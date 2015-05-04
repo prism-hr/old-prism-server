@@ -14,6 +14,8 @@ public class ResourceListRowDTO {
     private Integer systemId;
 
     private Integer institutionId;
+    
+    private Integer partnerId;
 
     private Integer programId;
 
@@ -71,6 +73,14 @@ public class ResourceListRowDTO {
 
     public void setInstitutionId(Integer institutionId) {
         this.institutionId = institutionId;
+    }
+
+    public Integer getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(Integer partnerId) {
+        this.partnerId = partnerId;
     }
 
     public Integer getProgramId() {

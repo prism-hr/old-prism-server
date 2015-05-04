@@ -1,18 +1,87 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_ADVERT_DETAILS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CATEGORIES;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CLOSING_DATES;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_FEES_AND_PAYMENTS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_DOMAIN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
+
+import java.util.List;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
-
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
-	/*
+    /*
      * *************** SYSTEM GLOBAL *********************
-	 */
+     */
 
     SYSTEM_ORGANIZATION(SYSTEM_GLOBAL, "Organization"),
     SYSTEM_ORGANIZATIONS(SYSTEM_GLOBAL, "Organizations"),
@@ -88,9 +157,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_LINK(SYSTEM_GLOBAL, "Link"),
     SYSTEM_NOW(SYSTEM_GLOBAL, "Now"),
 
-	/*
+    /*
      * *************** SYSTEM COMMENT *********************
-	 */
+     */
 
     SYSTEM_COMMENT_UPDATED_USER_ROLE(SYSTEM_COMMENT, "Updated system user roles"),
     SYSTEM_COMMENT_UPDATED_NOTIFICATION(SYSTEM_COMMENT, "Updated system notification configuration"),
@@ -107,9 +176,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use"),
     SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one"),
 
-	/*
+    /*
      * *************** SYSTEM STATE GROUP *********************
-	 */
+     */
 
     SYSTEM_STATE_GROUP_APPLICATION_UNSUBMITTED(SYSTEM_STATE_GROUP, "Unsubmitted"),
     SYSTEM_STATE_GROUP_APPLICATION_VALIDATION(SYSTEM_STATE_GROUP, "Validation"),
@@ -122,12 +191,14 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_GROUP_APPLICATION_RESERVED(SYSTEM_STATE_GROUP, "Reserved"),
     SYSTEM_STATE_GROUP_APPLICATION_REJECTED(SYSTEM_STATE_GROUP, "Rejected"),
     SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN(SYSTEM_STATE_GROUP, "Withdrawn"),
+    SYSTEM_STATE_GROUP_PROJECT_APPROVAL_PARTNER(SYSTEM_STATE_GROUP, "Partner Approval"),
     SYSTEM_STATE_GROUP_PROJECT_APPROVAL(SYSTEM_STATE_GROUP, "Approval"),
     SYSTEM_STATE_GROUP_PROJECT_APPROVED(SYSTEM_STATE_GROUP, "Approved"),
     SYSTEM_STATE_GROUP_PROJECT_REJECTED(SYSTEM_STATE_GROUP, "Rejected"),
     SYSTEM_STATE_GROUP_PROJECT_DISABLED(SYSTEM_STATE_GROUP, "Disabled"),
     SYSTEM_STATE_GROUP_PROJECT_WITHDRAWN(SYSTEM_STATE_GROUP, "Withdrawn"),
     SYSTEM_STATE_GROUP_PROGRAM_APPROVAL(SYSTEM_STATE_GROUP, "Approval"),
+    SYSTEM_STATE_GROUP_PROGRAM_APPROVAL_PARTNER(SYSTEM_STATE_GROUP, "Partner Approval"),
     SYSTEM_STATE_GROUP_PROGRAM_APPROVED(SYSTEM_STATE_GROUP, "Approved"),
     SYSTEM_STATE_GROUP_PROGRAM_REJECTED(SYSTEM_STATE_GROUP, "Rejected"),
     SYSTEM_STATE_GROUP_PROGRAM_DISABLED(SYSTEM_STATE_GROUP, "Disabled"),
@@ -138,9 +209,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_GROUP_INSTITUTION_WITHDRAWN(SYSTEM_STATE_GROUP, "Withdrawn"),
     SYSTEM_STATE_GROUP_SYSTEM_RUNNING(SYSTEM_STATE_GROUP, "Running"),
 
-	/*
+    /*
      * *************** SYSTEM STATE TRANSITION *********************
-	 */
+     */
 
     SYSTEM_STATE_TRANSITION_APPLICATION_APPROVAL(SYSTEM_STATE_TRANSITION, "Confirm supervision"),
     SYSTEM_STATE_TRANSITION_APPLICATION_APPROVED(SYSTEM_STATE_TRANSITION, "Confirm an offer"),
@@ -160,9 +231,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_TRANSITION_PROJECT_APPROVED(SYSTEM_STATE_TRANSITION, "Approve"),
     SYSTEM_STATE_TRANSITION_PROJECT_REJECTED(SYSTEM_STATE_TRANSITION, "Reject"),
 
-	/*
+    /*
      * *************** SYSTEM ACTION *********************
-	 */
+     */
 
     SYSTEM_ACTION_APPLICATION_ASSESS_ELIGIBILITY(SYSTEM_ACTION, "Assess Eligibility"),
     SYSTEM_ACTION_APPLICATION_ASSIGN_INTERVIEWERS(SYSTEM_ACTION, "Assign Interviewers"),
@@ -239,9 +310,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_SYSTEM_CREATE_INSTITUTION(SYSTEM_ACTION, "Create Institution"),
     SYSTEM_ACTION_SYSTEM_MANAGE_ACCOUNT(SYSTEM_ACTION, "Manage Account"),
 
-	/*
-	 * *************** SYSTEM ROLE *********************
-	 */
+    /*
+     * *************** SYSTEM ROLE *********************
+     */
 
     SYSTEM_ROLE_APPLICATION_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
     SYSTEM_ROLE_APPLICATION_CREATOR(SYSTEM_ROLE, "Creator"),
@@ -258,18 +329,20 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ROLE_APPLICATION_VIEWER_REFEREE(SYSTEM_ROLE, "Viewer Referee"),
     SYSTEM_ROLE_INSTITUTION_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
     SYSTEM_ROLE_INSTITUTION_ADMITTER(SYSTEM_ROLE, "Admissions Officer"),
+    SYSTEM_ROLE_INSTITUTION_SPONSOR(SYSTEM_ROLE, "Sponsor"),
     SYSTEM_ROLE_PROGRAM_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
     SYSTEM_ROLE_PROGRAM_APPROVER(SYSTEM_ROLE, "Approver"),
     SYSTEM_ROLE_PROGRAM_VIEWER(SYSTEM_ROLE, "Viewer"),
-
+    SYSTEM_ROLE_PROGRAM_SPONSOR(SYSTEM_ROLE, "Sponsor"),
     SYSTEM_ROLE_PROJECT_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
     SYSTEM_ROLE_PROJECT_PRIMARY_SUPERVISOR(SYSTEM_ROLE, "Primary Supervisor"),
     SYSTEM_ROLE_PROJECT_SECONDARY_SUPERVISOR(SYSTEM_ROLE, "Secondary Supervisor"),
+    SYSTEM_ROLE_PROJECT_SPONSOR(SYSTEM_ROLE, "Sponsor"),
     SYSTEM_ROLE_SYSTEM_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
 
-	/*
-	 * *************** SYSTEM OPPORTUNITY TYPE *********************
-	 */
+    /*
+     * *************** SYSTEM OPPORTUNITY TYPE *********************
+     */
 
     SYSTEM_OPPORTUNITY_TYPE_STUDY_UNDERGRADUATE(SYSTEM_OPPORTUNITY_TYPE, "Undergraduate Study"),
     SYSTEM_OPPORTUNITY_TYPE_STUDY_POSTGRADUATE_TAUGHT(SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Study"),
@@ -283,26 +356,26 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_SECONDMENT(SYSTEM_OPPORTUNITY_TYPE, "Secondment"),
     SYSTEM_OPPORTUNITY_TYPE_TRAINING(SYSTEM_OPPORTUNITY_TYPE, "Training"),
 
-	/*
-	 * *************** SYSTEM YES NO UNSURE *********************
-	 */
+    /*
+     * *************** SYSTEM YES NO UNSURE *********************
+     */
 
     SYSTEM_YES_NO_UNSURE_YES(SYSTEM_YES_NO_UNSURE, "Yes"),
     SYSTEM_YES_NO_UNSURE_NO(SYSTEM_YES_NO_UNSURE, "No"),
     SYSTEM_YES_NO_UNSURE_UNSURE(SYSTEM_YES_NO_UNSURE, "Unsure"),
 
-	/*
-	 * *************** SYSTEM STUDY OPTION *********************
-	 */
+    /*
+     * *************** SYSTEM STUDY OPTION *********************
+     */
 
     SYSTEM_STUDY_OPTION_FULL_TIME(SYSTEM_STUDY_OPTION, "Full Time"),
     SYSTEM_STUDY_OPTION_PART_TIME(SYSTEM_STUDY_OPTION, "Part Time"),
     SYSTEM_STUDY_OPTION_MODULAR_FLEXIBLE(SYSTEM_STUDY_OPTION, "Modular / Flexible"),
     SYSTEM_STUDY_OPTION_UNCLASSIFIED(SYSTEM_STUDY_OPTION, "Unclassified"),
 
-	/*
-	 * *************** SYSTEM PROGRAM CATEGORY *********************
-	 */
+    /*
+     * *************** SYSTEM PROGRAM CATEGORY *********************
+     */
 
     SYSTEM_PROGRAM_CATEGORY_STUDY(SYSTEM_PROGRAM_CATEGORY, "Degrees"),
     SYSTEM_PROGRAM_CATEGORY_FUNDING(SYSTEM_PROGRAM_CATEGORY, "Scholarships"),
@@ -310,9 +383,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PROGRAM_CATEGORY_WORK(SYSTEM_PROGRAM_CATEGORY, "Jobs"),
     SYSTEM_PROGRAM_CATEGORY_LEARNING(SYSTEM_PROGRAM_CATEGORY, "Courses"),
 
-	/*
-	 * *************** SYSTEM DURATION *********************
-	 */
+    /*
+     * *************** SYSTEM DURATION *********************
+     */
 
     SYSTEM_DURATION_UNIT_DAY(SYSTEM_DURATION, "Day"),
     SYSTEM_DURATION_UNIT_WEEK(SYSTEM_DURATION, "Week"),
@@ -324,13 +397,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DURATION_UNIT_PER_MONTH(SYSTEM_DURATION, "per Month"),
     SYSTEM_DURATION_UNIT_PER_YEAR(SYSTEM_DURATION, "per Year"),
 
-	/*
-	 * *************** SYSTEM FILTER PROPERTY *********************
-	 */
+    /*
+     * *************** SYSTEM FILTER PROPERTY *********************
+     */
 
     SYSTEM_FILTER_PROPERTY_USER(SYSTEM_FILTER_PROPERTY, "Creator"),
     SYSTEM_FILTER_PROPERTY_CODE(SYSTEM_FILTER_PROPERTY, "Code"),
     SYSTEM_FILTER_PROPERTY_INSTITUTION_TITLE(SYSTEM_FILTER_PROPERTY, "Institution"),
+    SYSTEM_FILTER_PROPERTY_PARTNER_TITLE(SYSTEM_FILTER_PROPERTY, "Partner Institution"),
+    SYSTEM_FILTER_PROPERTY_SPONSOR_TITLE(SYSTEM_FILTER_PROPERTY, "Sponsor Institution"),
     SYSTEM_FILTER_PROPERTY_DEPARTMENT_TITLE(SYSTEM_FILTER_PROPERTY, "Department"),
     SYSTEM_FILTER_PROPERTY_PROGRAM_TITLE(SYSTEM_FILTER_PROPERTY, "Program"),
     SYSTEM_FILTER_PROPERTY_PROJECT_TITLE(SYSTEM_FILTER_PROPERTY, "Project"),
@@ -356,9 +431,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_PROPERTY_STUDY_APPLICATION(SYSTEM_FILTER_PROPERTY, "Study Application ID"),
     SYSTEM_FILTER_PROPERTY_RESERVE_STATUS(SYSTEM_FILTER_PROPERTY, "Reserve Status"),
 
-	/*
-	 * *************** SYSTEM FILTER EXPRESSION *********************
-	 */
+    /*
+     * *************** SYSTEM FILTER EXPRESSION *********************
+     */
 
     SYSTEM_FILTER_EXPRESSION_BETWEEN(SYSTEM_FILTER_EXPRESSION, "Between"),
     SYSTEM_FILTER_EXPRESSION_BETWEEN_NEGATED(SYSTEM_FILTER_EXPRESSION, "Not Between"),
@@ -372,9 +447,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_EXPRESSION_LESSER_NEGATED(SYSTEM_FILTER_EXPRESSION, "Not less than"),
     SYSTEM_FILTER_EXPRESSION_NOT_SPECIFIED(SYSTEM_FILTER_EXPRESSION, "Not specified"),
 
-	/*
-	 * *************** SYSTEM ADVERT INDUSTRY *********************
-	 */
+    /*
+     * *************** SYSTEM ADVERT INDUSTRY *********************
+     */
 
     SYSTEM_ADVERT_INDUSTRY_ACCOUNTING(SYSTEM_ADVERT_INDUSTRY, "Accounting"),
     SYSTEM_ADVERT_INDUSTRY_AIRLINES_AVIATION(SYSTEM_ADVERT_INDUSTRY, "Airlines/Aviation"),
@@ -524,9 +599,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_INDUSTRY_WIRELESS(SYSTEM_ADVERT_INDUSTRY, "Wireless"),
     SYSTEM_ADVERT_INDUSTRY_WRITING_EDITING(SYSTEM_ADVERT_INDUSTRY, "Writing and Editing"),
 
-	/*
-	 * *************** SYSTEM ADVERT FUNCTION *********************
-	 */
+    /*
+     * *************** SYSTEM ADVERT FUNCTION *********************
+     */
 
     SYSTEM_ADVERT_FUNCTION_ACCOUNTING_AUDITING(SYSTEM_ADVERT_FUNCTION, "Accounting/Auditing"),
     SYSTEM_ADVERT_FUNCTION_ADMINISTRATIVE(SYSTEM_ADVERT_FUNCTION, "Administrative"),
@@ -564,9 +639,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_FUNCTION_TRAINING(SYSTEM_ADVERT_FUNCTION, "Training"),
     SYSTEM_ADVERT_FUNCTION_WRITING_EDITING(SYSTEM_ADVERT_FUNCTION, "Writing/Editing"),
 
-	/*
-	 * *************** SYSTEM ADVERT DOMAIN *********************
-	 */
+    /*
+     * *************** SYSTEM ADVERT DOMAIN *********************
+     */
 
     SYSTEM_ADVERT_DOMAIN_PRECLINICAL_MEDICINE(SYSTEM_ADVERT_DOMAIN, "Preclinical Medicine"), //
     SYSTEM_ADVERT_DOMAIN_PRECLINICAL_DENTISTRY(SYSTEM_ADVERT_DOMAIN, "Clinical Medicine"), //
@@ -694,9 +769,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_DOMAIN_COMBINED_ART(SYSTEM_ADVERT_DOMAIN, "Combined Arts"), //
     SYSTEM_ADVERT_DOMAIN_RESEARCH_METHODS(SYSTEM_ADVERT_DOMAIN, "Research Methods"), //
 
-	/*
-	 * *************** SYSTEM NOTIFICATION TEMPLATE *********************
-	 */
+    /*
+     * *************** SYSTEM NOTIFICATION TEMPLATE *********************
+     */
 
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_COMPLETE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_COMPLETE_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Request"),
@@ -744,25 +819,25 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_PROJECT_UPDATE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Project Update Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_RECOMMENDATION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Recommendation Notification"),
 
-	/*
-	 * *************** SYSTEM REFEREE TYPE *********************
-	 */
+    /*
+     * *************** SYSTEM REFEREE TYPE *********************
+     */
 
     SYSTEM_REFEREE_TYPE_ACADEMIC(SYSTEM_REFEREE_TYPE, "Academic"),
     SYSTEM_REFEREE_TYPE_EMPLOYER(SYSTEM_REFEREE_TYPE, "Employer"),
     SYSTEM_REFEREE_TYPE_OTHER(SYSTEM_REFEREE_TYPE, "Other"),
 
-	/*
-	 * *************** SYSTEM RESERVE STATUS *********************
-	 */
+    /*
+     * *************** SYSTEM RESERVE STATUS *********************
+     */
 
     SYSTEM_RESERVE_STATUS_FIRST(SYSTEM_RESERVE_STATUS, "First Reserve Group"),
     SYSTEM_RESERVE_STATUS_SECOND(SYSTEM_RESERVE_STATUS, "Second Reserve Group"),
     SYSTEM_RESERVE_STATUS_THIRD(SYSTEM_RESERVE_STATUS, "Third Reserve Group"),
 
-	/*
-	 * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************
-	 */
+    /*
+     * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************
+     */
 
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_GLOBAL(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Global"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_COMMENT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Comment"),
@@ -833,9 +908,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_COMMENT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Comment"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_REPORT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Report"),
 
-	/*
-	 * *************** SYSTEM VALIDATION ERROR *********************
-	 */
+    /*
+     * *************** SYSTEM VALIDATION ERROR *********************
+     */
 
     SYSTEM_VALIDATION_UNKNOWN(SYSTEM_VALIDATION_ERROR, "This field is invalid."),
     SYSTEM_VALIDATION_REQUIRED(SYSTEM_VALIDATION_ERROR, "This field is required."),
@@ -860,18 +935,18 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DUPLICATE_PROGRAM(SYSTEM_VALIDATION_ERROR, "Program already exists"),
     SYSTEM_DUPLICATE_PROJECT(SYSTEM_VALIDATION_ERROR, "Project already exists"),
 
-	/*
-	 * *************** SYSTEM INTEGRATION *********************
-	 */
+    /*
+     * *************** SYSTEM INTEGRATION *********************
+     */
 
     SYSTEM_ADDRESS_LINE_MOCK(SYSTEM_INTEGRATION, "Address Line"),
     SYSTEM_ADDRESS_CODE_MOCK(SYSTEM_INTEGRATION, "Address Code"),
     SYSTEM_PHONE_MOCK(SYSTEM_INTEGRATION, "0000000000"),
     SYSTEM_NO_EXPORT_PROGRAM_INSTANCE(SYSTEM_INTEGRATION, "No export program instance for application"),
 
-	/*
-	 * *************** SYSTEM STATE DURATION *********************
-	 */
+    /*
+     * *************** SYSTEM STATE DURATION *********************
+     */
 
     SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
     SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
@@ -899,8 +974,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_INSTITUTION_ESCALATE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new institution request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
 
     /*
-	 * *************** SYSTEM MONTH *********************
-	 */
+     * *************** SYSTEM MONTH *********************
+     */
 
     SYSTEM_MONTH_JANUARY(SYSTEM_MONTH, "January"),
     SYSTEM_MONTH_FEBRUARY(SYSTEM_MONTH, "February"),
@@ -915,9 +990,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MONTH_NOVEMBER(SYSTEM_MONTH, "November"),
     SYSTEM_MONTH_DECEMBER(SYSTEM_MONTH, "December"),
 
-	/*
-	 * *************** SYSTEM WORKFLOW *********************
-	 */
+    /*
+     * *************** SYSTEM WORKFLOW *********************
+     */
 
     SYSTEM_APPLICATION_STUDY_DETAIL_LABEL(SYSTEM_WORKFLOW, "Advanced Study Preferences"),
     SYSTEM_APPLICATION_STUDY_DETAIL_HINT(SYSTEM_WORKFLOW, "Enable collection of advanced study preferences"),
@@ -972,9 +1047,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_APPLICATION_OFFER_DETAIL_LABEL(SYSTEM_WORKFLOW, "Offer Detail"),
     SYSTEM_APPLICATION_OFFER_DETAIL_HINT(SYSTEM_WORKFLOW, "Enable collection of advanced terms of offer information"),
 
-	/*
-	 * *************** SYSTEM DECLINE ACTION *********************
-	 */
+    /*
+     * *************** SYSTEM DECLINE ACTION *********************
+     */
 
     SYSTEM_DECLINE_DECLINE(SYSTEM_DECLINE_ACTION, "Decline"),
     SYSTEM_DECLINE_APPLICANT(SYSTEM_DECLINE_ACTION, "Applicant:"),
@@ -983,9 +1058,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DECLINE_PROMPT(SYSTEM_DECLINE_ACTION, "You have chosen to decline. Are you sure?"),
     SYSTEM_DECLINE_CONFIRMATION(SYSTEM_DECLINE_ACTION, "You have declined to perform the action."),
 
-	/*
-	 * *************** SYSTEM HTML GENERAL SECTION *********************
-	 */
+    /*
+     * *************** SYSTEM HTML GENERAL SECTION *********************
+     */
 
     SYSTEM_HTML_GENERAL_SUPPORT(SYSTEM_HTML_GENERAL_SECTION, "Support"),
     SYSTEM_HTML_GENERAL_PASSWORD_PLACEHOLDER(SYSTEM_HTML_GENERAL_SECTION, "password"),
@@ -1012,9 +1087,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_ADVERTISE_OPPORTUNITIES(SYSTEM_HTML_GENERAL_SECTION, "Advertise Opportunity"),
     SYSTEM_HTML_ACTION_PERFORMED_CONFIRMATION(SYSTEM_HTML_GENERAL_SECTION, "Action completed successfully"),
 
-	/*
-	 * *************** SYSTEM AUTHENTICATE SECTION *********************
-	 */
+    /*
+     * *************** SYSTEM AUTHENTICATE SECTION *********************
+     */
 
     SYSTEM_AUTHENTICATE_METHOD_OR(SYSTEM_AUTHENTICATE_SECTION, "OR"),
     SYSTEM_AUTHENTICATE_SOCIAL_SIGN_IN_BUTTON(SYSTEM_HTML_GENERAL_SECTION, "Social Sign in"),
@@ -1042,9 +1117,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_TITLE_MODAL(SYSTEM_AUTHENTICATE_SECTION, "Your attention is required"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_CONTENT_MODAL(SYSTEM_AUTHENTICATE_SECTION, "Our system has detected that a plugin that blocks adverts is installed in your browser. This may be blocking essential functions of our site. We would advise that you disable it for our pages."),
 
-	/*
-	 * *************** SYSTEM OPPORTUNITIES SECTION *********************
-	 */
+    /*
+     * *************** SYSTEM OPPORTUNITIES SECTION *********************
+     */
 
     SYSTEM_OPPORTUNITIES_ALL_PROGRAM_CATEGORIES(SYSTEM_OPPORTUNITIES_SECTION, "All"),
     SYSTEM_OPPORTUNITIES_SEARCH_QUERY_PLACEHOLDER(SYSTEM_OPPORTUNITIES_SECTION, "keywords e.g. Engineering"),
@@ -1086,9 +1161,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_NOT_ACCEPTING_APPLICATIONS(SYSTEM_OPPORTUNITIES_SECTION, "Not accepting applications at the current time."),
     SYSTEM_OPPORTUNITIES_RELATED_PROJECTS(SYSTEM_OPPORTUNITIES_SECTION, "Related Projects"),
 
-	/*
-	 * *************** SYSTEM ADVERTISE SECTION *********************
-	 */
+    /*
+     * *************** SYSTEM ADVERTISE SECTION *********************
+     */
 
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization"),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_HINT(SYSTEM_ADVERTISE_SECTION, "Find your organization within the list"),
@@ -1103,9 +1178,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERTISE_REGISTER_PROJECT_TITLE(SYSTEM_ADVERTISE_SECTION, "Register Project"),
     SYSTEM_ADVERTISE_PARTNER_INSTITUTION_HEADER(SYSTEM_ADVERTISE_SECTION, "Your Organization"),
 
-	/*
-	 * *************** SYSTEM RESOURCES SECTION *********************
-	 */
+    /*
+     * *************** SYSTEM RESOURCES SECTION *********************
+     */
 
     SYSTEM_RESOURCES_FILTER(SYSTEM_RESOURCES_SECTION, "Filter"),
     SYSTEM_RESOURCES_FILTER_CLEAR(SYSTEM_RESOURCES_SECTION, "Clear"),
@@ -1155,9 +1230,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_NO_DOCUMENTS(SYSTEM_RESOURCES_SECTION, "No Documents provided"),
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_REFERENCES(SYSTEM_RESOURCES_SECTION, "References:"),
 
-	/*
-	 * *************** SYSTEM RESOURCE SECTION *********************
-	 */
+    /*
+     * *************** SYSTEM RESOURCE SECTION *********************
+     */
 
     SYSTEM_RESOURCE_ASSIGNED_USERS_INTERESTED(SYSTEM_RESOURCE_SECTION, "Users Interested in Applicant"),
     SYSTEM_RESOURCE_ASSIGNED_USERS_POTENTIALLY_INTERESTED(SYSTEM_RESOURCE_SECTION, "Users in Program"),
@@ -1177,20 +1252,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TIMELINE_NOW(SYSTEM_RESOURCE_SECTION, "Now"),
     SYSTEM_RESOURCE_TIMELINE_ON_BEHALF_OF(SYSTEM_RESOURCE_SECTION, "{{user}} on behalf of {{delegateUser}}"),
 
-	/*
-	 * *************** SYSTEM ACCOUNT SECTION *********************
-	 */
+    /*
+     * *************** SYSTEM ACCOUNT SECTION *********************
+     */
 
     SYSTEM_ACCOUNT_MANAGE_ACCOUNT(SYSTEM_ACCOUNT_SECTION, "Manage Account"),
     SYSTEM_ACCOUNT_SOCIAL_CONNECTIONS_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Social networks connections"),
     SYSTEM_ACCOUNT_SOCIAL_CHANGE_PASSWORD_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Change password"),
     SYSTEM_ACCOUNT_DETAILS_SEND_RECOMMENDATIONS_LABEL(SYSTEM_ACCOUNT_SECTION, "Send recommendation notifications?"),
-    SYSTEM_ACCOUNT_DETAILS_SEND_RECOMMENDATIONS_HINT(SYSTEM_ACCOUNT_SECTION, "???"),
+    SYSTEM_ACCOUNT_DETAILS_SEND_RECOMMENDATIONS_HINT(SYSTEM_ACCOUNT_SECTION, "Opt into receiving recommendation notifications from us"),
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_LABEL(SYSTEM_ACCOUNT_SECTION, "Link account to Social Networks"),
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_HINT(SYSTEM_ACCOUNT_SECTION, "Link your account to social networks that you use. This helps you to share information about your activities within PRiSM with friends and colleagues."),
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_LINKED(SYSTEM_ACCOUNT_SECTION, "Linked"),
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_UNLINK_BUTTON(SYSTEM_ACCOUNT_SECTION, "Unlink"),
-
     SYSTEM_ACCOUNT_LINKED_ACCOUNTS(SYSTEM_ACCOUNT_SECTION, "Linked Accounts"),
     SYSTEM_ACCOUNT_LINKED_SELECT_PRIMARY_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Select new primary account"),
     SYSTEM_ACCOUNT_LINKED_LINK_ACCOUNT_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Link new Account"),
@@ -1206,9 +1280,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACCOUNT_LINKED_OTHER_PASSWORD_HINT(SYSTEM_ACCOUNT_SECTION, "Please enter the password of the other account."),
     SYSTEM_ACCOUNT_LINKED_LINK_BUTTON(SYSTEM_ACCOUNT_SECTION, "Link Accounts"),
 
-	/*
-	 * *************** SYSTEM HTML FIELDS *********************
-	 */
+    /*
+     * *************** SYSTEM HTML FIELDS *********************
+     */
 
     SYSTEM_HTML_FIELDS_ACTIONS_CONTROL_DOWNLOAD_AS_PDF(SYSTEM_HTML_FIELDS, "Download as PDF"),
     SYSTEM_HTML_ASSIGN_USERS_USER_NOT_IN_LIST(SYSTEM_HTML_FIELDS, "User not in the list?"),
@@ -1230,11 +1304,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_LOOKUP_EMAIL_HINT(SYSTEM_HTML_FIELDS, "Please enter user's e-mail address."),
     SYSTEM_HTML_LOOKUP_RETURN_TO_SEARCH(SYSTEM_HTML_FIELDS, "Return to search"),
     SYSTEM_HTML_RATING_WEIGHTS_CONFIGURATION_SUM_LABEL(SYSTEM_HTML_FIELDS, "Weighting Sum"),
-    SYSTEM_HTML_RATING_WEIGHTS_CONFIGURATION_SUM_HINT(SYSTEM_HTML_FIELDS, "???"),
+    SYSTEM_HTML_RATING_WEIGHTS_CONFIGURATION_SUM_HINT(SYSTEM_HTML_FIELDS, "Specify (between 0 and 1) the importance that you place upon this criterion"),
 
-	/*
-	 * *************** SYSTEM HTML COMMON *********************
-	 */
+    /*
+     * *************** SYSTEM HTML COMMON *********************
+     */
 
     SYSTEM_HTML_COMMON_EDIT_BUTTON(SYSTEM_HTML_COMMON, "Edit"),
     SYSTEM_HTML_COMMON_SAVE_BUTTON(SYSTEM_HTML_COMMON, "Save"),
@@ -1247,9 +1321,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_COMMON_SUBMIT_BUTTON(SYSTEM_HTML_COMMON, "Submit"),
     SYSTEM_HTML_COMMON_ADD_BUTTON(SYSTEM_HTML_COMMON, "Add"),
 
-	/*
-	 * *************** SYSTEM HTML ADDRESS *********************
-	 */
+    /*
+     * *************** SYSTEM HTML ADDRESS *********************
+     */
 
     SYSTEM_ADDRESS_LINE1_LABEL(SYSTEM_HTML_ADDRESS, "Building name / number & street"),
     SYSTEM_ADDRESS_LINE1_HINT(SYSTEM_HTML_ADDRESS, "The building name/number and street of the address."),
@@ -1293,13 +1367,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_END_DATE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "End Date"),
     SYSTEM_RESOURCE_PARENT_END_DATE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The end date of the opportunity."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Business Year Start Month"),
-    SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(SYSTEM_HTML_RESOURCE_PARENT, "???"),
+    SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The month of the year that your business year starts from"),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Currency"),
-    SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_HINT(SYSTEM_HTML_RESOURCE_PARENT, "???"),
+    SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The currency that your organization typically does business in"),
 
-	/*
-	 * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
-	 */
+    /*
+     * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
+     */
 
     SYSTEM_RESOURCE_CONFIGURATION_SCOPE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Resource Scope"),
     SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The scope of the resource (e.g. system, institution, program, project, application) that you wish to define configuration for."),
@@ -1308,9 +1382,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_CONFIGURATION_OVERRIDE_LOCAL_VERSIONS_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Override Local Versions"),
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Restore Default"),
 
-	/*
-	 * *************** SYSTEM HTML MANAGE USERS *********************
-	 */
+    /*
+     * *************** SYSTEM HTML MANAGE USERS *********************
+     */
 
     SYSTEM_MANAGE_USERS_HEADER(SYSTEM_HTML_MANAGE_USERS, "Manage Users: {{title}}"),
     SYSTEM_MANAGE_USERS_ROLES_LABEL(SYSTEM_HTML_MANAGE_USERS, "Roles"),
@@ -1318,25 +1392,25 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MANAGE_USERS_ADD_USER_BUTTON(SYSTEM_HTML_MANAGE_USERS, "Add User"),
     SYSTEM_MANAGE_USERS_EXISTING_USERS_SUBHEADER(SYSTEM_HTML_MANAGE_USERS, "Existing users and roles"),
 
-	/*
-	 * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION
-	 * *********************
-	 */
+    /*
+     * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION
+     * *********************
+     */
 
     SYSTEM_EMAIL_CONFIGURATION_HEADER(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Manage Email Templates: {{title}}"),
     SYSTEM_EMAIL_CONFIGURATION_TEMPLATE_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Email Template"),
-    SYSTEM_EMAIL_CONFIGURATION_TEMPLATE_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "???"),
+    SYSTEM_EMAIL_CONFIGURATION_TEMPLATE_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Select the template you wish to configure"),
     SYSTEM_EMAIL_CONFIGURATION_SUBJECT_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Subject"),
-    SYSTEM_EMAIL_CONFIGURATION_SUBJECT_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "???"),
+    SYSTEM_EMAIL_CONFIGURATION_SUBJECT_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Edit to amend the email subject"),
     SYSTEM_EMAIL_CONFIGURATION_CONTENT_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Content"),
-    SYSTEM_EMAIL_CONFIGURATION_CONTENT_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "???"),
+    SYSTEM_EMAIL_CONFIGURATION_CONTENT_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Edit to amend the email content"),
     SYSTEM_EMAIL_CONFIGURATION_REMINDER_INTERVAL_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Reminder Interval"),
-    SYSTEM_EMAIL_CONFIGURATION_REMINDER_INTERVAL_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "???"),
+    SYSTEM_EMAIL_CONFIGURATION_REMINDER_INTERVAL_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Increase or reduce the frequency of reminder messages"),
 
-	/*
-	 * *************** SYSTEM HTML CUSTOM FORM CONFIGURATION
-	 * **********************
-	 */
+    /*
+     * *************** SYSTEM HTML CUSTOM FORM CONFIGURATION
+     * **********************
+     */
 
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_HEADER(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Manage Custom Forms: {{title}}"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_LABEL(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Comment Type"),
@@ -1345,9 +1419,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "To edit the field just click on it"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMPONENTS_PANEL_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Drag and drop the fields below to the canvas panel on the left."),
 
-	/*
-	 * *************** SYSTEM HTML WORKFLOW CONFIGURATION *********************
-	 */
+    /*
+     * *************** SYSTEM HTML WORKFLOW CONFIGURATION *********************
+     */
 
     SYSTEM_WORKFLOW_CONFIGURATION_WORKFLOW_SUBHEADER(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Workflow Configuration"),
     SYSTEM_WORKFLOW_CONFIGURATION_STAGE_DURATION_SUBHEADER(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Stage Durations"),
@@ -1362,24 +1436,25 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_WORKFLOW_CONFIGURATION_REQUIRED(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Required"),
     SYSTEM_WORKFLOW_CONFIGURATION_HEADER(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Configuration: {{title}}"),
 
-	/*
-	 * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION *********************
-	 */
+    /*
+     * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION
+     * *********************
+     */
 
     SYSTEM_TRANSLATIONS_CONFIGURATION_HEADER(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Customization: {{title}}"),
     SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_LABEL(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Category"),
-    SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_HINT(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "???"),
+    SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_HINT(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Select the category of property you wish to configure"),
 
-	/*
-	 * *************** SYSTEM ERROR MESSAGES *********************
-	 */
+    /*
+     * *************** SYSTEM ERROR MESSAGES *********************
+     */
 
     // TODO implement error messages
     // SYSTEM_HTML_COMMON_EDIT_BUTTON(SYSTEM_ERROR_MESSAGES, "Edit"),
 
-	/*
-	 * *************** INSTITUTION COMMENT *********************
-	 */
+    /*
+     * *************** INSTITUTION COMMENT *********************
+     */
 
     INSTITUTION_COMMENT_APPROVED(INSTITUTION_COMMENT, "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk"),
     INSTITUTION_COMMENT_CORRECTION(INSTITUTION_COMMENT, "Further information is required to activate your institution. Please login to address the reviewers comments"),
@@ -1407,26 +1482,26 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated institution closing dates"),
 
     /*
-	 * *************** INSTITUTION FORM *********************
-	 */
+     * *************** INSTITUTION FORM *********************
+     */
 
     INSTITUTION_FORM_BACKGROUND_UPLOAD_LABEL(INSTITUTION_ADVERT_DETAILS, "Please Upload a background image to create your landing page"),
     INSTITUTION_ADVERT_HOMEPAGE_LABEL(INSTITUTION_ADVERT_DETAILS, "Homepage URL"),
-    INSTITUTION_ADVERT_HOMEPAGE_HINT(INSTITUTION_ADVERT_DETAILS, "???"),
+    INSTITUTION_ADVERT_HOMEPAGE_HINT(INSTITUTION_ADVERT_DETAILS, "Specify the web address at which further information about your opportunity can be found"),
     INSTITUTION_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(INSTITUTION_ADVERT_DETAILS, "Use different address"),
-    INSTITUTION_ADVERT_USE_DIFFERENT_ADDRESS_HINT(INSTITUTION_ADVERT_DETAILS, "???"),
+    INSTITUTION_ADVERT_USE_DIFFERENT_ADDRESS_HINT(INSTITUTION_ADVERT_DETAILS, "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
 
-	/*
-	 * *************** INSTITUTION ADVERT DETAILS *********************
-	 */
+    /*
+     * *************** INSTITUTION ADVERT DETAILS *********************
+     */
 
     INSTITUTION_ADVERT_HEADER(INSTITUTION_ADVERT_DETAILS, "Advert"),
     INSTITUTION_ADVERT_DESCRIPTION_LABEL(INSTITUTION_ADVERT_DETAILS, "Description"),
     INSTITUTION_ADVERT_DESCRIPTION_HINT(INSTITUTION_ADVERT_DETAILS, "Detailed description of your advert."),
 
-	/*
-	 * *************** PROGRAM COMMENT *********************
-	 */
+    /*
+     * *************** PROGRAM COMMENT *********************
+     */
 
     PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
     PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
@@ -1448,9 +1523,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated program categories"),
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"),
 
-	/*
-	 * *************** PROGRAM FORM *********************
-	 */
+    /*
+     * *************** PROGRAM FORM *********************
+     */
 
     PROGRAM_FORM_DURATION_MINIMUM_LABEL(PROGRAM_FORM, "Duration Minimum"),
     PROGRAM_FORM_DURATION_MINIMUM_HINT(PROGRAM_FORM, "The minimum anticipated duration of study for your program."),
@@ -1460,35 +1535,35 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_FORM_ADVERTISE_HINT(PROGRAM_FORM, "Specify whether you wish to advertise the program for new applications at the current time"),
     PROGRAM_FORM_DISABLE_PROGRAM_BUTTON(PROGRAM_FORM, "Disable Program"),
 
-	/*
-	 * *************** PROGRAM ADVERT FEES & PAYMENTS *********************
-	 */
+    /*
+     * *************** PROGRAM ADVERT FEES & PAYMENTS *********************
+     */
 
     PROGRAM_FEES_HEADER(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fees and Payments"),
-    PROGRAM_FEES_SPECIFY_FEE_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify fee?"),
-    PROGRAM_FEES_SPECIFY_FEE_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_SPECIFY_FEE_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify fees?"),
+    PROGRAM_FEES_SPECIFY_FEE_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "If you are charging fees (e.g. for study) specify here"),
     PROGRAM_FEES_FEE_CURRENCY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee Currency"),
     PROGRAM_FEES_FEE_CURRENCY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the default fee currency of your advert."),
     PROGRAM_FEES_FEE_INTERVAL_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee Interval"),
-    PROGRAM_FEES_FEE_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_FEE_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify how regulary you collect fees"),
     PROGRAM_FEES_FEE_MINIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee minimum"),
-    PROGRAM_FEES_FEE_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_FEE_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the minimum fee level"),
     PROGRAM_FEES_FEE_MAXIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee maximum"),
-    PROGRAM_FEES_FEE_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_FEE_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the maximum fee level"),
     PROGRAM_FEES_SPECIFY_PAY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify pay?"),
-    PROGRAM_FEES_SPECIFY_PAY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_SPECIFY_PAY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "If you are paying a salary or fee (e.g. for work) specify here"),
     PROGRAM_FEES_PAY_CURRENCY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay Currency"),
     PROGRAM_FEES_PAY_CURRENCY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the default pay currency of your advert."),
     PROGRAM_FEES_PAY_INTERVAL_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay Interval"),
-    PROGRAM_FEES_PAY_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_PAY_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify how regularly you make payments"),
     PROGRAM_FEES_PAY_MINIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay minimum"),
-    PROGRAM_FEES_PAY_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_PAY_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the minimum pay level"),
     PROGRAM_FEES_PAY_MAXIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay maximum"),
-    PROGRAM_FEES_PAY_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_PAY_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the maximum pay level"),
 
-	/*
-	 * *************** PROGRAM ADVERT CATEGORIES *********************
-	 */
+    /*
+     * *************** PROGRAM ADVERT CATEGORIES *********************
+     */
 
     PROGRAM_CATEGORIES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Categories"),
     PROGRAM_CATEGORIES_APPLICATION_REQUIREMENTS_SUBHEADER(PROGRAM_ADVERT_CATEGORIES, "Application Requirements"),
@@ -1503,9 +1578,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_CATEGORIES_SUBJECTS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Subjects"),
     PROGRAM_CATEGORIES_SUBJECTS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
 
-	/*
-	 * *************** PROGRAM ADVERT CLOSING DATES *********************
-	 */
+    /*
+     * *************** PROGRAM ADVERT CLOSING DATES *********************
+     */
 
     PROGRAM_CLOSING_DATES_HEADER(PROGRAM_ADVERT_CLOSING_DATES, "Closing Dates"),
     PROGRAM_CLOSING_DATES_CLOSING_DATE_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Closing Date"),
@@ -1513,9 +1588,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_CLOSING_DATES_STUDY_PLACES_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Study Places"),
     PROGRAM_CLOSING_DATES_STUDY_PLACES_HINT(PROGRAM_ADVERT_CLOSING_DATES, "The number of study places on offer."),
 
-	/*
-	 * *************** PROJECT COMMENT *********************
-	 */
+    /*
+     * *************** PROJECT COMMENT *********************
+     */
 
     PROJECT_COMMENT_APPROVED(PROJECT_COMMENT, "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment"),
     PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments"),
@@ -1537,18 +1612,18 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_UPDATED_CATEGORY(PROJECT_COMMENT, "Updated project categories"),
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PROJECT_COMMENT, "Updated project closing dates"),
 
-	/*
-	 * *************** PROJECT FORM *********************
-	 */
+    /*
+     * *************** PROJECT FORM *********************
+     */
 
     PROJECT_FORM_DURATION_MINIMUM_LABEL(PROJECT_FORM, "Duration Minimum"),
     PROJECT_FORM_DURATION_MINIMUM_HINT(PROJECT_FORM, "The minimum anticipated duration of study for your project."),
     PROJECT_FORM_DURATION_MAXIMUM_LABEL(PROJECT_FORM, "Duration Maximum"),
     PROJECT_FORM_DURATION_MAXIMUM_HINT(PROJECT_FORM, "The maximum anticipated duration of study for your project."),
 
-	/*
-	 * *************** APPLICATION GLOBAL *********************
-	 */
+    /*
+     * *************** APPLICATION GLOBAL *********************
+     */
 
     APPLICATION_HEADER(APPLICATION_GLOBAL, "Application"),
     APPLICATION_CREATOR(APPLICATION_GLOBAL, "Applicant"),
@@ -1568,9 +1643,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_CODE(APPLICATION_GLOBAL, "Application Code"),
     APPLICATION_LAST_EDITED(APPLICATION_GLOBAL, "Last Edited"),
 
-	/*
-	 * *************** APPLICATION FORM *********************
-	 */
+    /*
+     * *************** APPLICATION FORM *********************
+     */
 
     APPLICATION_PROGRAM_DETAIL_HEADER(APPLICATION_PROGRAM_DETAIL, "Program Detail"),
     APPLICATION_PROGRAM_DETAIL_DESCRIPTION(APPLICATION_PROGRAM_DETAIL, "This section allows you to provide details about the program/opportunity that you are applying for."),
@@ -1589,7 +1664,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_HINT(APPLICATION_PROGRAM_DETAIL, "Please specify the primary subject(s)/theme(s) that you are interested on."),
     APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL(APPLICATION_PROGRAM_DETAIL, "Secondary Subjects"),
     APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_HINT(APPLICATION_PROGRAM_DETAIL, "Please specify the secondary subject(s)/theme(s) that you are interested on."),
-
+    
     APPLICATION_STUDY_DETAIL_HEADER(APPLICATION_STUDY_DETAIL, "Study Details"),
     APPLICATION_STUDY_DETAIL_DESCRIPTION(APPLICATION_STUDY_DETAIL, "This section allows you to provide details about the course of study that you are applying for funding to support."),
     APPLICATION_STUDY_DETAIL_LOCATION_LABEL(APPLICATION_STUDY_DETAIL, "Institution of Study"),
@@ -1602,13 +1677,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_STUDY_DETAIL_APPLICATION_ID_HINT(APPLICATION_STUDY_DETAIL, "The application identifier for the program that you have applied to study in (if applicable)."),
     APPLICATION_STUDY_DETAIL_START_DATE_LABEL(APPLICATION_STUDY_DETAIL, "Study Start Date"),
     APPLICATION_STUDY_DETAIL_START_DATE_HINT(APPLICATION_STUDY_DETAIL, "The expected start date of your studies, or the confirmed start date if you have already started."),
-
+    
     APPLICATION_SUPERVISOR_HEADER(APPLICATION_SUPERVISOR, "Supervisors"),
     APPLICATION_SUPERVISOR_DESCRIPTION(APPLICATION_SUPERVISOR, "If you have discussed your application with any potential supervisors prior to submission (recommended), please provide their details below."),
     APPLICATION_SUPERVISOR_SUBHEADER(APPLICATION_SUPERVISOR, "Supervisor"),
     APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_LABEL(APPLICATION_SUPERVISOR, "Is this supervisor aware of your application?"),
     APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_HINT(APPLICATION_SUPERVISOR, "This tells us whether the supervisor is aware of your application. We strongly recommend that you contact the supervisor before specifying them in your application."),
-
+    
     APPLICATION_PERSONAL_DETAIL_HEADER(APPLICATION_PERSONAL_DETAIL, "Personal Details"),
     APPLICATION_PERSONAL_DETAIL_DESCRIPTION(APPLICATION_PERSONAL_DETAIL, "This section allows you to provide details about yourself."),
     APPLICATION_PERSONAL_DETAIL_TITLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Title"),
@@ -1619,22 +1694,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_HINT(APPLICATION_PERSONAL_DETAIL, "Your date of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL(APPLICATION_PERSONAL_DETAIL, "Country of Birth"),
     APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_HINT(APPLICATION_PERSONAL_DETAIL, "Your country of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
-
     APPLICATION_PERSONAL_DETAIL_NATIONALITIES_SUBHEADER(APPLICATION_PERSONAL_DETAIL, "Nationalities"),
     APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Nationality"),
     APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Primary Nationality"),
     APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_HINT(APPLICATION_PERSONAL_DETAIL, "Select your primary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_SECOND_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Secondary Nationality"),
     APPLICATION_PERSONAL_DETAIL_SECOND_NATIONALITY_HINT(APPLICATION_PERSONAL_DETAIL, "Select your secondary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
-
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_SUBHEADER(APPLICATION_PERSONAL_DETAIL, "Language"),
     APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_LABEL(APPLICATION_PERSONAL_DETAIL, "Is English your first language?"),
     APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether English is your first language. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Do you have an English language qualification?"),
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether you have an English language qualification."),
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_DOCUMENT_LABEL(APPLICATION_PERSONAL_DETAIL, "Certificate (PDF)"),
-    APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_DOCUMENT_HINT(APPLICATION_PERSONAL_DETAIL, "Certificate of award. Please provide a complete grade transcript if you have this."),
-
+    APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_DOCUMENT_HINT(APPLICATION_PERSONAL_DETAIL, "Certificate of award. Please provide a complete grade transcript if you have this."),  
     APPLICATION_LANGUAGE_QUALIFICATION_HEADER(APPLICATION_PERSONAL_DETAIL, "Language Qualification"),
     APPLICATION_LANGUAGE_QUALIFICATION_TYPE_LABEL(APPLICATION_PERSONAL_DETAIL, "Qualification Type"),
     APPLICATION_LANGUAGE_QUALIFICATION_TYPE_HINT(APPLICATION_PERSONAL_DETAIL, "Select the type of your language qualification."),
@@ -1651,15 +1723,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_LANGUAGE_QUALIFICATION_LISTENING_SCORE_LABEL(APPLICATION_PERSONAL_DETAIL, "Listening Score"),
     APPLICATION_LANGUAGE_QUALIFICATION_LISTENING_SCORE_HINT(APPLICATION_PERSONAL_DETAIL, "Your listening score/mark/rank for your qualification."),
     APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX(APPLICATION_PERSONAL_DETAIL, "Language Qualification Transcript"),
-
     APPLICATION_PERSONAL_DETAIL_RESIDENCE_HEADER(APPLICATION_PERSONAL_DETAIL, "Residence"),
     APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL(APPLICATION_PERSONAL_DETAIL, "Country of Residence"),
     APPLICATION_PERSONAL_DETAIL_DOMICILE_HINT(APPLICATION_PERSONAL_DETAIL, "The country in which you are ordinarily (e.g. normally) resident. Be aware that this may not be the country that you currently live in. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_LABEL(APPLICATION_PERSONAL_DETAIL, "Do you Require a Visa to Study in the UK?"),
     APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether you need a visa to study in the UK. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Do you have a passport?"),
-    APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether you have a current passport."),
-
+    APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether you have a current passport."),   
     APPLICATION_PASSPORT_HEADER(APPLICATION_PERSONAL_DETAIL, "Passport"),
     APPLICATION_PASSPORT_NUMBER_LABEL(APPLICATION_PERSONAL_DETAIL, "Passport Number"),
     APPLICATION_PASSPORT_NUMBER_HINT(APPLICATION_PERSONAL_DETAIL, "Your passport number. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
@@ -1669,7 +1739,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PASSPORT_ISSUE_DATE_HINT(APPLICATION_PERSONAL_DETAIL, "The date at which your passport was issued. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PASSPORT_EXPIRY_DATE_LABEL(APPLICATION_PERSONAL_DETAIL, "Expiry Date"),
     APPLICATION_PASSPORT_EXPIRY_DATE_HINT(APPLICATION_PERSONAL_DETAIL, "The date at which your passport expires. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
-
     APPLICATION_PERSONAL_DETAIL_CONTACT_DETAIL_HEADER(APPLICATION_PERSONAL_DETAIL, "Contact Details"),
     APPLICATION_PERSONAL_DETAIL_EMAIL_LABEL(APPLICATION_PERSONAL_DETAIL, "Email"),
     APPLICATION_PERSONAL_DETAIL_EMAIL_HINT(APPLICATION_PERSONAL_DETAIL, "Your email address."),
@@ -1677,20 +1746,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PERSONAL_DETAIL_TELEPHONE_HINT(APPLICATION_PERSONAL_DETAIL, "Your contact telephone number."),
     APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL(APPLICATION_PERSONAL_DETAIL, "Skype"),
     APPLICATION_PERSONAL_DETAIL_SKYPE_HINT(APPLICATION_PERSONAL_DETAIL, "Your Skype address. We may you skype to contact you."),
-
     APPLICATION_PERSONAL_DETAIL_EQUAL_OPPORTUNITIES_HEADER(APPLICATION_PERSONAL_DETAIL, "Equal Opportunities"),
     APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Ethnicity"),
     APPLICATION_PERSONAL_DETAIL_ETHNICITY_HINT(APPLICATION_PERSONAL_DETAIL, "Please specify your ethnic background. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Disability"),
     APPLICATION_PERSONAL_DETAIL_DISABILITY_HINT(APPLICATION_PERSONAL_DETAIL, "Please let us know if you have a recognised disability. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
-
+    
     APPLICATION_ADDRESS_HEADER(APPLICATION_ADDRESS, "Address Detail"),
     APPLICATION_ADDRESS_DESCRIPTION(APPLICATION_ADDRESS, "Your current residence and contact address(es)."),
     APPLICATION_ADDRESS_CURRENT_HEADER(APPLICATION_ADDRESS, "Current Address"),
     APPLICATION_ADDRESS_CONTACT_HEADER(APPLICATION_ADDRESS, "Contact Address"),
     APPLICATION_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(APPLICATION_ADDRESS, "Is this the same as your current address?"),
     APPLICATION_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(APPLICATION_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
-
+    
     APPLICATION_QUALIFICATION_HEADER(APPLICATION_QUALIFICATION, "Qualifications"),
     APPLICATION_QUALIFICATION_DESCRIPTION(APPLICATION_STUDY_DETAIL, "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     APPLICATION_QUALIFICATION_SUBHEADER(APPLICATION_QUALIFICATION, "Qualification"),
@@ -1724,7 +1792,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_QUALIFICATION_NO_ITEMS(APPLICATION_QUALIFICATION, "This Application doesn't contain any Qualification"),
     APPLICATION_QUALIFICATION_EQUIVALENT_HEADER(APPLICATION_QUALIFICATION, "Equivalent Experience"),
     APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE(APPLICATION_QUALIFICATION, "We consider that the applicant has experience equivalent to the typical academic entrance requirements for our program. It is therefore our recommendation that an appointment be made"),
-
+    
     APPLICATION_EMPLOYMENT_POSITION_HEADER(APPLICATION_EMPLOYMENT_POSITION, "Employment Positions"),
     APPLICATION_EMPLOYMENT_POSITION_DESCRIPTION(APPLICATION_EMPLOYMENT_POSITION, "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),
     APPLICATION_EMPLOYMENT_POSITION_SUBHEADER(APPLICATION_EMPLOYMENT_POSITION, "Position"),
@@ -1743,7 +1811,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "End Date"),
     APPLICATION_EMPLOYMENT_POSITION_END_DATE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The end date of the position."),
     APPLICATION_EMPLOYMENT_POSITION_PERIOD_LABEL(APPLICATION_QUALIFICATION, "Employment Period"),
-
+    
     APPLICATION_FUNDING_HEADER(APPLICATION_FUNDING, "Funding Awards"),
     APPLICATION_FUNDING_DESCRIPTION(APPLICATION_FUNDING, "Please specify any funding that you have secured in support of your application."),
     APPLICATION_FUNDING_SUBHEADER(APPLICATION_FUNDING, "Award"),
@@ -1762,7 +1830,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_FUNDING_DOCUMENT_LABEL(APPLICATION_FUNDING, "Proof of Award"),
     APPLICATION_FUNDING_DOCUMENT_HINT(APPLICATION_FUNDING, "Proof of the award. You should upload a copy of the official award letter or your bank statement showing the funds entering your account."),
     APPLICATION_FUNDING_NO_ITEMS(APPLICATION_FUNDING, "This Application doesn't contain any Funding"),
-
+    
     APPLICATION_PRIZE_HEADER(APPLICATION_PRIZE, "Awards, Prizes & Achievements"),
     APPLICATION_PRIZE_DESCRIPTION(APPLICATION_PRIZE, "Please provide details of any awards, prizes or other outstanding achievements relevant to your application."),
     APPLICATION_PRIZE_SUBHEADER(APPLICATION_PRIZE, "Prize"),
@@ -1775,7 +1843,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PRIZE_AWARD_DATE_LABEL(APPLICATION_PRIZE, "Award Date"),
     APPLICATION_PRIZE_AWARD_DATE_HINT(APPLICATION_PRIZE, "The date upon which the prize/award was granted."),
     APPLICATION_PRIZE_AWARD_NO_ITEMS(APPLICATION_PRIZE, "This Application doesn't contain any Prizes/Awards"),
-
+    
     APPLICATION_REFEREE_HEADER(APPLICATION_REFEREE, "Referees"),
     APPLICATION_REFEREE_DESCRIPTION(APPLICATION_REFEREE, "Specify your referee(s) here. Each referee will be asked to provide a statement in support of your application."),
     APPLICATION_REFEREE_SUBHEADER(APPLICATION_REFEREE, "Referee"),
@@ -1791,10 +1859,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_REFEREE_PHONE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The employer telephone number of the referee."),
     APPLICATION_REFEREE_SKYPE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Skype user name"),
     APPLICATION_REFEREE_SKYPE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The Skype address of the referee."),
-
     APPLICATION_REFEREE_TYPE_ACADEMIC(APPLICATION_REFEREE, "Academic"),
     APPLICATION_REFEREE_TYPE_EMPLOYER(APPLICATION_REFEREE, "Employer"),
-
+    APPLICATION_REFEREE_REFERENCE_APPENDIX(APPLICATION_REFEREE, "Reference"),
+    APPLICATION_REFEREE_REFERENCE_COMMENT(APPLICATION_REFEREE, "Reference Comment"),
+    APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT(APPLICATION_REFEREE, "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us"),
+    
     APPLICATION_DOCUMENT_HEADER(APPLICATION_DOCUMENT, "Documents"),
     APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL(APPLICATION_DOCUMENT, "Personal Statement (PDF)"),
     APPLICATION_DOCUMENT_PERSONAL_STATEMENT_HINT(APPLICATION_DOCUMENT, "Your personal statement. This should describe your motivation for pursuing a career in research and summarise your research interests. Please provide no more than 1 page of A4."),
@@ -1819,13 +1889,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_FORM_SAVE_FOR_LATER(APPLICATION_FORM, "Save for later"),
     APPLICATION_FORM_SUBMIT_APPLICATION(APPLICATION_FORM, "Submit Application"),
 
-    APPLICATION_REFEREE_REFERENCE_APPENDIX(APPLICATION_REFEREE, "Reference"),
-    APPLICATION_REFEREE_REFERENCE_COMMENT(APPLICATION_REFEREE, "Reference Comment"),
-    APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT(APPLICATION_REFEREE, "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us"),
-
-	/*
-	 * *************** APPLICATION ACTION *********************
-	 */
+    /*
+     * *************** APPLICATION ACTION *********************
+     */
 
     APPLICATION_ACTION_APPOINTMENT_PREFERENCES_SUBHEADER(APPLICATION_ACTION, "Please select the dates when you are available."),
     APPLICATION_ACTION_APPOINTMENT_PREFERENCES_SUBHEADER_BACKOUT(APPLICATION_ACTION, "Please tell us why you cannot make it and when we can reschedule."),
@@ -1896,14 +1962,14 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_REJECTION_REASON_LABEL(APPLICATION_ACTION, "Reasons for Rejection"),
     APPLICATION_ACTION_REJECTION_REASON_HINT(APPLICATION_ACTION, "Specify the pertinent reason for rejection."),
     APPLICATION_ACTION_RESERVE_STATUS_LABEL(APPLICATION_ACTION, "Priority status"),
-    APPLICATION_ACTION_RESERVE_STATUS_HINT(APPLICATION_ACTION, "???"),
+    APPLICATION_ACTION_RESERVE_STATUS_HINT(APPLICATION_ACTION, "Indicate whether you wish you wish to assign the applicant to the first, second or third reserve group"),
     APPLICATION_ACTION_DELEGATE_ADMINISTRATION_BUTTON(APPLICATION_ACTION, "Delegate Administration"),
     APPLICATION_ACTION_CANNOT_MAKE_IT_BUTTON(APPLICATION_ACTION, "I cannot make it"),
     APPLICATION_ACTION_START_AGAIN_BUTTON(APPLICATION_ACTION, "Start Again"),
 
-	/*
-	 * *************** APPLICATION COMMENT *********************
-	 */
+    /*
+     * *************** APPLICATION COMMENT *********************
+     */
 
     APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference"),
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions"),
@@ -1923,9 +1989,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_COMMENT_UPDATED_DOCUMENT(APPLICATION_COMMENT, "Updated the document section"),
     APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information section"),
 
-	/*
-	 * *************** APPLICATION REPORT *********************
-	 */
+    /*
+     * *************** APPLICATION REPORT *********************
+     */
 
     APPLICATION_VERIFICATION_INSTANCE_COUNT(APPLICATION_REPORT, "Verification State Count"),
     APPLICATION_VERIFICATION_INSTANCE_DURATION_AVERAGE(APPLICATION_REPORT, "Verification Duration Average"),

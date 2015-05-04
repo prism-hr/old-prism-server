@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import com.zuehlke.pgadmissions.services.AdvertService;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-import java.util.List;
+import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
 public class AdvertServiceHelperExchangeRate implements AbstractServiceHelper {

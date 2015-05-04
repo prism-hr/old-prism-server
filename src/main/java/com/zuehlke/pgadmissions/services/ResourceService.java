@@ -379,9 +379,7 @@ public class ResourceService {
                     lastSequenceIdentifier, maxRecords, hasRedactions);
             for (ResourceListRowDTO row : rows) {
                 Set<ResourceListActionDTO> actions = Sets.newLinkedHashSet();
-                actions.addAll(actionService.getPermittedActions(resourceScope, row.getSystemId(), row.getInstitutionId(), row.getProgramId(),
-                        row.getProjectId(),
-                        row.getApplicationId(), user));
+                actions.addAll(actionService.getPermittedActions(resourceScope, row, user));
                 actions.addAll(creations.get(row.getResourceId()));
                 row.setActions(actions);
             }
@@ -451,13 +449,13 @@ public class ResourceService {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
 
-        List<Integer> resources = resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve);
-        assigned.addAll(resources);
+        assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
 
         for (PrismScope parentScopeId : parentScopeIds) {
-            resources = resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve);
-            assigned.addAll(resources);
+            assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
         }
+
+        assigned.addAll(resourceDAO.getAssignedPartnerResources(user, scopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
         return assigned;
     }
 
@@ -708,10 +706,7 @@ public class ResourceService {
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();
         advertService.updateAdvert(comment.getUser(), advertDTO, advert);
-
-        if (BooleanUtils.isFalse(advert.getImported())) {
-            resource.setTitle(advert.getTitle());
-        }
+        resource.setTitle(advert.getTitle());
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
@@ -759,9 +754,9 @@ public class ResourceService {
         resourceDAO.deleteElapsedStudyOptions(baseline);
     }
 
-    public void synchronizePartner(ResourceOpportunity resource, Comment comment) {
+    public void synchronizePartner(Resource resource, Comment comment) {
         Institution partner = resource.getPartner();
-        comment.setPartner(partner);
+        comment.setPartner(partner == null ? resource.getParentResource().getPartner() : partner);
     }
 
     public void resynchronizePartner(ResourceOpportunity resource, Comment comment) {
@@ -773,7 +768,15 @@ public class ResourceService {
             comment.setPartner(newPartner);
         }
     }
+    
+    public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
+        return resourceDAO.getResourcesByPartner(scope, searchTerm);
+    }
 
+    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
+        return resourceDAO.getResourcesBySponsor(scope, searchTerm);
+    }
+    
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {

@@ -83,6 +83,11 @@ public class Application extends Resource {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+    
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "institution_partner_id")
+    private Institution partner;
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
@@ -322,6 +327,16 @@ public class Application extends Resource {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Institution getPartner() {
+        return partner;
+    }
+
+    @Override
+    public void setPartner(Institution partner) {
+        this.partner = partner;
     }
 
     @Override

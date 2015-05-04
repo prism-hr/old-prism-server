@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.lang.reflect.InvocationTargetException;
@@ -50,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
@@ -58,7 +56,6 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
@@ -160,11 +157,6 @@ public class AdvertService {
         InstitutionAddressDTO addressDTO = advertDTO.getAddress();
         if (addressDTO != null) {
             updateAddress(advert, addressDTO);
-        }
-
-        InstitutionPartnerDTO partnerDTO = advertDTO.getPartner();
-        if (partnerDTO != null) {
-            updatePartner(user, advert, partnerDTO);
         }
 
         advert.setSponsorshipTarget(advertDTO.getSponsorshipRequired());
@@ -573,24 +565,6 @@ public class AdvertService {
         address.setAddressTown(addressDTO.getAddressTown());
         address.setAddressRegion(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
-    }
-
-    private void updatePartner(User user, Advert advert, InstitutionPartnerDTO partnerDTO) throws Exception {
-        Institution partner;
-        Integer partnerId = partnerDTO.getPartnerId();
-        if (partnerId == null) {
-            InstitutionPartnerDTO partnerPartnerDTO = partnerDTO.getPartner().getAdvert().getPartner();
-            if (partnerPartnerDTO != null) {
-                throw new RuntimeException("Denial of Service attempt: user attempted to post recursive advert");
-            }
-            partner = institutionService.createPartner(user, partnerDTO.getPartner());
-        } else {
-            partner = institutionService.getById(partnerId);
-            if (partner == null) {
-                throw new WorkflowEngineException(SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION.name());
-            }
-        }
-        advert.setPartner(partner);
     }
 
 }

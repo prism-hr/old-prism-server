@@ -22,4 +22,8 @@ public class InstitutionPartnerDTO {
         this.partner = partner;
     }
 
+    public boolean isEmpty() {
+        return partnerId == null && partner == null;
+    }
+
 }

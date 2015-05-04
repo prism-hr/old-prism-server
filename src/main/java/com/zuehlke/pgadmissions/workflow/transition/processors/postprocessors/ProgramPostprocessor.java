@@ -32,13 +32,14 @@ public class ProgramPostprocessor implements ResourceProcessor {
         program.setUpdatedTimestampSitemap(updatedTimestamp);
         program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
-
+        
         if (comment.isCreateComment()) {
             resourceService.synchronizePartner(program, comment);
         }
-        
+
         if (comment.isProgramApproveComment()) {
             synchronizeProjects(comment, program);
+            resourceService.resynchronizePartner(program, comment);
         }
 
         if (comment.isSponsorshipComment()) {

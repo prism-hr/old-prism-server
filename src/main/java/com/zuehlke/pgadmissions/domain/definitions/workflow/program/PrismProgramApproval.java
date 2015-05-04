@@ -23,7 +23,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(projectCompleteApprovalStage()
+		stateActions.add(programCompleteApprovalStage()
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
 		        .withTransitions(new PrismStateTransition() //
@@ -37,7 +37,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
 		stateActions.add(programWithdraw());
 	}
 
-	public static PrismStateAction projectCompleteApprovalStage() {
+	public static PrismStateAction programCompleteApprovalStage() {
 		return new PrismStateAction() //
 		        .withAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
 		        .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP) //

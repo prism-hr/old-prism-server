@@ -58,6 +58,7 @@ public class ProgramCreator implements ResourceCreator {
                 .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum())
                 .withDurationMaximum(newProgram.getDurationMaximum()).withRequireProjectDefinition(false)
                 .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
+        resourceService.updatePartner(user, program, newProgram);
 
         resourceService.setAttributes(program, newProgram.getAttributes());
         return program;

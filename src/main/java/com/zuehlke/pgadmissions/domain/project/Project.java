@@ -71,6 +71,10 @@ public class Project extends ResourceOpportunity {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+    
+    @ManyToOne
+    @JoinColumn(name = "institution_partner_id")
+    private Institution partner;
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
@@ -79,7 +83,7 @@ public class Project extends ResourceOpportunity {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "program_id")
     private Program program;
 
     @OneToOne
@@ -234,6 +238,16 @@ public class Project extends ResourceOpportunity {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Institution getPartner() {
+        return partner;
+    }
+
+    @Override
+    public void setPartner(Institution partner) {
+        this.partner = partner;
     }
 
     @Override

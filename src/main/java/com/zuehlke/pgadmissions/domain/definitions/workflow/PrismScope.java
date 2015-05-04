@@ -37,6 +37,8 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.In
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ProgramPreprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ProjectPreprocessor;
 
 public enum PrismScope {
 
@@ -44,9 +46,9 @@ public enum PrismScope {
     INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null,
             InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, null, InstitutionPostprocessor.class, null), //
     PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null,
-            ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, null, null, ProgramPostprocessor.class), //
+            ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, ProgramPreprocessor.class, null, ProgramPostprocessor.class), //
     PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,
-            ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, null, null, ProjectPostprocessor.class), //
+            ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, ProjectPreprocessor.class, null, ProjectPostprocessor.class), //
     APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,
             ApplicationExecutor.class, ApplicationCreator.class, ApplicationPersister.class, ApplicationPreprocessor.class, ApplicationProcessor.class,
             ApplicationPostprocessor.class);

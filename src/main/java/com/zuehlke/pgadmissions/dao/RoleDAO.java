@@ -124,21 +124,6 @@ public class RoleDAO {
 		        .list();
 	}
 
-	public List<Integer> getExcludingUserRoles(Resource resource, User user, Role role) {
-		String resourceReference = resource.getResourceScope().getLowerCamelName();
-		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-		        .setProjection(Projections.property("excludedUserRole.id")) //
-		        .createAlias("role", "role", JoinType.INNER_JOIN) //
-		        .createAlias("role.excludedRoles", "excludedRole", JoinType.INNER_JOIN) //
-		        .createAlias("excludedRole.userRoles", "excludedUserRole") //
-		        .add(Restrictions.eq(resourceReference, resource)) //
-		        .add(Restrictions.eq("user", user)) //
-		        .add(Restrictions.ne("role", role)) //
-		        .add(Restrictions.eq("excludedUserRole." + resourceReference, resource)) //
-		        .add(Restrictions.eq("excludedUserRole.user", user)) //
-		        .list();
-	}
-
 	public Role getCreatorRole(Resource resource) {
 		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class) //
 		        .add(Restrictions.eq("scope.id", PrismScope.getByResourceClass(resource.getClass()))) //

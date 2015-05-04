@@ -20,7 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_SPONSOR_TRANSITON;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproved;
 
@@ -41,7 +41,7 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_CREATE_PROJECT) //
                 .withCondition(ACCEPT_PROJECT) //
-                .withTransitions(PROJECT_APPROVE_TRANSITION //
+                .withTransitions(PROJECT_CREATE_TRANSITION //
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP))); //
 
         stateActions.add(new PrismStateAction() //

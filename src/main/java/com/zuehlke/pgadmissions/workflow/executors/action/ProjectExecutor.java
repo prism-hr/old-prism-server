@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -32,22 +33,22 @@ public class ProjectExecutor implements ActionExecutor {
 
     @Inject
     private ActionService actionService;
-    
+
     @Inject
     private CommentService commentService;
-    
+
     @Inject
     private ProjectService projectService;
-    
+
     @Inject
     private StateService stateService;
-    
+
     @Inject
     private UserService userService;
-    
+
     @Inject
     private ApplicationContext applicationContext;
-    
+
     @Override
     public ActionOutcomeDTO execute(Integer resourceId, CommentDTO commentDTO) throws Exception {
         User user = userService.getById(commentDTO.getUser());
@@ -68,8 +69,10 @@ public class ProjectExecutor implements ActionExecutor {
             transitionState = stateService.getById(PROJECT_APPROVED);
         }
 
-        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        InstitutionPartnerDTO partnerDTO = projectDTO.getPartner();
+        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action)
+                .withRemovedPartner(partnerDTO != null && partnerDTO.isEmpty()).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
+                .withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
         projectService.update(resourceId, projectDTO, comment);

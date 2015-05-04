@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -69,8 +70,10 @@ public class ProgramExecutor implements ActionExecutor {
             transitionState = stateService.getById(PROGRAM_APPROVED);
         }
 
-        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        InstitutionPartnerDTO partnerDTO = programDTO.getPartner();
+        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action)
+                .withRemovedPartner(partnerDTO != null && partnerDTO.isEmpty()).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
+                .withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
         programService.update(resourceId, programDTO, comment);

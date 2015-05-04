@@ -2,8 +2,13 @@ package com.zuehlke.pgadmissions.domain.resource;
 
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 public abstract class ResourceOpportunity extends ResourceParent {
+
+    public abstract Institution getPartner();
+
+    public abstract void setPartner(Institution institution);
 
     public abstract OpportunityType getOpportunityType();
 

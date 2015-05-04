@@ -1,18 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-
-import java.util.List;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
@@ -23,41 +10,47 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfigurationVersioned;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.dozer.Mapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
 public class CustomizationService {
 
-    @Autowired
+    @Inject
     private CustomizationDAO customizationDAO;
 
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private ResourceService resourceService;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
-    @Autowired
+    @Inject
     private Mapper mapper;
 
     public WorkflowDefinition getDefinitionById(PrismConfiguration configurationType, Enum<?> id) {
         return entityService.getById(configurationType.getDefinitionClass(), id);
     }
 
-    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, User user, WorkflowDefinition definition) {
+    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, WorkflowDefinition definition) {
         PrismScope resourceScope = resource.getResourceScope();
         PrismOpportunityType opportunityType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getOpportunityType()
                 .getPrismOpportunityType() : null;
@@ -96,11 +89,9 @@ public class CustomizationService {
         return representation;
     }
 
-    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, User user)
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource)
             throws Exception {
-        PrismScope resourceScope = resource.getResourceScope();
-        PrismOpportunityType opportunityType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getOpportunityType()
-                .getPrismOpportunityType() : null;
+        PrismOpportunityType opportunityType = getConfiguredOpportunityType(resource, null);
         return getConfigurationRepresentations(configurationType, resource, resource.getResourceScope(), opportunityType);
     }
 
@@ -148,7 +139,7 @@ public class CustomizationService {
 
         WorkflowPropertyConfiguration configuration;
         if (configurationVersion == null) {
-            configuration = (WorkflowPropertyConfiguration) getConfiguration(configurationType, resource, user, definition);
+            configuration = (WorkflowPropertyConfiguration) getConfiguration(configurationType, resource, definition);
         } else {
             configuration = (WorkflowPropertyConfiguration) getConfigurationWithVersion(configurationType, definition, configurationVersion);
         }
@@ -159,7 +150,7 @@ public class CustomizationService {
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration configurationType,
             Resource resource, Integer configurationVersion) throws Exception {
         if (configurationVersion == null) {
-            return getConfigurationRepresentations(configurationType, resource, userService.getCurrentUser());
+            return getConfigurationRepresentations(configurationType, resource);
         } else {
             return getConfigurationRepresentationsWithVersion(resource, configurationType, configurationVersion);
         }

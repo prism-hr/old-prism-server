@@ -6,6 +6,6 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 
 public interface ResourceCreator {
 
-    public Resource create(User user, ResourceDTO newResource) throws Exception;
+    Resource create(User user, ResourceDTO newResource) throws Exception;
 
 }

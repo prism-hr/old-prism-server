@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 public class InstitutionServiceHelper implements AbstractServiceHelper {
 
-	@Autowired
+	@Inject
 	private InstitutionService institutionService;
 
-	@Autowired
+	@Inject
 	private ImportedEntityService importedEntityService;
 
 	@Override

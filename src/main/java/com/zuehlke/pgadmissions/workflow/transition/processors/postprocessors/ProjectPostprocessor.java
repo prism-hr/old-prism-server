@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -20,6 +10,14 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
 @Component
 public class ProjectPostprocessor implements ResourceProcessor {
@@ -41,7 +39,9 @@ public class ProjectPostprocessor implements ResourceProcessor {
         Project project = (Project) resource;
         DateTime updatedTimestamp = project.getUpdatedTimestamp();
         project.setUpdatedTimestampSitemap(updatedTimestamp);
-        project.getProgram().setUpdatedTimestampSitemap(updatedTimestamp);
+        if(project.getProgram() != null) {
+            project.getProgram().setUpdatedTimestampSitemap(updatedTimestamp);
+        }
         project.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(project.getAdvert(), project.getSequenceIdentifier().substring(0, 13));
 

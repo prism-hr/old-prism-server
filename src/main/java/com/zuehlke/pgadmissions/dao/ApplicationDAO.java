@@ -351,7 +351,7 @@ public class ApplicationDAO {
         Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
         ImmutableMap<String, Object> model = ImmutableMap.of("resourceReference", (Object) resourceScope.getLowerCamelName(), "resourceId", resourceId);
 
-        SQLQuery query = (SQLQuery) sessionFactory.getCurrentSession().createSQLQuery( //
+        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery( //
                 FreeMarkerTemplateUtils.processTemplateIntoString(template, model)); //
 
         return query.addScalar("advertCount", LongType.INSTANCE) //

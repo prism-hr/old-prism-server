@@ -7,6 +7,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public interface StateDurationResolver {
 
-	public LocalDate resolve(Resource resource, Comment comment);
-	
+	LocalDate resolve(Resource resource, Comment comment);
+
 }

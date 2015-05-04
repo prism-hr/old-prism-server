@@ -843,6 +843,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_MINLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be less than {1} characters."),
     SYSTEM_VALIDATION_PATTERN(SYSTEM_VALIDATION_ERROR, "This field is invalid."),
+    SYSTEM_VALIDATION_URL(SYSTEM_VALIDATION_ERROR, "This field must be a valid URL."),
     SYSTEM_VALIDATION_TA_MAX_TEXT(SYSTEM_VALIDATION_ERROR, "This field is too long."),
     SYSTEM_VALIDATION_TIMESLOTS_REQUIRED(SYSTEM_VALIDATION_ERROR, "You have to specify at least one date and time."),
     SYSTEM_VALIDATION_SELECTION(SYSTEM_VALIDATION_ERROR, "You have to make a selection."),
@@ -1491,7 +1492,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     PROGRAM_CATEGORIES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Categories"),
     PROGRAM_CATEGORIES_APPLICATION_REQUIREMENTS_SUBHEADER(PROGRAM_ADVERT_CATEGORIES, "Application Requirements"),
-    PROGRAM_CATEGORIES_ADVERTISING_TARGETS_SUBHEADER(PROGRAM_ADVERT_CATEGORIES, "Advertising Targets"),
     PROGRAM_CATEGORIES_DOMAINS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Domains"),
     PROGRAM_CATEGORIES_DOMAINS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the domains/sectors that your advert is relevant to"),
     PROGRAM_CATEGORIES_FUNCTIONS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Functions"),
@@ -1502,10 +1502,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_CATEGORIES_COMPETENCIES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the competencies that you are looking for in your applicants."),
     PROGRAM_CATEGORIES_SUBJECTS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Subjects"),
     PROGRAM_CATEGORIES_SUBJECTS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
-    PROGRAM_CATEGORIES_INSTITUTIONS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Institutions"),
-    PROGRAM_CATEGORIES_INSTITUTIONS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the institutions that you wish to target your advert to."),
-    PROGRAM_CATEGORIES_OPPORTUNITY_TYPES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Opportunity Types"),
-    PROGRAM_CATEGORIES_OPPORTUNITY_TYPES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the opportunity types that you wish to target your advert to."),
 
 	/*
 	 * *************** PROGRAM ADVERT CLOSING DATES *********************

@@ -1,32 +1,19 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.institution;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_PROVIDE_SPONSORSHIP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_SPONSOR_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_SPONSOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.INSTITUTION_CREATE_SPONSOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_SPONSOR_TRANSITON;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreator;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproved;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_SPONSOR_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_SPONSOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproved;
 
 public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
 
@@ -41,7 +28,7 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_CREATE_PROJECT) //
                 .withCondition(ACCEPT_PROJECT) //
-                .withTransitions(PROJECT_APPROVE_TRANSITION //
+                .withTransitions(PROJECT_CREATE_TRANSITION //
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP))); //
 
         stateActions.add(new PrismStateAction() //

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
@@ -11,13 +10,11 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -37,9 +34,6 @@ public class ProgramService {
 
     @Inject
     private InstitutionService institutionService;
-
-    @Inject
-    private ProjectService projectService;
 
     @Inject
     private ResourceService resourceService;
@@ -99,24 +93,6 @@ public class ProgramService {
         return programDAO.getSitemapEntries(activeProgramStates);
     }
 
-    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        SearchEngineAdvertDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
-
-        if (searchEngineDTO != null) {
-            searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
-
-            List<String> relatedUsers = Lists.newArrayList();
-            List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_SUPERVISOR_GROUP.getRoles());
-            for (User programAcademic : programAcademics) {
-                relatedUsers.add(programAcademic.getSearchEngineRepresentation());
-            }
-            searchEngineDTO.setRelatedUsers(relatedUsers);
-        }
-
-        return searchEngineDTO;
-    }
-
     public List<ResourceSearchEngineDTO> getActiveProgramsByInstitution(Integer institutionId) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
@@ -138,6 +114,10 @@ public class ProgramService {
 
     public void update(Integer programId, OpportunityDTO programDTO, Comment comment) throws Exception {
         resourceService.update(PROGRAM, programId, programDTO, comment);
+    }
+
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId, List<PrismState> activeProgramStates) {
+        return programDAO.getSearchEngineAdvert(programId, activeProgramStates);
     }
 
 }

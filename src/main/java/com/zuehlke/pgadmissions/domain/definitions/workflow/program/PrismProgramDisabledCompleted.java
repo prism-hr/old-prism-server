@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
-
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditUnapproved;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProgramDisabledCompleted extends PrismWorkflowState {
 

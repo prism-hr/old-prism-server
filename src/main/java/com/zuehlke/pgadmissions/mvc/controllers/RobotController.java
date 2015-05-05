@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -87,13 +92,13 @@ public class RobotController {
 
     private PrismScope getQueryResourceScope(Map<String, String> queryMap) {
         if (queryMap.containsKey("institution")) {
-            return PrismScope.INSTITUTION;
+            return INSTITUTION;
         } else if (queryMap.containsKey("program")) {
-            return PrismScope.PROGRAM;
+            return PROGRAM;
         } else if (queryMap.containsKey("project")) {
-            return PrismScope.PROJECT;
+            return PROJECT;
         }
-        return PrismScope.SYSTEM;
+        return SYSTEM;
     }
 
     private Integer getQueryResourceId(PrismScope resourceScope, Map<String, String> queryMap) {
@@ -105,7 +110,7 @@ public class RobotController {
         case SYSTEM:
             return systemService.getSystem().getId();
         default:
-            throw new Error();
+            throw new UnsupportedOperationException();
         }
     }
 

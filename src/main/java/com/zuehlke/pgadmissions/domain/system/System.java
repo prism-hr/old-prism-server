@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -45,7 +46,7 @@ public class System extends Resource {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_partner_id")
@@ -203,7 +204,7 @@ public class System extends Resource {
     public void setInstitution(Institution institution) {
         return;
     }
-    
+
     @Override
     public Institution getPartner() {
         return partner;
@@ -231,6 +232,16 @@ public class System extends Resource {
 
     @Override
     public void setProject(Project project) {
+        return;
+    }
+
+    @Override
+    public Advert getAdvert() {
+        return null;
+    }
+
+    @Override
+    public void setAdvert(Advert advert) {
         return;
     }
 

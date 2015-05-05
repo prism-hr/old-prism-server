@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_PENDING_REACTIVATION;
@@ -14,7 +13,6 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -23,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -39,9 +36,6 @@ public class ProjectService {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private UserService userService;
 
     @Inject
     private StateService stateService;
@@ -96,23 +90,6 @@ public class ProjectService {
         return projectDAO.getSitemapEntries(activeProjectStates);
     }
 
-    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer projectId) {
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        SearchEngineAdvertDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
-
-        if (searchEngineDTO != null) {
-            List<String> relatedUsers = Lists.newArrayList();
-            List<User> projectAcademics = userService.getUsersForResourceAndRoles(getById(projectId), PROJECT_SUPERVISOR_GROUP.getRoles());
-            for (User projectAcademic : projectAcademics) {
-                relatedUsers.add(projectAcademic.getSearchEngineRepresentation());
-            }
-
-            searchEngineDTO.setRelatedUsers(relatedUsers);
-        }
-
-        return searchEngineDTO;
-    }
-
     public List<ResourceSearchEngineDTO> getActiveProjectsByProgram(Integer programId) {
         List<PrismState> activeStates = stateService.getActiveProjectStates();
         return projectDAO.getActiveProjectsByProgram(programId, activeStates);
@@ -125,6 +102,10 @@ public class ProjectService {
 
     public void update(Integer projectId, OpportunityDTO projectDTO, Comment comment) throws Exception {
         resourceService.update(PROJECT, projectId, projectDTO, comment);
+    }
+
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer projectId, List<PrismState> activeProjectStates) {
+        return projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
     }
 
 }

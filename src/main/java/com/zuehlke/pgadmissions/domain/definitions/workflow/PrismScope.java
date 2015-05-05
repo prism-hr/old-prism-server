@@ -20,6 +20,19 @@ import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
+import com.zuehlke.pgadmissions.workflow.resource.representation.ApplicationRepresentationEnricher;
+import com.zuehlke.pgadmissions.workflow.resource.representation.InstitutionRepresentationEnricher;
+import com.zuehlke.pgadmissions.workflow.resource.representation.ProgramRepresentationEnricher;
+import com.zuehlke.pgadmissions.workflow.resource.representation.ProjectRepresentationEnricher;
+import com.zuehlke.pgadmissions.workflow.resource.representation.ResourceRepresentationEnricher;
+import com.zuehlke.pgadmissions.workflow.resource.seo.search.InstitutionSearchRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProgramSearchRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProjectSearchRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.search.SearchRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.search.SystemSearchRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.social.ResourceParentSocialRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.social.SocialRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.social.SystemSocialRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ApplicationCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.InstitutionCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ProgramCreator;
@@ -42,20 +55,24 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.Pro
 
 public enum PrismScope {
 
-    SYSTEM(null, System.class, "SM", null, null, null, null, null, null, null, null), //
+    SYSTEM(null, System.class, "SM", null, null, null, null, null, null, null, null, SystemSearchRepresentationBuilder.class, //
+            SystemSocialRepresentationBuilder.class, null), //
     INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", //
             new ColumnDefinition().add("institution", "title").getAll(), null, //
-            InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, null, InstitutionPostprocessor.class, null), //
+            InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, null, InstitutionPostprocessor.class, null, //
+            InstitutionSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, InstitutionRepresentationEnricher.class), //
     PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", //
             new ColumnDefinition().add("institution", "title").add("partner", "title").add("program", "title").getAll(), null, //
-            ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, ProgramPreprocessor.class, null, ProgramPostprocessor.class), //
+            ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, ProgramPreprocessor.class, null, ProgramPostprocessor.class, //
+            ProgramSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProgramRepresentationEnricher.class), //
     PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", //
             new ColumnDefinition().add("institution", "title").add("partner", "title").add("program", "title").add("project", "title").getAll(), null, //
-            ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, ProjectPreprocessor.class, null, ProjectPostprocessor.class), //
+            ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, ProjectPreprocessor.class, null, ProjectPostprocessor.class, //
+            ProjectSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProjectRepresentationEnricher.class), //
     APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", //
             new ColumnDefinition().add("institution", "title").add("partner", "title").add("program", "title").add("project", "title").getAll(), null, //
             ApplicationExecutor.class, ApplicationCreator.class, ApplicationPersister.class, ApplicationPreprocessor.class, ApplicationProcessor.class, //
-            ApplicationPostprocessor.class);
+            ApplicationPostprocessor.class, null, null, ApplicationRepresentationEnricher.class);
 
     private static Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
@@ -87,11 +104,19 @@ public enum PrismScope {
 
     private Class<? extends ResourceProcessor> resourcePostprocessor;
 
+    private Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder;
+
+    private Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder;
+
+    private Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher;
+
     private PrismScope(PrismScopeCategory prismScopeCategory, Class<? extends Resource> resourceClass, String shortCode,
             HashMultimap<String, String> consoleListCustomColumns, HashMultimap<String, String> reportListCustomColumns,
             Class<? extends ActionExecutor> actionExecutor, Class<? extends ResourceCreator> resourceCreator,
             Class<? extends ResourcePersister> resourcePersister, Class<? extends ResourceProcessor> resourcePreprocessor,
-            Class<? extends ResourceProcessor> resourceProcessor, Class<? extends ResourceProcessor> resourcePostprocessor) {
+            Class<? extends ResourceProcessor> resourceProcessor, Class<? extends ResourceProcessor> resourcePostprocessor,
+            Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder, Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder,
+            Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher) {
         this.prismScopeCategory = prismScopeCategory;
         this.resourceClass = resourceClass;
         this.shortCode = shortCode;
@@ -103,6 +128,9 @@ public enum PrismScope {
         this.resourcePreprocessor = resourcePreprocessor;
         this.resourceProcessor = resourceProcessor;
         this.resourcePostprocessor = resourcePostprocessor;
+        this.searchRepresentationBuilder = searchRepresentationBuilder;
+        this.socialRepresentationBuilder = socialRepresentationBuilder;
+        this.resourceRepresentationEnricher = resourceRepresentationEnricher;
     }
 
     public PrismScopeCategory getPrismScopeCategory() {
@@ -147,6 +175,18 @@ public enum PrismScope {
 
     public Class<? extends ResourceProcessor> getResourcePostprocessor() {
         return resourcePostprocessor;
+    }
+
+    public Class<? extends SearchRepresentationBuilder> getSearchRepresentationBuilder() {
+        return searchRepresentationBuilder;
+    }
+
+    public Class<? extends SocialRepresentationBuilder> getSocialRepresentationBuilder() {
+        return socialRepresentationBuilder;
+    }
+
+    public Class<? extends ResourceRepresentationEnricher> getResourceRepresentationEnricher() {
+        return resourceRepresentationEnricher;
     }
 
     public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {

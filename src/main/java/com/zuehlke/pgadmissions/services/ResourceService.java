@@ -109,6 +109,8 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
+import com.zuehlke.pgadmissions.workflow.resource.seo.search.SearchRepresentationBuilder;
+import com.zuehlke.pgadmissions.workflow.resource.seo.social.SocialRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
 import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
@@ -149,9 +151,6 @@ public class ResourceService {
 
     @Inject
     private ImportedEntityService importedEntityService;
-
-    @Inject
-    private SystemService systemService;
 
     @Inject
     private EntityService entityService;
@@ -477,33 +476,20 @@ public class ResourceService {
     }
 
     public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) throws Exception {
-        Resource resource = getNotNullResource(resourceScope, resourceId);
-        switch (resourceScope) {
-        case INSTITUTION:
-        case PROGRAM:
-        case PROJECT:
-            ResourceParent parent = (ResourceParent) resource;
-            return advertService.getSocialMetadata(parent.getAdvert());
-        case SYSTEM:
-            return systemService.getSocialMetadata();
-        default:
-            throw new Error();
+        Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder = resourceScope.getSocialRepresentationBuilder();
+        if (socialRepresentationBuilder == null) {
+            throw new UnsupportedOperationException();
         }
+        Resource resource = getNotNullResource(resourceScope, resourceId);
+        return applicationContext.getBean(socialRepresentationBuilder).build(resource.getAdvert());
     }
 
-    public SearchEngineAdvertDTO getSearchEngineAdvert(PrismScope resourceScope, Integer resourceId) {
-        switch (resourceScope) {
-        case INSTITUTION:
-            return institutionService.getSearchEngineAdvert(resourceId);
-        case PROGRAM:
-            return programService.getSearchEngineAdvert(resourceId);
-        case PROJECT:
-            return projectService.getSearchEngineAdvert(resourceId);
-        case SYSTEM:
-            return systemService.getSearchEngineAdvert();
-        default:
-            throw new Error();
+    public SearchEngineAdvertDTO getSearchEngineAdvert(PrismScope resourceScope, Integer resourceId) throws Exception {
+        Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder = resourceScope.getSearchRepresentationBuilder();
+        if (searchRepresentationBuilder == null) {
+            throw new UnsupportedOperationException();
         }
+        return applicationContext.getBean(searchRepresentationBuilder).build(resourceId);
     }
 
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) throws Exception {

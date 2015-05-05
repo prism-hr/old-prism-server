@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
@@ -47,7 +48,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
@@ -57,7 +57,10 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 
 @Service
 @Transactional
@@ -80,6 +83,9 @@ public class AdvertService {
     private AdvertDAO advertDAO;
 
     @Inject
+    private ApplicationService applicationService;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -96,6 +102,8 @@ public class AdvertService {
 
     @Inject
     private RestTemplate restTemplate;
+
+    private AdvertToRepresentationFunction advertToRepresentationFunction = new AdvertToRepresentationFunction();
 
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
@@ -332,12 +340,6 @@ public class AdvertService {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
     }
 
-    public SocialMetadataDTO getSocialMetadata(Advert advert) {
-        Resource parentResource = advert.getResource();
-        return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getTitle()).withDescription(advert.getSummary())
-                .withThumbnailUrl(resourceService.getSocialThumbnailUrl(parentResource)).withResourceUrl(resourceService.getSocialResourceUrl(parentResource));
-    }
-
     public void synchronizeSponsorship(ResourceParent resource, Comment comment) throws Exception {
         Advert advert = resource.getAdvert();
         String advertCurrency = advert.getResource().getInstitution().getCurrency();
@@ -358,6 +360,13 @@ public class AdvertService {
 
         advert.setSponsorshipSecured(advertSecured);
         sponsorship.setTargetFulfilled(advertRequired.compareTo(advertSecured) >= 0);
+    }
+
+    public List<AdvertRepresentation> getRecommentedAdverts(Integer applicationId) {
+        Application application = applicationService.getById(applicationId);
+        List<AdvertRecommendationDTO> advertRecommendations = getRecommendedAdverts(application.getUser());
+        return Lists.transform(advertRecommendations,
+                Functions.compose(advertToRepresentationFunction, new ToPropertyFunction<AdvertRecommendationDTO, Advert>("advert")));
     }
 
     private String getCurrencyAtLocale(Advert advert) {

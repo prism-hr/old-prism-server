@@ -1,15 +1,10 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,12 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
@@ -32,10 +23,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
@@ -50,52 +37,24 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.RefereeRepresentation;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = { "api/applications" })
 @PreAuthorize("isAuthenticated()")
 public class ApplicationController {
 
-    @Autowired
-    private ActionService actionService;
-
-    @Autowired
-    private AdvertService advertService;
-
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private ApplicationSectionService applicationSectionService;
 
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OpportunityController opportunityController;
-
     @Inject
-    private ResourceService resourceService;
-
-    @Autowired
-    private Mapper beanMapper;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private CommentService commentService;
 
     @RequestMapping(value = "/{applicationId}/startDate", method = RequestMethod.GET)
     public ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
@@ -248,61 +207,6 @@ public class ApplicationController {
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=summary")
     public ApplicationSummaryRepresentation getSummary(@PathVariable Integer applicationId) throws Exception {
         return applicationService.getApplicationSummary(applicationId);
-    }
-
-	public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation representation) throws Exception {
-        HashMap<Integer, RefereeRepresentation> refereeRepresentations = Maps.newHashMap();
-        for (RefereeRepresentation refereeRepresentation : representation.getReferees()) {
-            refereeRepresentations.put(refereeRepresentation.getId(), refereeRepresentation);
-        }
-
-        for (ApplicationReferee referee : application.getReferees()) {
-            Comment reference = referee.getComment();
-            refereeRepresentations.get(referee.getId()).setCommentId(reference == null ? null : reference.getId());
-        }
-
-        List<UserSelectionDTO> interested = userService.getUsersInterestedInApplication(application);
-        List<UserSelectionDTO> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
-        List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
-        List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
-
-        for (UserSelectionDTO user : interested) {
-            interestedRepresentations.add(beanMapper.map(user, UserRepresentation.class));
-        }
-
-        for (UserSelectionDTO user : potentiallyInterested) {
-            potentiallyInterestedRepresentations.add(beanMapper.map(user, UserRepresentation.class));
-        }
-
-        representation.setUsersInterestedInApplication(interestedRepresentations);
-        representation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
-
-        representation.setInterview(commentService.getInterview(application));
-
-        representation.setOfferRecommendation(commentService.getOfferRecommendation(application));
-        representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
-
-        representation.setPossibleThemes(advertService.getAdvertThemes(application));
-
-        ResourceParent parent = (ResourceParent) application.getParentResource();
-
-        List<ResourceStudyLocation> studyLocations = resourceService.getStudyLocations(parent);
-        List<String> availableStudyLocations = Lists.newArrayListWithCapacity(studyLocations.size());
-        for (ResourceStudyLocation studyLocation : studyLocations) {
-            availableStudyLocations.add(studyLocation.getStudyLocation());
-        }
-        representation.setPossibleLocations(availableStudyLocations);
-
-        if(ResourceOpportunity.class.isAssignableFrom(parent.getResourceScope().getResourceClass())){
-            representation.setAvailableStudyOptions(resourceService.getStudyOptions((ResourceOpportunity) parent));
-        }
-
-        if (!actionService.hasRedactions(application, userService.getCurrentUser())) {
-            representation.setApplicationRatingAverage(application.getApplicationRatingAverage());
-        }
-
-        representation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
-        representation.setRecommendedAdverts(opportunityController.getRecommendedAdverts(application.getId()));
     }
 
 }

@@ -77,7 +77,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -152,9 +151,6 @@ public class SystemService {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private InstitutionService institutionService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -272,11 +268,6 @@ public class SystemService {
     }
 
     @Transactional
-    public SearchEngineAdvertDTO getSearchEngineAdvert() {
-        return new SearchEngineAdvertDTO().withRelatedInstitutions(institutionService.getActiveInstitutions());
-    }
-
-    @Transactional
     public AWSCredentials getAmazonCredentials() throws IntegrationException {
         System system = getSystem();
         String accessKey = system.getAmazonAccessKey();
@@ -347,7 +338,7 @@ public class SystemService {
             Scope scope = scopeService.getById(prismStateGroup.getScope());
             StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(ordinal).withScope(scope);
             entityService.createOrUpdate(transientStateGroup);
-            ordinal ++;
+            ordinal++;
         }
     }
 

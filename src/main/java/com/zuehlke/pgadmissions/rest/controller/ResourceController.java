@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -191,19 +192,19 @@ public class ResourceController {
                 projectRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
                 projectRepresentation.setStudyOptions(resourceService.getStudyOptions((ResourceOpportunity) resource));
                 representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
-                representation.setPartnerActions(resourceService.getPartnerActions((ResourceOpportunity) resource));
+                representation.setPartnerActions(resourceService.getPartnerActions((ResourceParent) resource));
                 break;
             case PROGRAM:
                 ProgramExtendedRepresentation programRepresentation = (ProgramExtendedRepresentation) representation;
                 programRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
                 representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
-                representation.setPartnerActions(resourceService.getPartnerActions((ResourceOpportunity) resource));
+                representation.setPartnerActions(resourceService.getPartnerActions((ResourceParent) resource));
                 break;
             case INSTITUTION:
                 InstitutionExtendedRepresentation institutionRepresentation = (InstitutionExtendedRepresentation) representation;
                 institutionRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
                 representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
-                representation.setPartnerActions(resourceService.getPartnerActions((ResourceOpportunity) resource));
+                representation.setPartnerActions(resourceService.getPartnerActions((ResourceParent) resource));
                 break;
             case SYSTEM:
                 break;

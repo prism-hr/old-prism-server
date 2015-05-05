@@ -37,7 +37,7 @@ public class StateServiceHelperPropagation implements AbstractServiceHelper {
                 Set<Integer> resourceIds = resourceService
                         .getResourcesToPropagate(resourceScope, stateTransitionPending.getResourceId(), actionScope, actionId);
                 for (Integer resourceId : resourceIds) {
-                    stateService.executeDeferredStateTransition(resourceScope, resourceId, actionId);
+                    stateService.executeDeferredStateTransition(actionScope, resourceId, actionId);
                 }
                 if (resourceIds.size() == 0) {
                     stateService.deleteStateTransitionPending(stateTransitionPending.getId());

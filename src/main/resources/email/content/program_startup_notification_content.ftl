@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Your specified partner organization for  ${TEMPLATE_SYSTEM_TITLE} Program ${PROGRAM_CODE} has been initialized 
+    Your specified partner organization for ${TEMPLATE_SYSTEM_TITLE} Program ${PROGRAM_CODE} has been initialized 
     and is now ready to use. You may now log in now to access functions and assign other users.
 </p>
 

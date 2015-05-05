@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -189,6 +190,7 @@ public class ResourceController {
             case PROJECT:
                 ProjectExtendedRepresentation projectRepresentation = (ProjectExtendedRepresentation) representation;
                 projectRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
+                projectRepresentation.setStudyOptions(resourceService.getStudyOptions((ResourceOpportunity) resource));
                 break;
             case PROGRAM:
                 ProgramExtendedRepresentation programRepresentation = (ProgramExtendedRepresentation) representation;

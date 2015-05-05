@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -292,13 +293,9 @@ public class ApplicationController {
         }
         representation.setPossibleLocations(availableStudyLocations);
 
-        List<ResourceStudyOption> studyOptions = resourceService.getStudyOptions(parent);
-        List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(studyOptions.size());
-        for (ResourceStudyOption studyOption : studyOptions) {
-            availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
+        if(ResourceOpportunity.class.isAssignableFrom(parent.getResourceScope().getResourceClass())){
+            representation.setAvailableStudyOptions(resourceService.getStudyOptions((ResourceOpportunity) parent));
         }
-
-        representation.setAvailableStudyOptions(availableStudyOptions);
 
         if (!actionService.hasRedactions(application, userService.getCurrentUser())) {
             representation.setApplicationRatingAverage(application.getApplicationRatingAverage());

@@ -1,40 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_APPLICATION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -45,20 +10,9 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
@@ -66,16 +20,12 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
-import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.dto.*;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
@@ -89,6 +39,30 @@ import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 
 @Service
 @Transactional
@@ -151,12 +125,15 @@ public class ApplicationService {
         Application application = getById(applicationId);
 
         StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
-        ResourceStudyOption programStudyOption = resourceService.getStudyOption((ResourceParent) application.getParentResource(), studyOption);
+        // TODO do we want to suggest start date when applying for an institution?
+        if (ResourceOpportunity.class.isAssignableFrom(application.getParentResource().getResourceScope().getResourceClass())) {
+            ResourceStudyOption programStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
 
-        if (programStudyOption != null) {
-            return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
-                    .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline))
-                    .withLatestDate(getLatestStartDate(programStudyOption.getId()));
+            if (programStudyOption != null) {
+                return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
+                        .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline))
+                        .withLatestDate(getLatestStartDate(programStudyOption.getId()));
+            }
         }
 
         return null;
@@ -344,16 +321,16 @@ public class ApplicationService {
                 String value = null;
                 String getMethod = "get" + WordUtils.capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
-                case DATE:
-                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
-                    break;
-                case DISPLAY_PROPERTY:
-                    Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                    value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
-                    break;
-                case STRING:
-                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                    break;
+                    case DATE:
+                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
+                        break;
+                    case DISPLAY_PROPERTY:
+                        Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                        value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
+                        break;
+                    case STRING:
+                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                        break;
                 }
                 row.addCell(value);
             }
@@ -380,8 +357,8 @@ public class ApplicationService {
 
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
         List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
-        customizationService.getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration.WORKFLOW_PROPERTY, application, //
-                application.getWorkflowPropertyConfigurationVersion());
+                customizationService.getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration.WORKFLOW_PROPERTY, application, //
+                        application.getWorkflowPropertyConfigurationVersion());
         if (application.isSubmitted()) {
             for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
                 PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
@@ -398,7 +375,7 @@ public class ApplicationService {
     }
 
     public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
-        return userAdministratorResources.isEmpty() ? Lists.<Application> newArrayList() : applicationDAO
+        return userAdministratorResources.isEmpty() ? Lists.<Application>newArrayList() : applicationDAO
                 .getUserAdministratorApplications(userAdministratorResources);
     }
 
@@ -423,7 +400,7 @@ public class ApplicationService {
     public ApplicationReferee getApplicationReferee(Application application, User user) {
         return applicationDAO.getApplicationReferee(application, user);
     }
-    
+
     public BeanPropertyBindingResult validateApplication(Application application) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
         ValidationUtils.invokeValidator(applicationValidator, application, errors);

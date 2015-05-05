@@ -54,7 +54,7 @@ public class Institution extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_partner_id")
@@ -162,10 +162,6 @@ public class Institution extends ResourceParent {
     @JoinColumn(name = "institution_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "institution_id")
-    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
-
     @OrderBy(clause = "study_location")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "institution_id")
@@ -185,10 +181,10 @@ public class Institution extends ResourceParent {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "partner")
     private Set<Program> partnerPrograms = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Project> projects = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "partner")
     private Set<Project> partnerProjects = Sets.newHashSet();
 
@@ -443,7 +439,7 @@ public class Institution extends ResourceParent {
     public void setInstitution(Institution institution) {
         return;
     }
-    
+
     @Override
     public Institution getPartner() {
         return partner;
@@ -606,11 +602,6 @@ public class Institution extends ResourceParent {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }
-
-    @Override
-    public Set<ResourceStudyOption> getStudyOptions() {
-        return studyOptions;
     }
 
     @Override

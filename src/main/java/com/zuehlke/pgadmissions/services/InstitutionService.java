@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
@@ -78,12 +77,6 @@ public class InstitutionService {
     private UserService userService;
 
     @Inject
-    private ProgramService programService;
-
-    @Inject
-    private ProjectService projectService;
-
-    @Inject
     private Mapper mapper;
 
     @Inject
@@ -113,7 +106,7 @@ public class InstitutionService {
     public Institution createPartner(User user, InstitutionDTO institutionDTO) throws Exception {
         Institution institution = (Institution) applicationContext.getBean(INSTITUTION.getResourceCreator()).create(user, institutionDTO);
         Institution persistentInstitution = entityService.getDuplicateEntity(institution);
-        
+
         if (persistentInstitution == null) {
             Action action = actionService.getById(SYSTEM_CREATE_INSTITUTION);
             Role creatorRole = roleService.getById(INSTITUTION_ADMINISTRATOR);
@@ -123,7 +116,7 @@ public class InstitutionService {
         } else {
             institution = persistentInstitution;
         }
-     
+
         return institution;
     }
 
@@ -209,28 +202,6 @@ public class InstitutionService {
         return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
     }
 
-    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId) {
-        List<PrismState> activeInsitutionStates = stateService.getActiveInstitutionStates();
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        SearchEngineAdvertDTO searchEngineDTO = institutionDAO.getSearchEngineAdvert(institutionId, activeInsitutionStates, activeProgramStates,
-                activeProjectStates);
-
-        if (searchEngineDTO != null) {
-            searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
-            searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
-
-            List<String> relatedUsers = Lists.newArrayList();
-            List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_SUPERVISOR_GROUP.getRoles());
-            for (User institutionAcademic : institutionAcademics) {
-                relatedUsers.add(institutionAcademic.getSearchEngineRepresentation());
-            }
-            searchEngineDTO.setRelatedUsers(relatedUsers);
-        }
-
-        return searchEngineDTO;
-    }
-
     public List<ResourceSearchEngineDTO> getActiveInstitutions() {
         List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
@@ -273,7 +244,8 @@ public class InstitutionService {
         List<PrismState> states = stateService.getActiveInstitutionStates();
         boolean userLoggedIn = userService.getCurrentUser() != null;
 
-        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO.getInstitutionsForWhichUserCanCreateProject(states, userLoggedIn);
+        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO
+                .getInstitutionsForWhichUserCanCreateProject(states, userLoggedIn);
         for (ResourceForWhichUserCanCreateChildDTO institutionProjectParent : institutionProjectParents) {
             ResourceForWhichUserCanCreateChildDTO institution = new ResourceForWhichUserCanCreateChildDTO()
                     .withResource(institutionProjectParent.getResource()).withPartnerMode(institutionProjectParent.getPartnerMode());
@@ -292,6 +264,11 @@ public class InstitutionService {
         }
 
         return Lists.newLinkedList(institutions.values());
+    }
+
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId, List<PrismState> activeInstitutionStates, List<PrismState> activeProgramStates,
+            List<PrismState> activeProjectStates) {
+        return institutionDAO.getSearchEngineAdvert(institutionId, activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
     private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {

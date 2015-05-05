@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -50,6 +51,10 @@ public abstract class Resource implements UniqueEntity {
     public abstract void setProgram(Program program);
 
     public abstract Project getProject();
+    
+    public abstract Advert getAdvert();
+
+    public abstract void setAdvert(Advert advert);
 
     public abstract void setProject(Project project);
 

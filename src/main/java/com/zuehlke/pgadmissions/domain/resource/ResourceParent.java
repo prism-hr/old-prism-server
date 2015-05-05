@@ -6,7 +6,6 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
@@ -15,10 +14,6 @@ public abstract class ResourceParent extends Resource {
     public abstract String getTitle();
 
     public abstract void setTitle(String title);
-
-    public abstract Advert getAdvert();
-
-    public abstract void setAdvert(Advert advert);
 
     public abstract DateTime getUpdatedTimestampSitemap();
 

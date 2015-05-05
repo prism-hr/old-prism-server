@@ -218,6 +218,7 @@ public class ProgramDAO {
                 .add(Restrictions.eq("program.institution.id", institutionId)) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(disjunction) //
+                .addOrder(Order.asc("program.title")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }

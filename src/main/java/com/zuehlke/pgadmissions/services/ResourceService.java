@@ -346,9 +346,11 @@ public class ResourceService {
         return resourceDAO.getResourcesToEscalate(resourceScope, actionId, baseline);
     }
 
-    public <T extends Resource> List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId,
-            PrismScope propagatedResourceScope, PrismAction actionId) {
-        return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatedResourceScope, actionId);
+    public Set<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
+        Set<Integer> resources = Sets.newHashSet(resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope,
+                actionId));
+        resources.addAll(resourceDAO.getPartnerResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId));
+        return resources;
     }
 
     public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
@@ -768,7 +770,7 @@ public class ResourceService {
             comment.setPartner(newPartner);
         }
     }
-    
+
     public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
         return resourceDAO.getResourcesByPartner(scope, searchTerm);
     }
@@ -776,7 +778,7 @@ public class ResourceService {
     public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
         return resourceDAO.getResourcesBySponsor(scope, searchTerm);
     }
-    
+
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {

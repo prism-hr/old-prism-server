@@ -75,6 +75,20 @@ public class ResourceDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .list();
     }
+    
+    public List<Integer> getPartnerResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
+        String propagatedAlias = "partner" + propagatedScope.getUpperCamelName();
+        String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
+
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
+                .setProjection(Projections.property(propagatedAlias + ".id")) //
+                .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
+                .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("partner.id", propagatingId)) //
+                .add(Restrictions.eq("stateAction.action.id", actionId)) //
+                .list();
+    }
 
     public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //

@@ -389,4 +389,22 @@ public class ActionDAO {
                 .list();
     }
 
+    public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
+                        Restrictions.eq("stateAction.actionCondition", "resourceCondition.actionCondition")) //
+                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resourceCondition.partnerMode", true));
+
+        if (!actionConditions.isEmpty()) {
+            criteria.add(Restrictions.in("resourceCondition.actionCondition", actionConditions));
+        }
+
+        return (List<PrismAction>) criteria.list();
+    }
+
 }

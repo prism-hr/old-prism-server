@@ -1,17 +1,18 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
+import java.util.List;
+import java.util.Set;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
-
-import java.util.List;
-import java.util.Set;
 
 public class AdvertRepresentation {
 
@@ -55,9 +56,11 @@ public class AdvertRepresentation {
 
     private PrismOpportunityType opportunityType;
 
+    private List<PrismStudyOption> studyOptions;
+    
+    private List<PrismAction> partnerActions;
+    
     private List<String> locations;
-
-    private List<ResourceConditionRepresentation> resourceConditions;
 
     private InstitutionRepresentation institution;
 
@@ -225,20 +228,28 @@ public class AdvertRepresentation {
         this.opportunityType = opportunityType;
     }
 
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
+    }
+
+    public List<PrismAction> getPartnerActions() {
+        return partnerActions;
+    }
+
+    public void setPartnerActions(List<PrismAction> partnerActions) {
+        this.partnerActions = partnerActions;
+    }
+
     public List<String> getLocations() {
         return locations;
     }
 
     public void setLocations(List<String> locations) {
         this.locations = locations;
-    }
-
-    public List<ResourceConditionRepresentation> getResourceConditions() {
-        return resourceConditions;
-    }
-
-    public void setResourceConditions(List<ResourceConditionRepresentation> resourceConditions) {
-        this.resourceConditions = resourceConditions;
     }
 
     public InstitutionRepresentation getInstitution() {

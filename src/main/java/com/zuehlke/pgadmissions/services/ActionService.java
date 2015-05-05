@@ -335,6 +335,10 @@ public class ActionService {
         }
         return createResourceActions;
     }
+    
+    public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
+        return actionDAO.getPartnerActions(resource, actionConditions);
+    }
 
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
         User user = comment.getUser();

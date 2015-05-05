@@ -9,9 +9,9 @@ import java.util.List;
 
 public enum PrismActionCondition {
 
-    ACCEPT_PROGRAM(INSTITUTION), //
-    ACCEPT_PROJECT(INSTITUTION, PROGRAM), //
     ACCEPT_APPLICATION(INSTITUTION, PROGRAM, PROJECT), //
+    ACCEPT_PROJECT(INSTITUTION, PROGRAM), //
+    ACCEPT_PROGRAM(INSTITUTION), //
     ACCEPT_SPONSOR(INSTITUTION, PROGRAM, PROJECT);
     
     private List<PrismScope> validScopes;

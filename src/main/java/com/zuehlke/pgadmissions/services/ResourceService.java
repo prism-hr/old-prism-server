@@ -451,7 +451,7 @@ public class ResourceService {
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
-                                             String lastSequenceIdentifier, Integer recordsToRetrieve) {
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
 
@@ -468,41 +468,41 @@ public class ResourceService {
     @SuppressWarnings("unchecked")
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) throws Exception {
         switch (resource.getResourceScope()) {
-            case APPLICATION:
-                return applicationService.getWorkflowPropertyConfigurations((Application) resource);
-            default:
-                return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                        PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
+        case APPLICATION:
+            return applicationService.getWorkflowPropertyConfigurations((Application) resource);
+        default:
+            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
+                    PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
         }
     }
 
     public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) throws Exception {
         Resource resource = getNotNullResource(resourceScope, resourceId);
         switch (resourceScope) {
-            case INSTITUTION:
-            case PROGRAM:
-            case PROJECT:
-                ResourceParent parent = (ResourceParent) resource;
-                return advertService.getSocialMetadata(parent.getAdvert());
-            case SYSTEM:
-                return systemService.getSocialMetadata();
-            default:
-                throw new Error();
+        case INSTITUTION:
+        case PROGRAM:
+        case PROJECT:
+            ResourceParent parent = (ResourceParent) resource;
+            return advertService.getSocialMetadata(parent.getAdvert());
+        case SYSTEM:
+            return systemService.getSocialMetadata();
+        default:
+            throw new Error();
         }
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(PrismScope resourceScope, Integer resourceId) {
         switch (resourceScope) {
-            case INSTITUTION:
-                return institutionService.getSearchEngineAdvert(resourceId);
-            case PROGRAM:
-                return programService.getSearchEngineAdvert(resourceId);
-            case PROJECT:
-                return projectService.getSearchEngineAdvert(resourceId);
-            case SYSTEM:
-                return systemService.getSearchEngineAdvert();
-            default:
-                throw new Error();
+        case INSTITUTION:
+            return institutionService.getSearchEngineAdvert(resourceId);
+        case PROGRAM:
+            return programService.getSearchEngineAdvert(resourceId);
+        case PROJECT:
+            return projectService.getSearchEngineAdvert(resourceId);
+        case SYSTEM:
+            return systemService.getSearchEngineAdvert();
+        default:
+            throw new Error();
         }
     }
 
@@ -576,7 +576,7 @@ public class ResourceService {
             filteredActionConditions.add(actionCondition.getActionCondition());
             lastResourceScope = thisResourceScope;
         }
-        
+
         Resource lastResource = resource.getEnclosingResource(lastResourceScope);
         return actionService.getPartnerActions(lastResource, filteredActionConditions);
     }
@@ -723,7 +723,7 @@ public class ResourceService {
 
         ResourceParentAttributesDTO attributes = resourceDTO.getAttributes();
         List<ResourceConditionDTO> resourceConditions = attributes.getResourceConditions();
-        setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO>newArrayList() : resourceConditions);
+        setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO> newArrayList() : resourceConditions);
         setStudyLocations(resource, attributes.getStudyLocations());
 
         if (!resource.getImported()) {
@@ -737,7 +737,7 @@ public class ResourceService {
             }
 
             List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
-            setStudyOptions(resource, studyOptions == null ? Lists.<PrismStudyOption>newArrayList() : studyOptions, new LocalDate());
+            setStudyOptions(resource, studyOptions == null ? Lists.<PrismStudyOption> newArrayList() : studyOptions, new LocalDate());
         }
     }
 
@@ -816,7 +816,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions,
-                                                                                                            Set<U> commentStateDefinitions) {
+            Set<U> commentStateDefinitions) {
         List<State> preservedStates = Lists.newArrayListWithCapacity(commentStateDefinitions.size());
         for (CommentStateDefinition commentStateDefinition : commentStateDefinitions) {
             preservedStates.add(commentStateDefinition.getState());
@@ -831,7 +831,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(Resource resource, Set<T> resourceStateDefinitions,
-                                                                                                            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) throws InstantiationException, IllegalAccessException {
+            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) throws InstantiationException, IllegalAccessException {
         for (U commentState : commentStateDefinitions) {
             T transientResourceStateDefinition = resourceStateClass.newInstance();
             transientResourceStateDefinition.setResource(resource);
@@ -848,7 +848,7 @@ public class ResourceService {
     }
 
     private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
-                                                      ApplicationProcessingSummaryRepresentation yearRepresentation) {
+            ApplicationProcessingSummaryRepresentation yearRepresentation) {
         yearRepresentation.setAdvertCount(longToInteger(yearSummary.getAdvertCount()));
         yearRepresentation.setCreatedApplicationCount(longToInteger(yearSummary.getCreatedApplicationCount()));
         yearRepresentation.setSubmittedApplicationCount(longToInteger(yearSummary.getSubmittedApplicationCount()));

@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
-import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -41,9 +40,6 @@ import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 @RequestMapping("/api/opportunities")
 @PreAuthorize("permitAll")
 public class OpportunityController {
-
-    @Inject
-    private ActionService actionService;
     
     @Inject
     private AdvertService advertService;

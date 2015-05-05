@@ -224,9 +224,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_TRANSITION_INSTITUTION_APPROVAL_PENDING_CORRECTION(SYSTEM_STATE_TRANSITION, "Request Correction"),
     SYSTEM_STATE_TRANSITION_INSTITUTION_APPROVED(SYSTEM_STATE_TRANSITION, "Approve"),
     SYSTEM_STATE_TRANSITION_INSTITUTION_REJECTED(SYSTEM_STATE_TRANSITION, "Reject"),
+    SYSTEM_STATE_TRANSITION_PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION(SYSTEM_STATE_TRANSITION, "Request Correction"),
+    SYSTEM_STATE_TRANSITION_PROGRAM_APPROVAL(SYSTEM_STATE_TRANSITION, "Approve"),
     SYSTEM_STATE_TRANSITION_PROGRAM_APPROVAL_PENDING_CORRECTION(SYSTEM_STATE_TRANSITION, "Request Correction"),
     SYSTEM_STATE_TRANSITION_PROGRAM_APPROVED(SYSTEM_STATE_TRANSITION, "Approve"),
     SYSTEM_STATE_TRANSITION_PROGRAM_REJECTED(SYSTEM_STATE_TRANSITION, "Reject"),
+    SYSTEM_STATE_TRANSITION_PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION(SYSTEM_STATE_TRANSITION, "Request Correction"),
+    SYSTEM_STATE_TRANSITION_PROJECT_APPROVAL(SYSTEM_STATE_TRANSITION, "Approve"),
     SYSTEM_STATE_TRANSITION_PROJECT_APPROVAL_PENDING_CORRECTION(SYSTEM_STATE_TRANSITION, "Request Correction"),
     SYSTEM_STATE_TRANSITION_PROJECT_APPROVED(SYSTEM_STATE_TRANSITION, "Approve"),
     SYSTEM_STATE_TRANSITION_PROJECT_REJECTED(SYSTEM_STATE_TRANSITION, "Reject"),
@@ -241,7 +245,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_ASSIGN_SUPERVISORS(SYSTEM_ACTION, "Assign Supervisors"),
     SYSTEM_ACTION_APPLICATION_RESERVE(SYSTEM_ACTION, "Commit To Reserve List"),
     SYSTEM_ACTION_APPLICATION_COMMENT(SYSTEM_ACTION, "Comment"),
-    SYSTEM_ACTION_APPLICATION_COMPLETE(SYSTEM_ACTION, "Submit Application"),
+    SYSTEM_ACTION_APPLICATION_COMPLETE(SYSTEM_ACTION, "Complete Application"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_VALIDATION_STAGE(SYSTEM_ACTION, "Complete Validation Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_VERIFICATION_STAGE(SYSTEM_ACTION, "Complete Verification Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REFERENCE_STAGE(SYSTEM_ACTION, "Complete Reference Stage"),
@@ -285,6 +289,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_ESCALATE(SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_INSTITUTION_IMPORT_PROGRAM(SYSTEM_ACTION, "Import Program"),
     SYSTEM_ACTION_INSTITUTION_WITHDRAW(SYSTEM_ACTION, "Withdraw"),
+    SYSTEM_ACTION_PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE(SYSTEM_ACTION, "Complete Approval by Partner Stage"),
     SYSTEM_ACTION_PROGRAM_COMPLETE_APPROVAL_STAGE(SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROGRAM_CONCLUDE(SYSTEM_ACTION, "Conclude"),
     SYSTEM_ACTION_PROGRAM_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
@@ -295,6 +300,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROGRAM_ESCALATE(SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_PROGRAM_RESTORE(SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROGRAM_WITHDRAW(SYSTEM_ACTION, "Withdraw"),
+    SYSTEM_ACTION_PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE(SYSTEM_ACTION, "Complete Approval by Partner Stage"),
     SYSTEM_ACTION_PROJECT_COMPLETE_APPROVAL_STAGE(SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROJECT_CONCLUDE(SYSTEM_ACTION, "Conclude"),
     SYSTEM_ACTION_PROJECT_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
@@ -305,7 +311,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROJECT_RESTORE(SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROJECT_SUSPEND(SYSTEM_ACTION, "Suspend"),
     SYSTEM_ACTION_PROJECT_TERMINATE(SYSTEM_ACTION, "Terminate"),
-    SYSTEM_ACTION_PROJECT_WITHDRAW(SYSTEM_ACTION, "Withdrawn"),
+    SYSTEM_ACTION_PROJECT_WITHDRAW(SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_SYSTEM_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_SYSTEM_CREATE_INSTITUTION(SYSTEM_ACTION, "Create Institution"),
     SYSTEM_ACTION_SYSTEM_MANAGE_ACCOUNT(SYSTEM_ACTION, "Manage Account"),
@@ -1503,6 +1509,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** PROGRAM COMMENT *********************
      */
 
+    PROGRAM_COMMENT_APPROVAL(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
     PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
     PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
@@ -1592,6 +1599,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** PROJECT COMMENT *********************
      */
 
+    PROJECT_COMMENT_APPROVAL(PROJECT_COMMENT, "We are pleased to tell you that your project has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
     PROJECT_COMMENT_APPROVED(PROJECT_COMMENT, "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment"),
     PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments"),
     PROJECT_COMMENT_REJECTED(PROJECT_COMMENT, "We are sorry to inform you that your project has been rejected"),

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST;
@@ -23,7 +23,7 @@ public class PrismProgramApprovalPartner extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
-        stateActions.add(programCompleteApprovalStage()
+        stateActions.add(programCompleteApprovalPartner()
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withTransitions(new PrismStateTransition() //
@@ -37,9 +37,9 @@ public class PrismProgramApprovalPartner extends PrismWorkflowState {
         stateActions.add(programWithdraw());
     }
 
-    public static PrismStateAction programCompleteApprovalStage() {
+    public static PrismStateAction programCompleteApprovalPartner() {
         return new PrismStateAction() //
-                .withAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
+                .withAction(PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE) //
                 .withPartnerAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
                 .withPartnerNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
                 .withNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION) //

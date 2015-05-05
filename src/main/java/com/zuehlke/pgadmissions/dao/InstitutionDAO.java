@@ -237,7 +237,7 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(boolean userLoggedIn) {
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(List<PrismState> states, boolean userLoggedIn) {
         Junction disjunction = Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
@@ -264,12 +264,13 @@ public class InstitutionDAO {
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("state.id", states)) //
                 .add(disjunction) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject(boolean userLoggedIn) {
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject(List<PrismState> states, boolean userLoggedIn) {
         Junction disjunction = Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
@@ -296,12 +297,14 @@ public class InstitutionDAO {
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("state.id", states)) //
                 .add(disjunction) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(boolean userLoggedIn) {
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(List<PrismState> states,
+            boolean userLoggedIn) {
         Junction disjunction = Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
@@ -330,6 +333,7 @@ public class InstitutionDAO {
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("state.id", states)) //
                 .add(disjunction) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();

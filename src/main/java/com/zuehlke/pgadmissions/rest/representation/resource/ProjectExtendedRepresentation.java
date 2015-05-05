@@ -5,11 +5,15 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
+import java.util.List;
+
 public class ProjectExtendedRepresentation extends AbstractResourceRepresentation {
 
     private InstitutionRepresentation institution;
 
     private ProgramRepresentation program;
+
+    private Boolean imported;
 
     private PrismOpportunityType opportunityType;
 
@@ -19,9 +23,9 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     private Integer durationMaximum;
 
-    private AdvertRepresentation advert;
+    private List<PrismStudyOption> studyOptions;
 
-    private PrismStudyOption[] studyOptions;
+    private AdvertRepresentation advert;
 
     private ResourceSummaryRepresentation resourceSummary;
 
@@ -39,6 +43,14 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setProgram(ProgramRepresentation program) {
         this.program = program;
+    }
+
+    public Boolean getImported() {
+        return imported;
+    }
+
+    public void setImported(Boolean imported) {
+        this.imported = imported;
     }
 
     public PrismOpportunityType getOpportunityType() {
@@ -73,6 +85,14 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
         this.durationMaximum = durationMaximum;
     }
 
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
+    }
+
     public AdvertRepresentation getAdvert() {
         return advert;
     }
@@ -81,13 +101,6 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
         this.advert = advert;
     }
 
-    public PrismStudyOption[] getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(PrismStudyOption[] studyOptions) {
-        this.studyOptions = studyOptions;
-    }
 
     public final ResourceSummaryRepresentation getResourceSummary() {
         return resourceSummary;

@@ -203,6 +203,7 @@ public class ResourceController {
                 InstitutionExtendedRepresentation institutionRepresentation = (InstitutionExtendedRepresentation) representation;
                 institutionRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
                 representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
+                representation.setPartnerActions(resourceService.getPartnerActions((ResourceOpportunity) resource));
                 break;
             case SYSTEM:
                 break;

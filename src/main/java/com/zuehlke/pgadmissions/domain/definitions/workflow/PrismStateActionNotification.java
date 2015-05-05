@@ -32,6 +32,11 @@ public class PrismStateActionNotification {
         return this;
     }
 
+    public PrismStateActionNotification withPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+        return this;
+    }
+
     public PrismStateActionNotification withDefinition(PrismNotificationDefinition notification) {
         this.notification = notification;
         return this;

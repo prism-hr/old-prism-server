@@ -31,6 +31,11 @@ public class PrismStateActionAssignment {
         this.partnerMode = true;
         return this;
     }
+    
+    public PrismStateActionAssignment withPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+        return this;
+    }
 
     public PrismStateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;

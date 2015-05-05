@@ -29,6 +29,10 @@
     <name>Work Experience</name>
   </opportunityType>
   <opportunityType>
+  	<code>VOLUNTEERING</code>
+    <name>Volunteering</name>
+  </opportunityType>
+  <opportunityType>
     <code>EMPLOYMENT</code>
     <name>Employment</name>
   </opportunityType>

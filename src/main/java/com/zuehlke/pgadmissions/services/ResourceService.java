@@ -198,7 +198,7 @@ public class ResourceService {
 
         Class<? extends ResourceCreator> resourceCreator = resourceScope.getResourceCreator();
         if (resourceCreator == null) {
-            throw new Error();
+            throw new UnsupportedOperationException();
         }
 
         User resourceUser = user.getParentUser();

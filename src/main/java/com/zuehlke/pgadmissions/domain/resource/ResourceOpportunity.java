@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.domain.resource;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
+import java.util.Set;
+
 public abstract class ResourceOpportunity extends ResourceParent {
 
     public abstract OpportunityType getOpportunityType();
@@ -22,5 +24,11 @@ public abstract class ResourceOpportunity extends ResourceParent {
     public abstract void setDurationMaximum(Integer maximum);
 
     public abstract Boolean getImported();
+
+    public abstract Set<ResourceStudyOption> getStudyOptions();
+
+    public void addStudyOption(ResourceStudyOption studyOption) {
+        getStudyOptions().add(studyOption);
+    }
 
 }

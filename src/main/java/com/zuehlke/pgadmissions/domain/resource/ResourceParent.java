@@ -40,8 +40,6 @@ public abstract class ResourceParent extends Resource {
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
 
-    public abstract Set<ResourceStudyOption> getStudyOptions();
-
     public abstract Set<ResourceStudyLocation> getStudyLocations();
 
     public OpportunityType getOpportunityType() {
@@ -54,10 +52,6 @@ public abstract class ResourceParent extends Resource {
 
     public void addResourceCondition(ResourceCondition resourceCondition) {
         getResourceConditions().add(resourceCondition);
-    }
-
-    public void addStudyOption(ResourceStudyOption studyOption) {
-        getStudyOptions().add(studyOption);
     }
 
     public void addStudyLocation(ResourceStudyLocation studyLocation) {

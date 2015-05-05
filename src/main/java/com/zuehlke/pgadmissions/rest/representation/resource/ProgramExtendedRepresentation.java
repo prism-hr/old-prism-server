@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+
+import java.util.List;
 
 public class ProgramExtendedRepresentation extends AbstractResourceRepresentation {
 
@@ -19,6 +22,8 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private Integer durationMinimum;
 
     private Integer durationMaximum;
+
+    private List<PrismStudyOption> studyOptions;
 
     private AdvertRepresentation advert;
 
@@ -78,6 +83,14 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
+    }
+
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
     public AdvertRepresentation getAdvert() {

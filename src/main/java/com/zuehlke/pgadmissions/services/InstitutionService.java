@@ -112,13 +112,18 @@ public class InstitutionService {
 
     public Institution createPartner(User user, InstitutionDTO institutionDTO) throws Exception {
         Institution institution = (Institution) applicationContext.getBean(INSTITUTION.getResourceCreator()).create(user, institutionDTO);
-
-        Action action = actionService.getById(SYSTEM_CREATE_INSTITUTION);
-        Role creatorRole = roleService.getById(INSTITUTION_ADMINISTRATOR);
-        Comment comment = new Comment().withResource(institution).withUser(user).withAction(action).withDeclinedResponse(false)
-                .withCreatedTimestamp(new DateTime()).addAssignedUser(user, creatorRole, CREATE);
-        actionService.executeUserAction(institution, action, comment);
-
+        Institution persistentInstitution = entityService.getDuplicateEntity(institution);
+        
+        if (persistentInstitution == null) {
+            Action action = actionService.getById(SYSTEM_CREATE_INSTITUTION);
+            Role creatorRole = roleService.getById(INSTITUTION_ADMINISTRATOR);
+            Comment comment = new Comment().withResource(institution).withUser(user).withAction(action).withDeclinedResponse(false)
+                    .withCreatedTimestamp(new DateTime()).addAssignedUser(user, creatorRole, CREATE);
+            actionService.executeUserAction(institution, action, comment);
+        } else {
+            institution = persistentInstitution;
+        }
+     
         return institution;
     }
 
@@ -256,17 +261,19 @@ public class InstitutionService {
     }
 
     public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram() {
+        List<PrismState> states = stateService.getActiveInstitutionStates();
         boolean userLoggedIn = userService.getCurrentUser() != null;
-        return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(userLoggedIn);
+        return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(states, userLoggedIn);
     }
 
     public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject() {
         Map<Integer, ResourceForWhichUserCanCreateChildDTO> index = Maps.newHashMap();
         Map<String, ResourceForWhichUserCanCreateChildDTO> institutions = Maps.newTreeMap();
 
+        List<PrismState> states = stateService.getActiveInstitutionStates();
         boolean userLoggedIn = userService.getCurrentUser() != null;
 
-        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO.getInstitutionsForWhichUserCanCreateProject(userLoggedIn);
+        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO.getInstitutionsForWhichUserCanCreateProject(states, userLoggedIn);
         for (ResourceForWhichUserCanCreateChildDTO institutionProjectParent : institutionProjectParents) {
             ResourceForWhichUserCanCreateChildDTO institution = new ResourceForWhichUserCanCreateChildDTO()
                     .withResource(institutionProjectParent.getResource()).withPartnerMode(institutionProjectParent.getPartnerMode());
@@ -275,7 +282,7 @@ public class InstitutionService {
         }
 
         List<ResourceForWhichUserCanCreateChildDTO> institutionProgramProjectParents = institutionDAO
-                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(userLoggedIn);
+                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(states, userLoggedIn);
         for (ResourceForWhichUserCanCreateChildDTO institutionProgramProjectParent : institutionProgramProjectParents) {
             ResourceForWhichUserCanCreateChildDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
             if (institution == null) {

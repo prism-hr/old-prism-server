@@ -331,7 +331,6 @@ public class NotificationService {
     }
 
     private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> exclusions, LocalDate baseline) {
-        exclusions.add(author);
         List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), exclusions, baseline);
 
         if (updates.size() > 0) {

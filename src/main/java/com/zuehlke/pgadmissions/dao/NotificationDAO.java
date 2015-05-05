@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -91,7 +92,7 @@ public class NotificationDAO {
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, Set<User> exclusions, LocalDate baseline) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
@@ -105,10 +106,14 @@ public class NotificationDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
-                .add(Restrictions.not( //
-                        Restrictions.in("userRole.user", exclusions))) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)); //
+
+        if (!exclusions.isEmpty()) {
+            criteria.add(Restrictions.not( //
+                    Restrictions.in("userRole.user", exclusions))); //
+        }
+
+        return (List<UserNotificationDefinitionDTO>) criteria.add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, "stateActionNotification")) //
                 .add(getResourceStateActionConstraint()) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //

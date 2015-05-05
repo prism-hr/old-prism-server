@@ -6,7 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_REVIVE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PARTNER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectCompleteApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApprovalPartner.projectCompleteApprovalPartner;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectSuspendUnapproved;
@@ -22,7 +22,7 @@ public class PrismProjectApprovalPartnerPendingCorrection extends PrismWorkflowS
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(projectCompleteApproval());
+		stateActions.add(projectCompleteApprovalPartner());
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(PROJECT_CORRECT) //

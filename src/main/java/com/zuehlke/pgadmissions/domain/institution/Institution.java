@@ -636,7 +636,10 @@ public class Institution extends ResourceParent {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("user", user).addProperty("title", title);
+        if (googleId == null) {
+            return new ResourceSignature().addProperty("user", user).addProperty("title", title);
+        }
+        return new ResourceSignature().addProperty("googleId", googleId).addProperty("title", title);
     }
 
 }

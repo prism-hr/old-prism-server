@@ -85,7 +85,7 @@ public class ResourceDAO {
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
                 .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("partner.id", propagatingId)) //
+                .add(Restrictions.eq("id", propagatingId)) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .list();
     }

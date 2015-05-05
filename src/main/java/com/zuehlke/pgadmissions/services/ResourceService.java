@@ -87,6 +87,7 @@ import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
@@ -734,19 +735,20 @@ public class ResourceService {
     }
 
     public void updatePartner(User user, ResourceOpportunity resource, OpportunityDTO newResource) throws Exception {
-        InstitutionPartnerDTO newPartner = newResource.getPartner();
-        if (newPartner != null) {
-            Institution partner;
-            Integer newPartnerId = newPartner.getPartnerId();
-            if (newPartnerId == null) {
-                partner = institutionService.createPartner(user, newPartner.getPartner());
-            } else {
-                partner = institutionService.getById(newPartnerId);
+        InstitutionPartnerDTO partnerDTO = newResource.getPartner();
+        if (partnerDTO != null) {
+            Integer partnerId = partnerDTO.getPartnerId();
+            InstitutionDTO newPartnerDTO = partnerDTO.getPartner();
+            if (newPartnerDTO != null) {
+                Institution partner = institutionService.createPartner(user, partnerDTO.getPartner());
+                resource.setPartner(partner);
+            } else if (partnerId != null) {
+                Institution partner = institutionService.getById(partnerId);
                 if (partner == null) {
-                    throw new WorkflowEngineException("Denial of Service attempt: user attempted to post recursive advert");
+                    throw new WorkflowEngineException("Invalid partner institution");
                 }
+                resource.setPartner(partner);
             }
-            resource.setPartner(partner);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PARTNER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PARTNER_INSTITUTION;
@@ -39,18 +39,18 @@ public class ProgramCreatedResolver implements StateTransitionResolver {
             Institution partner = resource.getPartner();
             List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
             if (!activeInstitutionStates.contains(partner.getState().getId())) {
-                return stateService.getStateTransition(partner, comment.getAction(), PROGRAM_APPROVAL_PARTNER_INSTITUTION);
+                return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROGRAM_APPROVAL_PARTNER_INSTITUTION);
             } else if (roleService.hasUserRole(partner, user, INSTITUTION_ADMINISTRATOR_GROUP)) {
-                return resolveProjectTransition(resource, comment, user);
+                return resolveProgramTransition(resource, comment, user);
             }
             return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROGRAM_APPROVAL_PARTNER);
         } else {
-            return resolveProjectTransition(resource, comment, user);
+            return resolveProgramTransition(resource, comment, user);
         }
     }
 
-    public StateTransition resolveProjectTransition(Resource resource, Comment comment, User user) {
-        if (roleService.hasUserRole(resource, user, PROJECT_ADMINISTRATOR_GROUP)) {
+    public StateTransition resolveProgramTransition(Resource resource, Comment comment, User user) {
+        if (roleService.hasUserRole(resource, user, PROGRAM_ADMINISTRATOR_GROUP)) {
             return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROGRAM_APPROVED);
         }
         return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROGRAM_APPROVAL);

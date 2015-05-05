@@ -54,9 +54,6 @@ public class AdvertDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution.resourceStates", "institutionState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution.resourceConditions", "institutionCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.partner", "programPartner", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("programPartner.advert", "programPartnerAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -84,10 +81,6 @@ public class AdvertDAO {
                         Restrictions.in("userRole.role.id", Arrays.asList(PROJECT_SUPERVISOR_GROUP))) //
                 .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("institution.id")) //
-                                .add(Restrictions.isNotNull("institutionCondition.id")) //
-                                .add(Restrictions.in("institutionState.state.id", institutionStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
@@ -149,9 +142,6 @@ public class AdvertDAO {
                 .createAlias("advertApplication.user", "otherUser", JoinType.INNER_JOIN) //
                 .createAlias("otherUser.applications", "otherUserApplication", JoinType.INNER_JOIN) //
                 .createAlias("otherUserApplication.advert", "recommendedAdvert", JoinType.INNER_JOIN) //
-                .createAlias("recommendedAdvert.institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution.resourceStates", "institutionState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution.resourceConditions", "institutionCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("recommendedAdvert.program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.resourceStates", "programState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.resourceConditions", "programCondition", JoinType.LEFT_OUTER_JOIN) //
@@ -163,10 +153,6 @@ public class AdvertDAO {
                 .add(Restrictions.neProperty("advert", "otherUserApplication.advert")) //
                 .add(Restrictions.isNotNull("otherUserApplication.submittedTimestamp")) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("institution.id")) //
-                                .add(Restrictions.isNotNull("institutionCondition.id")) //
-                                .add(Restrictions.in("institutionState.state.id", activeInstitutionStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
@@ -311,7 +297,6 @@ public class AdvertDAO {
                     .add(Restrictions.ilike("title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("programPartner.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
@@ -374,7 +359,6 @@ public class AdvertDAO {
         Integer[] institutions = queryDTO.getInstitutions();
         if (institutions != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.in("institution.id", institutions)) //
                     .add(Restrictions.in("programInstitution.id", institutions)) //
                     .add(Restrictions.in("programPartner.id", institutions)) //
                     .add(Restrictions.in("projectInstitution.id", institutions)) //

@@ -6,6 +6,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -49,6 +50,8 @@ public class AbstractResourceRepresentation {
     private List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations;
 
     private ResourceAttributesRepresentation attributes;
+    
+    private List<PrismAction> partnerActions;
 
     public Integer getId() {
         return id;
@@ -185,4 +188,13 @@ public class AbstractResourceRepresentation {
     public void setAttributes(ResourceAttributesRepresentation attributes) {
         this.attributes = attributes;
     }
+
+    public List<PrismAction> getPartnerActions() {
+        return partnerActions;
+    }
+
+    public void setPartnerActions(List<PrismAction> partnerActions) {
+        this.partnerActions = partnerActions;
+    }
+    
 }

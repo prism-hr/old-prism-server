@@ -266,6 +266,7 @@ public class InstitutionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(disjunction) //
+                .addOrder(Order.asc("institution.title")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }
@@ -299,6 +300,7 @@ public class InstitutionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(disjunction) //
+                .addOrder(Order.asc("institution.title")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }
@@ -335,6 +337,7 @@ public class InstitutionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(disjunction) //
+                .addOrder(Order.asc("institution.title")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }

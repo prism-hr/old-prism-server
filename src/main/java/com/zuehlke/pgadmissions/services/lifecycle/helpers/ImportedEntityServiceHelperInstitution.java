@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
@@ -67,7 +66,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 				maxRedirects = System.getProperty("http.maxRedirects");
 				System.setProperty("http.maxRedirects", "5");
 				importEntities(importedEntityFeed);
-			} catch (DataImportException e) {
+			} catch (Exception e) {
 				String errorMessage = e.getMessage();
 				Throwable cause = e.getCause();
 				if (cause != null) {

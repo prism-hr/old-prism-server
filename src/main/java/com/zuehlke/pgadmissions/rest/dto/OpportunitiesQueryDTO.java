@@ -226,7 +226,10 @@ public class OpportunitiesQueryDTO {
     }
 
     public void setResources(PrismScope resourceScope, Integer id) {
-        PrismReflectionUtils.setProperty(this, resourceScope.getLowerCamelName() + "s", new Integer[] { id });
+        String property = resourceScope.getLowerCamelName() + "s";
+        if (PrismReflectionUtils.hasProperty(this, property)) {
+            PrismReflectionUtils.setProperty(this, resourceScope.getLowerCamelName() + "s", new Integer[] { id });
+        }
     }
 
     public boolean isResourceAction() {

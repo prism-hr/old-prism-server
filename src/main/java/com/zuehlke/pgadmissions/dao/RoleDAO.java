@@ -58,11 +58,8 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getRolesOverridingRedactions(Resource resource, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -77,19 +74,10 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .list();
     }
 

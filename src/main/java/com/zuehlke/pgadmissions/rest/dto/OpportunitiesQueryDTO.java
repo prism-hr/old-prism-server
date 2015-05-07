@@ -9,8 +9,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public class OpportunitiesQueryDTO {
 
@@ -224,14 +222,7 @@ public class OpportunitiesQueryDTO {
     public final void setActionId(PrismAction actionId) {
         this.actionId = actionId;
     }
-
-    public void setResources(PrismScope resourceScope, Integer id) {
-        String property = resourceScope.getLowerCamelName() + "s";
-        if (PrismReflectionUtils.hasProperty(this, property)) {
-            PrismReflectionUtils.setProperty(this, resourceScope.getLowerCamelName() + "s", new Integer[] { id });
-        }
-    }
-
+    
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
     }

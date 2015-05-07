@@ -35,10 +35,9 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
-        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        List<Advert> adverts = advertService.getAdverts(query, activeInstitutionStates, activeProgramStates, activeProjectStates);
+        List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
         return Lists.transform(adverts, advertToRepresentationFunction);
     }
 

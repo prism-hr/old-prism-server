@@ -20,6 +20,8 @@ public class AbstractResourceRepresentation {
     private Integer id;
 
     private String code;
+    
+    private InstitutionRepresentation partner;
 
     private PrismState state;
 
@@ -67,6 +69,14 @@ public class AbstractResourceRepresentation {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public InstitutionRepresentation getPartner() {
+        return partner;
+    }
+
+    public void setPartner(InstitutionRepresentation partner) {
+        this.partner = partner;
     }
 
     public PrismState getState() {

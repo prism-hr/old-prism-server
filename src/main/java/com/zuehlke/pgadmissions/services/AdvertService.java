@@ -229,8 +229,7 @@ public class AdvertService {
         if (advert != null) {
             AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
                     .withStudyPlaces(advertClosingDateDTO.getStudyPlaces());
-            advert.getClosingDates().add(advertClosingDate);
-            entityService.flush();
+            entityService.getOrCreate(advertClosingDate);
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
             return advertClosingDate;
@@ -244,11 +243,16 @@ public class AdvertService {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
-        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
-        if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
-            advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
-            advertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
-            entityService.flush();
+        AdvertClosingDate persistentAdvertClosingDate = getClosingDateById(closingDateId);
+        if (advert.getId().equals(persistentAdvertClosingDate.getAdvert().getId())) {
+            AdvertClosingDate duplicateAdvertClosingDate = entityService.getDuplicateEntity(new AdvertClosingDate().withAdvert(advert)
+                    .withClosingDate(advertClosingDateDTO.getClosingDate()).withStudyPlaces(advertClosingDateDTO.getStudyPlaces()));
+            if (!duplicateAdvertClosingDate.getId().equals(persistentAdvertClosingDate.getId())) {
+                entityService.delete(persistentAdvertClosingDate);
+            } else {
+                persistentAdvertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
+                persistentAdvertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
+            }
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
         } else {
@@ -262,9 +266,11 @@ public class AdvertService {
 
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
-            advert.setClosingDate(null);
-            entityService.flush();
-            advert.getClosingDates().remove(advertClosingDate);
+            AdvertClosingDate currentAdvertClosingDate = advert.getClosingDate();
+            if (currentAdvertClosingDate != null && advertClosingDate.getId().equals(currentAdvertClosingDate.getId())) {
+                advert.setClosingDate(null);
+            }
+            entityService.delete(advertClosingDate);
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
         } else {

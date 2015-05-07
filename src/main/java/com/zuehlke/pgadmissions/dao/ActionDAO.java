@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -70,6 +71,7 @@ public class ActionDAO {
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
@@ -86,6 +88,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionType", SYSTEM_INVOCATION)) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getResourceStateActionConstraint()) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
@@ -105,6 +108,21 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public Action getPermittedAction(PrismState state, PrismAction action, List<PrismRole> roles) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.property("action")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state.id", state)) //
+                .add(Restrictions.eq("stateAction.action.id", action)) //
+                .add(Restrictions.in("stateActionAssignment.role.id", roles)) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
@@ -130,11 +148,14 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.eq(resourceReference + ".id", resourceId)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application.id", applicationId)) //
-                        .add(Restrictions.eq("userRole.project.id", projectId)) //
-                        .add(Restrictions.eq("userRole.program.id", programId)) //
-                        .add(Restrictions.eq("userRole.institution.id", institutionId)) //
-                        .add(Restrictions.eq("userRole.system.id", systemId)) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.disjunction()
+                                        .add(Restrictions.eq("userRole.application.id", applicationId)) //
+                                        .add(Restrictions.eq("userRole.project.id", projectId)) //
+                                        .add(Restrictions.eq("userRole.program.id", programId)) //
+                                        .add(Restrictions.eq("userRole.institution.id", institutionId)) //
+                                        .add(Restrictions.eq("userRole.system.id", systemId)))
+                                .add(Restrictions.eq("stateActionAssignment.partnerMode", false))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("stateActionAssignment.partnerMode", true)) //
                                 .add(Restrictions.eq("userRole.institution.id", partnerId)))) //

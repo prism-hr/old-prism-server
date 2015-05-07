@@ -24,7 +24,7 @@ public class AdvertClosingDate implements UniqueEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "advert_id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
     @Column(name = "closing_date", nullable = false)

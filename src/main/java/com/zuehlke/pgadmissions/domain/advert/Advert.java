@@ -104,7 +104,7 @@ public class Advert extends ResourceParentAttribute {
             @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")) })
     private AdvertFinancialDetail pay;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
 
@@ -154,8 +154,7 @@ public class Advert extends ResourceParentAttribute {
     private Set<Application> applications = Sets.newHashSet();
 
     @OrderBy(clause = "closing_date desc")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
+    @OneToMany(mappedBy = "advert")
     private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
 
     public Integer getId() {
@@ -329,7 +328,7 @@ public class Advert extends ResourceParentAttribute {
         PrismScope resourceScope = resource.getResourceScope();
         if (resourceScope.equals(INSTITUTION)) {
             return null;
-        } 
+        }
         ResourceOpportunity opportunity = (ResourceOpportunity) resource;
         return opportunity.getOpportunityType().getPrismOpportunityType();
     }

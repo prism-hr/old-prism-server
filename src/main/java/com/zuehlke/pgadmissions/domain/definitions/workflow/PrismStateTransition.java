@@ -13,6 +13,8 @@ public class PrismStateTransition {
 	private PrismAction transitionAction;
 
 	private PrismStateTransitionEvaluation transitionEvaluation;
+	
+	private Boolean excludeSelection = false;
 
 	private List<PrismRoleTransition> roleTransitions = Lists.newLinkedList();
 
@@ -32,7 +34,11 @@ public class PrismStateTransition {
 		return transitionEvaluation;
 	}
 
-	public List<PrismRoleTransition> getRoleTransitions() {
+	public Boolean getExcludeSelection() {
+        return excludeSelection;
+    }
+
+    public List<PrismRoleTransition> getRoleTransitions() {
 		return roleTransitions;
 	}
 
@@ -57,6 +63,11 @@ public class PrismStateTransition {
 	public PrismStateTransition withTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
 		this.transitionEvaluation = transitionEvaluation;
 		return this;
+	}
+	
+	public PrismStateTransition withExcludeSelection() {
+	    this.excludeSelection = true;
+	    return this;
 	}
 
 	public PrismStateTransition withRoleTransitions(PrismRoleTransition... roleTransitions) {

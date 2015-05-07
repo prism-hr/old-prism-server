@@ -1519,9 +1519,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** PROGRAM FORM *********************
      */
 
-    PROGRAM_FORM_DURATION_MINIMUM_LABEL(PROGRAM_FORM, "Duration Minimum"),
+    PROGRAM_FORM_DURATION_MINIMUM_LABEL(PROGRAM_FORM, "Duration Minimum (Months)"),
     PROGRAM_FORM_DURATION_MINIMUM_HINT(PROGRAM_FORM, "The minimum anticipated duration of study for your program."),
-    PROGRAM_FORM_DURATION_MAXIMUM_LABEL(PROGRAM_FORM, "Duration Maximum"),
+    PROGRAM_FORM_DURATION_MAXIMUM_LABEL(PROGRAM_FORM, "Duration Maximum (Months)"),
     PROGRAM_FORM_DURATION_MAXIMUM_HINT(PROGRAM_FORM, "The maximum anticipated duration of study for your program."),
     PROGRAM_FORM_ADVERTISE_LABEL(PROGRAM_FORM, "Advertise Program?"),
     PROGRAM_FORM_ADVERTISE_HINT(PROGRAM_FORM, "Specify whether you wish to advertise the program for new applications at the current time"),

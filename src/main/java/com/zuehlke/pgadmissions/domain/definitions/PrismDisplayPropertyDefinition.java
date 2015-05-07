@@ -1347,6 +1347,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The month of the year that your business year starts from. We use this knowledge to provide you with reports in a format the makes the greatest sense to you."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Currency"),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The currency that your organization typically does business in"),
+    SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Logo"),
+    SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Upload the logo for your institution."),
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************

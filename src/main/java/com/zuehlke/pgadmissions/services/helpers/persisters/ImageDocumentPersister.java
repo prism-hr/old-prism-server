@@ -4,6 +4,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 
 public interface ImageDocumentPersister {
 
-    void persist(Integer entityId, Document image) throws Exception;
+    void persist(Integer entityId, Document image);
 
 }

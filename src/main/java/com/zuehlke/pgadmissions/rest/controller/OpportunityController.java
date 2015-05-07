@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.controller;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -44,6 +45,9 @@ public class OpportunityController {
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}")
     public AdvertRepresentation getAdvert(@PathVariable String resourceScope, @PathVariable Integer resourceId) {
         Advert advert = advertService.getAdvert(StringUtils.removeEnd(resourceScope, "s"), resourceId);
+        if(advert == null) {
+            throw new ResourceNotFoundException("Advert not found");
+        }
         return advertToRepresentationFunction.apply(advert);
     }
 

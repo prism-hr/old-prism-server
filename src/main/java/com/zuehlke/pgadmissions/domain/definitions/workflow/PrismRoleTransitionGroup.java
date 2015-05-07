@@ -271,7 +271,15 @@ public enum PrismRoleTransitionGroup {
             new PrismRoleTransition() //
                     .withRole(PROJECT_SECONDARY_SUPERVISOR) //
                     .withTransitionType(DELETE) //
-                    .withTransitionRole(PROJECT_PRIMARY_SUPERVISOR)), //
+                    .withTransitionRole(PROJECT_PRIMARY_SUPERVISOR),
+            new PrismRoleTransition() //
+                    .withRole(PROJECT_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(PROJECT_SPONSOR), //
+            new PrismRoleTransition() //
+                    .withRole(PROJECT_SPONSOR) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(PROJECT_SPONSOR)), //
 
     PROJECT_CREATE_SPONSOR_GROUP( //
             new PrismRoleTransition() //
@@ -314,6 +322,14 @@ public enum PrismRoleTransitionGroup {
                     .withRole(PROGRAM_APPROVER) //
                     .withTransitionType(DELETE) //
                     .withTransitionRole(PROGRAM_APPROVER),
+            new PrismRoleTransition() //
+                    .withRole(PROGRAM_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(PROGRAM_SPONSOR), //
+            new PrismRoleTransition() //
+                    .withRole(PROGRAM_SPONSOR) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(PROGRAM_SPONSOR),
             new PrismRoleTransition() //
                     .withRole(PROGRAM_VIEWER) //
                     .withTransitionType(CREATE) //
@@ -363,7 +379,15 @@ public enum PrismRoleTransitionGroup {
             new PrismRoleTransition() //
                     .withRole(INSTITUTION_ADMITTER) //
                     .withTransitionType(DELETE) //
-                    .withTransitionRole(INSTITUTION_ADMITTER)),
+                    .withTransitionRole(INSTITUTION_ADMITTER),
+            new PrismRoleTransition() //
+                    .withRole(INSTITUTION_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(INSTITUTION_SPONSOR), //
+            new PrismRoleTransition() //
+                    .withRole(INSTITUTION_SPONSOR) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(INSTITUTION_SPONSOR)),
 
     INSTITUTION_CREATE_SPONSOR_GROUP( //
             new PrismRoleTransition() //

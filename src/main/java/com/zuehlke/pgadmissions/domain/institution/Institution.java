@@ -140,7 +140,6 @@ public class Institution extends ResourceParent {
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
-    @OrderBy(clause = "action_condition")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "institution_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();

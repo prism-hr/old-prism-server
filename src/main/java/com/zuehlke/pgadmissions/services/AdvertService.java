@@ -117,19 +117,16 @@ public class AdvertService {
         return advertDAO.getAdvert(resourceScope, resourceId);
     }
 
-    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> institutionStates, List<PrismState> programStates,
-            List<PrismState> projectStates) {
-        institutionStates = queryDTO.getInstitutions() == null ? institutionStates : stateService.getInstitutionStates();
+    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> programStates, List<PrismState> projectStates) {
         programStates = queryDTO.getPrograms() == null ? programStates : stateService.getProgramStates();
         projectStates = queryDTO.getProjects() == null ? projectStates : stateService.getProjectStates();
 
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
-            Resource parentResource = resource.getParentResource();
-            queryDTO.setResources(parentResource.getResourceScope(), parentResource.getId());
+            queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
         }
 
-        List<Integer> adverts = advertDAO.getAdverts(institutionStates, programStates, projectStates, queryDTO);
+        List<Integer> adverts = advertDAO.getAdverts(programStates, projectStates, queryDTO);
 
         if (adverts.isEmpty()) {
             return Lists.newArrayList();
@@ -140,11 +137,10 @@ public class AdvertService {
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {
-        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
-        return advertDAO.getRecommendedAdverts(user, activeInstitutionStates, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
+        return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
     public Advert createAdvert(User user, AdvertDTO advertDTO) throws Exception {
@@ -303,10 +299,9 @@ public class AdvertService {
     }
 
     public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
-        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeInstitutionStates, activeProgramStates, activeProjectStates);
+        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
 
     public InstitutionAddress createAddressCopy(InstitutionAddress address) {

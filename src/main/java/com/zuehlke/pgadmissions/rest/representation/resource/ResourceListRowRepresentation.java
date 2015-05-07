@@ -23,6 +23,8 @@ public class ResourceListRowRepresentation {
 
     private SimpleResourceRepresentation institution;
 
+    private SimpleResourceRepresentation partner;
+
     private SimpleResourceRepresentation program;
 
     private SimpleResourceRepresentation project;
@@ -83,6 +85,14 @@ public class ResourceListRowRepresentation {
 
     public void setInstitution(SimpleResourceRepresentation institution) {
         this.institution = institution;
+    }
+
+    public SimpleResourceRepresentation getPartner() {
+        return partner;
+    }
+
+    public void setPartner(SimpleResourceRepresentation partner) {
+        this.partner = partner;
     }
 
     public SimpleResourceRepresentation getProgram() {

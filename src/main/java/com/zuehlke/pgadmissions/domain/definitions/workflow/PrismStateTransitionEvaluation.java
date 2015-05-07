@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.Prog
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramEscalatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramImportedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramUpdatedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedPartnerResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
@@ -70,7 +71,7 @@ public enum PrismStateTransitionEvaluation {
     PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
     PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //
     PROGRAM_ESCALATED_OUTCOME(false, PROGRAM, ProgramEscalatedResolver.class), //
-    PROJECT_APPROVED_PARTNER_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
+    PROJECT_APPROVED_PARTNER_OUTCOME(true, PROJECT, ProjectApprovedPartnerResolver.class), //
     PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
     PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
     PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class);

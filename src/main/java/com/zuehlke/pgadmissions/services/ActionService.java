@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -119,12 +120,16 @@ public class ActionService {
 
         throw new WorkflowPermissionException(resource, action);
     }
+    
+    public Action getPermittedAction(PrismState state, PrismAction action, List<PrismRole> roles) {
+        return actionDAO.getPermittedAction(state, action, roles);
+    }
 
     public List<ResourceListActionDTO> getPermittedActions(PrismScope resourceScope, ResourceListRowDTO row, User user) {
         return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getPartnerId(),
                 row.getProgramId(), row.getProjectId(), row.getApplicationId(), user);
     }
-    
+
     public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
         PrismScope scope = resource.getResourceScope();
 
@@ -335,7 +340,7 @@ public class ActionService {
         }
         return createResourceActions;
     }
-    
+
     public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
         return actionDAO.getPartnerActions(resource, actionConditions);
     }
@@ -369,7 +374,8 @@ public class ActionService {
     }
 
     private boolean checkActionAvailable(Resource resource, Action action, User user) {
-        return actionDAO.getPermittedAction(resource, action, user) != null || !actionDAO.getCreateResourceActions(resource).isEmpty();
+        return actionDAO.getPermittedAction(resource, action, user) != null
+                || (action.getCreationScope() != null && !actionDAO.getCreateResourceActions(resource).isEmpty());
     }
 
     private void authenticateActionInvocation(Action action, User user, Boolean declineComment) {

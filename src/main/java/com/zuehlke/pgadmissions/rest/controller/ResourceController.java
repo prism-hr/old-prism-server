@@ -215,7 +215,7 @@ public class ResourceController {
             }
             representation.setActions(actionRepresentations);
 
-            for (String scopeName : new String[] { "institution", "program", "project" }) {
+            for (String scopeName : new String[] { "institution", "partner", "program", "project" }) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
                 if (id != null) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");

@@ -336,6 +336,11 @@ public enum PrismStateTransitionGroup {
 
     PROJECT_APPROVE_PARTNER_TRANSITION( //
             new PrismStateTransition() //
+                    .withTransitionState(PROJECT_APPROVED) //
+                    .withTransitionAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
+                    .withTransitionEvaluation(PROJECT_APPROVED_PARTNER_OUTCOME) //
+                    .withExcludeSelection(),
+            new PrismStateTransition() //
                     .withTransitionState(PROJECT_APPROVAL) //
                     .withTransitionAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
                     .withTransitionEvaluation(PROJECT_APPROVED_PARTNER_OUTCOME), //
@@ -400,6 +405,11 @@ public enum PrismStateTransitionGroup {
                     .withTransitionEvaluation(PROGRAM_CREATED_OUTCOME)), //
 
     PROGRAM_APPROVE_PARTNER_TRANSITION( //
+            new PrismStateTransition() //
+                    .withTransitionState(PROGRAM_APPROVED) //
+                    .withTransitionAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
+                    .withTransitionEvaluation(PROGRAM_APPROVED_PARTNER_OUTCOME) //
+                    .withExcludeSelection(), //
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_APPROVAL) //
                     .withTransitionAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //

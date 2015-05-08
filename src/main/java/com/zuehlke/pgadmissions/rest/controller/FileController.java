@@ -47,7 +47,7 @@ public class FileController {
         return ImmutableMap.of("id", (Object) document.getId());
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/images", method = RequestMethod.POST)
     public Map<String, Object> uploadImage(
             @RequestParam(value = "file-data") Part uploadStream,

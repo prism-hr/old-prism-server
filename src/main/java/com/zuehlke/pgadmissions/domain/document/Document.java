@@ -1,20 +1,5 @@
 package com.zuehlke.pgadmissions.domain.document;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
@@ -24,6 +9,10 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "DOCUMENT")
@@ -47,18 +36,18 @@ public class Document {
 
     @Column(name = "content_type", nullable = false)
     private String contentType;
-    
+
     @Column(name = "exported", nullable = false)
     private Boolean exported;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
-    
+
     @OneToOne
     @JoinColumn(name = "comment_id", insertable = false, updatable = false)
     private Comment comment;
@@ -89,7 +78,7 @@ public class Document {
 
     @OneToOne(mappedBy = "logoImage")
     private Institution logoImage;
-    
+
     @OneToOne(mappedBy = "backgroundImage")
     private Institution backgroundImage;
 
@@ -192,7 +181,7 @@ public class Document {
     public User getPortraitImage() {
         return portraitImage;
     }
-    
+
     public Institution getLogoImage() {
         return logoImage;
     }
@@ -225,7 +214,7 @@ public class Document {
         this.contentType = contentType;
         return this;
     }
-    
+
     public Document withExported(Boolean exported) {
         this.exported = exported;
         return this;
@@ -262,7 +251,7 @@ public class Document {
             return null;
         }
     }
-    
+
     public String getExportFilenameAmazon() {
         return id.toString();
     }
@@ -270,5 +259,5 @@ public class Document {
     public String getExportFilenameSits() {
         return getExportFilenameAmazon() + PrismConstants.DOT + PrismConstants.FILE_EXTENSION_PDF;
     }
-    
+
 }

@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcessor;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.io.Streams;
@@ -73,7 +72,7 @@ public class DocumentService {
     }
 
     public Document getById(Integer id, PrismFileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
     }
 
     public Document createDocument(Part uploadStream) throws Exception {
@@ -89,6 +88,7 @@ public class DocumentService {
         Preconditions.checkNotNull(category);
 
         boolean image = category == IMAGE;
+        User user = userService.getCurrentUser();
         if (image) {
             Class<? extends ImageDocumentProcessor> processor = imageCategory.getImageProcessor();
             if (processor != null) {
@@ -96,10 +96,11 @@ public class DocumentService {
             }
             contentType = "image/jpeg";
         } else if (category == DOCUMENT) {
-            createPdfDocument(content);
+            Preconditions.checkNotNull(user);
+            validatePdfDocument(content);
         }
         Document document = new Document().withContent(content).withContentType(contentType).withExported(false).withFileName(fileName)
-                .withUser(userService.getCurrentUser()).withCreatedTimestamp(new DateTime()).withCategory(category);
+                .withUser(user).withCreatedTimestamp(new DateTime()).withCategory(category);
         entityService.save(document);
 
         if (image && entityId != null) {
@@ -107,12 +108,6 @@ public class DocumentService {
         }
 
         return document;
-    }
-
-    public Document getImageDocument(FileDTO imageDTO) {
-        Document image = getById(imageDTO.getId(), PrismFileCategory.IMAGE);
-        Preconditions.checkState(image.getContentType().equals("image/jpeg"), "Unexpected image type: " + image.getContentType());
-        return image;
     }
 
     public void deleteOrphanDocuments(DateTime baselineTime) throws IOException {
@@ -221,7 +216,7 @@ public class DocumentService {
         documentDAO.reassignDocuments(oldUser, newUser);
     }
 
-    private void createPdfDocument(byte[] content) {
+    private void validatePdfDocument(byte[] content) {
         PdfReader pdfReader;
         try {
             pdfReader = new PdfReader(content);

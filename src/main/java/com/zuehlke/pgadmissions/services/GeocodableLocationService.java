@@ -49,31 +49,14 @@ public class GeocodableLocationService {
         return entityService.getById(locationClass, id);
     }
 
-    public <T extends GeocodableLocation> T getOrCreate(T transientLocation) throws Exception {
-        T persistentLocation = entityService.getDuplicateEntity(transientLocation);
-        if (persistentLocation == null) {
-            entityService.save(transientLocation);
-            return transientLocation;
-        }
-        transientLocation.setLocation(persistentLocation.getLocation());
-        return entityService.replace(persistentLocation, transientLocation);
-    }
-
-    public synchronized <T extends GeocodableLocation> LocationSearchResponseDTO getLocation(String address) throws Exception {
-        wait(googleGeocodeRequestDelayMs);
-        String addressEncoded = URLEncoder.encode(address, "UTF-8");
-        URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleApiKey).getURI();
-        return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
-    }
-
-    public void setLocation(InstitutionAddress address) {
+    public void setLocation(String googleIdentifier, InstitutionAddress address) {
         try {
             List<String> addressTokens = Lists.reverse(address.getAddressTokens());
             for (int i = addressTokens.size(); i >= 0; i--) {
                 List<String> requestTokens = addressTokens.subList(0, i);
                 LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
                 if (response.getStatus().equals("OK")) {
-                    setLocation(address, response);
+                    setLocation(googleIdentifier, address, response);
                     return;
                 }
             }
@@ -83,7 +66,7 @@ public class GeocodableLocationService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends GeocodableLocation> void setLocation(T transientLocation, LocationSearchResponseDTO response) {
+    public <T extends GeocodableLocation> void setLocation(String googleIdentifier, T transientLocation, LocationSearchResponseDTO response) {
         T persistentLocation = (T) getById(transientLocation.getClass(), transientLocation.getId());
 
         Results result = response.getResults().get(0);
@@ -92,11 +75,18 @@ public class GeocodableLocationService {
         Location gViewportNe = geometry.getViewPort().getNorthEast();
         Location gViewportSw = geometry.getViewPort().getSouthWest();
 
-        GeographicLocation geographicLocation = new GeographicLocation().withGoogleId(result.getGoogleId()).withLocationX(gLocation.getLat())
+        GeographicLocation geographicLocation = new GeographicLocation().withGoogleId(googleIdentifier).withLocationX(gLocation.getLat())
                 .withLocationY(gLocation.getLng()).withLocationViewNeX(gViewportNe.getLat()).withLocationViewNeY(gViewportNe.getLng())
                 .withLocationViewSwX(gViewportSw.getLat()).withLocationViewSwY(gViewportSw.getLng());
-        
+
         persistentLocation.setLocation(geographicLocation);
+    }
+
+    public synchronized <T extends GeocodableLocation> LocationSearchResponseDTO getLocation(String address) throws Exception {
+        wait(googleGeocodeRequestDelayMs);
+        String addressEncoded = URLEncoder.encode(address, "UTF-8");
+        URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleApiKey).getURI();
+        return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
     }
 
 }

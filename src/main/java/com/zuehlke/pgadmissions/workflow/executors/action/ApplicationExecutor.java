@@ -35,19 +35,19 @@ public class ApplicationExecutor implements ActionExecutor {
 
     @Inject
     private ActionService actionService;
-    
+
     @Inject
-    private ApplicationService applicationService;  
-    
+    private ApplicationService applicationService;
+
     @Inject
     private CommentService commentService;
-    
+
     @Inject
     private EntityService entityService;
-    
+
     @Inject
     private UserService userService;
-    
+
     @Override
     public ActionOutcomeDTO execute(Integer resourceId, CommentDTO commentDTO) throws Exception {
         Application application = entityService.getById(Application.class, resourceId);
@@ -59,7 +59,7 @@ public class ApplicationExecutor implements ActionExecutor {
             if (errors.hasErrors()) {
                 throw new PrismValidationException("Application not completed", errors);
             }
-            
+
             application.setRetain(commentDTO.getApplicationRetain());
             user.getUserAccount().setSendApplicationRecommendationNotification(commentDTO.getApplicationRecommend());
         }
@@ -68,7 +68,7 @@ public class ApplicationExecutor implements ActionExecutor {
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
 
-        Comment comment = new Comment().withResource(application).withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser)
+        Comment comment = new Comment().withUser(user).withResource(application).withContent(commentDTO.getContent()).withDelegateUser(delegateUser)
                 .withAction(action).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getApplicationEligible())
                 .withApplicationInterested(commentDTO.getApplicationInterested()).withApplicationRating(commentDTO.getApplicationRating())
@@ -110,5 +110,5 @@ public class ApplicationExecutor implements ActionExecutor {
 
         return actionService.executeUserAction(application, action, comment);
     }
-    
+
 }

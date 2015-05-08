@@ -565,7 +565,7 @@ public class AdvertService {
         } else {
             updateAddress(addressDTO, address);
         }
-        geocodableLocationService.setLocation(address);
+        geocodableLocationService.setLocation(addressDTO.getGoogleIdentifier(), address);
     }
 
     private void updateAddress(InstitutionAddressDTO addressDTO, InstitutionAddress address) {

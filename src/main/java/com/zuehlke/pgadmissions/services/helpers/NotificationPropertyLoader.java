@@ -13,6 +13,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HELPDESK_REPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTIONS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECTS;
@@ -64,9 +65,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
-import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
@@ -93,9 +92,6 @@ public class NotificationPropertyLoader {
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private SystemService systemService;
@@ -314,7 +310,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemApplicationRecommendation() throws Exception {
-        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(notificationDefinitionModelDTO.getUser());
+        List<AdvertRecommendationDTO> advertRecommendations = notificationDefinitionModelDTO.getAdvertRecommendations();
 
         if (!advertRecommendations.isEmpty()) {
             List<String> recommendations = Lists.newLinkedList();
@@ -335,7 +331,8 @@ public class NotificationPropertyLoader {
 
             return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
         }
-        throw new AbortMailSendException("No recommended adverts found for user: " + notificationDefinitionModelDTO.getUser().getId().toString());
+        
+        return propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS);
     }
 
     public String getSystemProjectHomepage() throws Exception {

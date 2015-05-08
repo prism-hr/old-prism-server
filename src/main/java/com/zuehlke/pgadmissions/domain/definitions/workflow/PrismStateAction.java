@@ -132,8 +132,8 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withPartnerNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition notification) {
-        for (PrismRole role : roleGroup.getRoles()) {
+    public PrismStateAction withPartnerNotifications(PrismRoleGroup roles, PrismNotificationDefinition notification) {
+        for (PrismRole role : roles.getRoles()) {
             notifications.add(new PrismStateActionNotification().withRole(role).withPartnerMode().withDefinition(notification));
         }
         return this;

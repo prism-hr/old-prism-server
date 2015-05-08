@@ -117,7 +117,15 @@ public abstract class Resource implements UniqueEntity {
     public void addComment(Comment comment) {
         getComments().add(comment);
     }
-
+    
+    public void addResourceState(ResourceState resourceState) {
+        getResourceStates().add(resourceState);
+    }
+    
+    public void addResourcePreviousState(ResourcePreviousState resourcePreviousState) {
+        getResourcePreviousStates().add(resourcePreviousState);
+    }
+ 
     public Resource getParentResource() {
         switch (PrismScope.getByResourceClass(this.getClass())) {
         case SYSTEM:

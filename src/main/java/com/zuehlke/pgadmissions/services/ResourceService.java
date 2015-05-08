@@ -234,8 +234,8 @@ public class ResourceService {
 
             resource.setCode(generateResourceCode(resource));
             entityService.save(resource);
+            entityService.flush();
         }
-        entityService.flush();
     }
 
     public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
@@ -309,6 +309,7 @@ public class ResourceService {
 
         Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourcePostprocessor();
         if (processor != null) {
+            entityService.flush();
             applicationContext.getBean(processor).process(resource, comment);
         }
 
@@ -828,7 +829,12 @@ public class ResourceService {
                 transientResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
                 transientResourceStateDefinition.setCreatedDate(baseline);
                 entityService.save(transientResourceStateDefinition);
-                resourceStateDefinitions.add(persistentResourceStateDefinition);
+                
+                if (transientResourceStateDefinition.getClass().equals(ResourceState.class)) {
+                    resource.addResourceState((ResourceState) transientResourceStateDefinition);
+                } else {
+                    resource.addResourcePreviousState((ResourcePreviousState) transientResourceStateDefinition);
+                }
             }
         }
     }

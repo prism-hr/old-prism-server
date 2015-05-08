@@ -70,7 +70,7 @@ public class ProjectExecutor implements ActionExecutor {
         }
 
         InstitutionPartnerDTO partnerDTO = projectDTO.getPartner();
-        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action)
+        Comment comment = new Comment().withUser(user).withResource(project).withContent(commentContent).withAction(action)
                 .withRemovedPartner(partnerDTO != null && partnerDTO.isEmpty()).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);

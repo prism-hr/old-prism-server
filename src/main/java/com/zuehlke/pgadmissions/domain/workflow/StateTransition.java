@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.workflow;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -41,9 +40,6 @@ public class StateTransition implements UniqueEntity {
 	@ManyToOne
 	@JoinColumn(name = "state_transition_evaluation_id")
 	private StateTransitionEvaluation stateTransitionEvaluation;
-	
-	@Column(name = "exclude_selection", nullable = false)
-	private Boolean excludeSelection;
 
 	@OneToMany(mappedBy = "stateTransition")
 	private Set<RoleTransition> roleTransitions = Sets.newHashSet();
@@ -95,14 +91,6 @@ public class StateTransition implements UniqueEntity {
 		this.stateTransitionEvaluation = stateTransitionEvaluation;
 	}
 
-	public Boolean getExcludeSelection() {
-        return excludeSelection;
-    }
-
-    public void setExcludeSelection(Boolean excludeSelection) {
-        this.excludeSelection = excludeSelection;
-    }
-
     public Set<RoleTransition> getRoleTransitions() {
 		return roleTransitions;
 	}
@@ -133,11 +121,6 @@ public class StateTransition implements UniqueEntity {
 	public StateTransition withStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
 		this.stateTransitionEvaluation = stateTransitionEvaluation;
 		return this;
-	}
-	
-	public StateTransition withExcludeSelection(Boolean excludeSelection) {
-	    this.excludeSelection = excludeSelection;
-	    return this;
 	}
 
 	@Override

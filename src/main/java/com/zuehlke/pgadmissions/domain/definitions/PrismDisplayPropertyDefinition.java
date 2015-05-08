@@ -82,7 +82,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR(SYSTEM_GLOBAL, "Property value unavailable"),
     SYSTEM_HELPDESK_REPORT(SYSTEM_GLOBAL, "Please report this matter to our helpdesk"),
     SYSTEM_USER_ACCOUNT(SYSTEM_GLOBAL, "User Account"),
-    SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_GLOBAL, "No comment provided"),
     SYSTEM_APPLY(SYSTEM_GLOBAL, "Apply Now"),
     SYSTEM_DESCRIPTION(SYSTEM_GLOBAL, "The Opportunity Portal"),
     SYSTEM_LINK(SYSTEM_GLOBAL, "Link"),
@@ -106,6 +105,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use"),
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use"),
     SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one"),
+    SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_COMMENT, "No comment provided"), 
 
     /*
      * *************** SYSTEM STATE GROUP *********************
@@ -767,6 +767,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_PROJECT_TASK_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Project Task Request Reminder"),
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_PROJECT_UPDATE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Project Update Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_RECOMMENDATION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Recommendation Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS(SYSTEM_NOTIFICATION_TEMPLATE, "We are sorry to inform that we have no current recommendations"),
 
     /*
      * *************** SYSTEM REFEREE TYPE *********************
@@ -1336,7 +1337,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_ACCEPT_SPONSOR(SYSTEM_ADVERTISE_SECTION, "Sponsors"),
     SYSTEM_RESOURCE_PARENT_SOCIAL_LINKS(SYSTEM_ADVERTISE_SECTION, "Social Links Placement"),
     SYSTEM_RESOURCE_PARENT_ACCEPT_PARTNER_MODE(SYSTEM_ADVERTISE_SECTION, "Accept from partner organizations"),
-    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Modes of Participation"),
+    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Work/Engagement Options"),
     SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT,
             "The modes of participation that your opportunity offers (e.g. full-time, part-time, modular/flexible)."),
     SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Possible Locations"),

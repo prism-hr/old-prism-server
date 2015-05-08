@@ -573,8 +573,7 @@ public class SystemService {
             }
 
             StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
-                    .withTransitionAction(transitionAction).withStateTransitionEvaluation(stateTransitionEvaluation)
-                    .withExcludeSelection(prismStateTransition.getExcludeSelection());
+                    .withTransitionAction(transitionAction).withStateTransitionEvaluation(stateTransitionEvaluation);
             entityService.save(stateTransition);
             stateAction.getStateTransitions().add(stateTransition);
 

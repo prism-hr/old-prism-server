@@ -41,8 +41,9 @@ public class PrismProgramApprovalPartner extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE) //
                 .withPartnerAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
-                .withPartnerNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
                 .withNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION) //
+                .withNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
+                .withPartnerNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
                 .withTransitions(PROGRAM_APPROVE_PARTNER_TRANSITION);
     }
 

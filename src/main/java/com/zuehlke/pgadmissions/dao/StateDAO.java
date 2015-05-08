@@ -228,8 +228,7 @@ public class StateDAO {
                 .add(Restrictions.eq("stateAction.state", state)) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
-                .add(Restrictions.isNotNull("transitionState")) //
-                .add(Restrictions.eq("excludeSelection", false));
+                .add(Restrictions.isNotNull("transitionState"));
 
         appendImportedResourceConstraint(criteria, importedResource);
 
@@ -249,8 +248,7 @@ public class StateDAO {
                 .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", state)) //
                 .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
-                .add(Restrictions.isNotNull("transitionState"))
-                .add(Restrictions.eq("excludeSelection", false));
+                .add(Restrictions.isNotNull("transitionState"));
 
         appendImportedResourceConstraint(criteria, importedResource);
 

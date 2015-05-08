@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -20,8 +22,12 @@ public class NotificationDefinitionModelDTO {
     private PrismAction transitionAction;
 
     private String dataImportErrorMessage;
+    
+    private String applicationRecommendations;
 
     private String newPassword;
+    
+    List<AdvertRecommendationDTO> advertRecommendations;
 
     public User getUser() {
         return user;
@@ -35,11 +41,11 @@ public class NotificationDefinitionModelDTO {
         return author;
     }
 
-    public final User getInvoker() {
+    public User getInvoker() {
         return invoker;
     }
 
-    public final void setInvoker(User invoker) {
+    public void setInvoker(User invoker) {
         this.invoker = invoker;
     }
 
@@ -59,8 +65,16 @@ public class NotificationDefinitionModelDTO {
         return dataImportErrorMessage;
     }
 
+    public String getApplicationRecommendations() {
+        return applicationRecommendations;
+    }
+
     public String getNewPassword() {
         return newPassword;
+    }
+
+    public List<AdvertRecommendationDTO> getAdvertRecommendations() {
+        return advertRecommendations;
     }
 
     public NotificationDefinitionModelDTO withUser(User user) {
@@ -83,23 +97,33 @@ public class NotificationDefinitionModelDTO {
         return this;
     }
 
-    public NotificationDefinitionModelDTO withComment(final Comment comment) {
+    public NotificationDefinitionModelDTO withComment(Comment comment) {
         this.comment = comment;
         return this;
     }
 
-    public NotificationDefinitionModelDTO withTransitionAction(final PrismAction transitionAction) {
+    public NotificationDefinitionModelDTO withTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
         return this;
     }
 
-    public NotificationDefinitionModelDTO withDataImportErrorMessage(final String dataImportErrorMessage) {
+    public NotificationDefinitionModelDTO withDataImportErrorMessage(String dataImportErrorMessage) {
         this.dataImportErrorMessage = dataImportErrorMessage;
         return this;
     }
+    
+    public NotificationDefinitionModelDTO withApplicationRecommendations(String applicationRecommendations) {
+        this.applicationRecommendations = applicationRecommendations;
+        return this;
+    }
 
-    public NotificationDefinitionModelDTO withNewPassword(final String newPassword) {
+    public NotificationDefinitionModelDTO withNewPassword(String newPassword) {
         this.newPassword = newPassword;
+        return this;
+    }
+    
+    public NotificationDefinitionModelDTO withAdvertRecommendations(List<AdvertRecommendationDTO> advertRecommendations) {
+        this.advertRecommendations = advertRecommendations;
         return this;
     }
 

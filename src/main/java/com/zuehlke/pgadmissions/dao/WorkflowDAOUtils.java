@@ -11,13 +11,14 @@ public class WorkflowDAOUtils {
 
     public static Junction getUserRoleConstraint(Resource resource, String targetEntity) {
         Junction constraint = Restrictions.disjunction() //
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq(targetEntity + ".partnerMode", false)); //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                                .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                                .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                        .add(Restrictions.eq(targetEntity + ".partnerMode", false))); //
 
         Institution partner = resource.getPartner();
         if (partner != null) {

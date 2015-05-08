@@ -30,22 +30,22 @@ public class InstitutionExecutor implements ActionExecutor {
 
     @Inject
     private ActionService actionService;
-    
-    @Inject 
+
+    @Inject
     private CommentService commentService;
-    
+
     @Inject
     private InstitutionService institutionService;
-    
-    @Inject 
+
+    @Inject
     private StateService stateService;
-    
+
     @Inject
     private UserService userService;
-    
+
     @Inject
     private ApplicationContext applicationContext;
-    
+
     @Override
     public ActionOutcomeDTO execute(Integer resourceId, CommentDTO commentDTO) throws Exception {
         User user = userService.getById(commentDTO.getUser());
@@ -58,8 +58,8 @@ public class InstitutionExecutor implements ActionExecutor {
                 .load(INSTITUTION_COMMENT_UPDATED) : commentDTO.getContent();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        Comment comment = new Comment().withUser(user).withResource(institution).withContent(commentContent).withAction(action)
+                .withTransitionState(transitionState).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
         InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.getResource();

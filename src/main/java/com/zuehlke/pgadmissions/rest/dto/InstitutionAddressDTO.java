@@ -4,6 +4,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class InstitutionAddressDTO {
 
+    private String googleIdentifier;
+    
     @NotEmpty
     private String domicile;
 
@@ -18,6 +20,14 @@ public class InstitutionAddressDTO {
     private String addressDistrict;
 
     private String addressCode;
+    
+    public String getGoogleIdentifier() {
+        return googleIdentifier;
+    }
+
+    public void setGoogleIdentifier(String googleIdentifier) {
+        this.googleIdentifier = googleIdentifier;
+    }
 
     public String getDomicile() {
         return domicile;

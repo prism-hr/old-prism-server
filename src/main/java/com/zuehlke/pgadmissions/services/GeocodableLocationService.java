@@ -101,8 +101,7 @@ public class GeocodableLocationService {
 
     private void setLocation(String googleIdentifier, GeocodableLocation location, GoogleGeometryDTO geometry) {
         Location googleLocation = geometry.getLocation();
-        GeographicLocation geographicLocation = new GeographicLocation().withGoogleId(googleIdentifier).withLocationX(googleLocation.getLat())
-                .withLocationY(googleLocation.getLng());
+        GeographicLocation geographicLocation = new GeographicLocation().withLocationX(googleLocation.getLat()).withLocationY(googleLocation.getLng());
         location.setLocation(geographicLocation);
     }
 

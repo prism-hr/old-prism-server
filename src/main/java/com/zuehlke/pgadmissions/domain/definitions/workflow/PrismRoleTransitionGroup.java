@@ -14,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADVERTISER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
@@ -290,6 +291,14 @@ public enum PrismRoleTransitionGroup {
                     .withMinimumPermitted(1) //
                     .withMaximumPermitted(1)),
 
+    PROJECT_CREATE_INSTITUTION_ADVERTISER_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(PROJECT_ADMINISTRATOR) //
+                    .withTransitionType(BRANCH) //
+                    .withTransitionRole(INSTITUTION_ADVERTISER)
+                    .withMinimumPermitted(1) //
+                    .withMaximumPermitted(1)), //
+
     PROGRAM_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //
                     .withRole(PROGRAM_ADMINISTRATOR) //
@@ -347,6 +356,14 @@ public enum PrismRoleTransitionGroup {
                     .withRestrictToOwner() //
                     .withMinimumPermitted(1) //
                     .withMaximumPermitted(1)),
+
+    PROGRAM_CREATE_INSTITUTION_ADVERTISER_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(PROGRAM_ADMINISTRATOR) //
+                    .withTransitionType(BRANCH) //
+                    .withTransitionRole(INSTITUTION_ADVERTISER)
+                    .withMinimumPermitted(1) //
+                    .withMaximumPermitted(1)), //
 
     INSTITUTION_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //

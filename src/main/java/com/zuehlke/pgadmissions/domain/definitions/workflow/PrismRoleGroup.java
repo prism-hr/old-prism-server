@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADVERTISER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
@@ -47,6 +48,7 @@ public enum PrismRoleGroup {
     PROGRAM_ADMINISTRATOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR, PROGRAM_ADMINISTRATOR), //
     PROGRAM_SPONSOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR, INSTITUTION_SPONSOR, PROGRAM_ADMINISTRATOR, PROGRAM_SPONSOR), //
     INSTITUTION_ADMINISTRATOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR), //
+    INSTIUTTION_ADVERTISER_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR, INSTITUTION_ADVERTISER), //
     INSTITUTION_SPONSOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR, INSTITUTION_SPONSOR);
 
     private PrismRole[] roles;

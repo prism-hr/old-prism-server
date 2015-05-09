@@ -702,7 +702,7 @@ public class ResourceService {
 
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();
-        advertService.updateAdvert(comment.getUser(), advertDTO, advert);
+        advertService.updateAdvert(advertDTO, advert);
         resource.setTitle(advert.getTitle());
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
@@ -829,7 +829,7 @@ public class ResourceService {
                 transientResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
                 transientResourceStateDefinition.setCreatedDate(baseline);
                 entityService.save(transientResourceStateDefinition);
-                
+
                 if (transientResourceStateDefinition.getClass().equals(ResourceState.class)) {
                     resource.addResourceState((ResourceState) transientResourceStateDefinition);
                 } else {

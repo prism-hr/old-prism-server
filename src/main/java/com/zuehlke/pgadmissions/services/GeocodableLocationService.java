@@ -1,19 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -23,6 +9,18 @@ import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.inject.Inject;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
 
 @Service
 @Transactional
@@ -49,14 +47,14 @@ public class GeocodableLocationService {
         return entityService.getById(locationClass, id);
     }
 
-    public void setLocation(String googleIdentifier, InstitutionAddress address) {
+    public void setLocation(InstitutionAddress address) {
         try {
             List<String> addressTokens = Lists.reverse(address.getAddressTokens());
             for (int i = addressTokens.size(); i >= 0; i--) {
                 List<String> requestTokens = addressTokens.subList(0, i);
                 LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
                 if (response.getStatus().equals("OK")) {
-                    setLocation(googleIdentifier, address, response);
+                    setLocation(address, response);
                     return;
                 }
             }
@@ -66,7 +64,7 @@ public class GeocodableLocationService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends GeocodableLocation> void setLocation(String googleIdentifier, T transientLocation, LocationSearchResponseDTO response) {
+    public <T extends GeocodableLocation> void setLocation(T transientLocation, LocationSearchResponseDTO response) {
         T persistentLocation = (T) getById(transientLocation.getClass(), transientLocation.getId());
 
         Results result = response.getResults().get(0);
@@ -75,7 +73,7 @@ public class GeocodableLocationService {
         Location gViewportNe = geometry.getViewPort().getNorthEast();
         Location gViewportSw = geometry.getViewPort().getSouthWest();
 
-        GeographicLocation geographicLocation = new GeographicLocation().withGoogleId(googleIdentifier).withLocationX(gLocation.getLat())
+        GeographicLocation geographicLocation = new GeographicLocation().withLocationX(gLocation.getLat())
                 .withLocationY(gLocation.getLng()).withLocationViewNeX(gViewportNe.getLat()).withLocationViewNeY(gViewportNe.getLng())
                 .withLocationViewSwX(gViewportSw.getLat()).withLocationViewSwY(gViewportSw.getLng());
 

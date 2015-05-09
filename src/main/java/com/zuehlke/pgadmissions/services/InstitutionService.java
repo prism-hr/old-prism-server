@@ -1,24 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
@@ -41,6 +22,23 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Service
 @Transactional
@@ -125,7 +123,7 @@ public class InstitutionService {
 
         AdvertDTO advertDTO = institutionDTO.getAdvert();
         Advert advert = institution.getAdvert();
-        advertService.updateAdvert(userService.getCurrentUser(), advertDTO, advert);
+        advertService.updateAdvert(advertDTO, advert);
 
         institution.setTitle(advert.getTitle());
         institution.setDomicile(advert.getAddress().getDomicile());
@@ -137,7 +135,7 @@ public class InstitutionService {
             changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
         }
 
-        institution.setGoogleId(advert.getAddress().getLocation().getGoogleId());
+        institution.setGoogleId(advert.getAddress().getGoogleId());
 
         LocalDate endDate = institutionDTO.getEndDate();
         if (endDate != null) {
@@ -209,6 +207,10 @@ public class InstitutionService {
         return institutionDAO.getRelatedInstitutions(activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
+    public List<Institution> getInstitutions(String query, String[] googleIds) {
+        return institutionDAO.getInstitutions(query, googleIds);
+    }
+
     public void disableInstitutionDomiciles(List<String> updates) {
         institutionDAO.disableInstitutionDomiciles(updates);
     }
@@ -276,5 +278,4 @@ public class InstitutionService {
         Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
-
 }

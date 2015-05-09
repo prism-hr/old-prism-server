@@ -227,6 +227,10 @@
             <a>domicile.id</a>
             <b>domicile</b>
         </field>
+        <field>
+            <a>advert.address</a>
+            <b>address</b>
+        </field>
     </mapping>
 
     <mapping>

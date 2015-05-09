@@ -1,19 +1,11 @@
 package com.zuehlke.pgadmissions.domain.institution;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "INSTITUTION_ADDRESS")
@@ -41,6 +33,9 @@ public class InstitutionAddress extends GeocodableLocation {
 
     @Column(name = "address_code")
     private String addressCode;
+
+    @Column(name = "google_id")
+    private String googleId;
 
     @Embedded
     private GeographicLocation location;
@@ -99,6 +94,14 @@ public class InstitutionAddress extends GeocodableLocation {
 
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
     @Override

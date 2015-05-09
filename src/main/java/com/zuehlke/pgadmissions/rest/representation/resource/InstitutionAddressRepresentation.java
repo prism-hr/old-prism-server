@@ -15,6 +15,8 @@ public class InstitutionAddressRepresentation {
 
     private String addressCode;
 
+    private String googleId;
+
     private String locationString;
 
     public String getDomicile() {
@@ -63,6 +65,14 @@ public class InstitutionAddressRepresentation {
 
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
     public String getLocationString() {

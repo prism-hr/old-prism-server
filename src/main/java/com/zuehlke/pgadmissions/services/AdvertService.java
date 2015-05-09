@@ -136,14 +136,14 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
-    public Advert createAdvert(User user, AdvertDTO advertDTO) throws Exception {
+    public Advert createAdvert(AdvertDTO advertDTO) throws Exception {
         Advert advert = new Advert();
-        updateAdvert(user, advertDTO, advert);
+        updateAdvert(advertDTO, advert);
         entityService.save(advert);
         return advert;
     }
 
-    public void updateAdvert(User user, AdvertDTO advertDTO, Advert advert) throws Exception {
+    public void updateAdvert(AdvertDTO advertDTO, Advert advert) throws Exception {
         if (BooleanUtils.isFalse(advert.getImported())) {
             advert.setTitle(advertDTO.getTitle());
         }
@@ -558,7 +558,7 @@ public class AdvertService {
         } else {
             updateAddress(addressDTO, address);
         }
-        geocodableLocationService.setLocation(addressDTO.getGoogleIdentifier(), address);
+        geocodableLocationService.setLocation(address);
     }
 
     private void updateAddress(InstitutionAddressDTO addressDTO, InstitutionAddress address) {
@@ -568,6 +568,7 @@ public class AdvertService {
         address.setAddressTown(addressDTO.getAddressTown());
         address.setAddressRegion(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
+        address.setGoogleId(addressDTO.getGoogleId());
     }
 
 }

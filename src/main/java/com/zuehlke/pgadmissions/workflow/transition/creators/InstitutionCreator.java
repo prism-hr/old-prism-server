@@ -40,12 +40,12 @@ public class InstitutionCreator implements ResourceCreator {
         InstitutionDTO newInstitution = (InstitutionDTO) newResource;
 
         AdvertDTO advertDTO = newInstitution.getAdvert();
-        Advert advert = advertService.createAdvert(user, advertDTO);
+        Advert advert = advertService.createAdvert(advertDTO);
         Document logoImage = newInstitution.getLogoImage() != null ? documentService.getById(newInstitution.getLogoImage().getId()) : null;
 
         Institution institution = new Institution().withUser(user).withParentResource(systemService.getSystem())
                 .withDomicile(advert.getAddress().getDomicile()).withAdvert(advert).withTitle(advert.getTitle()).withCurrency(newInstitution.getCurrency())
-                .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getLocation().getGoogleId())
+                .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getGoogleId())
                 .withUclInstitution(false).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withCreatedTimestamp(new DateTime())
                 .withLogoImage(logoImage);
         advert.setInstitution(institution);

@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.domain.location;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.math.BigDecimal;
 
 @Embeddable
 public class GeographicLocation {
-    
-    @Column(name = "google_id")
-    private String googleId;
 
     @Column(name = "location_x")
     private BigDecimal locationX;
@@ -29,65 +25,52 @@ public class GeographicLocation {
     @Column(name = "location_view_sw_y")
     private BigDecimal locationViewSwY;
 
-    public String getGoogleId() {
-        return googleId;
-    }
-
-    public void setGoogleId(String googleId) {
-        this.googleId = googleId;
-    }
-
-    public final BigDecimal getLocationX() {
+    public BigDecimal getLocationX() {
         return locationX;
     }
 
-    public final void setLocationX(BigDecimal locationX) {
+    public void setLocationX(BigDecimal locationX) {
         this.locationX = locationX;
     }
 
-    public final BigDecimal getLocationY() {
+    public BigDecimal getLocationY() {
         return locationY;
     }
 
-    public final void setLocationY(BigDecimal locationY) {
+    public void setLocationY(BigDecimal locationY) {
         this.locationY = locationY;
     }
 
-    public final BigDecimal getLocationViewNeX() {
+    public BigDecimal getLocationViewNeX() {
         return locationViewNeX;
     }
 
-    public final void setLocationViewNeX(BigDecimal locationViewNeX) {
+    public void setLocationViewNeX(BigDecimal locationViewNeX) {
         this.locationViewNeX = locationViewNeX;
     }
 
-    public final BigDecimal getLocationViewNeY() {
+    public BigDecimal getLocationViewNeY() {
         return locationViewNeY;
     }
 
-    public final void setLocationViewNeY(BigDecimal locationViewNeY) {
+    public void setLocationViewNeY(BigDecimal locationViewNeY) {
         this.locationViewNeY = locationViewNeY;
     }
 
-    public final BigDecimal getLocationViewSwX() {
+    public BigDecimal getLocationViewSwX() {
         return locationViewSwX;
     }
 
-    public final void setLocationViewSwX(BigDecimal locationViewSwX) {
+    public void setLocationViewSwX(BigDecimal locationViewSwX) {
         this.locationViewSwX = locationViewSwX;
     }
 
-    public final BigDecimal getLocationViewSwY() {
+    public BigDecimal getLocationViewSwY() {
         return locationViewSwY;
     }
 
-    public final void setLocationViewSwY(BigDecimal locationViewSwY) {
+    public void setLocationViewSwY(BigDecimal locationViewSwY) {
         this.locationViewSwY = locationViewSwY;
-    }
-    
-    public GeographicLocation withGoogleId(String googleId) {
-        this.googleId = googleId;
-        return this;
     }
 
     public GeographicLocation withLocationX(BigDecimal locationX) {

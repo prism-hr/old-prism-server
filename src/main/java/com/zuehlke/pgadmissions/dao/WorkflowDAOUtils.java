@@ -24,7 +24,7 @@ public class WorkflowDAOUtils {
         if (partner != null) {
             constraint.add(Restrictions.conjunction() //
                     .add(Restrictions.eq(targetEntity + ".partnerMode", true)) //
-                    .add(Restrictions.eq("userRole.institution", resource.getPartner())));
+                    .add(Restrictions.eq("userRole.institution", partner)));
         }
 
         return constraint;

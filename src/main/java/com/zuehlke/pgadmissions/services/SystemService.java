@@ -591,8 +591,9 @@ public class SystemService {
                     WORKFLOW_PROPERTY, prismRoleTransition.getPropertyDefinition());
             RoleTransition roleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
                     .withRoleTransitionType(prismRoleTransition.getTransitionType()).withTransitionRole(transitionRole)
-                    .withRestrictToActionOwner(prismRoleTransition.getRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
-                    .withMaximumPermitted(prismRoleTransition.getMaximumPermitted()).withWorkflowPropertyDefinition(workflowPropertyDefinition);
+                    .withPartnerMode(prismRoleTransition.getPartnerMode()).withRestrictToActionOwner(prismRoleTransition.getRestrictToActionOwner())
+                    .withMinimumPermitted(prismRoleTransition.getMinimumPermitted()).withMaximumPermitted(prismRoleTransition.getMaximumPermitted())
+                    .withWorkflowPropertyDefinition(workflowPropertyDefinition);
             entityService.save(roleTransition);
             stateTransition.getRoleTransitions().add(roleTransition);
         }

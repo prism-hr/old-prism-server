@@ -295,7 +295,8 @@ public enum PrismRoleTransitionGroup {
             new PrismRoleTransition() //
                     .withRole(PROJECT_ADMINISTRATOR) //
                     .withTransitionType(BRANCH) //
-                    .withTransitionRole(INSTITUTION_ADVERTISER)
+                    .withPartnerMode() //
+                    .withTransitionRole(INSTITUTION_ADVERTISER) //
                     .withMinimumPermitted(1) //
                     .withMaximumPermitted(1)), //
 
@@ -361,7 +362,8 @@ public enum PrismRoleTransitionGroup {
             new PrismRoleTransition() //
                     .withRole(PROGRAM_ADMINISTRATOR) //
                     .withTransitionType(BRANCH) //
-                    .withTransitionRole(INSTITUTION_ADVERTISER)
+                    .withPartnerMode() //
+                    .withTransitionRole(INSTITUTION_ADVERTISER) //
                     .withMinimumPermitted(1) //
                     .withMaximumPermitted(1)), //
 

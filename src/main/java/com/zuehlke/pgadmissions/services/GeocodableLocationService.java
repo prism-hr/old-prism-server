@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
@@ -58,13 +60,13 @@ public class GeocodableLocationService {
 
     public synchronized <T extends GeocodableLocation> EstablishmentSearchResponseDTO getEstablishmentLocation(String googleIdentifier) throws Exception {
         wait(googleGeocodeRequestDelayMs);
-        URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?placeid=" + googleIdentifier + "&key=" + googleApiKey).getURI();
+        URI request = new DefaultResourceLoader().getResource(googlePlacesApiUri + "json?placeid=" + googleIdentifier + "&key=" + googleApiKey).getURI();
         return restTemplate.getForObject(request, EstablishmentSearchResponseDTO.class);
     }
 
     private boolean setEstablishmentLocation(String googleIdentifier, InstitutionAddress address) throws Exception {
         EstablishmentSearchResponseDTO response = getEstablishmentLocation(googleIdentifier);
-        if (response.getStatus().equals("OK")) {
+        if (response.getStatus().equals(OK)) {
             GoogleResultDTO result = response.getResult();
             if (result != null) {
                 setLocation(googleIdentifier, address, result.getGeometry());
@@ -87,7 +89,7 @@ public class GeocodableLocationService {
         for (int i = addressTokens.size(); i >= 0; i--) {
             List<String> requestTokens = addressTokens.subList(0, i);
             LocationSearchResponseDTO response = getGeocodeLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
-            if (response.getStatus().equals("OK")) {
+            if (response.getStatus().equals(OK)) {
                 List<GoogleResultDTO> results = response.getResults();
                 if (!results.isEmpty()) {
                     setLocation(googleIdentifier, address, results.get(0).getGeometry());

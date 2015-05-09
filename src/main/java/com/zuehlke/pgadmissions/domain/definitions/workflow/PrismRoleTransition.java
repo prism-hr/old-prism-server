@@ -7,6 +7,8 @@ public class PrismRoleTransition {
     private PrismRole role;
 
     private PrismRoleTransitionType transitionType;
+    
+    private Boolean partnerMode = false;
 
     private PrismRole transitionRole;
 
@@ -24,6 +26,10 @@ public class PrismRoleTransition {
 
     public PrismRoleTransitionType getTransitionType() {
         return transitionType;
+    }
+    
+    public Boolean getPartnerMode() {
+        return partnerMode;
     }
 
     public PrismRole getTransitionRole() {
@@ -60,6 +66,11 @@ public class PrismRoleTransition {
         return this;
     }
 
+    public PrismRoleTransition withPartnerMode() {
+        this.partnerMode = true;
+        return this;
+    }
+    
     public PrismRoleTransition withTransitionRole(PrismRole transitionRole) {
         this.transitionRole = transitionRole;
         return this;

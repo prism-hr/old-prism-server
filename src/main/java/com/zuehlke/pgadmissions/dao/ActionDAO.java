@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -405,7 +406,9 @@ public class ActionDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(Restrictions.eq("resourceCondition.partnerMode", true));
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
+                        .add(Restrictions.eq("resourceCondition.partnerMode", true)));
 
         if (!actionConditions.isEmpty()) {
             criteria.add(Restrictions.in("resourceCondition.actionCondition", actionConditions));

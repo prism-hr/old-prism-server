@@ -31,6 +31,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_INSTITUTION_ADVERTISER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_INSTITUTION_ADVERTISER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
@@ -338,7 +340,8 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(PROJECT_APPROVAL) //
                     .withTransitionAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
-                    .withTransitionEvaluation(PROJECT_APPROVED_PARTNER_OUTCOME), //
+                    .withTransitionEvaluation(PROJECT_APPROVED_PARTNER_OUTCOME) //
+                    .withRoleTransitions(PROJECT_CREATE_INSTITUTION_ADVERTISER_GROUP), //
             new PrismStateTransition() //
                     .withTransitionState(PROJECT_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
@@ -403,7 +406,8 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_APPROVAL) //
                     .withTransitionAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
-                    .withTransitionEvaluation(PROGRAM_APPROVED_PARTNER_OUTCOME), //
+                    .withTransitionEvaluation(PROGRAM_APPROVED_PARTNER_OUTCOME) //
+                    .withRoleTransitions(PROGRAM_CREATE_INSTITUTION_ADVERTISER_GROUP), //
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //

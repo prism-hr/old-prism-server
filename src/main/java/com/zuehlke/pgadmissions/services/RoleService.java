@@ -1,15 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -181,15 +179,6 @@ public class RoleService {
         return roleDAO.getPermissionOrdinal(user);
     }
 
-    public void executeApplicationProvideReferenceRoleTransition(Resource resource, Comment comment) {
-        User user = comment.getDelegateUser();
-        Role referee = getById(APPLICATION_REFEREE);
-        UserRole userRole = new UserRole().withResource(resource).withUser(user).withRole(referee);
-        Role viewer = getById(APPLICATION_VIEWER_REFEREE);
-        UserRole transitionUserRole = new UserRole().withResource(resource).withUser(user).withRole(viewer);
-        applicationContext.getBean(UPDATE.getResolver()).resolve(userRole, transitionUserRole, comment);
-    }
-
     public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole != null) {
@@ -290,13 +279,17 @@ public class RoleService {
         Role transitionRole = roleTransition.getTransitionRole();
 
         Resource resource = resourceService.getOperativeResource(comment.getResource(), comment.getAction());
-        Resource transitionResource = comment.getResource();
+        Resource commentResource = comment.getResource();
+        Resource transitionResource = BooleanUtils.isTrue(roleTransition.getPartnerMode()) ? commentResource.getPartner().getEnclosingResource(
+                transitionRole.getScope().getId()) : commentResource.getEnclosingResource(transitionRole.getScope().getId());
 
-        UserRole userRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
-        UserRole transitionUserRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)
-                .withAssignedTimestamp(baseline);
-
-        applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
+        if (transitionResource != null) {
+            UserRole userRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
+            UserRole transitionUserRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)
+                    .withAssignedTimestamp(baseline);
+    
+            applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
+        }
     }
 
     private void validateUserRoleRemoval(Resource resource, Role roleToRemove) {

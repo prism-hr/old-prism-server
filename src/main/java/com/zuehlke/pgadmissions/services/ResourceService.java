@@ -565,7 +565,8 @@ public class ResourceService {
         }
 
         Resource lastResource = resource.getEnclosingResource(lastResourceScope);
-        return actionService.getPartnerActions(lastResource, filteredActionConditions);
+        List<PrismAction> partnerActions = actionService.getPartnerActions(lastResource, filteredActionConditions);
+        return partnerActions; 
     }
 
     public ResourceStudyOption getStudyOption(ResourceOpportunity resource, StudyOption studyOption) {

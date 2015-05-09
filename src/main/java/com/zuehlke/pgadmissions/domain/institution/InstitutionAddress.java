@@ -144,6 +144,11 @@ public class InstitutionAddress extends GeocodableLocation {
         return this;
     }
 
+    public InstitutionAddress withGoogleId(String googleId) {
+        this.googleId = googleId;
+        return this;
+    }
+    
     public InstitutionAddress withLocation(GeographicLocation location) {
         this.location = location;
         return this;

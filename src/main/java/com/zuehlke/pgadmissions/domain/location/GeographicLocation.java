@@ -7,23 +7,12 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class GeographicLocation {
-    
-    @Column(name = "google_id")
-    private String googleId;
 
     @Column(name = "location_x")
     private BigDecimal locationX;
 
     @Column(name = "location_y")
     private BigDecimal locationY;
-
-    public String getGoogleId() {
-        return googleId;
-    }
-
-    public void setGoogleId(String googleId) {
-        this.googleId = googleId;
-    }
 
     public final BigDecimal getLocationX() {
         return locationX;
@@ -39,11 +28,6 @@ public class GeographicLocation {
 
     public final void setLocationY(BigDecimal locationY) {
         this.locationY = locationY;
-    }
-    
-    public GeographicLocation withGoogleId(String googleId) {
-        this.googleId = googleId;
-        return this;
     }
 
     public GeographicLocation withLocationX(BigDecimal locationX) {

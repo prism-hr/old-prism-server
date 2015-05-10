@@ -73,7 +73,7 @@ public enum PrismScope {
             ProjectSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProjectRepresentationEnricher.class), //
     APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
-                    .add("project", "title").getAll(), null, //
+                    .add("program", "title").add("project", "title").getAll(), null, //
             ApplicationExecutor.class, ApplicationCreator.class, ApplicationPersister.class, ApplicationPreprocessor.class, ApplicationProcessor.class, //
             ApplicationPostprocessor.class, null, null, ApplicationRepresentationEnricher.class);
 

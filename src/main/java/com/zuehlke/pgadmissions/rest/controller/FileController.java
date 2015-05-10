@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -13,19 +32,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 
 @RestController
 @RequestMapping("/api")

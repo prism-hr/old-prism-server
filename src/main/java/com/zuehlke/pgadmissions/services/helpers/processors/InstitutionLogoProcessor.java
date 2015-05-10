@@ -1,14 +1,16 @@
 package com.zuehlke.pgadmissions.services.helpers.processors;
 
-import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
-import org.imgscalr.Scalr;
-import org.springframework.stereotype.Component;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
+import javax.imageio.ImageIO;
+
+import org.imgscalr.Scalr;
+import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 
 @Component
 public class InstitutionLogoProcessor implements ImageDocumentProcessor {

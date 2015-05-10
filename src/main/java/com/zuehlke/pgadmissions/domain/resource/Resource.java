@@ -41,9 +41,9 @@ public abstract class Resource implements UniqueEntity {
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);
-    
+
     public abstract Institution getPartner();
-    
+
     public abstract void setPartner(Institution partner);
 
     public abstract Program getProgram();
@@ -51,7 +51,7 @@ public abstract class Resource implements UniqueEntity {
     public abstract void setProgram(Program program);
 
     public abstract Project getProject();
-    
+
     public abstract Advert getAdvert();
 
     public abstract void setAdvert(Advert advert);
@@ -59,7 +59,7 @@ public abstract class Resource implements UniqueEntity {
     public abstract void setProject(Project project);
 
     public abstract Application getApplication();
-    
+
     public abstract String getReferrer();
 
     public abstract void setReferrer(String referrer);
@@ -117,15 +117,15 @@ public abstract class Resource implements UniqueEntity {
     public void addComment(Comment comment) {
         getComments().add(comment);
     }
-    
+
     public void addResourceState(ResourceState resourceState) {
         getResourceStates().add(resourceState);
     }
-    
+
     public void addResourcePreviousState(ResourcePreviousState resourcePreviousState) {
         getResourcePreviousStates().add(resourcePreviousState);
     }
- 
+
     public Resource getParentResource() {
         switch (PrismScope.getByResourceClass(this.getClass())) {
         case SYSTEM:
@@ -159,10 +159,23 @@ public abstract class Resource implements UniqueEntity {
     public Resource getEnclosingResource(PrismScope resourceScope) {
         return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
     }
-    
+
     @Override
     public String toString() {
         return getResourceScope().name() + "#" + getId();
     }
-  
+
+    public boolean sameAs(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final Resource other = (Resource) object;
+        Integer id = getId();
+        Integer otherId = other.getId();
+        return id != null && otherId != null && id.equals(otherId);
+    }
+
 }

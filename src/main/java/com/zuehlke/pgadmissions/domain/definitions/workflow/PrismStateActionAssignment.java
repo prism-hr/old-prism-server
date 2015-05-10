@@ -59,4 +59,5 @@ public class PrismStateActionAssignment {
         return Objects.equal(role, other.getRole()) && Objects.equal(partnerMode, other.getPartnerMode())
                 && Objects.equal(actionEnhancement, other.getActionEnhancement());
     }
+
 }

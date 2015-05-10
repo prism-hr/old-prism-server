@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
-import com.google.common.base.Function;
+import javax.inject.Inject;
+
 import org.dozer.Mapper;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import com.google.common.base.Function;
 
 @Component
 public class DozerMapperHelper {

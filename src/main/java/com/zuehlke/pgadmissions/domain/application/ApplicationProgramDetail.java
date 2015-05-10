@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 
@@ -28,6 +29,10 @@ public class ApplicationProgramDetail extends ApplicationSection {
 
     @OneToOne(mappedBy = "programDetail")
     private Application application;
+    
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id", nullable = false)
+    private OpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "study_option_id", nullable = false)
@@ -62,6 +67,14 @@ public class ApplicationProgramDetail extends ApplicationSection {
 
     public void setApplication(Application application) {
         this.application = application;
+    }
+
+    public OpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public StudyOption getStudyOption() {
@@ -111,6 +124,11 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
+    public ApplicationProgramDetail withOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+        return this;
+    }
+    
     public ApplicationProgramDetail withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
         return this;

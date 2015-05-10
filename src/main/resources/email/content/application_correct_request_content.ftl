@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    The application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE} could not be exported due to errors
+    The application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE} could not be exported due to errors
     in the data. Please log in to correct the application and resubmit it for export.
 </p>
 

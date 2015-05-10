@@ -13,7 +13,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
+import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +29,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -54,7 +57,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
@@ -78,6 +80,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
+import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
@@ -88,7 +91,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepr
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
@@ -152,42 +154,40 @@ public class ApplicationService {
         Application application = getById(applicationId);
 
         StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
-        // TODO do we want to suggest start date when applying for an institution?
-        if (ResourceOpportunity.class.isAssignableFrom(application.getParentResource().getResourceScope().getResourceClass())) {
-            ResourceStudyOption programStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
-
-            if (programStudyOption != null) {
-                return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
-                        .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline))
-                        .withLatestDate(getLatestStartDate(programStudyOption.getId()));
-            }
+        ResourceStudyOption resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
+        
+        if (resourceStudyOption == null && !application.getParentResource().sameAs(application.getInstitution())) {
+            throw new PrismCannotApplyException();
         }
 
-        return null;
+        LocalDate earliestStartDate = getEarliestStartDate(resourceStudyOption, baseline);
+        LocalDate latestStartDate = getLatestStartDate(application, resourceStudyOption);
+
+        return new ApplicationStartDateRepresentation().withEarliestDate(earliestStartDate)
+                .withRecommendedDate(getRecommendedStartDate(application, earliestStartDate, latestStartDate, baseline)).withLatestDate(latestStartDate);
+
     }
 
-    public LocalDate getEarliestStartDate(Integer studyOptionId, LocalDate baseline) {
-        if (studyOptionId == null) {
-            return null;
+    public LocalDate getEarliestStartDate(ResourceStudyOption resourceStudyOption, LocalDate baseline) {
+        if (resourceStudyOption != null) {
+            LocalDate studyOptionStart = resourceStudyOption.getApplicationStartDate();
+            LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
+            earliestStartDate = earliestStartDate.withDayOfWeek(MONDAY);
+            return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
+        } else {
+            return new LocalDate().withDayOfWeek(MONDAY);
         }
-
-        ResourceStudyOption studyOption = entityService.getById(ResourceStudyOption.class, studyOptionId);
-        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
-        LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
-        earliestStartDate = earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
-        return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
     }
 
-    public LocalDate getLatestStartDate(Integer studyOptionId) {
-        if (studyOptionId == null) {
-            return null;
+    public LocalDate getLatestStartDate(Application application, ResourceStudyOption resourceStudyOption) {
+        if (resourceStudyOption != null) {
+            LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
+                    resourceStudyOption.getProgram().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
+            LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
+            return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
+        } else {
+            return application.getInstitution().getEndDate();
         }
-
-        ResourceStudyOption studyOption = entityService.getById(ResourceStudyOption.class, studyOptionId);
-        LocalDate closeDate = studyOption.getApplicationCloseDate().plusMonths(
-                studyOption.getProgram().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
-        LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
-        return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
 
     public String getApplicationExportReference(Application application) {
@@ -252,7 +252,7 @@ public class ApplicationService {
         Application application = getById(applicationId);
 
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
-        String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
+        String dateFormat = loader.load(SYSTEM_DATE_FORMAT);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
@@ -313,14 +313,14 @@ public class ApplicationService {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
 
         PrismScope scopeId = PrismScope.APPLICATION;
-        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(PrismScope.APPLICATION);
+        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(APPLICATION);
 
         User user = userService.getCurrentUser();
         resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
         Set<Integer> assignedApplications = resourceService.getAssignedResources(user, scopeId, parentScopeIds, filter);
 
         List<PrismWorkflowPropertyDefinition> workflowPropertyDefinitions = applicationDAO.getApplicationWorkflowPropertyDefinitions(assignedApplications);
-        List<PrismActionRedactionType> redactions = actionService.getRedactions(PrismScope.APPLICATION, assignedApplications, user);
+        List<PrismActionRedactionType> redactions = actionService.getRedactions(APPLICATION, assignedApplications, user);
 
         DataTable dataTable = new DataTable();
 
@@ -348,20 +348,20 @@ public class ApplicationService {
                 String value = null;
                 String getMethod = "get" + WordUtils.capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
-                    case DATE:
-                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
-                        break;
-                    case DISPLAY_PROPERTY:
-                        Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                        value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
-                        break;
-                    case STRING:
-                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                        break;
+                case DATE:
+                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
+                    break;
+                case DISPLAY_PROPERTY:
+                    Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                    value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
+                    break;
+                case STRING:
+                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                    break;
                 }
                 row.addCell(value);
             }
-            row.addCell(applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/application/" + reportRow.getIdDisplay() + "/view");
+            row.addCell(applicationUrl + "/" + ANGULAR_HASH + "/application/" + reportRow.getIdDisplay() + "/view");
             dataTable.addRow(row);
         }
 
@@ -384,14 +384,14 @@ public class ApplicationService {
 
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
         List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
-                customizationService.getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration.WORKFLOW_PROPERTY, application, //
-                        application.getWorkflowPropertyConfigurationVersion());
+        customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
+                application.getWorkflowPropertyConfigurationVersion());
         if (application.isSubmitted()) {
             for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
                 PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
-                if (definitionId == PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE) {
+                if (definitionId == APPLICATION_ASSIGN_REFEREE) {
                     configuration.setMaximum(definitionId.getMaximumPermitted());
-                } else if (definitionId == PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL
+                } else if (definitionId == APPLICATION_POSITION_DETAIL
                         && BooleanUtils.isTrue(application.getProgram().getRequireProjectDefinition())) {
                     configuration.setEnabled(true);
                     configuration.setRequired(true);
@@ -402,7 +402,7 @@ public class ApplicationService {
     }
 
     public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
-        return userAdministratorResources.isEmpty() ? Lists.<Application>newArrayList() : applicationDAO
+        return userAdministratorResources.isEmpty() ? Lists.<Application> newArrayList() : applicationDAO
                 .getUserAdministratorApplications(userAdministratorResources);
     }
 
@@ -434,31 +434,28 @@ public class ApplicationService {
         return errors;
     }
 
-    private LocalDate getRecommendedStartDate(Application application, ResourceStudyOption studyOption, LocalDate baseline) {
-        if (studyOption == null) {
-            return null;
+    private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
+        if (!application.getParentResource().sameAs(application.getInstitution())) {
+            PrismOpportunityType opportunityType = application.getProgram().getOpportunityType().getPrismOpportunityType();
+            DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
+
+            LocalDate immediate = defaults.getImmediate();
+            LocalDate scheduled = defaults.getScheduled();
+
+            LocalDate recommended = application.getDefaultStartType() == SCHEDULED ? scheduled : immediate;
+
+            if (recommended.isBefore(earliest)) {
+                recommended = earliest.plusWeeks(opportunityType.getDefaultStartDelay());
+            }
+
+            if (recommended.isAfter(latest)) {
+                recommended = immediate.isAfter(latest) ? latest : immediate;
+            }
+
+            return recommended;
+        } else {
+            return baseline.withDayOfWeek(MONDAY).plusWeeks(4);
         }
-
-        LocalDate earliest = getEarliestStartDate(studyOption.getId(), baseline);
-        LocalDate latest = getLatestStartDate(studyOption.getId());
-
-        PrismOpportunityType opportunityType = application.getProgram().getOpportunityType().getPrismOpportunityType();
-        DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
-
-        LocalDate immediate = defaults.getImmediate();
-        LocalDate scheduled = defaults.getScheduled();
-
-        LocalDate recommended = application.getDefaultStartType() == SCHEDULED ? scheduled : immediate;
-
-        if (recommended.isBefore(earliest)) {
-            recommended = earliest.plusWeeks(opportunityType.getDefaultStartDelay());
-        }
-
-        if (recommended.isAfter(latest)) {
-            recommended = immediate.isAfter(latest) ? latest : immediate;
-        }
-
-        return recommended;
     }
 
 }

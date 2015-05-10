@@ -4,7 +4,7 @@
 
 <p>
     Our Programme Director has completed their assessment of your Application ${APPLICATION_CODE}
-    for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+    for ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 <p>
     We are pleased to inform you that your Application has been advanced to UCL Admissions for final approval. If this

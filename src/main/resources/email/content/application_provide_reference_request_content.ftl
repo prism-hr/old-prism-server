@@ -4,7 +4,7 @@
 
 <p>
 ${APPLICATION_CREATOR_FULL_NAME} has submitted an Application ${APPLICATION_CODE} for ${APPLICATION_OPPORTUNITY_TYPE} at
-${INSTITUTION_HOMEPAGE} in ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+${INSTITUTION_HOMEPAGE} in ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 <p>
     They have nominated you as one of their referees and we would very much appreciate your feedback on their
@@ -53,7 +53,7 @@ ${ACTION_COMPLETE}
 
 <p>
     We look forward to receiving your feedback at your earliest convenience. Should you run into any difficulty, please
-    see our dedicated ${TEMPLATE_HELPDESK} to access further assistance.
+    see our dedicated ${TEMPLATE_SYSTEM_HELPDESK} to access further assistance.
 </p>
 
 

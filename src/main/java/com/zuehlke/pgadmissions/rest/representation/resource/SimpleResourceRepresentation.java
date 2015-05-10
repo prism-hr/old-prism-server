@@ -7,6 +7,7 @@ public class SimpleResourceRepresentation {
     private String title;
 
     public SimpleResourceRepresentation() {
+        return;
     }
 
     public SimpleResourceRepresentation(Integer id, String title) {
@@ -29,4 +30,5 @@ public class SimpleResourceRepresentation {
     public void setTitle(String title) {
         this.title = title;
     }
+
 }

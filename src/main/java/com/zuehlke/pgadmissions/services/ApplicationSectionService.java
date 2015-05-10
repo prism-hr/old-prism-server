@@ -13,7 +13,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -51,9 +50,9 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.imported.Country;
@@ -65,11 +64,13 @@ import com.zuehlke.pgadmissions.domain.imported.Gender;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.Language;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.QualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -135,6 +136,15 @@ public class ApplicationSectionService {
 
         application.setPreviousApplication(programDetailDTO.getPreviousApplication());
 
+        PrismOpportunityType prismOpportunityType = programDetailDTO.getOpportunityType();
+        if (prismOpportunityType == null) {
+            ResourceOpportunity parent = (ResourceOpportunity) application.getParentResource();
+            programDetail.setOpportunityType(parent.getOpportunityType());
+        } else {
+            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, prismOpportunityType.name());
+            programDetail.setOpportunityType(opportunityType);
+        }
+        
         StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
         ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailDTO.getReferralSource());
         programDetail.setStudyOption(studyOption);
@@ -607,12 +617,6 @@ public class ApplicationSectionService {
         User userCurrent = userService.getCurrentUser();
         List<PrismActionEnhancement> userEnhancements = actionService.getPermittedActionEnhancements(application, userCurrent);
         List<PrismActionEnhancement> permittedEnhancements = Lists.newArrayList(APPLICATION_VIEW_EDIT_AS_CREATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER);
-
-        for (CommentAssignedUser assignee : assignees) {
-            if (assignee.getRole().getId() == PrismRole.APPLICATION_REFEREE && assignee.getRoleTransitionType() == PrismRoleTransitionType.CREATE) {
-                permittedEnhancements.add(APPLICATION_VIEW_EDIT_AS_RECRUITER);
-            }
-        }
 
         if (Collections.disjoint(userEnhancements, permittedEnhancements)) {
             Action action = actionService.getViewEditAction(application);

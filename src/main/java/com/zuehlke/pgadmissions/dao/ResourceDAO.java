@@ -75,7 +75,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .list();
     }
-    
+
     public List<Integer> getPartnerResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
         String propagatedAlias = "partner" + propagatedScope.getUpperCamelName();
         String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
@@ -408,7 +408,7 @@ public class ResourceDAO {
                 .add(Restrictions.ilike("partner.title", searchTerm, MatchMode.ANYWHERE))
                 .list();
     }
-    
+
     public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.groupProperty(scope.getLowerCamelName() + ".id")) //
@@ -422,8 +422,16 @@ public class ResourceDAO {
         for (String tableName : customColumns.keySet()) {
             boolean prefixColumnName = !tableName.equals(scopeId.getLowerCamelName());
             for (String columnName : customColumns.get(tableName)) {
-                projectionList.add(Projections.property(prefixColumnName ? tableName + "." + columnName : columnName),
-                        tableName + WordUtils.capitalize(columnName));
+                String columnAlias = columnName;
+                if (columnAlias.contains(".")) {
+                    columnAlias = "";
+                    for (String columnAliasPart : columnAlias.split("\\.")) {
+                        columnAlias = columnAlias + columnAliasPart.toUpperCase();
+                    }
+                } else {
+                    columnAlias = WordUtils.capitalize(columnAlias);
+                }
+                projectionList.add(Projections.property(prefixColumnName ? tableName + "." + columnName : columnName), tableName + columnAlias);
             }
         }
     }

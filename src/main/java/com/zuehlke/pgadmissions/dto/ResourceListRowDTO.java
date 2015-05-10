@@ -14,7 +14,7 @@ public class ResourceListRowDTO {
     private Integer systemId;
 
     private Integer institutionId;
-    
+
     private Integer partnerId;
 
     private Integer programId;
@@ -42,8 +42,12 @@ public class ResourceListRowDTO {
     private String code;
 
     private String institutionTitle;
-    
+
+    private Integer institutionLogoImageId;
+
     private String partnerTitle;
+
+    private Integer partnerLogoImageId;
 
     private String programTitle;
 
@@ -58,7 +62,7 @@ public class ResourceListRowDTO {
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
-    
+
     private Set<ResourceListActionDTO> actions;
 
     public Integer getSystemId() {
@@ -165,12 +169,28 @@ public class ResourceListRowDTO {
         this.institutionTitle = institutionTitle;
     }
 
+    public Integer getInstitutionLogoImageId() {
+        return institutionLogoImageId;
+    }
+
+    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
+        this.institutionLogoImageId = institutionLogoImageId;
+    }
+
     public String getPartnerTitle() {
         return partnerTitle;
     }
 
     public void setPartnerTitle(String partnerTitle) {
         this.partnerTitle = partnerTitle;
+    }
+
+    public Integer getPartnerLogoImageId() {
+        return partnerLogoImageId;
+    }
+
+    public void setPartnerLogoImageId(Integer partnerLogoImageId) {
+        this.partnerLogoImageId = partnerLogoImageId;
     }
 
     public String getProgramTitle() {
@@ -252,7 +272,7 @@ public class ResourceListRowDTO {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public Set<ResourceListActionDTO> getActions() {
         return actions;
     }
@@ -264,5 +284,5 @@ public class ResourceListRowDTO {
     public Integer getResourceId() {
         return ObjectUtils.firstNonNull(applicationId, projectId, programId, institutionId, systemId);
     }
-    
+
 }

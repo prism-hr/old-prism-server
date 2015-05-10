@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
@@ -708,7 +709,7 @@ public class Comment {
     }
 
     public boolean isApplicationProvideReferenceComment() {
-        return action.getId() == APPLICATION_PROVIDE_REFERENCE;
+        return Arrays.asList(APPLICATION_PROVIDE_REFERENCE, APPLICATION_UPLOAD_REFERENCE).contains(action.getId());
     }
 
     public boolean isApplicationConfirmOfferRecommendationComment() {
@@ -852,7 +853,7 @@ public class Comment {
     public boolean isProjectPartnerApproveComment() {
         return action.getId().equals(PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE) && transitionState.getId().equals(PROJECT_APPROVAL);
     }
-    
+
     public boolean isProgramPartnerApproveComment() {
         return action.getId().equals(PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE) && transitionState.getId().equals(PROGRAM_APPROVAL);
     }

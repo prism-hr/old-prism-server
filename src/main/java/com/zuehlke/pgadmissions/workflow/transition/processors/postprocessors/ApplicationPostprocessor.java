@@ -1,29 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
-import static java.math.RoundingMode.HALF_UP;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
@@ -39,13 +15,25 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
+import static java.math.RoundingMode.HALF_UP;
 
 @Component
 public class ApplicationPostprocessor implements ResourceProcessor {
@@ -61,7 +49,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
 
     @Inject
     private ResourceService resourceService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -71,7 +59,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     @Override
     public void process(Resource resource, Comment comment) throws Exception {
         Application application = (Application) resource;
-        
+
         if (comment.isCreateComment()) {
             resourceService.synchronizePartner(resource, comment);
         }
@@ -145,7 +133,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
             Integer ratingCount = ratingSummary.getApplicationRatingCount().intValue();
             Integer ratingApplications = ratingSummary.getApplicationRatingApplications().intValue();
             parent.setApplicationRatingCount(ratingCount);
-            parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications).setScale(2, HALF_UP)));
+            parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications), 2, HALF_UP));
             parent.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()).setScale(2, HALF_UP));
         }
     }

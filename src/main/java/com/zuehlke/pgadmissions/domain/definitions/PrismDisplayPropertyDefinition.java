@@ -105,7 +105,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use"),
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use"),
     SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one"),
-    SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_COMMENT, "No comment provided"), 
+    SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_COMMENT, "No comment provided"),
 
     /*
      * *************** SYSTEM STATE GROUP *********************
@@ -1975,6 +1975,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Specify how highly you rate the applicant in comparison to other applicants that you have seen, with 5 stars being the highest rating and 0 the lowest."),
     APPLICATION_ACTION_ELIGIBLE_LABEL(APPLICATION_ACTION, "Is the applicant Eligible?"),
     APPLICATION_ACTION_ELIGIBLE_HINT(APPLICATION_ACTION, "Assess whether the applicant is eligible."),
+    APPLICATION_ACTION_SELECT_REFEREE_LABEL(APPLICATION_ACTION, "Referee"),
+    APPLICATION_ACTION_SELECT_REFEREE_HINT(APPLICATION_ACTION, "???"),
     APPLICATION_ACTION_TRANSITION_STATE_LABEL(APPLICATION_ACTION, "Next Task"),
     APPLICATION_ACTION_TRANSITION_STATE_HINT(APPLICATION_ACTION, "Select the next task that you wish to perform."),
     APPLICATION_ACTION_SECONDARY_STATES_LABEL(APPLICATION_ACTION, "Other Tasks"),

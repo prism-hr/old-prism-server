@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Please complete your Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+    Please complete your Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 
 ${ACTION_COMPLETE}

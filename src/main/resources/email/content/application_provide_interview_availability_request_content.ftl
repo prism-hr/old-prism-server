@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    We wish to schedule an interview in connection with Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+    We wish to schedule an interview in connection with Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 <p>
     Please let us know when you would be available to attend.

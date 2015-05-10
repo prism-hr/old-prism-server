@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 import static org.junit.Assert.*;
 
 @Service
@@ -62,7 +74,7 @@ public class WorkflowConfigurationHelper {
 
 	private void verifyState(State state) {
 		if (state == null) {
-			state = stateService.getById(PrismState.SYSTEM_RUNNING);
+			state = stateService.getById(SYSTEM_RUNNING);
 		}
 
 		statesVisited.add(state);
@@ -109,7 +121,7 @@ public class WorkflowConfigurationHelper {
 
 			PrismActionCategory actionCategory = action.getActionCategory();
 
-			if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+			if (action.getActionType() == SYSTEM_INVOCATION) {
 				assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
 				assertFalse(stateAction.getRaisesUrgentFlag());
 				assertNull(stateAction.getNotificationDefinition());
@@ -120,11 +132,11 @@ public class WorkflowConfigurationHelper {
 				assertNotNull(stateAction.getNotificationDefinition());
 			}
 
-			if (actionCategory == PrismActionCategory.ESCALATE_RESOURCE || actionCategory == PrismActionCategory.PURGE_RESOURCE) {
+			if (actionCategory == ESCALATE_RESOURCE || actionCategory == PURGE_RESOURCE) {
 				escalationActions.add(action);
 			}
 
-			if (actionCategory == PrismActionCategory.VIEW_EDIT_RESOURCE) {
+			if (actionCategory == VIEW_EDIT_RESOURCE) {
 				verifyActionEnhancements(stateAction);
 				viewEditActions.add(action);
 			}
@@ -212,19 +224,18 @@ public class WorkflowConfigurationHelper {
 			logger.info("Verifying role transition: " + role.getId().toString() + " " + roleTransitionType + " " + transitionRoleId.toString());
 
 			actualProcessedRoles.add(transitionRoleId);
-			assertEquals(transitionState.getScope(), transitionRole.getScope());
 
-			if (roleTransitionType != PrismRoleTransitionType.RETIRE) {
+			if (roleTransitionType != RETIRE) {
 
 				PrismActionCategory actionCategory = action.getActionCategory();
-				if (transitionRole.getScopeCreator() != null && roleTransitionType == PrismRoleTransitionType.CREATE
-				        && (actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.INITIALISE_RESOURCE)) {
+				if (transitionRole.getScopeCreator() != null && roleTransitionType == CREATE
+				        && (actionCategory == CREATE_RESOURCE || actionCategory == INITIALISE_RESOURCE)) {
 					assertTrue(roleTransition.getMinimumPermitted() == 1);
 					assertTrue(roleTransition.getMaximumPermitted() == 1);
 					actualCreatorRoles.put(transitionState.getScope().getId(), transitionRoleId);
 				}
 
-				if (!(roleTransitionType == PrismRoleTransitionType.CREATE || roleTransitionType == PrismRoleTransitionType.BRANCH)) {
+				if (!(roleTransitionType == CREATE || roleTransitionType == BRANCH)) {
 					assertEquals(state.getScope(), role.getScope());
 					assertEquals(state.getScope(), transitionRole.getScope());
 				}
@@ -237,7 +248,7 @@ public class WorkflowConfigurationHelper {
 			Action action = stateAction.getAction();
 			Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
 
-			if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+			if (action.getActionType() == SYSTEM_INVOCATION) {
 				assertTrue(assignments.size() == 0);
 			}
 
@@ -257,7 +268,7 @@ public class WorkflowConfigurationHelper {
 				com.zuehlke.pgadmissions.domain.workflow.Scope templateScope = template.getScope();
 				logger.info("Verifying notification: " + template.getId().toString());
 
-				assertTrue(state.getScope() == templateScope || templateScope.getId() == PrismScope.SYSTEM
+				assertTrue(state.getScope() == templateScope || templateScope.getId() == SYSTEM
 				        || stateAction.getAction().getCreationScope() == templateScope);
 			}
 		}
@@ -306,7 +317,7 @@ public class WorkflowConfigurationHelper {
 
 	private void verifyFallbackActions() {
 		for (Action action : actionService.getActions()) {
-			assertEquals(PrismScope.SYSTEM, action.getFallbackAction().getScope().getId());
+			assertEquals(SYSTEM, action.getFallbackAction().getScope().getId());
 		}
 	}
 

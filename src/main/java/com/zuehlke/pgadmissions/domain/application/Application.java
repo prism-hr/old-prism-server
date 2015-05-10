@@ -3,6 +3,24 @@ package com.zuehlke.pgadmissions.domain.application;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_RETAINED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_CORRECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_EXPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_RETAINED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_PENDING_CORRECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_RETAINED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -38,9 +56,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -83,7 +101,7 @@ public class Application extends Resource {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_partner_id")
@@ -328,7 +346,7 @@ public class Application extends Resource {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Institution getPartner() {
         return partner;
@@ -883,21 +901,19 @@ public class Application extends Resource {
         return submittedTimestamp != null;
     }
 
-    public String getProjectOrProgramTitleDisplay() {
-        return project == null ? program.getTitle() : project.getTitle();
+    public String getParentResourceTitleDisplay() {
+        ResourceParent parent = (ResourceParent) getParentResource();
+        return parent.getTitle();
     }
 
-    public String getProjectOrProgramCodeDisplay() {
-        return project == null ? program.getCode() : project.getCode();
+    public String getParentResourceCodeDisplay() {
+        ResourceParent parent = (ResourceParent) getParentResource();
+        return parent.getCode();
     }
 
     public PrismOpportunityType getOpportunityType() {
-        if (project == null && program == null) {
-            return null;
-        } else if (project != null) {
-            return project.getOpportunityType().getPrismOpportunityType();
-        }
-        return program.getOpportunityType().getPrismOpportunityType();
+        OpportunityType opportunityType = programDetail.getOpportunityType();
+        return opportunityType == null ? null : opportunityType.getPrismOpportunityType();
     }
 
     public PrismProgramStartType getDefaultStartType() {
@@ -907,18 +923,28 @@ public class Application extends Resource {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("user", user).addProperty("program", program).addProperty("project", project)
-                .addExclusion("state.id", PrismState.APPLICATION_APPROVED_COMPLETED).addExclusion("state.id", PrismState.APPLICATION_APPROVED_PENDING_EXPORT)
-                .addExclusion("state.id", PrismState.APPLICATION_APPROVED_PENDING_CORRECTION)
-                .addExclusion("state.id", PrismState.APPLICATION_APPROVED_COMPLETED_PURGED).addExclusion("state.id", PrismState.APPLICATION_REJECTED_COMPLETED)
-                .addExclusion("state.id", PrismState.APPLICATION_REJECTED_PENDING_EXPORT)
-                .addExclusion("state.id", PrismState.APPLICATION_REJECTED_PENDING_CORRECTION)
-                .addExclusion("state.id", PrismState.APPLICATION_REJECTED_COMPLETED_PURGED)
-                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED).addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT)
-                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION)
-                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED)
-                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)
-                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED);
+        return new ResourceSignature()
+                .addProperty("user", user)
+                .addProperty("program", program)
+                .addProperty("project", project)
+                .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED)
+                .addExclusion("state.id", APPLICATION_APPROVED_PENDING_EXPORT)
+                .addExclusion("state.id", APPLICATION_APPROVED_PENDING_CORRECTION)
+                .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED_PURGED)
+                .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED_RETAINED)
+                .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED)
+                .addExclusion("state.id", APPLICATION_REJECTED_PENDING_EXPORT)
+                .addExclusion("state.id", APPLICATION_REJECTED_PENDING_CORRECTION)
+                .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED_PURGED)
+                .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED_RETAINED)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_PENDING_EXPORT)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_PENDING_CORRECTION)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_PURGED)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_RETAINED)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED)
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED);
     }
 
 }

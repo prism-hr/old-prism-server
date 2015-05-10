@@ -4,7 +4,7 @@
 
 <p>
     This is a gentle reminder that ${APPLICATION_CREATOR_FULL_NAME} has nominated you as their referee for Application ${APPLICATION_CODE}
-    , ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_HOMEPAGE} in ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+    , ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_HOMEPAGE} in ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 <p>
     The Programme Admissions Panel would still very much appreciate your feedback on their suitability for
@@ -38,7 +38,7 @@ ${ACTION_COMPLETE}
 
 <p>
     We look forward to receiving your feedback at your earliest convenience. Should you run into any difficulty, please
-    see our dedicated ${TEMPLATE_HELPDESK} to access further assistance.
+    see our dedicated ${TEMPLATE_SYSTEM_HELPDESK} to access further assistance.
 </p>
 
 <p>

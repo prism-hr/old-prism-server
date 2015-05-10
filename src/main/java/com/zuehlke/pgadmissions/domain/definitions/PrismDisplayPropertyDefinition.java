@@ -115,6 +115,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NO(SYSTEM_GLOBAL, "No"),
     SYSTEM_VALUE_PROVIDED(SYSTEM_GLOBAL, "Provided"),
     SYSTEM_VALUE_NOT_PROVIDED(SYSTEM_GLOBAL, "Not Provided"),
+    SYSTEM_VALUE_SPECIFIED(SYSTEM_GLOBAL, "Specified"),
+    SYSTEM_VALUE_NOT_SPECIFIED(SYSTEM_GLOBAL, "Not Specified"),
     SYSTEM_ID(SYSTEM_GLOBAL, "Id"),
     SYSTEM_NAME(SYSTEM_GLOBAL, "Name"),
     SYSTEM_FIRST_NAME(SYSTEM_GLOBAL, "First Name"),

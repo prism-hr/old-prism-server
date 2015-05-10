@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Thank you for your Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+    Thank you for your Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 
 <p>

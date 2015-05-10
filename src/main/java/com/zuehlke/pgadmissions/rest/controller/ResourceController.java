@@ -64,6 +64,7 @@ import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentat
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.BrandedResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -215,7 +216,16 @@ public class ResourceController {
             }
             representation.setActions(actionRepresentations);
 
-            for (String scopeName : new String[] { "institution", "partner", "program", "project" }) {
+            for (String scopeName : new String[] { "institution", "partner" }) {
+                Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
+                if (id != null) {
+                    String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
+                    Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
+                    PropertyUtils.setSimpleProperty(representation, scopeName, new BrandedResourceRepresentation(id, title, logoImageId));
+                }
+            }
+
+            for (String scopeName : new String[] { "program", "project" }) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
                 if (id != null) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");

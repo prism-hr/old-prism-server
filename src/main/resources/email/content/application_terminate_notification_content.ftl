@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    We have assessed your Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE} and we regret to inform you
+    We have assessed your Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE} and we regret to inform you
     that it was unsucessful.
 </p>
 <p>

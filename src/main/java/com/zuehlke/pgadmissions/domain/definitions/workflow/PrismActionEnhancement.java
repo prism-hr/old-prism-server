@@ -4,7 +4,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 public enum PrismActionEnhancement {
 
     APPLICATION_VIEW_EDIT_AS_CREATOR(PrismScope.APPLICATION), //
-    APPLICATION_VIEW_EDIT_AS_RECRUITER(PrismScope.APPLICATION), //
     APPLICATION_VIEW_EDIT_AS_ADMITTER(PrismScope.APPLICATION), //
     APPLICATION_VIEW_AS_CREATOR(PrismScope.APPLICATION), //
     APPLICATION_VIEW_AS_RECRUITER(PrismScope.APPLICATION), //

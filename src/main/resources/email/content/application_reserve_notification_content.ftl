@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    We have finished processing your application for ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+    We have finished processing your application for ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 <p>
     Though the application was of very high quality, we regret to inform that we are unable to offer you a position at 

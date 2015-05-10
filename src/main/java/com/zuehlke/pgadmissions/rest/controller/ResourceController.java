@@ -220,7 +220,7 @@ public class ResourceController {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
                 if (id != null) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
-                    Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, "logoImageId");
+                    Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
                     PropertyUtils.setSimpleProperty(representation, scopeName, new BrandedResourceRepresentation(id, title, logoImageId));
                 }
             }

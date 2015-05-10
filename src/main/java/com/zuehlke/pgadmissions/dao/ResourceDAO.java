@@ -425,8 +425,8 @@ public class ResourceDAO {
                 String columnAlias = columnName;
                 if (columnAlias.contains(".")) {
                     columnAlias = "";
-                    for (String columnAliasPart : columnAlias.split("\\.")) {
-                        columnAlias = columnAlias + columnAliasPart.toUpperCase();
+                    for (String columnNamePart : columnName.split("\\.")) {
+                        columnAlias = columnAlias + WordUtils.capitalize(columnNamePart);
                     }
                 } else {
                     columnAlias = WordUtils.capitalize(columnAlias);

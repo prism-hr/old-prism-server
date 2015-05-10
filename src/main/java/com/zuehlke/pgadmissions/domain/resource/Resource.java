@@ -147,6 +147,7 @@ public abstract class Resource implements UniqueEntity {
         if (parentResource.getId() != null) {
             setProject(parentResource.getProject());
             setProgram(parentResource.getProgram());
+            setPartner(parentResource.getPartner());
             setInstitution(parentResource.getInstitution());
             setSystem(parentResource.getSystem());
         }

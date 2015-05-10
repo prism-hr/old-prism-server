@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.services.helpers.persisters;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.services.InstitutionService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class InstitutionLogoPersister implements ImageDocumentPersister {

@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.services.helpers.persisters;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.UserService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class UserPortraitPersister implements ImageDocumentPersister {

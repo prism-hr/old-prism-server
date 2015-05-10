@@ -1,5 +1,13 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
+
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -12,13 +20,6 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SystemService;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 @Component
 public class InstitutionCreator implements ResourceCreator {

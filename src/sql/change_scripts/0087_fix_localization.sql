@@ -381,7 +381,7 @@ alter table project
 ;
 
 alter table institution
-	add column business_year_start_month int(2) unsigned
+	add column business_year_start_month int(2) unsigned after currency
 ;
 
 update institution

@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -118,6 +119,9 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
+    
+    @Value("${system.minimum.wage}")
+    private BigDecimal systemMinimumWage;
 
     @Value("${system.default.email.subject.directory}")
     private String defaultEmailSubjectDirectory;
@@ -408,7 +412,7 @@ public class SystemService {
 
         if (system == null) {
             State systemRunning = stateService.getById(SYSTEM_RUNNING);
-            system = new System().withId(systemId).withTitle(systemName).withUser(systemUser).withState(systemRunning)
+            system = new System().withId(systemId).withTitle(systemName).withMinimumWage(systemMinimumWage).withUser(systemUser).withState(systemRunning)
                     .withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
             entityService.save(system);
 

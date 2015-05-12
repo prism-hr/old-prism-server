@@ -127,7 +127,7 @@ public class InstitutionService {
         Advert advert = institution.getAdvert();
         advertService.updateAdvert(advertDTO, advert);
         institution.setGoogleId(advert.getAddress().getGoogleId());
-        
+
         institution.setTitle(advert.getTitle());
         institution.setDomicile(advert.getAddress().getDomicile());
         institution.setCurrency(institutionDTO.getCurrency());
@@ -137,6 +137,8 @@ public class InstitutionService {
         if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
             changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
         }
+
+        institution.setMinimumWage(institutionDTO.getMinimumWage());
 
         LocalDate endDate = institutionDTO.getEndDate();
         if (endDate != null) {

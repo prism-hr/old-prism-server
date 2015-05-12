@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.system;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -54,6 +55,9 @@ public class System extends Resource {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
+    
+    @Column(name = "minimum_wage", nullable = false)
+    private BigDecimal minimumWage;
 
     @Column(name = "last_data_import_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -165,6 +169,14 @@ public class System extends Resource {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public BigDecimal getMinimumWage() {
+        return minimumWage;
+    }
+
+    public void setMinimumWage(BigDecimal minimumWage) {
+        this.minimumWage = minimumWage;
     }
 
     public final LocalDate getLastDataImportDate() {
@@ -440,16 +452,21 @@ public class System extends Resource {
         return projects;
     }
 
+    public System withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
     public System withTitle(String title) {
         this.title = title;
         return this;
     }
 
-    public System withId(Integer id) {
-        this.id = id;
+    public System withMinimumWage(BigDecimal minimumWage) {
+        this.minimumWage = minimumWage;
         return this;
     }
-
+    
     public System withUser(User user) {
         this.user = user;
         return this;

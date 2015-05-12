@@ -46,9 +46,9 @@ public class InstitutionCreator implements ResourceCreator {
 
         Institution institution = new Institution().withUser(user).withParentResource(systemService.getSystem())
                 .withDomicile(advert.getAddress().getDomicile()).withAdvert(advert).withTitle(advert.getTitle()).withCurrency(newInstitution.getCurrency())
-                .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getGoogleId())
-                .withUclInstitution(false).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withCreatedTimestamp(new DateTime())
-                .withLogoImage(logoImage);
+                .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withMinimumWage(newInstitution.getMinimumWage())
+                .withGoogleId(advert.getAddress().getGoogleId()).withUclInstitution(false).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD))
+                .withCreatedTimestamp(new DateTime()).withLogoImage(logoImage);
         advert.setInstitution(institution);
 
         resourceService.setAttributes(institution, newInstitution.getAttributes());

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotNull;
 
 public class InstitutionDTO extends ResourceParentDTO {
@@ -9,6 +11,9 @@ public class InstitutionDTO extends ResourceParentDTO {
 
     @NotNull
     private Integer businessYearStartMonth;
+    
+    @NotNull
+    private BigDecimal minimumWage;
 
     private FileDTO logoImage;
 
@@ -28,6 +33,14 @@ public class InstitutionDTO extends ResourceParentDTO {
 
     public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
         this.businessYearStartMonth = businessYearStartMonth;
+    }
+
+    public BigDecimal getMinimumWage() {
+        return minimumWage;
+    }
+
+    public void setMinimumWage(BigDecimal minimumWage) {
+        this.minimumWage = minimumWage;
     }
 
     public FileDTO getLogoImage() {

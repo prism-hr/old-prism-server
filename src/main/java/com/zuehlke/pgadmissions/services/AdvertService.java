@@ -159,6 +159,7 @@ public class AdvertService {
 
         advert.setSummary(advertDTO.getSummary());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
+        advert.setTelephone(advertDTO.getTelephone());
 
         InstitutionAddressDTO addressDTO = advertDTO.getAddress();
         if (addressDTO != null) {

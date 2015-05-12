@@ -63,6 +63,9 @@ public class Advert extends ResourceParentAttribute {
 
     @Column(name = "apply_homepage")
     private String applyHomepage;
+    
+    @Column(name = "telephone")
+    private String telephone;
 
     @OneToOne
     @JoinColumn(name = "institution_address_id")
@@ -203,6 +206,14 @@ public class Advert extends ResourceParentAttribute {
 
     public void setApplyHomepage(String applyHomepage) {
         this.applyHomepage = applyHomepage;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     public InstitutionAddress getAddress() {

@@ -1,19 +1,19 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class OpportunityDTO extends ResourceParentDTO {
 
     @Valid
     private InstitutionPartnerDTO partner;
-    
+
+    @Valid
     private DepartmentDTO department;
 
     @NotNull
@@ -22,9 +22,9 @@ public class OpportunityDTO extends ResourceParentDTO {
     private Integer durationMinimum;
 
     private Integer durationMaximum;
-    
+
     private List<PrismStudyOption> studyOptions;
-    
+
     public InstitutionPartnerDTO getPartner() {
         return partner;
     }

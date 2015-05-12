@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.math.BigDecimal;
+
 public class InstitutionRepresentation {
 
     private Integer id;

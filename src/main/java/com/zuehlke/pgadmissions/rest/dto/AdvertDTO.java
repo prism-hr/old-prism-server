@@ -8,6 +8,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
+import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
+
 public class AdvertDTO {
 
     @NotEmpty
@@ -21,6 +23,10 @@ public class AdvertDTO {
     @URL
     @Size(max = 2048)
     private String applyHomepage;
+    
+    @NotEmpty
+    @PhoneNumber
+    private String telephone;
 
     @Valid
     private InstitutionAddressDTO address;
@@ -49,6 +55,14 @@ public class AdvertDTO {
 
     public void setApplyHomepage(String applyHomepage) {
         this.applyHomepage = applyHomepage;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     public InstitutionAddressDTO getAddress() {

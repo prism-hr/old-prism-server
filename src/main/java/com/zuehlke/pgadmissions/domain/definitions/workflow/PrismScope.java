@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION_CATEGORY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY_CATEGORY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION_CATEGORY;
 
 import java.util.Map;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -197,11 +199,11 @@ public enum PrismScope {
     }
 
     public String getLowerCamelName() {
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
+        return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
 
     public String getUpperCamelName() {
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+        return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
     }
 
     private static class ColumnDefinition {

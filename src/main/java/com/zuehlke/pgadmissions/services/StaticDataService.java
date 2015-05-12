@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +77,9 @@ public class StaticDataService {
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
+    
+    @Value("${system.minimum.wage}")
+    private BigDecimal systemMinimumWage;
 
     private ToIdFunction toIdFunction = new ToIdFunction();
 
@@ -157,7 +161,7 @@ public class StaticDataService {
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
         staticData.put("currencies", institutionService.listAvailableCurrencies());
         staticData.put("googleApiKey", googleApiKey);
-
+        staticData.put("minimumWage", systemMinimumWage);
         return staticData;
     }
 

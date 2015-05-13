@@ -1,9 +1,9 @@
 select application_year as applicationYear,
 	application_month as applicationMonth,
 	${columnExpression}
-from application inner join application_program_detail
+from application left join application_program_detail
 	on application.application_program_detail_id = application_program_detail.id
-inner join application_personal_detail
+left join application_personal_detail
 	on application.application_personal_detail_id = application_personal_detail.id
 ${constraintExpression}
 group by application.application_year, application.application_month_sequence

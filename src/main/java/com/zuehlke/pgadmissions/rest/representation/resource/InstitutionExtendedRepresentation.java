@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.math.BigDecimal;
+
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
-
-import java.math.BigDecimal;
 
 public class InstitutionExtendedRepresentation extends AbstractResourceRepresentation {
 

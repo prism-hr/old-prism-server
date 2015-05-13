@@ -228,7 +228,7 @@ public class InstitutionService {
     public String getBusinessYear(Institution institution, Integer year, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
-        return month == 1 ? businessYear.toString() : (year.toString() + "/" + new Integer(year + 1).toString());
+        return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + new Integer(businessYear + 1).toString());
     }
 
     public Integer getMonthOfBusinessYear(Institution institution, Integer month) {

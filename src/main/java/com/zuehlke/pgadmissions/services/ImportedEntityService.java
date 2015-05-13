@@ -214,7 +214,7 @@ public class ImportedEntityService {
     }
 
     public Integer mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
-            throws DataImportException, DeduplicationException {
+            throws Exception {
         String domicileCode = institutionDefinition.getDomicile();
 
         Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
@@ -233,7 +233,7 @@ public class ImportedEntityService {
     }
 
     public Integer mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
-            throws DeduplicationException {
+            throws Exception {
         int precision = 2;
         String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
 
@@ -254,7 +254,7 @@ public class ImportedEntityService {
     }
 
     public Integer mergeImportedAgeRange(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange ageRangeDefinition)
-            throws DeduplicationException {
+            throws Exception {
         String ageRangeNameClean = ageRangeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
         BigInteger upperBound = ageRangeDefinition.getUpperBound();
 
@@ -398,4 +398,5 @@ public class ImportedEntityService {
                 .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
     }
+
 }

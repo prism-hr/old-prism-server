@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
@@ -76,6 +77,10 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @Column(name = "date_of_birth", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dateOfBirth;
+    
+    @ManyToOne
+    @JoinColumn(name = "age_range_id")
+    private AgeRange ageRange;    
 
     @ManyToOne
     @JoinColumn(name = "country_id")
@@ -143,6 +148,14 @@ public class ApplicationPersonalDetail extends ApplicationSection {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+    
+    public AgeRange getAgeRange() {
+        return ageRange;
+    }
+
+    public void setAgeRange(AgeRange ageRange) {
+        this.ageRange = ageRange;
     }
 
     public Domicile getDomicile() {

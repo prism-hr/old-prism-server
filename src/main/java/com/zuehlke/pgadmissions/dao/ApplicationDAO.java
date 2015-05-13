@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
@@ -357,6 +358,8 @@ public class ApplicationDAO {
         String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
         Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
 
+        String columnExpression = Joiner.on(",\n\t").join(getColumns());
+
         List<String> constraintExpressions = Lists.newLinkedList();
         if (constraint != null) {
             HashMultimap<PrismImportedEntity, Integer> flattenedConstraints = HashMultimap.create();
@@ -376,13 +379,13 @@ public class ApplicationDAO {
             }
         }
 
-        String constraintExpression = "where application." + resourceScope.getLowerCamelName() + "=" + resourceId;  
+        String constraintExpression = "where application." + resourceScope.getLowerCamelName() + ".id =" + resourceId;
         String filterConstraintExpression = Joiner.on("\n\tand ").join(constraintExpressions);
         if (!StringUtils.isNullOrEmpty(filterConstraintExpression)) {
             constraintExpression = constraintExpression + "\n\tand " + filterConstraintExpression;
         }
 
-        ImmutableMap<String, Object> model = ImmutableMap.of("constraintExpression", (Object) constraintExpression);
+        ImmutableMap<String, Object> model = ImmutableMap.of("columnExpression", (Object) columnExpression, "constraintExpression", constraintExpression);
         SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery( //
                 FreeMarkerTemplateUtils.processTemplateIntoString(template, model)); //
 

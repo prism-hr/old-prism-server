@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
+import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
@@ -223,7 +225,14 @@ public class ApplicationSectionService {
 
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
-        personalDetail.setDateOfBirth(personalDetailDTO.getDateOfBirth());
+        
+        LocalDate dateOfBirth = personalDetailDTO.getDateOfBirth();
+        personalDetail.setDateOfBirth(dateOfBirth);
+        
+        Integer ageAtCreation =  application.getCreatedTimestamp().getYear() - dateOfBirth.getYear();
+        AgeRange ageRange = importedEntityService.getAgeRange(institution, ageAtCreation);
+        personalDetail.setAgeRange(ageRange);
+        
         personalDetail.setCountry(country);
         personalDetail.setFirstNationality(firstNationality);
         personalDetail.setSecondNationality(secondNationality);

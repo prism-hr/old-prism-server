@@ -10,8 +10,38 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 
 public class ResourceSummaryRepresentation {
-    
+
+    private LocalDate createdDate;
+
+    private Integer programCount;
+
+    private Integer projectCount;
+
     private List<ResourceSummaryPlotRepresentation> plots = Lists.newLinkedList();
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Integer getProgramCount() {
+        return programCount;
+    }
+
+    public void setProgramCount(Integer programCount) {
+        this.programCount = programCount;
+    }
+
+    public Integer getProjectCount() {
+        return projectCount;
+    }
+
+    public void setProjectCount(Integer projectCount) {
+        this.projectCount = projectCount;
+    }
 
     public List<ResourceSummaryPlotRepresentation> getPlots() {
         return plots;
@@ -25,7 +55,7 @@ public class ResourceSummaryRepresentation {
     public static class ResourceSummaryPlotRepresentation {
 
         private Set<Set<ImportedEntity>> constraint;
-        
+
         private ResourceSummaryPlotDataRepresentation data;
 
         public Set<Set<ImportedEntity>> getConstraint() {
@@ -40,45 +70,15 @@ public class ResourceSummaryRepresentation {
             this.constraint = constraint;
             return this;
         }
-        
+
         public ResourceSummaryPlotRepresentation withData(ResourceSummaryPlotDataRepresentation data) {
             this.data = data;
             return this;
         }
-     
+
         public static class ResourceSummaryPlotDataRepresentation {
 
-            private LocalDate createdDate;
-
-            private Integer programCount;
-
-            private Integer projectCount;
-
             private List<ApplicationProcessingSummaryRepresentationYear> processingSummaries;
-
-            public final LocalDate getCreatedDate() {
-                return createdDate;
-            }
-
-            public final void setCreatedDate(LocalDate createdDate) {
-                this.createdDate = createdDate;
-            }
-
-            public final Integer getProgramCount() {
-                return programCount;
-            }
-
-            public final void setProgramCount(Integer programCount) {
-                this.programCount = programCount;
-            }
-
-            public final Integer getProjectCount() {
-                return projectCount;
-            }
-
-            public final void setProjectCount(Integer projectCount) {
-                this.projectCount = projectCount;
-            }
 
             public List<ApplicationProcessingSummaryRepresentationYear> getProcessingSummaries() {
                 return processingSummaries;
@@ -86,21 +86,6 @@ public class ResourceSummaryRepresentation {
 
             public void setProcessingSummaries(List<ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
                 this.processingSummaries = processingSummaries;
-            }
-
-            public ResourceSummaryPlotDataRepresentation withCreatedDate(LocalDate createdDate) {
-                this.createdDate = createdDate;
-                return this;
-            }
-
-            public ResourceSummaryPlotDataRepresentation withProgramCount(Integer programCount) {
-                this.programCount = programCount;
-                return this;
-            }
-
-            public ResourceSummaryPlotDataRepresentation withProjectCount(Integer projectCount) {
-                this.projectCount = projectCount;
-                return this;
             }
 
             public ResourceSummaryPlotDataRepresentation withProcessingSummaries(List<ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
@@ -177,8 +162,6 @@ public class ResourceSummaryRepresentation {
                 private BigDecimal withdrawnApplicationRatio;
 
                 private BigDecimal averageRating;
-
-                private BigDecimal averagePreparationTime;
 
                 private BigDecimal averageProcessingTime;
 
@@ -262,14 +245,6 @@ public class ResourceSummaryRepresentation {
                     this.averageRating = averageRating;
                 }
 
-                public BigDecimal getAveragePreparationTime() {
-                    return averagePreparationTime;
-                }
-
-                public void setAveragePreparationTime(BigDecimal averagePreparationTime) {
-                    this.averagePreparationTime = averagePreparationTime;
-                }
-
                 public BigDecimal getAverageProcessingTime() {
                     return averageProcessingTime;
                 }
@@ -281,7 +256,7 @@ public class ResourceSummaryRepresentation {
             }
 
         }
-        
+
     }
 
 }

@@ -15,6 +15,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -177,6 +178,17 @@ public class ImportedEntityDAO {
                 .addOrder(Order.desc("useCount")) //
                 .setMaxResults(1) //
                 .setResultTransformer(Transformers.aliasToBean(DomicileUseDTO.class)) //
+                .uniqueResult();
+    }
+
+    public AgeRange getAgeRange(Institution institution, Integer age) {
+        return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class) //
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.ge("lowerBound", age)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.le("upperBound", age)) //
+                        .add(Restrictions.isNull("upperBound"))) //
+                .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
     }
 

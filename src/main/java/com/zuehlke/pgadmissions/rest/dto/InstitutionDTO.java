@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 public class InstitutionDTO extends ResourceParentDTO {
 
@@ -11,12 +11,14 @@ public class InstitutionDTO extends ResourceParentDTO {
 
     @NotNull
     private Integer businessYearStartMonth;
-    
+
     @NotNull
     private BigDecimal minimumWage;
 
+    @Valid
     private FileDTO logoImage;
 
+    @Valid
     private FileDTO backgroundImage;
 
     public String getCurrency() {

@@ -1,17 +1,24 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.format.annotation.NumberFormat;
+
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 public class FinancialDetailsDTO {
 
+    @NotEmpty
     private String currency;
 
+    @NotNull
     private PrismDurationUnit interval;
 
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     private BigDecimal minimum;
 
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     private BigDecimal maximum;
 
     public String getCurrency() {

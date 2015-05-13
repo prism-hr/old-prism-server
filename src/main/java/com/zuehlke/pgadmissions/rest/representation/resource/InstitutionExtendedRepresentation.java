@@ -3,11 +3,15 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
+import java.math.BigDecimal;
+
 public class InstitutionExtendedRepresentation extends AbstractResourceRepresentation {
 
     private String title;
 
     private String currency;
+
+    private BigDecimal minimumWage;
 
     private Integer businessYearStartMonth;
 
@@ -33,6 +37,14 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public BigDecimal getMinimumWage() {
+        return minimumWage;
+    }
+
+    public void setMinimumWage(BigDecimal minimumWage) {
+        this.minimumWage = minimumWage;
     }
 
     public Integer getBusinessYearStartMonth() {

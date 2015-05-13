@@ -240,11 +240,9 @@ public class InstitutionDAO {
 
     public List<Institution> getInstitutions(String query, String[] googleIds) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class)
-                .createAlias("advert", "advert", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.disjunction()
                         .add(Restrictions.ilike("title", query, MatchMode.ANYWHERE))
-                        .add(Restrictions.in("address.googleId", googleIds)))
+                        .add(Restrictions.in("googleId", googleIds)))
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED_COMPLETED))
                 .list();
     }

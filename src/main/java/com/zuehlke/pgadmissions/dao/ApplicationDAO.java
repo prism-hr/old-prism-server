@@ -21,6 +21,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -46,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -351,6 +353,16 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
                 .uniqueResult();
 
+    }
+
+    public List<Integer> getApplicationsByMatchingSuggestedSupervisor(String searchTerm) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
+                .setProjection(Projections.property("application.id")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))) //
+                .list();
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(PrismScope resourceScope, Integer resourceId, Set<Set<ImportedEntity>> constraint,

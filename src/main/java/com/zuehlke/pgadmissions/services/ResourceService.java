@@ -451,7 +451,7 @@ public class ResourceService {
             String lastSequenceIdentifier, Integer recordsToRetrieve) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
-
+        
         assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
 
         for (PrismScope parentScopeId : parentScopeIds) {

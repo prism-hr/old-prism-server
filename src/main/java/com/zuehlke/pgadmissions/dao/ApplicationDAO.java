@@ -400,7 +400,6 @@ public class ApplicationDAO {
                 .addScalar("rejectedApplicationRatio", DoubleType.INSTANCE) //
                 .addScalar("withdrawnApplicationRatio", DoubleType.INSTANCE) //
                 .addScalar("averageRating", DoubleType.INSTANCE) //
-                .addScalar("averagePreparationTime", DoubleType.INSTANCE) //
                 .addScalar("averageProcessingTime", DoubleType.INSTANCE);
     }
 

@@ -436,6 +436,10 @@ public class ApplicationService {
         ValidationUtils.invokeValidator(applicationValidator, application, errors);
         return errors;
     }
+    
+    public List<Integer> getApplicationsByMatchingSuggestedSupervisor(String searchTerm) {
+        return applicationDAO.getApplicationsByMatchingSuggestedSupervisor(searchTerm);
+    }
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
         if (!application.getParentResource().sameAs(application.getInstitution())) {

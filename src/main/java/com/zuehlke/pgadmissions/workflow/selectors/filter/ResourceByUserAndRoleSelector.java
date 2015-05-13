@@ -16,30 +16,39 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Component
 public class ResourceByUserAndRoleSelector implements PrismResourceListFilterSelector<Integer> {
 
-	@Inject
-	private ResourceService resourceService;
+    @Inject
+    private ApplicationService applicationService;
 
-	@Inject
-	RoleService roleService;
+    @Inject
+    private ResourceService resourceService;
 
-	@Override
-	public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-		List<PrismRole> roles = Lists.newArrayList();
-		PrismResourceListFilter filter = constraint.getFilterProperty();
-		if (filter == SUPERVISOR) {
-			roles.addAll(Lists.<PrismRole> newArrayList(APPLICATION_CONFIRMED_SUPERVISOR_GROUP.getRoles()));
-		} else if (filter == USER) {
-			roles.add(APPLICATION_CREATOR);
-		} else {
-			roles.addAll(roleService.getRolesByScope(PrismScope.valueOf(constraint.getFilterProperty().name().replace("_USER", ""))));
-		}
-		return resourceService.getResourcesByUserMatchingUserAndRole(scope, constraint.getValueString(), roles);
-	}
+    @Inject
+    RoleService roleService;
+
+    @Override
+    public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
+        List<PrismRole> roles = Lists.newArrayList();
+        PrismResourceListFilter filter = constraint.getFilterProperty();
+        if (filter == SUPERVISOR) {
+            String searchTerm = constraint.getValueString();
+            roles.addAll(Lists.<PrismRole> newArrayList(APPLICATION_CONFIRMED_SUPERVISOR_GROUP.getRoles()));
+            List<Integer> applications = resourceService.getResourcesByUserMatchingUserAndRole(scope, searchTerm, roles);
+            applications.addAll(applicationService.getApplicationsByMatchingSuggestedSupervisor(searchTerm));
+            return applications;
+        } else if (filter == USER) {
+            roles.add(APPLICATION_CREATOR);
+            return resourceService.getResourcesByUserMatchingUserAndRole(scope, constraint.getValueString(), roles);
+        } else {
+            roles.addAll(roleService.getRolesByScope(PrismScope.valueOf(constraint.getFilterProperty().name().replace("_USER", ""))));
+            return resourceService.getResourcesByUserMatchingUserAndRole(scope, constraint.getValueString(), roles);
+        }
+    }
 
 }

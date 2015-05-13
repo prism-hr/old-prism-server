@@ -1,16 +1,16 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class ResourceParentDTO extends ResourceDTO {
 
     @NotNull
+    @Valid
     private AdvertDTO advert;
 
     private LocalDate endDate;

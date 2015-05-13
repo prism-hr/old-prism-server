@@ -1,18 +1,14 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
-import java.util.List;
-import java.util.Set;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+
+import java.util.List;
+import java.util.Set;
 
 public class AdvertRepresentation {
 
@@ -27,6 +23,8 @@ public class AdvertRepresentation {
     private String homepage;
 
     private String applyHomepage;
+
+    private String telephone;
 
     private InstitutionAddressRepresentation address;
 
@@ -57,9 +55,9 @@ public class AdvertRepresentation {
     private PrismOpportunityType opportunityType;
 
     private List<PrismStudyOption> studyOptions;
-    
+
     private List<PrismAction> partnerActions;
-    
+
     private List<String> locations;
 
     private InstitutionRepresentation institution;
@@ -114,6 +112,14 @@ public class AdvertRepresentation {
 
     public void setApplyHomepage(String applyHomepage) {
         this.applyHomepage = applyHomepage;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     public InstitutionAddressRepresentation getAddress() {

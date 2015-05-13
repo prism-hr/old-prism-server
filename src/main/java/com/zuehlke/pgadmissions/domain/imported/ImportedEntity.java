@@ -36,7 +36,7 @@ public abstract class ImportedEntity implements UniqueEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getInstitution(), getType(), getCode(), getName());
+        return Objects.hashCode(getInstitution(), getType(), getCode());
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class ImportedEntity implements UniqueEntity {
         }
         final ImportedEntity other = (ImportedEntity) object;
         return Objects.equal(getInstitution(), other.getInstitution()) && Objects.equal(getType(), other.getType())
-                && Objects.equal(getCode(), other.getCode()) && Objects.equal(getName(), other.getName());
+                && Objects.equal(getCode(), other.getCode());
     }
 
     @Override

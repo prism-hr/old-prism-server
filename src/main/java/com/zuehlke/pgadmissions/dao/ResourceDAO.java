@@ -28,7 +28,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -456,13 +456,13 @@ public class ResourceDAO {
 
     private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier,
             Integer recordsToRetrieve) {
-        PrismResourceListFilterSortOrder sortOrder = filter.getSortOrder();
+        PrismFilterSortOrder sortOrder = filter.getSortOrder();
 
         if (lastSequenceIdentifier != null) {
-            criteria.add(PrismResourceListFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
+            criteria.add(PrismFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
         }
 
-        criteria.addOrder(PrismResourceListFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
+        criteria.addOrder(PrismFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
 
         if (recordsToRetrieve != null) {
             criteria.setMaxResults(recordsToRetrieve);

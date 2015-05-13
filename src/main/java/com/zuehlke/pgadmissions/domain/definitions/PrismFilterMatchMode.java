@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public enum PrismResourceListFilterMatchMode {
+public enum PrismFilterMatchMode {
 
 	ALL, //
 	ANY;

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourcereportfilterproperties;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.math.BigDecimal;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
@@ -77,7 +79,7 @@ public class StaticDataService {
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
-    
+
     @Value("${system.minimum.wage}")
     private BigDecimal systemMinimumWage;
 
@@ -149,10 +151,10 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
-                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class}) {
+                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -241,9 +243,9 @@ public class StaticDataService {
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (Class<? extends ImportedEntity> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
+        for (Class<? extends ImportedEntity> entityClass : new Class[] { ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
                 Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class, RejectionReason.class,
-                ResidenceState.class}) {
+                ResidenceState.class, AgeRange.class }) {
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
@@ -258,12 +260,15 @@ public class StaticDataService {
                 ImportedLanguageQualificationType.class);
         List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
                 .size());
+        
         for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {
             languageQualificationTypeRepresentations.add(mapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
         }
+        
         staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
-
         staticData.put("institution", mapper.map(institution, InstitutionRepresentation.class));
+        
+        staticData.put("resourceReportFilterProperties", getResourcereportfilterproperties());
         return staticData;
     }
 
@@ -278,7 +283,6 @@ public class StaticDataService {
 
         return institutionRepresentations;
     }
-
 
     private static class ToIdFunction implements Function<WorkflowDefinition, Object> {
         @Override

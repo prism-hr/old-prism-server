@@ -4,12 +4,12 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-public enum PrismResourceListFilterSortOrder {
+public enum PrismFilterSortOrder {
 
 	ASCENDING, //
 	DESCENDING;
 
-	public static Criterion getPagingRestriction(String filterSortColumn, PrismResourceListFilterSortOrder filterSortOrder, String filterSortColumnValue) {
+	public static Criterion getPagingRestriction(String filterSortColumn, PrismFilterSortOrder filterSortOrder, String filterSortColumnValue) {
 		if (filterSortOrder == ASCENDING) {
 			return Restrictions.gt(filterSortColumn, filterSortColumnValue);
 		} else {
@@ -17,7 +17,7 @@ public enum PrismResourceListFilterSortOrder {
 		}
 	}
 
-	public static Order getOrderExpression(String filterSortColumn, PrismResourceListFilterSortOrder filterSortOrder) {
+	public static Order getOrderExpression(String filterSortColumn, PrismFilterSortOrder filterSortOrder) {
 		if (filterSortOrder == ASCENDING) {
 			return Order.asc(filterSortColumn);
 		} else {

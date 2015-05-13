@@ -538,7 +538,7 @@ public class CommentService {
     private void assignUsers(Comment comment, Set<CommentAssignedUser> assignees) {
         for (CommentAssignedUser assignee : assignees) {
             PrismRoleTransitionType transitionType = assignee.getRoleTransitionType();
-            comment.addAssignedUser(assignee.getUser().getParentUser(), assignee.getRole(), transitionType == null ? CREATE : transitionType);
+            comment.addAssignedUser(assignee.getUser(), assignee.getRole(), transitionType == null ? CREATE : transitionType);
         }
     }
 

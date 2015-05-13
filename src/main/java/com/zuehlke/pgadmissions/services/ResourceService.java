@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode.ANY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ALL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -32,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
@@ -48,6 +48,8 @@ import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -58,6 +60,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -98,11 +101,15 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentationMonth;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentationYear;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ResourceSummaryPlotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ResourceSummaryPlotRepresentation.ResourceSummaryPlotDataRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ResourceSummaryPlotRepresentation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ResourceSummaryPlotRepresentation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ResourceSummaryPlotRepresentation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -203,14 +210,13 @@ public class ResourceService {
             throw new UnsupportedOperationException();
         }
 
-        User resourceUser = user.getParentUser();
         Resource resource = applicationContext.getBean(resourceCreator).create(user, resourceDTO);
 
         resource.setReferrer(referrer);
         resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
 
-        Comment comment = new Comment().withUser(resourceUser).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                .addAssignedUser(resourceUser, roleService.getCreatorRole(resource), CREATE);
+        Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
+                .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
         return actionService.executeUserAction(resource, action, comment);
     }
 
@@ -396,50 +402,41 @@ public class ResourceService {
     }
 
     public ResourceSummaryRepresentation getResourceSummary(PrismScope resourceScope, Integer resourceId) throws Exception {
+        return getResourceSummary(resourceScope, resourceId, null).get(0);
+    }
+
+    public List<ResourceSummaryRepresentation> getResourceSummary(PrismScope resourceScope, Integer resourceId,
+            ResourceReportFilterDTO filterDTO) throws Exception {
         ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
+        List<ResourceSummaryRepresentation> summaries = Lists.newLinkedList();
 
-        ResourceSummaryRepresentation summary = new ResourceSummaryRepresentation().withCreatedDate(resource.getCreatedTimestamp().toLocalDate());
+        if (filterDTO == null) {
+            summaries.add(getResourceSummaryRespresentation(resourceScope, resourceId, null));
+        } else {
+            Institution institution = resource.getInstitution();
+            LinkedHashMultimap<PrismImportedEntity, ImportedEntity> properties = LinkedHashMultimap.create();
+            for (ResourceReportFilterPropertyDTO propertyDTO : filterDTO.getProperties()) {
+                PrismImportedEntity entityType = propertyDTO.getEntityType();
+                properties.put(entityType, importedEntityService.getById(institution, entityType, propertyDTO.getEntityid()));
+            }
 
-        if (resourceScope == INSTITUTION) {
-            summary.setProgramCount(programService.getActiveProgramCount((Institution) resource));
-            summary.setProjectCount(projectService.getActiveProjectCount(resource));
-        } else if (resourceScope == PROGRAM) {
-            summary.setProjectCount(projectService.getActiveProjectCount(resource));
-        }
+            List<Set<ImportedEntity>> constraintsProvided = Lists.newArrayList();
+            for (PrismImportedEntity filterEntity : properties.keySet()) {
+                constraintsProvided.add(properties.get(filterEntity));
+            }
 
-        boolean currentYear = true;
-        List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
-        List<ApplicationProcessingSummaryDTO> yearSummaries = applicationService.getApplicationProcessingSummariesByYear(resourceScope, resourceId);
-        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = applicationService.getApplicationProcessingSummariesByMonth(resourceScope,
-                resourceId);
-        for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
-            ApplicationProcessingSummaryRepresentationYear yearRepresentation = new ApplicationProcessingSummaryRepresentationYear();
-            String applicationYear = yearSummary.getApplicationYear();
-            yearRepresentation.setApplicationYear(applicationYear);
-
-            if (currentYear == true) {
-                Integer monthOfBusinessYear = institutionService.getMonthOfBusinessYear(resource.getInstitution(), new LocalDate().getMonthOfYear());
-                yearRepresentation.setPercentageComplete(new BigDecimal(monthOfBusinessYear).divide(new BigDecimal(12), 2, RoundingMode.HALF_UP));
+            Set<Set<Set<ImportedEntity>>> constraints;
+            PrismFilterMatchMode matchMode = filterDTO.getMatchMode();
+            if (matchMode.equals(ALL)) {
+                constraints = getReportPlotConstraintsExploded(constraintsProvided);
             } else {
-                yearRepresentation.setPercentageComplete(new BigDecimal(100.00));
+                constraints = getReportPlotConstraintsImploded(constraintsProvided);
             }
 
-            populateApplicationProcessingSummary(yearSummary, yearRepresentation);
-
-            List<ApplicationProcessingSummaryRepresentationMonth> monthRepresentations = Lists.newLinkedList();
-            for (ApplicationProcessingSummaryDTO monthSummary : monthSummaries.get(applicationYear)) {
-                ApplicationProcessingSummaryRepresentationMonth monthRepresentation = new ApplicationProcessingSummaryRepresentationMonth();
-                monthSummary.setApplicationMonth(monthSummary.getApplicationMonth());
-                populateApplicationProcessingSummary(monthSummary, monthRepresentation);
-                monthRepresentations.add(monthRepresentation);
-            }
-
-            yearRepresentation.setProcessingSummaries(monthRepresentations);
-            currentYear = false;
+            summaries.add(getResourceSummaryRespresentation(resourceScope, resourceId, constraints));
         }
 
-        summary.setProcessingSummaries(yearRepresentations);
-        return summary;
+        return summaries;
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds) {
@@ -481,7 +478,7 @@ public class ResourceService {
         if (socialRepresentationBuilder == null) {
             throw new UnsupportedOperationException();
         }
-        Resource resource = getNotNullResource(resourceScope, resourceId);
+        Resource resource = getById(resourceScope, resourceId);
         return applicationContext.getBean(socialRepresentationBuilder).build(resource.getAdvert());
     }
 
@@ -500,11 +497,6 @@ public class ResourceService {
             properties.put(prismDisplayPropertyDefinition, loader.load(prismDisplayPropertyDefinition));
         }
         return properties;
-    }
-
-    private Resource getNotNullResource(PrismScope resourceScope, Integer resourceId) throws Error {
-        Resource resource = getById(resourceScope.getResourceClass(), resourceId);
-        return Preconditions.checkNotNull(resource);
     }
 
     public String getSocialThumbnailUrl(Resource resource) {
@@ -566,7 +558,7 @@ public class ResourceService {
 
         Resource lastResource = resource.getEnclosingResource(lastResourceScope);
         List<PrismAction> partnerActions = actionService.getPartnerActions(lastResource, filteredActionConditions);
-        return partnerActions; 
+        return partnerActions;
     }
 
     public ResourceStudyOption getStudyOption(ResourceOpportunity resource, StudyOption studyOption) {
@@ -840,15 +832,103 @@ public class ResourceService {
         }
     }
 
+    private ResourceSummaryRepresentation getResourceSummaryRespresentation(PrismScope resourceScope, Integer resourceId,
+            Set<Set<Set<ImportedEntity>>> constraints) throws Exception {
+        ResourceSummaryRepresentation representation = new ResourceSummaryRepresentation();
+        if (constraints == null) {
+            representation.addPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, null));
+        } else {
+            for (Set<Set<ImportedEntity>> constraint : constraints) {
+                representation.addPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, constraint));
+            }
+        }
+        return representation;
+    }
+
+    private ResourceSummaryPlotRepresentation getResourceSummaryPlotRepresentation(PrismScope resourceScope, Integer resourceId,
+            Set<Set<ImportedEntity>> constraint) throws Exception {
+        ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resourceScope, resourceId, constraint);
+        return new ResourceSummaryPlotRepresentation().withConstraint(null).withData(plotDataRepresentation);
+    }
+
+    private ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(PrismScope resourceScope, Integer resourceId,
+            Set<Set<ImportedEntity>> constraint) throws Exception {
+        ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
+        ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation().withCreatedDate(resource.getCreatedTimestamp()
+                .toLocalDate());
+
+        if (resourceScope == INSTITUTION) {
+            summary.setProgramCount(programService.getActiveProgramCount((Institution) resource));
+            summary.setProjectCount(projectService.getActiveProjectCount(resource));
+        } else if (resourceScope == PROGRAM) {
+            summary.setProjectCount(projectService.getActiveProjectCount(resource));
+        }
+
+        boolean currentYear = true;
+        List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
+        List<ApplicationProcessingSummaryDTO> yearSummaries = applicationService.getApplicationProcessingSummariesByYear(resourceScope, resourceId, constraint);
+        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = applicationService.getApplicationProcessingSummariesByMonth(resourceScope,
+                resourceId, constraint);
+        for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
+            ApplicationProcessingSummaryRepresentationYear yearRepresentation = new ApplicationProcessingSummaryRepresentationYear();
+            String applicationYear = yearSummary.getApplicationYear();
+            yearRepresentation.setApplicationYear(applicationYear);
+
+            if (currentYear == true) {
+                Integer monthOfBusinessYear = institutionService.getMonthOfBusinessYear(resource.getInstitution(), new LocalDate().getMonthOfYear());
+                yearRepresentation.setPercentageComplete(new BigDecimal(monthOfBusinessYear).divide(new BigDecimal(12), 2, RoundingMode.HALF_UP));
+            } else {
+                yearRepresentation.setPercentageComplete(new BigDecimal(100.00));
+            }
+
+            populateApplicationProcessingSummary(yearSummary, yearRepresentation);
+
+            List<ApplicationProcessingSummaryRepresentationMonth> monthRepresentations = Lists.newLinkedList();
+            for (ApplicationProcessingSummaryDTO monthSummary : monthSummaries.get(applicationYear)) {
+                ApplicationProcessingSummaryRepresentationMonth monthRepresentation = new ApplicationProcessingSummaryRepresentationMonth();
+                monthSummary.setApplicationMonth(monthSummary.getApplicationMonth());
+                populateApplicationProcessingSummary(monthSummary, monthRepresentation);
+                monthRepresentations.add(monthRepresentation);
+            }
+
+            yearRepresentation.setProcessingSummaries(monthRepresentations);
+            currentYear = false;
+        }
+
+        summary.setProcessingSummaries(yearRepresentations);
+        return summary;
+    }
+
+    private Set<Set<Set<ImportedEntity>>> getReportPlotConstraintsExploded(List<Set<ImportedEntity>> constraintsProvided) {
+        Set<Set<Set<ImportedEntity>>> constraintsExploded = Sets.newHashSet();
+        Set<List<ImportedEntity>> plotsExploded = Sets.cartesianProduct(constraintsProvided);
+        for (List<ImportedEntity> plotExploded : plotsExploded) {
+            Set<Set<ImportedEntity>> plotWrapped = Sets.newHashSet();
+            for (ImportedEntity propertyExploded : plotExploded) {
+                plotWrapped.add(Sets.newHashSet(propertyExploded));
+            }
+            constraintsExploded.add(plotWrapped);
+        }
+        return constraintsExploded;
+    }
+
+    private Set<Set<Set<ImportedEntity>>> getReportPlotConstraintsImploded(List<Set<ImportedEntity>> constraintsProvided) {
+        Set<Set<ImportedEntity>> plotWrapped = Sets.newHashSet();
+        Set<Set<Set<ImportedEntity>>> constraintsImploded = Sets.newHashSet();
+        for (Set<ImportedEntity> plotsImploded : constraintsProvided) {
+            plotWrapped.add(plotsImploded);
+        }
+        constraintsImploded.add(plotWrapped);
+        return constraintsImploded;
+    }
+
     private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
             ApplicationProcessingSummaryRepresentation yearRepresentation) {
         yearRepresentation.setAdvertCount(longToInteger(yearSummary.getAdvertCount()));
-        yearRepresentation.setCreatedApplicationCount(longToInteger(yearSummary.getCreatedApplicationCount()));
         yearRepresentation.setSubmittedApplicationCount(longToInteger(yearSummary.getSubmittedApplicationCount()));
         yearRepresentation.setApprovedApplicationCount(longToInteger(yearSummary.getApprovedApplicationCount()));
         yearRepresentation.setRejectedApplicationCount(longToInteger(yearSummary.getRejectedApplicationCount()));
         yearRepresentation.setWithdrawnApplicationCount(longToInteger(yearSummary.getWithdrawnApplicationCount()));
-        yearRepresentation.setCreatedApplicationRatio(doubleToBigDecimal(yearSummary.getCreatedApplicationRatio(), 2));
         yearRepresentation.setSubmittedApplicationRatio(doubleToBigDecimal(yearSummary.getSubmittedApplicationRatio(), 2));
         yearRepresentation.setApprovedApplicationRatio(doubleToBigDecimal(yearSummary.getApprovedApplicationRatio(), 2));
         yearRepresentation.setRejectedApplicationRatio(doubleToBigDecimal(yearSummary.getRejectedApplicationRatio(), 2));

@@ -144,9 +144,9 @@ public class ApplicationSectionService {
             OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, prismOpportunityType.name());
             programDetail.setOpportunityType(opportunityType);
         }
-        
+
         StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
-        ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailDTO.getReferralSource());
+        ReferralSource referralSource = importedEntityService.getById(institution, ReferralSource.class, programDetailDTO.getReferralSource());
         programDetail.setStudyOption(studyOption);
         programDetail.setStartDate(programDetailDTO.getStartDate());
         programDetail.setReferralSource(referralSource);
@@ -213,13 +213,13 @@ public class ApplicationSectionService {
 
         updateUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
 
-        Title title = importedEntityService.getById(Title.class, institution, personalDetailDTO.getTitle());
-        Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
-        Country country = importedEntityService.getById(Country.class, institution, personalDetailDTO.getCountry());
-        Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailDTO.getFirstNationality());
-        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
+        Title title = importedEntityService.getById(institution, Title.class, personalDetailDTO.getTitle());
+        Gender gender = importedEntityService.getById(institution, Gender.class, personalDetailDTO.getGender());
+        Country country = importedEntityService.getById(institution, Country.class, personalDetailDTO.getCountry());
+        Language firstNationality = importedEntityService.getById(institution, Language.class, personalDetailDTO.getFirstNationality());
+        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(institution, Language.class,
                 personalDetailDTO.getSecondNationality()) : null;
-        Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getDomicile());
+        Domicile residenceCountry = importedEntityService.getById(institution, Domicile.class, personalDetailDTO.getDomicile());
 
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
@@ -235,13 +235,13 @@ public class ApplicationSectionService {
 
         Integer ethnicityId = personalDetailDTO.getEthnicity();
         if (ethnicityId != null) {
-            Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, ethnicityId);
+            Ethnicity ethnicity = importedEntityService.getById(institution, Ethnicity.class, ethnicityId);
             personalDetail.setEthnicity(ethnicity);
         }
 
         Integer disabilityId = personalDetailDTO.getDisability();
         if (disabilityId != null) {
-            Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailDTO.getDisability());
+            Disability disability = importedEntityService.getById(institution, Disability.class, personalDetailDTO.getDisability());
             personalDetail.setDisability(disability);
         }
 
@@ -300,7 +300,7 @@ public class ApplicationSectionService {
         ImportedInstitution importedInstitution = importedEntityService.getOrCreateImportedInstitution(institution, importedInstitutionDTO);
         qualification.setInstitution(importedInstitution);
 
-        QualificationType qualificationType = importedEntityService.getById(QualificationType.class, institution, qualificationDTO.getType());
+        QualificationType qualificationType = importedEntityService.getById(institution, QualificationType.class, qualificationDTO.getType());
         qualification.setType(qualificationType);
 
         qualification.setTitle(Strings.emptyToNull(qualificationDTO.getTitle()));
@@ -385,7 +385,7 @@ public class ApplicationSectionService {
             funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         }
 
-        FundingSource fundingSource = importedEntityService.getById(FundingSource.class, application.getInstitution(), fundingDTO.getFundingSource());
+        FundingSource fundingSource = importedEntityService.getById(application.getInstitution(), FundingSource.class, fundingDTO.getFundingSource());
 
         funding.setFundingSource(fundingSource);
         funding.setSponsor(fundingDTO.getSponsor());
@@ -585,7 +585,7 @@ public class ApplicationSectionService {
                 personalDetail.setLanguageQualification(languageQualification);
             }
 
-            ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(ImportedLanguageQualificationType.class, institution,
+            ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(institution, ImportedLanguageQualificationType.class,
                     languageQualificationDTO.getType());
             languageQualification.setType(languageQualificationType);
             languageQualification.setExamDate(languageQualificationDTO.getExamDate());
@@ -604,7 +604,7 @@ public class ApplicationSectionService {
     }
 
     private void copyAddress(Institution institution, Address to, AddressDTO from) {
-        Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
+        Domicile currentAddressDomicile = importedEntityService.getById(institution, Domicile.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());
         to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));

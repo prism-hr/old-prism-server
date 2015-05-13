@@ -94,7 +94,7 @@ public class UserController {
         UserExtendedRepresentation userRepresentation = dozerBeanMapper.map(user, UserExtendedRepresentation.class);
         userRepresentation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
         userRepresentation.setLinkedUsers(userService.getLinkedUserAccounts(user));
-        userRepresentation.setParentUser(user.getParentUser().getEmail());
+        userRepresentation.setParentUser(user.getEmail());
 
         Set<UserAccountExternal> externalAccounts = user.getUserAccount().getExternalAccounts();
         List<String> oauthProviders = Lists.newArrayListWithCapacity(externalAccounts.size());

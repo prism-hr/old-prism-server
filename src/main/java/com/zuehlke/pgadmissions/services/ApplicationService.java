@@ -65,6 +65,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -155,7 +156,7 @@ public class ApplicationService {
 
         StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
         ResourceStudyOption resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
-        
+
         if (resourceStudyOption == null && !application.getParentResource().sameAs(application.getInstitution())) {
             throw new PrismCannotApplyException();
         }
@@ -368,14 +369,16 @@ public class ApplicationService {
         return dataTable;
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId) throws Exception {
-        return applicationDAO.getApplicationProcessingSummariesByYear(resourceScope, resourceId);
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId,
+            Set<Set<ImportedEntity>> constraint) throws Exception {
+        return applicationDAO.getApplicationProcessingSummariesByYear(resourceScope, resourceId, constraint);
     }
 
-    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId)
-            throws Exception {
+    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId,
+            Set<Set<ImportedEntity>> constraint) throws Exception {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resourceScope, resourceId);
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resourceScope, resourceId,
+                constraint);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
             index.put(processingSummary.getApplicationYear(), processingSummary);
         }

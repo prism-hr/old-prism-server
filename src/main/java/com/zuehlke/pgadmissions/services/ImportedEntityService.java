@@ -93,7 +93,12 @@ public class ImportedEntityService {
     @Inject
     private SystemService systemService;
 
-    public <T extends ImportedEntity> T getById(Class<T> clazz, Institution institution, Integer id) {
+    @SuppressWarnings("unchecked")
+    public <T extends ImportedEntity> T getById(Institution institution, PrismImportedEntity entityId, Integer id) {
+        return getById(institution, (Class<T>) entityId.getEntityClass(), id);
+    }
+    
+    public <T extends ImportedEntity> T getById(Institution institution,  Class<T> clazz, Integer id) {
         return (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
     }
 
@@ -143,7 +148,7 @@ public class ImportedEntityService {
                 return enableCustomImportedInstitution(importedInstitution);
             }
         } else {
-            ImportedInstitution importedInstitution = getById(ImportedInstitution.class, institution, importedInstitutionDTO.getId());
+            ImportedInstitution importedInstitution = getById(institution, ImportedInstitution.class, importedInstitutionDTO.getId());
             if (BooleanUtils.isTrue(importedInstitution.getEnabled())) {
                 return importedInstitution;
             } else if (BooleanUtils.isTrue(importedInstitution.getCustom())) {
@@ -338,7 +343,7 @@ public class ImportedEntityService {
     }
 
     private ImportedInstitution createCustomImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
-        Domicile domicile = getById(Domicile.class, institution, importedInstitutionDTO.getDomicile());
+        Domicile domicile = getById(institution, Domicile.class, importedInstitutionDTO.getDomicile());
         ImportedInstitution importedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
                 .withName(importedInstitutionDTO.getName()).withEnabled(true).withCustom(true);
         entityService.save(importedInstitution);

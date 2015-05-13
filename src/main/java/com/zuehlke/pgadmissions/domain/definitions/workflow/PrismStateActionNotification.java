@@ -48,14 +48,14 @@ public class PrismStateActionNotification {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateActionNotification other = (PrismStateActionNotification) obj;
+        final PrismStateActionNotification other = (PrismStateActionNotification) object;
         return Objects.equal(role, other.getRole()) && Objects.equal(partnerMode, other.getPartnerMode())
                 && Objects.equal(notification, other.getNotification());
     }

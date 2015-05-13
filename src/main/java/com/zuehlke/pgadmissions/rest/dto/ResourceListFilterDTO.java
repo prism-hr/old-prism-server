@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 
 public class ResourceListFilterDTO {
 
-    private PrismResourceListFilterMatchMode matchMode;
+    private PrismFilterMatchMode matchMode;
 
-    private PrismResourceListFilterSortOrder sortOrder;
+    private PrismFilterSortOrder sortOrder;
 
     private String valueString;
 
@@ -19,19 +19,19 @@ public class ResourceListFilterDTO {
 
     private List<ResourceListFilterConstraintDTO> constraints;
 
-    public final PrismResourceListFilterMatchMode getMatchMode() {
+    public final PrismFilterMatchMode getMatchMode() {
         return matchMode;
     }
 
-    public final void setMatchMode(PrismResourceListFilterMatchMode matchMode) {
+    public final void setMatchMode(PrismFilterMatchMode matchMode) {
         this.matchMode = matchMode;
     }
 
-    public final PrismResourceListFilterSortOrder getSortOrder() {
+    public final PrismFilterSortOrder getSortOrder() {
         return sortOrder;
     }
 
-    public final void setSortOrder(PrismResourceListFilterSortOrder sortOrder) {
+    public final void setSortOrder(PrismFilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
 
@@ -65,12 +65,12 @@ public class ResourceListFilterDTO {
         return this;
     }
 
-    public ResourceListFilterDTO withMatchMode(PrismResourceListFilterMatchMode matchMode) {
+    public ResourceListFilterDTO withMatchMode(PrismFilterMatchMode matchMode) {
         this.matchMode = matchMode;
         return this;
     }
 
-    public ResourceListFilterDTO withSortOrder(PrismResourceListFilterSortOrder sortOrder) {
+    public ResourceListFilterDTO withSortOrder(PrismFilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
         return this;
     }

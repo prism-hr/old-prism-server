@@ -107,7 +107,7 @@ public class RoleDAO {
 
     public List<User> getRoleUsers(Resource resource, Role... roles) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property("user")) //
+                .setProjection(Projections.groupProperty("user")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("role", roles)) //
                 .list();
@@ -115,7 +115,7 @@ public class RoleDAO {
 
     public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property("user")) //
+                .setProjection(Projections.groupProperty("user")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("role.id", prismRoles)) //
                 .list();
@@ -137,7 +137,7 @@ public class RoleDAO {
 
     public List<User> getUnspecifiedRoleTransitionUsers(Resource resource, RoleTransition roleTransition, User actionOwner) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.property("userRole.user")) //
+                .setProjection(Projections.groupProperty("userRole.user")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", roleTransition.getId())) //

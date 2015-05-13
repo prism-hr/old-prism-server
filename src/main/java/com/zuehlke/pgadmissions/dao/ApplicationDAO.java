@@ -35,21 +35,26 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
+import com.mysql.jdbc.StringUtils;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -315,16 +320,17 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId) throws Exception {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId,
+            Set<Set<ImportedEntity>> constraint) throws Exception {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
                 "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId)
-            throws Exception {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId,
+            Set<Set<ImportedEntity>> constraint) throws Exception {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
                 "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
@@ -346,22 +352,46 @@ public class ApplicationDAO {
 
     }
 
-    private SQLQuery getApplicationProcessingSummaryQuery(PrismScope resourceScope, Integer resourceId, String templateLocation) throws Exception {
+    private SQLQuery getApplicationProcessingSummaryQuery(PrismScope resourceScope, Integer resourceId, Set<Set<ImportedEntity>> constraint,
+            String templateLocation) throws Exception {
         String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
         Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
-        ImmutableMap<String, Object> model = ImmutableMap.of("resourceReference", (Object) resourceScope.getLowerCamelName(), "resourceId", resourceId);
 
+        List<String> constraintExpressions = Lists.newLinkedList();
+        if (constraint != null) {
+            HashMultimap<PrismImportedEntity, Integer> flattenedConstraints = HashMultimap.create();
+            for (Set<ImportedEntity> entities : constraint) {
+                for (ImportedEntity entity : entities) {
+                    flattenedConstraints.put(entity.getType(), entity.getId());
+                }
+            }
+
+            for (PrismImportedEntity entity : flattenedConstraints.keySet()) {
+                String columnConstraintExpression = "(";
+                List<String> columnConstraint = Lists.newArrayList();
+                for (String column : entity.getColumnLocations()) {
+                    columnConstraint.add(column + " in (" + Joiner.on(", ").join(flattenedConstraints.get(entity)) + ")");
+                }
+                constraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tor ").join(columnConstraint) + ")");
+            }
+        }
+
+        String constraintExpression = "where application." + resourceScope.getLowerCamelName() + "=" + resourceId;  
+        String filterConstraintExpression = Joiner.on("\n\tand ").join(constraintExpressions);
+        if (!StringUtils.isNullOrEmpty(filterConstraintExpression)) {
+            constraintExpression = constraintExpression + "\n\tand " + filterConstraintExpression;
+        }
+
+        ImmutableMap<String, Object> model = ImmutableMap.of("constraintExpression", (Object) constraintExpression);
         SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery( //
                 FreeMarkerTemplateUtils.processTemplateIntoString(template, model)); //
 
         return query.addScalar("advertCount", LongType.INSTANCE) //
                 .addScalar("applicationYear", StringType.INSTANCE) //
-                .addScalar("createdApplicationCount", LongType.INSTANCE) //
                 .addScalar("submittedApplicationCount", LongType.INSTANCE) //
                 .addScalar("approvedApplicationCount", LongType.INSTANCE) //
                 .addScalar("rejectedApplicationCount", LongType.INSTANCE) //
                 .addScalar("withdrawnApplicationCount", LongType.INSTANCE) //
-                .addScalar("createdApplicationRatio", DoubleType.INSTANCE) //
                 .addScalar("submittedApplicationRatio", DoubleType.INSTANCE) //
                 .addScalar("approvedApplicationRatio", DoubleType.INSTANCE) //
                 .addScalar("rejectedApplicationRatio", DoubleType.INSTANCE) //

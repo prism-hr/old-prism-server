@@ -265,7 +265,7 @@ public class ResourceController {
         if (Arrays.asList(SYSTEM, APPLICATION).contains(resourceScope)) {
             throw new UnsupportedOperationException("Resource summary can only be generated for institutions, programs, projects");
         }
-        return resourceService.getResourceSummary(resourceScope, resourceId);
+        return resourceService.getResourceSummaryRepresentation(resourceScope, resourceId);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)

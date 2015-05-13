@@ -25,7 +25,7 @@ public class InstitutionRepresentationEnricher implements ResourceRepresentation
     public void enrich(PrismScope resourceScope, Integer resourceId, AbstractResourceRepresentation representation) throws Exception {
         Resource resource = resourceService.getById(resourceScope, resourceId);
         InstitutionExtendedRepresentation institutionRepresentation = (InstitutionExtendedRepresentation) representation;
-        institutionRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
+        institutionRepresentation.setResourceSummary(resourceService.getResourceSummaryRepresentation(resourceScope, resourceId));
         representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
     }
 

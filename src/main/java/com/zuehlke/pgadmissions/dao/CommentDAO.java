@@ -44,10 +44,10 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction prismAction) {
+    public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("action.id", prismAction)) //
+                .add(Restrictions.in("action.id", prismActions)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //

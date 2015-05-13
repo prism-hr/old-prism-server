@@ -8,14 +8,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.Countries;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.Disabilities;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.Domiciles;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.Ethnicities;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.Institutions;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.Nationalities;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ProgrammeOccurrences;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.Qualifications;
 import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
@@ -34,10 +26,18 @@ import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities;
 import com.zuehlke.pgadmissions.referencedata.jaxb.FundingSources;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Genders;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
 import com.zuehlke.pgadmissions.referencedata.jaxb.OpportunityTypes;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
 import com.zuehlke.pgadmissions.referencedata.jaxb.RejectionReasons;
 import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
 import com.zuehlke.pgadmissions.referencedata.jaxb.StudyOptions;
@@ -57,7 +57,7 @@ public enum PrismImportedEntity {
             new String[] { "application_personal_detail.ethnicity_id" }, false), //
     NATIONALITY(Nationalities.class, "nationality", Language.class, "xml/defaultEntities/nationality.xml", "xsd/import/nationality.xsd", //
             new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, false), //
-    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/opportunity.xsd", null, false), //
+    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/program.xsd", null, false), //
     QUALIFICATION_TYPE(Qualifications.class, "qualification", QualificationType.class, "xml/defaultEntities/qualificationType.xml",
             "xsd/import/qualificationType.xsd", null, false), //
     REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class, "xml/defaultEntities/referralSource.xml",

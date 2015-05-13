@@ -219,7 +219,7 @@ public class ImportedEntityService {
 
         Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
 
-        String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+        String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
 
         ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
                 .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true).withCustom(false);
@@ -235,7 +235,7 @@ public class ImportedEntityService {
     public Integer mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
             throws DeduplicationException {
         int precision = 2;
-        String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+        String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
 
         ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
                 .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeNameClean)
@@ -255,7 +255,7 @@ public class ImportedEntityService {
 
     public Integer mergeImportedAgeRange(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange ageRangeDefinition)
             throws DeduplicationException {
-        String ageRangeNameClean = ageRangeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+        String ageRangeNameClean = ageRangeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
         BigInteger upperBound = ageRangeDefinition.getUpperBound();
 
         AgeRange transientAgeRange = new AgeRange().withInstitution(institution).withCode(ageRangeDefinition.getCode()).withName(ageRangeNameClean)
@@ -296,7 +296,7 @@ public class ImportedEntityService {
         User proxyCreator = institution.getUser();
 
         String transientTitle = programDefinition.getName();
-        String transientTitleClean = transientTitle.replace("\n", "").replace("\r", "").replace("\t", "");
+        String transientTitleClean = transientTitle.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
 
         PrismOpportunityType prismOpportunityType = PrismOpportunityType.findValueFromString(programDefinition.getName());
         prismOpportunityType = prismOpportunityType == null ? getSystemOpportunityType() : prismOpportunityType;
@@ -374,7 +374,7 @@ public class ImportedEntityService {
     }
 
     private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {
-        Comment lastImportComment = commentService.getLatestComment(program, INSTITUTION_IMPORT_PROGRAM);
+        Comment lastImportComment = commentService.getLatestComment(program, INSTITUTION_CREATE_PROGRAM, INSTITUTION_IMPORT_PROGRAM);
         PrismAction actionId = lastImportComment == null ? INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM;
 
         User invoker = program.getUser();

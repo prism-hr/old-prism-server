@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -11,7 +10,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -23,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
-import org.xml.sax.SAXException;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -108,7 +105,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         }
     }
 
-    private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws IOException, JAXBException, SAXException {
+    private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws Exception {
         try {
             Authenticator.setDefault(new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -135,7 +132,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
     }
 
     @CacheEvict("institutionStaticData")
-    private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws JAXBException, SAXException, IOException {
+    private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
 
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -144,12 +141,8 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
-        try {
-            Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-            return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
-        } catch (Exception e) {
-            return null;
-        }
+        Object unmarshalled = unmarshaller.unmarshal(fileUrl);
+        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
     }
 
     private void mergeImportedPrograms(Integer importedEntityFeedId, Institution institution, List<ProgrammeOccurrence> programDefinitions) throws Exception {

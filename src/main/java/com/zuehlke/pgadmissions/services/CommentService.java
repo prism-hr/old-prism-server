@@ -121,12 +121,12 @@ public class CommentService {
         return commentDAO.getLatestComment(resource);
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction prismAction) {
-        return commentDAO.getLatestComment(resource, prismAction);
+    public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
+        return prismActions.length > 0 ? commentDAO.getLatestComment(resource, prismActions) : null;
     }
 
     public Comment getLatestComment(Resource resource, User user, PrismAction... prismActions) {
-        return commentDAO.getLatestComment(resource, user, prismActions);
+        return prismActions.length > 0 ? commentDAO.getLatestComment(resource, user, prismActions) : null;
     }
 
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {

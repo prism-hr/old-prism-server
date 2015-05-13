@@ -216,11 +216,8 @@ public class ImportedEntityService {
     public Integer mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
             throws Exception {
         String domicileCode = institutionDefinition.getDomicile();
-
         Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
-
         String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
-
         ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
                 .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true).withCustom(false);
 
@@ -235,7 +232,8 @@ public class ImportedEntityService {
     public Integer mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
             throws Exception {
         int precision = 2;
-        String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
+        String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "")
+                .replaceAll(" +", " ");
 
         ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
                 .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeNameClean)
@@ -287,7 +285,7 @@ public class ImportedEntityService {
     public DomicileUseDTO getMostUsedDomicile(Institution institution) {
         return importedEntityDAO.getMostUsedDomicile(institution);
     }
-    
+
     public AgeRange getAgeRange(Institution institution, Integer age) {
         return importedEntityDAO.getAgeRange(institution, age);
     }

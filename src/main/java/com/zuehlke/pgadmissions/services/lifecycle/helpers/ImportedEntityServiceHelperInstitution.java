@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -171,7 +170,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
     }
 
     private void mergeImportedLanguageQualificationTypes(Integer importedEntityFeedId, Institution institution,
-            List<LanguageQualificationType> languageQualificationTypeDefinitions) throws DeduplicationException {
+            List<LanguageQualificationType> languageQualificationTypeDefinitions) throws Exception {
         List<Integer> updates = Lists.newArrayList();
         for (LanguageQualificationType languageQualificationTypeDefinition : languageQualificationTypeDefinitions) {
             updates.add(importedEntityService.mergeImportedLanguageQualificationType(institution, languageQualificationTypeDefinition));
@@ -181,7 +180,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
     }
 
     private void mergeImportedAgeRanges(Integer importedEntityFeedId, Institution institution,
-            List<com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange> ageRangeDefinitions) throws DeduplicationException {
+            List<com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange> ageRangeDefinitions) throws Exception {
         List<Integer> updates = Lists.newArrayList();
         for (com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange ageRangeDefinition : ageRangeDefinitions) {
             updates.add(importedEntityService.mergeImportedAgeRange(institution, ageRangeDefinition));

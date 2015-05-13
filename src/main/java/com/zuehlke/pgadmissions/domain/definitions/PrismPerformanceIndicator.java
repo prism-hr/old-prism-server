@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 public enum PrismPerformanceIndicator {
 
     ADVERT_COUNT("count(distinct application.advert_id) as advertCount"),
@@ -22,7 +24,7 @@ public enum PrismPerformanceIndicator {
 
     private String columnExpression;
 
-    public static List<String> columns;
+    public static List<String> columns = Lists.newArrayList();
 
     static {
         for (PrismPerformanceIndicator indicator : values()) {

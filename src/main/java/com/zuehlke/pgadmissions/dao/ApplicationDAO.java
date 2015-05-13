@@ -379,7 +379,7 @@ public class ApplicationDAO {
             }
         }
 
-        String constraintExpression = "where application." + resourceScope.getLowerCamelName() + ".id =" + resourceId;
+        String constraintExpression = "where application." + resourceScope.getLowerCamelName() + "_id =" + resourceId;
         String filterConstraintExpression = Joiner.on("\n\tand ").join(constraintExpressions);
         if (!StringUtils.isNullOrEmpty(filterConstraintExpression)) {
             constraintExpression = constraintExpression + "\n\tand " + filterConstraintExpression;

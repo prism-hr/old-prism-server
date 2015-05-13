@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-
-import java.util.List;
 
 public class ResourceReportFilterDTO {
 

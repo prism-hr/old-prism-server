@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import java.math.BigDecimal;
+
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.NumberFormat;
 
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 
 public class FinancialDetailsDTO {
 

@@ -26,6 +26,7 @@
   </ageRange>
   <ageRange>
     <code>FOURTY_FOURTYNINE</code>
+    <name>40-49</name>
     <lowerBound>40</lowerBound>
     <upperBound>49</upperBound>
   </ageRange>

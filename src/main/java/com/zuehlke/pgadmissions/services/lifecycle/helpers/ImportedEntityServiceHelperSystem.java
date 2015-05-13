@@ -71,12 +71,8 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
-        try {
-            InstitutionDomiciles unmarshalled = (InstitutionDomiciles) unmarshaller.unmarshal(loader.getResource(institutionDomicileImportLocation).getURL());
-            return unmarshalled.getInstitutionDomicile();
-        } catch (Exception e) {
-            return null;
-        }
+        InstitutionDomiciles unmarshalled = (InstitutionDomiciles) unmarshaller.unmarshal(loader.getResource(institutionDomicileImportLocation).getURL());
+        return unmarshalled.getInstitutionDomicile();
     }
 
 }

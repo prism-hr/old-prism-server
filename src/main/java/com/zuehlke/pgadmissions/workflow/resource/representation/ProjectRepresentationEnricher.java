@@ -26,7 +26,7 @@ public class ProjectRepresentationEnricher implements ResourceRepresentationEnri
     public void enrich(PrismScope resourceScope, Integer resourceId, AbstractResourceRepresentation representation) throws Exception {
         Resource resource = resourceService.getById(resourceScope, resourceId);
         ProjectExtendedRepresentation projectRepresentation = (ProjectExtendedRepresentation) representation;
-        projectRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
+        projectRepresentation.setResourceSummary(resourceService.getResourceSummaryRepresentation(resourceScope, resourceId));
         projectRepresentation.setStudyOptions(resourceService.getStudyOptions((ResourceOpportunity) resource));
         representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
     }

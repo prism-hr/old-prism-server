@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
+import java.util.List;
+
 public class ResourceReportFilterDTO {
-    
+
     private PrismFilterMatchMode matchMode;
 
     private List<ResourceReportFilterPropertyDTO> properties;
@@ -31,7 +31,7 @@ public class ResourceReportFilterDTO {
 
         private PrismImportedEntity entityType;
 
-        private Integer entityid;
+        private Integer entityId;
 
         public PrismImportedEntity getEntityType() {
             return entityType;
@@ -41,12 +41,12 @@ public class ResourceReportFilterDTO {
             this.entityType = entityType;
         }
 
-        public Integer getEntityid() {
-            return entityid;
+        public Integer getEntityId() {
+            return entityId;
         }
 
-        public void setEntityid(Integer entityid) {
-            this.entityid = entityid;
+        public void setEntityId(Integer entityId) {
+            this.entityId = entityId;
         }
 
     }

@@ -93,7 +93,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         }
 
         if (comment.isApplicationRatingComment()) {
-            syncrhonizeApplicationRating(application, comment);
+            synchronizeApplicationRating(application, comment);
         }
 
         if (comment.isInterviewScheduledExpeditedComment()) {
@@ -134,7 +134,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         referee.setComment(comment);
     }
 
-    private void syncrhonizeApplicationRating(Application application, Comment comment) {
+    private void synchronizeApplicationRating(Application application, Comment comment) {
         buildAggregatedRating(comment);
         if (comment.getApplicationRating() == null) {
             comment.setApplicationRating(new BigDecimal(DEFAULT_RATING));

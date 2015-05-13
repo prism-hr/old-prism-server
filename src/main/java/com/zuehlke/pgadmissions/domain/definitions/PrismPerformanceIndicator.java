@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public enum PrismPerformanceIndicator {
 
@@ -32,7 +32,7 @@ public enum PrismPerformanceIndicator {
         }
     }
 
-    private PrismPerformanceIndicator(String columnExpression) {
+    PrismPerformanceIndicator(String columnExpression) {
         this.columnExpression = columnExpression;
     }
 

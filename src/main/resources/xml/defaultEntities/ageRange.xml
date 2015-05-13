@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ageRanges>
+  <ageRange>
+    <code>ZERO_EIGHTEEN</code>
+    <name>0-18</name>
+  </ageRange>
+  <ageRange>
+    <code>NINETEEN_TWENTYFOUR</code>
+    <name>19-24</name>
+  </ageRange>
+  <ageRange>
+    <code>TWENTYFOUR_TWENTYNINE</code>
+    <name>25-29</name>
+  </ageRange>
+  <ageRange>
+    <code>THIRTY_THIRTYNINE</code>
+    <name>30-39</name>
+  </ageRange>
+  <ageRange>
+    <code>FOURTY_FOURTYNINE</code>
+    <name>40-49</name>
+  </ageRange>
+  <ageRange>
+    <code>FIFTY_FIFTYNINE</code>
+    <name>50-59</name>
+  </ageRange>
+  <ageRange>
+    <code>SIXTY_PLUS</code>
+    <name>60+</name>
+  </ageRange>
+</ageRanges>

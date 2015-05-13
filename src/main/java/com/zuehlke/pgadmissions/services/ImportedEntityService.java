@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -97,8 +99,8 @@ public class ImportedEntityService {
     public <T extends ImportedEntity> T getById(Institution institution, PrismImportedEntity entityId, Integer id) {
         return getById(institution, (Class<T>) entityId.getEntityClass(), id);
     }
-    
-    public <T extends ImportedEntity> T getById(Institution institution,  Class<T> clazz, Integer id) {
+
+    public <T extends ImportedEntity> T getById(Institution institution, Class<T> clazz, Integer id) {
         return (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
     }
 
@@ -120,7 +122,7 @@ public class ImportedEntityService {
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location, String username,
-                                                            String password) throws DeduplicationException {
+            String password) throws DeduplicationException {
         ImportedEntityFeed transientImportedEntityFeed = new ImportedEntityFeed().withImportedEntityType(importedEntityType).withLocation(location)
                 .withUserName(username).withPassword(password).withInstitution(institution);
         return entityService.getOrCreate(transientImportedEntityFeed);
@@ -251,6 +253,17 @@ public class ImportedEntityService {
         return entityService.createOrUpdate(transientImportedLanguageQualificationType).getId();
     }
 
+    public Integer mergeImportedAgeRange(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange ageRangeDefinition)
+            throws DeduplicationException {
+        String ageRangeNameClean = ageRangeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+        BigInteger upperBound = ageRangeDefinition.getUpperBound();
+
+        AgeRange transientAgeRange = new AgeRange().withInstitution(institution).withCode(ageRangeDefinition.getCode()).withName(ageRangeNameClean)
+                .withLowerBound(ageRangeDefinition.getLowerBound().intValue()).withUpperBound(upperBound == null ? null : upperBound.intValue())
+                .withEnabled(true);
+        return entityService.createOrUpdate(transientAgeRange).getId();
+    }
+
     public <T extends ImportedEntity> Integer mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition)
             throws Exception {
         ImportedEntitySimple transientEntity = (ImportedEntitySimple) entityClass.newInstance();
@@ -273,6 +286,10 @@ public class ImportedEntityService {
 
     public DomicileUseDTO getMostUsedDomicile(Institution institution) {
         return importedEntityDAO.getMostUsedDomicile(institution);
+    }
+    
+    public AgeRange getAgeRange(Institution institution, Integer age) {
+        return importedEntityDAO.getAgeRange(institution, age);
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {

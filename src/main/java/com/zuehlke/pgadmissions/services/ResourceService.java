@@ -834,35 +834,35 @@ public class ResourceService {
 
     private ResourceSummaryRepresentation getResourceSummaryRespresentation(PrismScope resourceScope, Integer resourceId,
             Set<Set<Set<ImportedEntity>>> constraints) throws Exception {
+        ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
         ResourceSummaryRepresentation representation = new ResourceSummaryRepresentation();
+
+        if (resourceScope == INSTITUTION) {
+            representation.setProgramCount(programService.getActiveProgramCount((Institution) resource));
+            representation.setProjectCount(projectService.getActiveProjectCount(resource));
+        } else if (resourceScope == PROGRAM) {
+            representation.setProjectCount(projectService.getActiveProjectCount(resource));
+        }
+
         if (constraints == null) {
-            representation.addPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, null));
+            representation.addPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, resource, null));
         } else {
             for (Set<Set<ImportedEntity>> constraint : constraints) {
-                representation.addPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, constraint));
+                representation.addPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, resource, constraint));
             }
         }
         return representation;
     }
 
     private ResourceSummaryPlotRepresentation getResourceSummaryPlotRepresentation(PrismScope resourceScope, Integer resourceId,
-            Set<Set<ImportedEntity>> constraint) throws Exception {
-        ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resourceScope, resourceId, constraint);
+            ResourceParent resource, Set<Set<ImportedEntity>> constraint) throws Exception {
+        ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resourceScope, resourceId, resource, constraint);
         return new ResourceSummaryPlotRepresentation().withConstraint(null).withData(plotDataRepresentation);
     }
 
     private ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(PrismScope resourceScope, Integer resourceId,
-            Set<Set<ImportedEntity>> constraint) throws Exception {
-        ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
-        ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation().withCreatedDate(resource.getCreatedTimestamp()
-                .toLocalDate());
-
-        if (resourceScope == INSTITUTION) {
-            summary.setProgramCount(programService.getActiveProgramCount((Institution) resource));
-            summary.setProjectCount(projectService.getActiveProjectCount(resource));
-        } else if (resourceScope == PROGRAM) {
-            summary.setProjectCount(projectService.getActiveProjectCount(resource));
-        }
+            ResourceParent resource, Set<Set<ImportedEntity>> constraint) throws Exception {
+        ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
         boolean currentYear = true;
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
@@ -934,7 +934,6 @@ public class ResourceService {
         yearRepresentation.setRejectedApplicationRatio(doubleToBigDecimal(yearSummary.getRejectedApplicationRatio(), 2));
         yearRepresentation.setWithdrawnApplicationRatio(doubleToBigDecimal(yearSummary.getWithdrawnApplicationRatio(), 2));
         yearRepresentation.setAverageRating(doubleToBigDecimal(yearSummary.getAverageRating(), 2));
-        yearRepresentation.setAveragePreparationTime(doubleToBigDecimal(yearSummary.getAveragePreparationTime(), 2));
         yearRepresentation.setAverageProcessingTime(doubleToBigDecimal(yearSummary.getAverageProcessingTime(), 2));
     }
 

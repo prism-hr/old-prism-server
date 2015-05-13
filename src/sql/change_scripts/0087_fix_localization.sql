@@ -1,15 +1,16 @@
 alter table advert
 	add column logo_image_id int(10) unsigned after description,
 	add column background_image_id int(10) unsigned after logo_image_id,
+	add column institution_id int(10) unsigned,
 	add index (logo_image_id),
 	add index (background_image_id),
 	add foreign key (logo_image_id) references document (id),
 	add foreign key (background_image_id) references document (id)
 ;
 
-insert into advert (title, summary, description, logo_image_id, homepage, sequence_identifier)
+insert into advert (title, summary, description, logo_image_id, homepage, sequence_identifier, institution_id)
 	select title, summary, description, logo_document_id, homepage, 
-		concat(unix_timestamp(updated_timestamp), "000", lpad(id, "0", 10))
+		concat(unix_timestamp(updated_timestamp), "000", lpad(id, "0", 10)),  id
 	from institution
 ;
 
@@ -20,8 +21,12 @@ alter table institution
 ;
 
 update institution inner join advert
-	on institution.title = advert.title
+	on institution.id = advert.institution_id
 set institution.advert_id = advert.id
+;
+
+alter table advert
+	drop column institution_id
 ;
 
 delete advert.*

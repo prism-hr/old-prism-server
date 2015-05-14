@@ -8,4 +8,4 @@ left join application_personal_detail
 ${constraintExpression}
 	and application.submitted_timestamp is not null
 group by application.application_year, application.application_month_sequence
-order by application.application_year desc, application.application_month_sequence desc;
+order by application.application_year asc, application.application_month_sequence asc;

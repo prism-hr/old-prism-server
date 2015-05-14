@@ -113,7 +113,7 @@ public class AdvertService {
         return entityService.getById(AdvertClosingDate.class, id);
     }
 
-    public Advert getAdvert(String resourceScope, Integer resourceId) {
+    public Advert getAdvert(PrismScope resourceScope, Integer resourceId) {
         return advertDAO.getAdvert(resourceScope, resourceId);
     }
 

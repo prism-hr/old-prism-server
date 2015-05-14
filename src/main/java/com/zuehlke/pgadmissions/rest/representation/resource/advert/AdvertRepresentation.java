@@ -65,6 +65,8 @@ public class AdvertRepresentation {
     private List<String> locations;
 
     private InstitutionRepresentation institution;
+    
+    private InstitutionRepresentation partner;
 
     private String department;
 
@@ -268,6 +270,14 @@ public class AdvertRepresentation {
 
     public void setInstitution(InstitutionRepresentation institution) {
         this.institution = institution;
+    }
+
+    public InstitutionRepresentation getPartner() {
+        return partner;
+    }
+
+    public void setPartner(InstitutionRepresentation partner) {
+        this.partner = partner;
     }
 
     public String getDepartment() {

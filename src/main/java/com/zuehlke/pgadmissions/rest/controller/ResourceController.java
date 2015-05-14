@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -65,6 +66,7 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.BrandedResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -176,6 +178,12 @@ public class ResourceController {
 
         representation.setUsers(userRolesRepresentations);
         representation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
+        
+        Institution partner = resource.getPartner();
+        if (partner != null) {
+            InstitutionRepresentation partnerRepresentation = mapper.map(partner, InstitutionRepresentation.class);
+            representation.setPartner(partnerRepresentation);
+        }
 
         PrismScope resourceScope = resource.getResourceScope();
         Class<? extends ResourceRepresentationEnricher> resourceRepresentationEncricher = resourceScope.getResourceRepresentationEnricher();

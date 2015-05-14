@@ -46,7 +46,7 @@ public class AdvertDAO {
         String reference = resourceScope.getLowerCamelName();
         return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
                 .createAlias(reference, reference, JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.eq(resourceScope + ".id", resourceId))
+                .add(Restrictions.eq(reference + ".id", resourceId))
                 .uniqueResult();
     }
 

@@ -112,13 +112,14 @@ public class ProjectDAO {
                         .add(Projections.property("programAdvert.summary"), "programSummary") //
                         .add(Projections.property("programAdvert.description"), "programDescription") //
                         .add(Projections.property("institution.id"), "institutionId") //
-                        .add(Projections.property("institution.title"), "institutionTitle") //
-                        .add(Projections.property("institution.summary"), "institutionSummary") //
-                        .add(Projections.property("institution.homepage"), "institutionHomepage")) //
+                        .add(Projections.property("institutionAdvert.title"), "institutionTitle") //
+                        .add(Projections.property("institutionAdvert.summary"), "institutionSummary") //
+                        .add(Projections.property("institutionAdvert.homepage"), "institutionHomepage")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.advert", "programAdvert", JoinType.INNER_JOIN) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("institution.advert", "institutionAdvert", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", projectId)) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(Restrictions.isNotEmpty("resourceConditions")) //

@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
@@ -67,7 +68,12 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
         representation.setLocations(locations);
 
         representation.setInstitution(mapper.map(resource.getInstitution(), InstitutionRepresentation.class));
-        representation.setPartner(mapper.map(resource.getPartner(), InstitutionRepresentation.class));
+        
+        Institution partner = resource.getPartner();
+        if (partner != null) {
+            representation.setPartner(mapper.map(resource.getPartner(), InstitutionRepresentation.class));
+        }
+        
         return representation;
     }
 

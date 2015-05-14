@@ -37,6 +37,8 @@ public class ResourceListRowRepresentation {
 
     private LocalDate dueDate;
 
+    private DateTime createdTimestamp;
+    
     private DateTime updatedTimestamp;
 
     private Set<ActionRepresentation> actions;
@@ -141,6 +143,14 @@ public class ResourceListRowRepresentation {
 
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+    
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     public DateTime getUpdatedTimestamp() {

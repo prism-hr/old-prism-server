@@ -59,6 +59,8 @@ public class ResourceListRowDTO {
 
     private PrismStateGroup stateGroupId;
 
+    private DateTime createdTimestamp;
+    
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
@@ -255,6 +257,14 @@ public class ResourceListRowDTO {
 
     public void setCreatorAccountImageUrl(String creatorAccountImageUrl) {
         this.creatorAccountImageUrl = creatorAccountImageUrl;
+    }
+    
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     public DateTime getUpdatedTimestamp() {

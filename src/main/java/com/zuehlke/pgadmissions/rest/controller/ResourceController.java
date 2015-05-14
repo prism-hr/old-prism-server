@@ -179,8 +179,9 @@ public class ResourceController {
         representation.setUsers(userRolesRepresentations);
         representation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
         
+        Institution institution = resource.getInstitution();
         Institution partner = resource.getPartner();
-        if (partner != null) {
+        if (partner != null && !partner.sameAs(institution)) {
             InstitutionRepresentation partnerRepresentation = mapper.map(partner, InstitutionRepresentation.class);
             representation.setPartner(partnerRepresentation);
         }
@@ -226,7 +227,7 @@ public class ResourceController {
 
             for (String scopeName : new String[] { "institution", "partner" }) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
-                if (id != null) {
+                if (id != null && !id.equals(representation.getInstitution().getId())) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
                     Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
                     PropertyUtils.setSimpleProperty(representation, scopeName, new BrandedResourceRepresentation(id, title, logoImageId));

@@ -185,6 +185,7 @@ public class ResourceDAO {
         projectionList.add(Projections.property("state.id"), "stateId") //
                 .add(Projections.property("state.stateGroup.id"), "stateGroupId") //
                 .add(Projections.property("user.email"), "creatorEmail") //
+                .add(Projections.property("createdTimestamp"), "createdTimestamp") //
                 .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
                 .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
 

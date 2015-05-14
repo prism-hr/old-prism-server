@@ -227,7 +227,7 @@ public class ResourceController {
 
             for (String scopeName : new String[]{"institution", "partner"}) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
-                if (id != null && !id.equals(representation.getInstitution().getId())) {
+                if (id != null && (scopeName.equals("partner") && !id.equals(representation.getInstitution().getId()))) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
                     Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
                     PropertyUtils.setSimpleProperty(representation, scopeName, new BrandedResourceRepresentation(id, title, logoImageId));

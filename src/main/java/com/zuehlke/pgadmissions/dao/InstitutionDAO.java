@@ -145,13 +145,14 @@ public class InstitutionDAO {
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId, List<PrismState> institutionStates, List<PrismState> programStates,
-                                                       List<PrismState> projectStates) {
+            List<PrismState> projectStates) {
         return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("institution.id"), "institutionId") //
-                        .add(Projections.property("institution.title"), "institutionTitle") //
-                        .add(Projections.property("institution.summary"), "institutionSummary") //
-                        .add(Projections.property("institution.homepage"), "institutionHomepage")) //
+                        .add(Projections.property("advert.title"), "institutionTitle") //
+                        .add(Projections.property("advert.summary"), "institutionSummary") //
+                        .add(Projections.property("advert.homepage"), "institutionHomepage")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("programs", "program", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.in("program.state.id", programStates)) //
@@ -175,7 +176,7 @@ public class InstitutionDAO {
     }
 
     public List<ResourceSearchEngineDTO> getRelatedInstitutions(List<PrismState> institutionStates, List<PrismState> programStates,
-                                                                List<PrismState> projectStates) {
+            List<PrismState> projectStates) {
         return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id"), "id") //
@@ -316,7 +317,7 @@ public class InstitutionDAO {
     }
 
     public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(List<PrismState> states,
-                                                                                                                    boolean userLoggedIn) {
+            boolean userLoggedIn) {
         Junction disjunction = Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //

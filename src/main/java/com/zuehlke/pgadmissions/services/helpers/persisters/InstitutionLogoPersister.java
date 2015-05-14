@@ -18,7 +18,6 @@ public class InstitutionLogoPersister implements ImageDocumentPersister {
     public void persist(Integer institutionId, Document image) {
         Institution institution = institutionService.getById(institutionId);
         institution.setLogoImage(image);
-
     }
 
 }

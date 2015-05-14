@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -41,12 +42,12 @@ public class AdvertDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Advert getAdvert(String resourceScope, Integer resourceId) {
+    public Advert getAdvert(PrismScope resourceScope, Integer resourceId) {
+        String reference = resourceScope.getLowerCamelName();
         return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
-                .createAlias(resourceScope, resourceScope, JoinType.LEFT_OUTER_JOIN)
+                .createAlias(reference, reference, JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eq(resourceScope + ".id", resourceId))
                 .uniqueResult();
-
     }
 
     public List<Integer> getAdverts(List<PrismState> programStates, List<PrismState> projectStates,

@@ -27,7 +27,7 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
 
     @Inject
     private ResourceService resourceService;
-    
+
     @Inject
     private Mapper mapper;
 
@@ -67,6 +67,7 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
         representation.setLocations(locations);
 
         representation.setInstitution(mapper.map(resource.getInstitution(), InstitutionRepresentation.class));
+        representation.setPartner(mapper.map(resource.getPartner(), InstitutionRepresentation.class));
         return representation;
     }
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -45,8 +46,8 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}")
     public AdvertRepresentation getAdvert(@PathVariable String resourceScope, @PathVariable Integer resourceId) {
-        Advert advert = advertService.getAdvert(StringUtils.removeEnd(resourceScope, "s"), resourceId);
-        if(advert == null) {
+        Advert advert = advertService.getAdvert(PrismScope.valueOf(StringUtils.removeEnd(resourceScope, "s")), resourceId);
+        if (advert == null) {
             throw new ResourceNotFoundException("Advert not found");
         }
         return advertToRepresentationFunction.apply(advert);

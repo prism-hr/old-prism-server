@@ -37,8 +37,8 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -234,6 +234,23 @@ public class InstitutionService {
     public Integer getMonthOfBusinessYear(Institution institution, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         return month >= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
+    }
+    
+    public Integer getWeekOfBusinessYear(Institution institution, Integer week) {
+        LocalDate baseline = new LocalDate();
+        LocalDate businessYearStartDate = baseline.withMonthOfYear(institution.getBusinessYearStartMonth()).withDayOfMonth(1);
+        businessYearStartDate = businessYearStartDate.isAfter(baseline) ? businessYearStartDate.minusYears(1) : businessYearStartDate;
+        Integer businessYearStartWeek = businessYearStartDate.getWeekOfWeekyear();
+        LocalDate lastPossibleDayofWeekYear = baseline.withMonthOfYear(12).withDayOfMonth(31).plusDays(4);
+        Integer maximumWeekOfYear = null;
+        for (int i = 7; i > 0; i--) {
+            maximumWeekOfYear = lastPossibleDayofWeekYear.getWeekOfWeekyear();
+            if (!maximumWeekOfYear.equals(1)) {
+                break;
+            }
+            lastPossibleDayofWeekYear = lastPossibleDayofWeekYear.minusDays(1);
+        }
+        return week >= businessYearStartWeek ? (week - (businessYearStartWeek - 1)) : (week + (maximumWeekOfYear - (businessYearStartWeek - 1)));
     }
 
     public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram() {

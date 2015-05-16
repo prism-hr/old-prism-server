@@ -39,6 +39,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -385,6 +386,17 @@ public class ApplicationService {
         return index;
     }
 
+    public LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(PrismScope resourceScope,
+            Integer resourceId, Set<Set<ImportedEntity>> constraint) throws Exception {
+        LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByWeek(resourceScope, resourceId,
+                constraint);
+        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
+            index.put(new ApplicationProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
+        }
+        return index;
+    }
+
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
         List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
         customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
@@ -417,7 +429,8 @@ public class ApplicationService {
             for (ObjectError error : errors.getAllErrors()) {
                 Object property = PrismReflectionUtils.getProperty(application, error.getObjectName());
                 if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
-                    PrismReflectionUtils.setProperty(property, "lastUpdatedTimestamp", null);
+                    ApplicationSection section = (ApplicationSection) property;
+                    section.setLastUpdatedTimestamp(null);
                 }
             }
         }
@@ -436,7 +449,7 @@ public class ApplicationService {
         ValidationUtils.invokeValidator(applicationValidator, application, errors);
         return errors;
     }
-    
+
     public List<Integer> getApplicationsByMatchingSuggestedSupervisor(String searchTerm) {
         return applicationDAO.getApplicationsByMatchingSuggestedSupervisor(searchTerm);
     }
@@ -463,6 +476,44 @@ public class ApplicationService {
         } else {
             return baseline.withDayOfWeek(MONDAY).plusWeeks(4);
         }
+    }
+
+    public static class ApplicationProcessingMonth {
+
+        private String applicationYear;
+
+        private Integer applicationMonth;
+
+        public ApplicationProcessingMonth(String applicationYear, Integer applicationMonth) {
+            this.applicationYear = applicationYear;
+            this.applicationMonth = applicationMonth;
+        }
+
+        public String getApplicationYear() {
+            return applicationYear;
+        }
+
+        public Integer getApplicationMonth() {
+            return applicationMonth;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(applicationYear, applicationMonth);
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (object == null) {
+                return false;
+            }
+            if (getClass() != object.getClass()) {
+                return false;
+            }
+            final ApplicationProcessingMonth other = (ApplicationProcessingMonth) object;
+            return Objects.equal(applicationYear, other.getApplicationYear()) && Objects.equal(applicationMonth, other.getApplicationMonth());
+        }
+
     }
 
 }

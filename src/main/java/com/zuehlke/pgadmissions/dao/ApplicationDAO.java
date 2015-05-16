@@ -324,7 +324,7 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId,
-                                                                                         Set<Set<ImportedEntity>> constraint) throws Exception {
+            Set<Set<ImportedEntity>> constraint) throws Exception {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
                 "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
@@ -332,10 +332,20 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId,
-                                                                                          Set<Set<ImportedEntity>> constraint) throws Exception {
+            Set<Set<ImportedEntity>> constraint) throws Exception {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
                 "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
+                .list();
+    }
+
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(PrismScope resourceScope, Integer resourceId,
+            Set<Set<ImportedEntity>> constraint) throws Exception {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
+                "sql/application_processing_summary_week.ftl")
+                .addScalar("applicationMonth", IntegerType.INSTANCE) //
+                .addScalar("applicationWeek", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
@@ -366,7 +376,7 @@ public class ApplicationDAO {
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(PrismScope resourceScope, Integer resourceId, Set<Set<ImportedEntity>> constraint,
-                                                          String templateLocation) throws Exception {
+            String templateLocation) throws Exception {
         String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
         Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
 

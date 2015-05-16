@@ -61,9 +61,12 @@ public class ApplicationPreprocessor implements ResourceProcessor {
         DateTime createdTimestamp = application.getCreatedTimestamp();
         Integer applicationYear = createdTimestamp.getYear();
         Integer applicationMonth = createdTimestamp.getMonthOfYear();
+        Integer applicationWeek = createdTimestamp.getWeekOfWeekyear();
         application.setApplicationYear(institutionService.getBusinessYear(institution, applicationYear, applicationMonth));
         application.setApplicationMonth(applicationMonth);
         application.setApplicationMonthSequence(institutionService.getMonthOfBusinessYear(institution, applicationMonth));
+        application.setApplicationWeek(applicationWeek);
+        application.setApplicationWeekSequence(institutionService.getWeekOfBusinessYear(institution, applicationWeek));
     }
 
     private void setSubmissionData(Application application) {

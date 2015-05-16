@@ -15,18 +15,17 @@ public class ResourceSummaryPlotDataRepresentation {
         this.processingSummaries = processingSummaries;
     }
 
-    public ResourceSummaryPlotDataRepresentation withProcessingSummaries(List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
+    public ResourceSummaryPlotDataRepresentation withProcessingSummaries(
+            List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
         this.processingSummaries = processingSummaries;
         return this;
     }
 
-    public static class ApplicationProcessingSummaryRepresentationYear extends ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation {
+    public static class ApplicationProcessingSummaryRepresentationYear extends ApplicationProcessingSummaryRepresentation {
 
         private String applicationYear;
 
-        private BigDecimal percentageComplete;
-
-        private List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth> processingSummaries;
+        private List<ApplicationProcessingSummaryRepresentationMonth> processingSummaries;
 
         public String getApplicationYear() {
             return applicationYear;
@@ -36,27 +35,21 @@ public class ResourceSummaryPlotDataRepresentation {
             this.applicationYear = applicationYear;
         }
 
-        public BigDecimal getPercentageComplete() {
-            return percentageComplete;
-        }
-
-        public void setPercentageComplete(BigDecimal percentageComplete) {
-            this.percentageComplete = percentageComplete;
-        }
-
-        public List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth> getProcessingSummaries() {
+        public List<ApplicationProcessingSummaryRepresentationMonth> getProcessingSummaries() {
             return processingSummaries;
         }
 
-        public void setProcessingSummaries(List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth> processingSummaries) {
+        public void setProcessingSummaries(List<ApplicationProcessingSummaryRepresentationMonth> processingSummaries) {
             this.processingSummaries = processingSummaries;
         }
 
     }
 
-    public static class ApplicationProcessingSummaryRepresentationMonth extends ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation {
+    public static class ApplicationProcessingSummaryRepresentationMonth extends ApplicationProcessingSummaryRepresentation {
 
         private Integer applicationMonth;
+
+        private List<ApplicationProcessingSummaryRepresentationWeek> processingSummaries;
 
         public Integer getApplicationMonth() {
             return applicationMonth;
@@ -64,6 +57,28 @@ public class ResourceSummaryPlotDataRepresentation {
 
         public void setApplicationMonth(Integer applicationMonth) {
             this.applicationMonth = applicationMonth;
+        }
+
+        public List<ApplicationProcessingSummaryRepresentationWeek> getProcessingSummaries() {
+            return processingSummaries;
+        }
+
+        public void setProcessingSummaries(List<ApplicationProcessingSummaryRepresentationWeek> processingSummaries) {
+            this.processingSummaries = processingSummaries;
+        }
+
+    }
+
+    public static class ApplicationProcessingSummaryRepresentationWeek extends ApplicationProcessingSummaryRepresentation {
+
+        private Integer applicationWeek;
+
+        public Integer getApplicationWeek() {
+            return applicationWeek;
+        }
+
+        public void setApplicationWeek(Integer applicationWeek) {
+            this.applicationWeek = applicationWeek;
         }
 
     }

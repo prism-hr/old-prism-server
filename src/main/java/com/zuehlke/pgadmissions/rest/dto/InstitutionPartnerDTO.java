@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import javax.validation.Valid;
+
 public class InstitutionPartnerDTO {
 
     private Integer partnerId;
 
+    @Valid
     private InstitutionDTO partner;
 
     public Integer getPartnerId() {

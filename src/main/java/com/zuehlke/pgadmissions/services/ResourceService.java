@@ -12,8 +12,6 @@ import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +89,6 @@ import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
@@ -103,15 +100,18 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.services.ApplicationService.ApplicationProcessingMonth;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
@@ -853,37 +853,41 @@ public class ResourceService {
             ResourceParent resource, Set<Set<ImportedEntity>> constraint) throws Exception {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
-        boolean currentYear = true;
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
         List<ApplicationProcessingSummaryDTO> yearSummaries = applicationService.getApplicationProcessingSummariesByYear(resourceScope, resourceId, constraint);
-        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = applicationService.getApplicationProcessingSummariesByMonth(resourceScope,
-                resourceId, constraint);
+        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = applicationService //
+                .getApplicationProcessingSummariesByMonth(resourceScope, resourceId, constraint);
+        LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> weekSummaries = applicationService //
+                .getApplicationProcessingSummariesByWeek(resourceScope, resourceId, constraint);
+
         for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
             ApplicationProcessingSummaryRepresentationYear yearRepresentation = new ApplicationProcessingSummaryRepresentationYear();
             String applicationYear = yearSummary.getApplicationYear();
             yearRepresentation.setApplicationYear(applicationYear);
-
-            if (currentYear == true) {
-                Integer monthOfBusinessYear = institutionService.getMonthOfBusinessYear(resource.getInstitution(), new LocalDate().getMonthOfYear());
-                yearRepresentation.setPercentageComplete(new BigDecimal(monthOfBusinessYear).divide(new BigDecimal(12), 2, RoundingMode.HALF_UP));
-            } else {
-                yearRepresentation.setPercentageComplete(new BigDecimal(100.00));
-            }
 
             populateApplicationProcessingSummary(yearSummary, yearRepresentation);
 
             List<ApplicationProcessingSummaryRepresentationMonth> monthRepresentations = Lists.newLinkedList();
             for (ApplicationProcessingSummaryDTO monthSummary : monthSummaries.get(applicationYear)) {
                 ApplicationProcessingSummaryRepresentationMonth monthRepresentation = new ApplicationProcessingSummaryRepresentationMonth();
-                monthSummary.setApplicationMonth(monthSummary.getApplicationMonth());
                 populateApplicationProcessingSummary(monthSummary, monthRepresentation);
                 monthRepresentation.setApplicationMonth(monthSummary.getApplicationMonth());
                 monthRepresentations.add(monthRepresentation);
+
+                Integer applicationMonth = monthSummary.getApplicationMonth();
+                List<ApplicationProcessingSummaryRepresentationWeek> weekRepresentations = Lists.newLinkedList();
+                for (ApplicationProcessingSummaryDTO weekSummary : weekSummaries.get(new ApplicationProcessingMonth(applicationYear, applicationMonth))) {
+                    ApplicationProcessingSummaryRepresentationWeek weekRepresentation = new ApplicationProcessingSummaryRepresentationWeek();
+                    populateApplicationProcessingSummary(weekSummary, weekRepresentation);
+                    weekRepresentation.setApplicationWeek(weekSummary.getApplicationWeek());
+                    weekRepresentations.add(weekRepresentation);
+                }
+
+                monthRepresentation.setProcessingSummaries(weekRepresentations);
             }
 
             yearRepresentation.setProcessingSummaries(monthRepresentations);
             yearRepresentations.add(yearRepresentation);
-            currentYear = false;
         }
 
         summary.setProcessingSummaries(yearRepresentations);

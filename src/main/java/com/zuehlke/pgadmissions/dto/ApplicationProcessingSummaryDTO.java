@@ -6,6 +6,8 @@ public class ApplicationProcessingSummaryDTO {
     
     private Integer applicationMonth;
 
+    private Integer applicationWeek;
+    
     private Long advertCount;
 
     private Long createdApplicationCount;
@@ -48,6 +50,14 @@ public class ApplicationProcessingSummaryDTO {
 
     public void setApplicationMonth(Integer applicationMonth) {
         this.applicationMonth = applicationMonth;
+    }
+    
+    public Integer getApplicationWeek() {
+        return applicationWeek;
+    }
+
+    public void setApplicationWeek(Integer applicationWeek) {
+        this.applicationWeek = applicationWeek;
     }
 
     public Long getAdvertCount() {

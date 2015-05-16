@@ -231,6 +231,12 @@ public class Application extends Resource {
     @Column(name = "application_month_sequence")
     private Integer applicationMonthSequence;
 
+    @Column(name = "application_week")
+    private Integer applicationWeek;
+
+    @Column(name = "application_week_sequence")
+    private Integer applicationWeekSequence;
+    
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -504,6 +510,22 @@ public class Application extends Resource {
 
     public void setApplicationMonthSequence(Integer applicationMonthSequence) {
         this.applicationMonthSequence = applicationMonthSequence;
+    }
+
+    public Integer getApplicationWeek() {
+        return applicationWeek;
+    }
+
+    public void setApplicationWeek(Integer applicationWeek) {
+        this.applicationWeek = applicationWeek;
+    }
+
+    public Integer getApplicationWeekSequence() {
+        return applicationWeekSequence;
+    }
+
+    public void setApplicationWeekSequence(Integer applicationWeekSequence) {
+        this.applicationWeekSequence = applicationWeekSequence;
     }
 
     public LocalDate getClosingDate() {

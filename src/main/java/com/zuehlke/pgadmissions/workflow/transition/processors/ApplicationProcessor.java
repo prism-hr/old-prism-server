@@ -37,6 +37,10 @@ public class ApplicationProcessor implements ResourceProcessor {
             setRejectionReasonSystem(resource, comment);
         }
         
+        if (comment.isApplicationAssignRefereesComment()) {
+            appendApplicationReferees(application, comment);
+        }
+        
         if (comment.isApplicationUpdateRefereesComment()) {
             appendApplicationReferees(application, comment);
         }

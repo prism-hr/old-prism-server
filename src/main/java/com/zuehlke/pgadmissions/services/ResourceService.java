@@ -91,7 +91,7 @@ import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
@@ -730,7 +730,7 @@ public class ResourceService {
     public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
         return resourceDAO.getResourcesBySponsor(scope, searchTerm);
     }
-    
+
     public ResourceSummaryRepresentation getResourceSummaryRepresentation(PrismScope resourceScope, Integer resourceId) throws Exception {
         ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
         ResourceSummaryRepresentation representation = new ResourceSummaryRepresentation();
@@ -745,7 +745,7 @@ public class ResourceService {
         representation.setPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, resource, null).getPlots().iterator().next());
         return representation;
     }
-    
+
     public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(PrismScope resourceScope, Integer resourceId,
             ResourceParent resource, ResourceReportFilterDTO filterDTO) throws Exception {
         Institution institution = resource.getInstitution();

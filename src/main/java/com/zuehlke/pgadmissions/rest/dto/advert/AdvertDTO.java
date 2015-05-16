@@ -1,10 +1,11 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.advert;
 
 import java.math.BigDecimal;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
+import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
@@ -23,14 +24,14 @@ public class AdvertDTO {
     @URL
     @Size(max = 2048)
     private String applyHomepage;
-    
+
     @NotEmpty
     @PhoneNumber
     private String telephone;
 
     @Valid
     private InstitutionAddressDTO address;
-    
+
     private BigDecimal sponsorshipRequired;
 
     public String getTitle() {

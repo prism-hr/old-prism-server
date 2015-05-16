@@ -21,6 +21,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -85,7 +86,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
 	}
 
 	public static PrismStateAction applicationViewEditReference(PrismState state) {
-		return PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter(state) //
+		return applicationViewEditWithViewerRecruiter(state) //
 		        .withAssignments(APPLICATION_REFEREE, APPLICATION_VIEW_AS_REFEREE);
 	}
 

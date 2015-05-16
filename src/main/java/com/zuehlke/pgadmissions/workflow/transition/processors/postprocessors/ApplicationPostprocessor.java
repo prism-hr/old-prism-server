@@ -7,10 +7,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
 import static java.math.RoundingMode.HALF_UP;
 
@@ -37,7 +35,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -80,14 +77,6 @@ public class ApplicationPostprocessor implements ResourceProcessor {
             synchronizeProjectSupervisors(application);
         }
 
-        if (comment.isApplicationAssignRefereesComment()) {
-            appendApplicationReferees(application, comment);
-        }
-
-        if (comment.isApplicationUpdateRefereesComment()) {
-            appendApplicationReferees(application, comment);
-        }
-
         if (comment.isApplicationProvideReferenceComment()) {
             synchronizeApplicationReferees(application, comment);
         }
@@ -119,13 +108,6 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         for (User supervisorUser : supervisorUsers) {
             application.getSupervisors().add(
                     new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true).withLastUpdatedTimestamp(new DateTime()));
-        }
-    }
-
-    private void appendApplicationReferees(Application application, Comment comment) {
-        Role refereeRole = roleService.getById(APPLICATION_REFEREE);
-        for (User referee : applicationService.getUnassignedApplicationReferees(application)) {
-            comment.addAssignedUser(referee, refereeRole, CREATE);
         }
     }
 

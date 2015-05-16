@@ -33,6 +33,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PRO
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_VIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
@@ -46,6 +47,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -208,7 +210,7 @@ public class PrismApplicationWorkflow {
                 .withPartnerAssignments(INSTITUTION_ADMINISTRATOR_GROUP, APPLICATION_VIEW_AS_RECRUITER);
     }
 
-    public static PrismStateAction applicationViewEdit(PrismState state) {
+    public static PrismStateAction applicationViewEdit(PrismState state, PrismRoleTransition... roleTransitions) {
         return new PrismStateAction() //
                 .withAction(APPLICATION_VIEW_EDIT) //
                 .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER) //
@@ -224,11 +226,12 @@ public class PrismApplicationWorkflow {
                 .withPartnerAssignments(INSTITUTION_ADMINISTRATOR_GROUP, APPLICATION_VIEW_AS_RECRUITER)
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
-                        .withTransitionAction(APPLICATION_VIEW_EDIT)); //
+                        .withTransitionAction(APPLICATION_VIEW_EDIT) //
+                        .withRoleTransitions(roleTransitions));
     }
 
     public static PrismStateAction applicationViewEditWithViewerRecruiter(PrismState state) {
-        return applicationViewEdit(state) //
+        return applicationViewEdit(state, APPLICATION_CREATE_REFEREE_GROUP.getRoleTransitions()) //
                 .withAssignments(APPLICATION_VIEWER_RECRUITER, APPLICATION_VIEW_AS_RECRUITER);
     }
 

@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_SPONSOR_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_INSTITUTION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_SPONSOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
@@ -61,8 +62,8 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_PROVIDE_SPONSORSHIP) //
                 .withCondition(ACCEPT_SPONSOR) //
-                .withAssignments(INSTITUTION_SPONSOR_GROUP)
                 .withNotifications(INSTITUTION_SPONSOR, INSTITUTION_SPONSOR_NOTIFICATION) //
+                .withNotifications(INSTITUTION_SPONSOR_GROUP, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION)
                 .withTransitions(INSTITUTION_SPONSOR_TRANSITON //
                         .withRoleTransitions(INSTITUTION_CREATE_SPONSOR_GROUP))); //
 

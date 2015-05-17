@@ -847,7 +847,7 @@ public class Comment {
     }
 
     public boolean isSponsorshipComment() {
-        return sponsorship != null && BooleanUtils.isTrue(sponsorship.getConfirmed());
+        return sponsorship != null;
     }
 
     public boolean isProjectPartnerApproveComment() {

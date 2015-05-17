@@ -49,14 +49,14 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.FinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -84,6 +84,9 @@ public class AdvertService {
 
     @Inject
     private ApplicationService applicationService;
+
+    @Inject
+    private CommentService commentService;
 
     @Inject
     private EntityService entityService;
@@ -342,6 +345,26 @@ public class AdvertService {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
     }
 
+    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, BigDecimal sponsorshipTarget) throws Exception {
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
+
+        advert.setSponsorshipSecured(sponsorshipTarget);
+        executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
+    }
+
+    public void rejectSponsorship(PrismScope resourceScope, Integer resourceId, Integer commentId) throws Exception {
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
+
+        Comment comment = commentService.getById(commentId);
+        CommentSponsorship sponsorship = comment.getSponsorship();
+        advert.setSponsorshipSecured(advert.getSponsorshipSecured().subtract(sponsorship.getAmountConverted()));
+        
+        Comment rejection = executeUpdate(resource, "COMMENT_REJECTED_SPONSORSHIP");
+        sponsorship.setRejection(rejection);
+    }
+
     public void synchronizeSponsorship(ResourceParent resource, Comment comment) throws Exception {
         Advert advert = resource.getAdvert();
         String advertCurrency = advert.getResource().getInstitution().getCurrency();
@@ -547,8 +570,8 @@ public class AdvertService {
         return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 
-    private void executeUpdate(ResourceParent resource, String message) throws Exception {
-        resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
+    private Comment executeUpdate(ResourceParent resource, String message) throws Exception {
+        return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 
     private InstitutionAddress createAddress(InstitutionAddressDTO addressDTO) {

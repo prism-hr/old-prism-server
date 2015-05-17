@@ -211,8 +211,8 @@ public class InstitutionService {
         return institutionDAO.getRelatedInstitutions(activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
-    public List<Institution> getInstitutions(String query, String[] googleIds) {
-        return institutionDAO.getInstitutions(query, googleIds);
+    public List<Institution> getInstitutions(String searchTerm, String[] googleIds) {
+        return institutionDAO.getInstitutions(searchTerm, googleIds);
     }
 
     public void disableInstitutionDomiciles(List<String> updates) {

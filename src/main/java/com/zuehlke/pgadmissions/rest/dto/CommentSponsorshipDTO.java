@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import java.math.BigDecimal;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
-public class SponsorshipDTO {
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
+
+public class CommentSponsorshipDTO {
 
     @Valid
     private InstitutionPartnerDTO sponsor;
@@ -16,9 +19,6 @@ public class SponsorshipDTO {
 
     @NotNull
     private BigDecimal amountSpecified;
-
-    @NotNull
-    private BigDecimal amountConverted;
 
     public InstitutionPartnerDTO getSponsor() {
         return sponsor;
@@ -44,11 +44,4 @@ public class SponsorshipDTO {
         this.amountSpecified = amountSpecified;
     }
 
-    public BigDecimal getAmountConverted() {
-        return amountConverted;
-    }
-
-    public void setAmountConverted(BigDecimal amountConverted) {
-        this.amountConverted = amountConverted;
-    }
 }

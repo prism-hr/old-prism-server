@@ -243,10 +243,10 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public List<Institution> getInstitutions(String query, String[] googleIds) {
+    public List<Institution> getInstitutions(String searchTerm, String[] googleIds) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class)
                 .add(Restrictions.disjunction()
-                        .add(Restrictions.ilike("title", query, MatchMode.ANYWHERE))
+                        .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE))
                         .add(Restrictions.in("googleId", googleIds)))
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED_COMPLETED))
                 .list();

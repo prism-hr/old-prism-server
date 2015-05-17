@@ -69,7 +69,7 @@ public class CommentDTO {
 	private ResourceDTO application;
 
 	@Valid
-	private SponsorshipDTO sponsorship;
+	private CommentSponsorshipDTO sponsorship;
 
 	@Valid
 	private List<CommentAssignedUserDTO> assignedUsers;
@@ -265,11 +265,11 @@ public class CommentDTO {
         this.application = application;
     }
 
-	public SponsorshipDTO getSponsorship() {
+	public CommentSponsorshipDTO getSponsorship() {
 		return sponsorship;
 	}
 
-	public void setSponsorship(SponsorshipDTO sponsorship) {
+	public void setSponsorship(CommentSponsorshipDTO sponsorship) {
 		this.sponsorship = sponsorship;
 	}
 

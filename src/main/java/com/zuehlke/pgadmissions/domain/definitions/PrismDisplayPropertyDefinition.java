@@ -1401,8 +1401,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Specify whether you wish to use our recruitment engine, or link to your own."),
     SYSTEM_RESOURCE_PARENT_APPLY_HOMEPAGE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Application Page URL"),
     SYSTEM_RESOURCE_PARENT_APPLY_HOMEPAGE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Link to your application page for the opportunity."),
-    SYSTEM_RESOURCE_PARENT_TELEPHONE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Telephone"),
-    SYSTEM_RESOURCE_PARENT_TELEPHONE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "???"),
+    SYSTEM_RESOURCE_PARENT_TELEPHONE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Contact Telephone"),
+    SYSTEM_RESOURCE_PARENT_TELEPHONE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Provide us with a telephone number that we can contact you at should we need to."),
     SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Processing Options"),
     SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Configure the processing options that you wish to enable"),
     SYSTEM_RESOURCE_PARENT_INVALID_PARTNER_INSTITUTION(SYSTEM_ADVERTISE_SECTION, "You provided an invalid partner Organization"),
@@ -1426,8 +1426,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The month of the year that your business year starts from. We use this knowledge to provide you with reports in a format the makes the greatest sense to you."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Currency"),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The currency that your organization typically does business in"),
-    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Minimum Wage"),
-    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "???"),
+    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Minimum Hourly Wage"),
+    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Tell us what is the minimum wage that your organization would pay staff and/or work experience personnel. We need to know this so that we can verify that you meet sector requirements for the treatment of work experience personnel"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Logo"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Upload the logo for your institution."),
 
@@ -1564,6 +1564,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated institution fees and payments"),
     INSTITUTION_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated institution categories"),
     INSTITUTION_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated institution closing dates"),
+    INSTITUTION_COMMENT_UPDATED_SPONSORSHIP_TARGET(INSTITUTION_COMMENT, "Updated institution sponsorship target"),
+    INSTITUTION_COMMENT_REJECTED_SPONSORSHIP(INSTITUTION_COMMENT, "Rejected institution sponsorship"),
 
     /*
      * *************** INSTITUTION FORM *********************
@@ -1611,6 +1613,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated program fees and payments"),
     PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated program categories"),
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"),
+    PROGRAM_COMMENT_UPDATED_SPONSORSHIP_TARGET(PROGRAM_COMMENT, "Updated program sponsorship target"),
+    PROGRAM_COMMENT_REJECTED_SPONSORSHIP(PROGRAM_COMMENT, "Rejected program sponsorship"),
 
     /*
      * *************** PROGRAM FORM *********************
@@ -1705,6 +1709,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_UPDATED_FEE_AND_PAYMENT(PROJECT_COMMENT, "Updated project fees and payments"),
     PROJECT_COMMENT_UPDATED_CATEGORY(PROJECT_COMMENT, "Updated project categories"),
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PROJECT_COMMENT, "Updated project closing dates"),
+    PROJECT_COMMENT_UPDATED_SPONSORSHIP_TARGET(PROJECT_COMMENT, "Updated project sponsorship target"),
+    PROJECT_COMMENT_REJECTED_SPONSORSHIP(PROJECT_COMMENT, "Rejected project sponsorship"),
 
     /*
      * *************** PROJECT FORM *********************
@@ -2070,9 +2076,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_ELIGIBLE_LABEL(APPLICATION_ACTION, "Is the applicant Eligible?"),
     APPLICATION_ACTION_ELIGIBLE_HINT(APPLICATION_ACTION, "Assess whether the applicant is eligible."),
     APPLICATION_ACTION_SELECT_REFEREE_LABEL(APPLICATION_ACTION, "Referee"),
-    APPLICATION_ACTION_SELECT_REFEREE_HINT(APPLICATION_ACTION, "???"),
+    APPLICATION_ACTION_SELECT_REFEREE_HINT(APPLICATION_ACTION, "Select the referee that you wish to upload a reference for"),
     APPLICATION_ACTION_PROVIDE_REFERENCE_LABEL(APPLICATION_ACTION, "Are you happy to provide a reference?"),
-    APPLICATION_ACTION_PROVIDE_REFERENCE_HINT(APPLICATION_ACTION, "???"),
+    APPLICATION_ACTION_PROVIDE_REFERENCE_HINT(APPLICATION_ACTION, "Confirm that you are happy to provide a reference. You may decline if you wish"),
     APPLICATION_ACTION_TRANSITION_STATE_LABEL(APPLICATION_ACTION, "Next Task"),
     APPLICATION_ACTION_TRANSITION_STATE_HINT(APPLICATION_ACTION, "Select the next task that you wish to perform."),
     APPLICATION_ACTION_SECONDARY_STATES_LABEL(APPLICATION_ACTION, "Other Tasks"),

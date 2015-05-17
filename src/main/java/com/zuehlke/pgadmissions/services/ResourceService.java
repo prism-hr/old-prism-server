@@ -202,6 +202,10 @@ public class ResourceService {
         return resource == null ? null : resource.getId();
     }
 
+    public ActionOutcomeDTO create(User user, Action action, ResourceDTO resourceDTO) throws Exception {
+        return create(user, action, resourceDTO, null, null);
+    }
+    
     public ActionOutcomeDTO create(User user, Action action, ResourceDTO resourceDTO, String referrer, Integer workflowPropertyConfigurationVersion)
             throws Exception {
         PrismScope resourceScope = action.getCreationScope().getId();
@@ -333,7 +337,7 @@ public class ResourceService {
         return "PRiSM-" + PrismScope.getByResourceClass(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
-    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
+    public Comment executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 
@@ -347,6 +351,7 @@ public class ResourceService {
         }
 
         actionService.executeUserAction(resource, action, comment);
+        return comment;
     }
 
     public Resource getOperativeResource(Resource resource, Action action) {

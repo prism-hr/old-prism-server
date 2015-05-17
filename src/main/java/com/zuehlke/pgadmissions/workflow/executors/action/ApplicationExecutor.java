@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -54,7 +56,7 @@ public class ApplicationExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
 
         User user = userService.getById(commentDTO.getUser());
-        if (actionId == PrismAction.APPLICATION_COMPLETE) {
+        if (actionId == APPLICATION_COMPLETE) {
             BeanPropertyBindingResult errors = applicationService.validateApplication(application);
             if (errors.hasErrors()) {
                 throw new PrismValidationException("Application not completed", errors);

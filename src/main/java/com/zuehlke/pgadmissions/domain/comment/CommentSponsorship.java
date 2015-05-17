@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
@@ -25,11 +26,12 @@ public class CommentSponsorship {
     @Column(name = "sponsorship_amount_converted")
     private BigDecimal amountConverted;
 
-    @Column(name = "sponsorship_confirmed")
-    private Boolean confirmed;
-
     @Column(name = "sponsorship_target_fulfilled")
     private Boolean targetFulfilled;
+    
+    @OneToOne
+    @JoinColumn(name = "sponsorship_rejection_id")
+    private Comment rejection;
 
     public Institution getSponsor() {
         return sponsor;
@@ -63,20 +65,20 @@ public class CommentSponsorship {
         this.amountConverted = amountConverted;
     }
 
-    public Boolean getConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
-    }
-
     public Boolean getTargetFulfilled() {
         return targetFulfilled;
     }
 
     public void setTargetFulfilled(Boolean targetFulfilled) {
         this.targetFulfilled = targetFulfilled;
+    }
+
+    public Comment getRejection() {
+        return rejection;
+    }
+
+    public void setRejection(Comment rejection) {
+        this.rejection = rejection;
     }
 
     @Override

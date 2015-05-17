@@ -198,9 +198,10 @@ public class InstitutionService {
     }
 
     public List<SitemapEntryDTO> getSitemapEntries() {
+        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
+        return institutionDAO.getSitemapEntries(activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
     public List<ResourceSearchEngineDTO> getActiveInstitutions() {

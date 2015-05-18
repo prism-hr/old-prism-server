@@ -11,7 +11,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.util.Arrays;
 import java.util.List;
@@ -153,11 +152,11 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<ResourceListActionDTO> getPermittedUnsecuredActions(Resource resource, PrismScope... exclusions) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
+    public List<ResourceListActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Set<Integer> resourceIds, PrismScope... exclusions) {
+        String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property(resourceReference + ".id"), "resourceId") //
+                        .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState")) //
@@ -167,7 +166,7 @@ public class ActionDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
                 .add(Restrictions.eq("action.actionType", USER_INVOCATION)) //
                 .add(Restrictions.isNull("stateActionAssignment.id"));
 
@@ -189,29 +188,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("actionType", USER_INVOCATION)) //
                 .add(Restrictions.eq("actionCategory", CREATE_RESOURCE)) //
                 .add(Restrictions.eq("creationScope.id", creationScope)) //
-                .list();
-    }
-
-    public List<ResourceListActionDTO> getCreateResourceActions(PrismScope resourceScope, Set<Integer> resourceIds) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<ResourceListActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
-                        .add(Projections.groupProperty("action.id"), "actionId") //
-                        .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
-                        .add(Projections.max("primaryState"), "primaryState")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
-                .add(Restrictions.eq("action.actionType", USER_INVOCATION)) //
-                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE)) //
-                .add(Restrictions.ne("action.creationScope.id", APPLICATION)) //
-                .add(getResourceStateActionConstraint()) //
-                .addOrder(Order.asc("action.id")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceListActionDTO.class)) //
                 .list();
     }
 

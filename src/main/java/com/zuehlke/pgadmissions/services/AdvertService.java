@@ -349,7 +349,7 @@ public class AdvertService {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
-        advert.setSponsorshipSecured(sponsorshipTarget);
+        advert.setSponsorshipTarget(sponsorshipTarget);
         executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
     }
 
@@ -360,7 +360,7 @@ public class AdvertService {
         Comment comment = commentService.getById(commentId);
         CommentSponsorship sponsorship = comment.getSponsorship();
         advert.setSponsorshipSecured(advert.getSponsorshipSecured().subtract(sponsorship.getAmountConverted()));
-        
+
         Comment rejection = executeUpdate(resource, "COMMENT_REJECTED_SPONSORSHIP");
         sponsorship.setRejection(rejection);
     }
@@ -368,6 +368,7 @@ public class AdvertService {
     public void synchronizeSponsorship(ResourceParent resource, Comment comment) throws Exception {
         Advert advert = resource.getAdvert();
         String advertCurrency = advert.getResource().getInstitution().getCurrency();
+
         BigDecimal advertRequired = advert.getSponsorshipTarget();
         BigDecimal advertSecured = advert.getSponsorshipSecured();
 
@@ -384,7 +385,9 @@ public class AdvertService {
         advertSecured = advertSecured == null ? advertSecured : advertSecured.add(sponsorshipConverted);
 
         advert.setSponsorshipSecured(advertSecured);
-        sponsorship.setTargetFulfilled(advertRequired.compareTo(advertSecured) >= 0);
+        if (advertRequired != null) {
+            sponsorship.setTargetFulfilled(advertRequired.compareTo(advertSecured) >= 0);
+        }
     }
 
     public List<AdvertRepresentation> getRecommentedAdverts(Integer applicationId) {

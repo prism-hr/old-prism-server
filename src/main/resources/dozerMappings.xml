@@ -252,6 +252,14 @@
             <a>domicile.id</a>
             <b>domicile</b>
         </field>
+        <field>
+            <a>location.locationX</a>
+            <b>locationX</b>
+        </field>
+        <field>
+            <a>location.locationY</a>
+            <b>locationY</b>
+        </field>
     </mapping>
     
     <mapping>

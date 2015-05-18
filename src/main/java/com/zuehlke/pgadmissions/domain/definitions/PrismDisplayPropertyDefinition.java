@@ -1524,14 +1524,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_ADVERT_DESCRIPTION_HINT(INSTITUTION_ADVERT_DETAILS, "Detailed description of your advert."),
 
     /*
+     * *************** INSTITUTION ADVERT SPONSORSHIP *********************
+     */
+
+    INSTITUTION_ADVERT_SPONSORSHIP_HEADER(INSTITUTION_ADVERT_SPONSORSHIP, "Sponsorship"),
+    INSTITUTION_ADVERT_SPONSORSHIP_TARGET_LABEL(INSTITUTION_ADVERT_SPONSORSHIP, "Target"),
+    INSTITUTION_ADVERT_SPONSORSHIP_TARGET_HINT(INSTITUTION_ADVERT_SPONSORSHIP, "???"),
+
+    /*
      * *************** PROGRAM COMMENT *********************
      */
 
-    PROGRAM_COMMENT_APPROVAL(
-            PROGRAM_COMMENT,
-            "We are pleased to tell you that your program has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
-    PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT,
-            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
+    PROGRAM_COMMENT_APPROVAL(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
+    PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
     PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
     PROGRAM_COMMENT_UPDATED(PROGRAM_COMMENT, "Updated program"),

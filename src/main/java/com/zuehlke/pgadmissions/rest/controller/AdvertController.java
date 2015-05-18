@@ -1,24 +1,15 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.*;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|institutions}/{resourceId}")
@@ -63,6 +54,12 @@ public class AdvertController {
     public void deleteClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer closingDateId)
             throws Exception {
         advertService.deleteClosingDate(resourceDescriptor.getResourceScope(), resourceId, closingDateId);
+    }
+
+    @RequestMapping(value = "/sponsorship", method = RequestMethod.PUT)
+    public void updateSponsorship(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+                                      @Valid @RequestBody AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
+        advertService.updateSponsorship(resourceDescriptor.getResourceScope(), resourceId, sponsorshipDTO);
     }
 
     @ModelAttribute

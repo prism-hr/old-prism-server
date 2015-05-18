@@ -348,11 +348,11 @@ public class AdvertService {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
     }
 
-    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, BigDecimal sponsorshipTarget) throws Exception {
+    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
-        advert.setSponsorshipTarget(sponsorshipTarget);
+        advert.setSponsorshipTarget(sponsorshipDTO.getSponsorshipTarget());
         executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
     }
 

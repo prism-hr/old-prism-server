@@ -57,36 +57,32 @@ public class LifeCycleService {
 	private ApplicationContext applicationContext;
 
 	@PostConstruct
-	public void startup() {
+	public void startup() throws Exception {
 		boolean doInitializeWorkflow = BooleanUtils.isTrue(initializeWorkflow);
 
-		try {
-			if (doInitializeWorkflow) {
-				systemService.initializeWorkflow();
-			}
+        if (doInitializeWorkflow) {
+            systemService.initializeWorkflow();
+        }
 
-			if (BooleanUtils.isTrue(destroyDisplayProperties)) {
-				systemService.destroyDisplayProperties();
-			}
+        if (BooleanUtils.isTrue(destroyDisplayProperties)) {
+            systemService.destroyDisplayProperties();
+        }
 
-			if (BooleanUtils.isTrue(initializeDisplayProperties)) {
-				systemService.initializeDisplayProperties();
-			}
+        if (BooleanUtils.isTrue(initializeDisplayProperties)) {
+            systemService.initializeDisplayProperties();
+        }
 
-			if (doInitializeWorkflow) {
-				systemService.initializeSystemUser();
-			}
+        if (doInitializeWorkflow) {
+            systemService.initializeSystemUser();
+        }
 
-			if (BooleanUtils.isTrue(initializeData)) {
-				importedEntityServiceHelperSystem.execute();
-			}
+        if (BooleanUtils.isTrue(initializeData)) {
+            importedEntityServiceHelperSystem.execute();
+        }
 
-			if (BooleanUtils.isTrue(maintain)) {
-				executorService = Executors.newFixedThreadPool(PrismMaintenanceTask.values().length);
-			}
-		} catch (Exception e) {
-			logger.error("Error initializing system", e);
-		}
+        if (BooleanUtils.isTrue(maintain)) {
+            executorService = Executors.newFixedThreadPool(PrismMaintenanceTask.values().length);
+        }
 	}
 
 	@PreDestroy

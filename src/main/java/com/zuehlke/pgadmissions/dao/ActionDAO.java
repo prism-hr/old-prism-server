@@ -153,16 +153,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
-        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("actionType", USER_INVOCATION)) //
-                .add(Restrictions.eq("actionCategory", CREATE_RESOURCE)) //
-                .add(Restrictions.eq("creationScope.id", creationScope)) //
-                .list();
-    }
-
-    public List<ResourceListActionDTO> getCreateResourceActions(Resource resource, PrismScope... exclusions) {
+    public List<ResourceListActionDTO> getPermittedUnsecuredActions(Resource resource, PrismScope... exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -175,19 +166,29 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("action.actionType", USER_INVOCATION)) //
-                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE));
+                .add(Restrictions.isNull("stateActionAssignment.id"));
 
         for (PrismScope exclusion : exclusions) {
-            criteria.add(Restrictions.ne("action.creationScope.id", exclusion)); //
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.isNull("action.creationScope")) //
+                    .add(Restrictions.ne("action.creationScope.id", exclusion))); //
         }
 
-        return (List<ResourceListActionDTO>) criteria.add(Restrictions.disjunction() //
-                .add(Restrictions.isNull("stateAction.actionCondition")) //
-                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
+        return (List<ResourceListActionDTO>) criteria.add(getResourceStateActionConstraint()) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceListActionDTO.class)) //
+                .list();
+    }
+
+    public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
+        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq("actionType", USER_INVOCATION)) //
+                .add(Restrictions.eq("actionCategory", CREATE_RESOURCE)) //
+                .add(Restrictions.eq("creationScope.id", creationScope)) //
                 .list();
     }
 

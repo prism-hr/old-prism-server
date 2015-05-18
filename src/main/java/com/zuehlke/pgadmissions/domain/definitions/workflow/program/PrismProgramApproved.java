@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_SPONSOR_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_SPONSOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_SPONSOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
@@ -41,7 +41,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
                 .withAction(PROGRAM_PROVIDE_SPONSORSHIP) //
                 .withCondition(ACCEPT_SPONSOR) //
                 .withNotifications(PROGRAM_SPONSOR, PROGRAM_SPONSOR_NOTIFICATION) //
-                .withNotifications(PROGRAM_SPONSOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION)
+                .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION)
                 .withTransitions(PROGRAM_SPONSOR_TRANSITON //
                         .withRoleTransitions(PROGRAM_CREATE_SPONSOR_GROUP))); //
 

@@ -7,7 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_SPONSOR_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SPONSOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_SPONSOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
@@ -38,7 +38,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                 .withAction(PROJECT_PROVIDE_SPONSORSHIP) //
                 .withCondition(ACCEPT_SPONSOR) //
                 .withNotifications(PROJECT_SPONSOR, PROJECT_SPONSOR_NOTIFICATION) //
-                .withNotifications(PROJECT_SPONSOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION)
+                .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION)
                 .withTransitions(PROJECT_SPONSOR_TRANSITON //
                         .withRoleTransitions(PROJECT_CREATE_SPONSOR_GROUP))); //
 

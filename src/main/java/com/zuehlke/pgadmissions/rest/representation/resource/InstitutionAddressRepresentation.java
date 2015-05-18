@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-
 public class InstitutionAddressRepresentation {
 
     private String domicile;
@@ -16,6 +15,10 @@ public class InstitutionAddressRepresentation {
     private String addressCode;
 
     private String googleId;
+
+    private String locationX;
+
+    private String locationY;
 
     private String locationString;
 
@@ -75,6 +78,22 @@ public class InstitutionAddressRepresentation {
         this.googleId = googleId;
     }
 
+    public String getLocationX() {
+        return locationX;
+    }
+
+    public void setLocationX(String locationX) {
+        this.locationX = locationX;
+    }
+
+    public String getLocationY() {
+        return locationY;
+    }
+
+    public void setLocationY(String locationY) {
+        this.locationY = locationY;
+    }
+
     public String getLocationString() {
         return locationString;
     }
@@ -82,4 +101,5 @@ public class InstitutionAddressRepresentation {
     public void setLocationString(String locationString) {
         this.locationString = locationString;
     }
+
 }

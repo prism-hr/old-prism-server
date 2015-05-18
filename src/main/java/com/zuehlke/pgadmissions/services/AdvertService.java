@@ -179,6 +179,7 @@ public class AdvertService {
         Advert advert = resource.getAdvert();
         advert.setDescription(advertDetailsDTO.getDescription());
         advert.setHomepage(advertDetailsDTO.getHomepage());
+        updateAddress(advertDetailsDTO.getAddress(), advert.getAddress());
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
@@ -602,7 +603,7 @@ public class AdvertService {
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
         address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressRegion(addressDTO.getAddressDistrict());
+        address.setAddressRegion(addressDTO.getAddressRegion());
         address.setAddressCode(addressDTO.getAddressCode());
         address.setGoogleId(addressDTO.getGoogleId());
     }

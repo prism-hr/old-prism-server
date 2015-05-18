@@ -37,7 +37,7 @@ public class AgeRange extends ImportedEntity {
     @Column(name = "lower_bound", nullable = false)
     private Integer lowerBound;
 
-    @Column(name = "upper_bound", nullable = false)
+    @Column(name = "upper_bound")
     private Integer upperBound;
 
     @Column(name = "enabled", nullable = false)

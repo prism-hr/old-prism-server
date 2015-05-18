@@ -179,7 +179,7 @@ public class AdvertService {
         Advert advert = resource.getAdvert();
         advert.setDescription(advertDetailsDTO.getDescription());
         advert.setHomepage(advertDetailsDTO.getHomepage());
-        updateAddress(advertDetailsDTO.getAddress(), advert.getAddress());
+        updateAddress(advert, advertDetailsDTO.getAddress());
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 

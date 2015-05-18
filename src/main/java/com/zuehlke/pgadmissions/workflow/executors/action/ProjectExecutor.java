@@ -62,10 +62,10 @@ public class ProjectExecutor implements ActionExecutor {
                 .load(PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
 
         OpportunityDTO projectDTO = (OpportunityDTO) commentDTO.getResource();
-        LocalDate dueDate = projectDTO.getEndDate();
+        LocalDate endDate = projectDTO.getEndDate();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
-        if (viewEditAction && !project.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
+        if (viewEditAction && !project.getImported() && transitionState == null && (endDate == null || endDate.isAfter(new LocalDate()))) {
             transitionState = stateService.getById(PROJECT_APPROVED);
         }
 

@@ -12,8 +12,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 
 public class ResourceParentDTO extends ResourceDTO {
 
-    @NotNull
     @Valid
+    @NotNull
     private AdvertDTO advert;
 
     private LocalDate endDate;

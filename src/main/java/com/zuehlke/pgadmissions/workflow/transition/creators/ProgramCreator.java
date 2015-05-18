@@ -48,7 +48,7 @@ public class ProgramCreator implements ResourceCreator {
         Institution institution = institutionService.getById(newProgram.getResourceId());
 
         AdvertDTO advertDTO = newProgram.getAdvert();
-        Advert advert = advertService.createAdvert(advertDTO);
+        Advert advert = advertService.createAdvert(institution, advertDTO);
 
         DepartmentDTO departmentDTO = newProgram.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);

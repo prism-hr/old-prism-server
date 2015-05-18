@@ -253,6 +253,17 @@
             <b>domicile</b>
         </field>
     </mapping>
+    
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.institution.InstitutionAddress
+        </class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO
+        </class-b>
+        <field>
+            <a>domicile.id</a>
+            <b>domicile</b>
+        </field>
+    </mapping>
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.comment.Comment</class-a>

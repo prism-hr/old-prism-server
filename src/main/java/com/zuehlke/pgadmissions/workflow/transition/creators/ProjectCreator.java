@@ -49,7 +49,7 @@ public class ProjectCreator implements ResourceCreator {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, newProject.getResourceId());
 
         AdvertDTO advertDTO = newProject.getAdvert();
-        Advert advert = advertService.createAdvert(advertDTO);
+        Advert advert = advertService.createAdvert(resource, advertDTO);
 
         DepartmentDTO departmentDTO = newProject.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);

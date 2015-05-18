@@ -125,7 +125,7 @@ public class InstitutionService {
 
         AdvertDTO advertDTO = institutionDTO.getAdvert();
         Advert advert = institution.getAdvert();
-        advertService.updateAdvert(advertDTO, advert);
+        advertService.updateAdvert(institution.getParentResource(), advertDTO, advert);
         institution.setGoogleId(advert.getAddress().getGoogleId());
 
         institution.setTitle(advert.getTitle());

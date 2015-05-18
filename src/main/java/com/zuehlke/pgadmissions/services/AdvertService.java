@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.dozer.Mapper;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,9 @@ public class AdvertService {
     private GeocodableLocationService geocodableLocationService;
 
     @Inject
+    private Mapper mapper;
+
+    @Inject
     private RestTemplate restTemplate;
 
     private AdvertToRepresentationFunction advertToRepresentationFunction = new AdvertToRepresentationFunction();
@@ -148,14 +152,14 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
-    public Advert createAdvert(AdvertDTO advertDTO) throws Exception {
+    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) throws Exception {
         Advert advert = new Advert();
-        updateAdvert(advertDTO, advert);
+        updateAdvert(parentResource, advertDTO, advert);
         entityService.save(advert);
         return advert;
     }
 
-    public void updateAdvert(AdvertDTO advertDTO, Advert advert) throws Exception {
+    public void updateAdvert(Resource parentResource, AdvertDTO advertDTO, Advert advert) throws Exception {
         if (BooleanUtils.isFalse(advert.getImported())) {
             advert.setTitle(advertDTO.getTitle());
         }
@@ -164,8 +168,13 @@ public class AdvertService {
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
         advert.setTelephone(advertDTO.getTelephone());
 
+        InstitutionAddress address = advert.getAddress();
         InstitutionAddressDTO addressDTO = advertDTO.getAddress();
         if (addressDTO != null) {
+            updateAddress(advert, addressDTO);
+        } else if (address == null) {
+            address = getParentResourceAddress(parentResource);
+            addressDTO = mapper.map(address, InstitutionAddressDTO.class);
             updateAddress(advert, addressDTO);
         }
 
@@ -603,6 +612,20 @@ public class AdvertService {
         address.setAddressRegion(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
         address.setGoogleId(addressDTO.getGoogleId());
+    }
+
+    private InstitutionAddress getParentResourceAddress(Resource parentResource) {
+        Advert advert = parentResource.getAdvert();
+        if (advert == null) {
+            return null;
+        }
+
+        InstitutionAddress address = advert.getAddress();
+        if (address == null) {
+            getParentResourceAddress(parentResource.getParentResource());
+        }
+
+        return address;
     }
 
 }

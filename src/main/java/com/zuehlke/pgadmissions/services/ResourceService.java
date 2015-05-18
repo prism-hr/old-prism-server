@@ -663,7 +663,7 @@ public class ResourceService {
 
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();
-        advertService.updateAdvert(advertDTO, advert);
+        advertService.updateAdvert(resource.getParentResource(), advertDTO, advert);
         resource.setTitle(advert.getTitle());
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());

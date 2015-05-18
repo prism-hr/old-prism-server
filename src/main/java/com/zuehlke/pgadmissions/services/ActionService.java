@@ -342,8 +342,7 @@ public class ActionService {
 
     public boolean checkActionAvailable(Resource resource, Action action, User user) {
         return actionDAO.getPermittedAction(resource, action, user) != null
-                || (action.getCreationScope() != null && !actionDAO
-                        .getPermittedUnsecuredActions(resource.getResourceScope(), Sets.newHashSet(resource.getId())).isEmpty());
+                || !actionDAO.getPermittedUnsecuredActions(resource.getResourceScope(), Sets.newHashSet(resource.getId())).isEmpty();
     }
 
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {

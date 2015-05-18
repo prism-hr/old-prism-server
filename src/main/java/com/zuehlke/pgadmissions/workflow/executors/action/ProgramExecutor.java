@@ -63,10 +63,10 @@ public class ProgramExecutor implements ActionExecutor {
                 .load(PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
         OpportunityDTO programDTO = (OpportunityDTO) commentDTO.getResource();
-        LocalDate dueDate = programDTO.getEndDate();
+        LocalDate endDate = programDTO.getEndDate();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
-        if (viewEditAction && !program.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
+        if (viewEditAction && !program.getImported() && transitionState == null && (endDate == null || endDate.isAfter(new LocalDate()))) {
             transitionState = stateService.getById(PROGRAM_APPROVED);
         }
 

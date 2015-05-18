@@ -146,7 +146,7 @@ public class ActionService {
             representations.add(mapper.map(action, ActionRepresentation.class));
         }
 
-        List<ResourceListActionDTO> creationActions = actionDAO.getCreateResourceActions(resource, APPLICATION);
+        List<ResourceListActionDTO> creationActions = actionDAO.getPermittedUnsecuredActions(resource, APPLICATION);
         for (ResourceListActionDTO creationAction : creationActions) {
             representations.add(mapper.map(creationAction, ActionRepresentation.class));
         }
@@ -342,7 +342,7 @@ public class ActionService {
     
     public boolean checkActionAvailable(Resource resource, Action action, User user) {
         return actionDAO.getPermittedAction(resource, action, user) != null
-                || (action.getCreationScope() != null && !actionDAO.getCreateResourceActions(resource).isEmpty());
+                || (action.getCreationScope() != null && !actionDAO.getPermittedUnsecuredActions(resource).isEmpty());
     }
 
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {

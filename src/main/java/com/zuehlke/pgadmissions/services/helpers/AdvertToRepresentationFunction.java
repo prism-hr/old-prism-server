@@ -35,7 +35,6 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
     @Override
     public AdvertRepresentation apply(Advert advert) {
         AdvertRepresentation representation = mapper.map(advert, AdvertRepresentation.class);
-
         ResourceParent resource = advert.getResource();
 
         representation.setUser(mapper.map(resource.getUser(), UserRepresentation.class));

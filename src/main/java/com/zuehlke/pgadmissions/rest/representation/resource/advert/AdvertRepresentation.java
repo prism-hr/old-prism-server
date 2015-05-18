@@ -1,15 +1,19 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
-import com.zuehlke.pgadmissions.domain.definitions.*;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
 
 public class AdvertRepresentation {
 
@@ -28,6 +32,12 @@ public class AdvertRepresentation {
     private String telephone;
 
     private InstitutionAddressRepresentation address;
+    
+    private String sponsorshipPurpose;
+    
+    private BigDecimal sponsorshipTarget;
+
+    private BigDecimal sponsorshipSecured;
 
     private FinancialDetailsRepresentation fee;
 
@@ -66,10 +76,6 @@ public class AdvertRepresentation {
     private InstitutionRepresentation partner;
 
     private String department;
-
-    private BigDecimal sponsorshipTarget;
-
-    private BigDecimal sponsorshipSecured;
 
     private String sequenceIdentifier;
 
@@ -135,6 +141,30 @@ public class AdvertRepresentation {
 
     public void setAddress(InstitutionAddressRepresentation address) {
         this.address = address;
+    }
+
+    public String getSponsorshipPurpose() {
+        return sponsorshipPurpose;
+    }
+
+    public void setSponsorshipPurpose(String sponsorshipPurpose) {
+        this.sponsorshipPurpose = sponsorshipPurpose;
+    }
+
+    public BigDecimal getSponsorshipTarget() {
+        return sponsorshipTarget;
+    }
+
+    public void setSponsorshipTarget(BigDecimal sponsorshipTarget) {
+        this.sponsorshipTarget = sponsorshipTarget;
+    }
+
+    public BigDecimal getSponsorshipSecured() {
+        return sponsorshipSecured;
+    }
+
+    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
+        this.sponsorshipSecured = sponsorshipSecured;
     }
 
     public FinancialDetailsRepresentation getFee() {
@@ -287,22 +317,6 @@ public class AdvertRepresentation {
 
     public void setDepartment(String department) {
         this.department = department;
-    }
-
-    public BigDecimal getSponsorshipTarget() {
-        return sponsorshipTarget;
-    }
-
-    public void setSponsorshipTarget(BigDecimal sponsorshipTarget) {
-        this.sponsorshipTarget = sponsorshipTarget;
-    }
-
-    public BigDecimal getSponsorshipSecured() {
-        return sponsorshipSecured;
-    }
-
-    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
-        this.sponsorshipSecured = sponsorshipSecured;
     }
 
     public String getSequenceIdentifier() {

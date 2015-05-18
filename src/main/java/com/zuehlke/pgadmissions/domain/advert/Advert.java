@@ -71,6 +71,9 @@ public class Advert extends ResourceParentAttribute {
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
 
+    @Column(name = "sponsorship_purpose")
+    private String sponsorshipPurpose;
+    
     @Column(name = "sponsorship_target")
     private BigDecimal sponsorshipTarget;
 
@@ -222,6 +225,14 @@ public class Advert extends ResourceParentAttribute {
 
     public void setAddress(InstitutionAddress address) {
         this.address = address;
+    }
+
+    public String getSponsorshipPurpose() {
+        return sponsorshipPurpose;
+    }
+
+    public void setSponsorshipPurpose(String sponsorshipPurpose) {
+        this.sponsorshipPurpose = sponsorshipPurpose;
     }
 
     public BigDecimal getSponsorshipTarget() {

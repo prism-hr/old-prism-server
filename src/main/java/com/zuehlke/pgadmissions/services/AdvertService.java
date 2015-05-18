@@ -360,7 +360,9 @@ public class AdvertService {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
+        advert.setSponsorshipPurpose(sponsorshipDTO.getSponsorshipPurpose());
         advert.setSponsorshipTarget(sponsorshipDTO.getSponsorshipTarget());
+        
         executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
     }
 

@@ -55,7 +55,7 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
     public List<AdvertRepresentation> getRecommendedAdverts(@PathVariable Integer applicationId) {
-        return advertService.getRecommentedAdverts(applicationId);
+        return advertService.getRecommendedAdverts(applicationId);
     }
 
 }

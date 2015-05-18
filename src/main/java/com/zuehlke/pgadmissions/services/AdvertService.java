@@ -166,7 +166,7 @@ public class AdvertService {
         if (addressDTO != null) {
             updateAddress(advert, addressDTO);
         } else if (address == null) {
-            address = getParentResourceAddress(parentResource);
+            address = getResourceAddress(parentResource);
             addressDTO = mapper.map(address, InstitutionAddressDTO.class);
             updateAddress(advert, addressDTO);
         }
@@ -607,15 +607,19 @@ public class AdvertService {
         address.setGoogleId(addressDTO.getGoogleId());
     }
 
-    private InstitutionAddress getParentResourceAddress(Resource parentResource) {
-        Advert advert = parentResource.getAdvert();
+    private InstitutionAddress getResourceAddress(Resource resource) {
+        Advert advert = resource.getAdvert();
         if (advert == null) {
             return null;
         }
 
         InstitutionAddress address = advert.getAddress();
         if (address == null) {
-            getParentResourceAddress(parentResource.getParentResource());
+            Resource parentResource = resource.getParentResource();
+            if (parentResource.sameAs(resource)) {
+                return null;
+            }
+            getResourceAddress(resource.getParentResource());
         }
 
         return address;

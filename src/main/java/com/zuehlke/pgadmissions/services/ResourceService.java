@@ -714,8 +714,7 @@ public class ResourceService {
     }
 
     public void synchronizePartner(Resource resource, Comment comment) {
-        Institution partner = resource.getPartner();
-        comment.setPartner(partner == null ? resource.getParentResource().getPartner() : partner);
+        comment.setPartner(resource.getPartner());
     }
 
     public void resynchronizePartner(ResourceOpportunity resource, Comment comment) {

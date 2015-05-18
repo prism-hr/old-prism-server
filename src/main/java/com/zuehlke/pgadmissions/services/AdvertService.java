@@ -1,6 +1,31 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.dozer.Mapper;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -27,34 +52,17 @@ import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.*;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertSponsorshipDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
-import javax.inject.Inject;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional

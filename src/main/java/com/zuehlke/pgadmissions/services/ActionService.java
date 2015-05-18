@@ -146,7 +146,7 @@ public class ActionService {
             representations.add(mapper.map(action, ActionRepresentation.class));
         }
 
-        List<ResourceListActionDTO> creationActions = actionDAO.getPermittedUnsecuredActions(resource, APPLICATION);
+        List<ResourceListActionDTO> creationActions = actionDAO.getPermittedUnsecuredActions(scope, Sets.newHashSet(resource.getId()), APPLICATION);
         for (ResourceListActionDTO creationAction : creationActions) {
             representations.add(mapper.map(creationAction, ActionRepresentation.class));
         }
@@ -167,7 +167,7 @@ public class ActionService {
 
     public HashMultimap<Integer, ResourceListActionDTO> getCreateResourceActions(PrismScope resourceScope, Set<Integer> resourceIds) {
         HashMultimap<Integer, ResourceListActionDTO> creationActions = HashMultimap.create();
-        for (ResourceListActionDTO resourceListActionDTO : actionDAO.getCreateResourceActions(resourceScope, resourceIds)) {
+        for (ResourceListActionDTO resourceListActionDTO : actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, APPLICATION)) {
             creationActions.put(resourceListActionDTO.getResourceId(), resourceListActionDTO);
         }
         return creationActions;
@@ -339,10 +339,11 @@ public class ActionService {
     public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
         return actionDAO.getPartnerActions(resource, actionConditions);
     }
-    
+
     public boolean checkActionAvailable(Resource resource, Action action, User user) {
         return actionDAO.getPermittedAction(resource, action, user) != null
-                || (action.getCreationScope() != null && !actionDAO.getPermittedUnsecuredActions(resource).isEmpty());
+                || (action.getCreationScope() != null && !actionDAO
+                        .getPermittedUnsecuredActions(resource.getResourceScope(), Sets.newHashSet(resource.getId())).isEmpty());
     }
 
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {

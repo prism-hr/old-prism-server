@@ -318,7 +318,7 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("permitAll")
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) throws Exception {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(resourceId, commentDTO);
         return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);

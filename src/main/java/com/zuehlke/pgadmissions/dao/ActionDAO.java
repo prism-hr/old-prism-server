@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstrain
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
@@ -381,7 +380,7 @@ public class ActionDAO {
                 .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
                 .createAlias("stateTransition.transitionState", "transitionState", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.in("action.actionCategory", new PrismActionCategory[] { CREATE_RESOURCE, IMPORT_RESOURCE })) //
+                        .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE)) //
                         .add(Restrictions.eq("action.id", SYSTEM_STARTUP))) //
                 .setResultTransformer(Transformers.aliasToBean(ActionCreationScopeDTO.class)) //
                 .list();

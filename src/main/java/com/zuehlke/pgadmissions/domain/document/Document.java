@@ -21,6 +21,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualificat
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
@@ -91,8 +93,14 @@ public class Document {
     private Institution logoImage;
 
     @OneToOne(mappedBy = "backgroundImage")
-    private Institution backgroundImage;
+    private Institution institutionBackgroundImage;
 
+    @OneToOne(mappedBy = "backgroundImage")
+    private Program programBackgroundImage;
+
+    @OneToOne(mappedBy = "backgroundImage")
+    private Project projectBackgroundImage;
+    
     public void setId(Integer id) {
         this.id = id;
     }
@@ -197,8 +205,16 @@ public class Document {
         return logoImage;
     }
 
-    public Institution getBackgroundImage() {
-        return backgroundImage;
+    public Institution getInstitutionBackgroundImage() {
+        return institutionBackgroundImage;
+    }
+
+    public Program getProgramBackgroundImage() {
+        return programBackgroundImage;
+    }
+
+    public Project getProjectBackgroundImage() {
+        return projectBackgroundImage;
     }
 
     public Document withId(Integer id) {

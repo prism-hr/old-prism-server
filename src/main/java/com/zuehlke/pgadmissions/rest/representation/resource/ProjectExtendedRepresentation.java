@@ -18,6 +18,8 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
     private PrismOpportunityType opportunityType;
 
     private String title;
+    
+    private Integer backgroundImage;
 
     private Integer durationMinimum;
 
@@ -67,6 +69,14 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Integer getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Integer backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public Integer getDurationMinimum() {

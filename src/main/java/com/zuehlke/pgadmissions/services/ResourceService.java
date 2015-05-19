@@ -796,6 +796,18 @@ public class ResourceService {
     public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
         return resourceDAO.getResourceTopTenSponsors(resource);
     }
+    
+    public Integer getBackgroundImage(ResourceParent resource) {
+        Document backgroundImage = resource.getBackgroundImage();
+        if (backgroundImage == null) {
+            Resource parent = resource.getParentResource();
+            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
+                return getBackgroundImage(resource);
+            }
+            return null;
+        }
+        return backgroundImage.getId();
+    }
 
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;

@@ -37,6 +37,7 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
         AdvertRepresentation representation = mapper.map(advert, AdvertRepresentation.class);
         ResourceParent resource = advert.getResource();
 
+        representation.setBackgroundImage(resourceService.getBackgroundImage(resource));
         representation.setUser(mapper.map(resource.getUser(), UserRepresentation.class));
         representation.setResourceScope(resource.getResourceScope());
         representation.setResourceId(resource.getId());
@@ -48,7 +49,7 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
             partnerActions.add(action);
         }
         representation.setPartnerActions(partnerActions);
-        
+
         representation.setSponsorCount(resourceService.getResourceSponsorCount(resource));
         representation.setTopTenSponsors(resourceService.getResourceTopTenSponsors(resource));
 
@@ -71,12 +72,12 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
 
         Institution institution = resource.getInstitution();
         representation.setInstitution(mapper.map(institution, InstitutionRepresentation.class));
-        
+
         Institution partner = resource.getPartner();
         if (partner != null && !partner.sameAs(institution)) {
             representation.setPartner(mapper.map(resource.getPartner(), InstitutionRepresentation.class));
         }
-        
+
         return representation;
     }
 

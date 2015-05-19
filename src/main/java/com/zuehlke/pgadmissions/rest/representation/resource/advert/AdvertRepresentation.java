@@ -22,6 +22,8 @@ public class AdvertRepresentation {
 
     private String title;
 
+    private Integer backgroundImage;
+
     private String summary;
 
     private String description;
@@ -33,15 +35,15 @@ public class AdvertRepresentation {
     private String telephone;
 
     private InstitutionAddressRepresentation address;
-    
+
     private String sponsorshipPurpose;
-    
+
     private BigDecimal sponsorshipTarget;
 
     private BigDecimal sponsorshipSecured;
-    
+
     private Integer sponsorCount;
-    
+
     private List<ResourceSponsorRepresentation> topTenSponsors;
 
     private FinancialDetailsRepresentation fee;
@@ -98,6 +100,14 @@ public class AdvertRepresentation {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Integer getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Integer backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public String getSummary() {

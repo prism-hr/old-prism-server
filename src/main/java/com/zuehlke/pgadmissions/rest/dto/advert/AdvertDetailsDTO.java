@@ -2,8 +2,9 @@ package com.zuehlke.pgadmissions.rest.dto.advert;
 
 import javax.validation.constraints.Size;
 
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import org.hibernate.validator.constraints.URL;
+
+import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 
 public class AdvertDetailsDTO {
 

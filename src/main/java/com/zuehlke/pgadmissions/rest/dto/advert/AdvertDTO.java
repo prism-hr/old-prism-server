@@ -5,10 +5,10 @@ import java.math.BigDecimal;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
+import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
 
 public class AdvertDTO {

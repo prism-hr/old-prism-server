@@ -120,9 +120,7 @@ public class InstitutionService {
         return institution;
     }
 
-    public void update(Integer institutionId, InstitutionDTO institutionDTO) throws Exception {
-        Institution institution = entityService.getById(Institution.class, institutionId);
-
+    public void update(Institution institution, InstitutionDTO institutionDTO) throws Exception {
         AdvertDTO advertDTO = institutionDTO.getAdvert();
         Advert advert = institution.getAdvert();
         advertService.updateAdvert(institution.getParentResource(), advertDTO, advert);
@@ -236,7 +234,7 @@ public class InstitutionService {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         return month >= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
     }
-    
+
     public Integer getWeekOfBusinessYear(Institution institution, Integer week) {
         LocalDate baseline = new LocalDate();
         LocalDate businessYearStartDate = baseline.withMonthOfYear(institution.getBusinessYearStartMonth()).withDayOfMonth(1);

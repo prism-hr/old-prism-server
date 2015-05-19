@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
 public abstract class ResourceParent extends Resource {
@@ -14,6 +15,10 @@ public abstract class ResourceParent extends Resource {
     public abstract String getTitle();
 
     public abstract void setTitle(String title);
+
+    public abstract Document getBackgroundImage();
+
+    public abstract void setBackgroundImage(Document backgroundImageId);
 
     public abstract DateTime getUpdatedTimestampSitemap();
 

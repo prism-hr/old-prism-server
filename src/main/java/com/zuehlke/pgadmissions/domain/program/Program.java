@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -99,6 +100,10 @@ public class Program extends ResourceOpportunity {
 
     @Column(name = "title", nullable = false)
     private String title;
+    
+    @OneToOne
+    @JoinColumn(name = "background_image_id")
+    private Document backgroundImage;
 
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
@@ -337,6 +342,16 @@ public class Program extends ResourceOpportunity {
     @Override
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public Document getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    @Override
+    public void setBackgroundImage(Document backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     @Override

@@ -35,7 +35,9 @@ public class DocumentDAO {
                         .add(Restrictions.isNotNull("applicationCoveringLetter.id")) //
                         .add(Restrictions.isNotNull("portraitImage.id")) //
                         .add(Restrictions.isNotNull("logoImage.id")) //
-                        .add(Restrictions.isNotNull("backgroundImage.id"))) //
+                        .add(Restrictions.isNotNull("institutionBackgroundImage.id")) //
+                        .add(Restrictions.isNotNull("programBackgroundImage.id")) //
+                        .add(Restrictions.isNotNull("projectBackgroundImage.id"))) //
                 .list();
     }
 
@@ -51,7 +53,9 @@ public class DocumentDAO {
                 .add(Restrictions.isNull("applicationCoveringLetter.id")) //
                 .add(Restrictions.isNull("portraitImage.id")) //
                 .add(Restrictions.isNull("logoImage.id")) //
-                .add(Restrictions.isNull("backgroundImage.id")) //
+                .add(Restrictions.isNotNull("institutionBackgroundImage.id")) //
+                .add(Restrictions.isNotNull("programBackgroundImage.id")) //
+                .add(Restrictions.isNotNull("projectBackgroundImage.id")) //
                 .add(Restrictions.le("createdTimestamp", baselineTime.minusDays(1))) //
                 .list();
     }
@@ -87,7 +91,9 @@ public class DocumentDAO {
                 .createAlias("applicationCoveringLetter", "applicationCoveringLetter", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("portraitImage", "portraitImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("backgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN);
+                .createAlias("institutionBackgroundImage", "institutionBackgroundImage", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("programBackgroundImage", "institutionBackgroundImage", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("projectBackgroundImage", "institutionBackgroundImage", JoinType.LEFT_OUTER_JOIN);
     }
 
 }

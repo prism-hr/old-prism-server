@@ -12,6 +12,7 @@ public enum PrismActionCategory {
     PROCESS_RESOURCE, //
     PROPAGATE_RESOURCE, //
     PURGE_RESOURCE, //
+    SPONSOR_RESOURCE, //
     VIEW_EDIT_RESOURCE, //
     VIEW_RESOURCE_LIST, //
     WITHDRAW_RESOURCE

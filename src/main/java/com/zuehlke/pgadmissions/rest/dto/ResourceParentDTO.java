@@ -5,10 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
 public class ResourceParentDTO extends ResourceDTO {
 

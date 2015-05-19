@@ -48,6 +48,9 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
             partnerActions.add(action);
         }
         representation.setPartnerActions(partnerActions);
+        
+        representation.setSponsorCount(resourceService.getResourceSponsorCount(resource));
+        representation.setTopTenSponsors(resourceService.getResourceTopTenSponsors(resource));
 
         if (resource.getResourceScope().ordinal() > INSTITUTION.ordinal()) {
             ResourceOpportunity opportunity = (ResourceOpportunity) resource;

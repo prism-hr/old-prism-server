@@ -111,6 +111,7 @@ import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotRepresent
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService.ApplicationProcessingMonth;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -786,6 +787,14 @@ public class ResourceService {
         }
 
         return plotsRepresentation;
+    }
+    
+    public Integer getResourceSponsorCount(ResourceParent resource) {
+        return resourceDAO.getResourceSponsorCount(resource).intValue();
+    }
+    
+    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
+        return resourceDAO.getResourceTopTenSponsors(resource);
     }
 
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {

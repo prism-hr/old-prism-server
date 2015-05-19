@@ -46,9 +46,11 @@ import com.zuehlke.pgadmissions.workflow.transition.persisters.ProgramPersister;
 import com.zuehlke.pgadmissions.workflow.transition.persisters.ProjectPersister;
 import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.InstitutionProcessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.ProgramProcessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.ProjectProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
@@ -61,17 +63,17 @@ public enum PrismScope {
             SystemSocialRepresentationBuilder.class, null), //
     INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").getAll(), null, //
-            InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, null, InstitutionPostprocessor.class, null, //
+            InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, InstitutionProcessor.class, null, null, //
             InstitutionSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, InstitutionRepresentationEnricher.class), //
     PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
                     .add("program", "title").getAll(), null, //
-            ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, ProgramPreprocessor.class, null, ProgramPostprocessor.class, //
+            ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, ProgramPreprocessor.class, ProgramProcessor.class, ProgramPostprocessor.class, //
             ProgramSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProgramRepresentationEnricher.class), //
     PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
                     .add("program", "title").add("project", "title").getAll(), null, //
-            ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, ProjectPreprocessor.class, null, ProjectPostprocessor.class, //
+            ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, ProjectPreprocessor.class, ProjectProcessor.class, ProjectPostprocessor.class, //
             ProjectSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProjectRepresentationEnricher.class), //
     APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")

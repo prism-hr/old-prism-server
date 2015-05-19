@@ -227,13 +227,13 @@ public class CommentService {
         }
         InterviewRepresentation interview = new InterviewRepresentation();
 
-        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation>newLinkedList());
+        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation> newLinkedList());
         for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
             interview.getAppointmentTimeslots().add(
                     new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
-        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation>newLinkedList());
+        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation> newLinkedList());
         for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
             UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
             UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
@@ -491,7 +491,7 @@ public class CommentService {
     }
 
     public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
-                                                    DateTime baseline) {
+            DateTime baseline) {
         Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
                 .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
         preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
@@ -507,11 +507,16 @@ public class CommentService {
     public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
         return commentDAO.getAssignedUsers(comment, roles);
     }
-    
-    public Comment prepareResourceParentComment(ResourceParent resource, User user, Action action, CommentDTO commentDTO) throws Exception {
+
+    public Comment prepareResourceParentComment(ResourceParent resource, User user, Action action, CommentDTO commentDTO, PrismRole... roleAssignments)
+            throws Exception {
         Comment comment = new Comment().withUser(user).withResource(resource).withContent(commentDTO.getContent()).withAction(action)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         appendCommentProperties(comment, commentDTO);
+        for (PrismRole roleAssignment : roleAssignments) {
+            Role role = roleService.getById(roleAssignment);
+            comment.addAssignedUser(user, role, CREATE);
+        }
         return comment;
     }
 
@@ -570,7 +575,7 @@ public class CommentService {
     }
 
     private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,
-                                                           Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
+            Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
         User author = comment.getUser();
         User authorDelegate = comment.getDelegateUser();
 

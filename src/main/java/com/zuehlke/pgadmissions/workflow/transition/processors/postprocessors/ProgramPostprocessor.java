@@ -41,10 +41,6 @@ public class ProgramPostprocessor implements ResourceProcessor {
             synchronizeProjects(comment, program);
             resourceService.resynchronizePartner(program, comment);
         }
-
-        if (comment.isSponsorshipComment()) {
-            advertService.synchronizeSponsorship(program, comment);
-        }
     }
 
     private void synchronizeProjects(Comment comment, Program program) {

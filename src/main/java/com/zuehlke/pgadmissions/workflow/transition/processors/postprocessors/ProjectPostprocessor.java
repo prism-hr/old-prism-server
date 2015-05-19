@@ -68,10 +68,6 @@ public class ProjectPostprocessor implements ResourceProcessor {
             resourceService.resynchronizePartner(project, comment);
         }
 
-        if (comment.isSponsorshipComment()) {
-            advertService.synchronizeSponsorship(project, comment);
-        }
-
         if (comment.isProjectPartnerApproveComment()) {
             postProcessProjectPartnerApproval(project, comment);
         }

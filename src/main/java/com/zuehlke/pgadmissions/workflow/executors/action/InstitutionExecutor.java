@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.workflow.executors.action;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
 
 import javax.inject.Inject;
 
@@ -56,7 +57,7 @@ public class InstitutionExecutor implements ActionExecutor {
         Action action = actionService.getById(actionId);
 
         if (action.getActionCategory().equals(SPONSOR_RESOURCE)) {
-            Comment comment = commentService.prepareResourceParentComment(institution, user, action, commentDTO);
+            Comment comment = commentService.prepareResourceParentComment(institution, user, action, commentDTO, INSTITUTION_SPONSOR);
             return actionService.executeUserAction(institution, action, comment);
         } else {
             InstitutionDTO institutionDTO = commentDTO.getResource().getInstitution();

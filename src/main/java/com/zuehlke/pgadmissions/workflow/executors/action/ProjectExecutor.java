@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.workflow.executors.action;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 
 import javax.inject.Inject;
@@ -59,7 +60,7 @@ public class ProjectExecutor implements ActionExecutor {
         Action action = actionService.getById(actionId);
 
         if (action.getActionCategory().equals(SPONSOR_RESOURCE)) {
-            Comment comment = commentService.prepareResourceParentComment(project, user, action, commentDTO);
+            Comment comment = commentService.prepareResourceParentComment(project, user, action, commentDTO, PROJECT_SPONSOR);
             return actionService.executeUserAction(project, action, comment);
         } else {
             OpportunityDTO programDTO = commentDTO.getResource().getProgram();
@@ -68,10 +69,10 @@ public class ProjectExecutor implements ActionExecutor {
             return actionService.executeUserAction(project, action, comment);
         }
     }
-    
+
     public Comment prepareProcessResourceComment(Project project, User user, Action action, OpportunityDTO projectDTO, CommentDTO commentDTO) throws Exception {
         boolean viewEditAction = action.getId() == PROJECT_VIEW_EDIT;
-        
+
         String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project)
                 .load(PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
         LocalDate endDate = projectDTO.getEndDate();

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.workflow.executors.action;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 
 import javax.inject.Inject;
@@ -59,7 +60,7 @@ public class ProgramExecutor implements ActionExecutor {
         Action action = actionService.getById(actionId);
 
         if (action.getActionCategory().equals(SPONSOR_RESOURCE)) {
-            Comment comment = commentService.prepareResourceParentComment(program, user, action, commentDTO);
+            Comment comment = commentService.prepareResourceParentComment(program, user, action, commentDTO, PROGRAM_SPONSOR);
             return actionService.executeUserAction(program, action, comment);
         } else {
             OpportunityDTO programDTO = commentDTO.getResource().getProgram();

@@ -14,14 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,10 +36,6 @@ import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -49,12 +44,10 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
-import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -114,30 +107,6 @@ public class ResourceController {
 
     @Inject
     private ApplicationContext applicationContext;
-
-    @RequestMapping(method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated()")
-    public ActionOutcomeRepresentation createResource(@RequestBody @Valid ActionDTO actionDTO) throws Exception {
-        ResourceDTO newResource = actionDTO.getNewResource();
-
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(newResource, "userDTO");
-        ValidationUtils.rejectIfEmpty(errors, "resourceId", "notNull");
-        ValidationUtils.rejectIfEmpty(errors, "resourceScope", "notNull");
-        if (errors.hasErrors()) {
-            throw new PrismValidationException("Could not create resource", errors);
-        }
-
-        if (!actionDTO.getActionId().getActionCategory().equals(PrismActionCategory.CREATE_RESOURCE)) {
-            throw new Error();
-        }
-
-        User user = userService.getCurrentUser();
-        Action action = actionService.getById(actionDTO.getActionId());
-
-        ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResource, actionDTO.getReferer(),
-                actionDTO.getWorkflowPropertyConfigurationVersion());
-        return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-    }
 
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
@@ -206,7 +175,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+                                                            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         DateTime baseline = new DateTime().minusDays(1);
@@ -223,7 +192,7 @@ public class ResourceController {
             }
             representation.setActions(actionRepresentations);
 
-            for (String scopeName : new String[] { "institution", "partner" }) {
+            for (String scopeName : new String[]{"institution", "partner"}) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
                 if (id != null && (scopeName.equals("institution") || scopeName.equals("partner") && !id.equals(representation.getInstitution().getId()))) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
@@ -232,7 +201,7 @@ public class ResourceController {
                 }
             }
 
-            for (String scopeName : new String[] { "program", "project" }) {
+            for (String scopeName : new String[]{"program", "project"}) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
                 if (id != null) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
@@ -253,7 +222,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
     @PreAuthorize("isAuthenticated()")
     public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                          HttpServletResponse response) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
@@ -280,7 +249,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody Map<String, PrismRole> body) throws Exception {
+                            @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -290,7 +259,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-            @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+                               @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
         roleService.assignUserRoles(resource, user, DELETE, role);
@@ -299,7 +268,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
+                                      @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
@@ -318,9 +287,21 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
-    @PreAuthorize("permitAll")
-    public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) throws Exception {
-        ActionOutcomeDTO actionOutcome = resourceService.executeAction(resourceId, commentDTO);
+    @PreAuthorize("isAuthenticated()")
+    public ActionOutcomeRepresentation executeAction(
+            @PathVariable Integer resourceId,
+            @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @Valid @RequestBody CommentDTO commentDTO) throws Exception {
+        if (commentDTO.getAction().getActionCategory().equals(PrismActionCategory.CREATE_RESOURCE)) {
+            ResourceDTO newResource = commentDTO.getNewResource().getResource();
+            if (newResource == null) {
+                throw new Error("Cannot create new resource for " + resourceDescriptor.getResourceScope() + '#' + resourceId);
+            }
+            newResource.setResourceId(resourceId);
+            newResource.setResourceScope(resourceDescriptor.getResourceScope());
+        }
+
+        ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
         return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 

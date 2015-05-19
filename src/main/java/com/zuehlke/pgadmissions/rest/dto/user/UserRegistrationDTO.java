@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto.user;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class UserRegistrationDTO {
 
@@ -32,7 +31,7 @@ public class UserRegistrationDTO {
     private Integer resourceId;
 
     @Valid
-    private ActionDTO action;
+    private CommentDTO comment;
 
     public String getFirstName() {
         return firstName;
@@ -82,12 +81,12 @@ public class UserRegistrationDTO {
         this.resourceId = resourceId;
     }
 
-    public ActionDTO getAction() {
-        return action;
+    public CommentDTO getComment() {
+        return comment;
     }
 
-    public void setAction(ActionDTO action) {
-        this.action = action;
+    public void setComment(CommentDTO comment) {
+        this.comment = comment;
     }
 
     public UserRegistrationDTO withFirstName(final String firstName) {
@@ -120,8 +119,8 @@ public class UserRegistrationDTO {
         return this;
     }
 
-    public UserRegistrationDTO withAction(final ActionDTO action) {
-        this.action = action;
+    public UserRegistrationDTO withComment(final CommentDTO comment) {
+        this.comment = comment;
         return this;
     }
 

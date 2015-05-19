@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
-import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AuthenticationService;
@@ -52,10 +52,12 @@ public class UserHelper {
 
         String testContextReferrer = actionId.getActionCategory() == CREATE_RESOURCE ? "http://www.testcontextreferrer.com" : null;
 
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setAction(actionId);
         authenticationService.registerUser(
                 new UserRegistrationDTO().withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail())
                         .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
-                        .withAction(new ActionDTO().withActionId(actionId)), null);
+                        .withComment(commentDTO), null);
 
         mailSenderMock.assertEmailSent(user, SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 

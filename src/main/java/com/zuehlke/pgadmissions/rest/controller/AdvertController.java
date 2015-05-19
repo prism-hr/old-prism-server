@@ -58,7 +58,7 @@ public class AdvertController {
 
     @RequestMapping(value = "/sponsorship", method = RequestMethod.PUT)
     public void updateSponsorship(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                      @Valid @RequestBody AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
+            @Valid @RequestBody AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
         advertService.updateSponsorship(resourceDescriptor.getResourceScope(), resourceId, sponsorshipDTO);
     }
 

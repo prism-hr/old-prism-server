@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 
 public class AdvertRepresentation {
 
@@ -38,6 +39,10 @@ public class AdvertRepresentation {
     private BigDecimal sponsorshipTarget;
 
     private BigDecimal sponsorshipSecured;
+    
+    private Integer sponsorCount;
+    
+    private List<ResourceSponsorRepresentation> topTenSponsors;
 
     private FinancialDetailsRepresentation fee;
 
@@ -165,6 +170,22 @@ public class AdvertRepresentation {
 
     public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
         this.sponsorshipSecured = sponsorshipSecured;
+    }
+
+    public Integer getSponsorCount() {
+        return sponsorCount;
+    }
+
+    public void setSponsorCount(Integer sponsorCount) {
+        this.sponsorCount = sponsorCount;
+    }
+
+    public List<ResourceSponsorRepresentation> getTopTenSponsors() {
+        return topTenSponsors;
+    }
+
+    public void setTopTenSponsors(List<ResourceSponsorRepresentation> topTenSponsors) {
+        this.topTenSponsors = topTenSponsors;
     }
 
     public FinancialDetailsRepresentation getFee() {

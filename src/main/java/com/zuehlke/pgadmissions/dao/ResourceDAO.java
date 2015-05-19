@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -418,6 +419,33 @@ public class ResourceDAO {
                 .list();
     }
 
+    public Long getResourceSponsorCount(Resource resource) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.countDistinct("sponsorship.sponsor")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
+                .add(Restrictions.isNull("sponsorship.rejection")) //
+                .uniqueResult();
+    }
+    
+    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
+        return (List<ResourceSponsorRepresentation>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("sponsor.id"), "sponsorId") //
+                        .add(Projections.property("sponsor.title"), "sponsorTitle") //
+                        .add(Projections.property("sponsor.logoImage.id"), "sponsorLogoId") //
+                        .add(Projections.sum("sponsorship.amountConverted").as("sponsorshipProvided"), "sponsorshipProvided")) //
+                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
+                .add(Restrictions.isNull("sponsorship.rejection")) //
+                .addOrder(Order.desc("sponsorshipProvided")) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(10) //
+                .list();
+    }
+    
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
         HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
         for (String tableName : customColumns.keySet()) {

@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import javax.validation.Valid;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 public class ResourceDefinitionDTO {
 

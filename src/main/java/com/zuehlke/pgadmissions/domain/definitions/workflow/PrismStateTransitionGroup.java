@@ -68,7 +68,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PARTNER;
@@ -488,7 +487,7 @@ public enum PrismStateTransitionGroup {
 
     INSTITUTION_SPONSOR_TRANSITON( //
             new PrismStateTransition() //
-                    .withTransitionState(INSTITUTION_APPROVED_COMPLETED) //
+                    .withTransitionState(INSTITUTION_APPROVED) //
                     .withTransitionAction(INSTITUTION_VIEW_EDIT));
 
     private PrismStateTransition[] stateTransitionTemplates;

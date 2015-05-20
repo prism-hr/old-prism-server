@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.ProgramProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ProjectProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
@@ -63,7 +64,7 @@ public enum PrismScope {
             SystemSocialRepresentationBuilder.class, null), //
     INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").getAll(), null, //
-            InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, InstitutionProcessor.class, null, null, //
+            InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, InstitutionProcessor.class, InstitutionPostprocessor.class, null, //
             InstitutionSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, InstitutionRepresentationEnricher.class), //
     PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")

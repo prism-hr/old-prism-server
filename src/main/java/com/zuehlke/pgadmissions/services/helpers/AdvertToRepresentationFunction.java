@@ -27,10 +27,10 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 public class AdvertToRepresentationFunction implements Function<Advert, AdvertRepresentation> {
 
     @Inject
-    private ResourceService resourceService;
+    protected ResourceService resourceService;
 
     @Inject
-    private Mapper mapper;
+    protected Mapper mapper;
 
     @Override
     public AdvertRepresentation apply(Advert advert) {

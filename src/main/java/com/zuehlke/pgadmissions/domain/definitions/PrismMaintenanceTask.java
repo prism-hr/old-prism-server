@@ -9,7 +9,6 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.EmailBounceServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperRecommendation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperWorkflow;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ResourceServiceHelper;
@@ -25,7 +24,6 @@ public enum PrismMaintenanceTask {
     SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class), //
     SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class), //
     SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class), //
-    SYSTEM_STARTUP_INSTITUTION(InstitutionServiceHelper.class), //
     SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class), //
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class), //
     SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class), //

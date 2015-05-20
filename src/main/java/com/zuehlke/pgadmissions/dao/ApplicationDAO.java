@@ -394,7 +394,7 @@ public class ApplicationDAO {
             for (PrismImportedEntity entity : flattenedConstraints.keySet()) {
                 String columnConstraintExpression = "(";
                 List<String> columnConstraint = Lists.newArrayList();
-                for (String column : entity.getColumnLocations()) {
+                for (String column : entity.getDatabaseReferenceColumns()) {
                     columnConstraint.add(column + " in (" + Joiner.on(", ").join(flattenedConstraints.get(entity)) + ")");
                 }
                 constraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tor ").join(columnConstraint) + ")");

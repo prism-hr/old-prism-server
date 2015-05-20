@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -24,7 +22,6 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
@@ -40,7 +37,6 @@ import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -56,13 +52,7 @@ public class InstitutionService {
     private EntityService entityService;
 
     @Inject
-    private ImportedEntityService importedEntityService;
-
-    @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private SystemService systemService;
 
     @Inject
     private ActionService actionService;
@@ -84,6 +74,10 @@ public class InstitutionService {
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
+    }
+
+    public List<Integer> getApprovedInstitutions() {
+        return institutionDAO.getApprovedInstitutions();
     }
 
     public List<InstitutionDomicileRepresentation> getInstitutionDomiciles() {
@@ -146,31 +140,6 @@ public class InstitutionService {
 
     public void save(Institution institution) {
         entityService.save(institution);
-    }
-
-    public void populateDefaultImportedEntityFeeds() throws DeduplicationException {
-        for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
-            for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-                String defaultLocation = prismImportedEntity.getDefaultLocation();
-                if (defaultLocation != null) {
-                    importedEntityService.getOrCreateImportedEntityFeed(institution, prismImportedEntity, defaultLocation);
-                }
-            }
-        }
-    }
-
-    public void initializeInstitution(Integer institutionId) throws Exception {
-        Institution institution = getById(institutionId);
-        User user = systemService.getSystem().getUser();
-        Action action = actionService.getById(INSTITUTION_STARTUP);
-        Comment comment = new Comment().withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).localize(institution).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION))
-                .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime());
-        actionService.executeAction(institution, action, comment);
-    }
-
-    public List<Integer> getInstitutionsToActivate() {
-        return institutionDAO.getInstitutionsToActivate();
     }
 
     public List<Institution> list() {
@@ -291,4 +260,5 @@ public class InstitutionService {
         Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
+
 }

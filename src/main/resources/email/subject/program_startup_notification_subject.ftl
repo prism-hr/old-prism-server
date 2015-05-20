@@ -1,1 +1,1 @@
-Program ${PROGRAM_CODE} Partner Organization Initialized
+Program ${PROGRAM_CODE} Partner Organization Approved

@@ -1,1 +1,1 @@
-Project ${PROJECT_CODE} Partner Organization Initialized
+Project ${PROJECT_CODE} Partner Organization Approved

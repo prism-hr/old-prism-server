@@ -56,7 +56,7 @@ import freemarker.template.TemplateException;
 @Scope(SCOPE_PROTOTYPE)
 public class MailSender {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MailSender.class);
+    private static final Logger logger = LoggerFactory.getLogger(MailSender.class);
 
     private PropertyLoader propertyLoader;
 
@@ -98,7 +98,7 @@ public class MailSender {
             final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
-                LOGGER.info("Sending Production Email: " + messageDTO.toString());
+                logger.info("Sending Production Email: " + messageDTO.toString());
 
                 Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(modelDTO.getUser()).toString() });
                 Content subjectContent = new Content().withData(subject);
@@ -115,12 +115,12 @@ public class MailSender {
                 client.setRegion(REGION);
                 client.sendEmail(request);
             } else if (contextEnvironment.equals("dev")) {
-                LOGGER.info("Sending Development Email: " + messageDTO.toString() + "\nSubject: " + subject + "\nContent:\n" + html);
+                logger.info("Sending Development Email: " + messageDTO.toString() + "\nSubject: " + subject + "\nContent:\n" + html);
             } else {
-                LOGGER.info("Sending Development Email: " + messageDTO.toString());
+                logger.info("Sending Development Email: " + messageDTO.toString());
             }
         } catch (Exception e) {
-            LOGGER.error(String.format("Failed to send email %s", messageDTO.toString()), e);
+            logger.error(String.format("Failed to send email %s", messageDTO.toString()), e);
         }
 
     }

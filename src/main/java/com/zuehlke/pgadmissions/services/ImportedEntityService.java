@@ -7,23 +7,32 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.floatToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -38,9 +47,7 @@ import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -52,19 +59,18 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
-import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
-import com.zuehlke.pgadmissions.utils.PrismConversionUtils;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
 public class ImportedEntityService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ImportedEntityService.class);
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("dd-MMM-yy");
 
@@ -87,6 +93,9 @@ public class ImportedEntityService {
     private EntityService entityService;
 
     @Inject
+    private InstitutionService institutionService;
+
+    @Inject
     private RoleService roleService;
 
     @Inject
@@ -104,6 +113,10 @@ public class ImportedEntityService {
         return (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
     }
 
+    public ImportedEntityFeed getImportedEntityFeedById(Integer id) {
+        return entityService.getById(ImportedEntityFeed.class, id);
+    }
+
     public <T extends ImportedEntity> T getByCode(Class<T> entityClass, Institution institution, String code) {
         return importedEntityDAO.getImportedEntityByCode(entityClass, institution, code);
     }
@@ -114,26 +127,6 @@ public class ImportedEntityService {
 
     public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
         return importedEntityDAO.getEnabledImportedInstitutions(domicile);
-    }
-
-    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location)
-            throws DeduplicationException {
-        return getOrCreateImportedEntityFeed(institution, importedEntityType, location, null, null);
-    }
-
-    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location, String username,
-            String password) throws DeduplicationException {
-        ImportedEntityFeed transientImportedEntityFeed = new ImportedEntityFeed().withImportedEntityType(importedEntityType).withLocation(location)
-                .withUserName(username).withPassword(password).withInstitution(institution);
-        return entityService.getOrCreate(transientImportedEntityFeed);
-    }
-
-    public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return importedEntityDAO.getImportedEntityFeeds();
-    }
-
-    public List<Integer> getPendingImportedEntityFeeds(Integer institutionId) {
-        return importedEntityDAO.getPendingImportedEntityFeeds(institutionId);
     }
 
     public ImportedInstitution getOrCreateImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
@@ -161,22 +154,175 @@ public class ImportedEntityService {
         throw new Error();
     }
 
-    public void disableEntities(Class<? extends ImportedEntity> entityClass, Institution institution, List<Integer> updates) {
-        importedEntityDAO.disableEntities(entityClass, institution, updates);
+    public List<ImportedEntityFeed> getInstitutionImportedEntityFeeds(Integer institution, PrismImportedEntity... exclusions) {
+        return importedEntityDAO.getImportedEntityFeeds(institution, exclusions);
     }
 
-    public void disableAllInstitutions(Institution institution, List<Integer> updates) {
-        importedEntityDAO.disableInstitutions(institution, updates);
+    public void setInstitutionImportedEntityFeeds(Institution institution) {
+        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
+            String defaultLocation = prismImportedEntity.getDefaultLocation();
+            if (defaultLocation != null) {
+                entityService.getOrCreate(new ImportedEntityFeed().withInstitution(institution).withImportedEntityType(prismImportedEntity)
+                        .withLocation(prismImportedEntity.getDefaultLocation()));
+            }
+        }
     }
 
-    public void disableImportedPrograms(Institution institution, List<Integer> updates, LocalDate baseline) {
+    public void disableImportedPrograms(Integer institution, List<Integer> updates, LocalDate baseline) {
         importedEntityDAO.disableImportedPrograms(institution, updates, baseline);
         importedEntityDAO.disableImportedProgramStudyOptions(institution, updates);
         importedEntityDAO.disableImportedProgramStudyOptionInstances(institution, updates);
     }
 
-    public Integer mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
+    public void mergeImportedAgeRanges(Integer importedEntityFeedId, List<com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange> definitions)
             throws Exception {
+        ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
+        Institution institution = importedEntityFeed.getInstitution();
+        PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
+
+        try {
+            importedEntityDAO.disableImportedEntities(importedEntityType.getEntityClass(), institution);
+            entityService.flush();
+
+            List<String> rows = Lists.newLinkedList();
+            for (com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange definition : definitions) {
+                List<String> cells = Lists.newLinkedList();
+                cells.add(prepareCellForInsert(institution.getId().toString()));
+                cells.add(prepareCellForInsert(definition.getCode()));
+                cells.add(prepareCellForInsert(definition.getName()));
+                cells.add(prepareCellForInsert(definition.getLowerBound().toString()));
+
+                BigInteger upperBound = definition.getUpperBound();
+                cells.add(upperBound == null ? "null" : prepareCellForInsert(upperBound.toString()));
+
+                cells.add(prepareCellForInsert(new Integer(1).toString()));
+
+                String row = prepareCellsForInsert(cells);
+                rows.add(row);
+            }
+
+            importedEntityDAO.mergeImportedEntities(importedEntityType.getDatabaseTable(), importedEntityType.getDatabaseColumns(), prepareRowsForInsert(rows));
+            entityService.flush();
+
+            importedEntityFeed.setLastImportedTimestamp(new DateTime());
+        } catch (Exception e) {
+            logger.error("Error importing " + importedEntityType.name() + " for institution " + institution.getCode(), e);
+        }
+    }
+
+    public void mergeImportedEntities(Integer importedEntityFeedId, List<Object> definitions) throws Exception {
+        ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
+        Institution institution = importedEntityFeed.getInstitution();
+        PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
+
+        try {
+            importedEntityDAO.disableImportedEntities(importedEntityType.getEntityClass(), institution);
+            entityService.flush();
+
+            List<String> rows = Lists.newLinkedList();
+            for (Object definition : definitions) {
+                List<String> cells = Lists.newLinkedList();
+                cells.add(prepareCellForInsert(institution.getId().toString()));
+                cells.add(prepareCellForInsert(importedEntityType.toString()));
+                cells.add(prepareCellForInsert((String) getProperty(definition, "code")));
+                cells.add(prepareCellForInsert((String) getProperty(definition, "name")));
+                cells.add(prepareCellForInsert(new Integer(1).toString()));
+
+                String row = prepareCellsForInsert(cells);
+                rows.add(row);
+            }
+
+            importedEntityDAO.mergeImportedEntities(importedEntityType.getDatabaseTable(), importedEntityType.getDatabaseColumns(), prepareRowsForInsert(rows));
+            entityService.flush();
+
+            importedEntityFeed.setLastImportedTimestamp(new DateTime());
+        } catch (Exception e) {
+            logger.error("Error importing " + importedEntityType.name() + " for institution " + institution.getCode(), e);
+        }
+    }
+
+    public void mergeImportedInstitutions(Integer importedEntityFeedId, List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> definitions)
+            throws Exception {
+        ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
+        Institution institution = importedEntityFeed.getInstitution();
+        PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
+
+        Map<String, String> domicilesByCode = Maps.newHashMap();
+        List<Domicile> domiciles = getEnabledImportedEntities(institution, Domicile.class);
+        for (Domicile domicile : domiciles) {
+            domicilesByCode.put(domicile.getCode(), domicile.getId().toString());
+        }
+
+        try {
+            importedEntityDAO.disableImportedInstitutions(institution);
+            entityService.flush();
+
+            List<String> rows = Lists.newLinkedList();
+            for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution definition : definitions) {
+                List<String> cells = Lists.newLinkedList();
+                cells.add(prepareCellForInsert(institution.getId().toString()));
+                cells.add(prepareCellForInsert(domicilesByCode.get(definition.getDomicile())));
+                cells.add(prepareCellForInsert(definition.getCode()));
+                cells.add(prepareCellForInsert(definition.getName()));
+                cells.add(prepareCellForInsert(new Integer(1).toString()));
+                cells.add(prepareCellForInsert(new Integer(0).toString()));
+
+                String row = prepareCellsForInsert(cells);
+                rows.add(row);
+            }
+
+            importedEntityDAO.mergeImportedEntities(importedEntityType.getDatabaseTable(), importedEntityType.getDatabaseColumns(), prepareRowsForInsert(rows));
+            entityService.flush();
+
+            importedEntityFeed.setLastImportedTimestamp(new DateTime());
+        } catch (Exception e) {
+            logger.error("Error importing " + importedEntityType.name() + " for institution " + institution.getCode(), e);
+        }
+    }
+
+    public void mergeImportedLanguageQualifications(Integer importedEntityFeedId, List<LanguageQualificationType> definitions) throws Exception {
+        ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
+        Institution institution = importedEntityFeed.getInstitution();
+        PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
+
+        try {
+            importedEntityDAO.disableImportedEntities(importedEntityType.getEntityClass(), institution);
+            entityService.flush();
+
+            List<String> rows = Lists.newLinkedList();
+            for (LanguageQualificationType definition : definitions) {
+                List<String> cells = Lists.newLinkedList();
+                cells.add(prepareCellForInsert(institution.getId().toString()));
+                cells.add(prepareCellForInsert(definition.getCode()));
+                cells.add(prepareCellForInsert(definition.getName()));
+                cells.add(prepareDecimalForInsert(definition.getMinimumOverallScore()));
+                cells.add(prepareDecimalForInsert(definition.getMaximumOverallScore()));
+                cells.add(prepareDecimalForInsert(definition.getMinimumReadingScore()));
+                cells.add(prepareDecimalForInsert(definition.getMaximumReadingScore()));
+                cells.add(prepareDecimalForInsert(definition.getMinimumWritingScore()));
+                cells.add(prepareDecimalForInsert(definition.getMaximumWritingScore()));
+                cells.add(prepareDecimalForInsert(definition.getMinimumSpeakingScore()));
+                cells.add(prepareDecimalForInsert(definition.getMaximumSpeakingScore()));
+                cells.add(prepareDecimalForInsert(definition.getMinimumListeningScore()));
+                cells.add(prepareDecimalForInsert(definition.getMaximumListeningScore()));
+                cells.add(prepareCellForInsert(new Integer(1).toString()));
+
+                String row = prepareCellsForInsert(cells);
+                rows.add(row);
+            }
+
+            importedEntityDAO.mergeImportedEntities(importedEntityType.getDatabaseTable(), importedEntityType.getDatabaseColumns(), prepareRowsForInsert(rows));
+            entityService.flush();
+
+            importedEntityFeed.setLastImportedTimestamp(new DateTime());
+        } catch (Exception e) {
+            logger.error("Error importing " + importedEntityType.name() + " for institution " + institution.getCode(), e);
+        }
+    }
+
+    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
+            throws Exception {
+        Institution institution = institutionService.getById(institutionId);
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
@@ -211,70 +357,6 @@ public class ImportedEntityService {
         persistentProgram.setEndDate(closeDate);
         executeProgramImportAction(persistentProgram, baselineTime);
         return persistentProgram.getId();
-    }
-
-    public Integer mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
-            throws Exception {
-        String domicileCode = institutionDefinition.getDomicile();
-        Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
-        String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
-        ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
-                .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true).withCustom(false);
-
-        if (domicile == null) {
-            throw new DataImportException("No enabled domicile for Institution " + transientImportedInstitution.getResourceSignature().toString()
-                    + ". Code specified was " + domicileCode);
-        }
-
-        return entityService.createOrUpdate(transientImportedInstitution).getId();
-    }
-
-    public Integer mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
-            throws Exception {
-        int precision = 2;
-        String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "")
-                .replaceAll(" +", " ");
-
-        ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
-                .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeNameClean)
-                .withMinimumOverallScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore(), precision))
-                .withMaximumOverallScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore(), precision))
-                .withMinimumReadingScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore(), precision))
-                .withMaximumReadingScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore(), precision))
-                .withMinimumWritingScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore(), precision))
-                .withMaximumWritingScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore(), precision))
-                .withMinimumSpeakingScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore(), precision))
-                .withMaximumSpeakingScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore(), precision))
-                .withMinimumListeningScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore(), precision))
-                .withMaximumListeningScore(PrismConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore(), precision))
-                .withEnabled(true);
-        return entityService.createOrUpdate(transientImportedLanguageQualificationType).getId();
-    }
-
-    public Integer mergeImportedAgeRange(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange ageRangeDefinition)
-            throws Exception {
-        String ageRangeNameClean = ageRangeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
-        BigInteger upperBound = ageRangeDefinition.getUpperBound();
-
-        AgeRange transientAgeRange = new AgeRange().withInstitution(institution).withCode(ageRangeDefinition.getCode()).withName(ageRangeNameClean)
-                .withLowerBound(ageRangeDefinition.getLowerBound().intValue()).withUpperBound(upperBound == null ? null : upperBound.intValue())
-                .withEnabled(true);
-        return entityService.createOrUpdate(transientAgeRange).getId();
-    }
-
-    public <T extends ImportedEntity> Integer mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition)
-            throws Exception {
-        ImportedEntitySimple transientEntity = (ImportedEntitySimple) entityClass.newInstance();
-        transientEntity.setInstitution(institution);
-        transientEntity.setType(PrismImportedEntity.getByEntityClass(entityClass));
-        transientEntity.setCode((String) PrismReflectionUtils.getProperty(entityDefinition, "code"));
-
-        String name = (String) PrismReflectionUtils.getProperty(entityDefinition, "name");
-        String nameClean = name.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ");
-        transientEntity.setName(nameClean);
-
-        transientEntity.setEnabled(true);
-        return entityService.createOrUpdate(transientEntity).getId();
     }
 
     public void setLastImportedTimestamp(Integer importedEntityFeedId) {
@@ -395,6 +477,22 @@ public class ImportedEntityService {
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
                 .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
+    }
+
+    private static String prepareRowsForInsert(List<String> sequence) {
+        return Joiner.on(", ").join(sequence);
+    }
+
+    private static String prepareCellsForInsert(List<String> cells) {
+        return "(" + prepareRowsForInsert(cells) + ")";
+    }
+
+    private static String prepareCellForInsert(String string) {
+        return "'" + StringEscapeUtils.escapeSql(string.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ")) + "'";
+    }
+
+    private static String prepareDecimalForInsert(Float decimal) {
+        return "'" + StringEscapeUtils.escapeSql(floatToBigDecimal(decimal, 2).toPlainString()) + "'";
     }
 
 }

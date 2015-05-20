@@ -66,7 +66,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApprovedCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval;
@@ -198,7 +197,6 @@ public enum PrismState {
     INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null,
             PrismInstitutionApprovalPendingCorrection.class),
     INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, null, PrismInstitutionApproved.class),
-    INSTITUTION_APPROVED_COMPLETED(PrismStateGroup.INSTITUTION_APPROVED, null, null, PrismInstitutionApprovedCompleted.class),
     INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, null, PrismInstitutionRejected.class),
     INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, null, PrismInstitutionWithdrawn.class),
     SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, PrismSystemRunning.class);

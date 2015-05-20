@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.floatToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -488,11 +488,11 @@ public class ImportedEntityService {
     }
 
     private static String prepareCellForInsert(String string) {
-        return "'" + StringEscapeUtils.escapeSql(string.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ")) + "'";
+        return string == null ? "null" : "'" + escapeSql(string.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ")) + "'";
     }
 
     private static String prepareDecimalForInsert(Float decimal) {
-        return "'" + StringEscapeUtils.escapeSql(floatToBigDecimal(decimal, 2).toPlainString()) + "'";
+        return decimal == null ? "null" : "'" + escapeSql(floatToBigDecimal(decimal, 2).toPlainString()) + "'";
     }
 
 }

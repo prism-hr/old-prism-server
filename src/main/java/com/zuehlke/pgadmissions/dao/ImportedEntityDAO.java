@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.INSTITUTION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -15,6 +15,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.AgeRange;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -67,13 +68,18 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
+    public List<ImportedEntityFeed> getImportedEntityFeeds(Integer institution, PrismImportedEntity... exclusions) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state.stateGroup.id", INSTITUTION_APPROVED)) //
-                .addOrder(Order.asc("institution")) //
-                .addOrder(Order.asc("importedEntityType")) //
+                .createAlias("institution.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("institution.id", institution)) //
+                .add(Restrictions.eq("resourceState.state.id", INSTITUTION_APPROVED));
+
+        for (PrismImportedEntity exclusion : exclusions) {
+            criteria.add(Restrictions.ne("importedEntityType", exclusion));
+        }
+
+        return criteria.addOrder(Order.asc("importedEntityType")) //
                 .list();
     }
 
@@ -85,41 +91,30 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
-    public void disableAllEntities(Class<?> entityClass) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + entityClass.getSimpleName() + " " //
-                        + "set enabled = false") //
-                .executeUpdate();
-    }
-
-    public void disableEntities(Class<?> entityClass, Institution institution, List<Integer> updates) {
+    public void disableImportedEntities(Class<?> entityClass, Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //
                         + "set enabled = false " //
-                        + "where institution = :institution "
-                        + "and id not in (:updates)") //
+                        + "where institution = :institution") //
                 .setParameter("institution", institution) //
-                .setParameterList("updates", updates) //
                 .executeUpdate();
     }
 
-    public void disableInstitutions(Institution institution, List<Integer> updates) {
+    public void disableImportedInstitutions(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ImportedInstitution " //
                         + "set enabled = false " //
                         + "where institution = :institution " //
-                        + "and custom is false " //
-                        + "and id not in (:updates)") //
+                        + "and custom is false") //
                 .setParameter("institution", institution) //
-                .setParameterList("updates", updates) //
                 .executeUpdate();
     }
 
-    public void disableImportedPrograms(Institution institution, List<Integer> updates, LocalDate baseline) {
+    public void disableImportedPrograms(Integer institution, List<Integer> updates, LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update Program " //
                         + "set dueDate = :dueDate " //
-                        + "where institution = :institution " //
+                        + "where institution.id = :institution " //
                         + "and imported is true " //
                         + "and id not in (:updates)") //
                 .setParameter("institution", institution) //
@@ -128,13 +123,13 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void disableImportedProgramStudyOptions(Institution institution, List<Integer> updates) {
+    public void disableImportedProgramStudyOptions(Integer institution, List<Integer> updates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceStudyOption " //
                         + "where program in (" //
                         + "select id " //
                         + "from Program " //
-                        + "where institution = :institution " //
+                        + "where institution.id = :institution " //
                         + "and imported is true "
                         + "and id not in (:updates))") //
                 .setParameter("institution", institution) //
@@ -142,29 +137,28 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void disableImportedProgramStudyOptionInstances(Institution institution, List<Integer> updates) {
+    public void disableImportedProgramStudyOptionInstances(Integer institution, List<Integer> updates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceStudyOptionInstance " //
                         + "where studyOption in (" //
                         + "select resourceStudyOption.id " //
                         + "from ResourceStudyOption as resourceStudyOption " //
                         + "join resourceStudyOption.program as program " //
-                        + "where program.institution = :institution " //
+                        + "where program.institution.id = :institution " //
                         + "and program.imported is true "
                         + "and program.id not in (:updates))") //
-                .setParameter("institution", institution) //
+                .setParameter("institution.id", institution) //
                 .setParameterList("updates", updates) //
                 .executeUpdate();
 
     }
 
-    public List<Integer> getPendingImportedEntityFeeds(Integer institutionId) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("institution.id", institutionId)) //
-                .add(Restrictions.ne("importedEntityType", PROGRAM)) //
-                .add(Restrictions.isNull("lastImportedTimestamp")) //
-                .list();
+    public void mergeImportedEntities(String table, String columns, String values) {
+        sessionFactory.getCurrentSession().createSQLQuery(//
+                "insert into " + table + " (" + columns + ") " //
+                        + values + " " //
+                        + "on duplicate key update enabled = '1'")
+                .executeUpdate();
     }
 
     public DomicileUseDTO getMostUsedDomicile(Institution institution) {

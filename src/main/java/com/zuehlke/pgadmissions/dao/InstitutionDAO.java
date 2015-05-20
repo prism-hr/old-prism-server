@@ -52,7 +52,7 @@ public class InstitutionDAO {
     public List<Institution> getApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
-                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED_COMPLETED)) //
+                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
                 .addOrder(Order.asc("title")) //
                 .list();
     }
@@ -63,13 +63,6 @@ public class InstitutionDAO {
                 .uniqueResult();
     }
 
-    public List<Institution> getInstitutionsWithoutImportedEntityFeeds() {
-        return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .add(Restrictions.isEmpty("importedEntityFeeds")) //
-                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
-                .list();
-    }
-
     public List<String> listAvailableCurrencies() {
         return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
@@ -78,16 +71,16 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<Integer> getInstitutionsToActivate() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
-                .add(Restrictions.isNotEmpty("importedEntityFeeds")) //
-                .list();
-    }
-
     public List<Institution> list() {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class).list();
+    }
+
+    public List<Integer> getApprovedInstitutions() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .setProjection(Projections.property("id")) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resourceState.state.id", INSTITUTION_APPROVED)) //
+                .list();
     }
 
     public Long getAuthenticatedFeedCount(Institution institution) {
@@ -100,7 +93,7 @@ public class InstitutionDAO {
     public Institution getActivatedInstitutionByGoogleId(String googleId) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("googleId", googleId)) //
-                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED_COMPLETED)) //
+                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
                 .uniqueResult();
     }
 
@@ -248,7 +241,7 @@ public class InstitutionDAO {
                 .add(Restrictions.disjunction()
                         .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE))
                         .add(Restrictions.in("googleId", googleIds)))
-                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED_COMPLETED))
+                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED))
                 .list();
     }
 

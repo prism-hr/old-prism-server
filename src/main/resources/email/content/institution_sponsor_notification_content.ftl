@@ -8,7 +8,7 @@
     Thank you for your generous contribution to our efforts.
     
     Should you ever wish to receive updates on what your investment is being spent towards, you can always see the most
-    up to date status of the activity by logging into the ${SYSTEM_NAME} platform as below.
+    up to date status of the activity by logging into the ${TEMPLATE_SYSTEM_TITLE} platform as below.
 </p>
 
 ${ACTION_VIEW_EDIT}

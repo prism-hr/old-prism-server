@@ -217,7 +217,6 @@ public enum PrismAction {
                     new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT))), //
     APPLICATION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, APPLICATION, null), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, INSTITUTION, null), //
-    INSTITUTION_STARTUP(SYSTEM_INVOCATION, INITIALISE_RESOURCE, false, false, true, null, INSTITUTION, null), //
     INSTITUTION_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, null, INSTITUTION, null), //
     INSTITUTION_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, INSTITUTION, null), //
     INSTITUTION_CREATE_PROGRAM(USER_INVOCATION, CREATE_RESOURCE, false, false, true, null, INSTITUTION, null), //

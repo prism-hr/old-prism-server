@@ -137,12 +137,6 @@ public class InstitutionService {
         }
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
-
-        LocalDate endDate = institutionDTO.getEndDate();
-        if (endDate != null) {
-            institution.setEndDate(endDate);
-        }
-
         resourceService.setAttributes(institution, institutionDTO.getAttributes());
     }
 

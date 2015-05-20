@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION;
@@ -40,10 +41,10 @@ public class PrismProgramApprovalPartner extends PrismWorkflowState {
     public static PrismStateAction programCompleteApprovalPartner() {
         return new PrismStateAction() //
                 .withAction(PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE) //
-                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR) //
                 .withNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION) //
                 .withNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
-                .withPartnerNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
+                .withPartnerNotifications(INSTITUTION_ADMINISTRATOR, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
                 .withTransitions(PROGRAM_APPROVE_PARTNER_TRANSITION);
     }
 

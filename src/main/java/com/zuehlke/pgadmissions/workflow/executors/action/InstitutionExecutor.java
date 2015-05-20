@@ -69,13 +69,14 @@ public class InstitutionExecutor implements ActionExecutor {
 
     public Comment prepareProcessResourceComment(Institution institution, User user, Action action, InstitutionDTO institutionDTO, CommentDTO commentDTO)
             throws Exception {
-        String commentContent = action.getId() == INSTITUTION_VIEW_EDIT ? applicationContext.getBean(PropertyLoader.class).localize(institution)
+        String commentContent = action.getId().equals(INSTITUTION_VIEW_EDIT) ? applicationContext.getBean(PropertyLoader.class).localize(institution)
                 .load(INSTITUTION_COMMENT_UPDATED) : commentDTO.getContent();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
         Comment comment = new Comment().withUser(user).withResource(institution).withContent(commentContent).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
+
         return comment;
     }
 

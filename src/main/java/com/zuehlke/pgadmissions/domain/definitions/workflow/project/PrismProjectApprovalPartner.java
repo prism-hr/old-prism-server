@@ -5,8 +5,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_PARTNER_OUTCOME;
@@ -45,10 +45,10 @@ public class PrismProjectApprovalPartner extends PrismWorkflowState {
     public static PrismStateAction projectCompleteApprovalPartner() {
         return new PrismStateAction() //
                 .withAction(PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE) //
-                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR) //
                 .withNotifications(PROJECT_ADMINISTRATOR, PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION) //
                 .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
-                .withPartnerNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
+                .withPartnerNotifications(INSTITUTION_ADMINISTRATOR, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
                 .withTransitions(PROJECT_APPROVE_PARTNER_TRANSITION);
     }
 

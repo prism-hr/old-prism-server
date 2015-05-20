@@ -246,7 +246,7 @@ public class ResourceService {
     }
 
     public ActionOutcomeDTO executeAction(User user, Integer resourceId, CommentDTO commentDTO) throws Exception {
-        if(commentDTO.getAction().getActionCategory() == CREATE_RESOURCE) {
+        if (commentDTO.getAction().getActionCategory() == CREATE_RESOURCE) {
             Action action = actionService.getById(commentDTO.getAction());
             ResourceDefinitionDTO newResource = commentDTO.getNewResource();
             ResourceDTO resource = newResource.getResource();
@@ -684,11 +684,6 @@ public class ResourceService {
                     resource.getInstitution(), resourceDTO.getOpportunityType().name());
             resource.setOpportunityType(opportunityType);
 
-            LocalDate endDate = resourceDTO.getEndDate();
-            if (endDate != null) {
-                resource.setEndDate(endDate);
-            }
-
             List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
             setStudyOptions(resource, studyOptions == null ? Lists.<PrismStudyOption> newArrayList() : studyOptions, new LocalDate());
         }
@@ -792,15 +787,15 @@ public class ResourceService {
 
         return plotsRepresentation;
     }
-    
+
     public Integer getResourceSponsorCount(ResourceParent resource) {
         return resourceDAO.getResourceSponsorCount(resource).intValue();
     }
-    
+
     public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
         return resourceDAO.getResourceTopTenSponsors(resource);
     }
-    
+
     public Integer getBackgroundImage(ResourceParent resource) {
         Document backgroundImage = resource.getBackgroundImage();
         if (backgroundImage == null) {

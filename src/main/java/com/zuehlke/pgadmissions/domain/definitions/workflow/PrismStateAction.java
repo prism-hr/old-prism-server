@@ -106,17 +106,15 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withPartnerAssignments(PrismRoleGroup roles) {
-        for (PrismRole role : roles.getRoles()) {
+    public PrismStateAction withPartnerAssignments(PrismRole... roles) {
+        for (PrismRole role : roles) {
             this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode());
         }
         return this;
     }
 
-    public PrismStateAction withPartnerAssignments(PrismRoleGroup roles, PrismActionEnhancement actionEnhancement) {
-        for (PrismRole role : roles.getRoles()) {
-            this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode().withActionEnhancement(actionEnhancement));
-        }
+    public PrismStateAction withPartnerAssignments(PrismRole role, PrismActionEnhancement actionEnhancement) {
+        this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode().withActionEnhancement(actionEnhancement));
         return this;
     }
 
@@ -132,10 +130,8 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withPartnerNotifications(PrismRoleGroup roles, PrismNotificationDefinition notification) {
-        for (PrismRole role : roles.getRoles()) {
-            notifications.add(new PrismStateActionNotification().withRole(role).withPartnerMode().withDefinition(notification));
-        }
+    public PrismStateAction withPartnerNotifications(PrismRole role, PrismNotificationDefinition notification) {
+        notifications.add(new PrismStateActionNotification().withRole(role).withPartnerMode().withDefinition(notification));
         return this;
     }
 

@@ -56,7 +56,7 @@ public class ProjectExecutor implements ActionExecutor {
             Comment comment = commentService.prepareResourceParentComment(project, user, action, commentDTO, PROJECT_SPONSOR);
             return actionService.executeUserAction(project, action, comment);
         } else {
-            OpportunityDTO programDTO = commentDTO.getResource().getProgram();
+            OpportunityDTO programDTO = commentDTO.getResource().getProject();
             Comment comment = prepareProcessResourceComment(project, user, action, programDTO, commentDTO);
             projectService.update(resourceId, programDTO, comment);
             return actionService.executeUserAction(project, action, comment);

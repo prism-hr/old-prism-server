@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.PROGRAM;
 
 import javax.inject.Inject;
@@ -34,7 +33,7 @@ public class InstitutionPostprocessor implements ResourceProcessor {
 
     public void initializeInstitution(Institution institution) throws Exception {
         importedEntityService.setInstitutionImportedEntityFeeds(institution);
-        importedEntityServiceHelperInstitution.execute(institution.getId(), INSTITUTION, PROGRAM);
+        importedEntityServiceHelperInstitution.execute(institution.getId(), PROGRAM);
     }
 
 }

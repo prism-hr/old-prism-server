@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
@@ -116,9 +115,6 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private CustomizationService localizationService;
-
-    @Autowired
-    private UserHelper userHelper;
 
     public void verifyScopeCreation() {
         for (PrismScope scopeId : scopeService.getScopesDescending()) {
@@ -287,12 +283,6 @@ public class SystemInitialisationHelper {
 
         verifyNotificationTemplateCreation();
         verifyStateDurationCreation();
-    }
-
-    public void verifySystemUserRegistration() throws Exception {
-        System system = systemService.getSystem();
-        userHelper.registerAndActivateUser(PrismAction.SYSTEM_STARTUP, system.getId(), system.getUser(),
-                PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
     }
 
     private void verifyStateActionAssignmentCreation(StateAction stateAction, PrismStateAction prismStateAction) {

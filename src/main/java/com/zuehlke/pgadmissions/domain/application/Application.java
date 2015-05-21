@@ -229,13 +229,15 @@ public class Application extends Resource {
     private Integer applicationMonth;
 
     @Column(name = "application_month_sequence")
-    private Integer applicationMonthSequence;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate applicationMonthSequence;
 
     @Column(name = "application_week")
     private Integer applicationWeek;
 
     @Column(name = "application_week_sequence")
-    private Integer applicationWeekSequence;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate applicationWeekSequence;
     
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -504,11 +506,11 @@ public class Application extends Resource {
         this.applicationMonth = applicationMonth;
     }
 
-    public Integer getApplicationMonthSequence() {
+    public LocalDate getApplicationMonthSequence() {
         return applicationMonthSequence;
     }
 
-    public void setApplicationMonthSequence(Integer applicationMonthSequence) {
+    public void setApplicationMonthSequence(LocalDate applicationMonthSequence) {
         this.applicationMonthSequence = applicationMonthSequence;
     }
 
@@ -519,12 +521,12 @@ public class Application extends Resource {
     public void setApplicationWeek(Integer applicationWeek) {
         this.applicationWeek = applicationWeek;
     }
-
-    public Integer getApplicationWeekSequence() {
+    
+    public LocalDate getApplicationWeekSequence() {
         return applicationWeekSequence;
     }
 
-    public void setApplicationWeekSequence(Integer applicationWeekSequence) {
+    public void setApplicationWeekSequence(LocalDate applicationWeekSequence) {
         this.applicationWeekSequence = applicationWeekSequence;
     }
 

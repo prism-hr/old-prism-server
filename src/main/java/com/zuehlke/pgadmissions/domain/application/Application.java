@@ -109,7 +109,7 @@ public class Application extends Resource {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "program_id")
     private Program program;
 
     @ManyToOne

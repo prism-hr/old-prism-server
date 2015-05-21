@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_EXPORT_PROGRAM_INSTANCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity.STUDY_APPLICANT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_EXPORT;
 
 import java.io.ByteArrayOutputStream;
@@ -40,8 +42,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -136,8 +136,8 @@ public class ApplicationExportService {
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws Exception {
         localize(application);
 
-        String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
-        Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), STUDY_APPLICANT);
+        Comment offerRecommendationComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
         ResourceStudyOptionInstance exportProgramInstance = resourceService.getFirstStudyOptionInstance(application.getProgram(), application
                 .getProgramDetail().getStudyOption());
@@ -180,7 +180,7 @@ public class ApplicationExportService {
         propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
     }
 
-    private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) {
+    private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) throws Exception {
         AdmissionsApplicationResponse exportResponse = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(exportRequest,
                 new WebServiceMessageCallback() {
                     public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {

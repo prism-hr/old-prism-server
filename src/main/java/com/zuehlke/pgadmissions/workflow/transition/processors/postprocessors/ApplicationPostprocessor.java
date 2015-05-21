@@ -1,27 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
-import static java.math.RoundingMode.HALF_UP;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
@@ -36,13 +14,24 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
+import static java.math.RoundingMode.HALF_UP;
 
 @Component
 public class ApplicationPostprocessor implements ResourceProcessor {
@@ -66,7 +55,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     private UserService userService;
 
     @Override
-    public void process(Resource resource, Comment comment) throws Exception {
+    public void process(Resource resource, Comment comment) {
         Application application = (Application) resource;
 
         if (comment.isCreateComment()) {
@@ -157,7 +146,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
                 .multiply(new BigDecimal(5)).multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private void appendInterviewScheduledExpeditedComments(Comment comment) throws Exception {
+    private void appendInterviewScheduledExpeditedComments(Comment comment) {
         LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
         comment.getAppointmentTimeslots().add(new CommentAppointmentTimeslot().withDateTime(interviewDateTime));
 

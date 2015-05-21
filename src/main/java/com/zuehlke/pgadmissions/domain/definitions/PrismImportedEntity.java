@@ -42,31 +42,53 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.RejectionReasons;
 import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
 import com.zuehlke.pgadmissions.referencedata.jaxb.StudyOptions;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Titles;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedCountryExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedDisabilityExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedDomicileExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEthnicityExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedFundingSourceExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedGenderExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedInstitutionExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedNationalityExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedOpportunityTypeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedQualificationTypeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedReferralSourceExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedRejectionReasonExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedStudyOptionExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedTitleExtractor;
 
 public enum PrismImportedEntity {
 
     AGE_RANGE(AgeRanges.class, "ageRange", AgeRange.class, "xml/defaultEntities/ageRange.xml",
-            "xsd/import/ageRange.xsd", "imported_age_range", "institution_id, code, name, lower_bound, upper_bound, enabled",
+            "xsd/import/ageRange.xsd", "imported_age_range", "institution_id, code, name, lower_bound, upper_bound, enabled", ImportedAgeRangeExtractor.class,
             new String[] { "application_personal_detail.age_range_id" }, false), //
     COUNTRY(Countries.class, "country", Country.class, "xml/defaultEntities/country.xml", "xsd/import/country.xsd", //
-            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", new String[] { "application_personal_detail.country_id" }, false), //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedCountryExtractor.class, //
+            new String[] { "application_personal_detail.country_id" }, false), //
     DISABILITY(Disabilities.class, "disability", Disability.class, "xml/defaultEntities/disability.xml", "xsd/import/disability.xsd", //
-            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", new String[] { "application_personal_detail.disability_id" }, false), //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedDisabilityExtractor.class, //
+            new String[] { "application_personal_detail.disability_id" }, false), //
     DOMICILE(Domiciles.class, "domicile", Domicile.class, "xml/defaultEntities/domicile.xml", "xsd/import/domicile.xsd", //
-            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", new String[] { "application_personal_detail.domicile_id" }, false), //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedDomicileExtractor.class, //
+            new String[] { "application_personal_detail.domicile_id" }, false), //
     ETHNICITY(Ethnicities.class, "ethnicity", Ethnicity.class, "xml/defaultEntities/ethnicity.xml", "xsd/import/ethnicity.xsd", //
-            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", new String[] { "application_personal_detail.ethnicity_id" }, false), //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedEthnicityExtractor.class, //
+            new String[] { "application_personal_detail.ethnicity_id" }, false), //
     NATIONALITY(Nationalities.class, "nationality", Language.class, "xml/defaultEntities/nationality.xml", "xsd/import/nationality.xsd", //
-            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedNationalityExtractor.class, //
             new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, false), //
-    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/program.xsd", null, null, null, false), //
+    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/program.xsd", null, null, null, null, false), //
     QUALIFICATION_TYPE(Qualifications.class, "qualification", QualificationType.class, "xml/defaultEntities/qualificationType.xml",
-            "xsd/import/qualificationType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", null, false), //
+            "xsd/import/qualificationType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", //
+            ImportedQualificationTypeExtractor.class, null, false), //
     REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class, "xml/defaultEntities/referralSource.xml",
-            "xsd/import/referralSource.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled",
+            "xsd/import/referralSource.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedReferralSourceExtractor.class,
             new String[] { "application_program_detail.referral_source_id" }, false), //
     FUNDING_SOURCE(FundingSources.class, "fundingSource", FundingSource.class, "xml/defaultEntities/fundingSource.xml", "xsd/import/fundingSource.xsd",
-            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", null, false), //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedFundingSourceExtractor.class, null, false), //
     LANGUAGE_QUALIFICATION_TYPE(
             LanguageQualificationTypes.class,
             "languageQualificationType",
@@ -75,21 +97,23 @@ public enum PrismImportedEntity {
             "xsd/import/languageQualificationType.xsd",
             "imported_language_qualification_type",
             "institution_id, code, name, minimum_overall_score, maximum_overall_score, minimum_reading_score, maximum_reading_score, minimum_writing_score, maximum_writing_score, minimum_speaking_score, maximum_speaking_score, minimum_listening_score, maximum_listening_score, enabled",
-            null, false), //
+            ImportedLanguageQualificationTypeExtractor.class, null, false), //
     TITLE(Titles.class, "title", Title.class, "xml/defaultEntities/title.xml", "xsd/import/title.xsd", "imported_entity",
-            "institution_id, imported_entity_type, code, name, enabled", null, false), //
+            "institution_id, imported_entity_type, code, name, enabled", ImportedTitleExtractor.class, null, false), //
     GENDER(Genders.class, "gender", Gender.class, "xml/defaultEntities/gender.xml", "xsd/import/gender.xsd", //
-            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", new String[] { "application_personal_detail.gender_id" }, false), //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedGenderExtractor.class, //
+            new String[] { "application_personal_detail.gender_id" }, false), //
     REJECTION_REASON(RejectionReasons.class, "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml",
-            "xsd/import/rejectionReason.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", null, false), //
-    STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml",
-            "xsd/import/studyOption.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled",
+            "xsd/import/rejectionReason.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedRejectionReasonExtractor.class, //
+            null, false), //
+    STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml", "xsd/import/studyOption.xsd", //
+            "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedStudyOptionExtractor.class, //
             new String[] { "application_program_detail.study_option_id" }, false), //
     OPPORTUNITY_TYPE(OpportunityTypes.class, "opportunityType", OpportunityType.class, "xml/defaultEntities/opportunityType.xml",
-            "xsd/import/opportunityType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled",
+            "xsd/import/opportunityType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedOpportunityTypeExtractor.class, //
             new String[] { "application_program_detail.opportunity_type_id" }, false), //
     INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd",
-            "imported_institution", "institution_id, domicile_id, code, name, enabled, custom", null, true);
+            "imported_institution", "institution_id, domicile_id, code, name, enabled, custom", ImportedInstitutionExtractor.class, null, true);
 
     private Class<?> jaxbClass;
 
@@ -104,6 +128,8 @@ public enum PrismImportedEntity {
     private String databaseTable;
 
     private String databaseColumns;
+
+    private Class<? extends ImportedEntityExtractor> databaseImportExtractor;
 
     private String[] databaseReferenceColumns;
 
@@ -123,7 +149,8 @@ public enum PrismImportedEntity {
     }
 
     private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
-            String databaseTable, String databaseColumns, String[] databaseReferenceColumns, boolean supportsUserDefinedInput) {
+            String databaseTable, String databaseColumns, Class<? extends ImportedEntityExtractor> databaseImportExtractor, String[] databaseReferenceColumns,
+            boolean supportsUserDefinedInput) {
         this.jaxbClass = jaxbClass;
         this.jaxbPropertyName = jaxbPropertyName;
         this.entityClass = entityClass;
@@ -131,6 +158,7 @@ public enum PrismImportedEntity {
         this.schemaLocation = schemaLocation;
         this.databaseTable = databaseTable;
         this.databaseColumns = databaseColumns;
+        this.databaseImportExtractor = databaseImportExtractor;
         this.databaseReferenceColumns = databaseReferenceColumns;
         this.supportsUserDefinedInput = supportsUserDefinedInput;
     }
@@ -161,6 +189,10 @@ public enum PrismImportedEntity {
 
     public String getDatabaseColumns() {
         return databaseColumns;
+    }
+
+    public Class<? extends ImportedEntityExtractor> getDatabaseImportExtractor() {
+        return databaseImportExtractor;
     }
 
     public String[] getDatabaseReferenceColumns() {

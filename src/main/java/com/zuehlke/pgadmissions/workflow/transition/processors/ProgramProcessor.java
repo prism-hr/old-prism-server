@@ -14,9 +14,9 @@ public class ProgramProcessor implements ResourceProcessor {
 
     @Inject
     private AdvertService advertService;
-    
+
     @Override
-    public void process(Resource resource, Comment comment) throws Exception {
+    public void process(Resource resource, Comment comment) {
         Program program = (Program) resource;
 
         if (comment.isSponsorshipComment()) {

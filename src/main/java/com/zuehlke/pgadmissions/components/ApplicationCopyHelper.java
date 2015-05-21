@@ -1,47 +1,7 @@
 package com.zuehlke.pgadmissions.components;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE;
-
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -53,6 +13,18 @@ import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.*;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -67,7 +39,7 @@ public class ApplicationCopyHelper {
     private final Set<ApplicationSection> sectionsWithErrors = Sets.newHashSet();
 
     @Transactional
-    public void copyApplication(Application to, Application from) throws Exception {
+    public void copyApplication(Application to, Application from) {
         copyApplicationPersonalDetail(to, from);
         copyApplicationAddress(to, from);
         copyApplicationQualifications(to, from);
@@ -83,7 +55,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationPersonalDetail(Application to, Application from) throws Exception {
+    private void copyApplicationPersonalDetail(Application to, Application from) {
         if (from.getPersonalDetail() != null) {
             ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
             to.setPersonalDetail(personalDetail);
@@ -157,7 +129,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationQualifications(Application to, Application from) throws Exception {
+    private void copyApplicationQualifications(Application to, Application from) {
         WorkflowPropertyConfiguration qualificationConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_QUALIFICATION, to.getWorkflowPropertyConfigurationVersion());
 
@@ -199,7 +171,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationFundings(Application to, Application from) throws Exception {
+    private void copyApplicationFundings(Application to, Application from) {
         WorkflowPropertyConfiguration fundingConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
 
@@ -259,7 +231,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationDocument(Application to, Application from) throws Exception {
+    private void copyApplicationDocument(Application to, Application from) {
         WorkflowPropertyConfiguration personalStatementConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_PERSONAL_STATEMENT, to.getWorkflowPropertyConfigurationVersion());
         boolean personalStatementEnabled = BooleanUtils.isTrue(personalStatementConfiguration.getEnabled());
@@ -345,7 +317,7 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) throws Exception {
+    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setSponsor(from.getSponsor());
         to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource(), to));
@@ -381,7 +353,7 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    public void copyQualification(ApplicationQualification to, ApplicationQualification from, WorkflowPropertyConfiguration configuration) throws Exception {
+    public void copyQualification(ApplicationQualification to, ApplicationQualification from, WorkflowPropertyConfiguration configuration) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution(), to));
         to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
@@ -419,7 +391,7 @@ public class ApplicationCopyHelper {
         return toAddress;
     }
 
-    private Document copyDocument(Document from) throws Exception {
+    private Document copyDocument(Document from) {
         if (from == null) {
             return null;
         }
@@ -434,8 +406,8 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private ApplicationLanguageQualification copyLanguageQualification(Institution toInstitution, ApplicationLanguageQualification from,
-            Application toApplication) throws Exception {
+    private ApplicationLanguageQualification copyLanguageQualification(
+            Institution toInstitution, ApplicationLanguageQualification from, Application toApplication) {
         if (from == null) {
             return null;
         }

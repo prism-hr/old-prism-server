@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.integration;
 
-import com.zuehlke.pgadmissions.integration.helpers.PropertyLoaderHelper;
-import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
-import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
-import com.zuehlke.pgadmissions.integration.helpers.WorkflowConfigurationHelper;
-import com.zuehlke.pgadmissions.mail.MailSenderMock;
-import com.zuehlke.pgadmissions.services.SystemService;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,59 +13,68 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
+import com.zuehlke.pgadmissions.dto.MailMessageDTO;
+import com.zuehlke.pgadmissions.integration.helpers.PropertyLoaderHelper;
+import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
+import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
+import com.zuehlke.pgadmissions.integration.helpers.WorkflowConfigurationHelper;
+import com.zuehlke.pgadmissions.mail.MailSenderMock;
+import com.zuehlke.pgadmissions.services.SystemService;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
 public class LifeCycleTest {
 
-	@Autowired
-	private SystemService systemService;
+    @Autowired
+    private SystemService systemService;
 
-	@Autowired
-	private MailSenderMock mailSenderMock;
+    @Autowired
+    private MailSenderMock mailSenderMock;
 
-	@Autowired
-	private SystemInitialisationHelper systemInitialisationHelper;
+    @Autowired
+    private SystemInitialisationHelper systemInitialisationHelper;
 
-	@Autowired
-	private SystemDataImportHelper systemDataImportHelper;
+    @Autowired
+    private SystemDataImportHelper systemDataImportHelper;
 
-	@Autowired
-	private PropertyLoaderHelper propertyLoaderHelper;
+    @Autowired
+    private PropertyLoaderHelper propertyLoaderHelper;
 
-	@Autowired
-	private ApplicationContext applicationContext;
+    @Autowired
+    private ApplicationContext applicationContext;
 
-	@Test
-	public void run() throws Exception {
-		for (int i = 0; i < 2; i++) {
-			systemService.initializeWorkflow();
-			systemService.initializeDisplayProperties();
-			systemService.initializeSystemUser();
+    @Test
+    public void run() throws Exception {
+        for (int i = 0; i < 2; i++) {
+            systemService.initializeWorkflow();
+            systemService.initializeDisplayProperties();
+            systemService.initializeSystemUser();
 
-			systemInitialisationHelper.verifyScopeCreation();
-			systemInitialisationHelper.verifyRoleCreation();
-			systemInitialisationHelper.verifyActionCreation();
-			systemInitialisationHelper.verifyStateCreation();
+            systemInitialisationHelper.verifyScopeCreation();
+            systemInitialisationHelper.verifyRoleCreation();
+            systemInitialisationHelper.verifyActionCreation();
+            systemInitialisationHelper.verifyStateCreation();
 
-			systemInitialisationHelper.verifySystemCreation();
-			systemInitialisationHelper.verifySystemUserCreation();
+            systemInitialisationHelper.verifySystemCreation();
+            systemInitialisationHelper.verifySystemUserCreation();
 
-			systemInitialisationHelper.verifyNotificationTemplateCreation();
-			systemInitialisationHelper.verifyStateDurationCreation();
+            systemInitialisationHelper.verifyNotificationTemplateCreation();
+            systemInitialisationHelper.verifyStateDurationCreation();
 
-			systemInitialisationHelper.verifyStateActionCreation();
-			applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
+            systemInitialisationHelper.verifyStateActionCreation();
+            applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
 
-			if (i == 0) {
-				systemInitialisationHelper.verifySystemUserRegistration();
-			}
+            List<MailMessageDTO> messages = mailSenderMock.getSentMessages();
+            assertEquals(1, messages.size());
+            NotificationConfiguration configuration = messages.get(0).getConfiguration();
+            assertEquals(SYSTEM_COMPLETE_REGISTRATION_REQUEST, configuration.getNotificationDefinition().getId());
+            mailSenderMock.getSentMessages().clear();
+        }
 
-			mailSenderMock.verify();
-		}
-
-		systemDataImportHelper.verifyImport();
-		propertyLoaderHelper.verifyPropertyLoader();
-	}
+        systemDataImportHelper.verifyImport();
+        propertyLoaderHelper.verifyPropertyLoader();
+    }
 
 }

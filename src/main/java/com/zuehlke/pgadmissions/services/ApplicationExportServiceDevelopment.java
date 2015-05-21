@@ -1,24 +1,21 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.domain.application.Application;
+
 @Service
 @Transactional
 public class ApplicationExportServiceDevelopment extends ApplicationExportService {
-
-    private static final Logger log = LoggerFactory.getLogger(ApplicationExportServiceDevelopment.class);
 
     protected final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();
 
@@ -45,8 +42,6 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
             exportRequests.put(application, exportRequest);
 
             executeExportAction(application, dataExportRequest, "TEST EXPORT", "TEST EXPORT USER ID", null);
-        } catch (RuntimeException e) {
-            log.error("Could not export application", e);
         } catch (Exception e) {
             executeExportAction(application, dataExportRequest, null, null, ExceptionUtils.getStackTrace(e));
         } finally {

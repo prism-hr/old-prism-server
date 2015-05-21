@@ -10,7 +10,7 @@ public class ResourceSponsorRepresentation {
 
     private Integer sponsorLogoId;
 
-    private Double sponsorshipProvided;
+    private BigDecimal sponsorshipProvided;
 
     public Integer getSponsorId() {
         return sponsorId;
@@ -37,11 +37,10 @@ public class ResourceSponsorRepresentation {
     }
 
     public BigDecimal getSponsorshipProvided() {
-        return BigDecimal.valueOf(sponsorshipProvided);
+        return sponsorshipProvided;
     }
 
-    public void setSponsorshipProvided(Double sponsorshipProvided) {
+    public void setSponsorshipProvided(BigDecimal sponsorshipProvided) {
         this.sponsorshipProvided = sponsorshipProvided;
     }
-
 }

@@ -445,6 +445,7 @@ public class ResourceDAO {
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(10) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceSponsorRepresentation.class))
                 .list();
     }
 

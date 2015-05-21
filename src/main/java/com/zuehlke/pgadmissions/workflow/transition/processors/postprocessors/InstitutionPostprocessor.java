@@ -18,20 +18,20 @@ public class InstitutionPostprocessor implements ResourceProcessor {
 
     @Inject
     private ImportedEntityService importedEntityService;
-    
+
     @Inject
-    private ImportedEntityServiceHelperInstitution importedEntityServiceHelperInstitution; 
+    private ImportedEntityServiceHelperInstitution importedEntityServiceHelperInstitution;
 
     @Override
-    public void process(Resource resource, Comment comment) throws Exception {
+    public void process(Resource resource, Comment comment) {
         Institution institution = (Institution) resource;
-        
+
         if (comment.isInstitutionApproveComment()) {
             initializeInstitution(institution);
         }
     }
 
-    public void initializeInstitution(Institution institution) throws Exception {
+    public void initializeInstitution(Institution institution) {
         importedEntityService.setInstitutionImportedEntityFeeds(institution);
         importedEntityServiceHelperInstitution.execute(institution.getId(), PROGRAM);
     }

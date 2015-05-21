@@ -65,7 +65,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         }
     }
 
-    public void execute(Integer institution, PrismImportedEntity... exclusions) throws Exception {
+    public void execute(Integer institution, PrismImportedEntity... exclusions) {
         List<ImportedEntityFeed> importedEntityFeeds = importedEntityService.getInstitutionImportedEntityFeeds(institution, exclusions);
         for (ImportedEntityFeed importedEntityFeed : importedEntityFeeds) {
             List<?> unmarshalledEntities = unmarshallEntities(importedEntityFeed);
@@ -157,7 +157,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
     }
 
-    private void mergeImportedPrograms(Integer institutionId, Integer importedEntityFeedId, List<ProgrammeOccurrence> definitions) throws Exception {
+    private void mergeImportedPrograms(Integer institutionId, Integer importedEntityFeedId, List<ProgrammeOccurrence> definitions) {
         DateTime baselineTime = new DateTime();
         LocalDate baseline = baselineTime.toLocalDate();
 

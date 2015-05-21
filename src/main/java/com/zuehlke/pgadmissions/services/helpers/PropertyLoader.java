@@ -36,7 +36,7 @@ public class PropertyLoader {
     @Inject
     private CustomizationService customizationService;
 
-    public String load(PrismDisplayPropertyDefinition property) throws Exception {
+    public String load(PrismDisplayPropertyDefinition property) {
         String value = properties.get(property);
         if (value == null) {
             PrismDisplayPropertyCategory category = property.getCategory();
@@ -64,7 +64,7 @@ public class PropertyLoader {
     }
 
     private HashMap<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope scope, PrismDisplayPropertyCategory category,
-            PrismOpportunityType opportunityType) throws Exception {
+            PrismOpportunityType opportunityType) {
         List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations( //
                 DISPLAY_PROPERTY, resource, scope, opportunityType, category);
         HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();

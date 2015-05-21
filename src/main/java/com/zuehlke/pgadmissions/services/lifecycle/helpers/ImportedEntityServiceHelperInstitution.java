@@ -69,7 +69,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         List<ImportedEntityFeed> importedEntityFeeds = importedEntityService.getInstitutionImportedEntityFeeds(institution, exclusions);
         for (ImportedEntityFeed importedEntityFeed : importedEntityFeeds) {
             List<?> unmarshalledEntities = unmarshallEntities(importedEntityFeed);
-            if (unmarshalledEntities != null) {
+            if (!(unmarshalledEntities == null || unmarshalledEntities.isEmpty())) {
                 Integer importedEntityFeedId = importedEntityFeed.getId();
                 PrismImportedEntity prismImportedEntity = importedEntityFeed.getImportedEntityType();
                 if (prismImportedEntity.equals(AGE_RANGE)) {

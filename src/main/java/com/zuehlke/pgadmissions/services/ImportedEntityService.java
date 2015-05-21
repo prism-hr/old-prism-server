@@ -168,7 +168,8 @@ public class ImportedEntityService {
         }
     }
 
-    public void disableImportedPrograms(Integer institution, List<Integer> updates, LocalDate baseline) {
+    public void disableImportedPrograms(Integer institutionId, List<Integer> updates, LocalDate baseline) {
+        Institution institution = institutionService.getById(institutionId);
         importedEntityDAO.disableImportedPrograms(institution, updates, baseline);
         importedEntityDAO.disableImportedProgramStudyOptions(institution, updates);
         importedEntityDAO.disableImportedProgramStudyOptionInstances(institution, updates);

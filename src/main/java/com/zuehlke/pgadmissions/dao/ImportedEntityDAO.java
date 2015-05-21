@@ -110,11 +110,11 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void disableImportedPrograms(Integer institution, List<Integer> updates, LocalDate baseline) {
+    public void disableImportedPrograms(Institution institution, List<Integer> updates, LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update Program " //
                         + "set dueDate = :dueDate " //
-                        + "where institution.id = :institution " //
+                        + "where institution = :institution " //
                         + "and imported is true " //
                         + "and id not in (:updates)") //
                 .setParameter("institution", institution) //
@@ -123,13 +123,13 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void disableImportedProgramStudyOptions(Integer institution, List<Integer> updates) {
+    public void disableImportedProgramStudyOptions(Institution institution, List<Integer> updates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceStudyOption " //
                         + "where program in (" //
                         + "select id " //
                         + "from Program " //
-                        + "where institution.id = :institution " //
+                        + "where institution = :institution " //
                         + "and imported is true "
                         + "and id not in (:updates))") //
                 .setParameter("institution", institution) //
@@ -137,17 +137,17 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void disableImportedProgramStudyOptionInstances(Integer institution, List<Integer> updates) {
+    public void disableImportedProgramStudyOptionInstances(Institution institution, List<Integer> updates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceStudyOptionInstance " //
                         + "where studyOption in (" //
                         + "select resourceStudyOption.id " //
                         + "from ResourceStudyOption as resourceStudyOption " //
                         + "join resourceStudyOption.program as program " //
-                        + "where program.institution.id = :institution " //
+                        + "where program.institution = :institution " //
                         + "and program.imported is true "
                         + "and program.id not in (:updates))") //
-                .setParameter("institution.id", institution) //
+                .setParameter("institution", institution) //
                 .setParameterList("updates", updates) //
                 .executeUpdate();
 

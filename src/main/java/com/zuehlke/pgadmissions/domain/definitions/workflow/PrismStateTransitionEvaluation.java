@@ -34,10 +34,12 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.Prog
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramEscalatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramImportedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramStartedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedPartnerResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectStartedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
 
 public enum PrismStateTransitionEvaluation {
@@ -70,11 +72,13 @@ public enum PrismStateTransitionEvaluation {
     PROGRAM_IMPORTED_OUTCOME(true, PROGRAM, ProgramImportedResolver.class), //
     PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
     PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //
+    PROGRAM_STARTED_OUTCOME(false, PROGRAM, ProgramStartedResolver.class), //
     PROGRAM_ESCALATED_OUTCOME(false, PROGRAM, ProgramEscalatedResolver.class), //
     PROJECT_APPROVED_PARTNER_OUTCOME(true, PROJECT, ProjectApprovedPartnerResolver.class), //
     PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
     PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
-    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class);
+    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class), //
+    PROJECT_STARTED_OUTCOME(false, PROJECT, ProjectStartedResolver.class);
 
     private boolean nextStateSelection;
 

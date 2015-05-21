@@ -59,7 +59,7 @@ public enum PrismImportedEntity {
     NATIONALITY(Nationalities.class, "nationality", Language.class, "xml/defaultEntities/nationality.xml", "xsd/import/nationality.xsd", //
             "imported_entity", "institution_id, imported_entity_type, code, name, enabled", //
             new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, false), //
-    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, null, null, "xsd/import/program.xsd", null, false), //
+    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/program.xsd", null, null, null, false), //
     QUALIFICATION_TYPE(Qualifications.class, "qualification", QualificationType.class, "xml/defaultEntities/qualificationType.xml",
             "xsd/import/qualificationType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", null, false), //
     REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class, "xml/defaultEntities/referralSource.xml",

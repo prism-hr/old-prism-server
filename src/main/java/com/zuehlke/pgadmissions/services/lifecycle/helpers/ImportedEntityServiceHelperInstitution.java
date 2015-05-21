@@ -22,6 +22,8 @@ import javax.xml.validation.SchemaFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -41,6 +43,8 @@ import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 @Component
 @SuppressWarnings({ "unchecked" })
 public class ImportedEntityServiceHelperInstitution implements AbstractServiceHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
 
     @Value("${context.environment}")
     private String contextEnvironment;
@@ -100,6 +104,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
             if (cause != null) {
                 errorMessage += "\n" + cause.toString();
             }
+            logger.error("Error importing " + importedEntityFeed.getImportedEntityType().name() + " for " + importedEntityFeed.getInstitution().getCode(), e);
             notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
         } finally {
             Authenticator.setDefault(null);
@@ -163,7 +168,10 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
             updates.add(importedEntityService.mergeImportedProgram(institutionId, occurrencesInBatch, baseline, baselineTime));
         }
 
-        importedEntityService.disableImportedPrograms(institutionId, updates, baseline);
+        if (!updates.isEmpty()) {
+            importedEntityService.disableImportedPrograms(institutionId, updates, baseline);
+        }
+
         importedEntityService.setLastImportedTimestamp(importedEntityFeedId);
     }
 

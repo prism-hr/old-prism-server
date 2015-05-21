@@ -1,33 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.getSystemStudyOption;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.floatToBigDecimal;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
-
-import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -43,13 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -65,6 +31,30 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.getSystemStudyOption;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.floatToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
 @Service
 @Transactional
@@ -175,8 +165,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedProgramStudyOptionInstances(institution, updates);
     }
 
-    public void mergeImportedAgeRanges(Integer importedEntityFeedId, List<com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange> definitions)
-            throws Exception {
+    public void mergeImportedAgeRanges(Integer importedEntityFeedId, List<com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange> definitions) {
         ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
         Institution institution = importedEntityFeed.getInstitution();
         PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
@@ -211,7 +200,7 @@ public class ImportedEntityService {
         }
     }
 
-    public void mergeImportedEntities(Integer importedEntityFeedId, List<Object> definitions) throws Exception {
+    public void mergeImportedEntities(Integer importedEntityFeedId, List<Object> definitions) {
         ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
         Institution institution = importedEntityFeed.getInstitution();
         PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
@@ -242,8 +231,7 @@ public class ImportedEntityService {
         }
     }
 
-    public void mergeImportedInstitutions(Integer importedEntityFeedId, List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> definitions)
-            throws Exception {
+    public void mergeImportedInstitutions(Integer importedEntityFeedId, List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> definitions) {
         ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
         Institution institution = importedEntityFeed.getInstitution();
         PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
@@ -281,7 +269,7 @@ public class ImportedEntityService {
         }
     }
 
-    public void mergeImportedLanguageQualifications(Integer importedEntityFeedId, List<LanguageQualificationType> definitions) throws Exception {
+    public void mergeImportedLanguageQualifications(Integer importedEntityFeedId, List<LanguageQualificationType> definitions) {
         ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
         Institution institution = importedEntityFeed.getInstitution();
         PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
@@ -321,8 +309,7 @@ public class ImportedEntityService {
         }
     }
 
-    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
-            throws Exception {
+    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime) {
         Institution institution = institutionService.getById(institutionId);
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
@@ -454,7 +441,7 @@ public class ImportedEntityService {
         return importedInstitution;
     }
 
-    private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {
+    private void executeProgramImportAction(Program program, DateTime baselineTime) {
         Comment lastImportComment = commentService.getLatestComment(program, INSTITUTION_CREATE_PROGRAM, INSTITUTION_IMPORT_PROGRAM);
         PrismAction actionId = lastImportComment == null ? INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM;
 

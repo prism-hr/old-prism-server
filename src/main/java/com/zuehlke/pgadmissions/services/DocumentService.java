@@ -1,35 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.Part;
-
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.util.io.Streams;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -45,6 +18,23 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcessor;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.util.io.Streams;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.Part;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 
 @Service
 @Transactional
@@ -136,7 +126,7 @@ public class DocumentService {
         }
     }
 
-    public byte[] getDocumentContent(Document document) throws IOException, IntegrationException {
+    public byte[] getDocumentContent(Document document) throws IntegrationException {
         if (document.getExported()) {
             AmazonS3 amazonClient = getAmazonClient();
             String amazonObjectKey = document.getExportFilenameAmazon();
@@ -161,15 +151,6 @@ public class DocumentService {
 
     public List<Integer> getExportDocuments() {
         return documentDAO.getExportDocuments();
-    }
-
-    public List<Integer> getOrphanDocuments(DateTime baselineTime) {
-        return documentDAO.getOrphanDocuments(baselineTime);
-    }
-
-    public void deleteDocument(Integer documentId) {
-        Document document = getById(documentId);
-        entityService.delete(document);
     }
 
     public void exportDocumentToAmazon(Integer documentId) throws IOException, IntegrationException {
@@ -218,8 +199,12 @@ public class DocumentService {
         }
     }
 
-    public byte[] getSystemDocument(String path) throws IOException {
-        return Resources.toByteArray(Resources.getResource(path));
+    public byte[] getSystemDocument(String path) {
+        try {
+            return Resources.toByteArray(Resources.getResource(path));
+        } catch (IOException e) {
+            throw new Error(e);
+        }
     }
 
     public void reassignDocuments(User oldUser, User newUser) {
@@ -243,7 +228,7 @@ public class DocumentService {
         return new AmazonS3Client(systemService.getAmazonCredentials());
     }
 
-    private byte[] getAmazonObject(AmazonS3 amazonClient, String amazonObjectKey) throws IOException {
+    private byte[] getAmazonObject(AmazonS3 amazonClient, String amazonObjectKey) throws IntegrationException {
         GetObjectRequest amazonRequest = new GetObjectRequest(amazonBucket, amazonObjectKey);
         S3Object amazonObject = amazonClient.getObject(amazonRequest);
 
@@ -253,6 +238,8 @@ public class DocumentService {
             byte[] amazonByteArray = IOUtils.toByteArray(amazonStream);
             IOUtils.closeQuietly(amazonStream);
             return amazonByteArray;
+        } catch (IOException e) {
+            throw new IntegrationException(e);
         } finally {
             IOUtils.closeQuietly(amazonStream);
         }
@@ -267,7 +254,7 @@ public class DocumentService {
         return null;
     }
 
-    private byte[] getFallbackDocument(Document document) throws IOException {
+    private byte[] getFallbackDocument(Document document) {
         return getSystemDocument("document/" + (document.getCategory() == PrismFileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg"));
     }
 

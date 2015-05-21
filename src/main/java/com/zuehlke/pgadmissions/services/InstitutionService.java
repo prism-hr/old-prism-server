@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,28 +190,6 @@ public class InstitutionService {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
         return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + new Integer(businessYear + 1).toString());
-    }
-
-    public Integer getMonthOfBusinessYear(Institution institution, Integer month) {
-        Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
-        return month >= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
-    }
-
-    public Integer getWeekOfBusinessYear(Institution institution, Integer week) {
-        LocalDate baseline = new LocalDate();
-        LocalDate businessYearStartDate = baseline.withMonthOfYear(institution.getBusinessYearStartMonth()).withDayOfMonth(1);
-        businessYearStartDate = businessYearStartDate.isAfter(baseline) ? businessYearStartDate.minusYears(1) : businessYearStartDate;
-        Integer businessYearStartWeek = businessYearStartDate.getWeekOfWeekyear();
-        LocalDate lastPossibleDayofWeekYear = baseline.withMonthOfYear(12).withDayOfMonth(31).plusDays(4);
-        Integer maximumWeekOfYear = null;
-        for (int i = 7; i > 0; i--) {
-            maximumWeekOfYear = lastPossibleDayofWeekYear.getWeekOfWeekyear();
-            if (!maximumWeekOfYear.equals(1)) {
-                break;
-            }
-            lastPossibleDayofWeekYear = lastPossibleDayofWeekYear.minusDays(1);
-        }
-        return week >= businessYearStartWeek ? (week - (businessYearStartWeek - 1)) : (week + (maximumWeekOfYear - (businessYearStartWeek - 1)));
     }
 
     public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram() {

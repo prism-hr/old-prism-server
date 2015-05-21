@@ -1,4 +1,3 @@
 update application
-set application_year = concat(month(created_timestamp)),
-	application_month_sequence = application_month
+set application_year = concat(year(created_timestamp))
 where institution_id = ${institutionId?c};

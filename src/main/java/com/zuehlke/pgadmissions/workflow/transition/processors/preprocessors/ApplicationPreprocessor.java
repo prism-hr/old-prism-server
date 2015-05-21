@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.util.List;
 
@@ -64,9 +65,9 @@ public class ApplicationPreprocessor implements ResourceProcessor {
         Integer applicationWeek = createdTimestamp.getWeekOfWeekyear();
         application.setApplicationYear(institutionService.getBusinessYear(institution, applicationYear, applicationMonth));
         application.setApplicationMonth(applicationMonth);
-        application.setApplicationMonthSequence(institutionService.getMonthOfBusinessYear(institution, applicationMonth));
+        application.setApplicationMonthSequence(createdTimestamp.toLocalDate().withDayOfMonth(1));
         application.setApplicationWeek(applicationWeek);
-        application.setApplicationWeekSequence(institutionService.getWeekOfBusinessYear(institution, applicationWeek));
+        application.setApplicationWeekSequence(createdTimestamp.toLocalDate().withDayOfWeek(MONDAY));
     }
 
     private void setSubmissionData(Application application) {

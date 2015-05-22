@@ -1,84 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_ADVERT_DETAILS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_ADVERT_SPONSORSHIP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CATEGORIES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CLOSING_DATES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_FEES_AND_PAYMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_DOMAIN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_SPONSORSHIP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -802,18 +730,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_REJECTION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Confirm Rejection Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST(SYSTEM_NOTIFICATION, "Application Correct Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST_REMINDER(SYSTEM_NOTIFICATION, "Application Correct Request Reminder"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Provide Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Request"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Provide Interview Availability Request Reminder"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Request Reminder"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_REFERENCE_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Reference Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Reference Request Reminder"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_RESERVE_NOTIFICATION(SYSTEM_NOTIFICATION, "Application Reserve Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_REVERSE_REJECTION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Rejection Reversed Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_TERMINATE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Terminate Notification"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Update Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Update Interview Availability Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_INSTITUTION_CORRECT_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Correct Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_INSTITUTION_CORRECT_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Correct Request Reminder"),
@@ -823,6 +748,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_PROGRAM_CORRECT_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Correct Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_PROGRAM_CORRECT_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Correct Request Reminder"),
+    SYSTEM_NOTIFICATION_TEMPLATE_PROGRAM_STARTUP_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Program Startup Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_PROGRAM_SPONSOR_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Program Sponsor Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Partner Approval Stage Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Approval Stage Notification"),

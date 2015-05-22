@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import com.google.common.base.Functions;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
@@ -24,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
+import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.*;
@@ -56,6 +58,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
@@ -126,7 +129,7 @@ public class AdvertService {
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             if (resource.getInstitution() != null) {
-                queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
+                queryDTO.setInstitutions(new Integer[]{resource.getInstitution().getId()});
             }
         }
 
@@ -147,14 +150,14 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
-    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) throws Exception {
+    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) {
         Advert advert = new Advert();
         updateAdvert(parentResource, advertDTO, advert);
         entityService.save(advert);
         return advert;
     }
 
-    public void updateAdvert(Resource parentResource, AdvertDTO advertDTO, Advert advert) throws Exception {
+    public void updateAdvert(Resource parentResource, AdvertDTO advertDTO, Advert advert) {
         if (BooleanUtils.isFalse(advert.getImported())) {
             advert.setTitle(advertDTO.getTitle());
         }
@@ -176,7 +179,7 @@ public class AdvertService {
         advert.setSponsorshipTarget(advertDTO.getSponsorshipRequired());
     }
 
-    public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
+    public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         advert.setDescription(advertDetailsDTO.getDescription());
@@ -185,8 +188,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
-    public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO)
-            throws Exception {
+    public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -204,11 +206,11 @@ public class AdvertService {
     }
 
     @SuppressWarnings("unchecked")
-    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
+    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
-        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme" }) {
+        for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme"}) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) PrismReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
@@ -228,8 +230,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws Exception {
+    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -245,8 +246,7 @@ public class AdvertService {
         return null;
     }
 
-    public void updateClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws Exception {
+    public void updateClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -267,7 +267,7 @@ public class AdvertService {
         }
     }
 
-    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) throws Exception {
+    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -335,7 +335,7 @@ public class AdvertService {
     }
 
     public List<String> getAdvertThemes(Application application) {
-        for (ResourceParent resource : new ResourceParent[] { application.getProject(), application.getProgram(), application.getInstitution() }) {
+        for (ResourceParent resource : new ResourceParent[]{application.getProject(), application.getProgram(), application.getInstitution()}) {
             if (resource != null) {
                 List<String> themes = advertDAO.getAdvertThemes(resource.getAdvert());
                 if (!themes.isEmpty()) {
@@ -350,7 +350,7 @@ public class AdvertService {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
     }
 
-    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
+    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, AdvertSponsorshipDTO sponsorshipDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -360,12 +360,16 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
     }
 
-    public void rejectSponsorship(PrismScope resourceScope, Integer resourceId, Integer commentId) throws Exception {
+    public void rejectSponsorship(PrismScope resourceScope, Integer resourceId, Integer commentId) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
-
         Comment comment = commentService.getById(commentId);
+
+        Preconditions.checkState(comment.getResource().getId().equals(resource.getId()));
         CommentSponsorship sponsorship = comment.getSponsorship();
+        if (sponsorship == null || comment.getAction().getActionCategory() != SPONSOR_RESOURCE || sponsorship.getRejection() != null) {
+            throw new PrismForbiddenException("Cannot decline given sponsorship");
+        }
         advert.setSponsorshipSecured(advert.getSponsorshipSecured().subtract(sponsorship.getAmountConverted()));
 
         Comment rejection = executeUpdate(resource, "COMMENT_REJECTED_SPONSORSHIP");
@@ -411,16 +415,19 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
-        PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
-        PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixGenerated + "Minimum" + context, minimumGenerated);
-        PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixGenerated + "Maximum" + context, maximumGenerated);
+                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
+        try {
+            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
+            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
+            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixGenerated + "Minimum" + context, minimumGenerated);
+            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixGenerated + "Maximum" + context, maximumGenerated);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -518,7 +525,7 @@ public class AdvertService {
         }
     }
 
-    private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO feeDTO) throws Exception {
+    private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO feeDTO) {
         if (feeDTO == null) {
             advert.setFee(null);
             return;
@@ -529,7 +536,7 @@ public class AdvertService {
         updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
     }
 
-    private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO payDTO) throws Exception {
+    private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO payDTO) {
         if (payDTO == null) {
             advert.setPay(null);
             return;
@@ -541,7 +548,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
-            LocalDate baseline) throws Exception {
+                                        LocalDate baseline) {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 
@@ -587,7 +594,7 @@ public class AdvertService {
         return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 
-    private Comment executeUpdate(ResourceParent resource, String message) throws Exception {
+    private Comment executeUpdate(ResourceParent resource, String message) {
         return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 

@@ -83,6 +83,9 @@ public class ResourceController {
     private ApplicationService applicationService;
 
     @Inject
+    private AdvertService advertService;
+
+    @Inject
     private Mapper mapper;
 
     @Inject
@@ -271,8 +274,7 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/setAsOwner", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void setAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor)
-            throws Exception {
+    public void setAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
@@ -295,6 +297,12 @@ public class ResourceController {
 
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
         return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+    }
+
+    @RequestMapping(value = "/{resourceId}/comments/{commentId}/sponsorship", method = RequestMethod.DELETE)
+    @PreAuthorize("isAuthenticated()")
+    public void rejectSponsorship(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer commentId) {
+        advertService.rejectSponsorship(resourceDescriptor.getResourceScope(), resourceId, commentId);
     }
 
     @ModelAttribute

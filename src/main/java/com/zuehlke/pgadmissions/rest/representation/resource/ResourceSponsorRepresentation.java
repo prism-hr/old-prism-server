@@ -43,4 +43,25 @@ public class ResourceSponsorRepresentation {
     public void setSponsorshipProvided(BigDecimal sponsorshipProvided) {
         this.sponsorshipProvided = sponsorshipProvided;
     }
+
+    public ResourceSponsorRepresentation withSponsorId(Integer sponsorId) {
+        this.sponsorId = sponsorId;
+        return this;
+    }
+
+    public ResourceSponsorRepresentation withSponsorTitle(String sponsorTitle) {
+        this.sponsorTitle = sponsorTitle;
+        return this;
+    }
+
+    public ResourceSponsorRepresentation withSponsorLogoId(Integer sponsorLogoId) {
+        this.sponsorLogoId = sponsorLogoId;
+        return this;
+    }
+
+    public ResourceSponsorRepresentation withSponsorshipProvided(BigDecimal sponsorshipProvided) {
+        this.sponsorshipProvided = sponsorshipProvided;
+        return this;
+    }
+
 }

@@ -50,9 +50,6 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
         }
         representation.setPartnerActions(partnerActions);
 
-        representation.setSponsorCount(resourceService.getResourceSponsorCount(resource));
-        representation.setTopTenSponsors(resourceService.getResourceTopTenSponsors(resource));
-
         if (resource.getResourceScope().ordinal() > INSTITUTION.ordinal()) {
             ResourceOpportunity opportunity = (ResourceOpportunity) resource;
             List<PrismStudyOption> studyOptions = resourceService.getStudyOptions(opportunity);

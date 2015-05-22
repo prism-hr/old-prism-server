@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.math.BigDecimal;
 
 public class ApplicationReportListRowDTO {
 
@@ -72,26 +71,6 @@ public class ApplicationReportListRowDTO {
     private Long providedReferences;
 
     private Long declinedReferences;
-
-    private Integer verificationInstanceCount;
-
-    private BigDecimal verificationInstanceDurationAverage;
-
-    private Integer referenceInstanceCount;
-
-    private BigDecimal referenceInstanceDurationAverage;
-
-    private Integer reviewInstanceCount;
-
-    private BigDecimal reviewInstanceDurationAverage;
-
-    private Integer interviewInstanceCount;
-
-    private BigDecimal interviewInstanceDurationAverage;
-
-    private Integer approvalInstanceCount;
-
-    private BigDecimal approvalInstanceDurationAverage;
 
     private LocalDate confirmedStartDate;
 
@@ -345,85 +324,6 @@ public class ApplicationReportListRowDTO {
         this.declinedReferences = declinedReferences;
     }
 
-    public final Integer getVerificationInstanceCount() {
-        return verificationInstanceCount;
-    }
-
-    public final void setVerificationInstanceCount(Integer verificationInstanceCount) {
-        this.verificationInstanceCount = verificationInstanceCount;
-    }
-
-    public final BigDecimal getVerificationInstanceDurationAverage() {
-        return verificationInstanceDurationAverage;
-    }
-
-    public final void setVerificationInstanceDurationAverage(BigDecimal verificationInstanceDurationAverage) {
-        this.verificationInstanceDurationAverage = verificationInstanceDurationAverage;
-    }
-
-    public final Integer getReferenceInstanceCount() {
-        return referenceInstanceCount;
-    }
-
-    public final void setReferenceInstanceCount(Integer referenceInstanceCount) {
-        this.referenceInstanceCount = referenceInstanceCount;
-    }
-
-    public final BigDecimal getReferenceInstanceDurationAverage() {
-        return referenceInstanceDurationAverage;
-    }
-
-    public final void setReferenceInstanceDurationAverage(BigDecimal referenceInstanceDurationAverage) {
-        this.referenceInstanceDurationAverage = referenceInstanceDurationAverage;
-    }
-
-    public final Integer getReviewInstanceCount() {
-        return reviewInstanceCount;
-    }
-
-    public final void setReviewInstanceCount(Integer reviewInstanceCount) {
-        this.reviewInstanceCount = reviewInstanceCount;
-    }
-
-    public final BigDecimal getReviewInstanceDurationAverage() {
-        return reviewInstanceDurationAverage;
-    }
-
-    public final void setReviewInstanceDurationAverage(BigDecimal reviewInstanceDurationAverage) {
-        this.reviewInstanceDurationAverage = reviewInstanceDurationAverage;
-    }
-
-    public final Integer getInterviewInstanceCount() {
-        return interviewInstanceCount;
-    }
-
-    public final void setInterviewInstanceCount(Integer interviewInstanceCount) {
-        this.interviewInstanceCount = interviewInstanceCount;
-    }
-
-    public final BigDecimal getInterviewInstanceDurationAverage() {
-        return interviewInstanceDurationAverage;
-    }
-
-    public final void setInterviewInstanceDurationAverage(BigDecimal interviewInstanceDurationAverage) {
-        this.interviewInstanceDurationAverage = interviewInstanceDurationAverage;
-    }
-
-    public final Integer getApprovalInstanceCount() {
-        return approvalInstanceCount;
-    }
-
-    public final void setApprovalInstanceCount(Integer approvalInstanceCount) {
-        this.approvalInstanceCount = approvalInstanceCount;
-    }
-
-    public final BigDecimal getApprovalInstanceDurationAverage() {
-        return approvalInstanceDurationAverage;
-    }
-
-    public final void setApprovalInstanceDurationAverage(BigDecimal approvalInstanceDurationAverage) {
-        this.approvalInstanceDurationAverage = approvalInstanceDurationAverage;
-    }
 
     public final LocalDate getConfirmedStartDate() {
         return confirmedStartDate;
@@ -560,46 +460,6 @@ public class ApplicationReportListRowDTO {
 
     public String getDeclinedReferencesDisplay() {
         return declinedReferences == null ? "" : declinedReferences.toString();
-    }
-
-    public String getVerificationInstanceCountDisplay() {
-        return verificationInstanceCount == null ? "" : verificationInstanceCount.toString();
-    }
-
-    public String getVerificationInstanceDurationAverageDisplay() {
-        return verificationInstanceDurationAverage == null ? "" : verificationInstanceDurationAverage.toPlainString();
-    }
-
-    public String getReferenceInstanceCountDisplay() {
-        return referenceInstanceCount == null ? "" : referenceInstanceCount.toString();
-    }
-
-    public String getReferenceInstanceDurationAverageDisplay() {
-        return referenceInstanceDurationAverage == null ? "" : referenceInstanceDurationAverage.toPlainString();
-    }
-
-    public String getReviewInstanceCountDisplay() {
-        return reviewInstanceCount == null ? "" : reviewInstanceCount.toString();
-    }
-
-    public String getReviewInstanceDurationAverageDisplay() {
-        return reviewInstanceDurationAverage == null ? "" : reviewInstanceDurationAverage.toPlainString();
-    }
-
-    public String getInterviewInstanceCountDisplay() {
-        return interviewInstanceCount == null ? "" : interviewInstanceCount.toString();
-    }
-
-    public String getInterviewInstanceDurationAverageDisplay() {
-        return interviewInstanceDurationAverage == null ? "" : interviewInstanceDurationAverage.toPlainString();
-    }
-
-    public String getApprovalInstanceCountDisplay() {
-        return approvalInstanceCount == null ? "" : approvalInstanceCount.toString();
-    }
-
-    public String getApprovalInstanceDurationAverageDisplay() {
-        return approvalInstanceDurationAverage == null ? "" : approvalInstanceDurationAverage.toPlainString();
     }
 
     public PrismStudyOption getStudyOptionDisplay() {

@@ -1,41 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.DoubleType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
-import org.springframework.stereotype.Repository;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
 import com.amazonaws.util.StringUtils;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -43,20 +7,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -69,8 +24,31 @@ import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
-
 import freemarker.template.Template;
+import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.DoubleType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
+import org.springframework.stereotype.Repository;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -283,26 +261,11 @@ public class ApplicationDAO {
                         + "left join application.comments as declineReferenceComment " //
                         + "with declineReferenceComment.action.id = :provideReferenceAction " //
                         + "and declineReferenceComment.declinedResponse is true " //
-                        + "left join application.processings as verificationProcessing " //
-                        + "with verificationProcessing.stateGroup.id = :verificationStateGroup " //
-                        + "left join application.processings as referenceProcessing " //
-                        + "with referenceProcessing.stateGroup.id = :referenceStateGroup " //
-                        + "left join application.processings as reviewProcessing " //
-                        + "with reviewProcessing.stateGroup.id = :reviewStateGroup " //
-                        + "left join application.processings as interviewProcessing " //
-                        + "with interviewProcessing.stateGroup.id = :interviewStateGroup " //
-                        + "left join application.processings as approvalProcessing " //
-                        + "with approvalProcessing.stateGroup.id = :approvalStateGroup " //
                         + "where application.id in :assignedApplications " //
                         + "group by application.id " //
                         + "order by application.sequenceIdentifier desc") //
                 .setParameterList("assignedApplications", assignedApplications) //
                 .setParameter("provideReferenceAction", PrismAction.APPLICATION_PROVIDE_REFERENCE) //
-                .setParameter("verificationStateGroup", PrismStateGroup.APPLICATION_VERIFICATION) //
-                .setParameter("referenceStateGroup", PrismStateGroup.APPLICATION_REFERENCE) //
-                .setParameter("reviewStateGroup", PrismStateGroup.APPLICATION_REVIEW) //
-                .setParameter("interviewStateGroup", PrismStateGroup.APPLICATION_INTERVIEW) //
-                .setParameter("approvalStateGroup", PrismStateGroup.APPLICATION_APPROVAL) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }
@@ -323,26 +286,26 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId,
-            Set<Set<ImportedEntity>> constraint) throws Exception {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(
+            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId,
-            Set<Set<ImportedEntity>> constraint) throws Exception {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(
+            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(PrismScope resourceScope, Integer resourceId,
-            Set<Set<ImportedEntity>> constraint) throws Exception {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, constraint,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(
+            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_week.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .addScalar("applicationWeek", IntegerType.INSTANCE) //
@@ -375,11 +338,8 @@ public class ApplicationDAO {
                 .list();
     }
 
-    private SQLQuery getApplicationProcessingSummaryQuery(PrismScope resourceScope, Integer resourceId, Set<Set<ImportedEntity>> constraint,
-            String templateLocation) throws Exception {
-        String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
-        Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
-
+    private SQLQuery getApplicationProcessingSummaryQuery(
+            ResourceParent resource, Set<Set<ImportedEntity>> constraint, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
         List<String> constraintExpressions = Lists.newLinkedList();
@@ -401,15 +361,23 @@ public class ApplicationDAO {
             }
         }
 
-        String constraintExpression = "where application." + resourceScope.getLowerCamelName() + "_id =" + resourceId;
+        String constraintExpression = "where application." + resource.getResourceScope().getLowerCamelName() + "_id =" + resource.getId();
         String filterConstraintExpression = Joiner.on("\n\tand ").join(constraintExpressions);
         if (!StringUtils.isNullOrEmpty(filterConstraintExpression)) {
             constraintExpression = constraintExpression + "\n\tand " + filterConstraintExpression;
         }
 
         ImmutableMap<String, Object> model = ImmutableMap.of("columnExpression", (Object) columnExpression, "constraintExpression", constraintExpression);
-        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery( //
-                FreeMarkerTemplateUtils.processTemplateIntoString(template, model)); //
+
+        String queryString;
+        try {
+            String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
+            Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
+            queryString = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(queryString);
 
         return query.addScalar("advertCount", LongType.INSTANCE) //
                 .addScalar("applicationYear", StringType.INSTANCE) //

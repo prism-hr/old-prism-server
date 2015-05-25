@@ -67,7 +67,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.Language;
+import com.zuehlke.pgadmissions.domain.imported.Nationality;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
@@ -173,7 +173,7 @@ public class ApplicationExportBuilder {
 
 	private NationalityTp buildFirstNationality(Application application) {
 		ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-		Language firstNationality = personalDetail.getFirstNationality();
+		Nationality firstNationality = personalDetail.getFirstNationality();
 		NationalityTp nationalityTp = objectFactory.createNationalityTp();
 		nationalityTp.setCode(firstNationality.getCode());
 		nationalityTp.setName(firstNationality.getName());
@@ -181,7 +181,7 @@ public class ApplicationExportBuilder {
 	}
 
 	private NationalityTp buildSecondNationality(Application application) {
-		Language secondNationality = application.getPersonalDetail().getSecondNationality();
+		Nationality secondNationality = application.getPersonalDetail().getSecondNationality();
 		NationalityTp nationalityTp = objectFactory.createNationalityTp();
 
 		if (secondNationality == null) {

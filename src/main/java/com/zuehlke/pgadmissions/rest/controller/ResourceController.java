@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -27,6 +28,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.*;
@@ -140,9 +142,9 @@ public class ResourceController {
         }
 
         PrismScope resourceScope = resource.getResourceScope();
-        Class<? extends ResourceRepresentationEnricher> resourceRepresentationEncricher = resourceScope.getResourceRepresentationEnricher();
-        if (resourceRepresentationEncricher != null) {
-            applicationContext.getBean(resourceRepresentationEncricher).enrich(resourceScope, resourceId, representation);
+        Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher = resourceScope.getResourceRepresentationEnricher();
+        if (resourceRepresentationEnricher != null) {
+            applicationContext.getBean(resourceRepresentationEnricher).enrich(resourceScope, resourceId, representation);
         }
 
         return representation;
@@ -222,7 +224,7 @@ public class ResourceController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}", params = "type=summary")
     @PreAuthorize("isAuthenticated()")
-    public Object getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) throws Exception {
+    public Object getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         if (resourceScope == SYSTEM) {
             throw new UnsupportedOperationException("Summary cannot be created for system");
@@ -230,6 +232,16 @@ public class ResourceController {
             return applicationService.getApplicationSummary(resourceId);
         }
         return resourceService.getResourceSummaryRepresentation(resourceScope, resourceId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
+    @PreAuthorize("isAuthenticated()")
+    public ResourceSummaryPlotsRepresentation getPlot(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
+        Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
+        if(!(resource instanceof ResourceParent)) {
+            throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
+        }
+        return resourceService.getResourceSummaryPlotRepresentation((ResourceParent)resource, null);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)

@@ -160,7 +160,7 @@ public enum PrismImportedEntity {
         return byEntityClass.get(entityClass);
     }
 
-    public static List<PrismImportedEntity> getResourcereportfilterproperties() {
+    public static List<PrismImportedEntity> getResourceReportFilterProperties(){
         return resourceReportFilterProperties;
     }
 

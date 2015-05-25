@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotsRepresentation;
@@ -236,12 +237,15 @@ public class ResourceController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
     @PreAuthorize("isAuthenticated()")
-    public ResourceSummaryPlotsRepresentation getPlot(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
+    public ResourceSummaryPlotsRepresentation getPlot(
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @RequestParam(required = false) String filter) throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
-        if(!(resource instanceof ResourceParent)) {
+        if (!(resource instanceof ResourceParent)) {
             throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
         }
-        return resourceService.getResourceSummaryPlotRepresentation((ResourceParent)resource, null);
+        ResourceReportFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceReportFilterDTO.class) : null;
+        return resourceService.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)

@@ -232,7 +232,7 @@ public class StaticDataService {
         staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
         staticData.put("institution", mapper.map(institution, InstitutionRepresentation.class));
 
-        staticData.put("resourceReportFilterProperties", getResourcereportfilterproperties());
+        staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;
     }
 

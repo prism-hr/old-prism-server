@@ -394,6 +394,29 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_EXPRESSION_LESSER_NEGATED(SYSTEM_FILTER_EXPRESSION, "Not less than"),
     SYSTEM_FILTER_EXPRESSION_NOT_SPECIFIED(SYSTEM_FILTER_EXPRESSION, "Not specified"),
 
+
+    /*
+     * *************** SYSTEM IMPORTED ENTITY *********************
+     */
+
+    SYSTEM_IMPORTED_ENTITY_AGE_RANGE(SYSTEM_IMPORTED_ENTITY, "Age Range"),
+    SYSTEM_IMPORTED_ENTITY_COUNTRY(SYSTEM_IMPORTED_ENTITY, "Country"),
+    SYSTEM_IMPORTED_ENTITY_DISABILITY(SYSTEM_IMPORTED_ENTITY, "Disability"),
+    SYSTEM_IMPORTED_ENTITY_DOMICILE(SYSTEM_IMPORTED_ENTITY, "Domicile"),
+    SYSTEM_IMPORTED_ENTITY_ETHNICITY(SYSTEM_IMPORTED_ENTITY, "Ethnicity"),
+    SYSTEM_IMPORTED_ENTITY_NATIONALITY(SYSTEM_IMPORTED_ENTITY, "Nationality"),
+    SYSTEM_IMPORTED_ENTITY_PROGRAM(SYSTEM_IMPORTED_ENTITY, "Program"),
+    SYSTEM_IMPORTED_ENTITY_QUALIFICATION_TYPE(SYSTEM_IMPORTED_ENTITY, "Type"),
+    SYSTEM_IMPORTED_ENTITY_REFERRAL_SOURCE(SYSTEM_IMPORTED_ENTITY, "Referral Source"),
+    SYSTEM_IMPORTED_ENTITY_FUNDING_SOURCE(SYSTEM_IMPORTED_ENTITY, "Funding Source"),
+    SYSTEM_IMPORTED_ENTITY_LANGUAGE_QUALIFICATION_TYPE(SYSTEM_IMPORTED_ENTITY, "Language Qualification Type"),
+    SYSTEM_IMPORTED_ENTITY_TITLE(SYSTEM_IMPORTED_ENTITY, "Title"),
+    SYSTEM_IMPORTED_ENTITY_GENDER(SYSTEM_IMPORTED_ENTITY, "Gender"),
+    SYSTEM_IMPORTED_ENTITY_REJECTION_REASON(SYSTEM_IMPORTED_ENTITY, "Rejection Reason"),
+    SYSTEM_IMPORTED_ENTITY_STUDY_OPTION(SYSTEM_IMPORTED_ENTITY, "Study Option"),
+    SYSTEM_IMPORTED_ENTITY_OPPORTUNITY_TYPE(SYSTEM_IMPORTED_ENTITY, "Opportunity Type"),
+    SYSTEM_IMPORTED_ENTITY_INSTITUTION(SYSTEM_IMPORTED_ENTITY, "Institution"),
+
     /*
      * *************** SYSTEM ADVERT INDUSTRY *********************
      */
@@ -1220,6 +1243,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_CUSTOM_FORMS(SYSTEM_RESOURCE_SECTION, "Custom Forms"),
     SYSTEM_RESOURCE_RELATED_OPPORTUNITIES(SYSTEM_RESOURCE_SECTION, "Related Opportunities"),
     SYSTEM_RESOURCE_CONFIGURATION(SYSTEM_RESOURCE_SECTION, "Configuration"),
+    SYSTEM_RESOURCE_STATISTICS(SYSTEM_RESOURCE_SECTION, "Configuration"),
     SYSTEM_RESOURCE_USER_BOUNCES(SYSTEM_RESOURCE_SECTION, "User Bounces"),
     SYSTEM_RESOURCE_UNREGISTERED_USERS(SYSTEM_RESOURCE_SECTION, "Unregistered Users"),
     SYSTEM_RESOURCE_TRANSLATIONS(SYSTEM_RESOURCE_SECTION, "Customization"),
@@ -1378,12 +1402,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_RESOURCE_CONFIGURATION_SCOPE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Resource Scope"),
-    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION,
-            "The scope of the resource (e.g. system, institution, program, project, application) that you wish to define configuration for."),
+    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The scope of the resource (e.g. system, institution, program, project, application) that you wish to define configuration for."),
     SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Opportunity Type"),
-    SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_HINT(
-            SYSTEM_HTML_RESOURCE_CONFIGURATION,
-            "The type of the program that you wish to define configuration for. Think about this in terms of the terminology that will make sense for different types of recruitment (e.g. student, intern, employee, etc)."),
+    SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The type of the program that you wish to define configuration for. Think about this in terms of the terminology that will make sense for different types of recruitment (e.g. student, intern, employee, etc)."),
     SYSTEM_RESOURCE_CONFIGURATION_OVERRIDE_LOCAL_VERSIONS_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Override Local Versions"),
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Restore Default"),
 
@@ -1398,8 +1419,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MANAGE_USERS_EXISTING_USERS_SUBHEADER(SYSTEM_HTML_MANAGE_USERS, "Existing users and roles"),
 
     /*
-     * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION
-     * *********************
+     * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION *********************
      */
 
     SYSTEM_EMAIL_CONFIGURATION_HEADER(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Manage Email Templates: {{title}}"),
@@ -1413,18 +1433,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_EMAIL_CONFIGURATION_REMINDER_INTERVAL_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Increase or reduce the frequency of reminder messages"),
 
     /*
-     * *************** SYSTEM HTML CUSTOM FORM CONFIGURATION
-     * **********************
+     * *************** SYSTEM HTML CUSTOM FORM CONFIGURATION **********************
      */
 
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_HEADER(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Manage Custom Forms: {{title}}"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_LABEL(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Comment Type"),
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_HINT(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION,
-            "The type of comment that you wish to configure custom data entry fields for."),
+    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_HINT(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "The type of comment that you wish to configure custom data entry fields for."),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_SUBHEADER(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Canvas"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "To edit the field just click on it"),
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMPONENTS_PANEL_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION,
-            "Drag and drop the fields below to the canvas panel on the left."),
+    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMPONENTS_PANEL_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Drag and drop the fields below to the canvas panel on the left."),
 
     /*
      * *************** SYSTEM HTML WORKFLOW CONFIGURATION *********************
@@ -1444,13 +1461,18 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_WORKFLOW_CONFIGURATION_HEADER(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Configuration: {{title}}"),
 
     /*
-     * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION
-     * *********************
+     * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION *******************
      */
 
     SYSTEM_TRANSLATIONS_CONFIGURATION_HEADER(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Customization: {{title}}"),
     SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_LABEL(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Category"),
     SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_HINT(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Select the category of property you wish to configure"),
+
+    /*
+     * *************** SYSTEM HTML STATISTICS *******************
+     */
+
+    SYSTEM_STATISTICS_HEADER(SYSTEM_HTML_STATISTICS, "Statistics: {{title}}"),
 
     /*
      * *************** SYSTEM ERROR MESSAGES *********************

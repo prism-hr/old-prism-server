@@ -1,64 +1,17 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.referencedata.jaxb.*;
+import com.zuehlke.pgadmissions.services.helpers.extractors.*;
 
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.Language;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.imported.Title;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.FundingSources;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Genders;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
-import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.OpportunityTypes;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
-import com.zuehlke.pgadmissions.referencedata.jaxb.RejectionReasons;
-import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
-import com.zuehlke.pgadmissions.referencedata.jaxb.StudyOptions;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Titles;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedCountryExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedDisabilityExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedDomicileExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEthnicityExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedFundingSourceExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedGenderExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedInstitutionExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedNationalityExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedOpportunityTypeExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedQualificationTypeExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedReferralSourceExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedRejectionReasonExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedStudyOptionExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedTitleExtractor;
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 public enum PrismImportedEntity {
 
@@ -77,7 +30,7 @@ public enum PrismImportedEntity {
     ETHNICITY(Ethnicities.class, "ethnicity", Ethnicity.class, "xml/defaultEntities/ethnicity.xml", "xsd/import/ethnicity.xsd", //
             "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedEthnicityExtractor.class, //
             new String[] { "application_personal_detail.ethnicity_id" }, false), //
-    NATIONALITY(Nationalities.class, "nationality", Language.class, "xml/defaultEntities/nationality.xml", "xsd/import/nationality.xsd", //
+    NATIONALITY(Nationalities.class, "nationality", Nationality.class, "xml/defaultEntities/nationality.xml", "xsd/import/nationality.xsd", //
             "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedNationalityExtractor.class, //
             new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, false), //
     PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/program.xsd", null, null, null, null, false), //
@@ -148,7 +101,7 @@ public enum PrismImportedEntity {
         }
     }
 
-    private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
+    PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
             String databaseTable, String databaseColumns, Class<? extends ImportedEntityExtractor> databaseImportExtractor, String[] databaseReferenceColumns,
             boolean supportsUserDefinedInput) {
         this.jaxbClass = jaxbClass;
@@ -215,4 +168,10 @@ public enum PrismImportedEntity {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
 
+    public static void main(String[] args) {
+        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
+        System.out.println(prismImportedEntity.name());
+
+        }
+    }
 }

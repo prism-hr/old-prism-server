@@ -16,7 +16,7 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private PrismOpportunityType opportunityType;
 
     private String title;
-    
+
     private Integer backgroundImage;
 
     private Boolean requireProjectDefinition;
@@ -28,8 +28,6 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private List<PrismStudyOption> studyOptions;
 
     private AdvertRepresentation advert;
-
-    private ResourceSummaryRepresentation resourceSummary;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -109,14 +107,6 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setAdvert(AdvertRepresentation advert) {
         this.advert = advert;
-    }
-
-    public ResourceSummaryRepresentation getResourceSummary() {
-        return resourceSummary;
-    }
-
-    public void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
-        this.resourceSummary = resourceSummary;
     }
 
 }

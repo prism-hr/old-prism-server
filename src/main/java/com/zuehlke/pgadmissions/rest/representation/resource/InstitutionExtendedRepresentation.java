@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.math.BigDecimal;
-
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+
+import java.math.BigDecimal;
 
 public class InstitutionExtendedRepresentation extends AbstractResourceRepresentation {
 
@@ -20,8 +19,6 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
     private FileRepresentation backgroundImage;
 
     private AdvertRepresentation advert;
-
-    private ResourceSummaryRepresentation resourceSummary;
 
     public String getTitle() {
         return title;
@@ -79,11 +76,4 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
         this.advert = advert;
     }
 
-    public ResourceSummaryRepresentation getResourceSummary() {
-        return resourceSummary;
-    }
-
-    public void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
-        this.resourceSummary = resourceSummary;
-    }
 }

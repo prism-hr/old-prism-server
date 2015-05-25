@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
 import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.Language;
+import com.zuehlke.pgadmissions.domain.imported.Nationality;
 import com.zuehlke.pgadmissions.domain.imported.Title;
 
 @Entity
@@ -60,11 +60,11 @@ public class ApplicationPersonalDetail extends ApplicationSection {
 
     @ManyToOne
     @JoinColumn(name = "nationality_id1")
-    private Language firstNationality;
+    private Nationality firstNationality;
 
     @ManyToOne
     @JoinColumn(name = "nationality_id2")
-    private Language secondNationality;
+    private Nationality secondNationality;
 
     @ManyToOne
     @JoinColumn(name = "title_id")
@@ -77,10 +77,10 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @Column(name = "date_of_birth", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dateOfBirth;
-    
+
     @ManyToOne
     @JoinColumn(name = "age_range_id")
-    private AgeRange ageRange;    
+    private AgeRange ageRange;
 
     @ManyToOne
     @JoinColumn(name = "country_id")
@@ -110,19 +110,19 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return id;
     }
 
-    public Language getFirstNationality() {
+    public Nationality getFirstNationality() {
         return firstNationality;
     }
 
-    public void setFirstNationality(Language firstNationality) {
+    public void setFirstNationality(Nationality firstNationality) {
         this.firstNationality = firstNationality;
     }
 
-    public Language getSecondNationality() {
+    public Nationality getSecondNationality() {
         return secondNationality;
     }
 
-    public void setSecondNationality(Language secondNationality) {
+    public void setSecondNationality(Nationality secondNationality) {
         this.secondNationality = secondNationality;
     }
 
@@ -149,7 +149,7 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-    
+
     public AgeRange getAgeRange() {
         return ageRange;
     }
@@ -294,12 +294,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withFirstNationality(Language firstNationality) {
+    public ApplicationPersonalDetail withFirstNationality(Nationality firstNationality) {
         this.firstNationality = firstNationality;
         return this;
     }
 
-    public ApplicationPersonalDetail withSecondNationality(Language secondNationality) {
+    public ApplicationPersonalDetail withSecondNationality(Nationality secondNationality) {
         this.secondNationality = secondNationality;
         return this;
     }

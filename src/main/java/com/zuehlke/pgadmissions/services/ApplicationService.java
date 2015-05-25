@@ -227,7 +227,7 @@ public class ApplicationService {
         return applicationDAO.getApplicationsForExport();
     }
 
-    public ApplicationSummaryRepresentation getApplicationSummary(Integer applicationId) throws Exception {
+    public ApplicationSummaryRepresentation getApplicationSummary(Integer applicationId) {
         Application application = getById(applicationId);
 
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);

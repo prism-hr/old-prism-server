@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.domain.imported.FundingSource;
 import com.zuehlke.pgadmissions.domain.imported.Gender;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.Language;
+import com.zuehlke.pgadmissions.domain.imported.Nationality;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.QualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
@@ -218,21 +218,21 @@ public class ApplicationSectionService {
         Title title = importedEntityService.getById(institution, Title.class, personalDetailDTO.getTitle());
         Gender gender = importedEntityService.getById(institution, Gender.class, personalDetailDTO.getGender());
         Country country = importedEntityService.getById(institution, Country.class, personalDetailDTO.getCountry());
-        Language firstNationality = importedEntityService.getById(institution, Language.class, personalDetailDTO.getFirstNationality());
-        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(institution, Language.class,
+        Nationality firstNationality = importedEntityService.getById(institution, Nationality.class, personalDetailDTO.getFirstNationality());
+        Nationality secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Nationality> getById(institution, Nationality.class,
                 personalDetailDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(institution, Domicile.class, personalDetailDTO.getDomicile());
 
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
-        
+
         LocalDate dateOfBirth = personalDetailDTO.getDateOfBirth();
         personalDetail.setDateOfBirth(dateOfBirth);
-        
+
         Integer ageAtCreation =  application.getCreatedTimestamp().getYear() - dateOfBirth.getYear();
         AgeRange ageRange = importedEntityService.getAgeRange(institution, ageAtCreation);
         personalDetail.setAgeRange(ageRange);
-        
+
         personalDetail.setCountry(country);
         personalDetail.setFirstNationality(firstNationality);
         personalDetail.setSecondNationality(secondNationality);

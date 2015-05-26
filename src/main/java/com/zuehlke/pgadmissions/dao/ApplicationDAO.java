@@ -56,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -68,6 +67,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 
 import freemarker.template.Template;
 
@@ -307,16 +307,16 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
@@ -324,8 +324,8 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_week.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
@@ -359,17 +359,15 @@ public class ApplicationDAO {
                 .list();
     }
 
-    private SQLQuery getApplicationProcessingSummaryQuery(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint, String templateLocation) {
+    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, Set<ResourceSummaryPlotConstraintRepresentation> constraints,
+            String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
-        List<String> constraintExpressions = Lists.newLinkedList();
-        if (constraint != null) {
+        List<String> filterConstraintExpressions = Lists.newLinkedList();
+        if (constraints != null) {
             HashMultimap<PrismImportedEntity, Integer> flattenedConstraints = HashMultimap.create();
-            for (Set<ImportedEntity> entities : constraint) {
-                for (ImportedEntity entity : entities) {
-                    flattenedConstraints.put(entity.getType(), entity.getId());
-                }
+            for (ResourceSummaryPlotConstraintRepresentation constraint : constraints) {
+                flattenedConstraints.put(constraint.getType(), constraint.getId());
             }
 
             for (PrismImportedEntity entity : flattenedConstraints.keySet()) {
@@ -378,12 +376,12 @@ public class ApplicationDAO {
                 for (String column : entity.getDatabaseReferenceColumns()) {
                     columnConstraint.add(column + " in (" + Joiner.on(", ").join(flattenedConstraints.get(entity)) + ")");
                 }
-                constraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tor ").join(columnConstraint) + ")");
+                filterConstraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tor ").join(columnConstraint) + ")");
             }
         }
 
         String constraintExpression = "where application." + resource.getResourceScope().getLowerCamelName() + "_id =" + resource.getId();
-        String filterConstraintExpression = Joiner.on("\n\tand ").join(constraintExpressions);
+        String filterConstraintExpression = Joiner.on("\n\tand ").join(filterConstraintExpressions);
         if (!StringUtils.isNullOrEmpty(filterConstraintExpression)) {
             constraintExpression = constraintExpression + "\n\tand " + filterConstraintExpression;
         }

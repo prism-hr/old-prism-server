@@ -52,7 +52,7 @@ public class InstitutionCreator implements ResourceCreator {
                 .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withCreatedTimestamp(new DateTime()).withLogoImage(logoImage);
         advert.setInstitution(institution);
 
-        resourceService.setAttributes(institution, newInstitution.getAttributes());
+        resourceService.setResourceAttributes(institution, newInstitution.getAttributes());
         return institution;
     }
 

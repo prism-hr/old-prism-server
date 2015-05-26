@@ -129,7 +129,7 @@ public class AdvertService {
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             if (resource.getInstitution() != null) {
-                queryDTO.setInstitutions(new Integer[]{resource.getInstitution().getId()});
+                queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
             }
         }
 
@@ -210,7 +210,7 @@ public class AdvertService {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
-        for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme"}) {
+        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme" }) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) PrismReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
@@ -335,7 +335,7 @@ public class AdvertService {
     }
 
     public List<String> getAdvertThemes(Application application) {
-        for (ResourceParent resource : new ResourceParent[]{application.getProject(), application.getProgram(), application.getInstitution()}) {
+        for (ResourceParent resource : new ResourceParent[] { application.getProject(), application.getProgram(), application.getInstitution() }) {
             if (resource != null) {
                 List<String> themes = advertDAO.getAdvertThemes(resource.getAdvert());
                 if (!themes.isEmpty()) {
@@ -370,8 +370,8 @@ public class AdvertService {
         if (sponsorship == null || comment.getAction().getActionCategory() != SPONSOR_RESOURCE || sponsorship.getRejection() != null) {
             throw new PrismForbiddenException("Cannot decline given sponsorship");
         }
-        advert.setSponsorshipSecured(advert.getSponsorshipSecured().subtract(sponsorship.getAmountConverted()));
 
+        advert.setSponsorshipSecured(advert.getSponsorshipSecured().subtract(sponsorship.getAmountConverted()));
         Comment rejection = executeUpdate(resource, "COMMENT_REJECTED_SPONSORSHIP");
         sponsorship.setRejection(rejection);
     }
@@ -415,7 +415,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
         try {
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -427,7 +427,7 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -548,7 +548,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
-                                        LocalDate baseline) {
+            LocalDate baseline) {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 

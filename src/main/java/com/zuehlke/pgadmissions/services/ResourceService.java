@@ -744,18 +744,17 @@ public class ResourceService {
             representation.setProjectCount(projectService.getActiveProjectCount(resource));
         }
 
-        representation.setPlot(getResourceSummaryPlotRepresentation(resourceScope, resourceId, resource, null).getPlots().iterator().next());
+        representation.setPlot(getResourceSummaryPlotRepresentation(resource, null).getPlots().iterator().next());
         return representation;
     }
 
-    public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(PrismScope resourceScope, Integer resourceId,
-            ResourceParent resource, ResourceReportFilterDTO filterDTO) throws Exception {
+    public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(ResourceParent resource, ResourceReportFilterDTO filterDTO) throws Exception {
         Institution institution = resource.getInstitution();
         LinkedHashMultimap<PrismImportedEntity, ImportedEntity> properties = LinkedHashMultimap.create();
 
         ResourceSummaryPlotsRepresentation plotsRepresentation = new ResourceSummaryPlotsRepresentation();
         if (filterDTO == null) {
-            ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resourceScope, resourceId, resource, null);
+            ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, null);
             plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(null).withData(plotDataRepresentation));
         } else {
             for (ResourceReportFilterPropertyDTO propertyDTO : filterDTO.getProperties()) {
@@ -777,8 +776,7 @@ public class ResourceService {
             }
 
             for (Set<Set<ImportedEntity>> constraint : constraints) {
-                ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resourceScope, resourceId, resource,
-                        constraint);
+                ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
                 plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
             }
         }
@@ -876,16 +874,16 @@ public class ResourceService {
         }
     }
 
-    private ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(PrismScope resourceScope, Integer resourceId,
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) throws Exception {
+    private ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource, Set<Set<ImportedEntity>> constraint)
+            throws Exception {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
-        List<ApplicationProcessingSummaryDTO> yearSummaries = applicationService.getApplicationProcessingSummariesByYear(resourceScope, resourceId, constraint);
+        List<ApplicationProcessingSummaryDTO> yearSummaries = applicationService.getApplicationProcessingSummariesByYear(resource, constraint);
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = applicationService //
-                .getApplicationProcessingSummariesByMonth(resourceScope, resourceId, constraint);
+                .getApplicationProcessingSummariesByMonth(resource, constraint);
         LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> weekSummaries = applicationService //
-                .getApplicationProcessingSummariesByWeek(resourceScope, resourceId, constraint);
+                .getApplicationProcessingSummariesByWeek(resource, constraint);
 
         for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
             ApplicationProcessingSummaryRepresentationYear yearRepresentation = new ApplicationProcessingSummaryRepresentationYear();

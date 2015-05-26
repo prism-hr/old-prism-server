@@ -1,5 +1,34 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.dozer.Mapper;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -28,38 +57,17 @@ import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.*;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertSponsorshipDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.dozer.Mapper;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional
@@ -179,7 +187,7 @@ public class AdvertService {
         advert.setSponsorshipTarget(advertDTO.getSponsorshipRequired());
     }
 
-    public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) {
+    public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         advert.setDescription(advertDetailsDTO.getDescription());
@@ -188,7 +196,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
-    public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) {
+    public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -206,7 +214,7 @@ public class AdvertService {
     }
 
     @SuppressWarnings("unchecked")
-    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
+    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -230,7 +238,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) {
+    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -246,7 +254,7 @@ public class AdvertService {
         return null;
     }
 
-    public void updateClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO) {
+    public void updateClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -267,7 +275,7 @@ public class AdvertService {
         }
     }
 
-    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) {
+    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -350,7 +358,7 @@ public class AdvertService {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
     }
 
-    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, AdvertSponsorshipDTO sponsorshipDTO) {
+    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -360,7 +368,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
     }
 
-    public void rejectSponsorship(PrismScope resourceScope, Integer resourceId, Integer commentId) {
+    public void rejectSponsorship(PrismScope resourceScope, Integer resourceId, Integer commentId) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         Comment comment = commentService.getById(commentId);
@@ -594,7 +602,7 @@ public class AdvertService {
         return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 
-    private Comment executeUpdate(ResourceParent resource, String message) {
+    private Comment executeUpdate(ResourceParent resource, String message) throws Exception {
         return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 

@@ -42,7 +42,7 @@ public class ApplicationPreprocessor implements ResourceProcessor {
     private UserService userService;
 
     @Override
-    public void process(Resource resource, Comment comment) {
+    public void process(Resource resource, Comment comment) throws Exception {
         Application application = (Application) resource;
         if (comment.isApplicationCreatedComment()) {
             setReportingPeriod(application);
@@ -76,7 +76,7 @@ public class ApplicationPreprocessor implements ResourceProcessor {
         application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
     }
 
-    private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) {
+    private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) throws Exception {
         Resource resource = comment.getResource();
         PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
         Action action = actionService.getById(prismAction);

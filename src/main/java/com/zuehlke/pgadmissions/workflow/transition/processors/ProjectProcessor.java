@@ -16,7 +16,7 @@ public class ProjectProcessor implements ResourceProcessor {
     private AdvertService advertService;
 
     @Override
-    public void process(Resource resource, Comment comment) {
+    public void process(Resource resource, Comment comment) throws Exception {
         Project project = (Project) resource;
 
         if (comment.isSponsorshipComment()) {

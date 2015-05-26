@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 
 import java.math.BigDecimal;
@@ -60,7 +61,8 @@ public class AdvertDAO {
                 .createAlias("programPartner.advert", "programPartnerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("programPartnerAdvert.address", "programPartnerAddress", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.resourceStates", "programState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.resourceConditions", "programCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("program.resourceConditions", "programCondition", JoinType.LEFT_OUTER_JOIN, //
+                        getResourceConditionConstraint("programCondition")) //
                 .createAlias("program.institution", "programInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.department", "programDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.opportunityType", "programOpportunityType", JoinType.LEFT_OUTER_JOIN) //
@@ -71,7 +73,8 @@ public class AdvertDAO {
                 .createAlias("projectPartner.advert", "projectPartnerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectPartnerAdvert.address", "projectPartnerAddress", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.resourceStates", "projectState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.resourceConditions", "projectCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project.resourceConditions", "projectCondition", JoinType.LEFT_OUTER_JOIN, //
+                        getResourceConditionConstraint("projectCondition")) //
                 .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.institution", "projectInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.department", "projectDepartment", JoinType.LEFT_OUTER_JOIN) //
@@ -266,6 +269,12 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction().add(Restrictions.isNull("closingDate.id")) //
                                 .add(Restrictions.ge("otherClosingDate.closingDate", baseline)))) //
                 .list();
+    }
+
+    private Junction getResourceConditionConstraint(String tableReference) {
+        return Restrictions.disjunction() //
+                .add(Restrictions.eq(tableReference + ".partnerMode", true)) //
+                .add(Restrictions.eq(tableReference + ".actionCondition", ACCEPT_APPLICATION));
     }
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

@@ -1,5 +1,17 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -7,18 +19,13 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.services.*;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 
 @Component
 public class ProjectPostprocessor implements ResourceProcessor {
@@ -42,7 +49,7 @@ public class ProjectPostprocessor implements ResourceProcessor {
     private UserService userService;
 
     @Override
-    public void process(Resource resource, Comment comment) {
+    public void process(Resource resource, Comment comment) throws Exception {
         Project project = (Project) resource;
         DateTime updatedTimestamp = project.getUpdatedTimestamp();
         project.setUpdatedTimestampSitemap(updatedTimestamp);
@@ -74,7 +81,7 @@ public class ProjectPostprocessor implements ResourceProcessor {
         }
     }
 
-    private void postProcessProjectPartnerApproval(Project project, Comment comment) {
+    private void postProcessProjectPartnerApproval(Project project, Comment comment) throws Exception {
         User user = comment.getUser();
         Action action = actionService.getById(PROJECT_COMPLETE_APPROVAL_STAGE);
         if (actionService.checkActionAvailable(project, action, user)) {

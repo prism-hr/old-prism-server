@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import java.math.BigDecimal;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.math.BigDecimal;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ApplicationReportListRowDTO {
 

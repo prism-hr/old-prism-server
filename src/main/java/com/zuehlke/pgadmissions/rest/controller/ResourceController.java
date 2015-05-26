@@ -1,5 +1,33 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -32,30 +60,23 @@ import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.*;
-import com.zuehlke.pgadmissions.services.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.BrandedResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import com.zuehlke.pgadmissions.workflow.resource.representation.ResourceRepresentationEnricher;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -290,7 +311,7 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/setAsOwner", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void setAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public void setAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
@@ -317,7 +338,8 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/comments/{commentId}/sponsorship", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
-    public void rejectSponsorship(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer commentId) {
+    public void rejectSponsorship(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer commentId)
+            throws Exception {
         advertService.rejectSponsorship(resourceDescriptor.getResourceScope(), resourceId, commentId);
     }
 

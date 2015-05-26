@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -7,10 +12,6 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProjectService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class ProgramPostprocessor implements ResourceProcessor {
@@ -25,7 +26,7 @@ public class ProgramPostprocessor implements ResourceProcessor {
     private ResourceService resourceService;
 
     @Override
-    public void process(Resource resource, Comment comment) {
+    public void process(Resource resource, Comment comment) throws Exception {
         Program program = (Program) resource;
         DateTime updatedTimestamp = program.getUpdatedTimestamp();
         program.setUpdatedTimestampSitemap(updatedTimestamp);

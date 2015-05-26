@@ -23,7 +23,7 @@ public class InstitutionPostprocessor implements ResourceProcessor {
     private ImportedEntityServiceHelperInstitution importedEntityServiceHelperInstitution;
 
     @Override
-    public void process(Resource resource, Comment comment) {
+    public void process(Resource resource, Comment comment) throws Exception {
         Institution institution = (Institution) resource;
 
         if (comment.isInstitutionApproveComment()) {

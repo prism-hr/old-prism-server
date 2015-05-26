@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 public class ProgramExtendedRepresentation extends AbstractResourceRepresentation {

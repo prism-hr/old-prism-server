@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class ProjectPreprocessor implements ResourceProcessor {

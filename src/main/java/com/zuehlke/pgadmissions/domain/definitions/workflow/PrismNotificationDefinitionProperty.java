@@ -127,7 +127,7 @@ public enum PrismNotificationDefinitionProperty {
     PROGRAM_USER_CONTACT(PROGRAM_GLOBAL, true, ProgramUserContactBuilder.class), //
     INSTITUTION_TITLE(INSTITUTION_GLOBAL, true, InstitutionTitleBuilder.class), //
     INSTITUTION_CODE(INSTITUTION_GLOBAL, true, InstitutionCodeBuilder.class), //
-    INSTITUTION_USER_CONCACT(INSTITUTION_GLOBAL, true, InstitutionUserContactBuilder.class), //
+    INSTITUTION_USER_CONTACT(INSTITUTION_GLOBAL, true, InstitutionUserContactBuilder.class), //
     INSTITUTION_HOMEPAGE(INSTITUTION_GLOBAL, true, InstitutionHomepageBuilder.class), //
     INSTITUTION_DATA_IMPORT_ERROR(INSTITUTION_APPROVED, true, InstitutionDataImportErrorBuilder.class), //
     SYSTEM_APPLICATION_HOMEPAGE(SYSTEM_APPLICATION_SYNDICATED, false, SystemApplicationHomepageBuilder.class), //

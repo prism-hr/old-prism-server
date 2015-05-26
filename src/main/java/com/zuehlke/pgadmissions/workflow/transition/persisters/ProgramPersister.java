@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.workflow.transition.persisters;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.services.EntityService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class ProgramPersister implements ResourcePersister {

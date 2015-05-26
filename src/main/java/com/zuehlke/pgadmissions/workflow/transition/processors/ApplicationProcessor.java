@@ -1,5 +1,14 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
+import javax.inject.Inject;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -8,14 +17,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 @Component
 public class ApplicationProcessor implements ResourceProcessor {
@@ -30,7 +31,7 @@ public class ApplicationProcessor implements ResourceProcessor {
     private ApplicationContext applicationContext;
 
     @Override
-    public void process(Resource resource, Comment comment) {
+    public void process(Resource resource, Comment comment) throws Exception {
         Application application = (Application) resource;
         if (comment.isApplicationAutomatedRejectionComment()) {
             setRejectionReasonSystem(resource, comment);

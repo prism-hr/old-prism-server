@@ -5,6 +5,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public interface ResourceProcessor {
 
-    void process(Resource resource, Comment comment);
+    void process(Resource resource, Comment comment) throws Exception;
 
 }

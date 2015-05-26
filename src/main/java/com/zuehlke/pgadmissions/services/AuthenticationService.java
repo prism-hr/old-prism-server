@@ -1,21 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import java.util.ArrayList;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
@@ -37,10 +27,22 @@ import org.springframework.social.twitter.connect.TwitterServiceProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Set;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional

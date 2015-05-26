@@ -185,7 +185,7 @@ public class ImportedEntityService {
         importedEntityFeed.setLastImportedTimestamp(new DateTime());
     }
 
-    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime) {
+    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime) throws Exception {
         Institution institution = institutionService.getById(institutionId);
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
@@ -315,7 +315,7 @@ public class ImportedEntityService {
         return importedInstitution;
     }
 
-    private void executeProgramImportAction(Program program, DateTime baselineTime) {
+    private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {
         Comment lastImportComment = commentService.getLatestComment(program, INSTITUTION_CREATE_PROGRAM, INSTITUTION_IMPORT_PROGRAM);
         PrismAction actionId = lastImportComment == null ? INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM;
 

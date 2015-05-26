@@ -66,7 +66,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -90,6 +89,7 @@ import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresenta
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -370,13 +370,13 @@ public class ApplicationService {
         return dataTable;
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraint);
     }
 
     public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            Set<Set<ImportedEntity>> constraint) {
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraint);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -386,7 +386,7 @@ public class ApplicationService {
     }
 
     public LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            Set<Set<ImportedEntity>> constraint) {
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraint);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {

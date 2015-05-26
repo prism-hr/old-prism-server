@@ -130,7 +130,7 @@ public class InstitutionService {
         }
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
-        resourceService.setAttributes(institution, institutionDTO.getAttributes());
+        resourceService.setResourceAttributes(institution, institutionDTO.getAttributes());
     }
 
     public List<String> listAvailableCurrencies() {

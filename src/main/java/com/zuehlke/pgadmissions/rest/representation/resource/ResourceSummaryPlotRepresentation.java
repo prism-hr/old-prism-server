@@ -1,17 +1,16 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 
 public class ResourceSummaryPlotRepresentation {
 
-    private Set<Set<ImportedEntity>> constraint;
+    private Set<ResourceSummaryPlotConstraintRepresentation> constraint;
 
     private ResourceSummaryPlotDataRepresentation data;
 
-    public Set<Set<ImportedEntity>> getConstraint() {
+    public Set<ResourceSummaryPlotConstraintRepresentation> getConstraint() {
         return constraint;
     }
 
@@ -19,7 +18,7 @@ public class ResourceSummaryPlotRepresentation {
         return data;
     }
 
-    public ResourceSummaryPlotRepresentation withConstraint(Set<Set<ImportedEntity>> constraint) {
+    public ResourceSummaryPlotRepresentation withConstraint(Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         this.constraint = constraint;
         return this;
     }

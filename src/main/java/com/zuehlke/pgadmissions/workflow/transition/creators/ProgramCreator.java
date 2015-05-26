@@ -60,7 +60,7 @@ public class ProgramCreator implements ResourceCreator {
                 .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withImported(false);
         resourceService.updatePartner(user, program, newProgram);
 
-        resourceService.setAttributes(program, newProgram.getAttributes());
+        resourceService.setResourceAttributes(program, newProgram);
         return program;
     }
 

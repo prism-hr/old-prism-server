@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.dozer.Mapper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
@@ -102,16 +103,17 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryPlotsRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService.ApplicationProcessingMonth;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -190,6 +192,9 @@ public class ResourceService {
 
     @Inject
     private ApplicationContext applicationContext;
+
+    @Inject
+    Mapper mapper;
 
     public Resource getById(PrismScope resourceScope, Integer id) {
         return entityService.getById(resourceScope.getResourceClass(), id);
@@ -369,7 +374,7 @@ public class ResourceService {
         List<Integer> resources = resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
         Set<Integer> resourcesFiltered = Sets.newHashSet(resources);
         if (propagatingScope.equals(INSTITUTION)) {
-            List<Integer> partnerResources = resourceDAO.getPartnerResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);  
+            List<Integer> partnerResources = resourceDAO.getPartnerResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
             resourcesFiltered.addAll(partnerResources);
         }
         return resourcesFiltered;
@@ -594,7 +599,21 @@ public class ResourceService {
         return filteredStudylocations;
     }
 
-    public void setAttributes(ResourceParent resource, ResourceParentAttributesDTO attributes) {
+    public void setResourceAttributes(ResourceOpportunity resource, OpportunityDTO resourceDTO) {
+        ResourceParentAttributesDTO attributes = resourceDTO.getAttributes();
+        if (BooleanUtils.isTrue(resource.getImported())) {
+            resource.setOpportunityType(resource.getProgram().getOpportunityType());
+        } else {
+            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, resource.getInstitution(), resourceDTO
+                    .getOpportunityType().name());
+            resource.setOpportunityType(opportunityType);
+            setStudyOptions(resource, resourceDTO.getStudyOptions(), new LocalDate());
+        }
+
+        setResourceAttributes(resource, attributes);
+    }
+
+    public void setResourceAttributes(ResourceParent resource, ResourceParentAttributesDTO attributes) {
         setResourceConditions(resource, attributes.getResourceConditions());
         setStudyLocations(resource, attributes.getStudyLocations());
     }
@@ -751,8 +770,7 @@ public class ResourceService {
         return representation;
     }
 
-    public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(
-            ResourceParent resource, ResourceReportFilterDTO filterDTO) {
+    public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(ResourceParent resource, ResourceReportFilterDTO filterDTO) {
         Institution institution = resource.getInstitution();
         LinkedHashMultimap<PrismImportedEntity, ImportedEntity> properties = LinkedHashMultimap.create();
 
@@ -771,7 +789,7 @@ public class ResourceService {
                 constraintsProvided.add(properties.get(filterEntity));
             }
 
-            Set<Set<Set<ImportedEntity>>> constraints;
+            Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraints;
             PrismFilterMatchMode matchMode = filterDTO.getMatchMode();
             if (matchMode.equals(ALL)) {
                 constraints = getReportPlotConstraintsExploded(constraintsProvided);
@@ -779,7 +797,7 @@ public class ResourceService {
                 constraints = getReportPlotConstraintsImploded(constraintsProvided);
             }
 
-            for (Set<Set<ImportedEntity>> constraint : constraints) {
+            for (Set<ResourceSummaryPlotConstraintRepresentation> constraint : constraints) {
                 ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
                 plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
             }
@@ -873,8 +891,8 @@ public class ResourceService {
         }
     }
 
-    private ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+    private ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource,
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
@@ -918,26 +936,22 @@ public class ResourceService {
         return summary;
     }
 
-    private Set<Set<Set<ImportedEntity>>> getReportPlotConstraintsExploded(List<Set<ImportedEntity>> constraintsProvided) {
-        Set<Set<Set<ImportedEntity>>> constraintsExploded = Sets.newHashSet();
+    private Set<Set<ResourceSummaryPlotConstraintRepresentation>> getReportPlotConstraintsExploded(List<Set<ImportedEntity>> constraintsProvided) {
+        Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraintsExploded = Sets.newHashSet();
         Set<List<ImportedEntity>> plotsExploded = Sets.cartesianProduct(constraintsProvided);
         for (List<ImportedEntity> plotExploded : plotsExploded) {
-            Set<Set<ImportedEntity>> plotWrapped = Sets.newHashSet();
             for (ImportedEntity propertyExploded : plotExploded) {
-                plotWrapped.add(Sets.newHashSet(propertyExploded));
+                constraintsExploded.add(Sets.newHashSet(mapper.map(propertyExploded, ResourceSummaryPlotConstraintRepresentation.class)));
             }
-            constraintsExploded.add(plotWrapped);
         }
         return constraintsExploded;
     }
 
-    private Set<Set<Set<ImportedEntity>>> getReportPlotConstraintsImploded(List<Set<ImportedEntity>> constraintsProvided) {
-        Set<Set<ImportedEntity>> plotWrapped = Sets.newHashSet();
-        Set<Set<Set<ImportedEntity>>> constraintsImploded = Sets.newHashSet();
-        for (Set<ImportedEntity> plotsImploded : constraintsProvided) {
-            plotWrapped.add(plotsImploded);
+    private Set<Set<ResourceSummaryPlotConstraintRepresentation>> getReportPlotConstraintsImploded(List<Set<ImportedEntity>> constraintsProvided) {
+        Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraintsImploded = Sets.newHashSet();
+        for (Set<ImportedEntity> plotImploded : constraintsProvided) {
+            constraintsImploded.add(Sets.newHashSet(mapper.map(plotImploded, ResourceSummaryPlotConstraintRepresentation.class)));
         }
-        constraintsImploded.add(plotWrapped);
         return constraintsImploded;
     }
 

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.math.BigDecimal;
 import java.util.List;

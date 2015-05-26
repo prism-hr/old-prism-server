@@ -327,16 +327,16 @@ public class ApplicationService {
                 String value = null;
                 String getMethod = "get" + WordUtils.capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
-                    case DATE:
-                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
-                        break;
-                    case DISPLAY_PROPERTY:
-                        Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                        value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
-                        break;
-                    case STRING:
-                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                        break;
+                case DATE:
+                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
+                    break;
+                case DISPLAY_PROPERTY:
+                    Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                    value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
+                    break;
+                case STRING:
+                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                    break;
                 }
                 row.addCell(value);
             }
@@ -352,8 +352,8 @@ public class ApplicationService {
         return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraint);
     }
 
-    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+            Set<Set<ImportedEntity>> constraint) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraint);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -362,8 +362,8 @@ public class ApplicationService {
         return index;
     }
 
-    public LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(
-            ResourceParent resource, Set<Set<ImportedEntity>> constraint) {
+    public LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+            Set<Set<ImportedEntity>> constraint) {
         LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraint);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -374,8 +374,8 @@ public class ApplicationService {
 
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
         List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
-                customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
-                        application.getWorkflowPropertyConfigurationVersion());
+        customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
+                application.getWorkflowPropertyConfigurationVersion());
         if (application.isSubmitted()) {
             for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
                 PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
@@ -392,7 +392,7 @@ public class ApplicationService {
     }
 
     public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
-        return userAdministratorResources.isEmpty() ? Lists.<Application>newArrayList() : applicationDAO
+        return userAdministratorResources.isEmpty() ? Lists.<Application> newArrayList() : applicationDAO
                 .getUserAdministratorApplications(userAdministratorResources);
     }
 

@@ -1,19 +1,18 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.List;
+
 public class OpportunitiesQueryDTO {
 
     @NotNull
-    private PrismOpportunityCategory programCategory;
+    private List<PrismOpportunityCategory> programCategories;
 
     private String keyword;
 
@@ -55,12 +54,12 @@ public class OpportunitiesQueryDTO {
 
     private PrismAction actionId;
 
-    public PrismOpportunityCategory getProgramCategory() {
-        return programCategory;
+    public List<PrismOpportunityCategory> getProgramCategories() {
+        return programCategories;
     }
 
-    public void setProgramCategory(PrismOpportunityCategory programCategory) {
-        this.programCategory = programCategory;
+    public void setProgramCategories(List<PrismOpportunityCategory> programCategories) {
+        this.programCategories = programCategories;
     }
 
     public String getKeyword() {
@@ -222,7 +221,7 @@ public class OpportunitiesQueryDTO {
     public final void setActionId(PrismAction actionId) {
         this.actionId = actionId;
     }
-    
+
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
     }

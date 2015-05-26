@@ -366,10 +366,13 @@ public class ResourceService {
     }
 
     public Set<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
-        Set<Integer> resources = Sets.newHashSet(resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope,
-                actionId));
-        resources.addAll(resourceDAO.getPartnerResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId));
-        return resources;
+        List<Integer> resources = resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
+        Set<Integer> resourcesFiltered = Sets.newHashSet(resources);
+        if (propagatingScope.equals(INSTITUTION)) {
+            List<Integer> partnerResources = resourceDAO.getPartnerResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);  
+            resourcesFiltered.addAll(partnerResources);
+        }
+        return resourcesFiltered;
     }
 
     public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {

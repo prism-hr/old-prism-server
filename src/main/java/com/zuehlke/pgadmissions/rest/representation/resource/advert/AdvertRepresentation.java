@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.DepartmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
@@ -82,7 +83,7 @@ public class AdvertRepresentation {
 
     private InstitutionRepresentation partner;
 
-    private String department;
+    private DepartmentRepresentation department;
 
     private String sequenceIdentifier;
 
@@ -342,11 +343,11 @@ public class AdvertRepresentation {
         this.partner = partner;
     }
 
-    public String getDepartment() {
+    public DepartmentRepresentation getDepartment() {
         return department;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(DepartmentRepresentation department) {
         this.department = department;
     }
 

@@ -1,5 +1,28 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
@@ -9,28 +32,13 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -47,8 +55,7 @@ public class AdvertDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getAdverts(List<PrismState> programStates, List<PrismState> projectStates,
-                                    OpportunitiesQueryDTO queryDTO) {
+    public List<Integer> getAdverts(List<PrismState> programStates, List<PrismState> projectStates, OpportunitiesQueryDTO queryDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
@@ -95,6 +102,8 @@ public class AdvertDAO {
 
         appendOpportunityTypeConstraint(criteria, queryDTO);
         appendStudyOptionConstraint(queryDTO, criteria);
+        appendActionConditionConstraint(queryDTO, criteria);
+
         appendFeeConstraint(criteria, queryDTO);
         appendPayConstraint(criteria, queryDTO);
         appendDurationConstraint(criteria, queryDTO);
@@ -132,7 +141,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates,
-                                                               List<Integer> advertsRecentlyAppliedFor) {
+            List<Integer> advertsRecentlyAppliedFor) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("otherUserApplication.advert"), "advert") //
@@ -336,15 +345,29 @@ public class AdvertDAO {
 
     private void appendStudyOptionConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
         List<PrismStudyOption> studyOptions = queryDTO.getStudyOptions();
-        Disjunction studyOptionConstraint = Restrictions.disjunction();
-        if (studyOptions != null) {
+        if (CollectionUtils.isNotEmpty(studyOptions)) {
+            Disjunction studyOptionConstraint = Restrictions.disjunction();
             for (PrismStudyOption studyOption : studyOptions) {
                 studyOptionConstraint //
                         .add(Restrictions.eq("programStudyOption.code", studyOption.name())) //
                         .add(Restrictions.eq("projectStudyOption.code", studyOption.name())); //
             }
+            criteria.add(studyOptionConstraint);
         }
-        criteria.add(studyOptionConstraint);
+    }
+
+    private void appendActionConditionConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+        List<PrismActionCondition> actionConditions = queryDTO.getActionConditions();
+        if (CollectionUtils.isNotEmpty(actionConditions)) {
+            Disjunction actionConditionConstraint = Restrictions.disjunction();
+            for (PrismActionCondition actionCondition : actionConditions) {
+                actionConditionConstraint //
+                        .add(Restrictions.eq("programCondition.actionCondition", actionCondition)) //
+                        .add(Restrictions.eq("projectCondition.actionCondition", actionCondition)); //
+            }
+            criteria.add(actionConditionConstraint);
+        }
+
     }
 
     private void appendFeeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

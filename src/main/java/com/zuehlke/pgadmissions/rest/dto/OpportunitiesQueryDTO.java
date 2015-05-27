@@ -4,8 +4,10 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 
 import javax.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -19,6 +21,8 @@ public class OpportunitiesQueryDTO {
     private List<PrismOpportunityType> opportunityTypes;
 
     private List<PrismStudyOption> studyOptions;
+    
+    private List<PrismActionCondition> actionConditions;
 
     private Integer minFee;
 
@@ -84,6 +88,14 @@ public class OpportunitiesQueryDTO {
 
     public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
+    }
+
+    public List<PrismActionCondition> getActionConditions() {
+        return actionConditions;
+    }
+
+    public void setActionConditions(List<PrismActionCondition> actionConditions) {
+        this.actionConditions = actionConditions;
     }
 
     public final Integer getMinFee() {

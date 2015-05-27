@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -89,6 +90,9 @@ public class StaticDataService {
     private BigDecimal systemMinimumWage;
 
     private ToIdFunction toIdFunction = new ToIdFunction();
+
+    @Inject
+    private DepartmentService departmentService;
 
     @Inject
     private EntityService entityService;
@@ -156,11 +160,11 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
                 PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class,
-                PrismPerformanceIndicator.class, PrismImportedEntity.class}) {
+                PrismPerformanceIndicator.class, PrismImportedEntity.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -249,9 +253,9 @@ public class StaticDataService {
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (PrismImportedEntity prismImportedEntity : new PrismImportedEntity[]{AGE_RANGE, COUNTRY, DISABILITY, DOMICILE, ETHNICITY, NATIONALITY,
+        for (PrismImportedEntity prismImportedEntity : new PrismImportedEntity[] { AGE_RANGE, COUNTRY, DISABILITY, DOMICILE, ETHNICITY, NATIONALITY,
                 QUALIFICATION_TYPE, REFERRAL_SOURCE, FUNDING_SOURCE, LANGUAGE_QUALIFICATION_TYPE, TITLE, GENDER, REJECTION_REASON,
-                STUDY_OPTION, OPPORTUNITY_TYPE}) {
+                STUDY_OPTION, OPPORTUNITY_TYPE }) {
             Class<? extends ImportedEntity> entityClass = (Class<? extends ImportedEntity>) prismImportedEntity.getEntityClass();
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
@@ -277,6 +281,11 @@ public class StaticDataService {
 
         staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;
+    }
+
+    public Map<String, Object> getDepartments(Integer institutionId) {
+        Institution institution = institutionService.getById(institutionId);
+        return ImmutableMap.of("departments", (Object) departmentService.getDepartments(institution));
     }
 
     public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer domicileId) {

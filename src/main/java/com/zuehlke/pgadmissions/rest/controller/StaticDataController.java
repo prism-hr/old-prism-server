@@ -50,5 +50,10 @@ public class StaticDataController {
     public List<ImportedInstitutionRepresentation> getImportedInstitutions(@PathVariable Integer domicileId) {
         return staticDataService.getImportedInstitutions(domicileId);
     }
+    
+    @RequestMapping(method = RequestMethod.GET, params = "institutionId", value = "/departments")
+    public Map<String, Object> getDepartments(@RequestParam Integer institutionId) {
+        return staticDataService.getDepartments(institutionId);
+    }
 
 }

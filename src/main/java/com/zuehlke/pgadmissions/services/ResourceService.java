@@ -683,7 +683,7 @@ public class ResourceService {
         updatePartner(comment.getUser(), resource, resourceDTO);
 
         DepartmentDTO departmentDTO = resourceDTO.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(resource.getInstitution(), departmentDTO);
         resource.setDepartment(department);
 
         AdvertDTO advertDTO = resourceDTO.getAdvert();

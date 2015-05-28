@@ -44,6 +44,18 @@ public class StateDAO {
     private SessionFactory sessionFactory;
 
     public List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state." + resourceReference + "s", resourceReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReference + ".id", resource.getId())) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.isNotNull("transitionState")) //
+                .list();
+    }
+
+    public List<StateTransition> getPotentialUserStateTransitions(Resource resource, Action action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //

@@ -184,7 +184,7 @@ public class ApplicationService {
     public LocalDate getLatestStartDate(Application application, ResourceStudyOption resourceStudyOption) {
         if (resourceStudyOption != null) {
             LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
-                    resourceStudyOption.getProgram().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
+                    resourceStudyOption.getResource().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
             LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
             return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
         } else {
@@ -432,6 +432,10 @@ public class ApplicationService {
                 }
             }
         }
+    }
+
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(Application application) {
+        return applicationDAO.getApplicationRatingSummary(application);
     }
 
     public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {

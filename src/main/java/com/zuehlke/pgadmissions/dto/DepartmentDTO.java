@@ -3,9 +3,7 @@ package com.zuehlke.pgadmissions.dto;
 public class DepartmentDTO {
 
     private Integer id;
-    
-    private Integer institutionId;
-    
+
     private String title;
 
     public Integer getId() {
@@ -16,14 +14,6 @@ public class DepartmentDTO {
         this.id = id;
     }
 
-    public Integer getInstitutionId() {
-        return institutionId;
-    }
-
-    public void setInstitutionId(Integer institutionId) {
-        this.institutionId = institutionId;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -31,5 +21,5 @@ public class DepartmentDTO {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
 }

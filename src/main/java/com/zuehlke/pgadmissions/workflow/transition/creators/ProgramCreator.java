@@ -1,12 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
-
-import javax.inject.Inject;
-
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
@@ -18,11 +11,13 @@ import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.DepartmentService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.*;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 @Component
 public class ProgramCreator implements ResourceCreator {
@@ -51,7 +46,7 @@ public class ProgramCreator implements ResourceCreator {
         Advert advert = advertService.createAdvert(institution, advertDTO);
 
         DepartmentDTO departmentDTO = newProgram.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(institution, departmentDTO);
         OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, newProgram.getOpportunityType().name());
 
         Program program = new Program().withUser(user).withParentResource(institution).withDepartment(department).withAdvert(advert)

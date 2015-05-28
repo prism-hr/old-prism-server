@@ -1,12 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
-
-import javax.inject.Inject;
-
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
@@ -21,6 +14,12 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 @Component
 public class ProjectCreator implements ResourceCreator {
@@ -45,7 +44,7 @@ public class ProjectCreator implements ResourceCreator {
         Advert advert = advertService.createAdvert(resource, advertDTO);
 
         DepartmentDTO departmentDTO = newProject.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(resource.getInstitution(), departmentDTO);
 
         Project project = new Project().withUser(user).withParentResource(resource).withDepartment(department).withAdvert(advert)
                 .withTitle(advert.getTitle()).withDurationMinimum(newProject.getDurationMinimum()).withDurationMaximum(newProject.getDurationMaximum())

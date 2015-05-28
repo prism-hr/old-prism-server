@@ -7,6 +7,6 @@
     <defaultCache eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="1200"/>
 
     <cache name="staticData" maxElementsInMemory="1"/>
-    <cache name="institutionStaticData" maxElementsInMemory="10"/>
+    <cache name="importedInstitutionData" maxElementsInMemory="10"/>
 
 </ehcache>

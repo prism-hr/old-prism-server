@@ -304,7 +304,7 @@ public class ApplicationCopyHelper {
                     Document document = from.getDocument().getResearchStatement();
                     applicationDocument.setResearchStatement(copyDocument(document));
 
-                    if (BooleanUtils.isTrue(researchStatementConfiguration.getRequired())) {
+                    if (BooleanUtils.isTrue(researchStatementConfiguration.getRequired()) && document == null) {
                         sectionsWithErrors.add(applicationDocument);
                     }
                 }
@@ -313,7 +313,7 @@ public class ApplicationCopyHelper {
                     Document document = from.getDocument().getCoveringLetter();
                     applicationDocument.setCoveringLetter(copyDocument(document));
 
-                    if (BooleanUtils.isTrue(coveringLetterConfiguration.getRequired())) {
+                    if (BooleanUtils.isTrue(coveringLetterConfiguration.getRequired()) && document == null) {
                         sectionsWithErrors.add(applicationDocument);
                     }
                 }

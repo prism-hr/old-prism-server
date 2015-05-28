@@ -58,11 +58,11 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     @OneToMany(mappedBy = "studyOption")
     private Set<ResourceStudyOptionInstance> studyOptionInstances = Sets.newHashSet();
 
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -77,12 +77,12 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     }
 
     @Override
-    public final Program getProgram() {
+    public Program getProgram() {
         return program;
     }
 
     @Override
-    public final void setProgram(Program program) {
+    public void setProgram(Program program) {
         this.program = program;
     }
 
@@ -96,31 +96,31 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         this.project = project;
     }
 
-    public final StudyOption getStudyOption() {
+    public StudyOption getStudyOption() {
         return studyOption;
     }
 
-    public final void setStudyOption(StudyOption studyOption) {
+    public void setStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
     }
 
-    public final LocalDate getApplicationStartDate() {
+    public LocalDate getApplicationStartDate() {
         return applicationStartDate;
     }
 
-    public final void setApplicationStartDate(LocalDate applicationStartDate) {
+    public void setApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
     }
 
-    public final LocalDate getApplicationCloseDate() {
+    public LocalDate getApplicationCloseDate() {
         return applicationCloseDate;
     }
 
-    public final void setApplicationCloseDate(LocalDate applicationCloseDate) {
+    public void setApplicationCloseDate(LocalDate applicationCloseDate) {
         this.applicationCloseDate = applicationCloseDate;
     }
 
-    public final Set<ResourceStudyOptionInstance> getStudyOptionInstances() {
+    public Set<ResourceStudyOptionInstance> getStudyOptionInstances() {
         return studyOptionInstances;
     }
 
@@ -157,7 +157,7 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ResourceStudyOption other = (ResourceStudyOption) object;
+        ResourceStudyOption other = (ResourceStudyOption) object;
         return Objects.equal(getResource(), other.getResource()) && Objects.equal(studyOption, other.getStudyOption());
     }
 

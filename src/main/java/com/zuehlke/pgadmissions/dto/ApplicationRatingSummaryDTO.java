@@ -1,23 +1,23 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public class ApplicationRatingSummaryDTO {
-    
-    private ResourceParent parent;
+
+    private Resource resource;
 
     private Long applicationRatingCount;
 
     private Long applicationRatingApplications;
 
     private Double applicationRatingAverage;
-    
-    public ResourceParent getParent() {
-        return parent;
+
+    public Resource getResource() {
+        return resource;
     }
 
-    public void setParent(ResourceParent parent) {
-        this.parent = parent;
+    public void setParent(Resource resoure) {
+        this.resource = resoure;
     }
 
     public Long getApplicationRatingCount() {
@@ -42,6 +42,14 @@ public class ApplicationRatingSummaryDTO {
 
     public void setApplicationRatingAverage(Double applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    public ApplicationRatingSummaryDTO withInitialValues(Resource resource, Double applicationRatingAverage) {
+        this.resource = resource;
+        this.applicationRatingCount = new Long(1);
+        this.applicationRatingApplications = new Long(1);
+        this.applicationRatingAverage = applicationRatingAverage;
+        return this;
     }
 
 }

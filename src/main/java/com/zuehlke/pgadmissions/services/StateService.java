@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
 
 import java.util.List;
 import java.util.Set;
@@ -316,7 +317,14 @@ public class StateService {
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operativeResource = resourceService.getOperativeResource(resource, action);
-        List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operativeResource, action);
+        
+        List<StateTransition> potentialStateTransitions;
+        if (action.getActionType().equals(SYSTEM_INVOCATION)) {
+            potentialStateTransitions = getPotentialStateTransitions(operativeResource, action);
+        } else {
+            potentialStateTransitions = getPotentialUserStateTransitions(operativeResource, action);
+        }
+        
         if (potentialStateTransitions.size() > 1) {
             Class<? extends StateTransitionResolver> resolver = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver();
             return applicationContext.getBean(resolver).resolve(resource, comment);
@@ -344,6 +352,10 @@ public class StateService {
 
     private List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
         return stateDAO.getPotentialStateTransitions(resource, action);
+    }
+    
+    private List<StateTransition> getPotentialUserStateTransitions(Resource resource, Action action) {
+        return stateDAO.getPotentialUserStateTransitions(resource, action);
     }
 
 }

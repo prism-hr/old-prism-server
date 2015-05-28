@@ -334,6 +334,18 @@ public class ApplicationDAO {
                 .list();
     }
 
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(Application application) {
+        return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("application"), "parent") //
+                        .add(Projections.countDistinct("id"), "applicationRatingCount") //
+                        .add(Projections.avg("applicationRating"), "applicationRatingAverage")) //
+                .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.isNotNull("applicationRating")) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
+                .uniqueResult();
+    }
+
     public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
@@ -346,7 +358,6 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("applicationRatingCount")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
                 .uniqueResult();
-
     }
 
     public List<Integer> getApplicationsByMatchingSuggestedSupervisor(String searchTerm) {

@@ -13,8 +13,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 
@@ -56,7 +61,22 @@ public class State extends WorkflowDefinition {
 
     @OneToMany(mappedBy = "state")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "state")
+    private Set<System> systems = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "state")
+    private Set<Institution> institutions = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "state")
+    private Set<Program> programs = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "state")
+    private Set<Project> projects = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "state")
+    private Set<Application> applications = Sets.newHashSet();
+    
     @Override
     public PrismState getId() {
         return id;
@@ -126,6 +146,26 @@ public class State extends WorkflowDefinition {
 
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
+    }
+
+    public Set<System> getSystems() {
+        return systems;
+    }
+
+    public Set<Institution> getInstitutions() {
+        return institutions;
+    }
+
+    public Set<Program> getPrograms() {
+        return programs;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public Set<Application> getApplications() {
+        return applications;
     }
 
     public State withId(PrismState id) {

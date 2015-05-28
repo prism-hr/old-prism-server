@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -52,6 +53,9 @@ public class ApplicationPostprocessor implements ResourceProcessor {
 
     @Inject
     private CommentService commentService;
+    
+    @Inject
+    private EntityService entityService;
 
     @Inject
     private ApplicationService applicationService;
@@ -122,13 +126,19 @@ public class ApplicationPostprocessor implements ResourceProcessor {
             comment.setApplicationRating(new BigDecimal(DEFAULT_RATING));
         }
 
+        ApplicationRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(application);
+        application.setApplicationRatingCount(ratingSummary.getApplicationRatingCount().intValue());
+        application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()));
+        
+        entityService.flush();
+
         for (ResourceParent parent : application.getParentResources()) {
-            ApplicationRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(parent);
-            Integer ratingCount = ratingSummary.getApplicationRatingCount().intValue();
-            Integer ratingApplications = ratingSummary.getApplicationRatingApplications().intValue();
+            ApplicationRatingSummaryDTO parentRatingSummary = applicationService.getApplicationRatingSummary(parent);
+            Integer ratingCount = parentRatingSummary.getApplicationRatingCount().intValue();
+            Integer ratingApplications = parentRatingSummary.getApplicationRatingApplications().intValue();
             parent.setApplicationRatingCount(ratingCount);
             parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications), 2, HALF_UP));
-            parent.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()).setScale(2, HALF_UP));
+            parent.setApplicationRatingAverage(BigDecimal.valueOf(parentRatingSummary.getApplicationRatingAverage()).setScale(2, HALF_UP));
         }
     }
 

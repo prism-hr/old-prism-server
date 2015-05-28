@@ -1,21 +1,14 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.PROGRAM;
-
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.NotificationService;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -26,15 +19,20 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.services.NotificationService;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import javax.inject.Inject;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.PROGRAM;
 
 @Component
 @SuppressWarnings({ "unchecked" })
@@ -131,7 +129,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         }
     }
 
-    @CacheEvict("institutionStaticData")
+    @CacheEvict("importedInstitutionData")
     private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
 

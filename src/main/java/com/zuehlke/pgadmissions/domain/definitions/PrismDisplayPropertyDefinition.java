@@ -968,6 +968,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_UNKNOWN(SYSTEM_VALIDATION_ERROR, "This field is invalid."),
     SYSTEM_VALIDATION_REQUIRED(SYSTEM_VALIDATION_ERROR, "This field is required."),
     SYSTEM_VALIDATION_EMAIL(SYSTEM_VALIDATION_ERROR, "This field must be a valid email address."),
+    SYSTEM_VALIDATION_NUMBER(SYSTEM_VALIDATION_ERROR, "This field must be a number."),
     SYSTEM_VALIDATION_MINLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be less than {1} character(s)."),
     SYSTEM_VALIDATION_ARRAY_MINLENGTH(SYSTEM_VALIDATION_ERROR, "You have to select at least {1} element(s)."),

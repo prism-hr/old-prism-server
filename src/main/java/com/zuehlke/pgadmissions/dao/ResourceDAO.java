@@ -193,7 +193,7 @@ public class ResourceDAO {
         criteria.setProjection(projectionList) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN)
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN));

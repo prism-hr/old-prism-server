@@ -57,9 +57,9 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
     private Mapper mapper;
 
     @Override
-    public void enrich(PrismScope resourceScope, Integer resourceId, AbstractResourceRepresentation representatio) throws Exception {
+    public void enrich(PrismScope resourceScope, Integer resourceId, AbstractResourceRepresentation representation) throws Exception {
         Application application = applicationService.getById(resourceId);
-        ApplicationExtendedRepresentation applicationRepresentation = (ApplicationExtendedRepresentation) representatio;
+        ApplicationExtendedRepresentation applicationRepresentation = (ApplicationExtendedRepresentation) representation;
 
         HashMap<Integer, RefereeRepresentation> refereeRepresentations = Maps.newHashMap();
         for (RefereeRepresentation refereeRepresentation : applicationRepresentation.getReferees()) {

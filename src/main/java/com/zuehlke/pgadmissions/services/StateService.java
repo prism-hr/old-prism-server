@@ -166,6 +166,11 @@ public class StateService {
         resourceService.processResource(resource, comment);
         roleService.executeRoleTransitions(resource, comment, stateTransition);
 
+        List<StateTransition> secondaryStateTransitions = getSecondaryStateTransitions(resource, action, comment);
+        for (StateTransition secondaryStateTransition : secondaryStateTransitions) {
+            roleService.executeRoleTransitions(resource, comment, secondaryStateTransition);
+        }
+
         for (Action propagatedAction : stateTransition.getPropagatedActions()) {
             getOrCreateStateTransitionPending(resource, propagatedAction);
         }
@@ -317,14 +322,30 @@ public class StateService {
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operativeResource = resourceService.getOperativeResource(resource, action);
-        
+
         List<StateTransition> potentialStateTransitions;
         if (action.getActionType().equals(SYSTEM_INVOCATION)) {
-            potentialStateTransitions = getPotentialStateTransitions(operativeResource, action);
+            potentialStateTransitions = stateDAO.getPotentialStateTransitions(operativeResource, action);
         } else {
-            potentialStateTransitions = getPotentialUserStateTransitions(operativeResource, action);
+            potentialStateTransitions = stateDAO.getPotentialUserStateTransitions(operativeResource, action);
         }
-        
+
+        return resolveStateTransition(resource, comment, potentialStateTransitions);
+    }
+
+    private List<StateTransition> getSecondaryStateTransitions(Resource resource, Action action, Comment comment) {
+        Resource operativeResource = resourceService.getOperativeResource(resource, action);
+
+        List<StateTransition> stateTransitions = Lists.newArrayList();
+        List<State> states = stateDAO.getSecondaryResourceStates(operativeResource);
+        for (State state : states) {
+            stateTransitions.add(stateDAO.getSecondaryStateTransition(operativeResource, state, action));
+        }
+
+        return stateTransitions;
+    }
+
+    private StateTransition resolveStateTransition(Resource resource, Comment comment, List<StateTransition> potentialStateTransitions) {
         if (potentialStateTransitions.size() > 1) {
             Class<? extends StateTransitionResolver> resolver = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver();
             return applicationContext.getBean(resolver).resolve(resource, comment);
@@ -348,14 +369,6 @@ public class StateService {
     private void getOrCreateStateTransitionPending(Resource resource, Action action) {
         StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withAction(action);
         entityService.getOrCreate(transientTransitionPending);
-    }
-
-    private List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
-        return stateDAO.getPotentialStateTransitions(resource, action);
-    }
-    
-    private List<StateTransition> getPotentialUserStateTransitions(Resource resource, Action action) {
-        return stateDAO.getPotentialUserStateTransitions(resource, action);
     }
 
 }

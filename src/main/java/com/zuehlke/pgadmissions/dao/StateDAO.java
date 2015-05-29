@@ -72,6 +72,16 @@ public class StateDAO {
                 .list();
     }
 
+    public StateTransition getSecondaryStateTransition(Resource resource, State state, Action action) {
+        return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state", resource.getPreviousState())) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("transitionState", state)) //
+                .uniqueResult();
+    }
+
     public StateTransition getStateTransition(Resource resource, Action action) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction") //
@@ -217,6 +227,15 @@ public class StateDAO {
                 .addOrder(Order.desc("updatedTimestamp")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<State> getSecondaryResourceStates(Resource resource) {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("state")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("primaryState", false)) //
+                .list();
     }
 
     public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {

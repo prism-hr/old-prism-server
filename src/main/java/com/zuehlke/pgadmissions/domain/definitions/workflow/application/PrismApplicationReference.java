@@ -40,6 +40,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
 		stateActions.add(applicationCompleteReference(state) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionAction(APPLICATION_VIEW_EDIT) //
+		                .withRoleTransitions(APPLICATION_RETIRE_REFEREE_GROUP) //
 		                .withStateTerminations(new PrismStateTermination() //
 		                        .withTerminationState(APPLICATION_REFERENCE)))); //
 

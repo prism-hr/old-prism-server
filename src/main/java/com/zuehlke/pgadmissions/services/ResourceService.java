@@ -887,6 +887,8 @@ public class ResourceService {
                 } else {
                     resource.addResourcePreviousState((ResourcePreviousState) transientResourceStateDefinition);
                 }
+            } else {
+                persistentResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
             }
         }
     }

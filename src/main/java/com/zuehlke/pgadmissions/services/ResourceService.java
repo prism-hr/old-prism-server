@@ -375,7 +375,7 @@ public class ResourceService {
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
-                                             String lastSequenceIdentifier, Integer recordsToRetrieve) {
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
 
@@ -392,11 +392,11 @@ public class ResourceService {
     @SuppressWarnings("unchecked")
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) throws Exception {
         switch (resource.getResourceScope()) {
-            case APPLICATION:
-                return applicationService.getWorkflowPropertyConfigurations((Application) resource);
-            default:
-                return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                        PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
+        case APPLICATION:
+            return applicationService.getWorkflowPropertyConfigurations((Application) resource);
+        default:
+            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
+                    PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
         }
     }
 
@@ -646,7 +646,7 @@ public class ResourceService {
 
         ResourceParentAttributesDTO attributes = resourceDTO.getAttributes();
         List<ResourceConditionDTO> resourceConditions = attributes.getResourceConditions();
-        setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO>newArrayList() : resourceConditions);
+        setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO> newArrayList() : resourceConditions);
         setStudyLocations(resource, attributes.getStudyLocations());
 
         if (!resource.getImported()) {
@@ -655,7 +655,7 @@ public class ResourceService {
             resource.setOpportunityType(opportunityType);
 
             List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
-            setStudyOptions(resource, studyOptions == null ? Lists.<PrismStudyOption>newArrayList() : studyOptions, new LocalDate());
+            setStudyOptions(resource, studyOptions == null ? Lists.<PrismStudyOption> newArrayList() : studyOptions, new LocalDate());
         }
     }
 

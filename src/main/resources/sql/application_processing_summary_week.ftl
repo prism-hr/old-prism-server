@@ -6,7 +6,9 @@ from application left join application_program_detail
 	on application.application_program_detail_id = application_program_detail.id
 left join application_personal_detail
 	on application.application_personal_detail_id = application_personal_detail.id
+left join application_qualification
+	on application.id = application_qualification.application_id
 ${constraintExpression}
 	and application.submitted_timestamp is not null
 group by application.application_year, application.application_month_sequence, application.application_week_sequence
-order by application.application_year asc, application.application_month_sequence asc, application.application_week_sequence asc;
+order by application.application_year, application.application_month_sequence, application.application_week_sequence;

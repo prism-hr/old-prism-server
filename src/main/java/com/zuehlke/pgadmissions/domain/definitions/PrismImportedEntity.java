@@ -85,7 +85,8 @@ public enum PrismImportedEntity {
             "xsd/import/qualificationType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", //
             ImportedQualificationTypeExtractor.class, null, false), //
     REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class, "xml/defaultEntities/referralSource.xml",
-            "xsd/import/referralSource.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedReferralSourceExtractor.class,
+            "xsd/import/referralSource.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled",
+            ImportedReferralSourceExtractor.class,
             new String[] { "application_program_detail.referral_source_id" }, false), //
     FUNDING_SOURCE(FundingSources.class, "fundingSource", FundingSource.class, "xml/defaultEntities/fundingSource.xml", "xsd/import/fundingSource.xsd",
             "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedFundingSourceExtractor.class, null, false), //
@@ -104,16 +105,19 @@ public enum PrismImportedEntity {
             "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedGenderExtractor.class, //
             new String[] { "application_personal_detail.gender_id" }, false), //
     REJECTION_REASON(RejectionReasons.class, "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml",
-            "xsd/import/rejectionReason.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedRejectionReasonExtractor.class, //
+            "xsd/import/rejectionReason.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled",
+            ImportedRejectionReasonExtractor.class, //
             null, false), //
     STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml", "xsd/import/studyOption.xsd", //
             "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedStudyOptionExtractor.class, //
             new String[] { "application_program_detail.study_option_id" }, false), //
     OPPORTUNITY_TYPE(OpportunityTypes.class, "opportunityType", OpportunityType.class, "xml/defaultEntities/opportunityType.xml",
-            "xsd/import/opportunityType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled", ImportedOpportunityTypeExtractor.class, //
+            "xsd/import/opportunityType.xsd", "imported_entity", "institution_id, imported_entity_type, code, name, enabled",
+            ImportedOpportunityTypeExtractor.class, //
             new String[] { "application_program_detail.opportunity_type_id" }, false), //
     INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd",
-            "imported_institution", "institution_id, domicile_id, code, name, enabled, custom", ImportedInstitutionExtractor.class, null, true);
+            "imported_institution", "institution_id, domicile_id, code, name, enabled, custom", ImportedInstitutionExtractor.class, //
+            new String[] { "application_qualification.institution_id" }, true);
 
     private Class<?> jaxbClass;
 
@@ -207,7 +211,7 @@ public enum PrismImportedEntity {
         return byEntityClass.get(entityClass);
     }
 
-    public static List<PrismImportedEntity> getResourceReportFilterProperties(){
+    public static List<PrismImportedEntity> getResourceReportFilterProperties() {
         return resourceReportFilterProperties;
     }
 
@@ -217,7 +221,7 @@ public enum PrismImportedEntity {
 
     public static void main(String[] args) {
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-        System.out.println(prismImportedEntity.name());
+            System.out.println(prismImportedEntity.name());
 
         }
     }

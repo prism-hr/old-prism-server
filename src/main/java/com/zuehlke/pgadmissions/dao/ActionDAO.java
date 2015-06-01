@@ -161,15 +161,18 @@ public class ActionDAO {
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.disjunction() //
+                                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
+                                .add(Restrictions.eq("resourceCondition.partnerMode", true))) // //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                        .add(Restrictions.eq("resourceCondition.partnerMode", true))) //
+                        .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM)) //
+                        .add(Restrictions.isNotNull("resourceCondition.id")))
                 .add(Restrictions.eq("action.actionType", USER_INVOCATION)) //
                 .add(Restrictions.isNull("stateActionAssignment.id"));
 

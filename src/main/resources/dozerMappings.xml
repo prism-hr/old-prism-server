@@ -236,7 +236,7 @@
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.institution.Institution
         </class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAdvertRepresentation
         </class-b>
         <field>
             <a>logoImage.id</a>

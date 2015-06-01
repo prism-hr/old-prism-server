@@ -13,7 +13,6 @@ public class AdvertToExtendedRepresentationFunction extends AdvertToRepresentati
     @Override
     public AdvertRepresentation apply(Advert advert) {
         AdvertRepresentation representation = super.apply(advert);
-
         ResourceParent resource = advert.getResource();
         representation.setSponsorCount(resourceService.getResourceSponsorCount(resource));
         representation.setTopTenSponsors(resourceService.getResourceTopTenSponsors(resource));

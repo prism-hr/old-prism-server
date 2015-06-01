@@ -23,8 +23,6 @@ public class AdvertRepresentation {
 
     private String title;
 
-    private Integer backgroundImage;
-
     private String summary;
 
     private String description;
@@ -81,7 +79,13 @@ public class AdvertRepresentation {
 
     private InstitutionRepresentation institution;
 
-    private InstitutionRepresentation partner;
+    private InstitutionRepresentation promoter;
+    
+    private Integer logoImage;
+    
+    private Integer promoterLogoImage;
+    
+    private Integer backgroundImage;
 
     private DepartmentRepresentation department;
 
@@ -101,14 +105,6 @@ public class AdvertRepresentation {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getBackgroundImage() {
-        return backgroundImage;
-    }
-
-    public void setBackgroundImage(Integer backgroundImage) {
-        this.backgroundImage = backgroundImage;
     }
 
     public String getSummary() {
@@ -335,12 +331,36 @@ public class AdvertRepresentation {
         this.institution = institution;
     }
 
-    public InstitutionRepresentation getPartner() {
-        return partner;
+    public InstitutionRepresentation getPromoter() {
+        return promoter;
     }
 
-    public void setPartner(InstitutionRepresentation partner) {
-        this.partner = partner;
+    public void setPromoter(InstitutionRepresentation promoter) {
+        this.promoter = promoter;
+    }
+    
+    public Integer getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(Integer logoImage) {
+        this.logoImage = logoImage;
+    }
+
+    public Integer getPromoterLogoImage() {
+        return promoterLogoImage;
+    }
+
+    public void setPromoterLogoImage(Integer promoterLogoImage) {
+        this.promoterLogoImage = promoterLogoImage;
+    }
+
+    public Integer getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Integer backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public DepartmentRepresentation getDepartment() {

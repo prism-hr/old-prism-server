@@ -387,7 +387,7 @@ public class ApplicationDAO {
                 for (String column : entity.getDatabaseReferenceColumns()) {
                     columnConstraint.add(column + " in (" + Joiner.on(", ").join(flattenedConstraints.get(entity)) + ")");
                 }
-                filterConstraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tor ").join(columnConstraint) + ")");
+                filterConstraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tand ").join(columnConstraint) + ")");
             }
         }
 

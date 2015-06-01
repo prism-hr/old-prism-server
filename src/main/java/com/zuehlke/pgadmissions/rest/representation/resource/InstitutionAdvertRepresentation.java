@@ -6,7 +6,7 @@ public class InstitutionAdvertRepresentation {
 
     private String title;
 
-    private Integer logoImageId;
+    private Integer logoImage;
 
     public Integer getId() {
         return id;
@@ -24,12 +24,12 @@ public class InstitutionAdvertRepresentation {
         this.title = title;
     }
 
-    public Integer getLogoImageId() {
-        return logoImageId;
+    public Integer getLogoImage() {
+        return logoImage;
     }
 
-    public void setLogoImageId(Integer logoImageId) {
-        this.logoImageId = logoImageId;
+    public void setLogoImage(Integer logoImage) {
+        this.logoImage = logoImage;
     }
 
 }

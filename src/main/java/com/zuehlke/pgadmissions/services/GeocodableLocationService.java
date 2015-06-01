@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
-
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -26,6 +10,20 @@ import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.inject.Inject;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
 
 @Service
 @Transactional
@@ -58,7 +56,7 @@ public class GeocodableLocationService {
         }
     }
 
-    public synchronized <T extends GeocodableLocation> EstablishmentSearchResponseDTO getEstablishmentLocation(String googleIdentifier) throws Exception {
+    public synchronized EstablishmentSearchResponseDTO getEstablishmentLocation(String googleIdentifier) throws Exception {
         wait(googleGeocodeRequestDelayMs);
         URI request = new DefaultResourceLoader().getResource(googlePlacesApiUri + "json?placeid=" + googleIdentifier + "&key=" + googleApiKey).getURI();
         return restTemplate.getForObject(request, EstablishmentSearchResponseDTO.class);
@@ -76,7 +74,7 @@ public class GeocodableLocationService {
         return false;
     }
 
-    public synchronized <T extends GeocodableLocation> LocationSearchResponseDTO getGeocodeLocation(String address) throws Exception {
+    public synchronized LocationSearchResponseDTO getGeocodeLocation(String address) throws Exception {
         wait(googleGeocodeRequestDelayMs);
         String addressEncoded = URLEncoder.encode(address, "UTF-8");
         URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleApiKey).getURI();

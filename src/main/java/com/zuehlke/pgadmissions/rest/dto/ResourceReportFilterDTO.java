@@ -3,28 +3,14 @@ package com.zuehlke.pgadmissions.rest.dto;
 import java.util.Collections;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 public class ResourceReportFilterDTO {
 
-    private PrismFilterMatchMode matchMode;
-
     private List<ResourceReportFilterPropertyDTO> properties;
 
-    public PrismFilterMatchMode getMatchMode() {
-        return matchMode;
-    }
-
-    public void setMatchMode(PrismFilterMatchMode matchMode) {
-        this.matchMode = matchMode;
-    }
-
     public List<ResourceReportFilterPropertyDTO> getProperties() {
-        if(properties == null){
-            return Collections.emptyList();
-        }
-        return properties;
+        return properties == null ? Collections.<ResourceReportFilterPropertyDTO> emptyList() : properties;
     }
 
     public void setProperties(List<ResourceReportFilterPropertyDTO> getFilters) {

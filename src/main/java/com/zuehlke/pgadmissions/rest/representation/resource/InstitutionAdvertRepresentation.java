@@ -5,8 +5,12 @@ public class InstitutionAdvertRepresentation {
     private Integer id;
 
     private String title;
+    
+    private String currency;
 
     private Integer logoImage;
+    
+    private Integer backgroundImage;
 
     public Integer getId() {
         return id;
@@ -24,12 +28,28 @@ public class InstitutionAdvertRepresentation {
         this.title = title;
     }
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
     public Integer getLogoImage() {
         return logoImage;
     }
 
     public void setLogoImage(Integer logoImage) {
         this.logoImage = logoImage;
+    }
+
+    public Integer getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Integer backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
 }

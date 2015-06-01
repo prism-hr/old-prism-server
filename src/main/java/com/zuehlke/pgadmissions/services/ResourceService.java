@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ALL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
@@ -47,7 +46,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
@@ -801,14 +799,7 @@ public class ResourceService {
                 constraintsProvided.add(properties.get(filterEntity));
             }
 
-            Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraints;
-            PrismFilterMatchMode matchMode = filterDTO.getMatchMode();
-            if (matchMode.equals(ALL)) {
-                constraints = getReportPlotConstraintsExploded(constraintsProvided);
-            } else {
-                constraints = getReportPlotConstraintsImploded(constraintsProvided);
-            }
-
+            Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraints = getReportPlotConstraintsImploded(constraintsProvided);
             for (Set<ResourceSummaryPlotConstraintRepresentation> constraint : constraints) {
                 ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
                 plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
@@ -948,17 +939,6 @@ public class ResourceService {
 
         summary.setProcessingSummaries(yearRepresentations);
         return summary;
-    }
-
-    private Set<Set<ResourceSummaryPlotConstraintRepresentation>> getReportPlotConstraintsExploded(List<Set<ImportedEntity>> constraintsProvided) {
-        Set<List<ImportedEntity>> plotsExploded = Sets.cartesianProduct(constraintsProvided);
-        Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraintsExploded = Sets.newHashSet();
-        for (List<ImportedEntity> plotExploded : plotsExploded) {
-            for (ImportedEntity propertyExploded : plotExploded) {
-                constraintsExploded.add(Sets.newHashSet(mapper.map(propertyExploded, ResourceSummaryPlotConstraintRepresentation.class)));
-            }
-        }
-        return constraintsExploded;
     }
 
     private Set<Set<ResourceSummaryPlotConstraintRepresentation>> getReportPlotConstraintsImploded(List<Set<ImportedEntity>> constraintsProvided) {

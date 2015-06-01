@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.DepartmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 
 public class AdvertRepresentation {
@@ -77,15 +77,11 @@ public class AdvertRepresentation {
 
     private List<String> locations;
 
-    private InstitutionRepresentation institution;
-
-    private InstitutionRepresentation promoter;
-    
-    private Integer logoImage;
-    
-    private Integer promoterLogoImage;
-    
     private Integer backgroundImage;
+
+    private InstitutionAdvertRepresentation institution;
+
+    private InstitutionAdvertRepresentation partner;
 
     private DepartmentRepresentation department;
 
@@ -323,36 +319,20 @@ public class AdvertRepresentation {
         this.locations = locations;
     }
 
-    public InstitutionRepresentation getInstitution() {
+    public InstitutionAdvertRepresentation getInstitution() {
         return institution;
     }
 
-    public void setInstitution(InstitutionRepresentation institution) {
+    public void setInstitution(InstitutionAdvertRepresentation institution) {
         this.institution = institution;
     }
 
-    public InstitutionRepresentation getPromoter() {
-        return promoter;
+    public InstitutionAdvertRepresentation getPartner() {
+        return partner;
     }
 
-    public void setPromoter(InstitutionRepresentation promoter) {
-        this.promoter = promoter;
-    }
-    
-    public Integer getLogoImage() {
-        return logoImage;
-    }
-
-    public void setLogoImage(Integer logoImage) {
-        this.logoImage = logoImage;
-    }
-
-    public Integer getPromoterLogoImage() {
-        return promoterLogoImage;
-    }
-
-    public void setPromoterLogoImage(Integer promoterLogoImage) {
-        this.promoterLogoImage = promoterLogoImage;
+    public void setPartner(InstitutionAdvertRepresentation partner) {
+        this.partner = partner;
     }
 
     public Integer getBackgroundImage() {

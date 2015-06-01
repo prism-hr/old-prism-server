@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
@@ -36,7 +36,7 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
     public AdvertRepresentation apply(Advert advert) {
         AdvertRepresentation representation = mapper.map(advert, AdvertRepresentation.class);
         ResourceParent resource = advert.getResource();
-        
+
         representation.setUser(mapper.map(resource.getUser(), UserRepresentation.class));
         representation.setResourceScope(resource.getResourceScope());
         representation.setResourceId(resource.getId());
@@ -69,15 +69,12 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
         Institution partner = resource.getPartner();
         Institution institution = resource.getInstitution();
         if (partner != null && !partner.sameAs(institution)) {
-            representation.setLogoImage(partner.getLogoImage().getId());
-            representation.setPromoterLogoImage(institution.getLogoImage().getId());
-            representation.setInstitution(mapper.map(partner, InstitutionRepresentation.class));
-            representation.setPromoter(mapper.map(institution, InstitutionRepresentation.class));
+            representation.setInstitution(mapper.map(partner, InstitutionAdvertRepresentation.class));
+            representation.setPartner(mapper.map(institution, InstitutionAdvertRepresentation.class));
         } else {
-            representation.setLogoImage(institution.getLogoImage().getId());
-            representation.setInstitution(mapper.map(institution, InstitutionRepresentation.class));
+            representation.setInstitution(mapper.map(institution, InstitutionAdvertRepresentation.class));
         }
-        
+
         representation.setBackgroundImage(resourceService.getBackgroundImage(resource));
         return representation;
     }

@@ -232,6 +232,17 @@
             <b>address</b>
         </field>
     </mapping>
+    
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.institution.Institution
+        </class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation
+        </class-b>
+        <field>
+            <a>logoImage.id</a>
+            <b>logoImage</b>
+        </field>
+    </mapping>
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.user.User</class-a>

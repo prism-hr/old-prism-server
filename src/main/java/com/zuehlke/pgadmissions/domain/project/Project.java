@@ -46,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+
 @Entity
 @Table(name = "PROJECT")
 public class Project extends ResourceOpportunity {
@@ -71,7 +72,7 @@ public class Project extends ResourceOpportunity {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_partner_id")
@@ -101,7 +102,7 @@ public class Project extends ResourceOpportunity {
 
     @Column(name = "title", nullable = false)
     private String title;
-    
+
     @OneToOne
     @JoinColumn(name = "background_image_id")
     private Document backgroundImage;
@@ -244,7 +245,7 @@ public class Project extends ResourceOpportunity {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Institution getPartner() {
         return partner;
@@ -613,9 +614,8 @@ public class Project extends ResourceOpportunity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("opportunityType", opportunityType)
-                .addProperty("title", title).addExclusion("state.id", PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PROJECT_REJECTED)
-                .addExclusion("state.id", PROJECT_WITHDRAWN);
+        return new ResourceSignature().addProperty("program", program).addProperty("opportunityType", opportunityType).addProperty("title", title)
+                .addExclusion("state.id", PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PROJECT_REJECTED).addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 
 }

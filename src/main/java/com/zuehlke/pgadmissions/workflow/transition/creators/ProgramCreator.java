@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
+
+import javax.inject.Inject;
+
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
@@ -11,13 +18,11 @@ import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.services.*;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.DepartmentService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 
 @Component
 public class ProgramCreator implements ResourceCreator {
@@ -53,9 +58,11 @@ public class ProgramCreator implements ResourceCreator {
                 .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum())
                 .withDurationMaximum(newProgram.getDurationMaximum()).withRequireProjectDefinition(false)
                 .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withImported(false);
+        
         resourceService.updatePartner(user, program, newProgram);
-
+        resourceService.adoptPartnerAddress(program, advert);
         resourceService.setResourceAttributes(program, newProgram);
+        
         return program;
     }
 

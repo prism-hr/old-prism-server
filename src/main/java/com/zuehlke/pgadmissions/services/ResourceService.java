@@ -63,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -690,7 +691,7 @@ public class ResourceService {
 
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();
-        advertService.updateAdvert(resource.getParentResource(), advertDTO, advert);
+        advertService.updateAdvert(resource.getParentResource(), advert, advertDTO);
         resource.setTitle(advert.getTitle());
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
@@ -726,6 +727,15 @@ public class ResourceService {
                 }
                 resource.setPartner(partner);
             }
+        }
+    }
+
+    public void adoptPartnerAddress(ResourceOpportunity resource, Advert advert) {
+        Institution partner = resource.getPartner();
+        if (partner != null) {
+            InstitutionAddress address = advertService.getAddressCopy(partner.getAdvert().getAddress());
+            entityService.save(address);
+            advert.setAddress(address);
         }
     }
 

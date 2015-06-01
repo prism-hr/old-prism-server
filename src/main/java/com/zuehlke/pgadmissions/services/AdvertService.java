@@ -160,12 +160,12 @@ public class AdvertService {
 
     public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) {
         Advert advert = new Advert();
-        updateAdvert(parentResource, advertDTO, advert);
+        updateAdvert(parentResource, advert, advertDTO);
         entityService.save(advert);
         return advert;
     }
 
-    public void updateAdvert(Resource parentResource, AdvertDTO advertDTO, Advert advert) {
+    public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO) {
         if (BooleanUtils.isFalse(advert.getImported())) {
             advert.setTitle(advertDTO.getTitle());
         }
@@ -254,7 +254,8 @@ public class AdvertService {
         return null;
     }
 
-    public void updateClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
+    public void updateClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
+            throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -414,6 +415,12 @@ public class AdvertService {
         List<AdvertRecommendationDTO> advertRecommendations = getRecommendedAdverts(application.getUser());
         return Lists.transform(advertRecommendations,
                 Functions.compose(advertToRepresentationFunction, new ToPropertyFunction<AdvertRecommendationDTO, Advert>("advert")));
+    }
+
+    public InstitutionAddress getAddressCopy(InstitutionAddress address) {
+        return new InstitutionAddress().withDomicile(address.getDomicile()).withAddressLine1(address.getAddressLine1())
+                .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
+                .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId()).withLocation(address.getLocation());
     }
 
     private String getCurrencyAtLocale(Advert advert) {

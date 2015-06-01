@@ -116,7 +116,7 @@ public class InstitutionService {
     public void update(Institution institution, InstitutionDTO institutionDTO) throws Exception {
         AdvertDTO advertDTO = institutionDTO.getAdvert();
         Advert advert = institution.getAdvert();
-        advertService.updateAdvert(institution.getParentResource(), advertDTO, advert);
+        advertService.updateAdvert(institution.getParentResource(), advert, advertDTO);
         institution.setGoogleId(advert.getAddress().getGoogleId());
 
         institution.setTitle(advert.getTitle());

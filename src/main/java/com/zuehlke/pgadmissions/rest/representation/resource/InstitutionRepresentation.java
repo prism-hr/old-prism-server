@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-
 public class InstitutionRepresentation {
 
     private Integer id;

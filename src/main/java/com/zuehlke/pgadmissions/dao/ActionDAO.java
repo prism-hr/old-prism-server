@@ -27,6 +27,7 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -195,15 +196,16 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNull("stateActionAssignment.id")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM)) //
                         .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                        .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
-                        .add(Restrictions.eq("resourceCondition.partnerMode", !userLoggedIn))) //
+                        .add(Restrictions.in("resourceCondition.partnerMode", Lists.newArrayList(new Boolean(true), new Boolean(!userLoggedIn))))) //
                 .uniqueResult();
     }
 

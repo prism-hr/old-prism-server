@@ -24845,10 +24845,47 @@
 		<name>Uganda Pentecostal University</name>
 		<domicile>UG</domicile>
 	</institution>
+    <institution>
+        <code>PRISM_001</code>
+        <name>The Academy of Contemporary Music</name>
+        <domicile>XK</domicile>
+        <ucasId>108</ucasId>
+        <facebookId>127916583290</facebookId>
+    </institution>
+    <institution>
+        <code>PRISM_002</code>
+        <name>Access to Music</name>
+        <domicile>XK</domicile>
+        <ucasId>105</ucasId>
+        <facebookId>9337781339</facebookId>
+    </institution>
+    <institution>
+        <code>PRISM_003</code>
+        <name>Accrington & Rossendale College</name>
+        <domicile>XK</domicile>
+        <ucasId>106</ucasId>
+        <facebookId>265211753560625</facebookId>
+    </institution>
+    <institution>
+        <code>PRISM_004</code>
+        <name>Anglo European College of Chiropractic</name>
+        <domicile>XK</domicile>
+        <ucasId>107</ucasId>
+        <facebookId>283166808463426</facebookId>
+    </institution>
+    <institution>
+        <code>PRISM_005</code>
+        <name>University of the Arts London</name>
+        <domicile>XK</domicile>
+        <ucasId>2221</ucasId>
+        <facebookId>203743569649170</facebookId>
+    </institution>
 	<institution>
 		<code>UK0001</code>
 		<name>Aberystwyth University</name>
 		<domicile>XK</domicile>
+        <ucasId>21</ucasId>
+        <facebookId>7943470086</facebookId>
 	</institution>
 	<institution>
 		<code>UK0002</code>
@@ -24859,6 +24896,8 @@
 		<code>UK0003</code>
 		<name>Anglia Ruskin University</name>
 		<domicile>XK</domicile>
+        <ucasId>61</ucasId>
+        <facebookId>109573039060488</facebookId>
 	</institution>
 	<institution>
 		<code>UK0004</code>
@@ -26244,11 +26283,15 @@
 		<code>UK0283</code>
 		<name>University of Aberdeen</name>
 		<domicile>XK</domicile>
+        <ucasId>41</ucasId>
+        <facebookId>252953634729871</facebookId>
 	</institution>
 	<institution>
 		<code>UK0284</code>
 		<name>University of Abertay Dundee</name>
 		<domicile>XK</domicile>
+        <ucasId>1</ucasId>
+        <facebookId>23659826872</facebookId>
 	</institution>
 	<institution>
 		<code>UK0285</code>

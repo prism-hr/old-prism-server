@@ -19,17 +19,9 @@ public class ResourceReportFilterDTO {
 
     public static class ResourceReportFilterPropertyDTO {
 
-        private PrismImportedEntity entityType;
-
         private Integer entityId;
-
-        public PrismImportedEntity getEntityType() {
-            return entityType;
-        }
-
-        public void setEntityType(PrismImportedEntity entityType) {
-            this.entityType = entityType;
-        }
+        
+        private PrismImportedEntity entityType;
 
         public Integer getEntityId() {
             return entityId;
@@ -37,6 +29,14 @@ public class ResourceReportFilterDTO {
 
         public void setEntityId(Integer entityId) {
             this.entityId = entityId;
+        }
+        
+        public PrismImportedEntity getEntityType() {
+            return entityType;
+        }
+
+        public void setEntityType(PrismImportedEntity entityType) {
+            this.entityType = entityType;
         }
 
     }

@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+
+import java.util.List;
 
 public class ProjectExtendedRepresentation extends AbstractResourceRepresentation {
 
@@ -18,7 +18,7 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     private String title;
 
-    private Integer backgroundImage;
+    private FileRepresentation backgroundImage;
 
     private Integer durationMinimum;
 
@@ -68,11 +68,11 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
         this.title = title;
     }
 
-    public Integer getBackgroundImage() {
+    public FileRepresentation getBackgroundImage() {
         return backgroundImage;
     }
 
-    public void setBackgroundImage(Integer backgroundImage) {
+    public void setBackgroundImage(FileRepresentation backgroundImage) {
         this.backgroundImage = backgroundImage;
     }
 

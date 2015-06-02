@@ -9,6 +9,8 @@
                             <xs:element name="code" type="xs:string"/>
                             <xs:element name="name" type="xs:string"/>
                             <xs:element name="domicile" type="xs:string"/>
+                            <xs:element name="ucasId" type="xs:string"/>
+                            <xs:element name="facebookId" type="xs:string"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

@@ -46,7 +46,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -57,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -781,31 +779,18 @@ public class ResourceService {
     }
 
     public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(ResourceParent resource, ResourceReportFilterDTO filterDTO) {
-        Institution institution = resource.getInstitution();
-        LinkedHashMultimap<PrismImportedEntity, ImportedEntity> properties = LinkedHashMultimap.create();
-
         ResourceSummaryPlotsRepresentation plotsRepresentation = new ResourceSummaryPlotsRepresentation();
         if (filterDTO == null) {
             ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, null);
             plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(null).withData(plotDataRepresentation));
         } else {
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint = Sets.newHashSet();
             for (ResourceReportFilterPropertyDTO propertyDTO : filterDTO.getProperties()) {
-                PrismImportedEntity entityType = propertyDTO.getEntityType();
-                properties.put(entityType, importedEntityService.getById(institution, entityType, propertyDTO.getEntityId()));
+                constraint.add(mapper.map(propertyDTO, ResourceSummaryPlotConstraintRepresentation.class));
             }
-
-            List<Set<ImportedEntity>> constraintsProvided = Lists.newArrayList();
-            for (PrismImportedEntity filterEntity : properties.keySet()) {
-                constraintsProvided.add(properties.get(filterEntity));
-            }
-
-            Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraints = getReportPlotConstraintsImploded(constraintsProvided);
-            for (Set<ResourceSummaryPlotConstraintRepresentation> constraint : constraints) {
-                ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
-                plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
-            }
+            ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
+            plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
         }
-
         return plotsRepresentation;
     }
 
@@ -939,16 +924,6 @@ public class ResourceService {
 
         summary.setProcessingSummaries(yearRepresentations);
         return summary;
-    }
-
-    private Set<Set<ResourceSummaryPlotConstraintRepresentation>> getReportPlotConstraintsImploded(List<Set<ImportedEntity>> constraintsProvided) {
-        Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraintsImploded = Sets.newHashSet();
-        for (Set<ImportedEntity> plotImploded : constraintsProvided) {
-            for (ImportedEntity propertyImploded : plotImploded) {
-                constraintsImploded.add(Sets.newHashSet(mapper.map(propertyImploded, ResourceSummaryPlotConstraintRepresentation.class)));
-            }
-        }
-        return constraintsImploded;
     }
 
     private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary, ApplicationProcessingSummaryRepresentation yearRepresentation) {

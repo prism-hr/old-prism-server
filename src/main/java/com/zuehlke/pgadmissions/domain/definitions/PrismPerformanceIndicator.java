@@ -53,10 +53,20 @@ public enum PrismPerformanceIndicator {
 
 
     public enum PrismPerformanceIndicatorGroup {
-        ADVERT_COUNT,
-        APPLICATION_COUNT,
-        APPLICATION_RATIO,
-        AVERAGE_RATING,
-        AVERAGE_PROCESSING_TIME,
+        ADVERT_COUNT(true),
+        APPLICATION_COUNT(true),
+        APPLICATION_RATIO(false),
+        AVERAGE_RATING(false),
+        AVERAGE_PROCESSING_TIME(false);
+
+        private boolean cumulative;
+
+        PrismPerformanceIndicatorGroup(boolean cumulative) {
+            this.cumulative = cumulative;
+        }
+
+        public boolean isCumulative() {
+            return cumulative;
+        }
     }
 }

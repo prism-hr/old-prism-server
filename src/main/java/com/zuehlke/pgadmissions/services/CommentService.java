@@ -374,20 +374,6 @@ public class CommentService {
         entityService.flush();
     }
 
-    public void update(Integer commentId, CommentDTO commentDTO) {
-        Comment comment = getById(commentId);
-        actionService.validateUpdateAction(comment);
-
-        comment.setDeclinedResponse(commentDTO.getDeclinedResponse());
-        comment.setContent(commentDTO.getContent());
-        comment.getDocuments().clear();
-
-        for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = documentService.getById(fileDTO.getId(), DOCUMENT);
-            comment.getDocuments().add(document);
-        }
-    }
-
     public List<Comment> getRecentComments(PrismScope resourceScope, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return commentDAO.getRecentComments(resourceScope, resourceId, rangeStart, rangeClose);
     }
@@ -704,9 +690,17 @@ public class CommentService {
         }
 
         sponsorship.setSponsor(sponsor);
-        sponsorship.setCurrency(sponsorshipDTO.getCurrency());
-        sponsorship.setAmountSpecified(sponsorshipDTO.getAmountSpecified());
+        sponsorship.setCurrencySpecified(sponsorshipDTO.getCurrency());
 
+        Resource resource = comment.getResource();
+        Institution partner = resource.getPartner();
+        if (partner == null) {
+            sponsorship.setCurrencyConverted(resource.getInstitution().getCurrency());
+        } else {
+            sponsorship.setCurrencyConverted(partner.getCurrency());
+        }
+
+        sponsorship.setAmountSpecified(sponsorshipDTO.getAmountSpecified());
         comment.setSponsorship(sponsorship);
     }
 

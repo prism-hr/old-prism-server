@@ -289,7 +289,8 @@ public class UserService {
     }
 
     public boolean isCurrentUser(User user) {
-        return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
+        User currentUser = getCurrentUser();
+        return !(user == null || currentUser == null) && Objects.equal(user.getId(), getCurrentUser().getId());
     }
 
     public <T extends Resource> List<User> getBouncedOrUnverifiedUsers(UserListFilterDTO userListFilterDTO) {

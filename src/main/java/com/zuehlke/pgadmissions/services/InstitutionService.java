@@ -121,7 +121,12 @@ public class InstitutionService {
 
         institution.setTitle(advert.getTitle());
         institution.setDomicile(advert.getAddress().getDomicile());
-        institution.setCurrency(institutionDTO.getCurrency());
+
+        String oldCurrency = institution.getCurrency();
+        String newCurrency = institutionDTO.getCurrency();
+        if (!oldCurrency.equals(newCurrency)) {
+            changeInstitutionCurrency(institution, oldCurrency, newCurrency);
+        }
 
         Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
@@ -202,11 +207,11 @@ public class InstitutionService {
         Map<Integer, ResourceForWhichUserCanCreateChildDTO> index = Maps.newHashMap();
         Map<String, ResourceForWhichUserCanCreateChildDTO> institutions = Maps.newTreeMap();
 
-        List<PrismState> states = stateService.getActiveInstitutionStates();
+        List<PrismState> institutionStates = stateService.getActiveInstitutionStates();
         boolean userLoggedIn = userService.getCurrentUser() != null;
 
         List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO
-                .getInstitutionsForWhichUserCanCreateProject(states, userLoggedIn);
+                .getInstitutionsForWhichUserCanCreateProject(institutionStates, userLoggedIn);
         for (ResourceForWhichUserCanCreateChildDTO institutionProjectParent : institutionProjectParents) {
             ResourceForWhichUserCanCreateChildDTO institution = new ResourceForWhichUserCanCreateChildDTO()
                     .withResource(institutionProjectParent.getResource()).withPartnerMode(institutionProjectParent.getPartnerMode());
@@ -214,8 +219,10 @@ public class InstitutionService {
             institutions.put(institutionProjectParent.getResource().getTitle(), institution);
         }
 
+        List<PrismState> programStates = stateService.getActiveProgramStates();
+
         List<ResourceForWhichUserCanCreateChildDTO> institutionProgramProjectParents = institutionDAO
-                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(states, userLoggedIn);
+                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(programStates, userLoggedIn);
         for (ResourceForWhichUserCanCreateChildDTO institutionProgramProjectParent : institutionProgramProjectParents) {
             ResourceForWhichUserCanCreateChildDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
             if (institution == null) {
@@ -230,6 +237,20 @@ public class InstitutionService {
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId, List<PrismState> activeInstitutionStates, List<PrismState> activeProgramStates,
             List<PrismState> activeProjectStates) {
         return institutionDAO.getSearchEngineAdvert(institutionId, activeInstitutionStates, activeProgramStates, activeProjectStates);
+    }
+
+    private void changeInstitutionCurrency(Institution institution, String oldCurrency, String newCurrency) throws Exception {
+        List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFeesAndPays(institution);
+        for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
+            advertService.updateFeesAndPayments(advertWithFeesAndPays, newCurrency);
+        }
+
+        List<Advert> advertsWithSponsorship = advertService.getAdvertsWithSponsorship(institution);
+        for (Advert advertWithSponsorship : advertsWithSponsorship) {
+            advertService.updateSponsorship(advertWithSponsorship, oldCurrency, newCurrency);
+        }
+
+        institution.setCurrency(newCurrency);
     }
 
     private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {

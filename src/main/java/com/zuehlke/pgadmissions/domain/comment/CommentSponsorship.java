@@ -17,8 +17,11 @@ public class CommentSponsorship {
     @JoinColumn(name = "institution_sponsor_id")
     private Institution sponsor;
 
-    @Column(name = "sponsorship_currency")
-    private String currency;
+    @Column(name = "sponsorship_currency_specified")
+    private String currencySpecified;
+
+    @Column(name = "sponsorship_currency_converted")
+    private String currencyConverted;
 
     @Column(name = "sponsorship_amount_specified")
     private BigDecimal amountSpecified;
@@ -28,7 +31,7 @@ public class CommentSponsorship {
 
     @Column(name = "sponsorship_target_fulfilled")
     private Boolean targetFulfilled;
-    
+
     @OneToOne
     @JoinColumn(name = "sponsorship_rejection_id")
     private Comment rejection;
@@ -41,12 +44,20 @@ public class CommentSponsorship {
         this.sponsor = sponsor;
     }
 
-    public String getCurrency() {
-        return currency;
+    public String getCurrencySpecified() {
+        return currencySpecified;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setCurrencySpecified(String currencySpecified) {
+        this.currencySpecified = currencySpecified;
+    }
+
+    public String getCurrencyConverted() {
+        return currencyConverted;
+    }
+
+    public void setCurrencyConverted(String currencyConverted) {
+        this.currencyConverted = currencyConverted;
     }
 
     public BigDecimal getAmountSpecified() {
@@ -83,7 +94,7 @@ public class CommentSponsorship {
 
     @Override
     public String toString() {
-        return currency + " " + amountConverted.toPlainString();
+        return currencySpecified + " " + amountConverted.toPlainString();
     }
 
 }

@@ -22,4 +22,14 @@ public class AdvertFeesAndPaymentsDTO {
         this.pay = pay;
     }
 
+    public AdvertFeesAndPaymentsDTO withFee(FinancialDetailsDTO fee) {
+        this.fee = fee;
+        return this;
+    }
+
+    public AdvertFeesAndPaymentsDTO withPay(FinancialDetailsDTO pay) {
+        this.pay = pay;
+        return this;
+    }
+    
 }

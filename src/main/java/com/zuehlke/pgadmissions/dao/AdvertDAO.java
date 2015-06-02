@@ -1,5 +1,28 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
@@ -16,23 +39,6 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -262,11 +268,35 @@ public class AdvertDAO {
                 .setProjection(Projections.property("id")) //
                 .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("closingDates", "otherClosingDate", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions //
-                        .disjunction() //
+                .add(Restrictions.disjunction() //
                         .add(Restrictions.lt("closingDate.closingDate", baseline)) //
                         .add(Restrictions.conjunction().add(Restrictions.isNull("closingDate.id")) //
                                 .add(Restrictions.ge("otherClosingDate.closingDate", baseline)))) //
+                .list();
+    }
+
+    public List<Advert> getAdvertsWithFeesAndPays(Institution institution) {
+        String currency = institution.getCurrency();
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .createAlias("project", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("program", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
+                .add(getInstitutionConstraint(institution)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("fee.currencySpecified", currency)) //
+                        .add(Restrictions.eq("pay.currencySpecified", currency))) //
+                .list();
+    }
+
+    public List<Advert> getAdvertsWithSponsorship(Institution institution) {
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .createAlias("project", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("program", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
+                .add(getInstitutionConstraint(institution)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.gt("sponsorshipTarget", new BigDecimal(0.00))) //
+                        .add(Restrictions.gt("sponsorshipSecured", new BigDecimal(0.00)))) //
                 .list();
     }
 
@@ -443,6 +473,19 @@ public class AdvertDAO {
             conjunction.add(Restrictions.le(hiColumn, loValue != null && loValue > hiValue ? loValue : decimal ? new BigDecimal(hiValue) : hiValue));
         }
         return conjunction;
+    }
+
+    private Junction getInstitutionConstraint(Institution institution) {
+        return Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.isNull("project.partner")) //
+                        .add(Restrictions.isNull("program.partner")) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eq("project.institution", institution)) //
+                                .add(Restrictions.eq("program.institution", institution)) //
+                                .add(Restrictions.eq("institution.id", institution.getId())))) //
+                .add(Restrictions.eq("project.partner", institution)) //
+                .add(Restrictions.eq("program.partner", institution));
     }
 
 }

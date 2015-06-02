@@ -88,34 +88,10 @@ public class ActionService {
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
-        User user = comment.getUser();
-        Boolean declineComment = BooleanUtils.toBoolean(comment.getDeclinedResponse());
-        authenticateActionInvocation(resource, action, user, declineComment);
-
-        if (declineComment) {
-            return;
-        }
-
         resource = resourceService.getOperativeResource(resource, action);
-
-        if (checkActionAvailable(resource, action, user)) {
+        if (checkActionAvailable(resource, action, comment.getUser(), comment.getDeclinedResponse())) {
             return;
         }
-
-        throw new WorkflowPermissionException(resource, action);
-    }
-
-    public void validateUpdateAction(Comment comment) {
-        Action action = comment.getAction();
-
-        User user = comment.getUser();
-        Resource resource = comment.getResource();
-        authenticateActionInvocation(resource, action, user, null);
-
-        if (userService.isCurrentUser(user)) {
-            return;
-        }
-
         throw new WorkflowPermissionException(resource, action);
     }
 
@@ -263,8 +239,8 @@ public class ActionService {
         return actionDAO.getConfigurableActions();
     }
 
-    public void validateUserAction(Resource resource, Action action, User invoker) {
-        if (checkActionAvailable(resource, action, invoker)) {
+    public void validateViewEditAction(Resource resource, Action action, User invoker) {
+        if (checkActionAvailable(resource, action, invoker, false)) {
             return;
         }
         throw new WorkflowPermissionException(resource, action);
@@ -284,23 +260,23 @@ public class ActionService {
             PrismAction fallbackActionId;
             Scope creationScope = action.getCreationScope();
             switch (creationScope == null ? action.getScope().getId() : creationScope.getId()) {
-                case APPLICATION:
-                    fallbackActionId = SYSTEM_VIEW_APPLICATION_LIST;
-                    break;
-                case INSTITUTION:
-                    fallbackActionId = SYSTEM_VIEW_INSTITUTION_LIST;
-                    break;
-                case PROGRAM:
-                    fallbackActionId = SYSTEM_VIEW_PROGRAM_LIST;
-                    break;
-                case PROJECT:
-                    fallbackActionId = SYSTEM_VIEW_PROJECT_LIST;
-                    break;
-                case SYSTEM:
-                    fallbackActionId = SYSTEM_VIEW_EDIT;
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
+            case APPLICATION:
+                fallbackActionId = SYSTEM_VIEW_APPLICATION_LIST;
+                break;
+            case INSTITUTION:
+                fallbackActionId = SYSTEM_VIEW_INSTITUTION_LIST;
+                break;
+            case PROGRAM:
+                fallbackActionId = SYSTEM_VIEW_PROGRAM_LIST;
+                break;
+            case PROJECT:
+                fallbackActionId = SYSTEM_VIEW_PROJECT_LIST;
+                break;
+            case SYSTEM:
+                fallbackActionId = SYSTEM_VIEW_EDIT;
+                break;
+            default:
+                throw new UnsupportedOperationException();
             }
             Action fallbackAction = fallbackActions.get(fallbackActionId);
             if (fallbackAction == null) {
@@ -335,9 +311,15 @@ public class ActionService {
         return actionDAO.getPartnerActions(resource, actionConditions);
     }
 
-    public boolean checkActionAvailable(Resource resource, Action action, User user) {
-        return actionDAO.getPermittedAction(resource, action, user) != null
-                || !actionDAO.getPermittedUnsecuredActions(resource.getResourceScope(), Sets.newHashSet(resource.getId())).isEmpty();
+    public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
+        if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
+            return true;
+        } else if (actionDAO.getPermittedUnsecuredAction(resource, action, userService.isCurrentUser(user)) != null) {
+            return true;
+        } else if (actionDAO.getPermittedAction(resource, action, user) != null) {
+            return true;
+        }
+        return false;
     }
 
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
@@ -366,19 +348,6 @@ public class ActionService {
 
         return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
                 .withTransitionAction(transitionAction);
-    }
-
-    private void authenticateActionInvocation(Resource resource, Action action, User user, Boolean declineComment) {
-        if (action.getDeclinableAction() && BooleanUtils.toBoolean(declineComment)) {
-            return;
-        } else if (action.getId().getActionCategory().equals(CREATE_RESOURCE)) {
-            return;
-        } else if (actionDAO.getPermittedUnsecuredAction(resource, action) != null) {
-            return;
-        } else if (userService.isCurrentUser(user)) {
-            return;
-        }
-        throw new Error();
     }
 
 }

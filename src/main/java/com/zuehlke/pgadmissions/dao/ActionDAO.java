@@ -161,10 +161,7 @@ public class ActionDAO {
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.disjunction() //
-                                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                                .add(Restrictions.eq("resourceCondition.partnerMode", true))) // //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -188,7 +185,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public Action getPermittedUnsecuredAction(Resource resource, Action action) {
+    public Action getPermittedUnsecuredAction(Resource resource, Action action, boolean userLoggedIn) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action")) //
@@ -201,6 +198,10 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNull("stateActionAssignment.id")) //
                 .add(getResourceStateActionConstraint()) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
+                        .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
+                        .add(Restrictions.eq("resourceCondition.partnerMode", !userLoggedIn))) //
                 .uniqueResult();
     }
 

@@ -84,7 +84,7 @@ public class ProjectPostprocessor implements ResourceProcessor {
     private void postProcessProjectPartnerApproval(Project project, Comment comment) throws Exception {
         User user = comment.getUser();
         Action action = actionService.getById(PROJECT_COMPLETE_APPROVAL_STAGE);
-        if (actionService.checkActionAvailable(project, action, user)) {
+        if (actionService.checkActionAvailable(project, action, user, false)) {
             State transitionState = stateService.getById(PROJECT_APPROVED);
             Comment approveComment = new Comment().withUser(user).withResource(project).withAction(action).withDeclinedResponse(false)
                     .withTransitionState(transitionState).withCreatedTimestamp(new DateTime());

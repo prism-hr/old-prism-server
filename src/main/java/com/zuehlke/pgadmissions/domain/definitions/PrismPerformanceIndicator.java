@@ -1,26 +1,28 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public enum PrismPerformanceIndicator {
 
-    ADVERT_COUNT("count(distinct application.advert_id) as advertCount"),
-    SUBMITTED_APPLICATION_COUNT("sum(if(application.submitted_timestamp is not null, 1, 0)) as submittedApplicationCount"),
-    APPROVED_APPLICATION_COUNT("sum(if(application.state_id like \"APPLICATION_APPROVED_%\", 1, 0)) as approvedApplicationCount"),
-    REJECTED_APPLICATION_COUNT("sum(if(application.state_id like \"APPLICATION_REJECTED_%\", 1, 0)) as rejectedApplicationCount"),
-    WITHDRAWN_APPLICATION_COUNT("sum(if(application.state_id like \"APPLICATION_WITHDRAWN%\", 1, 0)) as withdrawnApplicationCount"),
-    SUBMITTED_APPLICATION_RATIO(
+    ADVERT_COUNT(PrismPerformanceIndicatorGroup.ADVERT_COUNT, "count(distinct application.advert_id) as advertCount"),
+    SUBMITTED_APPLICATION_COUNT(PrismPerformanceIndicatorGroup.APPLICATION_COUNT, "sum(if(application.submitted_timestamp is not null, 1, 0)) as submittedApplicationCount"),
+    APPROVED_APPLICATION_COUNT(PrismPerformanceIndicatorGroup.APPLICATION_COUNT, "sum(if(application.state_id like \"APPLICATION_APPROVED_%\", 1, 0)) as approvedApplicationCount"),
+    REJECTED_APPLICATION_COUNT(PrismPerformanceIndicatorGroup.APPLICATION_COUNT, "sum(if(application.state_id like \"APPLICATION_REJECTED_%\", 1, 0)) as rejectedApplicationCount"),
+    WITHDRAWN_APPLICATION_COUNT(PrismPerformanceIndicatorGroup.APPLICATION_COUNT, "sum(if(application.state_id like \"APPLICATION_WITHDRAWN%\", 1, 0)) as withdrawnApplicationCount"),
+    SUBMITTED_APPLICATION_RATIO(PrismPerformanceIndicatorGroup.APPLICATION_RATIO,
             "round(sum(if(application.submitted_timestamp is not null, 1, 0)) / count(distinct application.advert_id), 2) as submittedApplicationRatio"),
-    APPROVED_APPLICATION_RATIO(
+    APPROVED_APPLICATION_RATIO(PrismPerformanceIndicatorGroup.APPLICATION_RATIO,
             "round(sum(if(application.state_id like \"APPLICATION_APPROVED_%\", 1, 0)) / count(distinct application.advert_id), 2) as approvedApplicationRatio"),
-    REJECTED_APPLICATION_RATIO(
+    REJECTED_APPLICATION_RATIO(PrismPerformanceIndicatorGroup.APPLICATION_RATIO,
             "round(sum(if(application.state_id like \"APPLICATION_REJECTED_%\", 1, 0)) / count(distinct application.advert_id), 2) as rejectedApplicationRatio"),
-    WITHDRAWN_APPLICATION_RATIO(
+    WITHDRAWN_APPLICATION_RATIO(PrismPerformanceIndicatorGroup.APPLICATION_RATIO,
             "round(sum(if(application.state_id like \"APPLICATION_WITHDRAWN%\", 1, 0)) / count(distinct application.advert_id), 2) as withdrawnApplicationRatio"),
-    AVERAGE_RATING("round(avg(application.application_rating_average), 2) as averageRating"),
-    AVERAGE_PROCESSING_TIME("round(avg(datediff(application.completion_date, date(application.submitted_timestamp))), 2) as averageProcessingTime");
+    AVERAGE_RATING(PrismPerformanceIndicatorGroup.AVERAGE_RATING, "round(avg(application.application_rating_average), 2) as averageRating"),
+    AVERAGE_PROCESSING_TIME(PrismPerformanceIndicatorGroup.AVERAGE_PROCESSING_TIME, "round(avg(datediff(application.completion_date, date(application.submitted_timestamp))), 2) as averageProcessingTime");
+
+    private PrismPerformanceIndicatorGroup group;
 
     private String columnExpression;
 
@@ -32,8 +34,13 @@ public enum PrismPerformanceIndicator {
         }
     }
 
-    PrismPerformanceIndicator(String columnExpression) {
+    PrismPerformanceIndicator(PrismPerformanceIndicatorGroup group, String columnExpression) {
+        this.group = group;
         this.columnExpression = columnExpression;
+    }
+
+    public PrismPerformanceIndicatorGroup getGroup() {
+        return group;
     }
 
     public String getColumnExpression() {
@@ -44,4 +51,12 @@ public enum PrismPerformanceIndicator {
         return columns;
     }
 
+
+    public enum PrismPerformanceIndicatorGroup {
+        ADVERT_COUNT,
+        APPLICATION_COUNT,
+        APPLICATION_RATIO,
+        AVERAGE_RATING,
+        AVERAGE_PROCESSING_TIME,
+    }
 }

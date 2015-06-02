@@ -407,5 +407,20 @@
             <b>rejection</b>
         </field>
     </mapping>
+    
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO
+        </class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation
+        </class-b>
+        <field>
+            <a>entityId</a>
+            <b>id</b>
+        </field>
+        <field>
+            <a>entityType</a>
+            <b>type</b>
+        </field>
+    </mapping>
 
 </mappings>

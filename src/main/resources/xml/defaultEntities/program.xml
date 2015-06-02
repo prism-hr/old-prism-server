@@ -1,0 +1,1318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<programmeOccurrences>
+  <programmeOccurrence>
+    <programme>
+      <code>RDMCLISMPH01</code>
+      <name>MD(Res) Clinical Research</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Medical Physics and Bioengineering</department>
+    </programme>
+    <identifier>0004</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RDMCLISMPH01</code>
+      <name>MD(Res) Clinical Research</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Medical Physics and Bioengineering</department>
+    </programme>
+    <identifier>0005</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDBENSING01</code>
+      <name>Research Degree:  Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDBENSING01</code>
+      <name>Research Degree:  Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCENSING01</code>
+      <name>Research Degree:  Chemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Chemical Engineering</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCENSING01</code>
+      <name>Research Degree:  Chemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Chemical Engineering</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCIVSGEO01</code>
+      <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCIVSGEO01</code>
+      <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCOMSING01</code>
+      <name>Research Degree:  Computer Science</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCOMSING01</code>
+      <name>Research Degree:  Computer Science</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDEENSING01</code>
+      <name>Research Degree:  Electronic and Electrical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Electronic and Electrical Engineering</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDEENSING01</code>
+      <name>Research Degree:  Electronic and Electrical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Electronic and Electrical Engineering</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMECSING01</code>
+      <name>Research Degree:  Mechanical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Mechanical Engineering</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMECSING01</code>
+      <name>Research Degree:  Mechanical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Mechanical Engineering</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSCAN01</code>
+      <name>Research Degree: Physics of Cancer Therapy</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Bioengineering</department>
+    </programme>
+    <identifier>0001</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSING01</code>
+      <name>Research Degree:  Medical Physics</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Bioengineering</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSING01</code>
+      <name>Research Degree:  Medical Physics</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Bioengineering</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSCSSING01</code>
+      <name>Research Degree: Security and Crime Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0011</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSCSSING01</code>
+      <name>Research Degree: Security and Crime Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0012</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSECSING01</code>
+      <name>Research Degree: Security Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0016</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSECSING01</code>
+      <name>Research Degree: Security Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>22-SEP-14</startDate>
+    <endDate>15-SEP-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNBENSBIL01</code>
+      <name>EngD Biochemical Engineering and Bioprocess Leadership</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNBENSBIL01</code>
+      <name>EngD Biochemical Engineering and Bioprocess Leadership</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0016</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNBENSING09</code>
+      <name>EngD Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0013</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNBENSING09</code>
+      <name>EngD Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNCIVSUSR09</code>
+      <name>EngD Urban Sustainability and Resilience</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0013</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNCIVSUSR09</code>
+      <name>EngD Urban Sustainability and Resilience</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNCOMSVEI09</code>
+      <name>EngD Virtual Environments, Imaging and Visualisation</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0013</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNCOMSVEI09</code>
+      <name>EngD Virtual Environments, Imaging and Visualisation</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDPSTESING01</code>
+      <name>DPA Science, Technology, Engineering and Public Policy</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Science, Technology, Engineering and Public Policy</department>
+    </programme>
+    <identifier>0001</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDPSTESING01</code>
+      <name>DPA Science, Technology, Engineering and Public Policy</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Science, Technology, Engineering and Public Policy</department>
+    </programme>
+    <identifier>0002</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RDMCLISMPH01</code>
+      <name>MD(Res) Clinical Research</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0006</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RDMCLISMPH01</code>
+      <name>MD(Res) Clinical Research</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0007</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDBENSING01</code>
+      <name>Research Degree:  Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDBENSING01</code>
+      <name>Research Degree:  Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0020</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCENSING01</code>
+      <name>Research Degree:  Chemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Chemical Engineering</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCENSING01</code>
+      <name>Research Degree:  Chemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Chemical Engineering</department>
+    </programme>
+    <identifier>0020</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCIVSGEO01</code>
+      <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCIVSGEO01</code>
+      <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0020</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCOMSING01</code>
+      <name>Research Degree:  Computer Science</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCOMSING01</code>
+      <name>Research Degree:  Computer Science</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0020</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDEENSING01</code>
+      <name>Research Degree:  Electronic and Electrical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Electronic and Electrical Engineering</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDEENSING01</code>
+      <name>Research Degree:  Electronic and Electrical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Electronic and Electrical Engineering</department>
+    </programme>
+    <identifier>0020</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMANSING01</code>
+      <name>Research Degree: Management Science and Innovation</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Management Science and Innovation</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMANSING01</code>
+      <name>Research Degree: Management Science and Innovation</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Management Science and Innovation</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMECSING01</code>
+      <name>Research Degree:  Mechanical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Mechanical Engineering</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMECSING01</code>
+      <name>Research Degree:  Mechanical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Mechanical Engineering</department>
+    </programme>
+    <identifier>0020</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMEISING01</code>
+      <name>Research Degree: Medical Imaging</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0003</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMEISING01</code>
+      <name>Research Degree: Medical Imaging</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0004</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSCAN01</code>
+      <name>Research Degree: Physics of Cancer Therapy</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0002</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSING01</code>
+      <name>Research Degree:  Medical Physics</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSING01</code>
+      <name>Research Degree:  Medical Physics</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0020</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMVISING01</code>
+      <name>Research Degree: Medical Device Innovation</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0001</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMVISING01</code>
+      <name>Research Degree: Medical Device Innovation</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0002</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSCSSING01</code>
+      <name>Research Degree: Security and Crime Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0013</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSCSSING01</code>
+      <name>Research Degree: Security and Crime Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSECSING01</code>
+      <name>Research Degree: Security Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0018</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSECSING01</code>
+      <name>Research Degree: Security Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0019</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSTESING01</code>
+      <name>Research Degree: Science, Technology, Engineering and Public Policy
+</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Science, Technology, Engineering and Public Policy</department>
+    </programme>
+    <identifier>0001</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSTESING01</code>
+      <name>Research Degree: Science, Technology, Engineering and Public Policy
+</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Science, Technology, Engineering and Public Policy</department>
+    </programme>
+    <identifier>0002</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>15-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRBENSING01</code>
+      <name>MRes Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRBENSING01</code>
+      <name>MRes Biochemical Engineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0016</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRBOLSSYN01</code>
+      <name>MRes Synthetic Biology</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Biochemical Engineering</department>
+    </programme>
+    <identifier>0010</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCIVSUSR01</code>
+      <name>MRes Urban Sustainability and Resilience</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>B+++++</code>
+      <name>Modular/flexible study</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCIVSUSR01</code>
+      <name>MRes Urban Sustainability and Resilience</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCOMSFNC01</code>
+      <name>MRes Financial Computing</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0012</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCOMSSML01</code>
+      <name>MRes Computational Statistics and Machine Learning</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0004</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>21-SEP-15</startDate>
+    <endDate>20-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCOMSVEI01</code>
+      <name>MRes Virtual Environments, Imaging and Visualisation</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0012</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCOMSWEB01</code>
+      <name>MRes Web Science and Big Data Analytics</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Computer Science</department>
+    </programme>
+    <identifier>0006</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMREENSIPE01</code>
+      <name>MRes Integrated Photonic and Electronic Systems</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Electronic and Electrical Engineering</department>
+    </programme>
+    <identifier>0002</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRHEAAWLB01</code>
+      <name>MRes Lifelong Health and Wellbeing</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0013</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRHEAAWLB01</code>
+      <name>MRes Lifelong Health and Wellbeing</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Civil, Environmental and Geomatic Engineering</department>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMECSHAP01</code>
+      <name>MRes Healthcare Engineering for an Ageing Population</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Mechanical Engineering</department>
+    </programme>
+    <identifier>0004</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMEDSTEN01</code>
+      <name>MRes Medical Technology Entrepreneurship</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0007</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMEDSTEN01</code>
+      <name>MRes Medical Technology Entrepreneurship</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMEISING01</code>
+      <name>MRes Medical Imaging</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0002</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMPHSING01</code>
+      <name>MRes Medical Physics and Bioengineering</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0023</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Part-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMSISING01</code>
+      <name>MRes Management Sciences and Innovation</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Management Science and Innovation</department>
+    </programme>
+    <identifier>0008</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRPHYSCTH01</code>
+      <name>MRes Physics of Cancer Therapy</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Medical Physics and Biomedical Engineering</department>
+    </programme>
+    <identifier>0004</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRSECSING01</code>
+      <name>MRes Security Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0016</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>B+++++</code>
+      <name>Modular/flexible study</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRSECSING01</code>
+      <name>MRes Security Science</name>
+      <atasRegistered>false</atasRegistered>
+      <department>Security and Crime Science</department>
+    </programme>
+    <identifier>0017</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRTELSING01</code>
+      <name>MRes Telecommunications</name>
+      <atasRegistered>true</atasRegistered>
+      <department>Electronic and Electrical Engineering</department>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2015</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>28-SEP-15</startDate>
+    <endDate>27-SEP-16</endDate>
+  </programmeOccurrence>
+</programmeOccurrences>
+

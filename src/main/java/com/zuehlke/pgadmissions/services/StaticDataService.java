@@ -1,59 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.AGE_RANGE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.COUNTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.DISABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.DOMICILE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.ETHNICITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.FUNDING_SOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.GENDER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.NATIONALITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.QUALIFICATION_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.REFERRAL_SOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.REJECTION_REASON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.TITLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.WordUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
+import com.google.common.collect.*;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -62,11 +12,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
@@ -78,6 +24,20 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Languag
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
+import org.apache.commons.lang.WordUtils;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.*;
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional
@@ -154,14 +114,30 @@ public class StaticDataService {
         return staticData;
     }
 
+    public Map<String, Object> getPerformanceIndicatorGroups() {
+        Map<String, Object> staticData = Maps.newHashMap();
+        Map<PrismPerformanceIndicator.PrismPerformanceIndicatorGroup, PrismPerformanceIndicator[]> groups = Maps.newLinkedHashMap();
+        for (PrismPerformanceIndicator.PrismPerformanceIndicatorGroup group : PrismPerformanceIndicator.PrismPerformanceIndicatorGroup.values()) {
+            List<PrismPerformanceIndicator> indicators = Lists.newLinkedList();
+            for (PrismPerformanceIndicator indicator : PrismPerformanceIndicator.values()) {
+                if (indicator.getGroup() == group) {
+                    indicators.add(indicator);
+                }
+            }
+            groups.put(group, indicators.toArray(new PrismPerformanceIndicator[0]));
+        }
+        staticData.put("performanceIndicatorGroups", groups);
+        return staticData;
+    }
+
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
                 PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class,
-                PrismPerformanceIndicator.class, PrismImportedEntity.class }) {
+                PrismImportedEntity.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -251,9 +227,9 @@ public class StaticDataService {
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (PrismImportedEntity prismImportedEntity : new PrismImportedEntity[] { AGE_RANGE, COUNTRY, DISABILITY, DOMICILE, ETHNICITY, NATIONALITY,
+        for (PrismImportedEntity prismImportedEntity : new PrismImportedEntity[]{AGE_RANGE, COUNTRY, DISABILITY, DOMICILE, ETHNICITY, NATIONALITY,
                 QUALIFICATION_TYPE, REFERRAL_SOURCE, FUNDING_SOURCE, LANGUAGE_QUALIFICATION_TYPE, TITLE, GENDER, REJECTION_REASON,
-                STUDY_OPTION, OPPORTUNITY_TYPE }) {
+                STUDY_OPTION, OPPORTUNITY_TYPE}) {
             Class<? extends ImportedEntity> entityClass = (Class<? extends ImportedEntity>) prismImportedEntity.getEntityClass();
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);

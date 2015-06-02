@@ -1421,6 +1421,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM HTML RESOURCE PARENT *********************
      */
 
+    SYSTEM_RESOURCE_PARENT_FORM_BACKGROUND_UPLOAD_LABEL(INSTITUTION_ADVERT_DETAILS, "Please Upload a background image to create your landing page"),
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Type"),
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The type of the opportunity"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Organization Name"),
@@ -1612,7 +1613,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** INSTITUTION FORM *********************
      */
 
-    INSTITUTION_FORM_BACKGROUND_UPLOAD_LABEL(INSTITUTION_ADVERT_DETAILS, "Please Upload a background image to create your landing page"),
     INSTITUTION_ADVERT_HOMEPAGE_LABEL(INSTITUTION_ADVERT_DETAILS, "Homepage URL"),
     INSTITUTION_ADVERT_HOMEPAGE_HINT(INSTITUTION_ADVERT_DETAILS, "Specify the web address at which further information about your opportunity can be found"),
     INSTITUTION_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(INSTITUTION_ADVERT_DETAILS, "Use different address"),

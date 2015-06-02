@@ -116,15 +116,18 @@ public class StaticDataService {
 
     public Map<String, Object> getPerformanceIndicatorGroups() {
         Map<String, Object> staticData = Maps.newHashMap();
-        Map<PrismPerformanceIndicator.PrismPerformanceIndicatorGroup, PrismPerformanceIndicator[]> groups = Maps.newLinkedHashMap();
+        Map<PrismPerformanceIndicator.PrismPerformanceIndicatorGroup, Object> groups = Maps.newLinkedHashMap();
         for (PrismPerformanceIndicator.PrismPerformanceIndicatorGroup group : PrismPerformanceIndicator.PrismPerformanceIndicatorGroup.values()) {
+            Map<String, Object> groupRepresentation = Maps.newHashMap();
             List<PrismPerformanceIndicator> indicators = Lists.newLinkedList();
             for (PrismPerformanceIndicator indicator : PrismPerformanceIndicator.values()) {
                 if (indicator.getGroup() == group) {
                     indicators.add(indicator);
                 }
             }
-            groups.put(group, indicators.toArray(new PrismPerformanceIndicator[0]));
+            groupRepresentation.put("indicators", indicators.toArray(new PrismPerformanceIndicator[0]));
+            groupRepresentation.put("cumulative", group.isCumulative());
+            groups.put(group, groupRepresentation);
         }
         staticData.put("performanceIndicatorGroups", groups);
         return staticData;

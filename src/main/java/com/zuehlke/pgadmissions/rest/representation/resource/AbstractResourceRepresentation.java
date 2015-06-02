@@ -19,8 +19,6 @@ public class AbstractResourceRepresentation {
     private Integer id;
 
     private String code;
-    
-    private InstitutionRepresentation partner;
 
     private PrismState state;
 
@@ -51,7 +49,7 @@ public class AbstractResourceRepresentation {
     private List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations;
 
     private ResourceAttributesRepresentation attributes;
-    
+
     private List<PrismAction> partnerActions;
 
     public Integer getId() {
@@ -70,14 +68,6 @@ public class AbstractResourceRepresentation {
         this.code = code;
     }
 
-    public InstitutionRepresentation getPartner() {
-        return partner;
-    }
-
-    public void setPartner(InstitutionRepresentation partner) {
-        this.partner = partner;
-    }
-
     public PrismState getState() {
         return state;
     }
@@ -87,14 +77,14 @@ public class AbstractResourceRepresentation {
     }
 
     public PrismState getPreviousState() {
-		return previousState;
-	}
+        return previousState;
+    }
 
-	public void setPreviousState(PrismState previousState) {
-		this.previousState = previousState;
-	}
+    public void setPreviousState(PrismState previousState) {
+        this.previousState = previousState;
+    }
 
-	public PrismStateGroup getStateGroup() {
+    public PrismStateGroup getStateGroup() {
         return stateGroup;
     }
 
@@ -205,5 +195,5 @@ public class AbstractResourceRepresentation {
     public void setPartnerActions(List<PrismAction> partnerActions) {
         this.partnerActions = partnerActions;
     }
-    
+
 }

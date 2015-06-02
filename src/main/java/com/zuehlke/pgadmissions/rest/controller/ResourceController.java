@@ -39,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -61,7 +60,6 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.BrandedResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
@@ -155,13 +153,6 @@ public class ResourceController {
 
         representation.setUsers(userRolesRepresentations);
         representation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
-
-        Institution institution = resource.getInstitution();
-        Institution partner = resource.getPartner();
-        if (partner != null && !partner.sameAs(institution)) {
-            InstitutionRepresentation partnerRepresentation = mapper.map(partner, InstitutionRepresentation.class);
-            representation.setPartner(partnerRepresentation);
-        }
 
         PrismScope resourceScope = resource.getResourceScope();
         Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher = resourceScope.getResourceRepresentationEnricher();

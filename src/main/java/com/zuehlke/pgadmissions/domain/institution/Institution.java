@@ -53,12 +53,7 @@ public class Institution extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
-
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
+    
     @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)
@@ -458,16 +453,6 @@ public class Institution extends ResourceParent {
 
     @Override
     public void setInstitution(Institution institution) {
-        return;
-    }
-
-    @Override
-    public Institution getPartner() {
-        return partner;
-    }
-
-    @Override
-    public void setPartner(Institution partner) {
         return;
     }
 

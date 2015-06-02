@@ -96,8 +96,8 @@ public class ActionService {
     }
 
     public List<ResourceListActionDTO> getPermittedActions(PrismScope resourceScope, ResourceListRowDTO row, User user) {
-        return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getPartnerId(),
-                row.getProgramId(), row.getProjectId(), row.getApplicationId(), user);
+        return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getProgramId(),
+                row.getProjectId(), row.getApplicationId(), user);
     }
 
     public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
@@ -106,7 +106,6 @@ public class ActionService {
         Integer resourceId = resource.getId();
         Integer systemId = resource.getSystem().getId();
         Integer institutionId = resourceService.getResourceId(resource.getInstitution());
-        Integer partnerId = resourceService.getResourceId(resource.getPartner());
 
         Program program = resource.getProgram();
         Integer programId = resourceService.getResourceId(program);
@@ -115,7 +114,7 @@ public class ActionService {
         Integer applicationId = resourceService.getResourceId(resource.getApplication());
 
         Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
-        List<ResourceListActionDTO> actions = actionDAO.getPermittedActions(scope, resourceId, systemId, institutionId, partnerId, programId, projectId,
+        List<ResourceListActionDTO> actions = actionDAO.getPermittedActions(scope, resourceId, systemId, institutionId, programId, projectId,
                 applicationId, user);
         for (ResourceListActionDTO action : actions) {
             representations.add(mapper.map(action, ActionRepresentation.class));

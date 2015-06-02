@@ -104,11 +104,6 @@ public class Application extends Resource {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id")
     private Program program;
 
@@ -353,16 +348,6 @@ public class Application extends Resource {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
-    }
-
-    @Override
-    public Institution getPartner() {
-        return partner;
-    }
-
-    @Override
-    public void setPartner(Institution partner) {
-        this.partner = partner;
     }
 
     @Override
@@ -936,7 +921,7 @@ public class Application extends Resource {
     }
 
     public PrismOpportunityType getOpportunityType() {
-        OpportunityType opportunityType = ((ResourceParent)getParentResource()).getOpportunityType();
+        OpportunityType opportunityType = ((ResourceParent) getParentResource()).getOpportunityType();
         return opportunityType == null ? null : opportunityType.getPrismOpportunityType();
     }
 

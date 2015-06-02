@@ -165,8 +165,7 @@ public class ResourceDAO {
             projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
 
-        projectionList.add(Projections.property("partner.id"), "partnerId") //
-                .add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
+        projectionList.add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
                 .add(Projections.property("user.id"), "creatorId") //
                 .add(Projections.property("user.firstName"), "creatorFirstName") //
                 .add(Projections.property("user.firstName2"), "creatorFirstName2") //

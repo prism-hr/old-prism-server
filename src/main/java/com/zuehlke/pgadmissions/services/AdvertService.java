@@ -1,6 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.io.IOException;
@@ -213,6 +217,13 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_FEE_AND_PAYMENT");
     }
 
+    public void updateFeesAndPayments(Advert advert, String newCurrency) throws Exception {
+        Resource resource = advert.getResource();
+        FinancialDetailsDTO feeDTO = getFinancialDetailDTO(advert.getFee(), newCurrency);
+        FinancialDetailsDTO payDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
+        updateFeesAndPayments(resource.getResourceScope(), resource.getId(), new AdvertFeesAndPaymentsDTO().withFee(feeDTO).withPay(payDTO));
+    }
+
     @SuppressWarnings("unchecked")
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
@@ -369,6 +380,20 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
     }
 
+    public void updateSponsorship(Advert advert, String oldCurrency, String newCurrency) {
+        BigDecimal exchangeRate = getExchangeRate(oldCurrency, newCurrency, new LocalDate());
+
+        BigDecimal sponsorshipTarget = advert.getSponsorshipTarget();
+        if (!(sponsorshipTarget == null || sponsorshipTarget.compareTo(new BigDecimal(0.00)) == 0)) {
+            advert.setSponsorshipTarget(sponsorshipTarget.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
+        }
+
+        BigDecimal sponsorshipSecured = advert.getSponsorshipSecured();
+        if (!(sponsorshipSecured == null || sponsorshipSecured.compareTo(new BigDecimal(0.00)) == 0)) {
+            advert.setSponsorshipSecured(sponsorshipSecured.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
+        }
+    }
+
     public void rejectSponsorship(PrismScope resourceScope, Integer resourceId, Integer commentId) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
@@ -387,17 +412,17 @@ public class AdvertService {
 
     public void synchronizeSponsorship(ResourceParent resource, Comment comment) {
         Advert advert = resource.getAdvert();
-        String advertCurrency = advert.getResource().getInstitution().getCurrency();
 
         BigDecimal advertRequired = advert.getSponsorshipTarget();
         BigDecimal advertSecured = advert.getSponsorshipSecured();
 
         CommentSponsorship sponsorship = comment.getSponsorship();
-        String sponsorshipCurrency = sponsorship.getCurrency();
+        String currencySpecified = sponsorship.getCurrencySpecified();
+        String currencyConverted = sponsorship.getCurrencyConverted();
 
         BigDecimal sponsorshipConverted = sponsorship.getAmountSpecified();
-        if (!sponsorshipCurrency.equals(advertCurrency)) {
-            BigDecimal exchangeRate = getExchangeRate(sponsorshipCurrency, advertCurrency, new LocalDate());
+        if (!currencySpecified.equals(currencyConverted)) {
+            BigDecimal exchangeRate = getExchangeRate(currencySpecified, currencyConverted, new LocalDate());
             sponsorshipConverted = sponsorshipConverted.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP);
         }
 
@@ -421,6 +446,14 @@ public class AdvertService {
         return new InstitutionAddress().withDomicile(address.getDomicile()).withAddressLine1(address.getAddressLine1())
                 .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
                 .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId()).withLocation(address.getLocation());
+    }
+
+    public List<Advert> getAdvertsWithFeesAndPays(Institution institution) {
+        return advertDAO.getAdvertsWithFeesAndPays(institution);
+    }
+
+    public List<Advert> getAdvertsWithSponsorship(Institution institution) {
+        return advertDAO.getAdvertsWithSponsorship(institution);
     }
 
     private String getCurrencyAtLocale(Advert advert) {
@@ -494,10 +527,10 @@ public class AdvertService {
         }
     }
 
-    private BigDecimal getExchangeRate(String specifiedCurrency, String currencyAtLocale, LocalDate baseline) {
+    private BigDecimal getExchangeRate(String currencySpecified, String currencyConverted, LocalDate baseline) {
         removeExpiredExchangeRates(baseline);
 
-        String pair = specifiedCurrency + currencyAtLocale;
+        String pair = currencySpecified + currencyConverted;
         HashMap<String, BigDecimal> todaysRates = exchangeRates.get(baseline);
 
         if (todaysRates != null) {
@@ -579,12 +612,12 @@ public class AdvertService {
         BigDecimal minimumGenerated;
         BigDecimal maximumGenerated;
 
-        if (interval == PrismDurationUnit.MONTH) {
-            intervalPrefixGenerated = PrismDurationUnit.YEAR.name().toLowerCase();
+        if (interval == MONTH) {
+            intervalPrefixGenerated = YEAR.name().toLowerCase();
             minimumGenerated = minimumSpecified.multiply(new BigDecimal(12));
             maximumGenerated = maximumSpecified.multiply(new BigDecimal(12));
         } else {
-            intervalPrefixGenerated = PrismDurationUnit.MONTH.name().toLowerCase();
+            intervalPrefixGenerated = MONTH.name().toLowerCase();
             minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
             maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
         }
@@ -603,6 +636,30 @@ public class AdvertService {
                 LOGGER.error("Problem performing currency conversion", e);
             }
         }
+    }
+
+    public FinancialDetailsDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
+        if (detail != null) {
+            FinancialDetailsDTO detailDTO = new FinancialDetailsDTO();
+            detailDTO.setCurrency(newCurrency);
+
+            PrismDurationUnit interval = detail.getInterval();
+            String intervalPrefix = interval.name().toLowerCase();
+            detailDTO.setInterval(interval);
+
+            String oldCurrency = detail.getCurrencySpecified();
+
+            BigDecimal exchangeRate = getExchangeRate(oldCurrency, newCurrency, new LocalDate());
+
+            BigDecimal minimumSpecified = (BigDecimal) getProperty(detail, intervalPrefix + "MinimumSpecified");
+            BigDecimal maximumSpecified = (BigDecimal) getProperty(detail, intervalPrefix + "MaximumSpecified");
+
+            setProperty(detailDTO, "minimum", minimumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
+            setProperty(detailDTO, "maximum", maximumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
+
+            return detailDTO;
+        }
+        return null;
     }
 
     private AdvertClosingDate getNextAdvertClosingDate(Advert advert) {

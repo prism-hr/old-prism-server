@@ -132,7 +132,7 @@ public class DocumentService {
         Resource resource = document.getResource();
         if (!user.getId().equals(document.getUser().getId())) {
             Action viewEditAction = actionService.getViewEditAction(resource);
-            actionService.validateUserAction(resource, viewEditAction, user);
+            actionService.validateViewEditAction(resource, viewEditAction, user);
         }
     }
 

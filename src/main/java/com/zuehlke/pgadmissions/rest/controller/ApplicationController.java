@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -21,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
@@ -35,12 +33,10 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
 
 @RestController
 @RequestMapping(value = { "api/applications" })
@@ -52,9 +48,6 @@ public class ApplicationController {
 
     @Inject
     private ApplicationSectionService applicationSectionService;
-
-    @Inject
-    private CommentService commentService;
 
     @RequestMapping(value = "/{applicationId}/startDate", method = RequestMethod.GET)
     public ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
@@ -195,13 +188,6 @@ public class ApplicationController {
     public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO)
             throws Exception {
         applicationSectionService.updateAdditionalInformation(applicationId, additionalInformationDTO);
-    }
-
-    @RequestMapping(value = "/{applicationId}/comments/{commentId}", method = RequestMethod.PUT)
-    public void updateComment(@PathVariable Integer applicationId, @PathVariable Integer commentId, @Valid @RequestBody CommentDTO commentDTO) {
-        Comment comment = commentService.getById(commentId);
-        Preconditions.checkArgument(comment.getApplication().getId().equals(applicationId));
-        commentService.update(commentId, commentDTO);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=summary")

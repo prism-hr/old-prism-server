@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 public class InstitutionRepresentation {
 
     private Integer id;

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 public class InstitutionRepresentation {
 
     private Integer id;
 
     private String title;
+    
+    private Integer logoImage;
 
     private String domicile;
 
@@ -28,6 +28,14 @@ public class InstitutionRepresentation {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Integer getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(Integer logoImage) {
+        this.logoImage = logoImage;
     }
 
     public String getDomicile() {

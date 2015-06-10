@@ -306,7 +306,7 @@ public class UserService {
                 userListFilterDTO);
     }
 
-    public <T extends Resource> void correctBouncedOrUnverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) {
+    public <T extends Resource> void correctBouncedOrUnverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) throws Exception {
         HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userAdministratorResources, userId);
 

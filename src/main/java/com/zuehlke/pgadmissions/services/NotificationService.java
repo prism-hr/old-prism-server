@@ -290,7 +290,7 @@ public class NotificationService {
         resource.setLastNotifiedUpdateSyndicated(null);
     }
 
-    public void resetNotifications(User user) {
+    public void resetNotifications(User user) throws Exception {
         notificationDAO.resetNotifications(user);
         for (PrismScope scope : PrismScope.values()) {
             List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);

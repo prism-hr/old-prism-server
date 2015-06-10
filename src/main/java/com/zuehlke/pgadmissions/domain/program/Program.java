@@ -661,12 +661,9 @@ public class Program extends ResourceOpportunity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        ResourceSignature signature = new ResourceSignature().addProperty("institution", institution);
+        ResourceSignature signature = super.getResourceSignature();
         if (BooleanUtils.isTrue(imported)) {
             signature.addProperty("importedCode", importedCode);
-        } else {
-            signature.addProperty("opportunityType", opportunityType);
-            signature.addProperty("title", title);
         }
         signature.addExclusion("state.id", PROGRAM_REJECTED);
         signature.addExclusion("state.id", PROGRAM_WITHDRAWN);

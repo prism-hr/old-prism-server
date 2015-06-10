@@ -599,8 +599,8 @@ public class Project extends ResourceOpportunity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("program", program).addProperty("opportunityType", opportunityType).addProperty("title", title)
-                .addExclusion("state.id", PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PROJECT_REJECTED).addExclusion("state.id", PROJECT_WITHDRAWN);
+        return super.getResourceSignature().addProperty("program", program).addExclusion("state.id", PROJECT_DISABLED_COMPLETED)
+                .addExclusion("state.id", PROJECT_REJECTED).addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 
 }

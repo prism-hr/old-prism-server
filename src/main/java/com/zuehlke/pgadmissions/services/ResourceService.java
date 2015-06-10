@@ -46,7 +46,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -57,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -116,6 +114,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepr
 import com.zuehlke.pgadmissions.services.ApplicationService.ApplicationProcessingMonth;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelperConcurrency;
+import com.zuehlke.pgadmissions.services.helpers.concurrency.ResourceServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
@@ -391,53 +391,50 @@ public class ResourceService {
         return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceScope, baseline, rangeStart, rangeClose);
     }
 
-    public List<ResourceListRowDTO> getResourceList(PrismScope resourceScope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
-        User user = userService.getCurrentUser();
+    public List<ResourceListRowDTO> getResourceList(final PrismScope resourceScope, ResourceListFilterDTO filter, String lastSequenceIdentifier)
+            throws Exception {
+        final User user = userService.getCurrentUser();
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(resourceScope);
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, resourceScope, filter);
 
         int maxRecords = LIST_PAGE_ROW_COUNT;
-        Set<Integer> assignedResources = getAssignedResources(user, resourceScope, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
-
+        Set<Integer> assignedResources = applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, resourceScope,
+                parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
         boolean hasRedactions = actionService.hasRedactions(resourceScope, assignedResources, user);
 
         if (!assignedResources.isEmpty()) {
-            HashMultimap<Integer, ResourceListActionDTO> creations = actionService.getCreateResourceActions(resourceScope, assignedResources);
+            final HashMultimap<Integer, ResourceListActionDTO> creations = actionService.getCreateResourceActions(resourceScope, assignedResources);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds, assignedResources, filter,
                     lastSequenceIdentifier, maxRecords, hasRedactions);
-            for (ResourceListRowDTO row : rows) {
-                Set<ResourceListActionDTO> actions = Sets.newLinkedHashSet();
-                actions.addAll(actionService.getPermittedActions(resourceScope, row, user));
-                actions.addAll(creations.get(row.getResourceId()));
-                row.setActions(actions);
-            }
+
+            applicationContext.getBean(ActionServiceHelperConcurrency.class).appendActions(resourceScope, user, rows, creations, maxRecords);
             return rows;
         }
 
         return Lists.newArrayList();
     }
 
-    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds) {
-        return getAssignedResources(user, scopeId, parentScopeIds, new ResourceListFilterDTO(), null, null);
+    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds) throws Exception {
+        return applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, scopeId, parentScopeIds, null, null, null);
     }
 
-    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter) {
-        return getAssignedResources(user, scopeId, parentScopeIds, filter, null, null);
+    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter) throws Exception {
+        return applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, scopeId, parentScopeIds, filter, null, null);
     }
 
-    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
-        Set<Integer> assigned = Sets.newHashSet();
-        Junction conditions = getFilterConditions(scopeId, filter);
+    public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+        return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
+    }
 
-        assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
+    public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+        return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
+    }
 
-        for (PrismScope parentScopeId : parentScopeIds) {
-            assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
-        }
-
-        assigned.addAll(resourceDAO.getAssignedPartnerResources(user, scopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
-        return assigned;
+    public List<Integer> getAssignedPartnerResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+        return resourceDAO.getAssignedPartnerResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     @SuppressWarnings("unchecked")
@@ -781,31 +778,18 @@ public class ResourceService {
     }
 
     public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(ResourceParent resource, ResourceReportFilterDTO filterDTO) {
-        Institution institution = resource.getInstitution();
-        LinkedHashMultimap<PrismImportedEntity, ImportedEntity> properties = LinkedHashMultimap.create();
-
         ResourceSummaryPlotsRepresentation plotsRepresentation = new ResourceSummaryPlotsRepresentation();
         if (filterDTO == null) {
             ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, null);
             plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(null).withData(plotDataRepresentation));
         } else {
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint = Sets.newHashSet();
             for (ResourceReportFilterPropertyDTO propertyDTO : filterDTO.getProperties()) {
-                PrismImportedEntity entityType = propertyDTO.getEntityType();
-                properties.put(entityType, importedEntityService.getById(institution, entityType, propertyDTO.getEntityId()));
+                constraint.add(mapper.map(propertyDTO, ResourceSummaryPlotConstraintRepresentation.class));
             }
-
-            List<Set<ImportedEntity>> constraintsProvided = Lists.newArrayList();
-            for (PrismImportedEntity filterEntity : properties.keySet()) {
-                constraintsProvided.add(properties.get(filterEntity));
-            }
-
-            Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraints = getReportPlotConstraintsImploded(constraintsProvided);
-            for (Set<ResourceSummaryPlotConstraintRepresentation> constraint : constraints) {
-                ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
-                plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
-            }
+            ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
+            plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
         }
-
         return plotsRepresentation;
     }
 
@@ -829,7 +813,7 @@ public class ResourceService {
         return backgroundImage.getId();
     }
 
-    private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
+    public Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {
             conditions = filter.getMatchMode() == ANY ? Restrictions.disjunction() : Restrictions.conjunction();
@@ -939,16 +923,6 @@ public class ResourceService {
 
         summary.setProcessingSummaries(yearRepresentations);
         return summary;
-    }
-
-    private Set<Set<ResourceSummaryPlotConstraintRepresentation>> getReportPlotConstraintsImploded(List<Set<ImportedEntity>> constraintsProvided) {
-        Set<Set<ResourceSummaryPlotConstraintRepresentation>> constraintsImploded = Sets.newHashSet();
-        for (Set<ImportedEntity> plotImploded : constraintsProvided) {
-            for (ImportedEntity propertyImploded : plotImploded) {
-                constraintsImploded.add(Sets.newHashSet(mapper.map(propertyImploded, ResourceSummaryPlotConstraintRepresentation.class)));
-            }
-        }
-        return constraintsImploded;
     }
 
     private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary, ApplicationProcessingSummaryRepresentation yearRepresentation) {

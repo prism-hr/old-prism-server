@@ -224,6 +224,10 @@
         <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation
         </class-b>
         <field>
+            <a>logoImage.id</a>
+            <b>logoImage</b>
+        </field>        
+        <field>
             <a>domicile.id</a>
             <b>domicile</b>
         </field>

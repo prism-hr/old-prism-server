@@ -52,9 +52,8 @@ public class PropertyLoader {
 
     public PropertyLoader localize(Resource resource) {
         this.resource = resource;
-        PrismScope resourceScope = resource.getResourceScope();
-        if (resourceScope.ordinal() > INSTITUTION.ordinal()) {
-            Program program = resource.getProgram();
+        Program program = resource.getProgram();
+        if (program != null) {
             this.opportunityType = program == null ? resource.getProject().getOpportunityType().getPrismOpportunityType() : program.getOpportunityType()
                     .getPrismOpportunityType();
         } else {

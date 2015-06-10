@@ -10,8 +10,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
-import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.concludeThreads;
-import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.dispatchThread;
 
 import java.util.Arrays;
 import java.util.List;
@@ -116,6 +114,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepr
 import com.zuehlke.pgadmissions.services.ApplicationService.ApplicationProcessingMonth;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelperConcurrency;
+import com.zuehlke.pgadmissions.services.helpers.concurrency.ResourceServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
@@ -398,8 +398,8 @@ public class ResourceService {
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, resourceScope, filter);
 
         int maxRecords = LIST_PAGE_ROW_COUNT;
-        Set<Integer> assignedResources = getAssignedResources(user, resourceScope, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
-
+        Set<Integer> assignedResources = applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, resourceScope,
+                parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
         boolean hasRedactions = actionService.hasRedactions(resourceScope, assignedResources, user);
 
         if (!assignedResources.isEmpty()) {
@@ -407,22 +407,7 @@ public class ResourceService {
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds, assignedResources, filter,
                     lastSequenceIdentifier, maxRecords, hasRedactions);
 
-            List<Thread> workers = Lists.newArrayListWithCapacity(maxRecords);
-            for (final ResourceListRowDTO row : rows) {
-                Runnable runner = new Runnable() {
-                    @Override
-                    public void run() {
-                        Set<ResourceListActionDTO> actions = Sets.newLinkedHashSet();
-                        actions.addAll(actionService.getPermittedActions(resourceScope, row, user));
-                        actions.addAll(creations.get(row.getResourceId()));
-                        row.setActions(actions);
-                    }
-                };
-                dispatchThread(workers, runner);
-            }
-
-            concludeThreads(workers);
-
+            applicationContext.getBean(ActionServiceHelperConcurrency.class).appendActions(resourceScope, user, rows, creations, maxRecords);
             return rows;
         }
 
@@ -430,52 +415,26 @@ public class ResourceService {
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds) throws Exception {
-        return getAssignedResources(user, scopeId, parentScopeIds, new ResourceListFilterDTO(), null, null);
+        return applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, scopeId, parentScopeIds, null, null, null);
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter) throws Exception {
-        return getAssignedResources(user, scopeId, parentScopeIds, filter, null, null);
+        return applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, scopeId, parentScopeIds, filter, null, null);
     }
 
-    public Set<Integer> getAssignedResources(final User user, final PrismScope scopeId, final List<PrismScope> parentScopeIds,
-            final ResourceListFilterDTO filter, final String lastSequenceIdentifier, final Integer recordsToRetrieve) throws Exception {
-        final Set<Integer> assigned = Sets.newHashSet();
-        final Junction condition = getFilterConditions(scopeId, filter);
-        final List<Thread> workers = Lists.newArrayListWithCapacity(6);
+    public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+        return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
+    }
 
-        Runnable scopeRunner = new Runnable() {
-            @Override
-            public void run() {
-                assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve));
-            }
-        };
+    public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+        return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
+    }
 
-        dispatchThread(workers, scopeRunner);
-
-        for (final PrismScope parentScopeId : parentScopeIds) {
-            Runnable parentScopeRunner = new Runnable() {
-                @Override
-                public void run() {
-                    assigned.addAll(resourceDAO
-                            .getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve));
-                }
-            };
-
-            dispatchThread(workers, parentScopeRunner);
-        }
-
-        Runnable partnerRunner = new Runnable() {
-            @Override
-            public void run() {
-                assigned.addAll(resourceDAO.getAssignedPartnerResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve));
-            }
-        };
-
-        dispatchThread(workers, partnerRunner);
-
-        concludeThreads(workers);
-
-        return assigned;
+    public List<Integer> getAssignedPartnerResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+        return resourceDAO.getAssignedPartnerResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     @SuppressWarnings("unchecked")
@@ -854,7 +813,7 @@ public class ResourceService {
         return backgroundImage.getId();
     }
 
-    private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
+    public Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {
             conditions = filter.getMatchMode() == ANY ? Restrictions.disjunction() : Restrictions.conjunction();

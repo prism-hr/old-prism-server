@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
@@ -252,15 +253,21 @@ public class UserService {
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Application application, List<UserSelectionDTO> usersToExclude) {
         List<UserSelectionDTO> usersToInclude = Lists.newLinkedList();
-        Integer program = application.getProgram().getId();
-        List<Integer> relatedProjects = programService.getProjects(program);
-        List<Integer> relatedApplications = programService.getApplications(program);
-        List<UserSelectionDTO> usersPotentiallyInterested = userDAO.getUsersPotentiallyInterestedInApplication(program, relatedProjects, relatedApplications);
-        for (UserSelectionDTO userPotentiallyInterested : usersPotentiallyInterested) {
-            if (!usersToExclude.contains(userPotentiallyInterested)) {
-                usersToInclude.add(userPotentiallyInterested);
+
+        Program program = application.getProgram();
+        if (program != null) {
+            Integer programId = program.getId();
+
+            List<Integer> projects = programService.getProjects(programId);
+            List<Integer> applications = programService.getApplications(programId);
+            List<UserSelectionDTO> users = userDAO.getUsersPotentiallyInterestedInApplication(programId, projects, applications);
+            for (UserSelectionDTO userPotentiallyInterested : users) {
+                if (!usersToExclude.contains(userPotentiallyInterested)) {
+                    usersToInclude.add(userPotentiallyInterested);
+                }
             }
         }
+
         return usersToInclude;
     }
 

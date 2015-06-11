@@ -44,6 +44,28 @@ public class ImportedInstitution extends ImportedEntity {
     @Column(name = "custom", nullable = false)
     private Boolean custom;
 
+    @Column(name = "ucas_id")
+    private String ucasId;
+
+    @Column(name = "facebook_id")
+    private String facebookId;
+
+    public String getUcasId() {
+        return ucasId;
+    }
+
+    public void setUcasId(String ucasId) {
+        this.ucasId = ucasId;
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
+    }
+
     @Override
     public Integer getId() {
         return id;
@@ -113,6 +135,16 @@ public class ImportedInstitution extends ImportedEntity {
 
     public final void setCustom(Boolean custom) {
         this.custom = custom;
+    }
+
+    public ImportedInstitution withFacebookId(String facebookId) {
+        this.setFacebookId(facebookId);
+        return this;
+    }
+
+    public ImportedInstitution withUcasId(String ucasId){
+        this.setUcasId(ucasId);
+        return this;
     }
 
     public ImportedInstitution withInstitution(Institution institution) {

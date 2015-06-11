@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -148,11 +147,11 @@ public class RoleService {
     }
 
     public List<User> getRoleUsers(Resource resource, Role... roles) {
-        return resource == null ? Lists.<User>newArrayList() : roleDAO.getRoleUsers(resource, roles);
+        return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, roles);
     }
 
     public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return resource == null ? Lists.<User>newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
+        return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
     }
 
     public List<User> getRoleUsers(Resource resource, PrismRoleGroup prismRoleGroup) {
@@ -210,12 +209,14 @@ public class RoleService {
     }
 
     public void deleteUserRole(Resource resource, User user, Role role) {
-        if(getRolesForResource(resource, user).size() < 2 && resource.getUser().getId() == user.getId()){
+        if (getRolesForResource(resource, user).size() < 2 && resource.getUser().getId() == user.getId()) {
             throw new PrismForbiddenException("Cannot remove the owner");
-        };
+        }
+        ;
         UserRole userRole = getUserRole(resource, user, role);
         entityService.delete(userRole);
-        entityService.flush(); // so that getRolesForResource() returns up-to-date values
+        entityService.flush(); // so that getRolesForResource() returns
+                               // up-to-date values
     }
 
     public List<PrismRole> getRolesByScope(PrismScope prismScope) {
@@ -291,8 +292,7 @@ public class RoleService {
 
         Resource resource = resourceService.getOperativeResource(comment.getResource(), comment.getAction());
         Resource commentResource = comment.getResource();
-        Resource transitionResource = BooleanUtils.isTrue(roleTransition.getPartnerMode()) ? commentResource.getPartner().getEnclosingResource(
-                transitionRole.getScope().getId()) : commentResource.getEnclosingResource(transitionRole.getScope().getId());
+        Resource transitionResource = commentResource.getEnclosingResource(transitionRole.getScope().getId());
 
         if (transitionResource != null) {
             UserRole userRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);

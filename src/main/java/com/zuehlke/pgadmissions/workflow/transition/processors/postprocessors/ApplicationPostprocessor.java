@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
@@ -53,15 +52,12 @@ public class ApplicationPostprocessor implements ResourceProcessor {
 
     @Inject
     private CommentService commentService;
-    
+
     @Inject
     private EntityService entityService;
 
     @Inject
     private ApplicationService applicationService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Inject
     private RoleService roleService;
@@ -72,10 +68,6 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     @Override
     public void process(Resource resource, Comment comment) throws Exception {
         Application application = (Application) resource;
-
-        if (comment.isCreateComment()) {
-            resourceService.synchronizePartner(resource, comment);
-        }
 
         if (comment.isProjectCreateApplicationComment()) {
             synchronizeProjectSupervisors(application);
@@ -129,7 +121,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         ApplicationRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(application);
         application.setApplicationRatingCount(ratingSummary.getApplicationRatingCount().intValue());
         application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()));
-        
+
         entityService.flush();
 
         for (ResourceParent parent : application.getParentResources()) {

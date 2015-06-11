@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -41,6 +42,10 @@ public abstract class Resource implements UniqueEntity {
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);
+    
+    public abstract Department getDepartment();
+    
+    public abstract void setDepartment(Department department);
 
     public abstract Program getProgram();
 
@@ -55,10 +60,6 @@ public abstract class Resource implements UniqueEntity {
     public abstract void setProject(Project project);
 
     public abstract Application getApplication();
-
-    public abstract String getReferrer();
-
-    public abstract void setReferrer(String referrer);
 
     public abstract State getState();
 

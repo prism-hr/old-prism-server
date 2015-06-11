@@ -116,7 +116,7 @@ public enum PrismImportedEntity {
             ImportedOpportunityTypeExtractor.class, //
             new String[] { "application_program_detail.opportunity_type_id" }, false), //
     INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd",
-            "imported_institution", "institution_id, domicile_id, code, name, enabled, custom", ImportedInstitutionExtractor.class, //
+            "imported_institution", "institution_id, domicile_id, code, name, enabled, custom, ucas_id, facebook_id", ImportedInstitutionExtractor.class, //
             new String[] { "application_qualification.institution_id" }, true);
 
     private Class<?> jaxbClass;

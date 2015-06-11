@@ -691,14 +691,7 @@ public class CommentService {
 
         sponsorship.setSponsor(sponsor);
         sponsorship.setCurrencySpecified(sponsorshipDTO.getCurrency());
-
-        Resource resource = comment.getResource();
-        Institution partner = resource.getPartner();
-        if (partner == null) {
-            sponsorship.setCurrencyConverted(resource.getInstitution().getCurrency());
-        } else {
-            sponsorship.setCurrencyConverted(partner.getCurrency());
-        }
+        sponsorship.setCurrencyConverted(comment.getResource().getInstitution().getCurrency());
 
         sponsorship.setAmountSpecified(sponsorshipDTO.getAmountSpecified());
         comment.setSponsorship(sponsorship);

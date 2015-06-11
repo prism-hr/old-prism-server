@@ -66,20 +66,11 @@ public class AdvertToRepresentationFunction implements Function<Advert, AdvertRe
         }
         representation.setLocations(locations);
 
-        Institution partner = resource.getPartner();
         Institution institution = resource.getInstitution();
 
         InstitutionAdvertRepresentation institutionAdvertRepresentation = mapper.map(institution, InstitutionAdvertRepresentation.class);
         representation.setInstitution(institutionAdvertRepresentation);
-
-        if (!(partner == null || partner.sameAs(institution))) {
-            InstitutionAdvertRepresentation partnerAdvertRepresentation = mapper.map(partner, InstitutionAdvertRepresentation.class);
-            representation.setPartner(partnerAdvertRepresentation);
-            Integer partnerLogoImage = resourceService.getBackgroundImage(partner);
-            representation.setBackgroundImage(partnerLogoImage == null ? resourceService.getBackgroundImage(resource) : partnerLogoImage);
-        } else {
-            representation.setBackgroundImage(resourceService.getBackgroundImage(resource));
-        }
+        representation.setBackgroundImage(resourceService.getBackgroundImage(resource));
 
         return representation;
     }

@@ -33,8 +33,8 @@ public abstract class ResourceOpportunity extends ResourceParent {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("partner", getPartner())
-                .addProperty("opportunityType", getOpportunityType()).addProperty("title", getTitle());
+        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("opportunityType", getOpportunityType())
+                .addProperty("title", getTitle());
     }
 
 }

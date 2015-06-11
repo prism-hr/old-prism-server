@@ -59,7 +59,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -85,9 +84,6 @@ import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDefinitionDTO;
@@ -155,10 +151,7 @@ public class ResourceService {
 
     @Inject
     private DepartmentService departmentService;
-
-    @Inject
-    private InstitutionService institutionService;
-
+    
     @Inject
     private ImportedEntityService importedEntityService;
 
@@ -678,7 +671,6 @@ public class ResourceService {
 
     public void update(PrismScope resourceScope, Integer resourceId, OpportunityDTO resourceDTO, Comment comment) throws Exception {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
-        updatePartner(comment.getUser(), resource, resourceDTO);
 
         DepartmentDTO departmentDTO = resourceDTO.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(resource.getInstitution(), departmentDTO);
@@ -707,51 +699,10 @@ public class ResourceService {
         }
     }
 
-    public void updatePartner(User user, ResourceOpportunity resource, OpportunityDTO newResource) throws Exception {
-        InstitutionPartnerDTO partnerDTO = newResource.getPartner();
-        if (partnerDTO != null) {
-            Integer partnerId = partnerDTO.getPartnerId();
-            InstitutionDTO newPartnerDTO = partnerDTO.getPartner();
-            if (newPartnerDTO != null) {
-                Institution partner = institutionService.createPartner(user, partnerDTO.getPartner());
-                resource.setPartner(partner);
-            } else if (partnerId != null) {
-                Institution partner = institutionService.getById(partnerId);
-                if (partner == null) {
-                    throw new WorkflowEngineException("Invalid partner institution");
-                }
-                resource.setPartner(partner);
-            }
-        }
-    }
-
-    public void adoptPartnerAddress(ResourceOpportunity resource, Advert advert) {
-        Institution partner = resource.getPartner();
-        if (partner != null) {
-            InstitutionAddress address = advertService.getAddressCopy(partner.getAdvert().getAddress());
-            entityService.save(address);
-            advert.setAddress(address);
-        }
-    }
-
     public void deleteElapsedStudyOptions() {
         LocalDate baseline = new LocalDate();
         resourceDAO.deleteElapsedStudyOptionInstances(baseline);
         resourceDAO.deleteElapsedStudyOptions(baseline);
-    }
-
-    public void synchronizePartner(Resource resource, Comment comment) {
-        comment.setPartner(resource.getPartner());
-    }
-
-    public void resynchronizePartner(ResourceOpportunity resource, Comment comment) {
-        Institution newPartner = resource.getPartner();
-        Institution oldPartner = resourceDAO.getPreviousPartner(resource);
-        if (oldPartner == null) {
-            comment.setPartner(newPartner);
-        } else if (!(oldPartner == null || newPartner == null) && !oldPartner.getId().equals(newPartner.getId())) {
-            comment.setPartner(newPartner);
-        }
     }
 
     public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {

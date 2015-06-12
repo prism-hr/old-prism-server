@@ -1,10 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
-
 import javax.inject.Inject;
 
-import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -48,13 +45,12 @@ public class ProjectCreator implements ResourceCreator {
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(resource.getInstitution(), departmentDTO);
 
         Project project = new Project().withUser(user).withParentResource(resource).withDepartment(department).withAdvert(advert)
-                .withTitle(advert.getTitle()).withDurationMinimum(newProject.getDurationMinimum()).withDurationMaximum(newProject.getDurationMaximum())
-                .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
-        
+                .withTitle(advert.getTitle()).withDurationMinimum(newProject.getDurationMinimum()).withDurationMaximum(newProject.getDurationMaximum());
+
         resourceService.updatePartner(user, project, newProject);
         resourceService.adoptPartnerAddress(project, advert);
         resourceService.setResourceAttributes(project, newProject);
-        
+
         return project;
     }
 

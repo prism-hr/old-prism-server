@@ -47,11 +47,11 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     @JoinColumn(name = "study_option_id", nullable = false)
     private StudyOption studyOption;
 
-    @Column(name = "application_start_date", nullable = false)
+    @Column(name = "application_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationStartDate;
 
-    @Column(name = "application_close_date", nullable = false)
+    @Column(name = "application_close_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationCloseDate;
 

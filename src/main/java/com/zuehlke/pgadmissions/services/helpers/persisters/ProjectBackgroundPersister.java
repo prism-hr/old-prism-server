@@ -17,7 +17,7 @@ public class ProjectBackgroundPersister implements ImageDocumentPersister {
     @Override
     public void persist(Integer projectId, Document image) {
         Project project = projectService.getById(projectId);
-        project.setBackgroundImage(image);
+        project.getAdvert().setBackgroundImage(image);
     }
 
 }

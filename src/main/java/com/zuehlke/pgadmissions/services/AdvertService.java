@@ -162,7 +162,7 @@ public class AdvertService {
     }
 
     public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO) {
-        if (BooleanUtils.isFalse(advert.getImported())) {
+        if (BooleanUtils.isFalse(advert.isImported())) {
             advert.setTitle(advertDTO.getTitle());
         }
 

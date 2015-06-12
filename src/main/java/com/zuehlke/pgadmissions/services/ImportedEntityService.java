@@ -185,13 +185,12 @@ public class ImportedEntityService {
         importedEntityFeed.setLastImportedTimestamp(new DateTime());
     }
 
-    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime) throws Exception {
+    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
+            throws Exception {
         Institution institution = institutionService.getById(institutionId);
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
-        LocalDate startDate = null;
-        LocalDate closeDate = null;
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
             StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
@@ -212,13 +211,9 @@ public class ImportedEntityService {
 
                 ResourceStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
                 persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
-
-                startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
-                closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
             }
         }
 
-        persistentProgram.setEndDate(closeDate);
         executeProgramImportAction(persistentProgram, baselineTime);
         return persistentProgram.getId();
     }
@@ -252,8 +247,8 @@ public class ImportedEntityService {
 
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withDepartment(department)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withImported(true).withOpportunityType(opportunityType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime)
-                .withUpdatedTimestamp(baselineDateTime).withUpdatedTimestampSitemap(baselineDateTime);
+                .withOpportunityType(opportunityType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime).withUpdatedTimestamp(baselineDateTime)
+                .withUpdatedTimestampSitemap(baselineDateTime);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
         if (persistentProgram == null) {

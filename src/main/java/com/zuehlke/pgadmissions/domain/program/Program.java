@@ -18,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
@@ -31,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -75,7 +73,7 @@ public class Program extends ResourceOpportunity {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_partner_id")
@@ -95,15 +93,8 @@ public class Program extends ResourceOpportunity {
     @JoinColumn(name = "opportunity_type_id", nullable = false)
     private OpportunityType opportunityType;
 
-    @Column(name = "referrer")
-    private String referrer;
-
     @Column(name = "title", nullable = false)
     private String title;
-    
-    @OneToOne
-    @JoinColumn(name = "background_image_id")
-    private Document backgroundImage;
 
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
@@ -113,9 +104,6 @@ public class Program extends ResourceOpportunity {
 
     @Column(name = "require_project_definition", nullable = false)
     private Boolean requireProjectDefinition;
-
-    @Column(name = "imported", nullable = false)
-    private Boolean imported;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -133,10 +121,6 @@ public class Program extends ResourceOpportunity {
     @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
-
-    @Column(name = "end_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate endDate;
 
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -232,7 +216,7 @@ public class Program extends ResourceOpportunity {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Institution getPartner() {
         return partner;
@@ -276,16 +260,6 @@ public class Program extends ResourceOpportunity {
     @Override
     public Application getApplication() {
         return null;
-    }
-
-    @Override
-    public String getReferrer() {
-        return referrer;
-    }
-
-    @Override
-    public void setReferrer(String referrer) {
-        this.referrer = referrer;
     }
 
     public Advert getAdvert() {
@@ -345,16 +319,6 @@ public class Program extends ResourceOpportunity {
     }
 
     @Override
-    public Document getBackgroundImage() {
-        return backgroundImage;
-    }
-
-    @Override
-    public void setBackgroundImage(Document backgroundImage) {
-        this.backgroundImage = backgroundImage;
-    }
-
-    @Override
     public Integer getDurationMinimum() {
         return durationMinimum;
     }
@@ -380,15 +344,6 @@ public class Program extends ResourceOpportunity {
 
     public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
-    }
-
-    @Override
-    public Boolean getImported() {
-        return imported;
-    }
-
-    public void setImported(Boolean imported) {
-        this.imported = imported;
     }
 
     @Override
@@ -439,14 +394,6 @@ public class Program extends ResourceOpportunity {
     @Override
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     @Override
@@ -649,16 +596,6 @@ public class Program extends ResourceOpportunity {
         return this;
     }
 
-    public Program withEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-        return this;
-    }
-
-    public Program withImported(Boolean imported) {
-        this.imported = imported;
-        return this;
-    }
-
     public Program withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
@@ -676,14 +613,8 @@ public class Program extends ResourceOpportunity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        ResourceSignature signature = super.getResourceSignature();
-        if (BooleanUtils.isTrue(imported)) {
-            signature.addProperty("importedCode", importedCode);
-        }
-        signature.addExclusion("state.id", PROGRAM_REJECTED);
-        signature.addExclusion("state.id", PROGRAM_WITHDRAWN);
-        signature.addExclusion("state.id", PROGRAM_DISABLED_COMPLETED);
-        return signature;
+        return super.getResourceSignature().addExclusion("state.id", PROGRAM_REJECTED).addExclusion("state.id", PROGRAM_WITHDRAWN)
+                .addExclusion("state.id", PROGRAM_DISABLED_COMPLETED);
     }
 
 }

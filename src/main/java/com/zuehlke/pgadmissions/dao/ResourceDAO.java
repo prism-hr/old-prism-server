@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -410,6 +411,14 @@ public class ResourceDAO {
                 .createAlias("partner", "partner", JoinType.INNER_JOIN) //
                 .add(Restrictions.ilike("partner.title", searchTerm, MatchMode.ANYWHERE))
                 .list();
+    }
+
+    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
+        return (LocalDate) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .setProjection(Projections.property("applicationCloseDate")) //
+                .addOrder(Order.desc("applicationCloseDate")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

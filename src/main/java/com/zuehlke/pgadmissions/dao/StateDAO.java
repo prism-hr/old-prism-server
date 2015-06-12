@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
 
 import java.util.List;
 
@@ -268,26 +269,6 @@ public class StateDAO {
                 .list();
     }
 
-    public List<NextStateRepresentation> getSelectableTransitionStates(State state, boolean importedResource) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("transitionState.id"), "state") //
-                        .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
-                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
-                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", state)) //
-                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
-                .add(Restrictions.isNotNull("transitionState"));
-
-        appendImportedResourceConstraint(criteria, importedResource);
-
-        return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
-                .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
-                .list();
-    }
-
     public List<StateTransitionDTO> getStateTransitions() {
         return (List<StateTransitionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.projectionList() //
@@ -341,7 +322,8 @@ public class StateDAO {
 
     private void appendImportedResourceConstraint(Criteria criteria, boolean importedResource) {
         if (importedResource) {
-            criteria.add(Restrictions.ne("transitionState.id", PROGRAM_DISABLED_COMPLETED)); //
+            criteria.add(Restrictions.not(
+                    Restrictions.in("transitionState.id", new PrismState[] { PROGRAM_DISABLED_COMPLETED, PROJECT_DISABLED_COMPLETED })));
         }
     }
 

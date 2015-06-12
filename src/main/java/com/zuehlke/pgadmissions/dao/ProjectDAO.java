@@ -32,17 +32,6 @@ public class ProjectDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void synchronizeProjectEndDates(Program program) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update Project " //
-                        + "set endDate = :baseline " //
-                        + "where program = :program " //
-                        + "and endDate < :baseline") //
-                .setParameter("program", program) //
-                .setParameter("baseline", program.getEndDate()) //
-                .executeUpdate();
-    }
-
     public void synchronizeProjectDueDates(Program program) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update Project " //
@@ -73,7 +62,6 @@ public class ProjectDAO {
         return (List<Project>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("state.id", PROJECT_DISABLED_PENDING_REACTIVATION)) //
-                .add(Restrictions.ge("endDate", baseline)) //
                 .list();
     }
 

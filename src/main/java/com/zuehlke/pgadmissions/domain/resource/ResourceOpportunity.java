@@ -7,6 +7,10 @@ import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
 public abstract class ResourceOpportunity extends ResourceParent {
 
+    public abstract String getImportedCode();
+
+    public abstract void setImportedCode(String importedCode);
+
     public abstract OpportunityType getOpportunityType();
 
     public abstract void setOpportunityType(OpportunityType opportunityType);
@@ -22,8 +26,6 @@ public abstract class ResourceOpportunity extends ResourceParent {
     public abstract Integer getDurationMaximum();
 
     public abstract void setDurationMaximum(Integer maximum);
-
-    public abstract Boolean getImported();
 
     public abstract Set<ResourceStudyOption> getStudyOptions();
 

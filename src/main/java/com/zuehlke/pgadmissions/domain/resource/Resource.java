@@ -60,10 +60,6 @@ public abstract class Resource implements UniqueEntity {
 
     public abstract Application getApplication();
 
-    public abstract String getReferrer();
-
-    public abstract void setReferrer(String referrer);
-
     public abstract State getState();
 
     public abstract void setState(State state);

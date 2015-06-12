@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -44,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -165,7 +165,8 @@ public class ResourceDAO {
             projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
 
-        projectionList.add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
+        projectionList.add(Projections.property("partner.id"), "partnerId") //
+                .add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
                 .add(Projections.property("user.id"), "creatorId") //
                 .add(Projections.property("user.firstName"), "creatorFirstName") //
                 .add(Projections.property("user.firstName2"), "creatorFirstName2") //
@@ -412,40 +413,12 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.groupProperty(scope.getLowerCamelName() + ".id")) //
-                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
-                .add(Restrictions.ilike("sponsor.title", searchTerm, MatchMode.ANYWHERE))
-                .list();
-    }
-
-    public Long getResourceSponsorCount(Resource resource) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.countDistinct("sponsorship.sponsor")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
-                .add(Restrictions.isNull("sponsorship.rejection")) //
+    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
+        return (LocalDate) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .setProjection(Projections.property("applicationCloseDate")) //
+                .addOrder(Order.desc("applicationCloseDate")) //
+                .setMaxResults(1) //
                 .uniqueResult();
-    }
-
-    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
-        return (List<ResourceSponsorRepresentation>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("sponsor.id"), "sponsorId") //
-                        .add(Projections.property("sponsor.title"), "sponsorTitle") //
-                        .add(Projections.property("sponsor.logoImage.id"), "sponsorLogoId") //
-                        .add(Projections.sum("sponsorship.amountConverted").as("sponsorshipProvided"), "sponsorshipProvided")) //
-                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
-                .add(Restrictions.isNull("sponsorship.rejection")) //
-                .addOrder(Order.desc("sponsorshipProvided")) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(10) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceSponsorRepresentation.class))
-                .list();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

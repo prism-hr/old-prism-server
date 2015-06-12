@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-
-import javax.validation.constraints.NotNull;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public class OpportunitiesQueryDTO {
 

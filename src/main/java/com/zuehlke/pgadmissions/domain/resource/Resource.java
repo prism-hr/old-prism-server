@@ -11,7 +11,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -42,10 +41,10 @@ public abstract class Resource implements UniqueEntity {
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);
-    
-    public abstract Department getDepartment();
-    
-    public abstract void setDepartment(Department department);
+
+    public abstract Institution getPartner();
+
+    public abstract void setPartner(Institution partner);
 
     public abstract Program getProgram();
 
@@ -144,6 +143,7 @@ public abstract class Resource implements UniqueEntity {
         if (parentResource.getId() != null) {
             setProject(parentResource.getProject());
             setProgram(parentResource.getProgram());
+            setPartner(parentResource.getPartner());
             setInstitution(parentResource.getInstitution());
             setSystem(parentResource.getSystem());
         }

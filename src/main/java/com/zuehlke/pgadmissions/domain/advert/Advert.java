@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.advert;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
-import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -32,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -58,27 +58,22 @@ public class Advert extends ResourceParentAttribute {
     @Column(name = "description")
     private String description;
 
+    @OneToOne
+    @JoinColumn(name = "background_image_id")
+    private Document backgroundImage;
+
     @Column(name = "homepage")
     private String homepage;
 
     @Column(name = "apply_homepage")
     private String applyHomepage;
-    
+
     @Column(name = "telephone")
     private String telephone;
 
     @OneToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-
-    @Column(name = "sponsorship_purpose")
-    private String sponsorshipPurpose;
-    
-    @Column(name = "sponsorship_target")
-    private BigDecimal sponsorshipTarget;
-
-    @Column(name = "sponsorship_secured")
-    private BigDecimal sponsorshipSecured;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -195,6 +190,14 @@ public class Advert extends ResourceParentAttribute {
         this.description = description;
     }
 
+    public Document getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Document backgroundImage) {
+        this.backgroundImage = backgroundImage;
+    }
+
     public final String getHomepage() {
         return homepage;
     }
@@ -225,30 +228,6 @@ public class Advert extends ResourceParentAttribute {
 
     public void setAddress(InstitutionAddress address) {
         this.address = address;
-    }
-
-    public String getSponsorshipPurpose() {
-        return sponsorshipPurpose;
-    }
-
-    public void setSponsorshipPurpose(String sponsorshipPurpose) {
-        this.sponsorshipPurpose = sponsorshipPurpose;
-    }
-
-    public BigDecimal getSponsorshipTarget() {
-        return sponsorshipTarget;
-    }
-
-    public void setSponsorshipTarget(BigDecimal sponsorshipTarget) {
-        this.sponsorshipTarget = sponsorshipTarget;
-    }
-
-    public BigDecimal getSponsorshipSecured() {
-        return sponsorshipSecured;
-    }
-
-    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
-        this.sponsorshipSecured = sponsorshipSecured;
     }
 
     public AdvertFinancialDetail getFee() {
@@ -355,8 +334,9 @@ public class Advert extends ResourceParentAttribute {
         return opportunity.getOpportunityType().getPrismOpportunityType();
     }
 
-    public Boolean getImported() {
-        return program != null && program.getImported();
+    public boolean isImported() {
+        ResourceOpportunity resource = getResourceOpportunity();
+        return resource == null ? false : resource.getImportedCode() != null;
     }
 
     public Advert withTitle(String title) {
@@ -365,7 +345,15 @@ public class Advert extends ResourceParentAttribute {
     }
 
     public ResourceParent getResource() {
-        return ObjectUtils.firstNonNull(project, program, institution);
+        return ObjectUtils.firstNonNull(getResourceParent(), getResourceOpportunity());
+    }
+
+    public ResourceParent getResourceParent() {
+        return ObjectUtils.firstNonNull(institution);
+    }
+
+    public ResourceOpportunity getResourceOpportunity() {
+        return ObjectUtils.firstNonNull(program, project);
     }
 
     public boolean isAdvertOfScope(PrismScope scope) {

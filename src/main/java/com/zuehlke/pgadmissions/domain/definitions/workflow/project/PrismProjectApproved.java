@@ -1,17 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.project;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_PROVIDE_SPONSORSHIP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_SPONSOR_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_SPONSOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_SPONSOR_TRANSITON;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateApproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectSuspendApproved;
@@ -33,15 +25,6 @@ public class PrismProjectApproved extends PrismWorkflowState {
 
         stateActions.add(projectEmailCreator()); //
         stateActions.add(projectEscalateApproved()); //
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(PROJECT_PROVIDE_SPONSORSHIP) //
-                .withCondition(ACCEPT_SPONSOR) //
-                .withNotifications(PROJECT_SPONSOR, PROJECT_SPONSOR_NOTIFICATION) //
-                .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION)
-                .withTransitions(PROJECT_SPONSOR_TRANSITON //
-                        .withRoleTransitions(PROJECT_CREATE_SPONSOR_GROUP))); //
-
         stateActions.add(projectSuspendApproved()); //
         stateActions.add(projectTerminateApproved()); //
         stateActions.add(projectViewEditApproved()); //

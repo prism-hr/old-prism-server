@@ -47,9 +47,8 @@ public class ProjectService {
         return entityService.getById(Project.class, id);
     }
 
-    public void synchronizeProjects(Program program) {
+    public void synchronizeProjectDueDates(Program program) {
         projectDAO.synchronizeProjectDueDates(program);
-        projectDAO.synchronizeProjectEndDates(program);
     }
 
     public void restoreProjects(Program program, LocalDate baseline) {
@@ -61,7 +60,6 @@ public class ProjectService {
             for (Project project : projects) {
                 project.setState(state);
                 project.setPreviousState(previousState);
-                project.setDueDate(project.getEndDate());
 
                 project.getResourceStates().clear();
                 project.getResourcePreviousStates().clear();

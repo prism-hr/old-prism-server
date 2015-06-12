@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.helpers.AdvertToExtendedRepresentationFunction;
 import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
 
 @RestController
@@ -36,9 +35,6 @@ public class OpportunityController {
 
     @Inject
     private AdvertToRepresentationFunction advertToRepresentationFunction;
-    
-    @Inject 
-    private AdvertToExtendedRepresentationFunction advertToExtendedRepresentationFunction;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
@@ -54,7 +50,7 @@ public class OpportunityController {
         if (advert == null) {
             throw new ResourceNotFoundException("Advert not found");
         }
-        return advertToExtendedRepresentationFunction.apply(advert);
+        return advertToRepresentationFunction.apply(advert);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")

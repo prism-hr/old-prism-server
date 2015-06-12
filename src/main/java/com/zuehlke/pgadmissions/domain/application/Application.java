@@ -104,6 +104,11 @@ public class Application extends Resource {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "institution_partner_id")
+    private Institution partner;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id")
     private Program program;
 
@@ -116,9 +121,6 @@ public class Application extends Resource {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id")
     private Advert advert;
-
-    @Column(name = "referrer")
-    private String referrer;
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -351,6 +353,16 @@ public class Application extends Resource {
     }
 
     @Override
+    public Institution getPartner() {
+        return partner;
+    }
+
+    @Override
+    public void setPartner(Institution partner) {
+        this.partner = partner;
+    }
+
+    @Override
     public Program getProgram() {
         return program;
     }
@@ -381,16 +393,6 @@ public class Application extends Resource {
     @Override
     public Application getApplication() {
         return this;
-    }
-
-    @Override
-    public String getReferrer() {
-        return referrer;
-    }
-
-    @Override
-    public void setReferrer(String referrer) {
-        this.referrer = referrer;
     }
 
     public ApplicationAddress getAddress() {

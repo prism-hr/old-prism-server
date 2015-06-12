@@ -402,17 +402,6 @@
     </mapping>
     
     <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.comment.CommentSponsorship
-        </class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentSponsorshipRepresentation
-        </class-b>
-        <field>
-            <a>rejection.id</a>
-            <b>rejection</b>
-        </field>
-    </mapping>
-    
-    <mapping>
         <class-a>com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO
         </class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation

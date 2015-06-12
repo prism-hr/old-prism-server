@@ -48,9 +48,14 @@ public class System extends Resource {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "institution_partner_id")
+    private Institution partner;
+
     @Column(name = "title", nullable = false, unique = true)
     private String title;
-    
+
     @Column(name = "minimum_wage", nullable = false)
     private BigDecimal minimumWage;
 
@@ -213,6 +218,16 @@ public class System extends Resource {
     }
 
     @Override
+    public Institution getPartner() {
+        return partner;
+    }
+
+    @Override
+    public void setPartner(Institution partner) {
+        return;
+    }
+
+    @Override
     public Program getProgram() {
         return null;
     }
@@ -245,15 +260,6 @@ public class System extends Resource {
     @Override
     public Application getApplication() {
         return null;
-    }
-
-    @Override
-    public String getReferrer() {
-        return null;
-    }
-
-    @Override
-    public void setReferrer(String referrer) {
     }
 
     @Override
@@ -441,7 +447,7 @@ public class System extends Resource {
         this.id = id;
         return this;
     }
-    
+
     public System withTitle(String title) {
         this.title = title;
         return this;
@@ -451,7 +457,7 @@ public class System extends Resource {
         this.minimumWage = minimumWage;
         return this;
     }
-    
+
     public System withUser(User user) {
         this.user = user;
         return this;

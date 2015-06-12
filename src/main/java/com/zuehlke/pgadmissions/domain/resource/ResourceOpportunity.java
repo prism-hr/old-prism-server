@@ -7,6 +7,10 @@ import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
 public abstract class ResourceOpportunity extends ResourceParent {
 
+    public abstract String getImportedCode();
+
+    public abstract void setImportedCode(String importedCode);
+
     public abstract OpportunityType getOpportunityType();
 
     public abstract void setOpportunityType(OpportunityType opportunityType);
@@ -23,8 +27,6 @@ public abstract class ResourceOpportunity extends ResourceParent {
 
     public abstract void setDurationMaximum(Integer maximum);
 
-    public abstract Boolean getImported();
-
     public abstract Set<ResourceStudyOption> getStudyOptions();
 
     public void addStudyOption(ResourceStudyOption studyOption) {
@@ -33,8 +35,8 @@ public abstract class ResourceOpportunity extends ResourceParent {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("opportunityType", getOpportunityType())
-                .addProperty("title", getTitle());
+        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("partner", getPartner())
+                .addProperty("opportunityType", getOpportunityType()).addProperty("title", getTitle());
     }
 
 }

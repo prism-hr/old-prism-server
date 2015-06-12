@@ -172,24 +172,34 @@ public class ApplicationService {
 
     public LocalDate getEarliestStartDate(ResourceStudyOption resourceStudyOption, LocalDate baseline) {
         if (resourceStudyOption != null) {
-            LocalDate studyOptionStart = resourceStudyOption.getApplicationStartDate();
-            LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
-            earliestStartDate = earliestStartDate.withDayOfWeek(MONDAY);
-            return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
-        } else {
-            return new LocalDate().withDayOfWeek(MONDAY);
+            LocalDate applicationStartDate = resourceStudyOption.getApplicationStartDate();
+            LocalDate applicationCloseDate = resourceStudyOption.getApplicationCloseDate();
+
+            if (!(applicationStartDate == null || applicationCloseDate == null)) {
+                LocalDate studyOptionStart = resourceStudyOption.getApplicationStartDate();
+                LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
+                earliestStartDate = earliestStartDate.withDayOfWeek(MONDAY);
+                return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
+            }
         }
+
+        return new LocalDate().withDayOfWeek(MONDAY);
     }
 
     public LocalDate getLatestStartDate(Application application, ResourceStudyOption resourceStudyOption) {
         if (resourceStudyOption != null) {
-            LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
-                    resourceStudyOption.getResource().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
-            LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
-            return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
-        } else {
-            return application.getInstitution().getEndDate();
+            LocalDate applicationStartDate = resourceStudyOption.getApplicationStartDate();
+            LocalDate applicationCloseDate = resourceStudyOption.getApplicationCloseDate();
+
+            if (!(applicationStartDate == null || applicationCloseDate == null)) {
+                LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
+                        resourceStudyOption.getResource().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
+                LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
+                return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
+            }
         }
+
+        return new LocalDate().plusYears(1);
     }
 
     public String getApplicationExportReference(Application application) {
@@ -268,7 +278,7 @@ public class ApplicationService {
                 .withPrimaryThemes(application.getPrimaryThemeDisplay()).withSecondaryThemes(application.getSecondaryThemeDisplay())
                 .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personalDetailNull ? null : personalDetail.getSkype())
                 .withStudyOption(studyOption == null ? null : loader.load(programDetail.getStudyOptionDisplay().getDisplayProperty()))
-                .withReferralSource(programDetail == null ? null : programDetail.getReferralSourceDisplay()).withReferrer(application.getReferrer());
+                .withReferralSource(programDetail == null ? null : programDetail.getReferralSourceDisplay());
 
         ApplicationQualification latestQualification = applicationDAO.getLatestApplicationQualification(application);
         if (latestQualification != null) {
@@ -475,9 +485,9 @@ public class ApplicationService {
             }
 
             return recommended;
-        } else {
-            return baseline.withDayOfWeek(MONDAY).plusWeeks(4);
         }
+
+        return baseline.withDayOfWeek(MONDAY).plusWeeks(4);
     }
 
     public static class ApplicationProcessingMonth {

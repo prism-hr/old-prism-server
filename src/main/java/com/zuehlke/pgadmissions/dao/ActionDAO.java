@@ -112,7 +112,7 @@ public class ActionDAO {
     }
 
     public List<ResourceListActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
-            Integer programId, Integer projectId, Integer applicationId, User user) {
+            Integer partnerId, Integer programId, Integer projectId, Integer applicationId, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (List<ResourceListActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -122,8 +122,6 @@ public class ActionDAO {
                         .add(Projections.max("primaryState"), "primaryState")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.advertInstitutions", "advertInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -145,7 +143,7 @@ public class ActionDAO {
                                 .add(Restrictions.eq("stateActionAssignment.partnerMode", false))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("stateActionAssignment.partnerMode", true)) //
-                                .add(Restrictions.eqProperty("userRole.institution.id", "advertInstitution.institution")))) //
+                                .add(Restrictions.eq("userRole.institution.id", partnerId)))) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //

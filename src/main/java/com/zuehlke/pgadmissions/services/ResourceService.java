@@ -59,6 +59,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -84,6 +85,9 @@ import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDefinitionDTO;
@@ -97,7 +101,6 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportF
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
@@ -151,7 +154,10 @@ public class ResourceService {
 
     @Inject
     private DepartmentService departmentService;
-    
+
+    @Inject
+    private InstitutionService institutionService;
+
     @Inject
     private ImportedEntityService importedEntityService;
 
@@ -530,25 +536,18 @@ public class ResourceService {
     }
 
     public ResourceStudyOption getStudyOption(ResourceOpportunity resource, StudyOption studyOption) {
-        if (resource.getResourceScope() == PROGRAM) {
-            Program program = resource.getProgram();
-            if (BooleanUtils.isTrue(program.getImported())) {
-                return resourceDAO.getResourceAttributeStrict(resource, ResourceStudyOption.class, "studyOption", studyOption);
-            }
+        if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
+            return resourceDAO.getResourceAttributeStrict(resource, ResourceStudyOption.class, "studyOption", studyOption);
         }
-
         return resourceDAO.getResourceAttribute(resource, ResourceStudyOption.class, "studyOption", studyOption);
     }
 
     public List<PrismStudyOption> getStudyOptions(ResourceOpportunity resource) {
-        if (resource.getResourceScope() == PROGRAM) {
-            Program program = resource.getProgram();
-            if (BooleanUtils.isTrue(program.getImported())) {
-                List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
-                return Lists.transform(studyOptions, Functions.compose(
-                        new ToPropertyFunction<StudyOption, PrismStudyOption>("prismStudyOption"),
-                        new ToPropertyFunction<ResourceStudyOption, StudyOption>("studyOption")));
-            }
+        if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
+            List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
+            return Lists.transform(studyOptions, Functions.compose(
+                    new ToPropertyFunction<StudyOption, PrismStudyOption>("prismStudyOption"),
+                    new ToPropertyFunction<ResourceStudyOption, StudyOption>("studyOption")));
         }
 
         List<PrismStudyOption> filteredStudyOptions = Lists.newLinkedList();
@@ -589,8 +588,9 @@ public class ResourceService {
     }
 
     public void setResourceAttributes(ResourceOpportunity resource, OpportunityDTO resourceDTO) {
-        if (BooleanUtils.isTrue(resource.getImported())) {
-            resource.setOpportunityType(resource.getProgram().getOpportunityType());
+        Program program = resource.getProgram();
+        if (!program.sameAs(resource) && program.getAdvert().isImported()) {
+            resource.setOpportunityType(program.getOpportunityType());
         } else {
             OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, resource.getInstitution(), resourceDTO
                     .getOpportunityType().name());
@@ -641,7 +641,7 @@ public class ResourceService {
         resource.getStudyOptions().clear();
         entityService.flush();
 
-        LocalDate close = resource.getEndDate();
+        LocalDate close = getResourceEndDate(resource);
         if (prismStudyOptions == null) {
             PrismScope resourceScope = resource.getResourceScope();
             if (!resourceScope.equals(INSTITUTION)) {
@@ -650,7 +650,7 @@ public class ResourceService {
         }
 
         for (PrismStudyOption prismStudyOption : prismStudyOptions) {
-            if (close.isAfter(baseline)) {
+            if (close == null || close.isAfter(baseline)) {
                 StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
                 resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
                         .withApplicationCloseDate(close));
@@ -671,6 +671,7 @@ public class ResourceService {
 
     public void update(PrismScope resourceScope, Integer resourceId, OpportunityDTO resourceDTO, Comment comment) throws Exception {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
+        updatePartner(comment.getUser(), resource, resourceDTO);
 
         DepartmentDTO departmentDTO = resourceDTO.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(resource.getInstitution(), departmentDTO);
@@ -689,7 +690,7 @@ public class ResourceService {
         setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO> newArrayList() : resourceConditions);
         setStudyLocations(resource, attributes.getStudyLocations());
 
-        if (!resource.getImported()) {
+        if (!resource.getAdvert().isImported()) {
             OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
                     resource.getInstitution(), resourceDTO.getOpportunityType().name());
             resource.setOpportunityType(opportunityType);
@@ -699,18 +700,55 @@ public class ResourceService {
         }
     }
 
+    public void updatePartner(User user, ResourceOpportunity resource, OpportunityDTO newResource) throws Exception {
+        InstitutionPartnerDTO partnerDTO = newResource.getPartner();
+        if (partnerDTO != null) {
+            Integer partnerId = partnerDTO.getPartnerId();
+            InstitutionDTO newPartnerDTO = partnerDTO.getPartner();
+            if (newPartnerDTO != null) {
+                Institution partner = institutionService.createPartner(user, partnerDTO.getPartner());
+                resource.setPartner(partner);
+            } else if (partnerId != null) {
+                Institution partner = institutionService.getById(partnerId);
+                if (partner == null) {
+                    throw new WorkflowEngineException("Invalid partner institution");
+                }
+                resource.setPartner(partner);
+            }
+        }
+    }
+
+    public void adoptPartnerAddress(ResourceOpportunity resource, Advert advert) {
+        Institution partner = resource.getPartner();
+        if (partner != null) {
+            InstitutionAddress address = advertService.getAddressCopy(partner.getAdvert().getAddress());
+            entityService.save(address);
+            advert.setAddress(address);
+        }
+    }
+
     public void deleteElapsedStudyOptions() {
         LocalDate baseline = new LocalDate();
         resourceDAO.deleteElapsedStudyOptionInstances(baseline);
         resourceDAO.deleteElapsedStudyOptions(baseline);
     }
 
-    public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
-        return resourceDAO.getResourcesByPartner(scope, searchTerm);
+    public void synchronizePartner(Resource resource, Comment comment) {
+        comment.setPartner(resource.getPartner());
     }
 
-    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
-        return resourceDAO.getResourcesBySponsor(scope, searchTerm);
+    public void resynchronizePartner(ResourceOpportunity resource, Comment comment) {
+        Institution newPartner = resource.getPartner();
+        Institution oldPartner = resourceDAO.getPreviousPartner(resource);
+        if (oldPartner == null) {
+            comment.setPartner(newPartner);
+        } else if (!(oldPartner == null || newPartner == null) && !oldPartner.getId().equals(newPartner.getId())) {
+            comment.setPartner(newPartner);
+        }
+    }
+
+    public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
+        return resourceDAO.getResourcesByPartner(scope, searchTerm);
     }
 
     public ResourceSummaryRepresentation getResourceSummaryRepresentation(PrismScope resourceScope, Integer resourceId) {
@@ -744,16 +782,8 @@ public class ResourceService {
         return plotsRepresentation;
     }
 
-    public Integer getResourceSponsorCount(ResourceParent resource) {
-        return resourceDAO.getResourceSponsorCount(resource).intValue();
-    }
-
-    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
-        return resourceDAO.getResourceTopTenSponsors(resource);
-    }
-
     public Integer getBackgroundImage(ResourceParent resource) {
-        Document backgroundImage = resource.getBackgroundImage();
+        Document backgroundImage = resource.getAdvert().getBackgroundImage();
         if (backgroundImage == null) {
             Resource parent = resource.getParentResource();
             if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
@@ -773,6 +803,10 @@ public class ResourceService {
             }
         }
         return conditions;
+    }
+
+    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
+        return resourceDAO.getResourceEndDate(resource);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

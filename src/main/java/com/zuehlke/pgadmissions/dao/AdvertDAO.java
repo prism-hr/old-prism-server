@@ -288,18 +288,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Advert> getAdvertsWithSponsorship(Institution institution) {
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .createAlias("project", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .add(getInstitutionConstraint(institution)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.gt("sponsorshipTarget", new BigDecimal(0.00))) //
-                        .add(Restrictions.gt("sponsorshipSecured", new BigDecimal(0.00)))) //
-                .list();
-    }
-
     private Junction getResourceConditionConstraint(String tableReference) {
         return Restrictions.disjunction() //
                 .add(Restrictions.eq(tableReference + ".partnerMode", true)) //

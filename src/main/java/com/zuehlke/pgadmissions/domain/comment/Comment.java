@@ -151,9 +151,6 @@ public class Comment {
     @Column(name = "removed_partner")
     private Boolean removedPartner;
 
-    @Embedded
-    private CommentSponsorship sponsorship;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
     private PrismYesNoUnsureResponse applicationEligible;
@@ -362,14 +359,6 @@ public class Comment {
 
     public void setRemovedPartner(Boolean removedPartner) {
         this.removedPartner = removedPartner;
-    }
-
-    public CommentSponsorship getSponsorship() {
-        return sponsorship;
-    }
-
-    public void setSponsorship(CommentSponsorship sponsorship) {
-        this.sponsorship = sponsorship;
     }
 
     public PrismYesNoUnsureResponse getApplicationEligible() {
@@ -854,10 +843,6 @@ public class Comment {
 
     public boolean isPartnershipComment() {
         return partner != null;
-    }
-
-    public boolean isSponsorshipComment() {
-        return sponsorship != null;
     }
 
     public boolean isProjectPartnerApproveComment() {

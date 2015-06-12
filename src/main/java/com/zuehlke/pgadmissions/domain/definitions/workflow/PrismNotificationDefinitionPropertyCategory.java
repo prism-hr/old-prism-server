@@ -8,7 +8,6 @@ public enum PrismNotificationDefinitionPropertyCategory {
     ACTION_GLOBAL, //
     COMMENT_GLOBAL, //
     COMMENT_TRANSITION, //
-    COMMENT_SPONSOR, //
     APPLICATION_GLOBAL, //
     APPLICATION_INTERVIEW_SCHEDULED, //
     APPLICATION_APPROVED, //

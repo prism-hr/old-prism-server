@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-import java.math.BigDecimal;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
@@ -31,8 +29,6 @@ public class AdvertDTO {
 
     @Valid
     private InstitutionAddressDTO address;
-
-    private BigDecimal sponsorshipRequired;
 
     public String getTitle() {
         return title;
@@ -72,14 +68,6 @@ public class AdvertDTO {
 
     public void setAddress(InstitutionAddressDTO address) {
         this.address = address;
-    }
-
-    public BigDecimal getSponsorshipRequired() {
-        return sponsorshipRequired;
-    }
-
-    public void setSponsorshipRequired(BigDecimal sponsorshipRequired) {
-        this.sponsorshipRequired = sponsorshipRequired;
     }
 
 }

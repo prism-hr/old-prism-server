@@ -101,7 +101,6 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportF
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
@@ -758,10 +757,6 @@ public class ResourceService {
         return resourceDAO.getResourcesByPartner(scope, searchTerm);
     }
 
-    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
-        return resourceDAO.getResourcesBySponsor(scope, searchTerm);
-    }
-
     public ResourceSummaryRepresentation getResourceSummaryRepresentation(PrismScope resourceScope, Integer resourceId) {
         ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
         ResourceSummaryRepresentation representation = new ResourceSummaryRepresentation();
@@ -791,14 +786,6 @@ public class ResourceService {
             plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
         }
         return plotsRepresentation;
-    }
-
-    public Integer getResourceSponsorCount(ResourceParent resource) {
-        return resourceDAO.getResourceSponsorCount(resource).intValue();
-    }
-
-    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
-        return resourceDAO.getResourceTopTenSponsors(resource);
     }
 
     public Integer getBackgroundImage(ResourceParent resource) {

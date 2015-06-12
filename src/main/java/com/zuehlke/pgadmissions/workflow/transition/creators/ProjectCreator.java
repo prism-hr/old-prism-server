@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
+
+import javax.inject.Inject;
+
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
@@ -14,12 +21,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 @Component
 public class ProjectCreator implements ResourceCreator {

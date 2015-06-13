@@ -30929,11 +30929,6 @@
         <domicile>DE</domicile>
     </institution>
     <institution>
-        <code>CUST000350</code>
-        <name>MBM Government Engineering College, JNVU, Jodhpur, Rajasthan</name>
-        <domicile>IN</domicile>
-    </institution>
-    <institution>
         <code>CUST000351</code>
         <name>Mohamed Ali School</name>
         <domicile>CA</domicile>
@@ -31372,11 +31367,6 @@
         <code>CUST000438</code>
         <name>Sekolah Menengah Sultan Muhammad Jamalul Alam</name>
         <domicile>ZA</domicile>
-    </institution>
-    <institution>
-        <code>CUST000439</code>
-        <name>Rashtreeya Vidyalaya College of Engineering</name>
-        <domicile>IN</domicile>
     </institution>
     <institution>
         <code>CUST000440</code>
@@ -31943,11 +31933,6 @@
         <domicile>DE</domicile>
     </institution>
     <institution>
-        <code>CUST000552</code>
-        <name>University of Detroit Mercy</name>
-        <domicile>US</domicile>
-    </institution>
-    <institution>
         <code>CUST000553</code>
         <name>University of Eastern Finland</name>
         <domicile>FI</domicile>
@@ -31981,11 +31966,6 @@
         <code>CUST000559</code>
         <name>university of london external</name>
         <domicile>XK</domicile>
-    </institution>
-    <institution>
-        <code>CUST000560</code>
-        <name>Université Paris Sud XI</name>
-        <domicile>FR</domicile>
     </institution>
     <institution>
         <code>CUST000561</code>
@@ -32116,11 +32096,6 @@
         <code>CUST000586</code>
         <name>Urmia University of Technology</name>
         <domicile>ZA</domicile>
-    </institution>
-    <institution>
-        <code>CUST000587</code>
-        <name>university of london external</name>
-        <domicile>XK</domicile>
     </institution>
     <institution>
         <code>CUST000588</code>
@@ -32308,18 +32283,8 @@
         <domicile>DE</domicile>
     </institution>
     <institution>
-        <code>CUST000625</code>
-        <name>Xavier Institute of Management (XLRI)</name>
-        <domicile>IN</domicile>
-    </institution>
-    <institution>
         <code>CUST000626</code>
         <name>Xi'an Jiaotong Liverpool University</name>
-        <domicile>CN</domicile>
-    </institution>
-    <institution>
-        <code>CUST000627</code>
-        <name>Xi'an Jiaotong-Liverpool University</name>
         <domicile>CN</domicile>
     </institution>
     <institution>

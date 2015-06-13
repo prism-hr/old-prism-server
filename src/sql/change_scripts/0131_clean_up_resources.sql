@@ -99,3 +99,7 @@ alter table system
 	modify column amazon_access_key varchar(50) after cipher_salt,
 	modify column amazon_secret_key varchar(50) after amazon_access_key
 ;
+
+alter table imported_age_range
+	drop foreign key imported_age_range_ibfk_1
+;

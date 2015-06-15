@@ -20,7 +20,7 @@ public enum PrismMaintenanceTask {
     SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ResourceServiceHelper.class), //
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class), //
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class), //
-    SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class), //
+    SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class),//
     SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class), //
     SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class), //
     SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class), //

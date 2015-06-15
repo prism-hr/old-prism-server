@@ -42,7 +42,8 @@ public class ImportedInstitutionExtractor implements ImportedEntityExtractor {
             cells.add(prepareStringForSqlInsert(importedInstitution.getName()));
             cells.add(prepareStringForSqlInsert(new Integer(1).toString()));
             cells.add(prepareStringForSqlInsert(new Integer(0).toString()));
-
+            cells.add(prepareStringForSqlInsert(importedInstitution.getUcasId()));
+            cells.add(prepareStringForSqlInsert(importedInstitution.getFacebookId()));
             String row = prepareCellsForSqlInsert(cells);
             rows.add(row);
         }

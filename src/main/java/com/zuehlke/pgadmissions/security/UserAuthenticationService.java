@@ -8,7 +8,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
-public class UserAuthenticationService {
+public class
+        UserAuthenticationService {
 
     public boolean validateCredentials(User user, String password) {
         return password != null && user != null && user.isEnabled() && checkPassword(user, password);

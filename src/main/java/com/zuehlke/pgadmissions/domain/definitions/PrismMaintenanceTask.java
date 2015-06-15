@@ -33,7 +33,7 @@ public enum PrismMaintenanceTask {
 
     private Class<? extends AbstractServiceHelper> executor;
 
-    private PrismMaintenanceTask(Class<? extends AbstractServiceHelper> executor) {
+    PrismMaintenanceTask(Class<? extends AbstractServiceHelper> executor) {
         this.executor = executor;
     }
 

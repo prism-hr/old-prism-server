@@ -1,13 +1,10 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.services.ApplicationExportService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class ApplicationExportServiceHelper implements AbstractServiceHelper {
@@ -20,10 +17,11 @@ public class ApplicationExportServiceHelper implements AbstractServiceHelper {
 
     @Override
     public void execute() throws Exception {
-        List<Integer> applicationIds = applicationService.getApplicationsForExport();
-        for (Integer applicationId : applicationIds) {
-            applicationExportService.submitExportRequest(applicationId);
-        }
+        // TODO reimplement
+//        List<Integer> applicationIds = applicationService.getApplicationsForExport();
+//        for (Integer applicationId : applicationIds) {
+//            applicationExportService.submitExportRequest(applicationId);
+//        }
     }
 
 }

@@ -154,9 +154,9 @@ public class ImportedEntityDAO {
     }
 
     public void mergeImportedEntities(String table, String columns, String values) {
-        sessionFactory.getCurrentSession().createSQLQuery(//
-                "insert into " + table + " (" + columns + ") " //
-                        + "values " + values + " " //
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "insert into " + table + " (" + columns + ") "
+                        + "values " + values + " "
                         + "on duplicate key update enabled = '1'")
                 .executeUpdate();
     }

@@ -15,12 +15,15 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADVERTISER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -53,7 +56,12 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionRole(APPLICATION_REFEREE) //
                     .withPropertyDefinition(APPLICATION_ASSIGN_REFEREE)), //
 
-    APPLICATION_DELETE_REFEREE_GROUP(
+    APPLICATION_UPDATE_REFEREE_GROUP(
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_REFEREE) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(APPLICATION_REFEREE) //
+                    .withPropertyDefinition(APPLICATION_ASSIGN_REFEREE), //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_REFEREE) //
                     .withTransitionType(DELETE) //
@@ -275,7 +283,24 @@ public enum PrismRoleTransitionGroup {
             new PrismRoleTransition() //
                     .withRole(PROJECT_SECONDARY_SUPERVISOR) //
                     .withTransitionType(DELETE) //
-                    .withTransitionRole(PROJECT_PRIMARY_SUPERVISOR)), //
+                    .withTransitionRole(PROJECT_PRIMARY_SUPERVISOR),
+            new PrismRoleTransition() //
+                    .withRole(PROJECT_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(PROJECT_SPONSOR), //
+            new PrismRoleTransition() //
+                    .withRole(PROJECT_SPONSOR) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(PROJECT_SPONSOR)), //
+
+    PROJECT_CREATE_SPONSOR_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(PROJECT_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(PROJECT_SPONSOR) //
+                    .withRestrictToOwner() //
+                    .withMinimumPermitted(1) //
+                    .withMaximumPermitted(1)),
 
     PROJECT_CREATE_INSTITUTION_ADVERTISER_GROUP( //
             new PrismRoleTransition() //
@@ -319,6 +344,14 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionType(DELETE) //
                     .withTransitionRole(PROGRAM_APPROVER),
             new PrismRoleTransition() //
+                    .withRole(PROGRAM_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(PROGRAM_SPONSOR), //
+            new PrismRoleTransition() //
+                    .withRole(PROGRAM_SPONSOR) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(PROGRAM_SPONSOR),
+            new PrismRoleTransition() //
                     .withRole(PROGRAM_VIEWER) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(PROGRAM_VIEWER),
@@ -326,6 +359,15 @@ public enum PrismRoleTransitionGroup {
                     .withRole(PROGRAM_VIEWER) //
                     .withTransitionType(DELETE) //
                     .withTransitionRole(PROGRAM_VIEWER)),
+
+    PROGRAM_CREATE_SPONSOR_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(PROGRAM_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(PROGRAM_SPONSOR) //
+                    .withRestrictToOwner() //
+                    .withMinimumPermitted(1) //
+                    .withMaximumPermitted(1)),
 
     PROGRAM_CREATE_INSTITUTION_ADVERTISER_GROUP( //
             new PrismRoleTransition() //
@@ -367,7 +409,24 @@ public enum PrismRoleTransitionGroup {
             new PrismRoleTransition() //
                     .withRole(INSTITUTION_ADMITTER) //
                     .withTransitionType(DELETE) //
-                    .withTransitionRole(INSTITUTION_ADMITTER)),
+                    .withTransitionRole(INSTITUTION_ADMITTER),
+            new PrismRoleTransition() //
+                    .withRole(INSTITUTION_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(INSTITUTION_SPONSOR), //
+            new PrismRoleTransition() //
+                    .withRole(INSTITUTION_SPONSOR) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(INSTITUTION_SPONSOR)),
+
+    INSTITUTION_CREATE_SPONSOR_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(INSTITUTION_SPONSOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(INSTITUTION_SPONSOR) //
+                    .withRestrictToOwner() //
+                    .withMinimumPermitted(1) //
+                    .withMaximumPermitted(1)),
 
     SYSTEM_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //

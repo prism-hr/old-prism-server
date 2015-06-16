@@ -95,7 +95,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DASHBOARD(SYSTEM_GLOBAL, "Dashboard"),
     SYSTEM_DIVISIONS(SYSTEM_GLOBAL, "Divisions"),
     SYSTEM_OPPORTUNITY(SYSTEM_GLOBAL, "Opportunity"),
-    SYSTEM_PROMOTED_BY(SYSTEM_GLOBAL, "Promoted by"), 
+    SYSTEM_PROMOTED_BY(SYSTEM_GLOBAL, "Promoted by"),
     SYSTEM_OPPORTUNITIES(SYSTEM_GLOBAL, "Opportunities"),
     SYSTEM_DEADLINE(SYSTEM_GLOBAL, "Deadline"),
     SYSTEM_DEADLINES(SYSTEM_GLOBAL, "Deadlines"),
@@ -997,15 +997,20 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_MIN_ASSIGNED_USERS(SYSTEM_VALIDATION_ERROR, "You have to assign more users."),
     SYSTEM_VALIDATION_MAX_ASSIGNED_USERS(SYSTEM_VALIDATION_ERROR, "Too many users selected."),
 
-    SYSTEM_VALIDATION_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked"),
-    SYSTEM_VALIDATION_SECTION_NOT_COMPLETED(SYSTEM_VALIDATION_ERROR, "This section needs to be completed"),
-    SYSTEM_VALIDATION_SECTION_ITEM_NOT_COMPLETED(SYSTEM_VALIDATION_ERROR, "At least one of the items is not completed"),
-    SYSTEM_VALIDATION_SECTION_MIN_ITEMS(SYSTEM_VALIDATION_ERROR, "Min items: {{min}}"),
-    SYSTEM_VALIDATION_SECTION_MAX_ITEMS(SYSTEM_VALIDATION_ERROR, "Max items: {{max}}"),
+    SYSTEM_VALIDATION_BAD_CREDENTIALS(SYSTEM_VALIDATION_ERROR, "Invalid Username or Password."),
+    SYSTEM_VALIDATION_INVALID_PASSWORD(SYSTEM_VALIDATION_ERROR, "Invalid Password."),
+    SYSTEM_VALIDATION_ACCOUNT_NOT_ACTIVATED(SYSTEM_VALIDATION_ERROR, "Account is not activated."),
+    SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE(SYSTEM_VALIDATION_ERROR, "Given email is already in use."),
+    SYSTEM_VALIDATION_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked."),
 
-    SYSTEM_DUPLICATE_INSTITUTION(SYSTEM_VALIDATION_ERROR, "Institution already exists"),
-    SYSTEM_DUPLICATE_PROGRAM(SYSTEM_VALIDATION_ERROR, "Program already exists"),
-    SYSTEM_DUPLICATE_PROJECT(SYSTEM_VALIDATION_ERROR, "Project already exists"),
+    SYSTEM_VALIDATION_SECTION_NOT_COMPLETED(SYSTEM_VALIDATION_ERROR, "This section needs to be completed."),
+    SYSTEM_VALIDATION_SECTION_ITEM_NOT_COMPLETED(SYSTEM_VALIDATION_ERROR, "At least one of the items is not completed."),
+    SYSTEM_VALIDATION_SECTION_MIN_ITEMS(SYSTEM_VALIDATION_ERROR, "Min items: {{min}}."),
+    SYSTEM_VALIDATION_SECTION_MAX_ITEMS(SYSTEM_VALIDATION_ERROR, "Max items: {{max}}."),
+
+    SYSTEM_DUPLICATE_INSTITUTION(SYSTEM_VALIDATION_ERROR, "Institution already exists."),
+    SYSTEM_DUPLICATE_PROGRAM(SYSTEM_VALIDATION_ERROR, "Program already exists."),
+    SYSTEM_DUPLICATE_PROJECT(SYSTEM_VALIDATION_ERROR, "Project already exists."),
 
     /*
      * *************** SYSTEM INTEGRATION *********************
@@ -1571,13 +1576,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_STATISTICS_HEADER(SYSTEM_HTML_STATISTICS, "Statistics: {{title}}"),
-
-    /*
-     * *************** SYSTEM ERROR MESSAGES *********************
-     */
-
-    // TODO implement error messages
-    // SYSTEM_HTML_COMMON_EDIT_BUTTON(SYSTEM_ERROR_MESSAGES, "Edit"),
 
     /*
      * *************** SYSTEM PERFORMANCE INDICATORS *********************

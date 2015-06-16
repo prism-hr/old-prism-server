@@ -18,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
@@ -63,6 +62,9 @@ public class Project extends ResourceOpportunity {
     @Column(name = "code", unique = true)
     private String code;
 
+    @Column(name = "imported_code")
+    private String importedCode;
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "system_id", nullable = false)
@@ -97,9 +99,6 @@ public class Project extends ResourceOpportunity {
     @JoinColumn(name = "opportunity_type_id", nullable = false)
     private OpportunityType opportunityType;
 
-    @Column(name = "referrer")
-    private String referrer;
-
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -129,10 +128,6 @@ public class Project extends ResourceOpportunity {
     @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
-
-    @Column(name = "end_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate endDate;
 
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -227,6 +222,16 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
+    public String getImportedCode() {
+        return importedCode;
+    }
+
+    @Override
+    public void setImportedCode(String importedCode) {
+        this.importedCode = importedCode;
+    }
+
+    @Override
     public System getSystem() {
         return system;
     }
@@ -302,16 +307,6 @@ public class Project extends ResourceOpportunity {
     @Override
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    @Override
-    public Document getBackgroundImage() {
-        return backgroundImage;
-    }
-
-    @Override
-    public void setBackgroundImage(Document backgroundImage) {
-        this.backgroundImage = backgroundImage;
     }
 
     @Override
@@ -403,16 +398,6 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public String getReferrer() {
-        return referrer;
-    }
-
-    @Override
-    public void setReferrer(String referrer) {
-        this.referrer = referrer;
-    }
-
-    @Override
     public State getPreviousState() {
         return previousState;
     }
@@ -420,14 +405,6 @@ public class Project extends ResourceOpportunity {
     @Override
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     @Override
@@ -543,10 +520,6 @@ public class Project extends ResourceOpportunity {
         return resourceConditions;
     }
 
-    public Boolean getImported() {
-        return program != null && BooleanUtils.isTrue(program.getImported());
-    }
-
     public Project withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
@@ -599,11 +572,6 @@ public class Project extends ResourceOpportunity {
 
     public Project withDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
-        return this;
-    }
-
-    public Project withEndDate(LocalDate endDate) {
-        this.endDate = endDate;
         return this;
     }
 

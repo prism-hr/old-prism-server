@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -42,7 +41,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
-import com.zuehlke.pgadmissions.domain.comment.CommentSponsorship;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
@@ -64,17 +62,13 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationInterviewInstructionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentSponsorshipDTO;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -83,7 +77,6 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationIn
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentSponsorshipRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
@@ -115,12 +108,6 @@ public class CommentService {
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private InstitutionService institutionService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Inject
     private Mapper mapper;
@@ -440,10 +427,6 @@ public class CommentService {
         appendAssignedUsers(comment, commentDTO);
         appendTransitionStates(comment, commentDTO);
 
-        if (commentDTO.getSponsorship() != null) {
-            appendSponsorship(comment, commentDTO);
-        }
-
         if (commentDTO.getInterviewAppointment() != null) {
             appendInterviewAppointment(comment, commentDTO);
         }
@@ -583,11 +566,6 @@ public class CommentService {
                 representation.setPartner(mapper.map(partner, InstitutionRepresentation.class));
             }
 
-            CommentSponsorship sponsorship = comment.getSponsorship();
-            if (sponsorship != null) {
-                representation.setSponsorship(mapper.map(sponsorship, CommentSponsorshipRepresentation.class));
-            }
-
             if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
                 CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
                 if (interviewAppointment != null) {
@@ -667,41 +645,6 @@ public class CommentService {
             Document document = documentService.getById(fileDTO.getId(), DOCUMENT);
             comment.getDocuments().add(document);
         }
-    }
-
-    private void appendSponsorship(Comment comment, CommentDTO commentDTO) throws Exception {
-        CommentSponsorship sponsorship = new CommentSponsorship();
-        CommentSponsorshipDTO sponsorshipDTO = commentDTO.getSponsorship();
-        InstitutionPartnerDTO sponsorDTO = sponsorshipDTO.getSponsor();
-
-        Institution sponsor;
-        Integer sponsorId = sponsorDTO.getPartnerId();
-        if (sponsorId == null) {
-            Action action = actionService.getById(SYSTEM_CREATE_INSTITUTION);
-            InstitutionDTO newInstitution = sponsorDTO.getPartner();
-            newInstitution.setResourceId(1);
-            newInstitution.setResourceScope(PrismScope.SYSTEM);
-            sponsor = (Institution) resourceService.create(comment.getUser(), action, sponsorDTO.getPartner(), null).getResource();
-        } else {
-            sponsor = institutionService.getById(sponsorId);
-            if (sponsor == null) {
-                throw new WorkflowEngineException("Invalid sponsor specified");
-            }
-        }
-
-        sponsorship.setSponsor(sponsor);
-        sponsorship.setCurrencySpecified(sponsorshipDTO.getCurrency());
-
-        Resource resource = comment.getResource();
-        Institution partner = resource.getPartner();
-        if (partner == null) {
-            sponsorship.setCurrencyConverted(resource.getInstitution().getCurrency());
-        } else {
-            sponsorship.setCurrencyConverted(partner.getCurrency());
-        }
-
-        sponsorship.setAmountSpecified(sponsorshipDTO.getAmountSpecified());
-        comment.setSponsorship(sponsorship);
     }
 
     private void appendInterviewAppointment(Comment comment, CommentDTO commentDTO) {

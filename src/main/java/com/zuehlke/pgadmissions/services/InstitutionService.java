@@ -244,12 +244,6 @@ public class InstitutionService {
         for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
             advertService.updateFeesAndPayments(advertWithFeesAndPays, newCurrency);
         }
-
-        List<Advert> advertsWithSponsorship = advertService.getAdvertsWithSponsorship(institution);
-        for (Advert advertWithSponsorship : advertsWithSponsorship) {
-            advertService.updateSponsorship(advertWithSponsorship, oldCurrency, newCurrency);
-        }
-
         institution.setCurrency(newCurrency);
     }
 

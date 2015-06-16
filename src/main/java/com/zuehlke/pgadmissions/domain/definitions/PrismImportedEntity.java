@@ -116,7 +116,7 @@ public enum PrismImportedEntity {
             ImportedOpportunityTypeExtractor.class, //
             new String[] { "application_program_detail.opportunity_type_id" }, false), //
     INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd",
-            "imported_institution", "institution_id, domicile_id, code, name, enabled, custom, ucas_id, facebook_id", ImportedInstitutionExtractor.class, //
+            "imported_institution", "institution_id, domicile_id, code, name, ucas_id, facebook_id, enabled, custom", ImportedInstitutionExtractor.class, //
             new String[] { "application_qualification.institution_id" }, true);
 
     private Class<?> jaxbClass;
@@ -131,7 +131,9 @@ public enum PrismImportedEntity {
 
     private String databaseTable;
 
-    private String databaseColumns;
+    private String[] databaseUniqueColumns;
+    
+    private String[] databaseInformationColumns;
 
     private Class<? extends ImportedEntityExtractor> databaseImportExtractor;
 
@@ -152,16 +154,17 @@ public enum PrismImportedEntity {
         }
     }
 
-    PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
-            String databaseTable, String databaseColumns, Class<? extends ImportedEntityExtractor> databaseImportExtractor, String[] databaseReferenceColumns,
-            boolean supportsUserDefinedInput) {
+    private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
+            String databaseTable, String[] databaseUniqueColumns, String[] databaseInformationColumns,
+            Class<? extends ImportedEntityExtractor> databaseImportExtractor, String[] databaseReferenceColumns, boolean supportsUserDefinedInput) {
         this.jaxbClass = jaxbClass;
         this.jaxbPropertyName = jaxbPropertyName;
         this.entityClass = entityClass;
         this.defaultLocation = defaultLocation;
         this.schemaLocation = schemaLocation;
         this.databaseTable = databaseTable;
-        this.databaseColumns = databaseColumns;
+        this.databaseUniqueColumns = databaseUniqueColumns;
+        this.databaseInformationColumns = databaseInformationColumns;
         this.databaseImportExtractor = databaseImportExtractor;
         this.databaseReferenceColumns = databaseReferenceColumns;
         this.supportsUserDefinedInput = supportsUserDefinedInput;
@@ -191,8 +194,12 @@ public enum PrismImportedEntity {
         return databaseTable;
     }
 
-    public String getDatabaseColumns() {
-        return databaseColumns;
+    public String[] getDatabaseUniqueColumns() {
+        return databaseUniqueColumns;
+    }
+
+    public String[] getDatabaseInformationColumns() {
+        return databaseInformationColumns;
     }
 
     public Class<? extends ImportedEntityExtractor> getDatabaseImportExtractor() {

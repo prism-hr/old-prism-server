@@ -53,6 +53,12 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionRole(APPLICATION_REFEREE) //
                     .withPropertyDefinition(APPLICATION_ASSIGN_REFEREE)), //
 
+    APPLICATION_DELETE_REFEREE_GROUP(
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_REFEREE) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(APPLICATION_REFEREE)), //
+
     APPLICATION_RETIRE_REFEREE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_REFEREE) //

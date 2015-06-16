@@ -369,22 +369,7 @@
         </extensions>
 
         <finalName>prism</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>messages.properties</exclude>
-                </excludes>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>messages.properties</include>
-                </includes>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
+        
         <plugins>
 
             <plugin>

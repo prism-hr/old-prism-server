@@ -228,7 +228,7 @@
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_3.1_spec</artifactId>
             <version>1.0.0.Final</version>
-            <type>provided</type>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Commons -->
@@ -365,7 +365,7 @@
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-undertow</artifactId>
             <version>8.2.0.Final</version>
-            <type>provided</type>
+            <scope>provided</scope>
         </dependency>
 
 

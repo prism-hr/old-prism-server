@@ -17,7 +17,7 @@ public class InstitutionBackgroundPersister implements ImageDocumentPersister {
     @Override
     public void persist(Integer institutionId, Document image) {
         Institution institution = institutionService.getById(institutionId);
-        institution.setBackgroundImage(image);
+        institution.getAdvert().setBackgroundImage(image);
     }
 
 }

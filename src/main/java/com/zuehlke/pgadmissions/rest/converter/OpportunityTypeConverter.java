@@ -3,21 +3,21 @@ package com.zuehlke.pgadmissions.rest.converter;
 import org.dozer.DozerConverter;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 
-public class OpportunityTypeConverter extends DozerConverter<OpportunityType, PrismOpportunityType> {
+public class OpportunityTypeConverter extends DozerConverter<ImportedOpportunityType, PrismOpportunityType> {
 
     public OpportunityTypeConverter() {
-        super(OpportunityType.class, PrismOpportunityType.class);
+        super(ImportedOpportunityType.class, PrismOpportunityType.class);
     }
 
     @Override
-    public PrismOpportunityType convertTo(OpportunityType source, PrismOpportunityType destination) {
+    public PrismOpportunityType convertTo(ImportedOpportunityType source, PrismOpportunityType destination) {
         return PrismOpportunityType.valueOf(source.getCode());
     }
 
     @Override
-    public OpportunityType convertFrom(PrismOpportunityType source, OpportunityType destination) {
+    public ImportedOpportunityType convertFrom(PrismOpportunityType source, ImportedOpportunityType destination) {
         throw new UnsupportedOperationException();
     }
     

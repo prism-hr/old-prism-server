@@ -36,13 +36,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -118,7 +118,7 @@ public class ImportedEntityService {
         return importedEntityDAO.getEnabledImportedEntities(institution, entityClass);
     }
 
-    public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
+    public List<ImportedInstitution> getEnabledImportedInstitutions(ImportedDomicile domicile) {
         return importedEntityDAO.getEnabledImportedInstitutions(domicile);
     }
 
@@ -185,15 +185,14 @@ public class ImportedEntityService {
         importedEntityFeed.setLastImportedTimestamp(new DateTime());
     }
 
-    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime) throws Exception {
+    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
+            throws Exception {
         Institution institution = institutionService.getById(institutionId);
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
-        LocalDate startDate = null;
-        LocalDate closeDate = null;
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
-            StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
+            ImportedStudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
             LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
             LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
@@ -212,13 +211,9 @@ public class ImportedEntityService {
 
                 ResourceStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
                 persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
-
-                startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
-                closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
             }
         }
 
-        persistentProgram.setEndDate(closeDate);
         executeProgramImportAction(persistentProgram, baselineTime);
         return persistentProgram.getId();
     }
@@ -232,7 +227,7 @@ public class ImportedEntityService {
         return importedEntityDAO.getMostUsedDomicile(institution);
     }
 
-    public AgeRange getAgeRange(Institution institution, Integer age) {
+    public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
         return importedEntityDAO.getAgeRange(institution, age);
     }
 
@@ -246,14 +241,14 @@ public class ImportedEntityService {
         boolean transientRequireProjectDefinition = programDefinition.isAtasRegistered();
 
         DateTime baselineDateTime = new DateTime();
-        OpportunityType opportunityType = getByCode(OpportunityType.class, institution, prismOpportunityType.name());
+        ImportedOpportunityType opportunityType = getByCode(ImportedOpportunityType.class, institution, prismOpportunityType.name());
         Department department = departmentService.getOrCreateDepartment(new Department().withInstitution(institution).withTitle(
                 programDefinition.getDepartment()));
 
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withDepartment(department)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withImported(true).withOpportunityType(opportunityType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime)
-                .withUpdatedTimestamp(baselineDateTime).withUpdatedTimestampSitemap(baselineDateTime);
+                .withOpportunityType(opportunityType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime).withUpdatedTimestamp(baselineDateTime)
+                .withUpdatedTimestampSitemap(baselineDateTime);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
         if (persistentProgram == null) {
@@ -292,17 +287,17 @@ public class ImportedEntityService {
         }
     }
 
-    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
+    private ImportedStudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
         String externalCode = modeOfAttendance.getCode();
         PrismStudyOption prismStudyOption = PrismStudyOption.findValueFromString(externalCode);
         prismStudyOption = prismStudyOption == null ? getSystemStudyOption() : prismStudyOption;
-        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(prismStudyOption.name()).withName(externalCode).withEnabled(true);
-        studyOption.setType(PrismImportedEntity.STUDY_OPTION);
+        ImportedStudyOption studyOption = new ImportedStudyOption().withInstitution(institution).withCode(prismStudyOption.name()).withName(externalCode).withEnabled(true);
+        studyOption.setType(PrismImportedEntity.IMPORTED_STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
     }
 
     private ImportedInstitution createCustomImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
-        Domicile domicile = getById(institution, Domicile.class, importedInstitutionDTO.getDomicile());
+        ImportedDomicile domicile = getById(institution, ImportedDomicile.class, importedInstitutionDTO.getDomicile());
         ImportedInstitution importedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
                 .withName(importedInstitutionDTO.getName()).withEnabled(true).withCustom(true);
         entityService.save(importedInstitution);

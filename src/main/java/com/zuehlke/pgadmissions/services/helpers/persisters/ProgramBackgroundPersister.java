@@ -17,7 +17,7 @@ public class ProgramBackgroundPersister implements ImageDocumentPersister {
     @Override
     public void persist(Integer programId, Document image) {
         Program program = programService.getById(programId);
-        program.setBackgroundImage(image);
+        program.getAdvert().setBackgroundImage(image);
     }
 
 }

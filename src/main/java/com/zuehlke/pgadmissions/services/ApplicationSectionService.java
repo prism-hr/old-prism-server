@@ -56,21 +56,21 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedCountry;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedFundingSource;
+import com.zuehlke.pgadmissions.domain.imported.ImportedGender;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.Nationality;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.imported.Title;
+import com.zuehlke.pgadmissions.domain.imported.ImportedNationality;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
+import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedTitle;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.user.Address;
@@ -143,12 +143,12 @@ public class ApplicationSectionService {
             ResourceOpportunity parent = (ResourceOpportunity) application.getParentResource();
             programDetail.setOpportunityType(parent.getOpportunityType());
         } else {
-            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, prismOpportunityType.name());
+            ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, institution, prismOpportunityType.name());
             programDetail.setOpportunityType(opportunityType);
         }
 
-        StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
-        ReferralSource referralSource = importedEntityService.getById(institution, ReferralSource.class, programDetailDTO.getReferralSource());
+        ImportedStudyOption studyOption = importedEntityService.getByCode(ImportedStudyOption.class, institution, programDetailDTO.getStudyOption().name());
+        ImportedReferralSource referralSource = importedEntityService.getById(institution, ImportedReferralSource.class, programDetailDTO.getReferralSource());
         programDetail.setStudyOption(studyOption);
         programDetail.setStartDate(programDetailDTO.getStartDate());
         programDetail.setReferralSource(referralSource);
@@ -215,13 +215,13 @@ public class ApplicationSectionService {
 
         updateUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
 
-        Title title = importedEntityService.getById(institution, Title.class, personalDetailDTO.getTitle());
-        Gender gender = importedEntityService.getById(institution, Gender.class, personalDetailDTO.getGender());
-        Country country = importedEntityService.getById(institution, Country.class, personalDetailDTO.getCountry());
-        Nationality firstNationality = importedEntityService.getById(institution, Nationality.class, personalDetailDTO.getFirstNationality());
-        Nationality secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Nationality> getById(institution, Nationality.class,
+        ImportedTitle title = importedEntityService.getById(institution, ImportedTitle.class, personalDetailDTO.getTitle());
+        ImportedGender gender = importedEntityService.getById(institution, ImportedGender.class, personalDetailDTO.getGender());
+        ImportedCountry country = importedEntityService.getById(institution, ImportedCountry.class, personalDetailDTO.getCountry());
+        ImportedNationality firstNationality = importedEntityService.getById(institution, ImportedNationality.class, personalDetailDTO.getFirstNationality());
+        ImportedNationality secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<ImportedNationality> getById(institution, ImportedNationality.class,
                 personalDetailDTO.getSecondNationality()) : null;
-        Domicile residenceCountry = importedEntityService.getById(institution, Domicile.class, personalDetailDTO.getDomicile());
+        ImportedDomicile residenceCountry = importedEntityService.getById(institution, ImportedDomicile.class, personalDetailDTO.getDomicile());
 
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
@@ -230,7 +230,7 @@ public class ApplicationSectionService {
         personalDetail.setDateOfBirth(dateOfBirth);
 
         Integer ageAtCreation =  application.getCreatedTimestamp().getYear() - dateOfBirth.getYear();
-        AgeRange ageRange = importedEntityService.getAgeRange(institution, ageAtCreation);
+        ImportedAgeRange ageRange = importedEntityService.getAgeRange(institution, ageAtCreation);
         personalDetail.setAgeRange(ageRange);
 
         personalDetail.setCountry(country);
@@ -244,13 +244,13 @@ public class ApplicationSectionService {
 
         Integer ethnicityId = personalDetailDTO.getEthnicity();
         if (ethnicityId != null) {
-            Ethnicity ethnicity = importedEntityService.getById(institution, Ethnicity.class, ethnicityId);
+            ImportedEthnicity ethnicity = importedEntityService.getById(institution, ImportedEthnicity.class, ethnicityId);
             personalDetail.setEthnicity(ethnicity);
         }
 
         Integer disabilityId = personalDetailDTO.getDisability();
         if (disabilityId != null) {
-            Disability disability = importedEntityService.getById(institution, Disability.class, personalDetailDTO.getDisability());
+            ImportedDisability disability = importedEntityService.getById(institution, ImportedDisability.class, personalDetailDTO.getDisability());
             personalDetail.setDisability(disability);
         }
 
@@ -309,7 +309,7 @@ public class ApplicationSectionService {
         ImportedInstitution importedInstitution = importedEntityService.getOrCreateImportedInstitution(institution, importedInstitutionDTO);
         qualification.setInstitution(importedInstitution);
 
-        QualificationType qualificationType = importedEntityService.getById(institution, QualificationType.class, qualificationDTO.getType());
+        ImportedQualificationType qualificationType = importedEntityService.getById(institution, ImportedQualificationType.class, qualificationDTO.getType());
         qualification.setType(qualificationType);
 
         qualification.setTitle(Strings.emptyToNull(qualificationDTO.getTitle()));
@@ -394,7 +394,7 @@ public class ApplicationSectionService {
             funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         }
 
-        FundingSource fundingSource = importedEntityService.getById(application.getInstitution(), FundingSource.class, fundingDTO.getFundingSource());
+        ImportedFundingSource fundingSource = importedEntityService.getById(application.getInstitution(), ImportedFundingSource.class, fundingDTO.getFundingSource());
 
         funding.setFundingSource(fundingSource);
         funding.setSponsor(fundingDTO.getSponsor());
@@ -613,7 +613,7 @@ public class ApplicationSectionService {
     }
 
     private void copyAddress(Institution institution, Address to, AddressDTO from) {
-        Domicile currentAddressDomicile = importedEntityService.getById(institution, Domicile.class, from.getDomicile());
+        ImportedDomicile currentAddressDomicile = importedEntityService.getById(institution, ImportedDomicile.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());
         to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));

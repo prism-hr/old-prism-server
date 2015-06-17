@@ -50,7 +50,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
+import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -419,7 +419,7 @@ public class CommentService {
     }
 
     public void appendRejectionReason(Comment comment, CommentDTO commentDTO) {
-        RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
+        ImportedRejectionReason rejectionReason = entityService.getById(ImportedRejectionReason.class, commentDTO.getRejectionReason());
         comment.setRejectionReason(rejectionReason);
     }
 

@@ -1,20 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.AGE_RANGE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.COUNTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.DISABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.DOMICILE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.ETHNICITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.FUNDING_SOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.GENDER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.NATIONALITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.QUALIFICATION_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.REFERRAL_SOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.REJECTION_REASON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.TITLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_AGE_RANGE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_COUNTRY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_DISABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_DOMICILE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_ETHNICITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_FUNDING_SOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_GENDER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_NATIONALITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_OPPORTUNITY_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_QUALIFICATION_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_REFERRAL_SOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_REJECTION_REASON;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_STUDY_OPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_TITLE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
@@ -57,7 +57,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
@@ -270,9 +270,9 @@ public class StaticDataService {
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (PrismImportedEntity prismImportedEntity : new PrismImportedEntity[]{AGE_RANGE, COUNTRY, DISABILITY, DOMICILE, ETHNICITY, NATIONALITY,
-                QUALIFICATION_TYPE, REFERRAL_SOURCE, FUNDING_SOURCE, LANGUAGE_QUALIFICATION_TYPE, TITLE, GENDER, REJECTION_REASON,
-                STUDY_OPTION, OPPORTUNITY_TYPE}) {
+        for (PrismImportedEntity prismImportedEntity : new PrismImportedEntity[]{IMPORTED_AGE_RANGE, IMPORTED_COUNTRY, IMPORTED_DISABILITY, IMPORTED_DOMICILE, IMPORTED_ETHNICITY, IMPORTED_NATIONALITY,
+                IMPORTED_QUALIFICATION_TYPE, IMPORTED_REFERRAL_SOURCE, IMPORTED_FUNDING_SOURCE, IMPORTED_LANGUAGE_QUALIFICATION_TYPE, IMPORTED_TITLE, IMPORTED_GENDER, IMPORTED_REJECTION_REASON,
+                IMPORTED_STUDY_OPTION, IMPORTED_OPPORTUNITY_TYPE}) {
             Class<? extends ImportedEntity> entityClass = (Class<? extends ImportedEntity>) prismImportedEntity.getEntityClass();
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
@@ -301,7 +301,7 @@ public class StaticDataService {
     }
 
     public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer domicileId) {
-        Domicile domicile = entityService.getById(Domicile.class, domicileId);
+        ImportedDomicile domicile = entityService.getById(ImportedDomicile.class, domicileId);
         List<ImportedInstitution> institutions = importedEntityService.getEnabledImportedInstitutions(domicile);
 
         List<ImportedInstitutionRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());

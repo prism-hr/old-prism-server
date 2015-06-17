@@ -17,9 +17,9 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -245,8 +245,8 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public Domicile getDomicile() {
-        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
+    public ImportedDomicile getDomicile() {
+        return (ImportedDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class).setMaxResults(1).uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -274,8 +274,8 @@ public class TestObjectProvider {
                 .uniqueResult();
     }
 
-    public QualificationType getQualificationType() {
-        return (QualificationType) sessionFactory.getCurrentSession().createCriteria(QualificationType.class).setMaxResults(1).uniqueResult();
+    public ImportedQualificationType getQualificationType() {
+        return (ImportedQualificationType) sessionFactory.getCurrentSession().createCriteria(ImportedQualificationType.class).setMaxResults(1).uniqueResult();
     }
 
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -49,7 +49,7 @@ public class ProgramCreator implements ResourceCreator {
 
         DepartmentDTO departmentDTO = newProgram.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(institution, departmentDTO);
-        OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, newProgram.getOpportunityType().name());
+        ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, institution, newProgram.getOpportunityType().name());
 
         Program program = new Program().withUser(user).withParentResource(institution).withDepartment(department).withAdvert(advert)
                 .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum())

@@ -17,7 +17,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -44,8 +44,8 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "study_option_id", nullable = false)
-    private StudyOption studyOption;
+    @JoinColumn(name = "imported_study_option_id", nullable = false)
+    private ImportedStudyOption studyOption;
 
     @Column(name = "application_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -96,11 +96,11 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         this.project = project;
     }
 
-    public StudyOption getStudyOption() {
+    public ImportedStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(StudyOption studyOption) {
+    public void setStudyOption(ImportedStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -129,7 +129,7 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         return this;
     }
 
-    public ResourceStudyOption withStudyOption(StudyOption studyOption) {
+    public ResourceStudyOption withStudyOption(ImportedStudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }

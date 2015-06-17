@@ -29,7 +29,7 @@ public class ApplicationLanguageQualification extends ApplicationSection {
     private ApplicationPersonalDetail personalDetail;
 
     @ManyToOne
-    @JoinColumn(name = "language_qualification_type_id")
+    @JoinColumn(name = "imported_language_qualification_type_id")
     private ImportedLanguageQualificationType type;
 
     @Column(name = "exam_date", nullable = false)

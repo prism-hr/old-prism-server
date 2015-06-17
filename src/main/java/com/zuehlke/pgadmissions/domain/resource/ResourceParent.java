@@ -6,7 +6,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 
 public abstract class ResourceParent extends Resource {
 
@@ -32,7 +32,7 @@ public abstract class ResourceParent extends Resource {
 
     public abstract Set<ResourceStudyLocation> getStudyLocations();
 
-    public OpportunityType getOpportunityType() {
+    public ImportedOpportunityType getOpportunityType() {
         return null;
     }
 

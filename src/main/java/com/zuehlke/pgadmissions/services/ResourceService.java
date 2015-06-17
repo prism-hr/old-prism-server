@@ -56,8 +56,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -535,7 +535,7 @@ public class ResourceService {
         return partnerActions;
     }
 
-    public ResourceStudyOption getStudyOption(ResourceOpportunity resource, StudyOption studyOption) {
+    public ResourceStudyOption getStudyOption(ResourceOpportunity resource, ImportedStudyOption studyOption) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
             return resourceDAO.getResourceAttributeStrict(resource, ResourceStudyOption.class, "studyOption", studyOption);
         }
@@ -546,8 +546,8 @@ public class ResourceService {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
             List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
             return Lists.transform(studyOptions, Functions.compose(
-                    new ToPropertyFunction<StudyOption, PrismStudyOption>("prismStudyOption"),
-                    new ToPropertyFunction<ResourceStudyOption, StudyOption>("studyOption")));
+                    new ToPropertyFunction<ImportedStudyOption, PrismStudyOption>("prismStudyOption"),
+                    new ToPropertyFunction<ResourceStudyOption, ImportedStudyOption>("studyOption")));
         }
 
         List<PrismStudyOption> filteredStudyOptions = Lists.newLinkedList();
@@ -566,7 +566,7 @@ public class ResourceService {
         return filteredStudyOptions;
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, StudyOption studyOption) {
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, ImportedStudyOption studyOption) {
         return resourceDAO.getFirstStudyOptionInstance(resource, studyOption);
     }
 
@@ -592,7 +592,7 @@ public class ResourceService {
         if (!program.sameAs(resource) && program.getAdvert().isImported()) {
             resource.setOpportunityType(program.getOpportunityType());
         } else {
-            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, resource.getInstitution(), resourceDTO
+            ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, resource.getInstitution(), resourceDTO
                     .getOpportunityType().name());
             resource.setOpportunityType(opportunityType);
             setStudyOptions(resource, resourceDTO.getStudyOptions(), new LocalDate());
@@ -651,7 +651,7 @@ public class ResourceService {
 
         for (PrismStudyOption prismStudyOption : prismStudyOptions) {
             if (close == null || close.isAfter(baseline)) {
-                StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
+                ImportedStudyOption studyOption = importedEntityService.getByCode(ImportedStudyOption.class, resource.getInstitution(), prismStudyOption.name());
                 resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
                         .withApplicationCloseDate(close));
             }
@@ -691,7 +691,7 @@ public class ResourceService {
         setStudyLocations(resource, attributes.getStudyLocations());
 
         if (!resource.getAdvert().isImported()) {
-            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
+            ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, //
                     resource.getInstitution(), resourceDTO.getOpportunityType().name());
             resource.setOpportunityType(opportunityType);
 

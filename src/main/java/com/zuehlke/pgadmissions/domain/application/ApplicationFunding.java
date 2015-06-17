@@ -15,7 +15,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
+import com.zuehlke.pgadmissions.domain.imported.ImportedFundingSource;
 
 @Entity
 @Table(name = "APPLICATION_FUNDING")
@@ -30,8 +30,8 @@ public class ApplicationFunding extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "funding_source_id")
-    private FundingSource fundingSource;
+    @JoinColumn(name = "imported_funding_source_id")
+    private ImportedFundingSource fundingSource;
 
     @Column(name = "sponsor")
     private String sponsor;
@@ -73,11 +73,11 @@ public class ApplicationFunding extends ApplicationSection {
         this.application = application;
     }
 
-    public FundingSource getFundingSource() {
+    public ImportedFundingSource getFundingSource() {
         return fundingSource;
     }
 
-    public void setFundingSource(FundingSource fundingSource) {
+    public void setFundingSource(ImportedFundingSource fundingSource) {
         this.fundingSource = fundingSource;
     }
 
@@ -144,7 +144,7 @@ public class ApplicationFunding extends ApplicationSection {
         return this;
     }
 
-    public ApplicationFunding withType(FundingSource fundingSource) {
+    public ApplicationFunding withType(ImportedFundingSource fundingSource) {
         this.fundingSource = fundingSource;
         return this;
     }

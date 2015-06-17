@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -96,8 +96,8 @@ public class Project extends ResourceOpportunity {
     private Advert advert;
 
     @ManyToOne
-    @JoinColumn(name = "opportunity_type_id", nullable = false)
-    private OpportunityType opportunityType;
+    @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
+    private ImportedOpportunityType opportunityType;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -290,12 +290,12 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public OpportunityType getOpportunityType() {
+    public ImportedOpportunityType getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public void setOpportunityType(OpportunityType opportunityType) {
+    public void setOpportunityType(ImportedOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -555,7 +555,7 @@ public class Project extends ResourceOpportunity {
         return this;
     }
 
-    public Project withOpportunityType(OpportunityType opportunityType) {
+    public Project withOpportunityType(ImportedOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

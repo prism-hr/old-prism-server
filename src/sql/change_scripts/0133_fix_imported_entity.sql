@@ -1,7 +1,8 @@
 delete
 from imported_entity_feed
 where location like "xml/defaultEntities%"
-	and imported_entity_type != "INSTITUTION"
+	and !(institution_id = 5243 
+		and imported_entity_type in("INSTITUTION", "STUDY_OPTION"))
 ;
 
 update application_personal_detail inner join application
@@ -20,11 +21,10 @@ from imported_age_range_mapping
 ;
 
 alter table imported_age_range_mapping
-	drop index institution_id_2,
-	drop column enabled,
 	drop index id,
 	drop index institution_id,
-	add index (institution_id)
+	drop index institution_id_2,
+	add index (institution_id, enabled)
 ;
 
 alter table address
@@ -261,18 +261,20 @@ set map_for_export = 1
 where institution_id = 5243
 ;
 
-delete
-from imported_entity_mapping
-where institution_id != 5243
+delete imported_entity_mapping.*
+from imported_entity_mapping inner join imported_entity
+	on imported_entity_mapping.imported_entity_id = imported_entity.id
+where imported_entity_mapping.institution_id != 5243
+	and !(imported_entity_mapping.institution_id = 6856 
+		and imported_entity.imported_entity_type in ("REFERRAL_SOURCE", "FUNDING_SOURCE",
+			"REJECTION_REASON", "TITLE"))
 ;
 
 alter table imported_entity_mapping
 	drop index institution_id,
 	drop index id,
-	drop index institution_id_2,
 	drop column imported_entity_type,
-	drop column enabled,
-	add index (institution_id)
+	add index (institution_id, enabled)
 ;
 
 alter table imported_institution_subject_area
@@ -298,4 +300,68 @@ from imported_institution_mapping
 where code is null
 	or code like "PRISM%"
 	or code like "CUST%"
+;
+
+alter table imported_institution
+	drop index imported_domicile_id,
+	change column imported_domicile_id domicile_id int(10) unsigned not null,
+	add index (domicile_id),
+	add column ucas_id varchar(10),
+	add column facebook_id varchar(20),
+	add unique index (ucas_id),
+	add unique index (facebook_id),
+	drop column custom
+;
+
+alter table imported_institution_mapping
+	drop index institution_id,
+	drop index institution_id_2,
+	add index (institution_id, enabled),
+	drop index id
+;
+
+alter table imported_language_qualification_type_mapping
+	drop index institution_id,
+	drop index institution_id_2,
+	add index (institution_id, enabled),
+	drop index id
+;
+
+update application_language_qualification inner join imported_language_qualification_type_mapping
+	on application_language_qualification.language_qualification_type_id = imported_language_qualification_type_mapping.id
+set application_language_qualification.language_qualification_type_id = imported_language_qualification_type_mapping.imported_language_qualification_type_id
+;
+
+alter table imported_language_qualification_type_mapping
+	add foreign key (imported_language_qualification_type_id) references imported_language_qualification_type (id)
+;
+
+delete
+from imported_language_qualification_type_mapping
+where institution_id != 5243
+;
+
+delete
+from application_qualification
+where program_id is null
+;
+
+update application_qualification inner join imported_program_mapping
+	on application_qualification.program_id = imported_program_mapping.id
+set application_qualification.program_id = imported_program_mapping.imported_program_id
+;
+
+alter table application_qualification
+	add foreign key (program_id)  references imported_program (id)
+;
+
+alter table imported_program
+	drop index imported_institution_id_2,
+	drop column custom
+;
+
+alter table imported_program_mapping
+	drop index institution_id,
+	drop index institution_id_2,
+	add index (institution_id, enabled)
 ;

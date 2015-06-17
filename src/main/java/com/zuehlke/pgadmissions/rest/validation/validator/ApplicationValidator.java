@@ -24,8 +24,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
@@ -206,8 +206,8 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         boolean personalDetailNull = personalDetail == null;
 
-        Ethnicity ethnicity = personalDetailNull ? null : personalDetail.getEthnicity();
-        Disability disability = personalDetailNull ? null : personalDetail.getDisability();
+        ImportedEthnicity ethnicity = personalDetailNull ? null : personalDetail.getEthnicity();
+        ImportedDisability disability = personalDetailNull ? null : personalDetail.getDisability();
 
         validateRequiredConstraint(ethnicity, "personalDetail", "ethnicity", configuration, errors);
         validateRequiredConstraint(disability, "personalDetail", "disability", configuration, errors);

@@ -16,14 +16,14 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.Nationality;
-import com.zuehlke.pgadmissions.domain.imported.Title;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedCountry;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedGender;
+import com.zuehlke.pgadmissions.domain.imported.ImportedNationality;
+import com.zuehlke.pgadmissions.domain.imported.ImportedTitle;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")
@@ -59,44 +59,44 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     private ApplicationPassport passport;
 
     @ManyToOne
-    @JoinColumn(name = "nationality_id1")
-    private Nationality firstNationality;
+    @JoinColumn(name = "imported_nationality_id1")
+    private ImportedNationality firstNationality;
 
     @ManyToOne
-    @JoinColumn(name = "nationality_id2")
-    private Nationality secondNationality;
+    @JoinColumn(name = "imported_nationality_id2")
+    private ImportedNationality secondNationality;
 
     @ManyToOne
-    @JoinColumn(name = "title_id")
-    private Title title;
+    @JoinColumn(name = "imported_title_id")
+    private ImportedTitle title;
 
     @ManyToOne
-    @JoinColumn(name = "gender_id")
-    private Gender gender;
+    @JoinColumn(name = "imported_gender_id")
+    private ImportedGender gender;
 
     @Column(name = "date_of_birth", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dateOfBirth;
 
     @ManyToOne
-    @JoinColumn(name = "age_range_id")
-    private AgeRange ageRange;
+    @JoinColumn(name = "imported_age_range_id")
+    private ImportedAgeRange ageRange;
 
     @ManyToOne
-    @JoinColumn(name = "country_id")
-    private Country country;
+    @JoinColumn(name = "imported_country_id")
+    private ImportedCountry country;
 
     @ManyToOne
-    @JoinColumn(name = "ethnicity_id")
-    private Ethnicity ethnicity;
+    @JoinColumn(name = "imported_ethnicity_id")
+    private ImportedEthnicity ethnicity;
 
     @ManyToOne
-    @JoinColumn(name = "disability_id")
-    private Disability disability;
+    @JoinColumn(name = "imported_disability_id")
+    private ImportedDisability disability;
 
     @ManyToOne
-    @JoinColumn(name = "domicile_id")
-    private Domicile domicile;
+    @JoinColumn(name = "imported_domicile_id")
+    private ImportedDomicile domicile;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -110,35 +110,35 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return id;
     }
 
-    public Nationality getFirstNationality() {
+    public ImportedNationality getFirstNationality() {
         return firstNationality;
     }
 
-    public void setFirstNationality(Nationality firstNationality) {
+    public void setFirstNationality(ImportedNationality firstNationality) {
         this.firstNationality = firstNationality;
     }
 
-    public Nationality getSecondNationality() {
+    public ImportedNationality getSecondNationality() {
         return secondNationality;
     }
 
-    public void setSecondNationality(Nationality secondNationality) {
+    public void setSecondNationality(ImportedNationality secondNationality) {
         this.secondNationality = secondNationality;
     }
 
-    public Title getTitle() {
+    public ImportedTitle getTitle() {
         return title;
     }
 
-    public void setTitle(Title title) {
+    public void setTitle(ImportedTitle title) {
         this.title = title;
     }
 
-    public Gender getGender() {
+    public ImportedGender getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(ImportedGender gender) {
         this.gender = gender;
     }
 
@@ -150,19 +150,19 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public AgeRange getAgeRange() {
+    public ImportedAgeRange getAgeRange() {
         return ageRange;
     }
 
-    public void setAgeRange(AgeRange ageRange) {
+    public void setAgeRange(ImportedAgeRange ageRange) {
         this.ageRange = ageRange;
     }
 
-    public Domicile getDomicile() {
+    public ImportedDomicile getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(Domicile domicile) {
+    public void setDomicile(ImportedDomicile domicile) {
         this.domicile = domicile;
     }
 
@@ -174,27 +174,27 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.application = application;
     }
 
-    public Country getCountry() {
+    public ImportedCountry getCountry() {
         return country;
     }
 
-    public void setCountry(Country country) {
+    public void setCountry(ImportedCountry country) {
         this.country = country;
     }
 
-    public void setEthnicity(Ethnicity eth) {
+    public void setEthnicity(ImportedEthnicity eth) {
         this.ethnicity = eth;
     }
 
-    public Ethnicity getEthnicity() {
+    public ImportedEthnicity getEthnicity() {
         return ethnicity;
     }
 
-    public void setDisability(Disability disability) {
+    public void setDisability(ImportedDisability disability) {
         this.disability = disability;
     }
 
-    public Disability getDisability() {
+    public ImportedDisability getDisability() {
         return disability;
     }
 
@@ -274,12 +274,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withTitle(Title title) {
+    public ApplicationPersonalDetail withTitle(ImportedTitle title) {
         this.title = title;
         return this;
     }
 
-    public ApplicationPersonalDetail withGender(Gender gender) {
+    public ApplicationPersonalDetail withGender(ImportedGender gender) {
         this.gender = gender;
         return this;
     }
@@ -289,17 +289,17 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withCountry(Country country) {
+    public ApplicationPersonalDetail withCountry(ImportedCountry country) {
         this.country = country;
         return this;
     }
 
-    public ApplicationPersonalDetail withFirstNationality(Nationality firstNationality) {
+    public ApplicationPersonalDetail withFirstNationality(ImportedNationality firstNationality) {
         this.firstNationality = firstNationality;
         return this;
     }
 
-    public ApplicationPersonalDetail withSecondNationality(Nationality secondNationality) {
+    public ApplicationPersonalDetail withSecondNationality(ImportedNationality secondNationality) {
         this.secondNationality = secondNationality;
         return this;
     }
@@ -314,7 +314,7 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withDomicile(final Domicile domicile) {
+    public ApplicationPersonalDetail withDomicile(final ImportedDomicile domicile) {
         this.domicile = domicile;
         return this;
     }
@@ -339,12 +339,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withEthnicity(Ethnicity ethnicity) {
+    public ApplicationPersonalDetail withEthnicity(ImportedEthnicity ethnicity) {
         this.ethnicity = ethnicity;
         return this;
     }
 
-    public ApplicationPersonalDetail withDisability(Disability disability) {
+    public ApplicationPersonalDetail withDisability(ImportedDisability disability) {
         this.disability = disability;
         return this;
     }

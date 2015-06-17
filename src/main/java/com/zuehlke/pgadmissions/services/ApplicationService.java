@@ -66,7 +66,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -155,7 +155,7 @@ public class ApplicationService {
         LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
 
-        StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
+        ImportedStudyOption studyOption = importedEntityService.getByCode(ImportedStudyOption.class, application.getInstitution(), studyOptionId.name());
         ResourceStudyOption resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
 
         if (resourceStudyOption == null && !application.getParentResource().sameAs(application.getInstitution())) {

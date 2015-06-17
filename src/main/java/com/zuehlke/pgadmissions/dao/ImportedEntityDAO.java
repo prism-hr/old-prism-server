@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
@@ -60,7 +60,7 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
+    public List<ImportedInstitution> getEnabledImportedInstitutions(ImportedDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)//
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("enabled", true)) //
@@ -175,8 +175,8 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public AgeRange getAgeRange(Institution institution, Integer age) {
-        return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class) //
+    public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
+        return (ImportedAgeRange) sessionFactory.getCurrentSession().createCriteria(ImportedAgeRange.class) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.ge("lowerBound", age)) //
                 .add(Restrictions.disjunction() //

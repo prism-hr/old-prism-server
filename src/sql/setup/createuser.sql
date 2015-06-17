@@ -1,2 +1,2 @@
-CREATE USER 'prism'@'%' IDENTIFIED BY 'prism';
-GRANT ALL ON *.* to 'prism'@'%';
+CREATE USER 'pgadmissions'@'%' IDENTIFIED BY 'pgadmissions';
+GRANT ALL ON *.* to 'pgadmissions'@'%';

@@ -231,6 +231,10 @@ public class ImportedEntityService {
         return importedEntityDAO.getAgeRange(institution, age);
     }
 
+    public List<ImportedInstitution> getInstitutionsWithUcasId() {
+        return importedEntityDAO.getInstitutionsWithUcasId();
+    }
+
     private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {
         User proxyCreator = institution.getUser();
         String transientTitle = prepareStringForInsert(programDefinition.getName());
@@ -291,7 +295,8 @@ public class ImportedEntityService {
         String externalCode = modeOfAttendance.getCode();
         PrismStudyOption prismStudyOption = PrismStudyOption.findValueFromString(externalCode);
         prismStudyOption = prismStudyOption == null ? getSystemStudyOption() : prismStudyOption;
-        ImportedStudyOption studyOption = new ImportedStudyOption().withInstitution(institution).withCode(prismStudyOption.name()).withName(externalCode).withEnabled(true);
+        ImportedStudyOption studyOption = new ImportedStudyOption().withInstitution(institution).withCode(prismStudyOption.name()).withName(externalCode)
+                .withEnabled(true);
         studyOption.setType(PrismImportedEntity.IMPORTED_STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
     }

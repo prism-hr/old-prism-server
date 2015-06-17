@@ -186,4 +186,9 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
+    public List<ImportedInstitution> getAllWhereUcasIdIsNotNull(){
+        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
+                .add(Restrictions.isNotNull("ucasId")).list();
+    }
+
 }

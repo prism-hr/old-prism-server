@@ -225,11 +225,10 @@
 
         <!-- Servlet -->
         <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-6.0</artifactId>
-            <version>3.0.3.Final</version>
-            <type>pom</type>
-            <scope>provided</scope>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+            <version>1.0.0.Final</version>
+            <type>provided</type>
         </dependency>
 
         <!-- Commons -->
@@ -361,6 +360,14 @@
             <artifactId>aws-java-sdk</artifactId>
             <version>1.10.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-undertow</artifactId>
+            <version>8.2.0.Final</version>
+            <type>provided</type>
+        </dependency>
+
 
     </dependencies>
 

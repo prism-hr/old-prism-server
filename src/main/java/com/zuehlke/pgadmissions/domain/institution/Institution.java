@@ -64,9 +64,6 @@ public class Institution extends ResourceParent {
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
-    @Column(name = "referrer")
-    private String referrer;
-
     @Column(name = "code", unique = true)
     private String code;
 
@@ -86,16 +83,12 @@ public class Institution extends ResourceParent {
     @JoinColumn(name = "logo_image_id")
     private Document logoImage;
 
-    @OneToOne
-    @JoinColumn(name = "background_image_id")
-    private Document backgroundImage;
-
     @Column(name = "currency", nullable = false)
     private String currency;
 
     @Column(name = "business_year_start_month", nullable = false)
     private Integer businessYearStartMonth;
-    
+
     @Column(name = "minimum_wage", nullable = false)
     private BigDecimal minimumWage;
 
@@ -121,10 +114,6 @@ public class Institution extends ResourceParent {
     @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
-
-    @Column(name = "end_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate endDate;
 
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -243,14 +232,6 @@ public class Institution extends ResourceParent {
 
     public void setLogoImage(Document logoImage) {
         this.logoImage = logoImage;
-    }
-
-    public Document getBackgroundImage() {
-        return backgroundImage;
-    }
-
-    public void setBackgroundImage(Document backgroundImage) {
-        this.backgroundImage = backgroundImage;
     }
 
     public InstitutionDomicile getDomicile() {
@@ -399,11 +380,11 @@ public class Institution extends ResourceParent {
         this.businessYearStartMonth = businessYearStartMonth;
         return this;
     }
-    
+
     public Institution withMinimumWage(BigDecimal minimumWage) {
         this.minimumWage = minimumWage;
         return this;
-    }    
+    }
 
     public Institution withState(State state) {
         this.state = state;
@@ -417,11 +398,6 @@ public class Institution extends ResourceParent {
 
     public Institution withUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
-        return this;
-    }
-
-    public Institution withEndDate(LocalDate endDate) {
-        this.endDate = endDate;
         return this;
     }
 
@@ -439,7 +415,6 @@ public class Institution extends ResourceParent {
         this.logoImage = logoImage;
         return this;
     }
-
 
     @Override
     public System getSystem() {
@@ -497,16 +472,6 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public String getReferrer() {
-        return referrer;
-    }
-
-    @Override
-    public void setReferrer(String referrer) {
-        this.referrer = referrer;
-    }
-
-    @Override
     public State getState() {
         return state;
     }
@@ -534,16 +499,6 @@ public class Institution extends ResourceParent {
     @Override
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
-    }
-
-    @Override
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    @Override
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     @Override

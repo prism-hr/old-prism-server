@@ -58,7 +58,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -121,9 +121,6 @@ public class Application extends Resource {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id")
     private Advert advert;
-
-    @Column(name = "referrer")
-    private String referrer;
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -396,16 +393,6 @@ public class Application extends Resource {
     @Override
     public Application getApplication() {
         return this;
-    }
-
-    @Override
-    public String getReferrer() {
-        return referrer;
-    }
-
-    @Override
-    public void setReferrer(String referrer) {
-        this.referrer = referrer;
     }
 
     public ApplicationAddress getAddress() {
@@ -936,7 +923,7 @@ public class Application extends Resource {
     }
 
     public PrismOpportunityType getOpportunityType() {
-        OpportunityType opportunityType = ((ResourceParent)getParentResource()).getOpportunityType();
+        ImportedOpportunityType opportunityType = ((ResourceParent) getParentResource()).getOpportunityType();
         return opportunityType == null ? null : opportunityType.getPrismOpportunityType();
     }
 

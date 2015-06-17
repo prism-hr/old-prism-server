@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
@@ -34,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Functions;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
@@ -44,7 +42,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentSponsorship;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -58,7 +55,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
@@ -66,7 +62,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertSponsorshipDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
@@ -95,9 +90,6 @@ public class AdvertService {
 
     @Inject
     private ApplicationService applicationService;
-
-    @Inject
-    private CommentService commentService;
 
     @Inject
     private EntityService entityService;
@@ -170,7 +162,7 @@ public class AdvertService {
     }
 
     public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO) {
-        if (BooleanUtils.isFalse(advert.getImported())) {
+        if (BooleanUtils.isFalse(advert.isImported())) {
             advert.setTitle(advertDTO.getTitle());
         }
 
@@ -187,8 +179,6 @@ public class AdvertService {
             addressDTO = mapper.map(address, InstitutionAddressDTO.class);
             updateAddress(advert, addressDTO);
         }
-
-        advert.setSponsorshipTarget(advertDTO.getSponsorshipRequired());
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
@@ -370,71 +360,6 @@ public class AdvertService {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
     }
 
-    public void updateSponsorship(PrismScope resourceScope, Integer resourceId, AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-
-        advert.setSponsorshipPurpose(sponsorshipDTO.getSponsorshipPurpose());
-        advert.setSponsorshipTarget(sponsorshipDTO.getSponsorshipTarget());
-
-        executeUpdate(resource, "COMMENT_UPDATED_SPONSORSHIP_TARGET");
-    }
-
-    public void updateSponsorship(Advert advert, String oldCurrency, String newCurrency) {
-        BigDecimal exchangeRate = getExchangeRate(oldCurrency, newCurrency, new LocalDate());
-
-        BigDecimal sponsorshipTarget = advert.getSponsorshipTarget();
-        if (!(sponsorshipTarget == null || sponsorshipTarget.compareTo(new BigDecimal(0.00)) == 0)) {
-            advert.setSponsorshipTarget(sponsorshipTarget.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
-        }
-
-        BigDecimal sponsorshipSecured = advert.getSponsorshipSecured();
-        if (!(sponsorshipSecured == null || sponsorshipSecured.compareTo(new BigDecimal(0.00)) == 0)) {
-            advert.setSponsorshipSecured(sponsorshipSecured.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
-        }
-    }
-
-    public void rejectSponsorship(PrismScope resourceScope, Integer resourceId, Integer commentId) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-        Comment comment = commentService.getById(commentId);
-
-        Preconditions.checkState(comment.getResource().getId().equals(resource.getId()));
-        CommentSponsorship sponsorship = comment.getSponsorship();
-        if (sponsorship == null || comment.getAction().getActionCategory() != SPONSOR_RESOURCE || sponsorship.getRejection() != null) {
-            throw new PrismForbiddenException("Cannot decline given sponsorship");
-        }
-
-        advert.setSponsorshipSecured(advert.getSponsorshipSecured().subtract(sponsorship.getAmountConverted()));
-        Comment rejection = executeUpdate(resource, "COMMENT_REJECTED_SPONSORSHIP");
-        sponsorship.setRejection(rejection);
-    }
-
-    public void synchronizeSponsorship(ResourceParent resource, Comment comment) {
-        Advert advert = resource.getAdvert();
-
-        BigDecimal advertRequired = advert.getSponsorshipTarget();
-        BigDecimal advertSecured = advert.getSponsorshipSecured();
-
-        CommentSponsorship sponsorship = comment.getSponsorship();
-        String currencySpecified = sponsorship.getCurrencySpecified();
-        String currencyConverted = sponsorship.getCurrencyConverted();
-
-        BigDecimal sponsorshipConverted = sponsorship.getAmountSpecified();
-        if (!currencySpecified.equals(currencyConverted)) {
-            BigDecimal exchangeRate = getExchangeRate(currencySpecified, currencyConverted, new LocalDate());
-            sponsorshipConverted = sponsorshipConverted.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP);
-        }
-
-        sponsorship.setAmountConverted(sponsorshipConverted);
-        advertSecured = advertSecured == null ? sponsorshipConverted : advertSecured.add(sponsorshipConverted);
-
-        advert.setSponsorshipSecured(advertSecured);
-        if (advertRequired != null && advertSecured != null) {
-            sponsorship.setTargetFulfilled(advertRequired.compareTo(advertSecured) >= 0);
-        }
-    }
-
     public List<AdvertRepresentation> getRecommendedAdverts(Integer applicationId) {
         Application application = applicationService.getById(applicationId);
         List<AdvertRecommendationDTO> advertRecommendations = getRecommendedAdverts(application.getUser());
@@ -450,10 +375,6 @@ public class AdvertService {
 
     public List<Advert> getAdvertsWithFeesAndPays(Institution institution) {
         return advertDAO.getAdvertsWithFeesAndPays(institution);
-    }
-
-    public List<Advert> getAdvertsWithSponsorship(Institution institution) {
-        return advertDAO.getAdvertsWithSponsorship(institution);
     }
 
     private String getCurrencyAtLocale(Advert advert) {

@@ -66,9 +66,9 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.Nationality;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
+import com.zuehlke.pgadmissions.domain.imported.ImportedGender;
+import com.zuehlke.pgadmissions.domain.imported.ImportedNationality;
+import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.Address;
@@ -162,7 +162,7 @@ public class ApplicationExportBuilder {
 	}
 
 	private GenderTp buildGender(Application application) {
-		Gender gender = application.getPersonalDetail().getGender();
+		ImportedGender gender = application.getPersonalDetail().getGender();
 		return GenderTp.valueOf(gender.getCode());
 	}
 
@@ -173,7 +173,7 @@ public class ApplicationExportBuilder {
 
 	private NationalityTp buildFirstNationality(Application application) {
 		ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-		Nationality firstNationality = personalDetail.getFirstNationality();
+		ImportedNationality firstNationality = personalDetail.getFirstNationality();
 		NationalityTp nationalityTp = objectFactory.createNationalityTp();
 		nationalityTp.setCode(firstNationality.getCode());
 		nationalityTp.setName(firstNationality.getName());
@@ -181,7 +181,7 @@ public class ApplicationExportBuilder {
 	}
 
 	private NationalityTp buildSecondNationality(Application application) {
-		Nationality secondNationality = application.getPersonalDetail().getSecondNationality();
+		ImportedNationality secondNationality = application.getPersonalDetail().getSecondNationality();
 		NationalityTp nationalityTp = objectFactory.createNationalityTp();
 
 		if (secondNationality == null) {
@@ -369,7 +369,7 @@ public class ApplicationExportBuilder {
 	private SourceOfInterestTp buildSourcesOfInterest(Application application, CourseApplicationTp applicationTp) {
 		ApplicationProgramDetail programmeDetails = application.getProgramDetail();
 		SourceOfInterestTp interestTp = objectFactory.createSourceOfInterestTp();
-		ReferralSource sourcesOfInterest = programmeDetails.getReferralSource();
+		ImportedReferralSource sourcesOfInterest = programmeDetails.getReferralSource();
 		if (sourcesOfInterest == null) {
 			return null;
 		}

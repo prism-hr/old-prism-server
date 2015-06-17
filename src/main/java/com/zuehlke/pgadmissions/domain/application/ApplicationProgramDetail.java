@@ -8,16 +8,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
+import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 
 @Entity
 @Table(name = "APPLICATION_PROGRAM_DETAIL")
@@ -29,25 +28,22 @@ public class ApplicationProgramDetail extends ApplicationSection {
 
     @OneToOne(mappedBy = "programDetail")
     private Application application;
-    
-    @ManyToOne
-    @JoinColumn(name = "opportunity_type_id", nullable = false)
-    private OpportunityType opportunityType;
 
     @ManyToOne
-    @JoinColumn(name = "study_option_id", nullable = false)
-    private StudyOption studyOption;
+    @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
+    private ImportedOpportunityType opportunityType;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_study_option_id", nullable = false)
+    private ImportedStudyOption studyOption;
 
     @Column(name = "start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
 
     @ManyToOne
-    @JoinColumn(name = "referral_source_id", nullable = false)
-    private ReferralSource referralSource;
-
-    @Transient
-    private String sourceOfInterestText;
+    @JoinColumn(name = "imported_referral_source_id", nullable = false)
+    private ImportedReferralSource referralSource;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -69,19 +65,19 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.application = application;
     }
 
-    public OpportunityType getOpportunityType() {
+    public ImportedOpportunityType getOpportunityType() {
         return opportunityType;
     }
 
-    public void setOpportunityType(OpportunityType opportunityType) {
+    public void setOpportunityType(ImportedOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
-    public StudyOption getStudyOption() {
+    public ImportedStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(StudyOption studyOption) {
+    public void setStudyOption(ImportedStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -93,20 +89,12 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.startDate = startDate;
     }
 
-    public ReferralSource getReferralSource() {
+    public ImportedReferralSource getReferralSource() {
         return referralSource;
     }
 
-    public void setReferralSource(ReferralSource referralSource) {
+    public void setReferralSource(ImportedReferralSource referralSource) {
         this.referralSource = referralSource;
-    }
-
-    public String getSourceOfInterestText() {
-        return sourceOfInterestText;
-    }
-
-    public void setSourceOfInterestText(String sourceOfInterest) {
-        this.sourceOfInterestText = sourceOfInterest;
     }
 
     @Override
@@ -124,12 +112,12 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withOpportunityType(OpportunityType opportunityType) {
+    public ApplicationProgramDetail withOpportunityType(ImportedOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }
-    
-    public ApplicationProgramDetail withStudyOption(StudyOption studyOption) {
+
+    public ApplicationProgramDetail withStudyOption(ImportedStudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }
@@ -139,13 +127,8 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withReferralSource(ReferralSource referralSource) {
+    public ApplicationProgramDetail withReferralSource(ImportedReferralSource referralSource) {
         this.referralSource = referralSource;
-        return this;
-    }
-
-    public ApplicationProgramDetail withSourceOfInterestText(String sourceOfInterestText) {
-        this.sourceOfInterestText = sourceOfInterestText;
         return this;
     }
 

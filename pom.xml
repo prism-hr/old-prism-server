@@ -395,9 +395,13 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.7</version>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.1.0.Alpha1</version>
+                <configuration>
+                    <id>wildfly-prod</id>
+                    <port>${wildfly.management.port}</port>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -617,6 +621,7 @@
             <properties>
                 <sql.host>localhost</sql.host>
                 <sql.db>pgadmissions</sql.db>
+                <wildfly.management.port>9992</wildfly.management.port>
             </properties>
             <build>
                 <plugins>

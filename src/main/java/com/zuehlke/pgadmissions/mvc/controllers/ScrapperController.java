@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -45,5 +46,17 @@ public class ScrapperController {
     public Object getPrograms(@RequestParam String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
         log.debug("getPrograms() - start method");
         return scrapperService.getProgramsForImportedInstitutions(yearOfInterest);
+    }
+    //method created to fix temporary bug
+    @ResponseBody
+    @RequestMapping(value= "/fix", method = RequestMethod.POST)
+    public void fixDatabase() throws IOException, SAXException, ParserConfigurationException {
+        scrapperService.fixDatabase();
+    }
+
+    //manual importer for programs
+    @ResponseBody
+    @RequestMapping(value= "/importPrograms", method = RequestMethod.POST)
+    public void importPrograms() throws IOException, SAXException, ParserConfigurationException {
     }
 }

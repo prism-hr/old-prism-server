@@ -13,12 +13,12 @@ public class OpportunityTypeConverter extends DozerConverter<ImportedOpportunity
 
     @Override
     public PrismOpportunityType convertTo(ImportedOpportunityType source, PrismOpportunityType destination) {
-        return PrismOpportunityType.valueOf(source.getCode());
+        return PrismOpportunityType.valueOf(source.getName());
     }
 
     @Override
     public ImportedOpportunityType convertFrom(PrismOpportunityType source, ImportedOpportunityType destination) {
         throw new UnsupportedOperationException();
     }
-    
+
 }

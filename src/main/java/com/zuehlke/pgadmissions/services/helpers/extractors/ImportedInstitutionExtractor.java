@@ -1,19 +1,22 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import org.springframework.stereotype.Component;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_DOMICILE;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class ImportedInstitutionExtractor implements ImportedEntityExtractor {
@@ -24,9 +27,10 @@ public class ImportedInstitutionExtractor implements ImportedEntityExtractor {
     @Override
     public List<String> extract(Institution institution, PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception {
         Map<String, String> domicilesByCode = Maps.newHashMap();
-        List<ImportedDomicile> domiciles = importedEntityService.getEnabledImportedEntities(institution, ImportedDomicile.class);
-        for (ImportedDomicile domicile : domiciles) {
-            domicilesByCode.put(domicile.getCode(), domicile.getId().toString());
+        List<ImportedEntitySimpleMapping> mappings = importedEntityService.getEnabledImportedEntityMappings(institution, IMPORTED_DOMICILE,
+                ImportedEntitySimpleMapping.class);
+        for (ImportedEntitySimpleMapping mapping : mappings) {
+            domicilesByCode.put(mapping.getCode(), mapping.getId().toString());
         }
 
         List<String> rows = Lists.newLinkedList();

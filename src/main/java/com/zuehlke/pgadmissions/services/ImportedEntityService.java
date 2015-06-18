@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlIn
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForInsert;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -24,8 +25,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -118,6 +121,19 @@ public class ImportedEntityService {
         return importedEntityDAO.getEnabledImportedEntities(institution, entityClass);
     }
 
+    public <T extends ImportedEntity, V extends ImportedEntityMapping> V getEnabledImportedEntityMapping(Institution institution,
+            T importedEntity, Class<V> entityMappingClass) {
+        List<V> mappings = importedEntityDAO.getEnabledImportedEntityMapping(institution, importedEntity, entityMappingClass);
+        List<V> filteredMappings = getFilteredImportedEntityMappings(mappings);
+        return filteredMappings.isEmpty() ? null : filteredMappings.get(0);
+    }
+
+    public <T extends ImportedEntityMapping> List<T> getEnabledImportedEntityMappings(Institution institution, PrismImportedEntity importedEntity,
+            Class<T> entityMappingClass) {
+        List<T> mappings = importedEntityDAO.getEnabledImportedEntityMappings(institution, importedEntity, entityMappingClass);
+        return getFilteredImportedEntityMappings(mappings);
+    }
+
     public List<ImportedInstitution> getEnabledImportedInstitutions(ImportedDomicile domicile) {
         return importedEntityDAO.getEnabledImportedInstitutions(domicile);
     }
@@ -133,18 +149,12 @@ public class ImportedEntityService {
             } else if (BooleanUtils.isTrue(importedInstitution.getEnabled())) {
                 return importedInstitution;
             } else {
-                return enableCustomImportedInstitution(importedInstitution);
+                return importedInstitution.withEnabled(true);
             }
         } else {
             ImportedInstitution importedInstitution = getById(institution, ImportedInstitution.class, importedInstitutionDTO.getId());
-            if (BooleanUtils.isTrue(importedInstitution.getEnabled())) {
-                return importedInstitution;
-            } else if (BooleanUtils.isTrue(importedInstitution.getCustom())) {
-                return enableCustomImportedInstitution(importedInstitution);
-            }
+            return importedInstitution.withEnabled(true);
         }
-
-        throw new Error();
     }
 
     public List<ImportedEntityFeed> getInstitutionImportedEntityFeeds(Integer institution, PrismImportedEntity... exclusions) {
@@ -291,27 +301,20 @@ public class ImportedEntityService {
         }
     }
 
+    // TODO: store study option mapping
     private ImportedStudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
         String externalCode = modeOfAttendance.getCode();
         PrismStudyOption prismStudyOption = PrismStudyOption.findValueFromString(externalCode);
         prismStudyOption = prismStudyOption == null ? getSystemStudyOption() : prismStudyOption;
-        ImportedStudyOption studyOption = new ImportedStudyOption().withInstitution(institution).withCode(prismStudyOption.name()).withName(externalCode)
-                .withEnabled(true);
+        ImportedStudyOption studyOption = new ImportedStudyOption().withName(prismStudyOption.name()).withEnabled(true);
         studyOption.setType(PrismImportedEntity.IMPORTED_STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
     }
 
     private ImportedInstitution createCustomImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
         ImportedDomicile domicile = getById(institution, ImportedDomicile.class, importedInstitutionDTO.getDomicile());
-        ImportedInstitution importedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
-                .withName(importedInstitutionDTO.getName()).withEnabled(true).withCustom(true);
+        ImportedInstitution importedInstitution = new ImportedInstitution().withDomicile(domicile).withName(importedInstitutionDTO.getName()).withEnabled(true);
         entityService.save(importedInstitution);
-        importedInstitution.setCode("CUSTOM_" + Strings.padStart(importedInstitution.getId().toString(), 10, '0'));
-        return importedInstitution;
-    }
-
-    private ImportedInstitution enableCustomImportedInstitution(ImportedInstitution importedInstitution) {
-        importedInstitution.setEnabled(true);
         return importedInstitution;
     }
 
@@ -339,6 +342,17 @@ public class ImportedEntityService {
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
                 .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
+    }
+
+    private <T extends ImportedEntityMapping> List<T> getFilteredImportedEntityMappings(List<T> mappings) {
+        Map<String, T> filteredMappings = Maps.newHashMap();
+        for (T mapping : mappings) {
+            String code = mapping.getCode();
+            if (!filteredMappings.containsKey(code)) {
+                filteredMappings.put(code, mapping);
+            }
+        }
+        return Lists.newArrayList(filteredMappings.values());
     }
 
 }

@@ -146,7 +146,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     }
 
     public PrismStudyOption getStudyOptionDisplay() {
-        return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getCode());
+        return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getName());
     }
 
 }

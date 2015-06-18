@@ -139,7 +139,7 @@ public enum PrismImportedEntity {
 
     private String databaseTable;
 
-    private String databaseUniqueColumns;
+    private String databaseColumns;
 
     private Class<? extends ImportedEntityExtractor> databaseImportExtractor;
 
@@ -161,7 +161,7 @@ public enum PrismImportedEntity {
     }
 
     private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
-            String databaseTable, String databaseUniqueColumns, Class<? extends ImportedEntityExtractor> databaseImportExtractor,
+            String databaseTable, String databaseColumns, Class<? extends ImportedEntityExtractor> databaseImportExtractor,
             String[] databaseReferenceColumns, boolean supportsUserDefinedInput) {
         this.jaxbClass = jaxbClass;
         this.jaxbPropertyName = jaxbPropertyName;
@@ -169,7 +169,7 @@ public enum PrismImportedEntity {
         this.defaultLocation = defaultLocation;
         this.schemaLocation = schemaLocation;
         this.databaseTable = databaseTable;
-        this.databaseUniqueColumns = databaseUniqueColumns;
+        this.databaseColumns = databaseColumns;
         this.databaseImportExtractor = databaseImportExtractor;
         this.databaseReferenceColumns = databaseReferenceColumns;
         this.supportsUserDefinedInput = supportsUserDefinedInput;
@@ -199,8 +199,8 @@ public enum PrismImportedEntity {
         return databaseTable;
     }
 
-    public String getDatabaseUniqueColumns() {
-        return databaseUniqueColumns;
+    public String getDatabaseColumns() {
+        return databaseColumns;
     }
 
     public Class<? extends ImportedEntityExtractor> getDatabaseImportExtractor() {

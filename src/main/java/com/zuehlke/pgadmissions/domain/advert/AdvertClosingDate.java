@@ -13,11 +13,10 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "ADVERT_CLOSING_DATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "closing_date" }) })
-public class AdvertClosingDate implements UniqueEntity {
+public class AdvertClosingDate extends AdvertAttribute {
 
     @Id
     @GeneratedValue
@@ -34,10 +33,22 @@ public class AdvertClosingDate implements UniqueEntity {
     @Column(name = "study_places")
     private Integer studyPlaces;
 
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    @Override
     public Advert getAdvert() {
         return advert;
     }
 
+    @Override
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
@@ -58,14 +69,10 @@ public class AdvertClosingDate implements UniqueEntity {
         this.studyPlaces = studyPlaces;
     }
 
-    public Integer getId() {
-        return id;
+    public Object getValue() {
+        return closingDate;
     }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+    
     public AdvertClosingDate withAdvert(Advert advert) {
         this.advert = advert;
         return this;
@@ -100,7 +107,7 @@ public class AdvertClosingDate implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("advert", advert).addProperty("closingDate", closingDate);
+        return super.getResourceSignature().addProperty("closingDate", closingDate);
     }
 
 }

@@ -37,8 +37,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -340,7 +340,7 @@ public class AdvertService {
         return newAddress;
     }
 
-    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertFilterCategory> clazz) {
+    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertAttribute> clazz) {
         return advertDAO.getAdvertTags(institution, clazz);
     }
 

@@ -102,8 +102,11 @@ public class ScrapperService {
     private void getPrograms(org.w3c.dom.Element rootElement, ImportedInstitution currentInstitution,String yearOfInterest, int page, org.w3c.dom.Document doc) throws IOException {
         String url = buildProperUrl(currentInstitution.getUcasId(), yearOfInterest, page);
         Document htmlDoc = getHtml(url);
-
-        Iterator<Element> it = htmlDoc.getElementsByTag("li").iterator();
+        Elements t = htmlDoc.getElementsByClass("resultscontainer");
+        if (t.isEmpty()) {
+            return;
+        }
+        Iterator<Element> it =t.get(0).getElementsByTag("li").iterator();
         if (!it.hasNext()) {
             return;
         }

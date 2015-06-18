@@ -398,6 +398,18 @@
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>1.1.0.Alpha1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>deploy-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.zuehlke</groupId>
+                            <artifactId>prism</artifactId>
+                            <name>prism.war</name>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <id>wildfly-prod</id>
                     <port>${wildfly.management.port}</port>

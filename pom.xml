@@ -401,9 +401,6 @@
                 <configuration>
                     <id>wildfly-prod</id>
                     <port>${wildfly.management.port}</port>
-                    <groupId>com.zuehlke</groupId>
-                    <artifactId>prism</artifactId>
-                    <name>prism.war</name>
                 </configuration>
             </plugin>
 
@@ -495,7 +492,7 @@
                     <driver>com.mysql.jdbc.Driver</driver>
                     <url>
                         <![CDATA[jdbc:mysql://${sql.host}/${sql.db}?useUnicode=yes&characterEncoding=UTF-8&connectionCollation=utf8_general_ci]]></url>
-                    <userid>pgadmissions</userid>
+                    <userid>prism</userid>
                     <password>pgadmissions</password>
                     <dbms>mysql</dbms>
                     <delimiter>;</delimiter>
@@ -623,8 +620,8 @@
         <profile>
             <id>ucl-prod</id>
             <properties>
-                <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions</sql.db>
+                <sql.host>prism-prod.cd4p8rv23vn5.eu-west-1.rds.amazonaws.com</sql.host>
+                <sql.db>prism</sql.db>
                 <wildfly.management.port>9992</wildfly.management.port>
             </properties>
             <build>

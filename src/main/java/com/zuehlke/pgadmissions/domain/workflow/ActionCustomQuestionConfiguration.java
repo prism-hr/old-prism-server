@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "ACTION_CUSTOM_QUESTION_CONFIGURATION", uniqueConstraints = {
+@Table(name = "action_custom_question_configuration", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "version", "display_index" }),

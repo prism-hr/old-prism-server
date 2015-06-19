@@ -1,18 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -20,9 +7,13 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "RESOURCE_STATE_TRANSITION_SUMMARY", uniqueConstraints = {
+@Table(name = "resource_state_transition_summary", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "state_group_id", "transition_state_selection" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_group_id", "transition_state_selection" }),
         @UniqueConstraint(columnNames = { "program_id", "state_group_id", "transition_state_selection" }),

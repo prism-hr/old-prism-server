@@ -1,30 +1,21 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
-import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.system.System;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "STATE")
+@Table(name = "state")
 public class State extends WorkflowDefinition {
 
     @Id
@@ -61,7 +52,7 @@ public class State extends WorkflowDefinition {
 
     @OneToMany(mappedBy = "state")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "state")
     private Set<System> systems = Sets.newHashSet();
 
@@ -70,13 +61,13 @@ public class State extends WorkflowDefinition {
 
     @OneToMany(mappedBy = "state")
     private Set<Program> programs = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "state")
     private Set<Project> projects = Sets.newHashSet();
 
     @OneToMany(mappedBy = "state")
     private Set<Application> applications = Sets.newHashSet();
-    
+
     @Override
     public PrismState getId() {
         return id;

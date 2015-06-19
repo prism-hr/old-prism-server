@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.domain.system;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -32,9 +14,18 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
-@Table(name = "SYSTEM")
+@Table(name = "system")
 public class System extends Resource {
 
     @Id
@@ -55,7 +46,7 @@ public class System extends Resource {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
-    
+
     @Column(name = "minimum_wage", nullable = false)
     private BigDecimal minimumWage;
 
@@ -456,7 +447,7 @@ public class System extends Resource {
         this.id = id;
         return this;
     }
-    
+
     public System withTitle(String title) {
         this.title = title;
         return this;
@@ -466,7 +457,7 @@ public class System extends Resource {
         this.minimumWage = minimumWage;
         return this;
     }
-    
+
     public System withUser(User user) {
         this.user = user;
         return this;

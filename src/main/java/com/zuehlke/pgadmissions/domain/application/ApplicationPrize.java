@@ -1,20 +1,13 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "APPLICATION_PRIZE")
+@Table(name = "application_prize")
 public class ApplicationPrize extends ApplicationSection {
 
     @Id

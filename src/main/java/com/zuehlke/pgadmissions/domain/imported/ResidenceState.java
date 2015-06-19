@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-
 @Entity
-@DiscriminatorValue("RESIDENCE_STATE")
+@DiscriminatorValue("residence_state")
 public class ResidenceState extends ImportedEntitySimple {
 
     public ResidenceState withInstitution(Institution institution) {

@@ -119,6 +119,14 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
+    public <T extends ImportedEntity> void disableImportedEntities(Class<T> importedEntityClass) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + importedEntityClass.getSimpleName() + " " //
+                        + "set enabled = false") //
+                .executeUpdate();
+    }
+
+    // TODO: Switch to mapping class
     public void disableImportedEntities(Class<?> entityClass, Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //

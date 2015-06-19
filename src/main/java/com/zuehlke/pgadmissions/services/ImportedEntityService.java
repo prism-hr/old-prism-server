@@ -10,18 +10,30 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForInsert;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +72,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -187,6 +200,20 @@ public class ImportedEntityService {
         entityService.flush();
 
         List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(institution, prismImportedEntity, definitions);
+
+        importedEntityDAO
+                .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
+        entityService.flush();
+
+        importedEntityFeed.setLastImportedTimestamp(new DateTime());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ImportedEntity> void mergeImportedEntities(PrismImportedEntity prismImportedEntity) {
+        importedEntityDAO.disableImportedEntities((Class<T>) prismImportedEntity.getEntityClass());
+        entityService.flush();
+
+        List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions);
 
         importedEntityDAO
                 .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
@@ -353,6 +380,47 @@ public class ImportedEntityService {
             }
         }
         return Lists.newArrayList(filteredMappings.values());
+    }
+
+    private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws Exception {
+        try {
+            Authenticator.setDefault(new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(importedEntityFeed.getUsername(), importedEntityFeed.getPassword().toCharArray());
+                }
+            });
+
+            DateTime lastImportedTimestamp = importedEntityFeed.getLastImportedTimestamp();
+            PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
+
+            URL fileUrl = new DefaultResourceLoader().getResource(importedEntityFeed.getLocation()).getURL();
+            URLConnection connection = fileUrl.openConnection();
+            Long lastModifiedTimestamp = connection.getLastModified();
+
+            if (lastImportedTimestamp == null || lastModifiedTimestamp == 0
+                    || new LocalDateTime(lastModifiedTimestamp).toDateTime().isAfter(lastImportedTimestamp)) {
+                return readImportedData(importedEntityType, fileUrl);
+            }
+
+            return null;
+        } finally {
+            Authenticator.setDefault(null);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @CacheEvict("importedInstitutionData")
+    private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws Exception {
+        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
+
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
+
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        unmarshaller.setSchema(schema);
+
+        Object unmarshalled = unmarshaller.unmarshal(fileUrl);
+        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
     }
 
 }

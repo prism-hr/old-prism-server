@@ -105,56 +105,6 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         return unmarshalledEntities;
     }
 
-    private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws Exception {
-        try {
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(importedEntityFeed.getUsername(), importedEntityFeed.getPassword().toCharArray());
-                }
-            });
-
-            DateTime lastImportedTimestamp = importedEntityFeed.getLastImportedTimestamp();
-            PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
-
-            URL fileUrl = new DefaultResourceLoader().getResource(importedEntityFeed.getLocation()).getURL();
-            URLConnection connection = fileUrl.openConnection();
-            Long lastModifiedTimestamp = connection.getLastModified();
-
-            if (lastImportedTimestamp == null || lastModifiedTimestamp == 0
-                    || new LocalDateTime(lastModifiedTimestamp).toDateTime().isAfter(lastImportedTimestamp)) {
-                return readImportedData(importedEntityType, fileUrl);
-            }
-
-            return null;
-        } finally {
-            Authenticator.setDefault(null);
-        }
-    }
-
-    @CacheEvict("importedInstitutionData")
-    private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
-
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
-
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-
-        Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
-    }
-
-    private void processImportException(ImportedEntityFeed importedEntityFeed, Exception e) {
-        String errorMessage = e.getMessage();
-        Throwable cause = e.getCause();
-        if (cause != null) {
-            errorMessage += "\n" + cause.toString();
-        }
-        logger.error("Error importing " + importedEntityFeed.getImportedEntityType().name() + " for " + importedEntityFeed.getInstitution().getCode(), e);
-        notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
-    }
-
     private void mergeImportedPrograms(Integer institutionId, Integer importedEntityFeedId, List<Object> definitions) throws Exception {
         DateTime baselineTime = new DateTime();
         LocalDate baseline = baselineTime.toLocalDate();

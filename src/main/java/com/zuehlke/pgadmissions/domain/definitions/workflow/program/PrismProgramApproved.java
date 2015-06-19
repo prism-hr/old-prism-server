@@ -2,19 +2,11 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_PROVIDE_SPONSORSHIP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_SPONSOR_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_SPONSOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_SPONSOR_TRANSITON;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateApproved;
@@ -36,15 +28,6 @@ public class PrismProgramApproved extends PrismWorkflowState {
         stateActions.add(programCreateProject()); //
         stateActions.add(programEmailCreator());
         stateActions.add(programEscalateApproved());
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(PROGRAM_PROVIDE_SPONSORSHIP) //
-                .withCondition(ACCEPT_SPONSOR) //
-                .withNotifications(PROGRAM_SPONSOR, PROGRAM_SPONSOR_NOTIFICATION) //
-                .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION)
-                .withTransitions(PROGRAM_SPONSOR_TRANSITON //
-                        .withRoleTransitions(PROGRAM_CREATE_SPONSOR_GROUP))); //
-
         stateActions.add(programViewEditApproved()); //
     }
 

@@ -55,7 +55,7 @@ public class System extends Resource {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
-    
+
     @Column(name = "minimum_wage", nullable = false)
     private BigDecimal minimumWage;
 
@@ -263,15 +263,6 @@ public class System extends Resource {
     }
 
     @Override
-    public String getReferrer() {
-        return null;
-    }
-
-    @Override
-    public void setReferrer(String referrer) {
-    }
-
-    @Override
     public User getUser() {
         return user;
     }
@@ -456,7 +447,7 @@ public class System extends Resource {
         this.id = id;
         return this;
     }
-    
+
     public System withTitle(String title) {
         this.title = title;
         return this;
@@ -466,7 +457,7 @@ public class System extends Resource {
         this.minimumWage = minimumWage;
         return this;
     }
-    
+
     public System withUser(User user) {
         this.user = user;
         return this;

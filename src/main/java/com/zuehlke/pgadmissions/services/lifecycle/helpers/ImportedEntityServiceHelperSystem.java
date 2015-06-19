@@ -15,9 +15,12 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
+import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles.InstitutionDomicile;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -32,6 +35,9 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
 
     @Inject
     private InstitutionService institutionService;
+    
+    @Inject
+    private ImportedEntityService importedEntityService;
 
     @Inject
     private SystemService systemService;
@@ -42,26 +48,34 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
         System system = systemService.getSystem();
         LocalDate lastImportDate = system.getLastDataImportDate();
         if (lastImportDate == null || lastImportDate.isBefore(baseline)) {
-            List<String> updates = importInstitutionDomiciles();
-            institutionService.disableInstitutionDomiciles(updates);
+            importInstitutionDomiciles();
+            importEntities();
             systemService.setLastDataImportDate(baseline);
         }
     }
 
-    private List<String> importInstitutionDomiciles() throws Exception {
+    private void importInstitutionDomiciles() throws Exception {
         try {
-            List<String> isoCodes = Lists.newArrayList();
+            List<String> definitions = Lists.newArrayList();
             List<InstitutionDomiciles.InstitutionDomicile> institutionDomicileDefinitions = unmarshal();
             for (InstitutionDomiciles.InstitutionDomicile institutionDomicileDefinition : institutionDomicileDefinitions) {
-                isoCodes.add(institutionService.mergeInstitutionDomicile(institutionDomicileDefinition));
+                definitions.add(institutionService.mergeInstitutionDomicile(institutionDomicileDefinition));
             }
-            return isoCodes;
+            institutionService.disableInstitutionDomiciles(definitions);
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + institutionDomicileImportLocation, e);
         }
     }
 
-    public List<InstitutionDomiciles.InstitutionDomicile> unmarshal() throws Exception {
+    private void importEntities() {
+        for (PrismImportedEntity prisImportedEntity : PrismImportedEntity.values()) {
+            if (prisImportedEntity.isSystemImport()) {
+                importedEntityService.mergeImportedEntities(prisImportedEntity);
+            }
+        }
+    }
+
+    public List<InstitutionDomicile> unmarshal() throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(InstitutionDomiciles.class);
         DefaultResourceLoader loader = new DefaultResourceLoader();
 

@@ -75,7 +75,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
+import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -151,9 +151,6 @@ public class Comment {
     @Column(name = "removed_partner")
     private Boolean removedPartner;
 
-    @Embedded
-    private CommentSponsorship sponsorship;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
     private PrismYesNoUnsureResponse applicationEligible;
@@ -181,8 +178,8 @@ public class Comment {
     private PrismApplicationReserveStatus applicationReserveStatus;
 
     @ManyToOne
-    @JoinColumn(name = "application_rejection_reason_id")
-    private RejectionReason rejectionReason;
+    @JoinColumn(name = "application_imported_rejection_reason_id")
+    private ImportedRejectionReason rejectionReason;
 
     @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
@@ -364,14 +361,6 @@ public class Comment {
         this.removedPartner = removedPartner;
     }
 
-    public CommentSponsorship getSponsorship() {
-        return sponsorship;
-    }
-
-    public void setSponsorship(CommentSponsorship sponsorship) {
-        this.sponsorship = sponsorship;
-    }
-
     public PrismYesNoUnsureResponse getApplicationEligible() {
         return applicationEligible;
     }
@@ -436,11 +425,11 @@ public class Comment {
         this.applicationReserveStatus = applicationReserveRating;
     }
 
-    public RejectionReason getRejectionReason() {
+    public ImportedRejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(RejectionReason rejectionReason) {
+    public void setRejectionReason(ImportedRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
 
@@ -854,10 +843,6 @@ public class Comment {
 
     public boolean isPartnershipComment() {
         return partner != null;
-    }
-
-    public boolean isSponsorshipComment() {
-        return sponsorship != null;
     }
 
     public boolean isProjectPartnerApproveComment() {

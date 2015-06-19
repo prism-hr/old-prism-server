@@ -19,16 +19,16 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
+import com.zuehlke.pgadmissions.domain.imported.ImportedCountry;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedFundingSource;
+import com.zuehlke.pgadmissions.domain.imported.ImportedGender;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.Nationality;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedNationality;
+import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -60,11 +60,11 @@ public class ApplicationTestDataProvider {
 
     private void createPersonalDetail(Application application) {
         ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
-        personalDetail.setGender(testObjectProvider.get(Gender.class));
+        personalDetail.setGender(testObjectProvider.get(ImportedGender.class));
         personalDetail.setDateOfBirth(new LocalDate().minusYears(28));
-        personalDetail.setCountry(testObjectProvider.get(Country.class));
-        personalDetail.setFirstNationality(testObjectProvider.get(Nationality.class));
-        personalDetail.setSecondNationality(testObjectProvider.get(Nationality.class));
+        personalDetail.setCountry(testObjectProvider.get(ImportedCountry.class));
+        personalDetail.setFirstNationality(testObjectProvider.get(ImportedNationality.class));
+        personalDetail.setSecondNationality(testObjectProvider.get(ImportedNationality.class));
         ApplicationLanguageQualification languageQualification = new ApplicationLanguageQualification();
         languageQualification.setType(entityService.getByProperty(ImportedLanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
         languageQualification.setExamDate(new LocalDate(1967, 9, 14));
@@ -75,7 +75,7 @@ public class ApplicationTestDataProvider {
         languageQualification.setListeningScore("6");
         languageQualification.setDocument(testObjectProvider.get(Document.class));
         personalDetail.setLanguageQualification(languageQualification);
-        personalDetail.setDomicile(testObjectProvider.get(Domicile.class));
+        personalDetail.setDomicile(testObjectProvider.get(ImportedDomicile.class));
         personalDetail.setVisaRequired(true);
         ApplicationPassport passport = new ApplicationPassport();
         passport.setNumber("666");
@@ -85,8 +85,8 @@ public class ApplicationTestDataProvider {
         personalDetail.setPassport(passport);
         personalDetail.setPhone("+44(4)5435435");
         personalDetail.setSkype("dupajasia");
-        personalDetail.setEthnicity(testObjectProvider.get(Ethnicity.class));
-        personalDetail.setDisability(testObjectProvider.get(Disability.class));
+        personalDetail.setEthnicity(testObjectProvider.get(ImportedEthnicity.class));
+        personalDetail.setDisability(testObjectProvider.get(ImportedDisability.class));
         application.setPersonalDetail(personalDetail);
         entityService.save(personalDetail);
     }
@@ -98,7 +98,7 @@ public class ApplicationTestDataProvider {
         address.setAddressLine2("Bielsko-Biala");
         address.setAddressRegion("woj. Slaskie");
         address.setAddressCode("43-300");
-        address.setDomicile(testObjectProvider.get(Domicile.class));
+        address.setDomicile(testObjectProvider.get(ImportedDomicile.class));
         applicationAddress.setCurrentAddress(address);
         applicationAddress.setContactAddress(address);
         application.setAddress(applicationAddress);
@@ -109,7 +109,7 @@ public class ApplicationTestDataProvider {
         for (int i = 0; i < 3; i++) {
             ApplicationQualification qualification = new ApplicationQualification();
             qualification.setInstitution(testObjectProvider.get(ImportedInstitution.class));
-            qualification.setType(testObjectProvider.get(QualificationType.class));
+            qualification.setType(testObjectProvider.get(ImportedQualificationType.class));
             qualification.setTitle("Mistrzostwo");
             qualification.setSubject("Jestem piekny i mam wspaniale miesnie");
             qualification.setLanguage("Polish");
@@ -131,7 +131,7 @@ public class ApplicationTestDataProvider {
         address.setAddressLine2("Bielsko-Biala");
         address.setAddressRegion("woj. Slaskie");
         address.setAddressCode("43-300");
-        address.setDomicile(testObjectProvider.get(Domicile.class));
+        address.setDomicile(testObjectProvider.get(ImportedDomicile.class));
         employment.setEmployerAddress(address);
         employment.setPosition("Robol");
         employment.setRemit("Nic ino zapierdalac trza bylo");
@@ -143,7 +143,7 @@ public class ApplicationTestDataProvider {
 
     private void createFunding(Application application) {
         ApplicationFunding funding = new ApplicationFunding();
-        funding.setFundingSource(entityService.getByProperty(FundingSource.class, "code", "SCHOLARSHIP"));
+        funding.setFundingSource(entityService.getByProperty(ImportedFundingSource.class, "code", "SCHOLARSHIP"));
         funding.setDescription("Aa narucham troche kasy, niewazne skont");
         funding.setValue("2000000");
         funding.setAwardDate(new LocalDate().minusYears(1));
@@ -163,7 +163,7 @@ public class ApplicationTestDataProvider {
             address.setAddressLine2("Bielsko-Biala");
             address.setAddressRegion("woj. Slaskie");
             address.setAddressCode("43-300");
-            address.setDomicile(testObjectProvider.get(Domicile.class));
+            address.setDomicile(testObjectProvider.get(ImportedDomicile.class));
             referee.setAddress(address);
             referee.setPhone("+44(0)5435435");
             referee.setSkype("szefwszystkichszefow");

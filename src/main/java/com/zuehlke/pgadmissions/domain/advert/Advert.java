@@ -2,12 +2,10 @@ package com.zuehlke.pgadmissions.domain.advert;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
-import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -26,12 +24,12 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -58,27 +56,22 @@ public class Advert extends ResourceParentAttribute {
     @Column(name = "description")
     private String description;
 
+    @OneToOne
+    @JoinColumn(name = "background_image_id")
+    private Document backgroundImage;
+
     @Column(name = "homepage")
     private String homepage;
 
     @Column(name = "apply_homepage")
     private String applyHomepage;
-    
+
     @Column(name = "telephone")
     private String telephone;
 
     @OneToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-
-    @Column(name = "sponsorship_purpose")
-    private String sponsorshipPurpose;
-    
-    @Column(name = "sponsorship_target")
-    private BigDecimal sponsorshipTarget;
-
-    @Column(name = "sponsorship_secured")
-    private BigDecimal sponsorshipSecured;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -121,31 +114,6 @@ public class Advert extends ResourceParentAttribute {
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
-    @OrderBy(clause = "domain")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertDomain> domains = Sets.newHashSet();
-
-    @OrderBy(clause = "function")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertFunction> functions = Sets.newHashSet();
-
-    @OrderBy(clause = "industry")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertIndustry> industries = Sets.newHashSet();
-
-    @OrderBy(clause = "competency")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertCompetency> competencies = Sets.newHashSet();
-
-    @OrderBy(clause = "theme")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertTheme> themes = Sets.newHashSet();
-
     @OneToOne(mappedBy = "advert")
     private Institution institution;
 
@@ -155,13 +123,45 @@ public class Advert extends ResourceParentAttribute {
     @OneToOne(mappedBy = "advert")
     private Project project;
 
-    @OrderBy(clause = "sequence_identifier desc")
     @OneToMany(mappedBy = "advert")
-    private Set<Application> applications = Sets.newHashSet();
+    @OrderBy(clause = "industry")
+    private Set<AdvertIndustry> industries = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "advert")
+    @OrderBy(clause = "function")
+    private Set<AdvertFunction> functions = Sets.newHashSet();
+
+    @OrderBy(clause = "theme")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertTheme> themes = Sets.newHashSet();
+
+    @OrderBy(clause = "competence")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertCompetence> competences = Sets.newHashSet();
+
+    @OrderBy(clause = "institution")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertInstitution> institutions = Sets.newHashSet();
+
+    @OrderBy(clause = "department")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertDepartment> departments = Sets.newHashSet();
+
+    @OrderBy(clause = "program")
+    @OneToMany(mappedBy = "advert")
+    private Set<ImportedProgram> programs = Sets.newHashSet();
+
+    @OrderBy(clause = "subjectArea")
+    @OneToMany(mappedBy = "advert")
+    private Set<ImportedSubjectArea> subjectAreas = Sets.newHashSet();
 
     @OrderBy(clause = "closing_date desc")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
+
+    @OrderBy(clause = "sequence_identifier desc")
+    @OneToMany(mappedBy = "advert")
+    private Set<Application> applications = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -195,6 +195,14 @@ public class Advert extends ResourceParentAttribute {
         this.description = description;
     }
 
+    public Document getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Document backgroundImage) {
+        this.backgroundImage = backgroundImage;
+    }
+
     public final String getHomepage() {
         return homepage;
     }
@@ -225,30 +233,6 @@ public class Advert extends ResourceParentAttribute {
 
     public void setAddress(InstitutionAddress address) {
         this.address = address;
-    }
-
-    public String getSponsorshipPurpose() {
-        return sponsorshipPurpose;
-    }
-
-    public void setSponsorshipPurpose(String sponsorshipPurpose) {
-        this.sponsorshipPurpose = sponsorshipPurpose;
-    }
-
-    public BigDecimal getSponsorshipTarget() {
-        return sponsorshipTarget;
-    }
-
-    public void setSponsorshipTarget(BigDecimal sponsorshipTarget) {
-        this.sponsorshipTarget = sponsorshipTarget;
-    }
-
-    public BigDecimal getSponsorshipSecured() {
-        return sponsorshipSecured;
-    }
-
-    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
-        this.sponsorshipSecured = sponsorshipSecured;
     }
 
     public AdvertFinancialDetail getFee() {
@@ -291,26 +275,6 @@ public class Advert extends ResourceParentAttribute {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public final Set<AdvertDomain> getDomains() {
-        return domains;
-    }
-
-    public final Set<AdvertIndustry> getIndustries() {
-        return industries;
-    }
-
-    public final Set<AdvertFunction> getFunctions() {
-        return functions;
-    }
-
-    public final Set<AdvertCompetency> getCompetencies() {
-        return competencies;
-    }
-
-    public final Set<AdvertTheme> getThemes() {
-        return themes;
-    }
-
     @Override
     public Institution getInstitution() {
         return institution;
@@ -341,6 +305,58 @@ public class Advert extends ResourceParentAttribute {
         this.project = project;
     }
 
+    public final Set<AdvertIndustry> getIndustries() {
+        return industries;
+    }
+
+    public final Set<AdvertFunction> getFunctions() {
+        return functions;
+    }
+
+    public final Set<AdvertTheme> getThemes() {
+        return themes;
+    }
+
+    public Set<AdvertCompetence> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(Set<AdvertCompetence> competences) {
+        this.competences = competences;
+    }
+
+    public Set<AdvertInstitution> getInstitutions() {
+        return institutions;
+    }
+
+    public void setInstitutions(Set<AdvertInstitution> institutions) {
+        this.institutions = institutions;
+    }
+
+    public Set<AdvertDepartment> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(Set<AdvertDepartment> departments) {
+        this.departments = departments;
+    }
+
+    public Set<ImportedProgram> getPrograms() {
+        return programs;
+    }
+
+    public void setPrograms(Set<ImportedProgram> programs) {
+        this.programs = programs;
+    }
+
+    public Set<ImportedSubjectArea> getSubjectAreas() {
+        return subjectAreas;
+    }
+
+    public void setSubjectAreas(Set<ImportedSubjectArea> subjectAreas) {
+        this.subjectAreas = subjectAreas;
+    }
+
     public Set<AdvertClosingDate> getClosingDates() {
         return closingDates;
     }
@@ -355,8 +371,9 @@ public class Advert extends ResourceParentAttribute {
         return opportunity.getOpportunityType().getPrismOpportunityType();
     }
 
-    public Boolean getImported() {
-        return program != null && program.getImported();
+    public boolean isImported() {
+        ResourceOpportunity resource = getResourceOpportunity();
+        return resource == null ? false : resource.getImportedCode() != null;
     }
 
     public Advert withTitle(String title) {
@@ -365,7 +382,15 @@ public class Advert extends ResourceParentAttribute {
     }
 
     public ResourceParent getResource() {
-        return ObjectUtils.firstNonNull(project, program, institution);
+        return ObjectUtils.firstNonNull(getResourceParent(), getResourceOpportunity());
+    }
+
+    public ResourceParent getResourceParent() {
+        return ObjectUtils.firstNonNull(institution);
+    }
+
+    public ResourceOpportunity getResourceOpportunity() {
+        return ObjectUtils.firstNonNull(program, project);
     }
 
     public boolean isAdvertOfScope(PrismScope scope) {
@@ -386,36 +411,6 @@ public class Advert extends ResourceParentAttribute {
 
     public void addClosingDate(AdvertClosingDate closingDate) {
         closingDates.add(closingDate);
-    }
-
-    public void addDomain(PrismAdvertDomain domainId) {
-        AdvertDomain domain = new AdvertDomain().withAdvert(this);
-        domain.setDomain(domainId);
-        domains.add(domain);
-    }
-
-    public void addFunction(PrismAdvertFunction functionId) {
-        AdvertFunction function = new AdvertFunction().withAdvert(this);
-        function.setFunction(functionId);
-        functions.add(function);
-    }
-
-    public void addIndustry(PrismAdvertIndustry industryId) {
-        AdvertIndustry industry = new AdvertIndustry().withAdvert(this);
-        industry.setIndustry(industryId);
-        industries.add(industry);
-    }
-
-    public void addCompetency(String competencyId) {
-        AdvertCompetency competency = new AdvertCompetency().withAdvert(this);
-        competency.setCompetency(competencyId);
-        competencies.add(competency);
-    }
-
-    public void addTheme(String themeId) {
-        AdvertTheme theme = new AdvertTheme().withAdvert(this);
-        theme.setTheme(themeId);
-        themes.add(theme);
     }
 
 }

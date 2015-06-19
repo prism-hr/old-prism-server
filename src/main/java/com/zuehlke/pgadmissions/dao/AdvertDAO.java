@@ -25,8 +25,8 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -231,7 +231,7 @@ public class AdvertDAO {
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
     }
 
-    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertFilterCategory> clazz) {
+    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertAttribute> clazz) {
         String propertyName = clazz.getSimpleName().replace("Advert", "").toLowerCase();
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
                 .setProjection(Projections.groupProperty(propertyName)) //
@@ -285,18 +285,6 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("fee.currencySpecified", currency)) //
                         .add(Restrictions.eq("pay.currencySpecified", currency))) //
-                .list();
-    }
-
-    public List<Advert> getAdvertsWithSponsorship(Institution institution) {
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .createAlias("project", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .add(getInstitutionConstraint(institution)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.gt("sponsorshipTarget", new BigDecimal(0.00))) //
-                        .add(Restrictions.gt("sponsorshipSecured", new BigDecimal(0.00)))) //
                 .list();
     }
 

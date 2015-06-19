@@ -14,9 +14,8 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 
 @Entity
-@Table(name = "ADVERT_INDUSTRY", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "industry" }),
-        @UniqueConstraint(columnNames = { "industry", "advert_id" }) })
-public class AdvertIndustry extends AdvertFilterCategory {
+@Table(name = "ADVERT_INDUSTRY", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "industry" }) })
+public class AdvertIndustry extends AdvertAttribute {
 
     @Id
     @GeneratedValue
@@ -60,7 +59,7 @@ public class AdvertIndustry extends AdvertFilterCategory {
 
     @Override
     public Object getValue() {
-        return getIndustry();
+        return industry;
     }
 
     @Override

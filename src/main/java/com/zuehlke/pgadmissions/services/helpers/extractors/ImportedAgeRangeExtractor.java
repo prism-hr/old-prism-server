@@ -10,20 +10,18 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.referencedata.jaxb.AgeRanges.AgeRange;
 
 @Component
 public class ImportedAgeRangeExtractor implements ImportedEntityExtractor {
 
     @Override
-    public List<String> extract(Institution institution, PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception {
         List<String> rows = Lists.newLinkedList();
         for (Object definition : definitions) {
             AgeRange ageRange = (AgeRange) definition;
-            
+
             List<String> cells = Lists.newLinkedList();
-            cells.add(prepareStringForSqlInsert(institution.getId().toString()));
             cells.add(prepareStringForSqlInsert(ageRange.getCode()));
             cells.add(prepareStringForSqlInsert(ageRange.getName()));
             cells.add(prepareStringForSqlInsert(ageRange.getLowerBound().toString()));

@@ -16,11 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
@@ -60,7 +61,34 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
+    // TODO: put the entity mapping class reference in the enumeration
+    public <T extends ImportedEntity, V extends ImportedEntityMapping> List<V> getEnabledImportedEntityMapping(Institution institution, T importedEntity,
+            Class<V> entityMappingClass) {
+        String entityReference = importedEntity.getType().getLowerCamelName();
+        return (List<V>) sessionFactory.getCurrentSession().createCriteria(entityMappingClass) //
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(entityReference + ".type", importedEntity)) //
+                .add(Restrictions.eq(entityReference, importedEntity)) //
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.desc("id")) //
+                .list();
+    }
+
+    // TODO: put the entity mapping class reference in the enumeration
+    public <T extends ImportedEntityMapping> List<T> getEnabledImportedEntityMappings(Institution institution, PrismImportedEntity importedEntity,
+            Class<T> entityMappingClass) {
+        String entityReference = importedEntity.getLowerCamelName();
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(entityMappingClass) //
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(entityReference + ".type", importedEntity)) //
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.desc("id")) //
+                .list();
+    }
+
+    public List<ImportedInstitution> getEnabledImportedInstitutions(ImportedDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)//
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("enabled", true)) //
@@ -91,6 +119,14 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
+    public <T extends ImportedEntity> void disableImportedEntities(Class<T> importedEntityClass) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + importedEntityClass.getSimpleName() + " " //
+                        + "set enabled = false") //
+                .executeUpdate();
+    }
+
+    // TODO: Switch to mapping class
     public void disableImportedEntities(Class<?> entityClass, Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //
@@ -175,8 +211,8 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public AgeRange getAgeRange(Institution institution, Integer age) {
-        return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class) //
+    public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
+        return (ImportedAgeRange) sessionFactory.getCurrentSession().createCriteria(ImportedAgeRange.class) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.ge("lowerBound", age)) //
                 .add(Restrictions.disjunction() //
@@ -184,6 +220,12 @@ public class ImportedEntityDAO {
                         .add(Restrictions.isNull("upperBound"))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
+    }
+
+    public List<ImportedInstitution> getInstitutionsWithUcasId() {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
+                .add(Restrictions.isNotNull("ucasId")) //
+                .list();
     }
 
 }

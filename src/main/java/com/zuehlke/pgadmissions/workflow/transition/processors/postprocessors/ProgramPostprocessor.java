@@ -44,7 +44,7 @@ public class ProgramPostprocessor implements ResourceProcessor {
     }
 
     private void synchronizeProjects(Comment comment, Program program) {
-        projectService.synchronizeProjects(program);
+        projectService.synchronizeProjectDueDates(program);
         if (comment.isProgramRestoreComment()) {
             projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
         }

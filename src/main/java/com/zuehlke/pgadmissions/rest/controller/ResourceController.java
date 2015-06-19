@@ -67,7 +67,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlot
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -105,9 +104,6 @@ public class ResourceController {
 
     @Inject
     private ApplicationService applicationService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private Mapper mapper;
@@ -335,13 +331,6 @@ public class ResourceController {
 
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
         return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-    }
-
-    @RequestMapping(value = "/{resourceId}/comments/{commentId}/sponsorship", method = RequestMethod.DELETE)
-    @PreAuthorize("isAuthenticated()")
-    public void rejectSponsorship(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer commentId)
-            throws Exception {
-        advertService.rejectSponsorship(resourceDescriptor.getResourceScope(), resourceId, commentId);
     }
 
     @ModelAttribute

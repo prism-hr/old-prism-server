@@ -9,7 +9,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -102,15 +100,11 @@ public class ActionService {
 
     public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
         PrismScope scope = resource.getResourceScope();
-
         Integer resourceId = resource.getId();
         Integer systemId = resource.getSystem().getId();
         Integer institutionId = resourceService.getResourceId(resource.getInstitution());
         Integer partnerId = resourceService.getResourceId(resource.getPartner());
-
-        Program program = resource.getProgram();
-        Integer programId = resourceService.getResourceId(program);
-
+        Integer programId = resourceService.getResourceId(resource.getProgram());
         Integer projectId = resourceService.getResourceId(resource.getProject());
         Integer applicationId = resourceService.getResourceId(resource.getApplication());
 
@@ -132,8 +126,7 @@ public class ActionService {
             action.addActionEnhancements(actionDAO.getCustomActionEnhancements(resource, actionId, user));
 
             if (BooleanUtils.isTrue(action.getPrimaryState())) {
-                action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId,
-                        scope == PROGRAM && program.getImported()));
+                action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId, resource.getAdvert().isImported()));
             }
         }
 

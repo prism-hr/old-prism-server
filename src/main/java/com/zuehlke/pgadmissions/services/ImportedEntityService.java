@@ -10,22 +10,36 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForInsert;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -36,13 +50,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -57,6 +72,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -118,7 +134,20 @@ public class ImportedEntityService {
         return importedEntityDAO.getEnabledImportedEntities(institution, entityClass);
     }
 
-    public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
+    public <T extends ImportedEntity, V extends ImportedEntityMapping> V getEnabledImportedEntityMapping(Institution institution,
+            T importedEntity, Class<V> entityMappingClass) {
+        List<V> mappings = importedEntityDAO.getEnabledImportedEntityMapping(institution, importedEntity, entityMappingClass);
+        List<V> filteredMappings = getFilteredImportedEntityMappings(mappings);
+        return filteredMappings.isEmpty() ? null : filteredMappings.get(0);
+    }
+
+    public <T extends ImportedEntityMapping> List<T> getEnabledImportedEntityMappings(Institution institution, PrismImportedEntity importedEntity,
+            Class<T> entityMappingClass) {
+        List<T> mappings = importedEntityDAO.getEnabledImportedEntityMappings(institution, importedEntity, entityMappingClass);
+        return getFilteredImportedEntityMappings(mappings);
+    }
+
+    public List<ImportedInstitution> getEnabledImportedInstitutions(ImportedDomicile domicile) {
         return importedEntityDAO.getEnabledImportedInstitutions(domicile);
     }
 
@@ -133,18 +162,12 @@ public class ImportedEntityService {
             } else if (BooleanUtils.isTrue(importedInstitution.getEnabled())) {
                 return importedInstitution;
             } else {
-                return enableCustomImportedInstitution(importedInstitution);
+                return importedInstitution.withEnabled(true);
             }
         } else {
             ImportedInstitution importedInstitution = getById(institution, ImportedInstitution.class, importedInstitutionDTO.getId());
-            if (BooleanUtils.isTrue(importedInstitution.getEnabled())) {
-                return importedInstitution;
-            } else if (BooleanUtils.isTrue(importedInstitution.getCustom())) {
-                return enableCustomImportedInstitution(importedInstitution);
-            }
+            return importedInstitution.withEnabled(true);
         }
-
-        throw new Error();
     }
 
     public List<ImportedEntityFeed> getInstitutionImportedEntityFeeds(Integer institution, PrismImportedEntity... exclusions) {
@@ -185,15 +208,28 @@ public class ImportedEntityService {
         importedEntityFeed.setLastImportedTimestamp(new DateTime());
     }
 
-    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime) throws Exception {
+    @SuppressWarnings("unchecked")
+    public <T extends ImportedEntity> void mergeImportedEntities(PrismImportedEntity prismImportedEntity) {
+        importedEntityDAO.disableImportedEntities((Class<T>) prismImportedEntity.getEntityClass());
+        entityService.flush();
+
+        List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions);
+
+        importedEntityDAO
+                .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
+        entityService.flush();
+
+        importedEntityFeed.setLastImportedTimestamp(new DateTime());
+    }
+
+    public Integer mergeImportedProgram(Integer institutionId, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
+            throws Exception {
         Institution institution = institutionService.getById(institutionId);
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
-        LocalDate startDate = null;
-        LocalDate closeDate = null;
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
-            StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
+            ImportedStudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
             LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
             LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
@@ -212,13 +248,9 @@ public class ImportedEntityService {
 
                 ResourceStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
                 persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
-
-                startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
-                closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
             }
         }
 
-        persistentProgram.setEndDate(closeDate);
         executeProgramImportAction(persistentProgram, baselineTime);
         return persistentProgram.getId();
     }
@@ -232,8 +264,12 @@ public class ImportedEntityService {
         return importedEntityDAO.getMostUsedDomicile(institution);
     }
 
-    public AgeRange getAgeRange(Institution institution, Integer age) {
+    public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
         return importedEntityDAO.getAgeRange(institution, age);
+    }
+
+    public List<ImportedInstitution> getInstitutionsWithUcasId() {
+        return importedEntityDAO.getInstitutionsWithUcasId();
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {
@@ -246,14 +282,14 @@ public class ImportedEntityService {
         boolean transientRequireProjectDefinition = programDefinition.isAtasRegistered();
 
         DateTime baselineDateTime = new DateTime();
-        OpportunityType opportunityType = getByCode(OpportunityType.class, institution, prismOpportunityType.name());
+        ImportedOpportunityType opportunityType = getByCode(ImportedOpportunityType.class, institution, prismOpportunityType.name());
         Department department = departmentService.getOrCreateDepartment(new Department().withInstitution(institution).withTitle(
                 programDefinition.getDepartment()));
 
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withDepartment(department)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withImported(true).withOpportunityType(opportunityType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime)
-                .withUpdatedTimestamp(baselineDateTime).withUpdatedTimestampSitemap(baselineDateTime);
+                .withOpportunityType(opportunityType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime).withUpdatedTimestamp(baselineDateTime)
+                .withUpdatedTimestampSitemap(baselineDateTime);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
         if (persistentProgram == null) {
@@ -292,26 +328,20 @@ public class ImportedEntityService {
         }
     }
 
-    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
+    // TODO: store study option mapping
+    private ImportedStudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
         String externalCode = modeOfAttendance.getCode();
         PrismStudyOption prismStudyOption = PrismStudyOption.findValueFromString(externalCode);
         prismStudyOption = prismStudyOption == null ? getSystemStudyOption() : prismStudyOption;
-        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(prismStudyOption.name()).withName(externalCode).withEnabled(true);
-        studyOption.setType(PrismImportedEntity.STUDY_OPTION);
+        ImportedStudyOption studyOption = new ImportedStudyOption().withName(prismStudyOption.name()).withEnabled(true);
+        studyOption.setType(PrismImportedEntity.IMPORTED_STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
     }
 
     private ImportedInstitution createCustomImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
-        Domicile domicile = getById(institution, Domicile.class, importedInstitutionDTO.getDomicile());
-        ImportedInstitution importedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
-                .withName(importedInstitutionDTO.getName()).withEnabled(true).withCustom(true);
+        ImportedDomicile domicile = getById(institution, ImportedDomicile.class, importedInstitutionDTO.getDomicile());
+        ImportedInstitution importedInstitution = new ImportedInstitution().withDomicile(domicile).withName(importedInstitutionDTO.getName()).withEnabled(true);
         entityService.save(importedInstitution);
-        importedInstitution.setCode("CUSTOM_" + Strings.padStart(importedInstitution.getId().toString(), 10, '0'));
-        return importedInstitution;
-    }
-
-    private ImportedInstitution enableCustomImportedInstitution(ImportedInstitution importedInstitution) {
-        importedInstitution.setEnabled(true);
         return importedInstitution;
     }
 
@@ -339,6 +369,58 @@ public class ImportedEntityService {
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
                 .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
+    }
+
+    private <T extends ImportedEntityMapping> List<T> getFilteredImportedEntityMappings(List<T> mappings) {
+        Map<String, T> filteredMappings = Maps.newHashMap();
+        for (T mapping : mappings) {
+            String code = mapping.getCode();
+            if (!filteredMappings.containsKey(code)) {
+                filteredMappings.put(code, mapping);
+            }
+        }
+        return Lists.newArrayList(filteredMappings.values());
+    }
+
+    private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws Exception {
+        try {
+            Authenticator.setDefault(new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(importedEntityFeed.getUsername(), importedEntityFeed.getPassword().toCharArray());
+                }
+            });
+
+            DateTime lastImportedTimestamp = importedEntityFeed.getLastImportedTimestamp();
+            PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
+
+            URL fileUrl = new DefaultResourceLoader().getResource(importedEntityFeed.getLocation()).getURL();
+            URLConnection connection = fileUrl.openConnection();
+            Long lastModifiedTimestamp = connection.getLastModified();
+
+            if (lastImportedTimestamp == null || lastModifiedTimestamp == 0
+                    || new LocalDateTime(lastModifiedTimestamp).toDateTime().isAfter(lastImportedTimestamp)) {
+                return readImportedData(importedEntityType, fileUrl);
+            }
+
+            return null;
+        } finally {
+            Authenticator.setDefault(null);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @CacheEvict("importedInstitutionData")
+    private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws Exception {
+        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
+
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
+
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        unmarshaller.setSchema(schema);
+
+        Object unmarshalled = unmarshaller.unmarshal(fileUrl);
+        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
     }
 
 }

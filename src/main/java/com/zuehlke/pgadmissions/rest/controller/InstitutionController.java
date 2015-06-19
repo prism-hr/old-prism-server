@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCompetency;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -100,11 +100,8 @@ public class InstitutionController {
         Map<String, List<String>> categoryTags = Maps.newLinkedHashMap();
         Institution institution = institutionService.getById(institutionId);
 
-        String category = "competencies";
-        categoryTags.put(category, advertService.getAdvertTags(institution, AdvertCompetency.class));
-        category = "themes";
-        categoryTags.put(category, advertService.getAdvertTags(institution, AdvertTheme.class));
-
+        categoryTags.put("competences", advertService.getAdvertTags(institution, AdvertCompetence.class));
+        categoryTags.put("themes", advertService.getAdvertTags(institution, AdvertTheme.class));
         return categoryTags;
     }
 

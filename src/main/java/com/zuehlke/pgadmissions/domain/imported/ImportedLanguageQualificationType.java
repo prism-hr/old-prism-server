@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
 
 import java.math.BigDecimal;
 
@@ -8,32 +8,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
-@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
+@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
 public class ImportedLanguageQualificationType extends ImportedEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
-
-    @Column(name = "code", nullable = false)
-    private String code;
-
-    @Lob
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "minimum_overall_score")
@@ -80,28 +67,8 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     }
 
     @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    @Override
     public PrismImportedEntity getType() {
-        return LANGUAGE_QUALIFICATION_TYPE;
-    }
-    
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
+        return IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
     }
 
     @Override
@@ -202,16 +169,6 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public ImportedLanguageQualificationType withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public ImportedLanguageQualificationType withCode(String code) {
-        this.code = code;
-        return this;
     }
 
     public ImportedLanguageQualificationType withName(String name) {

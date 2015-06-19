@@ -3,13 +3,17 @@ package com.zuehlke.pgadmissions.domain.resource;
 import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 
 public abstract class ResourceOpportunity extends ResourceParent {
 
-    public abstract OpportunityType getOpportunityType();
+    public abstract String getImportedCode();
 
-    public abstract void setOpportunityType(OpportunityType opportunityType);
+    public abstract void setImportedCode(String importedCode);
+
+    public abstract ImportedOpportunityType getOpportunityType();
+
+    public abstract void setOpportunityType(ImportedOpportunityType opportunityType);
 
     public abstract Department getDepartment();
 
@@ -22,8 +26,6 @@ public abstract class ResourceOpportunity extends ResourceParent {
     public abstract Integer getDurationMaximum();
 
     public abstract void setDurationMaximum(Integer maximum);
-
-    public abstract Boolean getImported();
 
     public abstract Set<ResourceStudyOption> getStudyOptions();
 

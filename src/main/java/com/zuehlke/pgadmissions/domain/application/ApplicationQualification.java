@@ -16,7 +16,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
 
 @Entity
 @Table(name = "APPLICATION_QUALIFICATION")
@@ -49,7 +49,7 @@ public class ApplicationQualification extends ApplicationSection {
 
     @ManyToOne
     @JoinColumn(name = "qualification_type_id")
-    private QualificationType type;
+    private ImportedQualificationType type;
 
     @Column(name = "grade", nullable = false)
     private String grade;
@@ -133,11 +133,11 @@ public class ApplicationQualification extends ApplicationSection {
         this.language = language;
     }
 
-    public QualificationType getType() {
+    public ImportedQualificationType getType() {
         return type;
     }
 
-    public void setType(QualificationType type) {
+    public void setType(ImportedQualificationType type) {
         this.type = type;
     }
 
@@ -205,7 +205,7 @@ public class ApplicationQualification extends ApplicationSection {
         return this;
     }
 
-    public ApplicationQualification withType(QualificationType type) {
+    public ApplicationQualification withType(ImportedQualificationType type) {
         this.type = type;
         return this;
     }

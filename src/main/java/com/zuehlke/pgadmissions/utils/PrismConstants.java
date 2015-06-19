@@ -16,6 +16,4 @@ public class PrismConstants {
 
     public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
 
-    public static final Integer ADVERT_TRIAL_PERIOD = 12;
-
 }

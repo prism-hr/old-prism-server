@@ -9,20 +9,18 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Genders.Gender;
 
 @Component
 public class ImportedGenderExtractor implements ImportedEntityExtractor {
 
     @Override
-    public List<String> extract(Institution institution, PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception {
         List<String> rows = Lists.newLinkedList();
         for (Object definition : definitions) {
             Gender gender = (Gender) definition;
 
             List<String> cells = Lists.newLinkedList();
-            cells.add(prepareStringForSqlInsert(institution.getId().toString()));
             cells.add(prepareStringForSqlInsert(prismImportedEntity.name()));
             cells.add(prepareStringForSqlInsert(gender.getCode()));
             cells.add(prepareStringForSqlInsert(gender.getName()));

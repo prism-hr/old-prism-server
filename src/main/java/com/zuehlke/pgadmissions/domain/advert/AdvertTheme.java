@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "ADVERT_THEME", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }),
+@Table(name = "advert_theme", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }),
         @UniqueConstraint(columnNames = { "theme", "advert_id" }) })
 public class AdvertTheme extends AdvertFilterCategory {
 

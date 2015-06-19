@@ -1,20 +1,5 @@
 package com.zuehlke.pgadmissions.domain.document;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
@@ -26,9 +11,13 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "DOCUMENT")
+@Table(name = "document")
 public class Document {
 
     @Id
@@ -100,7 +89,7 @@ public class Document {
 
     @OneToOne(mappedBy = "backgroundImage")
     private Project projectBackgroundImage;
-    
+
     public void setId(Integer id) {
         this.id = id;
     }

@@ -1,26 +1,17 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "APPLICATION_PROGRAM_DETAIL")
+@Table(name = "application_program_detail")
 public class ApplicationProgramDetail extends ApplicationSection {
 
     @Id
@@ -29,7 +20,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
 
     @OneToOne(mappedBy = "programDetail")
     private Application application;
-    
+
     @ManyToOne
     @JoinColumn(name = "opportunity_type_id", nullable = false)
     private OpportunityType opportunityType;
@@ -128,7 +119,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.opportunityType = opportunityType;
         return this;
     }
-    
+
     public ApplicationProgramDetail withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
         return this;

@@ -1,17 +1,12 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "SCOPE")
+@Table(name = "scope")
 public class Scope implements UniqueEntity {
 
     @Id
@@ -21,7 +16,7 @@ public class Scope implements UniqueEntity {
 
     @Column(name = "short_code", nullable = false, unique = true)
     private String shortCode;
-    
+
     @Column(name = "ordinal", nullable = false, unique = true)
     private Integer ordinal;
 
@@ -40,7 +35,7 @@ public class Scope implements UniqueEntity {
     public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
     }
-    
+
     public Integer getOrdinal() {
         return ordinal;
     }
@@ -53,7 +48,7 @@ public class Scope implements UniqueEntity {
         this.shortCode = shortCode;
         return this;
     }
-    
+
     public Scope withId(PrismScope id) {
         this.id = id;
         return this;

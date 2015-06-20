@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genders>
-  <gender>
-    <code>F</code>
-    <name>Female</name>
-  </gender>
-  <gender>
-    <code>M</code>
-    <name>Male</name>
-  </gender>
-  <gender>
-    <code>N</code>
-    <name>Indeterminate Gender</name>
-  </gender>
+	<gender>
+		<name>Female</name>
+	</gender>
+	<gender>
+		<name>Indeterminate Gender</name>
+	</gender>
+	<gender>
+		<name>Male</name>
+	</gender>
 </genders>

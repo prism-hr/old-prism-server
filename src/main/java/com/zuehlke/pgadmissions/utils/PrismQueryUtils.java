@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.utils;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.floatToBigDecimal;
 import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import com.google.common.base.Joiner;
@@ -21,6 +22,10 @@ public class PrismQueryUtils {
         return string == null ? "null" : "'" + escapeSql(prepareStringForInsert(string)) + "'";
     }
 
+    public static String prepareIntegerForSqlInsert(BigInteger integer) {
+        return integer == null ? "null" : "'" + escapeSql(integer.toString()) + "'";
+    }
+
     public static String prepareDecimalForSqlInsert(Float decimal) {
         return decimal == null ? "null" : "'" + escapeSql(floatToBigDecimal(decimal, 2).toPlainString()) + "'";
     }
@@ -28,5 +33,5 @@ public class PrismQueryUtils {
     public static String prepareStringForInsert(String string) {
         return string.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
     }
-    
+
 }

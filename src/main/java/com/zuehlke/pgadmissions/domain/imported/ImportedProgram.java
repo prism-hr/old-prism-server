@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 @Entity
 @Table(name = "IMPORTED_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "qualification", "name" }) })
 public class ImportedProgram extends ImportedEntity {
-    
+
     @Id
     @GeneratedValue
     private Integer id;
@@ -25,30 +25,27 @@ public class ImportedProgram extends ImportedEntity {
     @ManyToOne
     @JoinColumn(name = "imported_institution_id", nullable = false)
     private ImportedInstitution institution;
-    
+
     @ManyToOne
     @JoinColumn(name = "imported_qualification_type_id", nullable = false)
     private ImportedQualificationType qualificationType;
-    
-    @Column(name = "code")
-    private String code;
-    
+
     @Column(name = "level")
     private String level;
-    
+
     @Column(name = "qualification")
     private String qualification;
-    
+
     @Column(name = "name", nullable = false)
     private String name;
-    
+
     @Lob
     @Column(name = "homepage")
     private String homepage;
-    
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-     
+
     @Override
     public Integer getId() {
         return id;
@@ -58,7 +55,7 @@ public class ImportedProgram extends ImportedEntity {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     @Override
     public PrismImportedEntity getType() {
         return IMPORTED_PROGRAM;
@@ -78,14 +75,6 @@ public class ImportedProgram extends ImportedEntity {
 
     public void setQualificationType(ImportedQualificationType qualificationType) {
         this.qualificationType = qualificationType;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getLevel() {
@@ -119,7 +108,7 @@ public class ImportedProgram extends ImportedEntity {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("institution", institution).addProperty("qualification", qualification);

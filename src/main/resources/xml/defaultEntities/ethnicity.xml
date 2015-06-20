@@ -1,71 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ethnicities>
-  <ethnicity>
-    <code>10</code>
-    <name>White</name>
-  </ethnicity>
-  <ethnicity>
-    <code>15</code>
-    <name>Gypsy or Traveller</name>
-  </ethnicity>
-  <ethnicity>
-    <code>21</code>
-    <name>Black or Black British - Caribbean</name>
-  </ethnicity>
-  <ethnicity>
-    <code>22</code>
-    <name>Black or Black British - African</name>
-  </ethnicity>
-  <ethnicity>
-    <code>29</code>
-    <name>Black - Other background</name>
-  </ethnicity>
-  <ethnicity>
-    <code>31</code>
-    <name>Asian or Asian British - Indian</name>
-  </ethnicity>
-  <ethnicity>
-    <code>32</code>
-    <name>Asian or Asian British - Pakistani</name>
-  </ethnicity>
-  <ethnicity>
-    <code>33</code>
-    <name>Asian or Asian British - Bangladeshi</name>
-  </ethnicity>
-  <ethnicity>
-    <code>34</code>
-    <name>Chinese</name>
-  </ethnicity>
-  <ethnicity>
-    <code>39</code>
-    <name>Asian - other background</name>
-  </ethnicity>
-  <ethnicity>
-    <code>41</code>
-    <name>Mixed - White and Black Caribbean</name>
-  </ethnicity>
-  <ethnicity>
-    <code>42</code>
-    <name>Mixed - White and Black African</name>
-  </ethnicity>
-  <ethnicity>
-    <code>43</code>
-    <name>Mixed - White and Asian</name>
-  </ethnicity>
-  <ethnicity>
-    <code>49</code>
-    <name>Mixed - other background</name>
-  </ethnicity>
-  <ethnicity>
-    <code>50</code>
-    <name>Arab</name>
-  </ethnicity>
-  <ethnicity>
-    <code>80</code>
-    <name>Other Ethnic background</name>
-  </ethnicity>
-  <ethnicity>
-    <code>98</code>
-    <name>Information refused</name>
-  </ethnicity>
+	<ethnicity>
+		<name>Arab</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Asian - other background</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Asian or Asian British - Bangladeshi</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Asian or Asian British - Indian</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Asian or Asian British - Pakistani</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Black - Other background</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Black or Black British - African</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Black or Black British - Caribbean</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Chinese</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Gypsy or Traveller</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Information refused</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Mixed - other background</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Mixed - White and Asian</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Mixed - White and Black African</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Mixed - White and Black Caribbean</name>
+	</ethnicity>
+	<ethnicity>
+		<name>Other Ethnic background</name>
+	</ethnicity>
+	<ethnicity>
+		<name>White</name>
+	</ethnicity>
 </ethnicities>

@@ -60,9 +60,9 @@ public class ProgramService {
         institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);
     }
-
-    public List<Program> getPrograms() {
-        return programDAO.getPrograms();
+    
+    public List<ProgramRepresentation> getApprovedPrograms(Integer institutionId) {
+        return programDAO.getApprovedPrograms(institutionId);
     }
 
     public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {

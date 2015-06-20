@@ -1,43 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <disabilities>
-  <disability>
-    <code>0</code>
-    <name>No Disability</name>
-  </disability>
-  <disability>
-    <code>53</code>
-    <name>Autistic Spectrum Disorder</name>
-  </disability>
-  <disability>
-    <code>58</code>
-    <name>visual Impairment</name>
-  </disability>
-  <disability>
-    <code>57</code>
-    <name>Hearing Impairment</name>
-  </disability>
-  <disability>
-    <code>54</code>
-    <name>Unseen Disability</name>
-  </disability>
-  <disability>
-    <code>55</code>
-    <name>Mental Health Disability</name>
-  </disability>
-  <disability>
-    <code>51</code>
-    <name>Learning Difficulty</name>
-  </disability>
-  <disability>
-    <code>56</code>
-    <name>Mobility Difficulties</name>
-  </disability>
-  <disability>
-    <code>96</code>
-    <name>Disability Not Listed</name>
-  </disability>
-  <disability>
-    <code>8</code>
-    <name>2 or more Impairments/med conditions</name>
-  </disability>
+	<disability>
+		<name>2 or more Impairments/med conditions</name>
+	</disability>
+	<disability>
+		<name>Autistic Spectrum Disorder</name>
+	</disability>
+	<disability>
+		<name>Disability Not Listed</name>
+	</disability>
+	<disability>
+		<name>Hearing Impairment</name>
+	</disability>
+	<disability>
+		<name>Learning Difficulty</name>
+	</disability>
+	<disability>
+		<name>Mental Health Disability</name>
+	</disability>
+	<disability>
+		<name>Mobility Difficulties</name>
+	</disability>
+	<disability>
+		<name>No Disability</name>
+	</disability>
+	<disability>
+		<name>Unseen Disability</name>
+	</disability>
+	<disability>
+		<name>Visual Impairment</name>
+	</disability>
 </disabilities>

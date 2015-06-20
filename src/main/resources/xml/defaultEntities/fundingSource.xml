@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fundingSources>
-  <fundingSource>
-    <code>EMPLOYER</code>
-    <name>Employer</name>
-  </fundingSource>
-  <fundingSource>
-    <code>SCHOLARSHIP</code>
-    <name>Scholarship</name>
-  </fundingSource>
-  <fundingSource>
-    <code>SPONSOR</code>
-    <name>Sponsor</name>
-  </fundingSource>
+	<fundingSource>
+		<name>Employer</name>
+	</fundingSource>
+	<fundingSource>
+		<name>Postgraduate (Research) Study Scholarship</name>
+	</fundingSource>
+	<fundingSource>
+		<name>Postgraduate (Taught) Study Scholarship</name>
+	</fundingSource>
+	<fundingSource>
+		<name>Scholarship</name>
+	</fundingSource>
+	<fundingSource>
+		<name>Sponsor</name>
+	</fundingSource>
+	<fundingSource>
+		<name>Undergraduate Study Scholarship</name>
+	</fundingSource>
 </fundingSources>

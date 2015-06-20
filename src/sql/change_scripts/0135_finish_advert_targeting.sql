@@ -56,3 +56,8 @@ drop table advert_domain
 update imported_entity
 set imported_entity_type = concat("IMPORTED_", imported_entity_type)
 ;
+
+alter table imported_program
+	drop column code,
+	drop index code
+;

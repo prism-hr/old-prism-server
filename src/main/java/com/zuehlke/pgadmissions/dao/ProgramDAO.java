@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
@@ -61,8 +62,15 @@ public class ProgramDAO {
                 .uniqueResult();
     }
 
-    public List<Program> getPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class) //
+    public List<ProgramRepresentation> getApprovedPrograms(Integer institutionId) {
+        return (List<ProgramRepresentation>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id")) //
+                        .add(Projections.property("title"))) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("institution.id", institutionId)) //
+                .add(Restrictions.eq("resourceState.state.id", PROGRAM_APPROVED)) //
+                .setResultTransformer(Transformers.aliasToBean(ProgramRepresentation.class)) //
                 .list();
     }
 

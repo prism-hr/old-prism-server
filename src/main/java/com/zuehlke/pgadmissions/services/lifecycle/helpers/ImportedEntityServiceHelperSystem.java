@@ -15,7 +15,6 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
@@ -35,7 +34,7 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
 
     @Inject
     private InstitutionService institutionService;
-    
+
     @Inject
     private ImportedEntityService importedEntityService;
 
@@ -49,7 +48,7 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
         LocalDate lastImportDate = system.getLastDataImportDate();
         if (lastImportDate == null || lastImportDate.isBefore(baseline)) {
             importInstitutionDomiciles();
-            importEntities();
+            importedEntityService.mergeImportedEntities();
             systemService.setLastDataImportDate(baseline);
         }
     }
@@ -64,14 +63,6 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
             institutionService.disableInstitutionDomiciles(definitions);
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + institutionDomicileImportLocation, e);
-        }
-    }
-
-    private void importEntities() {
-        for (PrismImportedEntity prisImportedEntity : PrismImportedEntity.values()) {
-            if (prisImportedEntity.isSystemImport()) {
-                importedEntityService.mergeImportedEntities(prisImportedEntity);
-            }
         }
     }
 

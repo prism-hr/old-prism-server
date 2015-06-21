@@ -24,6 +24,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -111,6 +112,9 @@ public class ImportedEntityService {
     @Inject
     private ApplicationContext applicationContext;
 
+    @Inject
+    private Mapper mapper;
+
     @SuppressWarnings("unchecked")
     public <T extends ImportedEntity> T getById(Institution institution, PrismImportedEntity entityId, Integer id) {
         return getById(institution, (Class<T>) entityId.getEntityClass(), id);
@@ -187,14 +191,18 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedEntities(prismImportedEntity.getEntityClass(), institution);
         entityService.flush();
 
-        List<Object> definitions = readImportedData(prismImportedEntity.getMappingJaxbClass(), prismImportedEntity.getMappingJaxbProperty(),
+        List<Object> entityDefinitions = Lists.newArrayList();
+        List<Object> mappingDefinitions = readImportedData(prismImportedEntity.getMappingJaxbClass(), prismImportedEntity.getMappingJaxbProperty(),
                 prismImportedEntity.getMappingXsdLocation(), importedEntityFeed.getLocation(), importedEntityFeed.getLastImportedTimestamp());
-        List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions);
+        for (Object mappingDefinition : mappingDefinitions) {
+            entityDefinitions.add(mapper.map(mappingDefinition, prismImportedEntity.getEntityJaxbClass()));
+        }
 
+        List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, entityDefinitions, false);
         importedEntityDAO
                 .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
         entityService.flush();
-        
+
         // TODO: import the mapping and handle enabled flags.
 
         importedEntityFeed.setLastImportedTimestamp(new DateTime());
@@ -399,7 +407,7 @@ public class ImportedEntityService {
     }
 
     private void insertImportedEntities(PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception {
-        List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions);
+        List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions, true);
         importedEntityDAO
                 .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
         entityService.flush();

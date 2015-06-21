@@ -6,6 +6,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 public interface ImportedEntityExtractor {
 
-    List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception;
+    List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions, boolean enable) throws Exception;
 
 }

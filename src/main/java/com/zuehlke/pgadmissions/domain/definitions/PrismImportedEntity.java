@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.data.Institutions;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.LanguageQualificationTypes;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.Nationalities;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.OpportunityTypes;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.ProgrammeOccurrences;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.Programs;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.Qualifications;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.RejectionReasons;
@@ -63,7 +62,7 @@ public enum PrismImportedEntity {
 
     // TODO: generalise resource importer
     PROGRAM(new PrismImportedEntityImportDefinition() //
-            .withJaxbClass(ProgrammeOccurrences.class) //
+            .withJaxbClass(com.zuehlke.pgadmissions.referencedata.jaxb.resource.Programs.Program.class) //
             .withJaxbProperty("programmeOccurrence") //
             .withEntityClass(Program.class) //
             .withXsdLocation("xsd/import/data/programmeOccurrence.xsd"), //

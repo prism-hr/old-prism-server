@@ -67,9 +67,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 

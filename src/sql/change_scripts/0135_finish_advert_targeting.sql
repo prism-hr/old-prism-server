@@ -61,3 +61,8 @@ alter table imported_program
 	drop column code,
 	drop index code
 ;
+
+alter table system
+	change column last_data_import_date last_data_import_timestamp datetime
+;
+

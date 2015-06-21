@@ -3,15 +3,9 @@ package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -43,41 +37,28 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
 
     @Override
     public void execute() throws Exception {
-        LocalDate baseline = new LocalDate();
+        DateTime baseline = new DateTime();
         System system = systemService.getSystem();
-        LocalDate lastImportDate = system.getLastDataImportDate();
-        if (lastImportDate == null || lastImportDate.isBefore(baseline)) {
-            importInstitutionDomiciles();
-            importedEntityService.mergeImportedEntities();
-            systemService.setLastDataImportDate(baseline);
+        DateTime lastDataImportTimestamp = system.getLastDataImportTimestamp();
+        if (lastDataImportTimestamp == null || lastDataImportTimestamp.isBefore(baseline.minusDays(1))) {
+            importInstitutionDomiciles(lastDataImportTimestamp);
+            importedEntityService.mergeImportedEntities(lastDataImportTimestamp);
+            systemService.setLastDataImportTimestamp(baseline);
         }
     }
 
-    private void importInstitutionDomiciles() throws Exception {
+    private void importInstitutionDomiciles(DateTime lastDataImportTimestamp) throws Exception {
         try {
             List<String> definitions = Lists.newArrayList();
-            List<InstitutionDomiciles.InstitutionDomicile> institutionDomicileDefinitions = unmarshal();
-            for (InstitutionDomiciles.InstitutionDomicile institutionDomicileDefinition : institutionDomicileDefinitions) {
-                definitions.add(institutionService.mergeInstitutionDomicile(institutionDomicileDefinition));
+            List<Object> institutionDomicileDefinitions = importedEntityService.readImportedData(InstitutionDomiciles.class,
+                    "institutionDomicile", institutionDomicileSchemaLocation, institutionDomicileImportLocation, lastDataImportTimestamp);
+            for (Object institutionDomicileDefinition : institutionDomicileDefinitions) {
+                definitions.add(institutionService.mergeInstitutionDomicile((InstitutionDomicile) institutionDomicileDefinition));
             }
             institutionService.disableInstitutionDomiciles(definitions);
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + institutionDomicileImportLocation, e);
         }
-    }
-
-    public List<InstitutionDomicile> unmarshal() throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(InstitutionDomiciles.class);
-        DefaultResourceLoader loader = new DefaultResourceLoader();
-
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(loader.getResource(institutionDomicileSchemaLocation).getURL());
-
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-
-        InstitutionDomiciles unmarshalled = (InstitutionDomiciles) unmarshaller.unmarshal(loader.getResource(institutionDomicileImportLocation).getURL());
-        return unmarshalled.getInstitutionDomicile();
     }
 
 }

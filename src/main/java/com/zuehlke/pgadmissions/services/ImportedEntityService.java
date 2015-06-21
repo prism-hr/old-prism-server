@@ -10,6 +10,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForInsert;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +26,7 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.cache.annotation.CacheEvict;
@@ -169,16 +172,6 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedEntityFeeds(institution, exclusions);
     }
 
-    public void setInstitutionImportedEntityFeeds(Institution institution) {
-        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-            String defaultLocation = prismImportedEntity.getXmlLocation();
-            if (defaultLocation != null) {
-                entityService.getOrCreate(new ImportedEntityFeed().withInstitution(institution).withImportedEntityType(prismImportedEntity)
-                        .withLocation(prismImportedEntity.getXmlLocation()));
-            }
-        }
-    }
-
     public void disableImportedPrograms(Integer institutionId, List<Integer> updates, LocalDate baseline) {
         Institution institution = institutionService.getById(institutionId);
         importedEntityDAO.disableImportedPrograms(institution, updates, baseline);
@@ -186,7 +179,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedProgramStudyOptionInstances(institution, updates);
     }
 
-    public void mergeImportedEntities(Integer importedEntityFeedId, List<Object> definitions) throws Exception {
+    public void mergeImportedEntities(Integer importedEntityFeedId) throws Exception {
         ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
         Institution institution = importedEntityFeed.getInstitution();
         PrismImportedEntity prismImportedEntity = importedEntityFeed.getImportedEntityType();
@@ -194,27 +187,29 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedEntities(prismImportedEntity.getEntityClass(), institution);
         entityService.flush();
 
+        List<Object> definitions = readImportedData(prismImportedEntity.getMappingJaxbClass(), prismImportedEntity.getMappingJaxbProperty(),
+                prismImportedEntity.getMappingXsdLocation(), importedEntityFeed.getLocation(), importedEntityFeed.getLastImportedTimestamp());
         List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions);
 
         importedEntityDAO
                 .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
         entityService.flush();
+        
+        // TODO: import the mapping and handle enabled flags.
 
         importedEntityFeed.setLastImportedTimestamp(new DateTime());
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ImportedEntity> void mergeImportedEntities() throws Exception {
-        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
+    public <T extends ImportedEntity> void mergeImportedEntities(DateTime lastImportedTimestamp) throws Exception {
+        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.getEntityimports()) {
             importedEntityDAO.disableImportedEntities((Class<T>) prismImportedEntity.getEntityClass());
             entityService.flush();
-
-            List<Object> definitions = readImportedData(prismImportedEntity);
-            List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions);
-
-            importedEntityDAO
-                    .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
-            entityService.flush();
+            List<Object> definitions = readImportedData(prismImportedEntity.getEntityJaxbClass(), prismImportedEntity.getEntityJaxbProperty(),
+                    prismImportedEntity.getEntityXsdLocation(), prismImportedEntity.getEntityXmlLocation(), lastImportedTimestamp);
+            if (definitions != null) {
+                insertImportedEntities(prismImportedEntity, definitions);
+            }
         }
     }
 
@@ -266,6 +261,31 @@ public class ImportedEntityService {
 
     public List<ImportedInstitution> getInstitutionsWithUcasId() {
         return importedEntityDAO.getInstitutionsWithUcasId();
+    }
+
+    @SuppressWarnings("unchecked")
+    @CacheEvict("importedInstitutionData")
+    public List<Object> readImportedData(Class<?> jaxbClass, String jaxbProperty, String xsdLocation, String xmlLocation, DateTime lastImportedTimestamp)
+            throws Exception {
+        URL fileUrl = new DefaultResourceLoader().getResource(xmlLocation).getURL();
+        URLConnection connection = fileUrl.openConnection();
+        Long lastModifiedTimestamp = connection.getLastModified();
+
+        if (lastImportedTimestamp == null || lastModifiedTimestamp == 0
+                || new LocalDateTime(lastModifiedTimestamp).toDateTime().isAfter(lastImportedTimestamp)) {
+            JAXBContext jaxbContext = JAXBContext.newInstance(jaxbClass);
+
+            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(xsdLocation).getFile());
+
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            unmarshaller.setSchema(schema);
+
+            Object unmarshalled = unmarshaller.unmarshal(new DefaultResourceLoader().getResource(xmlLocation).getURL());
+            return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, jaxbProperty);
+        }
+
+        return null;
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {
@@ -378,19 +398,11 @@ public class ImportedEntityService {
         return Lists.newArrayList(filteredMappings.values());
     }
 
-    @SuppressWarnings("unchecked")
-    @CacheEvict("importedInstitutionData")
-    private List<Object> readImportedData(PrismImportedEntity importedEntityType) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
-
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getXsdLocation()).getFile());
-
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-
-        Object unmarshalled = unmarshaller.unmarshal(new DefaultResourceLoader().getResource(importedEntityType.getXmlLocation()).getURL());
-        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbProperty());
+    private void insertImportedEntities(PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception {
+        List<String> rows = applicationContext.getBean(prismImportedEntity.getDatabaseImportExtractor()).extract(prismImportedEntity, definitions);
+        importedEntityDAO
+                .mergeImportedEntities(prismImportedEntity.getDatabaseTable(), prismImportedEntity.getDatabaseColumns(), prepareRowsForSqlInsert(rows));
+        entityService.flush();
     }
 
 }

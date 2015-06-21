@@ -19,7 +19,7 @@ public class SystemDataImportHelper {
 
     public void verifyImport() throws Exception {
         importedEntityServiceHelper.execute();
-        systemService.getSystem().setLastDataImportDate(null);
+        systemService.getSystem().setLastDataImportTimestamp(null);
         importedEntityServiceHelper.execute();
     }
 

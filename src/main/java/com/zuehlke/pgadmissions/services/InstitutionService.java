@@ -154,7 +154,7 @@ public class InstitutionService {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
-    public boolean hasAuthenticatedFeeds(Institution institution) {
+    public boolean hasAuthenticatedFeeds(Integer institution) {
         return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
     }
 

@@ -253,8 +253,8 @@ public class SystemService {
     }
 
     @Transactional
-    public void setLastDataImportDate(LocalDate baseline) {
-        getSystem().setLastDataImportDate(baseline);
+    public void setLastDataImportTimestamp(DateTime lastDataImportTimestamp) {
+        getSystem().setLastDataImportTimestamp(lastDataImportTimestamp);
     }
 
     @Transactional

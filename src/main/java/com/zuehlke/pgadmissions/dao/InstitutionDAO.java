@@ -84,10 +84,10 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public Long getAuthenticatedFeedCount(Institution institution) {
+    public Long getAuthenticatedFeedCount(Integer institution) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .setProjection(Projections.rowCount()) //
-                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.eq("institution.id", institution)) //
                 .add(Restrictions.isNotNull("username")).uniqueResult();
     }
 

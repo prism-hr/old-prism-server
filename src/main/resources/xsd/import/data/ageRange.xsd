@@ -8,7 +8,7 @@
                         <xs:sequence>
                             <xs:element name="name" type="xs:string"/>
                             <xs:element name="lowerBound" type="xs:integer"/>
-                            <xs:element name="upperBound" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="upperBound" type="xs:integer" minOccurs="0"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

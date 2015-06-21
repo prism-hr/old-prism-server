@@ -6,9 +6,9 @@
                 <xs:element name="institution" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
+                            <xs:element name="domicile" type="xs:string"/>
                             <xs:element name="code" type="xs:string"/>
                             <xs:element name="name" type="xs:string"/>
-                            <xs:element name="domicile" type="xs:string"/>
                             <xs:element name="ucasId" type="xs:string" minOccurs="0"/>
                             <xs:element name="facebookId" type="xs:string" minOccurs="0"/>
                         </xs:sequence>

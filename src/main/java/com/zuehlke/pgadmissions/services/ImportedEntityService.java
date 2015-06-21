@@ -171,10 +171,10 @@ public class ImportedEntityService {
 
     public void setInstitutionImportedEntityFeeds(Institution institution) {
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-            String defaultLocation = prismImportedEntity.getDefaultLocation();
+            String defaultLocation = prismImportedEntity.getXmlLocation();
             if (defaultLocation != null) {
                 entityService.getOrCreate(new ImportedEntityFeed().withInstitution(institution).withImportedEntityType(prismImportedEntity)
-                        .withLocation(prismImportedEntity.getDefaultLocation()));
+                        .withLocation(prismImportedEntity.getXmlLocation()));
             }
         }
     }
@@ -384,13 +384,13 @@ public class ImportedEntityService {
         JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
 
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
+        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getXsdLocation()).getFile());
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
-        Object unmarshalled = unmarshaller.unmarshal(new DefaultResourceLoader().getResource(importedEntityType.getDefaultLocation()).getURL());
-        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+        Object unmarshalled = unmarshaller.unmarshal(new DefaultResourceLoader().getResource(importedEntityType.getXmlLocation()).getURL());
+        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbProperty());
     }
 
 }

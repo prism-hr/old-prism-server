@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedCountry;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedFundingSource;
 import com.zuehlke.pgadmissions.domain.imported.ImportedGender;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
@@ -27,6 +26,8 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.ImportedTitle;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.AgeRanges;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.Countries;
@@ -40,10 +41,12 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.data.LanguageQualificationTyp
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.Nationalities;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.OpportunityTypes;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.jaxb.data.Programs;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.Qualifications;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.RejectionReasons;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.SourcesOfInterest;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.StudyOptions;
+import com.zuehlke.pgadmissions.referencedata.jaxb.data.SubjectAreas;
 import com.zuehlke.pgadmissions.referencedata.jaxb.data.Titles;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
@@ -53,38 +56,98 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtra
 
 public enum PrismImportedEntity {
 
-    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/data/programmeOccurrence.xsd", false, null, null, false), //
-    IMPORTED_AGE_RANGE(AgeRanges.class, "ageRange", ImportedAgeRange.class, "xml/defaultEntities/ageRange.xml", //
-            "xsd/import/data/ageRange.xsd", true, //
-            new PrismImportedEntityInsertDefinition("imported_age_range", ImportedAgeRangeExtractor.class) //
+    PROGRAM(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(ProgrammeOccurrences.class) //
+            .withJaxbProperty("programmeOccurrence") //
+            .withEntityClass(Program.class) //
+            .withXsdLocation("xsd/import/data/programmeOccurrence.xsd"), //
+            null, null, false), //
+    IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(AgeRanges.class) //
+            .withJaxbProperty("ageRange") //
+            .withEntityClass(ImportedAgeRange.class) //
+            .withEntityMappingClass(ImportedEntitySimpleMapping.class)
+            .withXsdLocation("xsd/import/data/ageRange.xsd") //
+            .withXmlLocation("xml/defaultEntities/ageRange.xml"), //
+            new PrismImportedEntityInsertDefinition() //
+                    .withTable("imported_age_range")
                     .withColumn("name") //
                     .withColumn("lower_bound") //
                     .withColumn("upper_bound") //
-                    .withColumn("enabled"),
+                    .withColumn("enabled") //
+                    .withExtractor(ImportedAgeRangeExtractor.class),
             new String[] { "application_personal_detail.age_range_id" }, false), //
-    IMPORTED_COUNTRY(Countries.class, "country", ImportedCountry.class, "xml/defaultEntities/country.xml", "xsd/import/data/country.xsd", true, //
-            getImportedEntitySimpleInsertDefinition(), new String[] { "application_personal_detail.country_id" }, false), //
-    IMPORTED_DISABILITY(Disabilities.class, "disability", ImportedDisability.class, "xml/defaultEntities/disability.xml", "xsd/import/data/disability.xsd",
-            true, //
-            getImportedEntitySimpleInsertDefinition(), new String[] { "application_personal_detail.disability_id" }, false), //
-    IMPORTED_DOMICILE(Domiciles.class, "domicile", ImportedDomicile.class, "xml/defaultEntities/domicile.xml", "xsd/import/data/domicile.xsd", true, //
-            getImportedEntitySimpleInsertDefinition(), new String[] { "application_personal_detail.domicile_id" }, false), //
-    IMPORTED_ETHNICITY(Ethnicities.class, "ethnicity", ImportedEthnicity.class, "xml/defaultEntities/ethnicity.xml", "xsd/import/data/ethnicity.xsd", true, //
-            getImportedEntitySimpleInsertDefinition(), new String[] { "application_personal_detail.ethnicity_id" }, false), //
-    IMPORTED_NATIONALITY(Nationalities.class, "nationality", ImportedNationality.class, "xml/defaultEntities/nationality.xml",
-            "xsd/import/data/nationality.xsd",
-            true, getImportedEntitySimpleInsertDefinition(), new String[] { "application_personal_detail.nationality_id1",
-                    "application_personal_detail.nationality_id2" }, false), //
-    IMPORTED_QUALIFICATION_TYPE(Qualifications.class, "qualification", ImportedQualificationType.class, "xml/defaultEntities/qualificationType.xml",
-            "xsd/import/data/qualificationType.xsd", true, getImportedEntitySimpleInsertDefinition(), null, false), //
-    IMPORTED_REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ImportedReferralSource.class, "xml/defaultEntities/referralSource.xml",
-            "xsd/import/data/referralSource.xsd", true, getImportedEntitySimpleInsertDefinition(), //
-            new String[] { "application_program_detail.referral_source_id" }, false), //
-    IMPORTED_FUNDING_SOURCE(FundingSources.class, "fundingSource", ImportedFundingSource.class, "xml/defaultEntities/fundingSource.xml",
-            "xsd/import/data/fundingSource.xsd", true, getImportedEntitySimpleInsertDefinition(), null, false), //
-    IMPORTED_LANGUAGE_QUALIFICATION_TYPE(LanguageQualificationTypes.class, "languageQualificationType", ImportedLanguageQualificationType.class, //
-            "xml/defaultEntities/languageQualificationType.xml", "xsd/import/data/languageQualificationType.xsd", true, //
-            new PrismImportedEntityInsertDefinition("imported_language_qualification_type", ImportedLanguageQualificationTypeExtractor.class) //
+    IMPORTED_COUNTRY(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Countries.class) //
+            .withJaxbProperty("country") //
+            .withEntityClass(ImportedCountry.class) //
+            .withXsdLocation("xsd/import/data/country.xsd") //
+            .withXmlLocation("xml/defaultEntities/country.xml"),
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_personal_detail.country_id" }, false), //
+    IMPORTED_DISABILITY(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Disabilities.class) //
+            .withJaxbProperty("disability") //
+            .withEntityClass(ImportedDisability.class) //
+            .withXsdLocation("xsd/import/data/disability.xsd") //
+            .withXmlLocation("xml/defaultEntities/disability.xml"), //
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_personal_detail.disability_id" }, false), //
+    IMPORTED_DOMICILE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Domiciles.class) //
+            .withJaxbProperty("domicile") //
+            .withEntityClass(ImportedDomicile.class) //
+            .withXsdLocation("xsd/import/data/domicile.xsd") //
+            .withXmlLocation("xml/defaultEntities/domicile.xml"),
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_personal_detail.domicile_id" }, false), //
+    IMPORTED_ETHNICITY(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Ethnicities.class) //
+            .withJaxbProperty("ethnicity") //
+            .withEntityClass(ImportedEthnicity.class) //
+            .withXsdLocation("xsd/import/data/ethnicity.xsd") //
+            .withXmlLocation("xml/defaultEntities/ethnicity.xml"),
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_personal_detail.ethnicity_id" }, false), //
+    IMPORTED_FUNDING_SOURCE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(FundingSources.class) //
+            .withJaxbProperty("fundingSource") //
+            .withEntityClass(ImportedReferralSource.class) //
+            .withXsdLocation("xsd/import/data/fundingSource.xsd") //
+            .withXmlLocation("xml/defaultEntities/fundingSource.xml"),
+            getImportedEntitySimpleInsertDefinition(), null, false), //
+    IMPORTED_GENDER(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Genders.class) //
+            .withJaxbProperty("gender") //
+            .withEntityClass(ImportedGender.class) //
+            .withXsdLocation("xsd/import/data/gender.xsd") //
+            .withXmlLocation("xml/defaultEntities/gender.xml"), //
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_personal_detail.gender_id" }, false), //
+    // TODO: add as chart filter
+    IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Institutions.class) //
+            .withJaxbProperty("institution") //
+            .withEntityClass(ImportedInstitution.class) //
+            .withXsdLocation("xsd/import/data/institution.xsd") //
+            .withXmlLocation("xml/defaultEntities/institution.xml"), //
+            new PrismImportedEntityInsertDefinition() //
+                    .withTable("imported_institution") //
+                    .withColumn("imported_domicile_id") //
+                    .withColumn("name") //
+                    .withColumn("ucas_id") //
+                    .withColumn("facebook_id") //
+                    .withColumn("enabled")
+                    .withExtractor(ImportedEntitySimpleExtractor.class), //
+            new String[] { "application_qualification.institution_id" }, true),
+    IMPORTED_LANGUAGE_QUALIFICATION_TYPE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(LanguageQualificationTypes.class) //
+            .withJaxbProperty("languageQualificationType") //
+            .withEntityClass(ImportedLanguageQualificationType.class) //
+            .withXsdLocation("xsd/import/data/languageQualificationType.xsd") //
+            .withXmlLocation("xml/defaultEntities/languageQualificationType.xml"),
+            new PrismImportedEntityInsertDefinition() //
+                    .withTable("imported_language_qualification_type") //
                     .withColumn("name") //
                     .withColumn("minimum_overall_score") //
                     .withColumn("maximum_overall_score") //
@@ -96,56 +159,98 @@ public enum PrismImportedEntity {
                     .withColumn("maximum_speaking_score") //
                     .withColumn("minimum_listening_score") //
                     .withColumn("maximum_listening_score") //
-                    .withColumn("enabled"), null, false), //
-    IMPORTED_TITLE(Titles.class, "title", ImportedTitle.class, "xml/defaultEntities/title.xml", "xsd/import/data/title.xsd", true, //
-            getImportedEntitySimpleInsertDefinition(), null, false), //
-    IMPORTED_GENDER(Genders.class, "gender", ImportedGender.class, "xml/defaultEntities/gender.xml", "xsd/import/data/gender.xsd", true, //
-            getImportedEntitySimpleInsertDefinition(), new String[] { "application_personal_detail.gender_id" }, false), //
-    IMPORTED_REJECTION_REASON(RejectionReasons.class, "rejectionReason", ImportedRejectionReason.class, "xml/defaultEntities/rejectionReason.xml",
-            "xsd/import/data/rejectionReason.xsd", true, getImportedEntitySimpleInsertDefinition(), null, false), //
-    IMPORTED_STUDY_OPTION(StudyOptions.class, "studyOption", ImportedStudyOption.class, "xml/defaultEntities/studyOption.xml",
-            "xsd/import/data/studyOption.xsd",
-            true, getImportedEntitySimpleInsertDefinition(), new String[] { "application_program_detail.study_option_id" }, false), //
-    IMPORTED_OPPORTUNITY_TYPE(OpportunityTypes.class, "opportunityType", ImportedOpportunityType.class, "xml/defaultEntities/opportunityType.xml",
-            "xsd/import/data/opportunityType.xsd", true, getImportedEntitySimpleInsertDefinition(),
+                    .withColumn("enabled") //
+                    .withExtractor(ImportedLanguageQualificationTypeExtractor.class), //
+            null, false), //
+    IMPORTED_NATIONALITY(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Nationalities.class) //
+            .withJaxbProperty("nationality") //
+            .withEntityClass(ImportedNationality.class) //
+            .withXsdLocation("xsd/import/data/nationality.xsd") //
+            .withXmlLocation("xml/defaultEntities/nationality.xml"),
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, false), //
+    IMPORTED_OPPORTUNITY_TYPE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(OpportunityTypes.class) //
+            .withJaxbProperty("opportunityType") //
+            .withEntityClass(ImportedOpportunityType.class) //
+            .withXsdLocation("xsd/import/data/opportunityType.xsd") //
+            .withXmlLocation("xml/defaultEntities/opportunityType.xml"), //
+            getImportedEntitySimpleInsertDefinition(),
             new String[] { "application_program_detail.opportunity_type_id" }, false), //
     // TODO: add as chart filter
-    IMPORTED_INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml",
-            "xsd/import/data/institution.xsd", true, //
-            new PrismImportedEntityInsertDefinition("imported_institution", ImportedEntitySimpleExtractor.class) //
-                    .withColumn("imported_domicile_id") //
-                    .withColumn("name") //
-                    .withColumn("ucas_id") //
-                    .withColumn("facebook_id") //
-                    .withColumn("enabled"), //
-            new String[] { "application_qualification.institution_id" }, true),
-    // TODO: add as chart filter
-    IMPORTED_PROGRAM(null, "program", ImportedProgram.class, "xml/defaultEntities/program.xml", "xsd/imported/program.xsd", true, //
-            new PrismImportedEntityInsertDefinition("imported_program", ImportedProgramExtractor.class) //
+    IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Programs.class) //
+            .withJaxbProperty("program") //
+            .withEntityClass(ImportedProgram.class) //
+            .withXsdLocation("xsd/imported/program.xsd") //
+            .withXmlLocation("xml/defaultEntities/program.xml"),
+            new PrismImportedEntityInsertDefinition() //
+                    .withTable("imported_program") //
                     .withColumn("imported_institution_id") //
                     .withColumn("level") //
                     .withColumn("qualification") //
                     .withColumn("name") //
                     .withColumn("homepage") //
-                    .withColumn("enabled"), null, true), //
+                    .withColumn("enabled") //
+                    .withExtractor(ImportedProgramExtractor.class), //
+            null, true), //
+    IMPORTED_QUALIFICATION_TYPE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Qualifications.class) //
+            .withJaxbProperty("qualification") //
+            .withEntityClass(ImportedQualificationType.class) //
+            .withXsdLocation("xsd/import/data/qualificationType.xsd") //
+            .withXmlLocation("xml/defaultEntities/qualificationType.xml"),
+            getImportedEntitySimpleInsertDefinition(), //
+            null, false), //
+    IMPORTED_REFERRAL_SOURCE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(SourcesOfInterest.class) //
+            .withJaxbProperty("sourceOfInterest") //
+            .withEntityClass(ImportedReferralSource.class) //
+            .withXsdLocation("xsd/import/data/referralSource.xsd") //
+            .withXmlLocation("xml/defaultEntities/referralSource.xml"),
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_program_detail.referral_source_id" }, false), //
+    IMPORTED_REJECTION_REASON(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(RejectionReasons.class) //
+            .withJaxbProperty("rejectionReason") //
+            .withEntityClass(ImportedRejectionReason.class) //
+            .withXsdLocation("xsd/import/data/rejectionReason.xsd") //
+            .withXmlLocation("xml/defaultEntities/rejectionReason.xml"), //
+            getImportedEntitySimpleInsertDefinition(), //
+            null, false), //
+    IMPORTED_STUDY_OPTION(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(StudyOptions.class) //
+            .withJaxbProperty("studyOption") //
+            .withEntityClass(ImportedStudyOption.class) //
+            .withXsdLocation("xsd/import/data/studyOption.xsd") //
+            .withXmlLocation("xml/defaultEntities/studyOption.xml"),
+            getImportedEntitySimpleInsertDefinition(), //
+            new String[] { "application_program_detail.study_option_id" }, false), //
     // TODO: add as chart filter
-    IMPORTED_SUBJECT_AREA(null, "subjectArea", ImportedSubjectArea.class, "xml/defaultEntities/subjectArea.xml", "xsd/imported/subjectArea.xsd", true, //
-            new PrismImportedEntityInsertDefinition("imported_subject_area", ImportedProgramExtractor.class) //
+    IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(SubjectAreas.class) //
+            .withJaxbProperty("subjectArea") //
+            .withEntityClass(ImportedSubjectArea.class) //
+            .withXsdLocation("xsd/imported/subjectArea.xsd") //
+            .withXmlLocation("xml/defaultEntities/subjectArea.xml"), //
+            new PrismImportedEntityInsertDefinition() //
+                    .withTable("imported_subject_area") //
                     .withColumn("name") //
                     .withColumn("code") //
-                    .withColumn("enabled"), null, false);
+                    .withColumn("enabled") //
+                    .withExtractor(ImportedProgramExtractor.class), //
+            null, false), //
+    IMPORTED_TITLE(new PrismImportedEntityImportDefinition() //
+            .withJaxbClass(Titles.class) //
+            .withJaxbProperty("title") //
+            .withEntityClass(ImportedTitle.class) //
+            .withXsdLocation("xsd/import/data/title.xsd") //
+            .withXmlLocation("xml/defaultEntities/title.xml"), //
+            getImportedEntitySimpleInsertDefinition(), //
+            null, false); //
 
-    private Class<?> jaxbClass;
-
-    private String jaxbPropertyName;
-
-    private Class<?> entityClass;
-
-    private String defaultLocation;
-
-    private String schemaLocation;
-
-    private boolean systemImport;
+    private PrismImportedEntityImportDefinition importDefinition;
 
     private PrismImportedEntityInsertDefinition insertDefinition;
 
@@ -166,41 +271,40 @@ public enum PrismImportedEntity {
         }
     }
 
-    private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
-            boolean systemImport, PrismImportedEntityInsertDefinition insertDefinition, String[] reportDefinition, boolean supportsUserDefinedInput) {
-        this.jaxbClass = jaxbClass;
-        this.jaxbPropertyName = jaxbPropertyName;
-        this.entityClass = entityClass;
-        this.defaultLocation = defaultLocation;
-        this.schemaLocation = schemaLocation;
-        this.systemImport = systemImport;
+    private PrismImportedEntity(PrismImportedEntityImportDefinition importDefinition, PrismImportedEntityInsertDefinition insertDefinition,
+            String[] reportDefinition, boolean supportsUserDefinedInput) {
+        this.importDefinition = importDefinition;
         this.insertDefinition = insertDefinition;
         this.reportDefinition = reportDefinition;
         this.supportsUserDefinedInput = supportsUserDefinedInput;
     }
 
     public Class<?> getJaxbClass() {
-        return jaxbClass;
+        return importDefinition.getJaxbClass();
     }
 
-    public String getJaxbPropertyName() {
-        return jaxbPropertyName;
+    public String getJaxbProperty() {
+        return importDefinition.getJaxbProperty();
     }
 
     public Class<?> getEntityClass() {
-        return entityClass;
+        return importDefinition.getEntityClass();
     }
 
-    public String getDefaultLocation() {
-        return defaultLocation;
+    public Class<? extends ImportedEntityMapping> getEntityMappingClass() {
+        return importDefinition.getEntityMappingClass();
     }
 
-    public final String getSchemaLocation() {
-        return schemaLocation;
+    public final String getXsdLocation() {
+        return importDefinition.getXsdLocation();
+    }
+
+    public String getXmlLocation() {
+        return importDefinition.getXmlLocation();
     }
 
     public boolean isSystemImport() {
-        return systemImport;
+        return importDefinition.getXmlLocation() != null;
     }
 
     public String getDatabaseTable() {
@@ -239,6 +343,76 @@ public enum PrismImportedEntity {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
 
+    private static class PrismImportedEntityImportDefinition {
+
+        private Class<?> jaxbClass;
+
+        private String jaxbProperty;
+
+        private Class<?> entityClass;
+
+        private Class<? extends ImportedEntityMapping> entityMappingClass;
+
+        private String xsdLocation;
+
+        private String xmlLocation;
+
+        public Class<?> getJaxbClass() {
+            return jaxbClass;
+        }
+
+        public String getJaxbProperty() {
+            return jaxbProperty;
+        }
+
+        public Class<?> getEntityClass() {
+            return entityClass;
+        }
+
+        public Class<? extends ImportedEntityMapping> getEntityMappingClass() {
+            return entityMappingClass;
+        }
+
+        public String getXsdLocation() {
+            return xsdLocation;
+        }
+
+        public String getXmlLocation() {
+            return xmlLocation;
+        }
+
+        public PrismImportedEntityImportDefinition withJaxbClass(Class<?> jaxbClass) {
+            this.jaxbClass = jaxbClass;
+            return this;
+        }
+
+        public PrismImportedEntityImportDefinition withJaxbProperty(String jaxbProperty) {
+            this.jaxbProperty = jaxbProperty;
+            return this;
+        }
+
+        public PrismImportedEntityImportDefinition withEntityClass(Class<?> entityClass) {
+            this.entityClass = entityClass;
+            return this;
+        }
+
+        public PrismImportedEntityImportDefinition withEntityMappingClass(Class<? extends ImportedEntityMapping> entityMappingClass) {
+            this.entityMappingClass = entityMappingClass;
+            return this;
+        }
+
+        public PrismImportedEntityImportDefinition withXsdLocation(String xsdLocation) {
+            this.xsdLocation = xsdLocation;
+            return this;
+        }
+
+        public PrismImportedEntityImportDefinition withXmlLocation(String xmlLocation) {
+            this.xmlLocation = xmlLocation;
+            return this;
+        }
+
+    }
+
     private static class PrismImportedEntityInsertDefinition {
 
         private String table;
@@ -246,11 +420,6 @@ public enum PrismImportedEntity {
         private List<String> columns = Lists.newLinkedList();
 
         private Class<? extends ImportedEntityExtractor> extractor;
-
-        public PrismImportedEntityInsertDefinition(String table, Class<? extends ImportedEntityExtractor> extractor) {
-            this.table = table;
-            this.extractor = extractor;
-        }
 
         public String getTable() {
             return table;
@@ -272,18 +441,30 @@ public enum PrismImportedEntity {
             return extractor;
         }
 
+        public PrismImportedEntityInsertDefinition withTable(String table) {
+            this.table = table;
+            return this;
+        }
+
         public PrismImportedEntityInsertDefinition withColumn(String column) {
             columns.add(column);
+            return this;
+        }
+
+        public PrismImportedEntityInsertDefinition withExtractor(Class<? extends ImportedEntityExtractor> extractor) {
+            this.extractor = extractor;
             return this;
         }
 
     }
 
     private static PrismImportedEntityInsertDefinition getImportedEntitySimpleInsertDefinition() {
-        return new PrismImportedEntityInsertDefinition("imported_entity", ImportedEntitySimpleExtractor.class) //
+        return new PrismImportedEntityInsertDefinition() //
+                .withTable("imported_entity") //
                 .withColumn("imported_entity_type") //
                 .withColumn("name") //
-                .withColumn("enabled");
+                .withColumn("enabled") //
+                .withExtractor(ImportedEntitySimpleExtractor.class);
     }
 
 }

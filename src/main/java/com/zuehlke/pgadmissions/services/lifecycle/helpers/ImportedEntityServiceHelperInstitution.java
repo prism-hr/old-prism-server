@@ -136,13 +136,13 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
 
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
+        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getXsdLocation()).getFile());
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
         Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+        return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbProperty());
     }
 
     private void processImportException(ImportedEntityFeed importedEntityFeed, Exception e) {

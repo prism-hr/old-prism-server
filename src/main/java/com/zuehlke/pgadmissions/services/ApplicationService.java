@@ -66,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -282,9 +283,10 @@ public class ApplicationService {
 
         ApplicationQualification latestQualification = applicationDAO.getLatestApplicationQualification(application);
         if (latestQualification != null) {
-            summary.setLatestQualification(new QualificationSummaryRepresentation().withTitle(latestQualification.getTitle())
-                    .withSubject(latestQualification.getSubject()).withGrade(latestQualification.getGrade())
-                    .withInstitution(latestQualification.getInstitutionDisplay()).withStartDate(latestQualification.getStartDateDisplay(dateFormat))
+            ImportedProgram importedProgram = latestQualification.getProgram();
+            summary.setLatestQualification(new QualificationSummaryRepresentation().withTitle(importedProgram.getQualification())
+                    .withSubject(importedProgram.getName()).withGrade(latestQualification.getGrade())
+                    .withInstitution(importedProgram.getInstitution().getName()).withStartDate(latestQualification.getStartDateDisplay(dateFormat))
                     .withEndDate(latestQualification.getAwardDateDisplay(dateFormat)));
         }
 

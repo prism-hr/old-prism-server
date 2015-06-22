@@ -301,7 +301,7 @@ public enum PrismImportedEntity {
                     .withTable("imported_program") //
                     .withPivotColumn("imported_institution_id") //
                     .withColumn("level") //
-                    .withPivotColumn("qualification") //
+                    .withColumn("qualification") //
                     .withPivotColumn("name") //
                     .withColumn("homepage") //
                     .withColumn("enabled") //

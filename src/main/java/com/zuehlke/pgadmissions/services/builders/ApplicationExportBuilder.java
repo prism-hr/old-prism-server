@@ -74,6 +74,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedNationality;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
@@ -409,19 +410,21 @@ public class ApplicationExportBuilder {
 
                 qualificationsTp.setGrade(qualification.getGrade());
                 qualificationsTp.setLanguageOfInstruction(qualification.getLanguage());
-                qualificationsTp.setMainSubject(qualification.getSubject());
+
+                ImportedProgram importedProgram = qualification.getProgram();
+                qualificationsTp.setMainSubject(importedProgram.getName());
 
                 QualificationTp qualificationTp = objectFactory.createQualificationTp();
-                ImportedQualificationType qualificationType = qualification.getType();
+                ImportedQualificationType qualificationType = importedProgram.getQualificationType();
                 qualificationTp.setCode(getImportedEntityCode(application.getInstitution(), qualificationType));
                 qualificationTp.setName(qualificationType.getName());
                 qualificationsTp.setQualification(qualificationTp);
 
                 InstitutionTp institutionTp = objectFactory.createInstitutionTp();
-                ImportedInstitution institution = qualification.getInstitution();
+                ImportedInstitution institution = qualification.getProgram().getInstitution();
                 String institutionCode = getImportedEntityCode(application.getInstitution(), institution);
                 institutionTp.setCode(institutionCode.startsWith("CUST") ? "OTHER" : institutionCode);
-                institutionTp.setName(qualification.getInstitution().getName());
+                institutionTp.setName(qualification.getProgram().getName());
 
                 CountryTp countryTp = objectFactory.createCountryTp();
                 ImportedDomicile domicile = institution.getDomicile();

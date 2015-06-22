@@ -51,9 +51,11 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -64,7 +66,8 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.imported.ImportedEntityPivotDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
@@ -121,7 +124,7 @@ public class ImportedEntityService {
     public ImportedEntityFeed getImportedEntityFeedById(Integer id) {
         return entityService.getById(ImportedEntityFeed.class, id);
     }
-    
+
     public List<ImportedEntityFeed> getImportedEntityFeeds(Integer institution, PrismImportedEntity... exclusions) {
         return importedEntityDAO.getImportedEntityFeeds(institution, exclusions);
     }
@@ -136,9 +139,9 @@ public class ImportedEntityService {
         if (entities.isEmpty()) {
             entities = importedEntityDAO.getEnabledImportedEntities(institution, prismImportedEntity);
         }
-        return entities; 
+        return entities;
     }
-    
+
     public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedDomicile domicile) {
         List<ImportedInstitution> institutions = importedEntityDAO.getEnabledImportedInstitutionsWithMappings(institution, domicile);
         if (institutions.isEmpty()) {
@@ -146,7 +149,7 @@ public class ImportedEntityService {
         }
         return institutions;
     }
-    
+
     public List<ImportedProgram> getEnabledImportedPrograms(Institution institution, ImportedInstitution importedInstitution) {
         List<ImportedProgram> programs = importedEntityDAO.getEnabledImportedProgramsWithMappings(institution, importedInstitution);
         if (programs.isEmpty()) {
@@ -154,7 +157,7 @@ public class ImportedEntityService {
         }
         return programs;
     }
-    
+
     public List<ImportedSubjectArea> getEnabledImportedSubjectAreas(Institution institution) {
         List<ImportedSubjectArea> subjectAreas = importedEntityDAO.getEnabledImportedSubjectAreasWithMappings(institution);
         if (subjectAreas.isEmpty()) {
@@ -174,22 +177,22 @@ public class ImportedEntityService {
         List<T> mappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
         return (List<T>) getFilteredImportedEntityMappings(mappings);
     }
-    
-    public ImportedInstitution getOrCreateImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
-        Integer importedInstitutionId = importedInstitutionDTO.getId();
-        if (importedInstitutionId == null) {
-            ImportedInstitution importedInstitution = importedEntityDAO.getImportedInstitutionByName(importedInstitutionDTO.getDomicile(),
-                    importedInstitutionDTO.getName());
-            if (importedInstitution == null) {
-                return createImportedInstitution(institution, importedInstitutionDTO);
+
+    public ImportedProgram getOrCreateImportedProgram(Institution institution, ImportedProgramDTO importedProgramDTO) {
+        Integer importedProgramId = importedProgramDTO.getId();
+        if (importedProgramId == null) {
+            ImportedInstitution importedInstitution = getOrCreateImportedInstitution(institution, importedProgramDTO.getInstitution());
+            ImportedProgram importedProgram = importedEntityDAO.getImportedProgramByName(importedInstitution, importedProgramDTO.getName());
+            if (importedProgram == null) {
+                return createImportedProgram(institution, importedInstitution, importedProgramDTO);
             } else {
-                createImportedInstitutionMapping(institution, importedInstitution);
-                return importedInstitution;
+                createImportedProgramMapping(institution, importedProgram);
+                return importedProgram;
             }
         } else {
-            ImportedInstitution importedInstitution = getById(institution, ImportedInstitution.class, importedInstitutionDTO.getId());
-            createImportedInstitutionMapping(institution, importedInstitution);
-            return importedInstitution;
+            ImportedProgram importedProgram = getById(institution, ImportedProgram.class, importedProgramDTO.getId());
+            createImportedProgramMapping(institution, importedProgram);
+            return importedProgram;
         }
     }
 
@@ -245,7 +248,7 @@ public class ImportedEntityService {
             }
         }
     }
-    
+
     public void disableImportedPrograms(Integer institutionId, List<Integer> updates, LocalDate baseline) {
         Institution institution = institutionService.getById(institutionId);
         importedEntityDAO.disableImportedPrograms(institution, updates, baseline);
@@ -419,6 +422,24 @@ public class ImportedEntityService {
     // return entityService.createOrUpdate(studyOption);
     // }
 
+    private ImportedInstitution getOrCreateImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
+        Integer importedInstitutionId = importedInstitutionDTO.getId();
+        if (importedInstitutionId == null) {
+            ImportedInstitution importedInstitution = importedEntityDAO.getImportedInstitutionByName(importedInstitutionDTO.getDomicile(),
+                    importedInstitutionDTO.getName());
+            if (importedInstitution == null) {
+                return createImportedInstitution(institution, importedInstitutionDTO);
+            } else {
+                createImportedInstitutionMapping(institution, importedInstitution);
+                return importedInstitution;
+            }
+        } else {
+            ImportedInstitution importedInstitution = getById(institution, ImportedInstitution.class, importedInstitutionDTO.getId());
+            createImportedInstitutionMapping(institution, importedInstitution);
+            return importedInstitution;
+        }
+    }
+
     private ImportedInstitution createImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
         ImportedDomicile domicile = getById(institution, ImportedDomicile.class, importedInstitutionDTO.getDomicile());
         ImportedInstitution importedInstitution = new ImportedInstitution().withDomicile(domicile).withName(importedInstitutionDTO.getName())
@@ -428,10 +449,27 @@ public class ImportedEntityService {
         return importedInstitution;
     }
 
+    private ImportedProgram createImportedProgram(Institution institution, ImportedInstitution importedInstitution, ImportedProgramDTO importedProgramDTO) {
+        ImportedQualificationType qualificationType = getById(institution, ImportedQualificationType.class, importedProgramDTO.getQualificationType());
+        ImportedProgram program = new ImportedProgram().withInstitution(importedInstitution).withQualificationType(qualificationType)
+                .withName(importedProgramDTO.getName()).withEnabled(false);
+        entityService.save(program);
+        createImportedProgramMapping(institution, program);
+        return program;
+    }
+
     private void createImportedInstitutionMapping(Institution institution, ImportedInstitution importedInstitution) {
         ImportedInstitutionMapping importedInstitutionMapping = new ImportedInstitutionMapping().withInstitution(institution)
                 .withImportedInstitution(importedInstitution).withEnabled(true);
         entityService.getOrCreate(importedInstitutionMapping);
+        importedInstitution.getMappings().add(importedInstitutionMapping);
+    }
+
+    private void createImportedProgramMapping(Institution institution, ImportedProgram importedProgram) {
+        ImportedProgramMapping importedProgramMapping = new ImportedProgramMapping().withInstitution(institution)
+                .withImportedProgram(importedProgram).withEnabled(true);
+        entityService.getOrCreate(importedProgramMapping);
+        importedProgram.getMappings().add(importedProgramMapping);
     }
 
     private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {

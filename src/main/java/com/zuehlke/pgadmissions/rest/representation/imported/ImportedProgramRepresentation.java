@@ -3,11 +3,13 @@ package com.zuehlke.pgadmissions.rest.representation.imported;
 public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresentation {
 
     private Integer institution;
-    
+
+    private Integer qualificationType;
+
     private String level;
-    
+
     private String qualification;
-    
+
     private String homepage;
 
     public Integer getInstitution() {
@@ -16,6 +18,14 @@ public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresent
 
     public void setInstitution(Integer institution) {
         this.institution = institution;
+    }
+
+    public Integer getQualificationType() {
+        return qualificationType;
+    }
+
+    public void setQualificationType(Integer qualificationType) {
+        this.qualificationType = qualificationType;
     }
 
     public String getLevel() {
@@ -41,5 +51,5 @@ public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresent
     public void setHomepage(String homepage) {
         this.homepage = homepage;
     }
-    
+
 }

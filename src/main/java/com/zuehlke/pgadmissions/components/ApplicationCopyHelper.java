@@ -383,10 +383,7 @@ public class ApplicationCopyHelper {
 
     public void copyQualification(ApplicationQualification to, ApplicationQualification from, WorkflowPropertyConfiguration configuration) {
         Institution toInstitution = to.getApplication().getInstitution();
-        to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution(), to));
-        to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
-        to.setTitle(from.getTitle());
-        to.setSubject(from.getSubject());
+        to.setProgram(getEnabledImportedObject(toInstitution, from.getProgram(), to));
         to.setLanguage(from.getLanguage());
         to.setStartDate(from.getStartDate());
         to.setCompleted(from.getCompleted());

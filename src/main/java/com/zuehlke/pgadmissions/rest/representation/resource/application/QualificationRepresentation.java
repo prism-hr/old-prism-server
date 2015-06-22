@@ -2,16 +2,14 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
 public class QualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private String subject;
-
-    private String title;
+    private ImportedProgramRepresentation program;
 
     private LocalDate startDate;
 
@@ -19,17 +17,11 @@ public class QualificationRepresentation extends ApplicationSectionRepresentatio
 
     private String language;
 
-    private Integer type;
-
     private String grade;
 
     private FileRepresentation document;
 
-    private ImportedInstitutionRepresentation institution;
-
     private Boolean completed;
-
-    private Boolean includeInExport;
 
     public Integer getId() {
         return id;
@@ -37,22 +29,6 @@ public class QualificationRepresentation extends ApplicationSectionRepresentatio
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public LocalDate getStartDate() {
@@ -79,14 +55,6 @@ public class QualificationRepresentation extends ApplicationSectionRepresentatio
         this.language = language;
     }
 
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
     public String getGrade() {
         return grade;
     }
@@ -103,12 +71,12 @@ public class QualificationRepresentation extends ApplicationSectionRepresentatio
         this.document = document;
     }
 
-    public ImportedInstitutionRepresentation getInstitution() {
-        return institution;
+    public ImportedProgramRepresentation getProgram() {
+        return program;
     }
 
-    public void setInstitution(ImportedInstitutionRepresentation institution) {
-        this.institution = institution;
+    public void setProgram(ImportedProgramRepresentation program) {
+        this.program = program;
     }
 
     public Boolean getCompleted() {
@@ -119,11 +87,4 @@ public class QualificationRepresentation extends ApplicationSectionRepresentatio
         this.completed = completed;
     }
 
-    public Boolean getIncludeInExport() {
-        return includeInExport;
-    }
-
-    public void setIncludeInExport(Boolean includeInExport) {
-        this.includeInExport = includeInExport;
-    }
 }

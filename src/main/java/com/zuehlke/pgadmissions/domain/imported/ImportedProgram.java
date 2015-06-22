@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 
 @Entity
-@Table(name = "IMPORTED_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "qualification", "name" }) })
+@Table(name = "IMPORTED_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "name" }) })
 public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> {
 
     @Id
@@ -134,10 +134,30 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> {
     public Set<ImportedProgramMapping> getMappings() {
         return mappings;
     }
+    
+    public ImportedProgram withInstitution(ImportedInstitution institution) {
+        this.institution = institution;
+        return this;
+    }
+    
+    public ImportedProgram withQualificationType(ImportedQualificationType qualificationType) {
+        this.qualificationType = qualificationType;
+        return this;
+    }
+    
+    public ImportedProgram withName(String name) {
+        this.name = name;
+        return this;
+    }
+    
+    public ImportedProgram withEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(institution.getId(), qualification, name);
+        return Objects.hashCode(institution.getId(), name);
     }
 
     @Override
@@ -146,12 +166,12 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> {
             return false;
         }
         ImportedProgram other = (ImportedProgram) object;
-        return Objects.equal(institution, other.getInstitution()) && Objects.equal(qualification, other.getQualification());
+        return Objects.equal(institution, other.getInstitution());
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("institution", institution).addProperty("qualification", qualification);
+        return super.getResourceSignature().addProperty("institution", institution);
     }
 
 }

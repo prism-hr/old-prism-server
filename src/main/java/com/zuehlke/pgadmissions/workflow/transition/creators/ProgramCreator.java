@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -17,7 +16,6 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
@@ -29,9 +27,6 @@ public class ProgramCreator implements ResourceCreator {
 
     @Inject
     private DepartmentService departmentService;
-
-    @Inject
-    private ImportedEntityService importedEntityService;
 
     @Inject
     private InstitutionService institutionService;
@@ -49,11 +44,10 @@ public class ProgramCreator implements ResourceCreator {
 
         DepartmentDTO departmentDTO = newProgram.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(institution, departmentDTO);
-        ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, institution, newProgram.getOpportunityType().name());
 
         Program program = new Program().withUser(user).withParentResource(institution).withDepartment(department).withAdvert(advert)
-                .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum())
-                .withDurationMaximum(newProgram.getDurationMaximum()).withRequireProjectDefinition(false);
+                .withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum()).withDurationMaximum(newProgram.getDurationMaximum())
+                .withRequireProjectDefinition(false);
 
         resourceService.updatePartner(user, program, newProgram);
         resourceService.adoptPartnerAddress(program, advert);

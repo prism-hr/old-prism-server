@@ -1,6 +1,6 @@
-package com.zuehlke.pgadmissions.rest.representation.resource.application;
+package com.zuehlke.pgadmissions.rest.representation.imported;
 
-public class ImportedInstitutionRepresentation extends ImportedEntityRepresentation {
+public class ImportedInstitutionRepresentation extends ImportedEntitySimpleRepresentation {
 
     private Integer domicile;
 
@@ -11,4 +11,5 @@ public class ImportedInstitutionRepresentation extends ImportedEntityRepresentat
     public void setDomicile(Integer domicile) {
         this.domicile = domicile;
     }
+
 }

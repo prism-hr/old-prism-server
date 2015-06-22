@@ -15,7 +15,7 @@ public interface UniqueEntity {
 
     public ResourceSignature getResourceSignature();
 
-    public class ResourceSignature {
+    public static class ResourceSignature {
 
         private final HashMap<String, Object> properties = Maps.newHashMap();
 
@@ -60,6 +60,7 @@ public interface UniqueEntity {
             }
             return property.toString();
         }
+
     }
 
 }

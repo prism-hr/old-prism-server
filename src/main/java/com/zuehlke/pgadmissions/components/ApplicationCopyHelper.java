@@ -46,8 +46,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
@@ -478,7 +478,7 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity, ApplicationSection toSection) {
+    private <T extends ImportedEntity<?>> T getEnabledImportedObject(Institution toInstitution, T fromEntity, ApplicationSection toSection) {
         T toEntity = null;
         if (fromEntity == null) {
             toEntity = null;

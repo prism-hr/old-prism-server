@@ -2,20 +2,26 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 
 @Entity
 @Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
-public class ImportedInstitution extends ImportedEntity {
+public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMapping> {
 
     @Id
     @GeneratedValue
@@ -36,6 +42,9 @@ public class ImportedInstitution extends ImportedEntity {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @OneToMany(mappedBy = "importedInstitution")
+    private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -96,6 +105,11 @@ public class ImportedInstitution extends ImportedEntity {
         this.enabled = enabled;
     }
 
+    @Override
+    public Set<ImportedInstitutionMapping> getMappings() {
+        return mappings;
+    }
+
     public ImportedInstitution withDomicile(ImportedDomicile domicile) {
         this.domicile = domicile;
         return this;
@@ -123,6 +137,20 @@ public class ImportedInstitution extends ImportedEntity {
 
     public String getDomicileDisplay() {
         return domicile == null ? null : domicile.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(domicile.getId(), name);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        ImportedInstitution other = (ImportedInstitution) object;
+        return Objects.equal(domicile, other.getDomicile());
     }
 
     @Override

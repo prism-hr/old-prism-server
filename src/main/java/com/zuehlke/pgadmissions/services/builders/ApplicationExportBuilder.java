@@ -78,9 +78,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
@@ -162,7 +159,7 @@ public class ApplicationExportBuilder {
     private DomicileTp buildDomicile(Application application) {
         DomicileTp domicileTp = objectFactory.createDomicileTp();
         ImportedDomicile domicile = application.getPersonalDetail().getDomicile();
-        domicileTp.setCode(getImportedEntityCode(application.getInstitution(), domicile, ImportedEntitySimpleMapping.class));
+        domicileTp.setCode(getImportedEntityCode(application.getInstitution(), domicile));
         domicileTp.setName(domicile.getName());
         return domicileTp;
     }
@@ -180,8 +177,7 @@ public class ApplicationExportBuilder {
     }
 
     private GenderTp buildGender(Application application) {
-        return GenderTp.valueOf(getImportedEntityCode(application.getInstitution(), application.getPersonalDetail().getGender(),
-                ImportedEntitySimpleMapping.class));
+        return GenderTp.valueOf(getImportedEntityCode(application.getInstitution(), application.getPersonalDetail().getGender()));
     }
 
     private XMLGregorianCalendar buildDateOfBirth(Application application) {
@@ -193,7 +189,7 @@ public class ApplicationExportBuilder {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         ImportedNationality firstNationality = personalDetail.getFirstNationality();
         NationalityTp nationalityTp = objectFactory.createNationalityTp();
-        nationalityTp.setCode(getImportedEntityCode(application.getInstitution(), firstNationality, ImportedEntitySimpleMapping.class));
+        nationalityTp.setCode(getImportedEntityCode(application.getInstitution(), firstNationality));
         nationalityTp.setName(firstNationality.getName());
         return nationalityTp;
     }
@@ -205,7 +201,7 @@ public class ApplicationExportBuilder {
         if (secondNationality == null) {
             return null;
         } else {
-            nationalityTp.setCode(getImportedEntityCode(application.getInstitution(), secondNationality, ImportedEntitySimpleMapping.class));
+            nationalityTp.setCode(getImportedEntityCode(application.getInstitution(), secondNationality));
             nationalityTp.setName(secondNationality.getName());
             return nationalityTp;
         }
@@ -215,7 +211,7 @@ public class ApplicationExportBuilder {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         CountryTp countryTp = objectFactory.createCountryTp();
         ImportedCountry country = personalDetail.getCountry();
-        countryTp.setCode(getImportedEntityCode(application.getInstitution(), country, ImportedEntitySimpleMapping.class));
+        countryTp.setCode(getImportedEntityCode(application.getInstitution(), country));
         countryTp.setName(country.getName());
         return countryTp;
     }
@@ -244,7 +240,7 @@ public class ApplicationExportBuilder {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         DisabilityTp disabilityTp = objectFactory.createDisabilityTp();
         ImportedDisability disability = personalDetail.getDisability();
-        disabilityTp.setCode(getImportedEntityCode(application.getInstitution(), disability, ImportedEntitySimpleMapping.class));
+        disabilityTp.setCode(getImportedEntityCode(application.getInstitution(), disability));
         disabilityTp.setName(disability.getName());
         return disabilityTp;
     }
@@ -253,7 +249,7 @@ public class ApplicationExportBuilder {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         EthnicityTp ethnicityTp = objectFactory.createEthnicityTp();
         ImportedEthnicity ethnicity = personalDetail.getEthnicity();
-        ethnicityTp.setCode(getImportedEntityCode(application.getInstitution(), ethnicity, ImportedEntitySimpleMapping.class));
+        ethnicityTp.setCode(getImportedEntityCode(application.getInstitution(), ethnicity));
         ethnicityTp.setName(ethnicity.getName());
         return ethnicityTp;
     }
@@ -270,7 +266,7 @@ public class ApplicationExportBuilder {
         String addressCode = currentAddress.getAddressCode();
         addressTp.setPostCode(addressCode == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
 
-        addressTp.setCountry(getImportedEntityCode(application.getInstitution(), currentAddress.getDomicile(), ImportedEntitySimpleMapping.class));
+        addressTp.setCountry(getImportedEntityCode(application.getInstitution(), currentAddress.getDomicile()));
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
         contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
@@ -289,7 +285,7 @@ public class ApplicationExportBuilder {
         String addressCode = contactAddress.getAddressCode();
         addressTp.setPostCode(addressCode == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
 
-        addressTp.setCountry(getImportedEntityCode(application.getInstitution(), contactAddress.getDomicile(), ImportedEntitySimpleMapping.class));
+        addressTp.setCountry(getImportedEntityCode(application.getInstitution(), contactAddress.getDomicile()));
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
         contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
@@ -373,7 +369,7 @@ public class ApplicationExportBuilder {
         ApplicationProgramDetail programmeDetails = application.getProgramDetail();
         ModeofattendanceTp modeofattendanceTp = objectFactory.createModeofattendanceTp();
         ImportedStudyOption studyOption = programmeDetails.getStudyOption();
-        modeofattendanceTp.setCode(getImportedEntityCode(application.getInstitution(), studyOption, ImportedEntitySimpleMapping.class));
+        modeofattendanceTp.setCode(getImportedEntityCode(application.getInstitution(), studyOption));
         modeofattendanceTp.setName(studyOption.getName());
         return modeofattendanceTp;
     }
@@ -395,7 +391,7 @@ public class ApplicationExportBuilder {
         if (sourceOfInterest == null) {
             return null;
         }
-        interestTp.setCode(getImportedEntityCode(application.getInstitution(), sourceOfInterest, ImportedEntitySimpleMapping.class));
+        interestTp.setCode(getImportedEntityCode(application.getInstitution(), sourceOfInterest));
         interestTp.setName(sourceOfInterest.getName());
         return interestTp;
     }
@@ -417,19 +413,19 @@ public class ApplicationExportBuilder {
 
                 QualificationTp qualificationTp = objectFactory.createQualificationTp();
                 ImportedQualificationType qualificationType = qualification.getType();
-                qualificationTp.setCode(getImportedEntityCode(application.getInstitution(), qualificationType, ImportedEntitySimpleMapping.class));
+                qualificationTp.setCode(getImportedEntityCode(application.getInstitution(), qualificationType));
                 qualificationTp.setName(qualificationType.getName());
                 qualificationsTp.setQualification(qualificationTp);
 
                 InstitutionTp institutionTp = objectFactory.createInstitutionTp();
                 ImportedInstitution institution = qualification.getInstitution();
-                String institutionCode = getImportedEntityCode(application.getInstitution(), institution, ImportedInstitutionMapping.class);
+                String institutionCode = getImportedEntityCode(application.getInstitution(), institution);
                 institutionTp.setCode(institutionCode.startsWith("CUST") ? "OTHER" : institutionCode);
                 institutionTp.setName(qualification.getInstitution().getName());
 
                 CountryTp countryTp = objectFactory.createCountryTp();
                 ImportedDomicile domicile = institution.getDomicile();
-                countryTp.setCode(getImportedEntityCode(application.getInstitution(), domicile, ImportedEntitySimpleMapping.class));
+                countryTp.setCode(getImportedEntityCode(application.getInstitution(), domicile));
                 countryTp.setName(domicile.getName());
                 institutionTp.setCountry(countryTp);
 
@@ -528,8 +524,7 @@ public class ApplicationExportBuilder {
             EnglishLanguageTp englishLanguageTp = objectFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(applicationExportBuilderHelper.buildXmlDate(languageQualification.getExamDate()));
 
-            String languageQualificationTypeCode = getImportedEntityCode(application.getInstitution(), languageQualification.getType(),
-                    ImportedLanguageQualificationTypeMapping.class);
+            String languageQualificationTypeCode = getImportedEntityCode(application.getInstitution(), languageQualification.getType());
             if (languageQualificationTypeCode.startsWith("OTHER")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
                 englishLanguageTp.setOtherLanguageExam(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
@@ -574,9 +569,10 @@ public class ApplicationExportBuilder {
         return englishLanguageQualificationDetailsTp;
     }
 
-    public <T extends ImportedEntityMapping> String getImportedEntityCode(Institution institution, ImportedEntity importedEntity,
-            Class<T> entityMappingClass) {
-        T mapping = importedEntityService.getEnabledImportedEntityMapping(institution, importedEntity, entityMappingClass);
+    @SuppressWarnings("unchecked")
+    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> String getImportedEntityCode(Institution institution,
+            ImportedEntity<?> importedEntity) {
+        V mapping = importedEntityService.getEnabledImportedEntityMapping(institution, (T) importedEntity);
         return mapping == null ? null : mapping.getCode();
     }
 

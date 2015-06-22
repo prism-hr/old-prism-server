@@ -2,19 +2,24 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
 
 @Entity
 @Table(name = "IMPORTED_SUBJECT_AREA")
-public class ImportedSubjectArea extends ImportedEntity {
+public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMapping> {
 
     @Id
     @GeneratedValue
@@ -32,6 +37,9 @@ public class ImportedSubjectArea extends ImportedEntity {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @OneToMany(mappedBy = "importedSubjectArea")
+    private Set<ImportedSubjectAreaMapping> mappings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -82,6 +90,11 @@ public class ImportedSubjectArea extends ImportedEntity {
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public Set<ImportedSubjectAreaMapping> getMappings() {
+        return mappings;
     }
 
 }

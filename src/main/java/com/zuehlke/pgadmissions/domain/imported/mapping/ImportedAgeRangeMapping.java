@@ -9,12 +9,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @Table(name = "IMPORTED_AGE_RANGE_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_age_range_id, code" }) })
-public class ImportedAgeRangeMapping extends ImportedEntityMapping {
+public class ImportedAgeRangeMapping extends ImportedEntityMapping<ImportedAgeRange> {
 
     @Id
     @GeneratedValue
@@ -33,6 +36,10 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+    
+    @Column(name = "imported_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime importedTimestamp;
 
     @Override
     public Integer getId() {
@@ -54,6 +61,11 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping {
         this.institution = institution;
     }
     
+    @Override
+    public ImportedAgeRange getImportedEntity() {
+        return importedAgeRange;
+    }
+    
     public ImportedAgeRange getImportedAgeRange() {
         return importedAgeRange;
     }
@@ -61,7 +73,7 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping {
     public void setImportedAgeRange(ImportedAgeRange importedAgeRange) {
         this.importedAgeRange = importedAgeRange;
     }
-
+    
     @Override
     public String getCode() {
         return code;
@@ -81,7 +93,12 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-
+    
+    @Override
+    public DateTime getImportedTimestamp() {
+        return importedTimestamp;
+    }
+   
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("importedAgeRange", importedAgeRange);

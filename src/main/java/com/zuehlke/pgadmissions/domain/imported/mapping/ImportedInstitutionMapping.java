@@ -9,12 +9,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @Table(name = "IMPORTED_INSTITUTION_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_institution_id, code" }) })
-public class ImportedInstitutionMapping extends ImportedEntityMapping {
+public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedInstitution> {
 
     @Id
     @GeneratedValue
@@ -34,6 +37,10 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @Column(name = "imported_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime importedTimestamp;
+    
     @Override
     public Integer getId() {
         return id;
@@ -52,6 +59,11 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public ImportedInstitution getImportedEntity() {
+        return importedInstitution;
     }
 
     public ImportedInstitution getImportedInstitution() {
@@ -80,6 +92,26 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping {
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    @Override
+    public DateTime getImportedTimestamp() {
+        return importedTimestamp;
+    }
+    
+    public ImportedInstitutionMapping withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+    
+    public ImportedInstitutionMapping withImportedInstitution(ImportedInstitution importedInstitution) {
+        this.importedInstitution = importedInstitution;
+        return this;
+    }
+
+    public ImportedInstitutionMapping withEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
     }
 
     @Override

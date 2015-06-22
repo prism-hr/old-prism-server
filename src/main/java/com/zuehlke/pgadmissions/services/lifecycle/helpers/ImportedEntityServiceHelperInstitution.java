@@ -1,26 +1,20 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.isEntityImport;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.isResourceImport;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
+import java.io.InvalidClassException;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
@@ -50,14 +44,12 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
     }
 
     public void execute(Integer institution, PrismImportedEntity... exclusions) {
-        if (contextEnvironment.equals("prod") || !institutionService.hasAuthenticatedFeeds(institution)) {
-            List<ImportedEntityFeed> importedEntityFeeds = importedEntityService.getInstitutionImportedEntityFeeds(institution, exclusions);
-            for (ImportedEntityFeed importedEntityFeed : importedEntityFeeds) {
-                try {
-                    execute(institution, importedEntityFeed);
-                } catch (Exception e) {
-                    processImportException(importedEntityFeed, e);
-                }
+        List<ImportedEntityFeed> importedEntityFeeds = importedEntityService.getImportedEntityFeeds(institution, exclusions);
+        for (ImportedEntityFeed importedEntityFeed : importedEntityFeeds) {
+            try {
+                execute(institution, importedEntityFeed);
+            } catch (Exception e) {
+                processImportException(importedEntityFeed, e);
             }
         }
     }
@@ -68,30 +60,21 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         if (!(unmarshalledEntities == null || unmarshalledEntities.isEmpty())) {
             Integer importedEntityFeedId = importedEntityFeed.getId();
             PrismImportedEntity prismImportedEntity = importedEntityFeed.getImportedEntityType();
-            if (prismImportedEntity.equals(PROGRAM)) {
-                mergeImportedPrograms(institution, importedEntityFeedId, unmarshalledEntities);
-            } else {
+            if (isResourceImport(prismImportedEntity)) {
+                // mergeImportedPrograms(institution, importedEntityFeedId,
+                // unmarshalledEntities);
+            } else if (isEntityImport(prismImportedEntity)) {
                 importedEntityService.mergeImportedEntities(importedEntityFeedId);
+            } else {
+                throw new InvalidClassException(prismImportedEntity.getEntityClass().getCanonicalName() + " is not a valid import target");
             }
         }
     }
 
-    private List<Object> unmarshallImportedData(final ImportedEntityFeed importedEntityFeed) throws Exception {
-        try {
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(importedEntityFeed.getUsername(), importedEntityFeed.getPassword().toCharArray());
-                }
-            });
-
-            DateTime lastImportedTimestamp = importedEntityFeed.getLastImportedTimestamp();
-            PrismImportedEntity prismImportedEntity = importedEntityFeed.getImportedEntityType();
-
-            return importedEntityService.readImportedData(prismImportedEntity.getEntityJaxbClass(), prismImportedEntity.getEntityJaxbProperty(),
-                    prismImportedEntity.getEntityXsdLocation(), prismImportedEntity.getEntityXmlLocation(), lastImportedTimestamp);
-        } finally {
-            Authenticator.setDefault(null);
-        }
+    private List<Object> unmarshallImportedData(ImportedEntityFeed importedEntityFeed) throws Exception {
+        PrismImportedEntity prismImportedEntity = importedEntityFeed.getImportedEntityType();
+        return importedEntityService.readImportedData(prismImportedEntity.getEntityJaxbClass(), prismImportedEntity.getEntityJaxbProperty(),
+                prismImportedEntity.getEntityXsdLocation(), prismImportedEntity.getEntityXmlLocation(), importedEntityFeed.getLastImportedTimestamp());
     }
 
     private void processImportException(ImportedEntityFeed importedEntityFeed, Exception e) {
@@ -104,31 +87,40 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
         notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
     }
 
-    private void mergeImportedPrograms(Integer institutionId, Integer importedEntityFeedId, List<Object> definitions) throws Exception {
-        DateTime baselineTime = new DateTime();
-        LocalDate baseline = baselineTime.toLocalDate();
-
-        List<Integer> updates = Lists.newArrayList();
-        HashMultimap<String, ProgrammeOccurrence> batchedOccurrences = getBatchedImportedPrograms(definitions);
-        for (String programCode : batchedOccurrences.keySet()) {
-            Set<ProgrammeOccurrence> occurrencesInBatch = batchedOccurrences.get(programCode);
-            updates.add(importedEntityService.mergeImportedProgram(institutionId, occurrencesInBatch, baseline, baselineTime));
-        }
-
-        if (!updates.isEmpty()) {
-            importedEntityService.disableImportedPrograms(institutionId, updates, baseline);
-        }
-
-        importedEntityService.setLastImportedTimestamp(importedEntityFeedId);
-    }
-
-    private HashMultimap<String, ProgrammeOccurrence> getBatchedImportedPrograms(List<Object> definitions) {
-        HashMultimap<String, ProgrammeOccurrence> batchedImports = HashMultimap.create();
-        for (Object definition : definitions) {
-            ProgrammeOccurrence programmeOccurrence = (ProgrammeOccurrence) definition;
-            batchedImports.put(programmeOccurrence.getProgramme().getCode(), programmeOccurrence);
-        }
-        return batchedImports;
-    }
+    // private void mergeImportedPrograms(Integer institutionId, Integer
+    // importedEntityFeedId, List<Object> definitions) throws Exception {
+    // DateTime baselineTime = new DateTime();
+    // LocalDate baseline = baselineTime.toLocalDate();
+    //
+    // List<Integer> updates = Lists.newArrayList();
+    // HashMultimap<String, ProgrammeOccurrence> batchedOccurrences =
+    // getBatchedImportedPrograms(definitions);
+    // for (String programCode : batchedOccurrences.keySet()) {
+    // Set<ProgrammeOccurrence> occurrencesInBatch =
+    // batchedOccurrences.get(programCode);
+    // updates.add(importedEntityService.mergeImportedProgram(institutionId,
+    // occurrencesInBatch, baseline, baselineTime));
+    // }
+    //
+    // if (!updates.isEmpty()) {
+    // importedEntityService.disableImportedPrograms(institutionId, updates,
+    // baseline);
+    // }
+    //
+    // importedEntityService.setLastImportedTimestamp(importedEntityFeedId);
+    // }
+    //
+    // private HashMultimap<String, ProgrammeOccurrence>
+    // getBatchedImportedPrograms(List<Object> definitions) {
+    // HashMultimap<String, ProgrammeOccurrence> batchedImports =
+    // HashMultimap.create();
+    // for (Object definition : definitions) {
+    // ProgrammeOccurrence programmeOccurrence = (ProgrammeOccurrence)
+    // definition;
+    // batchedImports.put(programmeOccurrence.getProgramme().getCode(),
+    // programmeOccurrence);
+    // }
+    // return batchedImports;
+    // }
 
 }

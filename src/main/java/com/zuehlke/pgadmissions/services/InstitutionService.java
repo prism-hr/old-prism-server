@@ -154,10 +154,6 @@ public class InstitutionService {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
-    public boolean hasAuthenticatedFeeds(Integer institution) {
-        return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
-    }
-
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
         return institutionDAO.getLatestUpdatedTimestampSitemap(programStates, projectStates);
     }

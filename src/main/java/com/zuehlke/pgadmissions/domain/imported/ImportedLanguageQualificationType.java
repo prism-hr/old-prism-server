@@ -3,18 +3,22 @@ package com.zuehlke.pgadmissions.domain.imported;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 
 @Entity
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
-public class ImportedLanguageQualificationType extends ImportedEntity {
+public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLanguageQualificationTypeMapping> {
 
     @Id
     @GeneratedValue
@@ -55,6 +59,9 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+    
+    @OneToMany(mappedBy = "importedLanguageQualificationType")
+    private Set<ImportedLanguageQualificationTypeMapping> mappings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -169,6 +176,11 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    @Override
+    public Set<ImportedLanguageQualificationTypeMapping> getMappings() {
+        return mappings;
     }
 
     public ImportedLanguageQualificationType withName(String name) {

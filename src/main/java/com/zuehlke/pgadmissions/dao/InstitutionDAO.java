@@ -29,7 +29,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -83,14 +82,7 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("resourceState.state.id", INSTITUTION_APPROVED)) //
                 .list();
     }
-
-    public Long getAuthenticatedFeedCount(Integer institution) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
-                .setProjection(Projections.rowCount()) //
-                .add(Restrictions.eq("institution.id", institution)) //
-                .add(Restrictions.isNotNull("username")).uniqueResult();
-    }
-
+    
     public Institution getActivatedInstitutionByGoogleId(String googleId) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("googleId", googleId)) //

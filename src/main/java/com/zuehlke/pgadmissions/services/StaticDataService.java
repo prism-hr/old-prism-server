@@ -1,20 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_AGE_RANGE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_COUNTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_DISABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_DOMICILE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_ETHNICITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_FUNDING_SOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_GENDER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_NATIONALITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_QUALIFICATION_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_REFERRAL_SOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_REJECTION_REASON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_TITLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchimports;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
@@ -60,7 +46,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -69,12 +56,12 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedSubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.LanguageQualificationTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
@@ -92,6 +79,12 @@ public class StaticDataService {
     private ToIdFunction toIdFunction = new ToIdFunction();
 
     @Inject
+    private CustomizationService customizationService;
+
+    @Inject
+    private DepartmentService departmentService;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -99,9 +92,6 @@ public class StaticDataService {
 
     @Inject
     private InstitutionService institutionService;
-
-    @Inject
-    private CustomizationService customizationService;
 
     @Inject
     private Mapper mapper;
@@ -176,11 +166,11 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
                 PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class,
-                PrismImportedEntity.class}) {
+                PrismImportedEntity.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -263,53 +253,63 @@ public class StaticDataService {
         return staticData;
     }
 
-    @SuppressWarnings("unchecked")
     @Cacheable("importedInstitutionData")
-    public Map<String, Object> getImportedData(Integer institutionId) {
+    public Map<String, Object> getInstitutionData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (PrismImportedEntity prismImportedEntity : new PrismImportedEntity[]{IMPORTED_AGE_RANGE, IMPORTED_COUNTRY, IMPORTED_DISABILITY, IMPORTED_DOMICILE, IMPORTED_ETHNICITY, IMPORTED_NATIONALITY,
-                IMPORTED_QUALIFICATION_TYPE, IMPORTED_REFERRAL_SOURCE, IMPORTED_FUNDING_SOURCE, IMPORTED_LANGUAGE_QUALIFICATION_TYPE, IMPORTED_TITLE, IMPORTED_GENDER, IMPORTED_REJECTION_REASON,
-                IMPORTED_STUDY_OPTION, IMPORTED_OPPORTUNITY_TYPE}) {
-            Class<? extends ImportedEntity> entityClass = (Class<? extends ImportedEntity>) prismImportedEntity.getEntityClass();
-            String simpleName = entityClass.getSimpleName();
-            simpleName = WordUtils.uncapitalize(simpleName);
-            List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
-            List<ImportedEntityRepresentation> entityRepresentations = Lists.newArrayListWithCapacity(entities.size());
+        for (PrismImportedEntity prismImportedEntity : getPrefetchimports()) {
+            List<? extends ImportedEntity<?>> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
+            List<Object> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
             for (Object entity : entities) {
-                entityRepresentations.add(mapper.map(entity, ImportedEntityRepresentation.class));
+                entityRepresentations.add(mapper.map(entity, prismImportedEntity.getClass()));
             }
-            staticData.put(pluralize(simpleName), entityRepresentations);
+            staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
 
-        List<ImportedLanguageQualificationType> languageQualificationTypes = importedEntityService.getEnabledImportedEntities(institution,
-                ImportedLanguageQualificationType.class);
-        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
-                .size());
-
-        for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {
-            languageQualificationTypeRepresentations.add(mapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
-        }
-
-        staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
         staticData.put("institution", mapper.map(institution, InstitutionRepresentation.class));
-
+        staticData.put("departments", departmentService.getDepartments(institutionId));
         staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;
     }
 
-    public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer domicileId) {
+    public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer institutionId, Integer domicileId) {
+        Institution institution = institutionService.getById(institutionId);
         ImportedDomicile domicile = entityService.getById(ImportedDomicile.class, domicileId);
-        List<ImportedInstitution> institutions = importedEntityService.getEnabledImportedInstitutions(domicile);
+        List<ImportedInstitution> importedInstitutions = importedEntityService.getEnabledImportedInstitutions(institution, domicile);
 
-        List<ImportedInstitutionRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
-        for (ImportedInstitution institution : institutions) {
-            institutionRepresentations.add(mapper.map(institution, ImportedInstitutionRepresentation.class));
+        List<ImportedInstitutionRepresentation> representations = Lists.newArrayListWithCapacity(importedInstitutions.size());
+        for (ImportedInstitution importedInstitution : importedInstitutions) {
+            representations.add(mapper.map(importedInstitution, ImportedInstitutionRepresentation.class));
         }
 
-        return institutionRepresentations;
+        return representations;
+    }
+
+    public List<ImportedProgramRepresentation> getImportedPrograms(Integer institutionId, Integer importedInstitutionId) {
+        Institution institution = institutionService.getById(institutionId);
+        ImportedInstitution importedInstitution = entityService.getById(ImportedInstitution.class, importedInstitutionId);
+        List<ImportedProgram> importedprograms = importedEntityService.getEnabledImportedPrograms(institution, importedInstitution);
+
+        List<ImportedProgramRepresentation> representations = Lists.newArrayListWithCapacity(importedprograms.size());
+        for (ImportedProgram importedProgram : importedprograms) {
+            representations.add(mapper.map(importedProgram, ImportedProgramRepresentation.class));
+        }
+
+        return representations;
+    }
+
+    public List<ImportedSubjectAreaRepresentation> getImportedSubjectAreas(Integer institutionId) {
+        Institution institution = institutionService.getById(institutionId);
+        List<ImportedSubjectArea> importedSubjectAreas = importedEntityService.getEnabledImportedSubjectAreas(institution);
+
+        List<ImportedSubjectAreaRepresentation> representations = Lists.newArrayListWithCapacity(importedSubjectAreas.size());
+        for (ImportedSubjectArea importedSubjectArea : importedSubjectAreas) {
+            representations.add(mapper.map(importedSubjectArea, ImportedSubjectAreaRepresentation.class));
+        }
+
+        return representations;
     }
 
     private static class ToIdFunction implements Function<WorkflowDefinition, Object> {

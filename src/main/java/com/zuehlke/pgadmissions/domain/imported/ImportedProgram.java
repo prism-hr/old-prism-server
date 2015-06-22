@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,14 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 
 @Entity
 @Table(name = "IMPORTED_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "qualification", "name" }) })
-public class ImportedProgram extends ImportedEntity {
+public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> {
 
     @Id
     @GeneratedValue
@@ -45,6 +51,9 @@ public class ImportedProgram extends ImportedEntity {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @OneToMany(mappedBy = "importedProgram")
+    private Set<ImportedProgramMapping> mappings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -85,6 +94,10 @@ public class ImportedProgram extends ImportedEntity {
         this.level = level;
     }
 
+    public String getQualification() {
+        return qualification;
+    }
+
     public void setQualification(String type) {
         this.qualification = type;
     }
@@ -99,6 +112,14 @@ public class ImportedProgram extends ImportedEntity {
         this.name = name;
     }
 
+    public String getHomepage() {
+        return homepage;
+    }
+
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
+
     @Override
     public Boolean getEnabled() {
         return enabled;
@@ -107,6 +128,25 @@ public class ImportedProgram extends ImportedEntity {
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public Set<ImportedProgramMapping> getMappings() {
+        return mappings;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(institution.getId(), qualification, name);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        ImportedProgram other = (ImportedProgram) object;
+        return Objects.equal(institution, other.getInstitution()) && Objects.equal(qualification, other.getQualification());
     }
 
     @Override

@@ -592,9 +592,7 @@ public class ResourceService {
         if (!program.sameAs(resource) && program.getAdvert().isImported()) {
             resource.setOpportunityType(program.getOpportunityType());
         } else {
-            ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, resource.getInstitution(), resourceDTO
-                    .getOpportunityType().name());
-            resource.setOpportunityType(opportunityType);
+            resource.setOpportunityType(importedEntityService.getByName(ImportedOpportunityType.class, resourceDTO.getOpportunityType().name()));
             setStudyOptions(resource, resourceDTO.getStudyOptions(), new LocalDate());
         }
 
@@ -651,7 +649,7 @@ public class ResourceService {
 
         for (PrismStudyOption prismStudyOption : prismStudyOptions) {
             if (close == null || close.isAfter(baseline)) {
-                ImportedStudyOption studyOption = importedEntityService.getByCode(ImportedStudyOption.class, resource.getInstitution(), prismStudyOption.name());
+                ImportedStudyOption studyOption = importedEntityService.getByName(ImportedStudyOption.class, prismStudyOption.name());
                 resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
                         .withApplicationCloseDate(close));
             }
@@ -691,8 +689,7 @@ public class ResourceService {
         setStudyLocations(resource, attributes.getStudyLocations());
 
         if (!resource.getAdvert().isImported()) {
-            ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, //
-                    resource.getInstitution(), resourceDTO.getOpportunityType().name());
+            ImportedOpportunityType opportunityType = importedEntityService.getByName(ImportedOpportunityType.class, resourceDTO.getOpportunityType().name());
             resource.setOpportunityType(opportunityType);
 
             List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();

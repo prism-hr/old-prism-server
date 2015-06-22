@@ -9,12 +9,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_language_qualification_type_id, code" }) })
-public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapping {
+public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapping<ImportedLanguageQualificationType> {
 
     @Id
     @GeneratedValue
@@ -33,6 +36,10 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+    
+    @Column(name = "imported_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime importedTimestamp;
 
     @Override
     public Integer getId() {
@@ -52,6 +59,11 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public ImportedLanguageQualificationType getImportedEntity() {
+        return importedLanguageQualificationType;
     }
 
     public ImportedLanguageQualificationType getImportedLanguageQualificationType() {
@@ -80,6 +92,11 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    @Override
+    public DateTime getImportedTimestamp() {
+        return importedTimestamp;
     }
 
     @Override

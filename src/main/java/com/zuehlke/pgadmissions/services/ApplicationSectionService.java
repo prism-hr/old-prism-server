@@ -143,11 +143,11 @@ public class ApplicationSectionService {
             ResourceOpportunity parent = (ResourceOpportunity) application.getParentResource();
             programDetail.setOpportunityType(parent.getOpportunityType());
         } else {
-            ImportedOpportunityType opportunityType = importedEntityService.getByCode(ImportedOpportunityType.class, institution, prismOpportunityType.name());
+            ImportedOpportunityType opportunityType = importedEntityService.getByName(ImportedOpportunityType.class, prismOpportunityType.name());
             programDetail.setOpportunityType(opportunityType);
         }
 
-        ImportedStudyOption studyOption = importedEntityService.getByCode(ImportedStudyOption.class, institution, programDetailDTO.getStudyOption().name());
+        ImportedStudyOption studyOption = importedEntityService.getByName(ImportedStudyOption.class, programDetailDTO.getStudyOption().name());
         ImportedReferralSource referralSource = importedEntityService.getById(institution, ImportedReferralSource.class, programDetailDTO.getReferralSource());
         programDetail.setStudyOption(studyOption);
         programDetail.setStartDate(programDetailDTO.getStartDate());

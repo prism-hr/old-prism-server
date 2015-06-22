@@ -155,7 +155,7 @@ public class ApplicationService {
         LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
 
-        ImportedStudyOption studyOption = importedEntityService.getByCode(ImportedStudyOption.class, application.getInstitution(), studyOptionId.name());
+        ImportedStudyOption studyOption = importedEntityService.getByName(ImportedStudyOption.class, studyOptionId.name());
         ResourceStudyOption resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
 
         if (resourceStudyOption == null && !application.getParentResource().sameAs(application.getInstitution())) {

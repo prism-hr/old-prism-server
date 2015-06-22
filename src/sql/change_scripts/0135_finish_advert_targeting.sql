@@ -66,3 +66,42 @@ alter table system
 	change column last_data_import_date last_data_import_timestamp datetime
 ;
 
+alter table imported_entity_feed
+	drop column map_for_export
+;
+
+alter table imported_entity_feed
+	drop column username,
+	drop column password
+;
+
+alter table imported_age_range_mapping
+	add column imported_timestamp timestamp not null default current_timestamp on update current_timestamp,
+	add index (institution_id, imported_age_range_id, imported_timestamp)
+;
+
+alter table imported_entity_mapping
+	add column imported_timestamp timestamp not null default current_timestamp on update current_timestamp,
+	add index (institution_id, imported_entity_id, imported_timestamp)
+;
+
+alter table imported_institution_mapping
+	add column imported_timestamp timestamp not null default current_timestamp on update current_timestamp,
+	add index (institution_id, imported_institution_id, imported_timestamp)
+;
+
+alter table imported_language_qualification_type_mapping
+	add column imported_timestamp timestamp not null default current_timestamp on update current_timestamp,
+	add index (institution_id, imported_language_qualification_type_id, imported_timestamp)
+;
+
+alter table imported_program_mapping
+	add column imported_timestamp timestamp not null default current_timestamp on update current_timestamp,
+	add index (institution_id, imported_program_id, imported_timestamp)
+;
+
+alter table imported_subject_area_mapping
+	add column imported_timestamp timestamp not null default current_timestamp on update current_timestamp,
+	add index (institution_id, imported_subject_area_id, imported_timestamp)
+;
+

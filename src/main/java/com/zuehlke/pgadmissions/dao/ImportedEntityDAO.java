@@ -252,9 +252,9 @@ public class ImportedEntityDAO {
     }
 
     public DomicileUseDTO getMostUsedDomicile(Institution institution) {
-        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(Address.class, "address") //
+        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(Address.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("domicile.code"), "code") //
+                        .add(Projections.groupProperty("domicile.id"), "id") //
                         .add(Projections.count("id").as("useCount"), "useCount")) //
                 .createAlias("domicile", "domicile", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("domicile.institution", institution)) //
@@ -284,7 +284,7 @@ public class ImportedEntityDAO {
 
     private <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
             Boolean enabled) {
-        String entityReference = importedEntity.getType().getLowerCamelName();
+        String entityReference = importedEntity.getType().getEntityClassLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingEntityClass()) //
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(entityReference + ".type", importedEntity)) //

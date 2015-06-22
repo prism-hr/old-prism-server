@@ -4,10 +4,10 @@ import com.google.common.base.Objects;
 
 public class ImportedProgramPivotDTO extends ImportedEntityPivotDTO {
 
-    private Integer program;
+    private Integer institution;
 
     private String qualification;
-    
+
     public String getQualification() {
         return qualification;
     }
@@ -16,26 +16,26 @@ public class ImportedProgramPivotDTO extends ImportedEntityPivotDTO {
         this.qualification = qualification;
     }
 
-    public Integer getProgram() {
-        return program;
+    public Integer getInstitution() {
+        return institution;
     }
 
-    public void setProgram(Integer program) {
-        this.program = program;
+    public void setInstitution(Integer institution) {
+        this.institution = institution;
     }
-    
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(program, qualification, getName());
+        return Objects.hashCode(institution, getName());
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (!super.equals(object)) {
             return false;
         }
         ImportedProgramPivotDTO other = (ImportedProgramPivotDTO) object;
-        return Objects.equal(program, other.getProgram()) && Objects.equal(qualification, other.getQualification());
+        return Objects.equal(institution, other.getInstitution());
     }
-    
+
 }

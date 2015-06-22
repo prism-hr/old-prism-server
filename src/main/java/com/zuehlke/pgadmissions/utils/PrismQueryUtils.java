@@ -41,7 +41,7 @@ public class PrismQueryUtils {
     }
 
     public static String prepareStringForInsert(String string) {
-        return string.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll(" +", " ");
+        return string.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ").trim();
     }
 
 }

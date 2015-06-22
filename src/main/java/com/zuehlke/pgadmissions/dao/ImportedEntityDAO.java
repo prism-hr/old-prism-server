@@ -68,6 +68,13 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
+    public ImportedProgram getImportedProgramByName(ImportedInstitution importedInstitution, String name) {
+        return (ImportedProgram) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
+                .add(Restrictions.eq("importedInstitution", importedInstitution)) //
+                .add(Restrictions.eq("name", name)) //
+                .uniqueResult();
+    }
+
     public <T extends ImportedEntity<?>> List<T> getEnabledImportedEntities(Institution institution,
             PrismImportedEntity prismImportedEntity) {
         String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
@@ -131,7 +138,6 @@ public class ImportedEntityDAO {
 
         return (List<ImportedProgram>) appendUmappedEntityRestriction(institution, entityReference, criteria) //
                 .addOrder(Order.asc(entityReference + ".name")) //
-                .addOrder(Order.asc(entityReference = ".qualification")) //
                 .list();
     }
 
@@ -144,7 +150,6 @@ public class ImportedEntityDAO {
 
         return (List<ImportedProgram>) appendMappedEntityRestriction(institution, entityReference, criteria) //
                 .addOrder(Order.asc(entityReference + ".name")) //
-                .addOrder(Order.asc(entityReference = ".qualification")) //
                 .list();
     }
 

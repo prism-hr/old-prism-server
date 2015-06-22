@@ -24,8 +24,9 @@ public class ImportedProgramExtractor implements ImportedEntityExtractor {
             List<String> cells = Lists.newLinkedList();
             cells.add(prepareIntegerForSqlInsert(data.getInstitution()));
             cells.add(prepareStringForSqlInsert(data.getLevel()));
-            cells.add(prepareStringForSqlInsert(data.getQualification()));
-            cells.add(prepareStringForSqlInsert(data.getName()));
+            String qualification = data.getQualification();
+            cells.add(prepareStringForSqlInsert(qualification));
+            cells.add(prepareStringForSqlInsert(qualification + " " + data.getName()));
             cells.add(prepareBooleanForSqlInsert(enable));
             rows.add(prepareCellsForSqlInsert(cells));
         }

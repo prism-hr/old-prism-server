@@ -36,7 +36,7 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
     @Column(name = "imported_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime importedTimestamp;
@@ -60,7 +60,7 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public ImportedProgram getImportedEntity() {
         return importedProgram;
@@ -93,10 +93,25 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public DateTime getImportedTimestamp() {
         return importedTimestamp;
+    }
+
+    public ImportedProgramMapping withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+
+    public ImportedProgramMapping withImportedProgram(ImportedProgram importedProgram) {
+        this.importedProgram = importedProgram;
+        return this;
+    }
+
+    public ImportedProgramMapping withEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
     }
 
     @Override

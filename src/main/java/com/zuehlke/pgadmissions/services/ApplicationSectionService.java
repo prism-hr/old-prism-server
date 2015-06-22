@@ -63,11 +63,10 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedFundingSource;
 import com.zuehlke.pgadmissions.domain.imported.ImportedGender;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedNationality;
 import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.imported.ImportedTitle;
@@ -96,7 +95,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 
 @Service
 @Transactional
@@ -219,7 +218,8 @@ public class ApplicationSectionService {
         ImportedGender gender = importedEntityService.getById(institution, ImportedGender.class, personalDetailDTO.getGender());
         ImportedCountry country = importedEntityService.getById(institution, ImportedCountry.class, personalDetailDTO.getCountry());
         ImportedNationality firstNationality = importedEntityService.getById(institution, ImportedNationality.class, personalDetailDTO.getFirstNationality());
-        ImportedNationality secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<ImportedNationality> getById(institution, ImportedNationality.class,
+        ImportedNationality secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<ImportedNationality> getById(
+                institution, ImportedNationality.class,
                 personalDetailDTO.getSecondNationality()) : null;
         ImportedDomicile residenceCountry = importedEntityService.getById(institution, ImportedDomicile.class, personalDetailDTO.getDomicile());
 
@@ -229,7 +229,7 @@ public class ApplicationSectionService {
         LocalDate dateOfBirth = personalDetailDTO.getDateOfBirth();
         personalDetail.setDateOfBirth(dateOfBirth);
 
-        Integer ageAtCreation =  application.getCreatedTimestamp().getYear() - dateOfBirth.getYear();
+        Integer ageAtCreation = application.getCreatedTimestamp().getYear() - dateOfBirth.getYear();
         ImportedAgeRange ageRange = importedEntityService.getAgeRange(institution, ageAtCreation);
         personalDetail.setAgeRange(ageRange);
 
@@ -305,15 +305,10 @@ public class ApplicationSectionService {
 
         Institution institution = application.getInstitution();
 
-        ImportedInstitutionDTO importedInstitutionDTO = qualificationDTO.getInstitution();
-        ImportedInstitution importedInstitution = importedEntityService.getOrCreateImportedInstitution(institution, importedInstitutionDTO);
-        qualification.setInstitution(importedInstitution);
+        ImportedProgramDTO importedProgramDTO = qualificationDTO.getProgram();
+        ImportedProgram importedProgram = importedEntityService.getOrCreateImportedProgram(institution, importedProgramDTO);
+        qualification.setProgram(importedProgram);
 
-        ImportedQualificationType qualificationType = importedEntityService.getById(institution, ImportedQualificationType.class, qualificationDTO.getType());
-        qualification.setType(qualificationType);
-
-        qualification.setTitle(Strings.emptyToNull(qualificationDTO.getTitle()));
-        qualification.setSubject(qualificationDTO.getSubject());
         qualification.setLanguage(qualificationDTO.getLanguage());
         qualification.setStartDate(qualificationDTO.getStartDate());
         qualification.setCompleted(BooleanUtils.isTrue(qualificationDTO.getCompleted()));
@@ -394,7 +389,8 @@ public class ApplicationSectionService {
             funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         }
 
-        ImportedFundingSource fundingSource = importedEntityService.getById(application.getInstitution(), ImportedFundingSource.class, fundingDTO.getFundingSource());
+        ImportedFundingSource fundingSource = importedEntityService.getById(application.getInstitution(), ImportedFundingSource.class,
+                fundingDTO.getFundingSource());
 
         funding.setFundingSource(fundingSource);
         funding.setSponsor(fundingDTO.getSponsor());

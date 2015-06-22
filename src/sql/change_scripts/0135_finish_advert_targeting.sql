@@ -105,3 +105,16 @@ alter table imported_subject_area_mapping
 	add index (institution_id, imported_subject_area_id, imported_timestamp)
 ;
 
+update imported_program
+set name = concat(qualification, " ", name)
+where qualification is not null
+;
+
+alter table imported_program
+	drop index imported_institution_id,
+	add unique index(imported_institution_id, name)
+;
+
+alter table application_qualification
+	change column program_id imported_program_id int(10) unsigned not null
+;

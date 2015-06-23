@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-public class RefereeRepresentation extends ApplicationSectionRepresentation {
+public class ApplicationRefereeRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 

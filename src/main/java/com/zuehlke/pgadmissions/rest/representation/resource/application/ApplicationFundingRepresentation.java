@@ -2,13 +2,14 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
-public class FundingRepresentation extends ApplicationSectionRepresentation {
+public class ApplicationFundingRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
-
-    private Integer fundingSource;
+    
+    private ImportedEntitySimpleRepresentation fundingSourceMapping;
 
     private String sponsor;
 
@@ -31,11 +32,19 @@ public class FundingRepresentation extends ApplicationSectionRepresentation {
     }
 
     public Integer getFundingSource() {
-        return fundingSource;
+        return fundingSourceMapping.getId();
     }
 
     public void setFundingSource(Integer fundingSource) {
-        this.fundingSource = fundingSource;
+        this.fundingSourceMapping = new ImportedEntitySimpleRepresentation().withId(fundingSource);
+    }
+    
+    public ImportedEntitySimpleRepresentation getFundingSourceMapping() {
+        return fundingSourceMapping;
+    }
+
+    public void setFundingSourceMapping(ImportedEntitySimpleRepresentation fundingSourceMapping) {
+        this.fundingSourceMapping = fundingSourceMapping;
     }
 
     public final String getSponsor() {

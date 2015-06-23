@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.imported;
 
 public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresentation {
 
-    private Integer institution;
+    private ImportedEntitySimpleRepresentation institutionMapping;
 
-    private Integer qualificationType;
+    private ImportedEntitySimpleRepresentation qualificationTypeMapping;
 
     private String level;
 
@@ -13,19 +13,35 @@ public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresent
     private String homepage;
 
     public Integer getInstitution() {
-        return institution;
+        return institutionMapping.getId();
     }
 
     public void setInstitution(Integer institution) {
-        this.institution = institution;
+        this.institutionMapping = new ImportedInstitutionRepresentation().withId(institution);
+    }
+
+    public ImportedEntitySimpleRepresentation getInstitutionMapping() {
+        return institutionMapping;
+    }
+
+    public void setInstitutionMapping(ImportedEntitySimpleRepresentation institutionMapping) {
+        this.institutionMapping = institutionMapping;
     }
 
     public Integer getQualificationType() {
-        return qualificationType;
+        return qualificationTypeMapping.getId();
     }
 
     public void setQualificationType(Integer qualificationType) {
-        this.qualificationType = qualificationType;
+        this.qualificationTypeMapping = new ImportedEntitySimpleRepresentation().withId(qualificationType);
+    }
+
+    public ImportedEntitySimpleRepresentation getQualificationTypeMapping() {
+        return qualificationTypeMapping;
+    }
+
+    public void setQualificationTypeMapping(ImportedEntitySimpleRepresentation qualificationTypeMapping) {
+        this.qualificationTypeMapping = qualificationTypeMapping;
     }
 
     public String getLevel() {
@@ -50,6 +66,11 @@ public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresent
 
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public ImportedProgramRepresentation withId(Integer id) {
+        setId(id);
+        return this;
     }
 
 }

@@ -34,8 +34,8 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationCloseDate;
 
-    @Column(name = "academic_year", nullable = false)
-    private String academicYear;
+    @Column(name = "business_year", nullable = false)
+    private String businessYear;
 
     @Column(name = "sequence_identifier", nullable = false)
     private String identifier;
@@ -72,12 +72,12 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
         this.applicationCloseDate = applicationCloseDate;
     }
 
-    public final String getAcademicYear() {
-        return academicYear;
+    public final String getBusinessYear() {
+        return businessYear;
     }
 
-    public final void setAcademicYear(String academicYear) {
-        this.academicYear = academicYear;
+    public final void setBusinessYear(String businessYear) {
+        this.businessYear = businessYear;
     }
 
     public final String getIdentifier() {
@@ -104,7 +104,7 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
     }
 
     public ResourceStudyOptionInstance withAcademicYear(String academicYear) {
-        this.academicYear = academicYear;
+        this.businessYear = academicYear;
         return this;
     }
 
@@ -115,7 +115,7 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("studyOption", studyOption).addProperty("academicYear", academicYear);
+        return new ResourceSignature().addProperty("studyOption", studyOption).addProperty("academicYear", businessYear);
     }
 
 }

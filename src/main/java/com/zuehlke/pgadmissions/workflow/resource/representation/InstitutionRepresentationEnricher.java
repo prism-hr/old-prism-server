@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionClientRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceAttributesRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
 @Component
-public class InstitutionRepresentationEnricher implements ResourceRepresentationEnricher {
+public class InstitutionRepresentationEnricher implements ResourceRepresentationEnricher<InstitutionClientRepresentation> {
 
     @Inject
     private ResourceService resourceService;
@@ -21,9 +21,9 @@ public class InstitutionRepresentationEnricher implements ResourceRepresentation
     private Mapper mapper;
 
     @Override
-    public void enrich(PrismScope resourceScope, Integer resourceId, AbstractResourceRepresentation representation) throws Exception {
+    public void enrich(PrismScope resourceScope, Integer resourceId, InstitutionClientRepresentation representation) throws Exception {
         Resource resource = resourceService.getById(resourceScope, resourceId);
-        representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
+        representation.getResourceProcessing().setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
     }
 
 }

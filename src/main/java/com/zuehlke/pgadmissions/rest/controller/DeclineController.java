@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -40,7 +40,7 @@ public class DeclineController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ApplicationRepresentation getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
+    public ResourceRepresentationExtended getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
             @RequestParam String activationCode) {
         userService.getUserByActivationCode(activationCode);
         Resource resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
@@ -48,7 +48,7 @@ public class DeclineController {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");
         }
 
-        return dozerBeanMapper.map(resource, ApplicationRepresentation.class);
+        return dozerBeanMapper.map(resource, ResourceRepresentationExtended.class);
     }
 
 }

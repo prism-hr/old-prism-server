@@ -107,7 +107,7 @@ public enum PrismScope {
 
     private Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder;
 
-    private Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher;
+    private Class<? extends ResourceRepresentationEnricher<?>> resourceRepresentationEnricher;
 
     private PrismScope(Class<? extends Resource> resourceClass, String shortCode, HashMultimap<String, String> consoleListCustomColumns,
             HashMultimap<String, String> reportListCustomColumns, Class<? extends ActionExecutor> actionExecutor,
@@ -115,7 +115,7 @@ public enum PrismScope {
             Class<? extends ResourceProcessor> resourcePreprocessor, Class<? extends ResourceProcessor> resourceProcessor,
             Class<? extends ResourceProcessor> resourcePostprocessor, Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder,
             Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder,
-            Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher) {
+            Class<? extends ResourceRepresentationEnricher<?>> resourceRepresentationEnricher) {
         this.resourceClass = resourceClass;
         this.shortCode = shortCode;
         this.consoleListCustomColumns = consoleListCustomColumns;
@@ -179,7 +179,7 @@ public enum PrismScope {
         return socialRepresentationBuilder;
     }
 
-    public Class<? extends ResourceRepresentationEnricher> getResourceRepresentationEnricher() {
+    public Class<? extends ResourceRepresentationEnricher<?>> getResourceRepresentationEnricher() {
         return resourceRepresentationEnricher;
     }
 

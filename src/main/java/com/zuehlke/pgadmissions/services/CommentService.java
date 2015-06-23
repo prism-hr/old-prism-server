@@ -77,7 +77,7 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationIn
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
@@ -563,7 +563,7 @@ public class CommentService {
 
             Institution partner = comment.getPartner();
             if (partner != null) {
-                representation.setPartner(mapper.map(partner, InstitutionRepresentation.class));
+                representation.setPartner(mapper.map(partner, ResourceRepresentationSimple.class));
             }
 
             if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {

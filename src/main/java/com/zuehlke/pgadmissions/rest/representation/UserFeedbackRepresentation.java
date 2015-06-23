@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 public class UserFeedbackRepresentation {
 
@@ -11,7 +11,7 @@ public class UserFeedbackRepresentation {
 
     private PrismRoleCategory roleCategory;
 
-    private InstitutionRepresentation institution;
+    private ResourceRepresentationSimple institution;
 
     private Integer rating;
 
@@ -39,11 +39,11 @@ public class UserFeedbackRepresentation {
         this.roleCategory = roleCategory;
     }
 
-    public InstitutionRepresentation getInstitution() {
+    public ResourceRepresentationSimple getInstitution() {
         return institution;
     }
 
-    public void setInstitution(InstitutionRepresentation institution) {
+    public void setInstitution(ResourceRepresentationSimple institution) {
         this.institution = institution;
     }
 

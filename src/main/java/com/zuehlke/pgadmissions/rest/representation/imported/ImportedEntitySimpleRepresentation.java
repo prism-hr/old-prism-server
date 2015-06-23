@@ -6,6 +6,8 @@ public class ImportedEntitySimpleRepresentation {
 
     private String name;
 
+    private String code;
+
     public Integer getId() {
         return id;
     }
@@ -20,6 +22,19 @@ public class ImportedEntitySimpleRepresentation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public ImportedEntitySimpleRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
     }
 
 }

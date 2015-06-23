@@ -264,10 +264,10 @@ public class StateService {
         return null;
     }
 
-    public List<PrismStateGroup> getSecondaryResourceStateGroups(Resource resource) {
-        return getSecondaryResourceStateGroups(resource.getResourceScope(), resource.getId());
+    public List<State> getSecondaryResourceStates(Resource resource) {
+        return stateDAO.getSecondaryResourceStates(resource);
     }
-
+    
     public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
         return stateDAO.getSecondaryResourceStateGroups(resourceScope, resourceId);
     }

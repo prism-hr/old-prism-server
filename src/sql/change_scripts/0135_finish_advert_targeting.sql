@@ -118,3 +118,7 @@ alter table imported_program
 alter table application_qualification
 	change column program_id imported_program_id int(10) unsigned not null
 ;
+
+alter table resource_study_option_instance
+	change column academic_year business_year varchar(4) not null
+;

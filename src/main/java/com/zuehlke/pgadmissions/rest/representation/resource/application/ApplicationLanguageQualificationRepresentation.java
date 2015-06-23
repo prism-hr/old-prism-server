@@ -2,11 +2,12 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
-public class LanguageQualificationRepresentation extends ApplicationSectionRepresentation {
-
-    private Integer type;
+public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
+    
+    private ImportedEntitySimpleRepresentation languageQualificationTypeMapping;
 
     private LocalDate examDate;
 
@@ -23,11 +24,19 @@ public class LanguageQualificationRepresentation extends ApplicationSectionRepre
     private FileRepresentation document;
 
     public Integer getType() {
-        return type;
+        return languageQualificationTypeMapping.getId();
+    }
+    
+    public void setType(Integer languageQualificationType) {
+        this.languageQualificationTypeMapping = new ImportedEntitySimpleRepresentation().withId(languageQualificationType);
+    }
+    
+    public ImportedEntitySimpleRepresentation getLanguageQualificationTypeMapping() {
+        return languageQualificationTypeMapping;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setLanguageQualificationTypeMapping(ImportedEntitySimpleRepresentation languageQualificationTypeMapping) {
+        this.languageQualificationTypeMapping = languageQualificationTypeMapping;
     }
 
     public LocalDate getExamDate() {

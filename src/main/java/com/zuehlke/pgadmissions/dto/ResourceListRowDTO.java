@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -58,6 +59,8 @@ public class ResourceListRowDTO {
     private PrismState stateId;
 
     private PrismStateGroup stateGroupId;
+    
+    private List<PrismStateGroup> secondaryStateGroupIds;
 
     private DateTime createdTimestamp;
     
@@ -66,6 +69,7 @@ public class ResourceListRowDTO {
     private String sequenceIdentifier;
 
     private Set<ResourceListActionDTO> actions;
+    
 
     public Integer getSystemId() {
         return systemId;
@@ -233,6 +237,14 @@ public class ResourceListRowDTO {
 
     public void setStateGroupId(PrismStateGroup stateGroupId) {
         this.stateGroupId = stateGroupId;
+    }
+
+    public List<PrismStateGroup> getSecondaryStateGroupIds() {
+        return secondaryStateGroupIds;
+    }
+
+    public void setSecondaryStateGroupIds(List<PrismStateGroup> secondaryStateGroupIds) {
+        this.secondaryStateGroupIds = secondaryStateGroupIds;
     }
 
     public String getCreatorEmail() {

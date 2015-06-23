@@ -358,7 +358,7 @@ public class ApplicationExportBuilder {
         occurrenceTp.setModeOfAttendance(buildModeofattendance(application));
 
         ResourceStudyOptionInstance exportProgramInstance = applicationExportDTO.getExportProgramInstance();
-        occurrenceTp.setAcademicYear(applicationExportBuilderHelper.buildXmlDateYearOnly(exportProgramInstance.getAcademicYear()));
+        occurrenceTp.setAcademicYear(applicationExportBuilderHelper.buildXmlDateYearOnly(exportProgramInstance.getBusinessYear()));
         String exportInstanceIdentifier = exportProgramInstance.getIdentifier();
         occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : exportInstanceIdentifier);
         occurrenceTp.setStartDate(applicationExportBuilderHelper.buildXmlDate(exportProgramInstance.getApplicationStartDate()));

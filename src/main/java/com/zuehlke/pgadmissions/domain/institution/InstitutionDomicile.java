@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.domain.institution;
 
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-
 @Entity
-@Table(name = "INSTITUTION_DOMICILE")
+@Table(name = "institution_domicile")
 public class InstitutionDomicile implements UniqueEntity {
 
     @Id
@@ -16,7 +16,7 @@ public class InstitutionDomicile implements UniqueEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
-    
+
     @Column(name = "currency", nullable = false)
     private String currency;
 
@@ -30,7 +30,7 @@ public class InstitutionDomicile implements UniqueEntity {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -59,7 +59,7 @@ public class InstitutionDomicile implements UniqueEntity {
         this.id = id;
         return this;
     }
-    
+
     public InstitutionDomicile withName(String name) {
         this.name = name;
         return this;
@@ -74,7 +74,7 @@ public class InstitutionDomicile implements UniqueEntity {
         this.enabled = enabled;
         return this;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("id", id);

@@ -1,18 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "STATE_TRANSITION_EVALUATION")
+@Table(name = "state_transition_evaluation")
 public class StateTransitionEvaluation extends WorkflowDefinition {
 
     @Id

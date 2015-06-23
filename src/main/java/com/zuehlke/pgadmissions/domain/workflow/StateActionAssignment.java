@@ -1,21 +1,12 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id", "partner_mode" }) })
+@Table(name = "state_action_assignment", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id", "partner_mode" }) })
 public class StateActionAssignment implements UniqueEntity {
 
     @Id
@@ -29,7 +20,7 @@ public class StateActionAssignment implements UniqueEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-    
+
     @Column(name = "partner_mode", nullable = false)
     private Boolean partnerMode;
 
@@ -91,7 +82,7 @@ public class StateActionAssignment implements UniqueEntity {
         this.partnerMode = partnerMode;
         return this;
     }
-    
+
     public StateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
         return this;

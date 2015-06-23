@@ -1,24 +1,15 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "APPLICATION_LANGUAGE_QUALIFICATION")
+@Table(name = "application_language_qualification")
 public class ApplicationLanguageQualification extends ApplicationSection {
 
     @Id

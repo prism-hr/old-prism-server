@@ -1,18 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "STATE_DURATION_DEFINITION")
+@Table(name = "state_duration_definition")
 public class StateDurationDefinition extends WorkflowDefinition {
 
     @Id

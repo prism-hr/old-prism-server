@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 public class CommentRepresentation {
 
@@ -33,7 +33,7 @@ public class CommentRepresentation {
 
     private Boolean applicationInterested;
     
-    private InstitutionRepresentation partner;
+    private ResourceRepresentationSimple partner;
     
     private Boolean removedPartner;
     
@@ -157,11 +157,11 @@ public class CommentRepresentation {
         this.applicationInterested = applicationInterested;
     }
 
-    public InstitutionRepresentation getPartner() {
+    public ResourceRepresentationSimple getPartner() {
         return partner;
     }
 
-    public void setPartner(InstitutionRepresentation partner) {
+    public void setPartner(ResourceRepresentationSimple partner) {
         this.partner = partner;
     }
     

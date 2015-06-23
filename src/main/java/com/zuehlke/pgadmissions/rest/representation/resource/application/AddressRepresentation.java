@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-public class AddressRepresentation {
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 
-    private Integer domicile;
+public class AddressRepresentation {
+    
+    private ImportedEntitySimpleRepresentation domicileMapping;
 
     private String addressLine1;
 
@@ -15,11 +17,19 @@ public class AddressRepresentation {
     private String addressCode;
 
     public Integer getDomicile() {
-        return domicile;
+        return domicileMapping.getId();
     }
 
     public void setDomicile(Integer domicile) {
-        this.domicile = domicile;
+        this.domicileMapping = new ImportedEntitySimpleRepresentation().withId(domicile);
+    }
+
+    public ImportedEntitySimpleRepresentation getDomicileMapping() {
+        return domicileMapping;
+    }
+
+    public void setDomicileMapping(ImportedEntitySimpleRepresentation domicileMapping) {
+        this.domicileMapping = domicileMapping;
     }
 
     public String getAddressLine1() {

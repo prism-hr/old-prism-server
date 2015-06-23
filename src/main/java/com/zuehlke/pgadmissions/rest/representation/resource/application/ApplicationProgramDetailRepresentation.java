@@ -3,14 +3,15 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 
-public class ProgramDetailRepresentation extends ApplicationSectionRepresentation {
+public class ApplicationProgramDetailRepresentation extends ApplicationSectionRepresentation {
 
     private PrismStudyOption studyOption;
 
     private LocalDate startDate;
 
-    private Integer referralSource;
+    private ImportedEntitySimpleRepresentation referralSourceMapping;
 
     public PrismStudyOption getStudyOption() {
         return studyOption;
@@ -29,11 +30,19 @@ public class ProgramDetailRepresentation extends ApplicationSectionRepresentatio
     }
 
     public Integer getReferralSource() {
-        return referralSource;
+        return referralSourceMapping.getId();
     }
 
     public void setReferralSource(Integer referralSource) {
-        this.referralSource = referralSource;
+        this.referralSourceMapping = new ImportedEntitySimpleRepresentation().withId(referralSource);
+    }
+
+    public ImportedEntitySimpleRepresentation getReferralSourceMapping() {
+        return referralSourceMapping;
+    }
+
+    public void setReferralSource(ImportedEntitySimpleRepresentation referralSourceMapping) {
+        this.referralSourceMapping = referralSourceMapping;
     }
 
 }

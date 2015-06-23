@@ -5,11 +5,11 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
-public class QualificationRepresentation extends ApplicationSectionRepresentation {
+public class ApplicationQualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private ImportedProgramRepresentation program;
+    private ImportedProgramRepresentation programMapping;
 
     private LocalDate startDate;
 
@@ -71,12 +71,20 @@ public class QualificationRepresentation extends ApplicationSectionRepresentatio
         this.document = document;
     }
 
-    public ImportedProgramRepresentation getProgram() {
-        return program;
+    public Integer getProgram() {
+        return programMapping.getId();
+    }
+    
+    public void setProgram(Integer program) {
+        this.programMapping = new ImportedProgramRepresentation().withId(program);
+    }
+    
+    public ImportedProgramRepresentation getProgramMapping() {
+        return programMapping;
     }
 
-    public void setProgram(ImportedProgramRepresentation program) {
-        this.program = program;
+    public void setProgramMapping(ImportedProgramRepresentation programMapping) {
+        this.programMapping = programMapping;
     }
 
     public Boolean getCompleted() {

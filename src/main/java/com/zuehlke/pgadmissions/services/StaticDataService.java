@@ -61,7 +61,7 @@ import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepr
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedSubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation.FilterExpressionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
@@ -117,7 +117,7 @@ public class StaticDataService {
         List<State> states = entityService.list(State.class);
         List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
-            stateRepresentations.add(new StateRepresentation(state.getId(), state.getStateGroup().getId()));
+            stateRepresentations.add(mapper.map(state, StateRepresentation.class));
         }
 
         staticData.put("states", stateRepresentations);
@@ -268,7 +268,7 @@ public class StaticDataService {
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
 
-        staticData.put("institution", mapper.map(institution, InstitutionRepresentation.class));
+        staticData.put("institution", mapper.map(institution, ResourceRepresentationSimple.class));
         staticData.put("departments", departmentService.getDepartments(institutionId));
         staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;

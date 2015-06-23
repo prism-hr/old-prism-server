@@ -115,6 +115,7 @@ import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBui
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.ResourceServiceHelperConcurrency;
+import com.zuehlke.pgadmissions.services.helpers.concurrency.StateServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
@@ -406,6 +407,7 @@ public class ResourceService {
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds, assignedResources, filter,
                     lastSequenceIdentifier, maxRecords, hasRedactions);
 
+            applicationContext.getBean(StateServiceHelperConcurrency.class).appendSecondaryStates(resourceScope, rows, maxRecords);
             applicationContext.getBean(ActionServiceHelperConcurrency.class).appendActions(resourceScope, user, rows, creations, maxRecords);
             return rows;
         }
@@ -530,9 +532,14 @@ public class ResourceService {
             lastResourceScope = thisResourceScope;
         }
 
-        Resource lastResource = resource.getEnclosingResource(lastResourceScope);
-        List<PrismAction> partnerActions = actionService.getPartnerActions(lastResource, filteredActionConditions);
-        return partnerActions;
+        if (lastResourceScope != null) {
+            Resource lastResource = resource.getEnclosingResource(lastResourceScope);
+            List<PrismAction> partnerActions = actionService.getPartnerActions(lastResource, filteredActionConditions);
+            return partnerActions;
+        }
+
+        return Lists.newArrayList();
+
     }
 
     public ResourceStudyOption getStudyOption(ResourceOpportunity resource, ImportedStudyOption studyOption) {

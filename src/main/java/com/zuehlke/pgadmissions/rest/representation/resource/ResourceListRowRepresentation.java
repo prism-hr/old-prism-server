@@ -21,13 +21,13 @@ public class ResourceListRowRepresentation {
 
     private UserRepresentation user;
 
-    private SimpleResourceRepresentation institution;
+    private ResourceRepresentationSimple institution;
 
-    private SimpleResourceRepresentation partner;
+    private ResourceRepresentationSimple partner;
 
-    private SimpleResourceRepresentation program;
+    private ResourceRepresentationSimple program;
 
-    private SimpleResourceRepresentation project;
+    private ResourceRepresentationSimple project;
 
     private LocalDate closingDate;
 
@@ -81,35 +81,35 @@ public class ResourceListRowRepresentation {
         this.user = user;
     }
 
-    public SimpleResourceRepresentation getInstitution() {
+    public ResourceRepresentationSimple getInstitution() {
         return institution;
     }
 
-    public void setInstitution(SimpleResourceRepresentation institution) {
+    public void setInstitution(ResourceRepresentationSimple institution) {
         this.institution = institution;
     }
 
-    public SimpleResourceRepresentation getPartner() {
+    public ResourceRepresentationSimple getPartner() {
         return partner;
     }
 
-    public void setPartner(SimpleResourceRepresentation partner) {
+    public void setPartner(ResourceRepresentationSimple partner) {
         this.partner = partner;
     }
 
-    public SimpleResourceRepresentation getProgram() {
+    public ResourceRepresentationSimple getProgram() {
         return program;
     }
 
-    public void setProgram(SimpleResourceRepresentation program) {
+    public void setProgram(ResourceRepresentationSimple program) {
         this.program = program;
     }
 
-    public SimpleResourceRepresentation getProject() {
+    public ResourceRepresentationSimple getProject() {
         return project;
     }
 
-    public void setProject(SimpleResourceRepresentation project) {
+    public void setProject(ResourceRepresentationSimple project) {
         this.project = project;
     }
 

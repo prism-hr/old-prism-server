@@ -233,7 +233,6 @@ public class StateDAO {
     public List<State> getSecondaryResourceStates(Resource resource) {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("state")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("primaryState", false)) //
                 .list();
@@ -241,7 +240,7 @@ public class StateDAO {
 
     public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
         return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("state.stateGroup.id")) //
+                .setProjection(Projections.groupProperty("state.stateGroup.id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
                 .add(Restrictions.eq("primaryState", false)) //

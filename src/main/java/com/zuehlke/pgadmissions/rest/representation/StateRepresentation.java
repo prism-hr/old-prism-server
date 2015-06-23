@@ -9,16 +9,20 @@ public class StateRepresentation {
 
     private PrismStateGroup stateGroup;
 
-    public StateRepresentation(PrismState id, PrismStateGroup stateGroup) {
-        this.id = id;
-        this.stateGroup = stateGroup;
-    }
-
     public PrismState getId() {
         return id;
+    }
+
+    public void setId(PrismState id) {
+        this.id = id;
     }
 
     public PrismStateGroup getStateGroup() {
         return stateGroup;
     }
+
+    public void setStateGroup(PrismStateGroup stateGroup) {
+        this.stateGroup = stateGroup;
+    }
+
 }

@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -62,20 +62,20 @@ public class ProgramDAO {
                 .uniqueResult();
     }
 
-    public List<ProgramRepresentation> getApprovedPrograms(Integer institutionId) {
-        return (List<ProgramRepresentation>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+    public List<ResourceRepresentationSimple> getApprovedPrograms(Integer institutionId) {
+        return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id")) //
                         .add(Projections.property("title"))) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.eq("resourceState.state.id", PROGRAM_APPROVED)) //
-                .setResultTransformer(Transformers.aliasToBean(ProgramRepresentation.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
                 .list();
     }
 
-    public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
-        return (List<ProgramRepresentation>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+    public List<ResourceRepresentationSimple> getSimilarPrograms(Integer institutionId, String searchTerm) {
+        return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
                         .add(Projections.property("title"), "title")) //
@@ -84,6 +84,7 @@ public class ProgramDAO {
                         Restrictions.in("state.id", Arrays.asList(PROGRAM_REJECTED, PROGRAM_WITHDRAWN, PROGRAM_DISABLED_COMPLETED)))) //
                 .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE)) //
                 .addOrder(Order.desc("title")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
                 .list();
     }
 

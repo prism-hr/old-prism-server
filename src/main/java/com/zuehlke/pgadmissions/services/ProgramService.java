@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Service
 @Transactional
@@ -60,12 +60,12 @@ public class ProgramService {
         institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);
     }
-    
-    public List<ProgramRepresentation> getApprovedPrograms(Integer institutionId) {
+
+    public List<ResourceRepresentationSimple> getApprovedPrograms(Integer institutionId) {
         return programDAO.getApprovedPrograms(institutionId);
     }
 
-    public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
+    public List<ResourceRepresentationSimple> getSimilarPrograms(Integer institutionId, String searchTerm) {
         return programDAO.getSimilarPrograms(institutionId, searchTerm);
     }
 

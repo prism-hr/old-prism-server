@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-public class ApplicationSuggestedSupervisorRepresentation extends ApplicationSectionRepresentation {
+public class ApplicationSupervisorRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 

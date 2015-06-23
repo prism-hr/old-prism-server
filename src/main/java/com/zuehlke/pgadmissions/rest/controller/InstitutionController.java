@@ -25,10 +25,9 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -55,14 +54,14 @@ public class InstitutionController {
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    public List<SimpleResourceRepresentation> getInstitutions() {
+    public List<ResourceRepresentationSimple> getInstitutions() {
         List<Institution> institutions;
         institutions = institutionService.list();
-        List<SimpleResourceRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
+        List<ResourceRepresentationSimple> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
             InstitutionAddress address = institution.getAdvert().getAddress();
-            String name = Joiner.on(" - ").skipNulls().join(institution.getTitle(), address.getAddressTown(), address.getAddressCode());
-            SimpleResourceRepresentation institutionRepresentation = new SimpleResourceRepresentation(institution.getId(), name);
+            String title = Joiner.on(" - ").skipNulls().join(institution.getTitle(), address.getAddressTown(), address.getAddressCode());
+            ResourceRepresentationSimple institutionRepresentation = new ResourceRepresentationSimple().withId(institution.getId()).withTitle(title);
             institutionRepresentations.add(institutionRepresentation);
         }
         return institutionRepresentations;
@@ -75,7 +74,7 @@ public class InstitutionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "accepting")
-    public List<AcceptingResourceRepresentation> getAcceptingInstitutions(@RequestParam String accepting) {
+    public List<ResourceRepresentationSimple> getAcceptingInstitutions(@RequestParam String accepting) {
         List<ResourceForWhichUserCanCreateChildDTO> institutions;
         if (accepting.equals("programs")) {
             institutions = institutionService.getInstitutionsForWhichUserCanCreateProgram();
@@ -84,20 +83,20 @@ public class InstitutionController {
         } else {
             throw new Error();
         }
-        return Lists.transform(institutions, new AcceptingResourceToRepresentationFunction());
+        return Lists.transform(institutions, new ResourceToResourceChildCreationRepresentationFunction());
     }
 
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET, params = "accepting=projects")
-    public List<AcceptingResourceRepresentation> getAcceptingPrograms(@PathVariable Integer institutionId) {
+    public List<ResourceRepresentationSimple> getAcceptingPrograms(@PathVariable Integer institutionId) {
         List<ResourceForWhichUserCanCreateChildDTO> programs = programService.getProgramsForWhichUserCanCreateProject(institutionId);
-        return Lists.transform(programs, new AcceptingResourceToRepresentationFunction());
+        return Lists.transform(programs, new ResourceToResourceChildCreationRepresentationFunction());
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
     @ResponseBody
-    public InstitutionExtendedRepresentation getInstitution(String googleId) {
+    public InstitutionRepresentation getInstitution(String googleId) {
         Institution institution = institutionService.getActivatedInstitutionByGoogleId(googleId);
-        return institution == null ? null : dozerBeanMapper.map(institution, InstitutionExtendedRepresentation.class);
+        return institution == null ? null : dozerBeanMapper.map(institution, InstitutionRepresentation.class);
     }
 
     @RequestMapping(value = "/{institutionId}/categoryTags", method = RequestMethod.GET)
@@ -111,44 +110,23 @@ public class InstitutionController {
     }
 
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)
-    public List<ProgramRepresentation> getPrograms(@PathVariable Integer institutionId) throws Exception {
+    public List<ResourceRepresentationSimple> getPrograms(@PathVariable Integer institutionId) throws Exception {
         return programService.getApprovedPrograms(institutionId);
     }
 
     @RequestMapping(value = "/{institutionId}/similarPrograms", method = RequestMethod.GET)
-    public List<ProgramRepresentation> getSimilarPrograms(@PathVariable Integer institutionId, @RequestParam String searchTerm) {
+    public List<ResourceRepresentationSimple> getSimilarPrograms(@PathVariable Integer institutionId, @RequestParam String searchTerm) {
         return programService.getSimilarPrograms(institutionId, searchTerm);
     }
 
-    private static class AcceptingResourceRepresentation extends SimpleResourceRepresentation {
-
-        private Boolean partnerMode;
-
-        private PrismOpportunityType opportunityType;
-
-        public AcceptingResourceRepresentation(Integer id, String title, Boolean partnerMode, PrismOpportunityType opportunityType) {
-            super(id, title);
-            this.partnerMode = partnerMode;
-            this.opportunityType = opportunityType;
-        }
-
-        @SuppressWarnings("unused")
-        public Boolean getPartnerMode() {
-            return partnerMode;
-        }
-
-        @SuppressWarnings("unused")
-        public PrismOpportunityType getOpportunityType() {
-            return opportunityType;
-        }
-    }
-
-    private static class AcceptingResourceToRepresentationFunction implements Function<ResourceForWhichUserCanCreateChildDTO, AcceptingResourceRepresentation> {
+    private static class ResourceToResourceChildCreationRepresentationFunction implements
+            Function<ResourceForWhichUserCanCreateChildDTO, ResourceRepresentationSimple> {
         @Override
-        public AcceptingResourceRepresentation apply(ResourceForWhichUserCanCreateChildDTO input) {
+        public ResourceChildCreationRepresentation apply(ResourceForWhichUserCanCreateChildDTO input) {
             ResourceParent resource = input.getResource();
-            PrismOpportunityType opportunityType = resource.getOpportunityType() != null ? resource.getOpportunityType().getPrismOpportunityType() : null;
-            return new AcceptingResourceRepresentation(resource.getId(), resource.getTitle(), input.getPartnerMode(), opportunityType);
+            PrismOpportunityType opportunityType = resource.getOpportunityType() == null ? null : resource.getOpportunityType().getPrismOpportunityType();
+            return new ResourceChildCreationRepresentation().withId(resource.getId()).withTitle(resource.getTitle()).withOpportunityType(opportunityType)
+                    .withPartnerMode(input.getPartnerMode());
         }
     }
 

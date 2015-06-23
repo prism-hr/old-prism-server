@@ -22,9 +22,8 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.RefereeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationClientRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -33,7 +32,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
-public class ApplicationRepresentationEnricher implements ResourceRepresentationEnricher {
+public class ApplicationRepresentationEnricher implements ResourceRepresentationEnricher<ApplicationClientRepresentation> {
 
     @Inject
     private ActionService actionService;
@@ -57,12 +56,11 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
     private Mapper mapper;
 
     @Override
-    public void enrich(PrismScope resourceScope, Integer resourceId, AbstractResourceRepresentation representation) throws Exception {
+    public void enrich(PrismScope resourceScope, Integer resourceId, ApplicationClientRepresentation representation) throws Exception {
         Application application = applicationService.getById(resourceId);
-        ApplicationExtendedRepresentation applicationRepresentation = (ApplicationExtendedRepresentation) representation;
 
-        HashMap<Integer, RefereeRepresentation> refereeRepresentations = Maps.newHashMap();
-        for (RefereeRepresentation refereeRepresentation : applicationRepresentation.getReferees()) {
+        HashMap<Integer, ApplicationRefereeRepresentation> refereeRepresentations = Maps.newHashMap();
+        for (ApplicationRefereeRepresentation refereeRepresentation : representation.getReferees()) {
             refereeRepresentations.put(refereeRepresentation.getId(), refereeRepresentation);
         }
 
@@ -84,15 +82,15 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
             potentiallyInterestedRepresentations.add(mapper.map(user, UserRepresentation.class));
         }
 
-        applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
-        applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
+        representation.setUsersInterestedInApplication(interestedRepresentations);
+        representation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
-        applicationRepresentation.setInterview(commentService.getInterview(application));
+        representation.setInterview(commentService.getInterview(application));
 
-        applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
-        applicationRepresentation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
+        representation.setOfferRecommendation(commentService.getOfferRecommendation(application));
+        representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
 
-        applicationRepresentation.setPossibleThemes(advertService.getAdvertThemes(application));
+        representation.setPossibleThemes(advertService.getAdvertThemes(application));
 
         ResourceParent parent = (ResourceParent) application.getParentResource();
 
@@ -101,7 +99,7 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
         for (ResourceStudyLocation studyLocation : studyLocations) {
             availableStudyLocations.add(studyLocation.getStudyLocation());
         }
-        applicationRepresentation.setPossibleLocations(availableStudyLocations);
+        representation.setPossibleLocations(availableStudyLocations);
 
         if (!parent.getResourceScope().equals(INSTITUTION)) {
             List<PrismStudyOption> studyOptions = resourceService.getStudyOptions((ResourceOpportunity) parent);
@@ -109,14 +107,14 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
             for (PrismStudyOption studyOption : studyOptions) {
                 availableStudyOptions.add(studyOption);
             }
-            applicationRepresentation.setAvailableStudyOptions(availableStudyOptions);
+            representation.setAvailableStudyOptions(availableStudyOptions);
         }
 
         if (!actionService.hasRedactions(application, userService.getCurrentUser())) {
-            applicationRepresentation.setApplicationRatingAverage(application.getApplicationRatingAverage());
+            representation.setApplicationRatingAverage(application.getApplicationRatingAverage());
         }
 
-        applicationRepresentation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
+        representation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
     }
 
 }

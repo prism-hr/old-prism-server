@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-public class SystemExtendedRepresentation extends AbstractResourceRepresentation {
+public class SystemClientRepresentation extends ResourceRepresentationSimple {
 
     private String title;
 
@@ -11,4 +11,5 @@ public class SystemExtendedRepresentation extends AbstractResourceRepresentation
     public void setTitle(String title) {
         this.title = title;
     }
+    
 }

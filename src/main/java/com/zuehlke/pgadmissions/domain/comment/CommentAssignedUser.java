@@ -1,12 +1,21 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "comment_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })

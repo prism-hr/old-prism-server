@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.*;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ResourceServiceHelper;
 
 public enum PrismMaintenanceTask {
 

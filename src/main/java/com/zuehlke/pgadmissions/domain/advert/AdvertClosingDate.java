@@ -1,11 +1,18 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "advert_closing_date", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "closing_date" }) })

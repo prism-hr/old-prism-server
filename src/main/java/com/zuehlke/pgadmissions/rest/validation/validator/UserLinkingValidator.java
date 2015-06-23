@@ -1,17 +1,19 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
-import com.zuehlke.pgadmissions.security.UserAuthenticationService;
-import com.zuehlke.pgadmissions.services.UserService;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import javax.inject.Inject;
-import java.util.Set;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
+import com.zuehlke.pgadmissions.security.UserAuthenticationService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class UserLinkingValidator extends LocalValidatorFactoryBean implements Validator {

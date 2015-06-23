@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain.institution;
 
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "institution_domicile")

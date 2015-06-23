@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
+@Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
 public class Institution extends ResourceParent {
 
     @Id

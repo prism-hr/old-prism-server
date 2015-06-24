@@ -361,13 +361,25 @@
             <version>1.10.0</version>
         </dependency>
 
+        <!-- Wildfly provided dependencies -->
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-undertow</artifactId>
             <version>8.2.0.Final</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>3.0.10.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- for application export request (mapping DTO to javax.ws.rs.client.Entity) -->
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson-provider</artifactId>
+            <version>3.0.10.Final</version>
+        </dependency>
 
     </dependencies>
 

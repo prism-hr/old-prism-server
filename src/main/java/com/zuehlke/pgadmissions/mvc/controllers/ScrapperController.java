@@ -42,10 +42,10 @@ public class ScrapperController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/programs", method = RequestMethod.GET, produces = "application/xml")
-    public Object getPrograms(@RequestParam String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
+    @RequestMapping(value = "/programs", method = RequestMethod.POST)
+    public void getPrograms(@RequestParam String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
         log.debug("getPrograms() - start method");
-        return scrapperService.getProgramsForImportedInstitutions(yearOfInterest);
+        scrapperService.getProgramsForImportedInstitutions(yearOfInterest);
     }
     //method created to fix temporary bug
     @ResponseBody

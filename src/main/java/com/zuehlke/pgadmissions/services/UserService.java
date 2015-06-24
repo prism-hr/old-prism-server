@@ -89,8 +89,8 @@ public class UserService {
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            User user = (User) authentication.getPrincipal();
+        if (authentication != null && authentication.getDetails() instanceof User) {
+            User user = (User) authentication.getDetails();
             return entityService.getById(User.class, user.getId());
         }
         return null;

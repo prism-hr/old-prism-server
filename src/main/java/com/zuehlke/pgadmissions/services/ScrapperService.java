@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.program.Program;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,7 +36,6 @@ import java.util.List;
  * Created by felipe on 02/06/2015.
  * This class will query http://search.ucas.com/search with a known URL we worked out manually that we could iterate
  * to get institution ID's, Programs, etc based on countries. UK to start with.
- * From UI we saw 16 pages to go through, hence the iteration limit = 17 in the code.
  * <p/>
  */
 @Service
@@ -51,7 +49,11 @@ public class ScrapperService {
     //for institutions
     private static String URL_INSTITUTIONS_TEMPLATE = HOST + "/search/providers?CountryCode=1%7C2%7C3%7C4%7C5&Feather=7&flt8=2&Vac=1&AvailableIn=2015&Location=united%20kingdom&MaxResults=1000&page=";
     //for programs
-    private static String URL_PROGRAMS_TEMPLATE = HOST + "/search/results?flt8=2&Vac=1&AvailableIn={yearOfInterest}&providerids={ucasId}&page=";
+    private static String URL_PROGRAMS_TEMPLATE = HOST + "/search/results?Vac=1&AvailableIn={yearOfInterest}&providerids={ucasId}";
+
+    private HashMap<String, String> cache = new HashMap();
+
+    private long counter = 0;
 
     @Autowired
     private ImportedEntityDAO importedEntityDAO;
@@ -77,8 +79,10 @@ public class ScrapperService {
         return jsonResult;
     }
 
-    public Object getProgramsForImportedInstitutions(String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
+    public void
+    getProgramsForImportedInstitutions(String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
         log.debug("getProgramsForImportedInstitutions() - start method");
+        counter = 0;
 
         //iterate through the list of ids building the URI for each
         ArrayList<Object> jsonResult = new ArrayList<Object>();
@@ -94,20 +98,27 @@ public class ScrapperService {
         while (i.hasNext()) {
             //nested iteration for all programs given an institution id
             ImportedInstitution currentInstitution = i.next();
-            getPrograms(rootElement, currentInstitution, yearOfInterest, 1, doc);
+            getProgramsForAnInstitution(rootElement, currentInstitution, yearOfInterest, doc);
         }
+        createXmlContentIntoFile(rootElement, yearOfInterest);
+        //return createXmlStringRepresentation(rootElement);
 
-        return createXmlStringRepresentation(rootElement);
     }
-    private void getPrograms(org.w3c.dom.Element rootElement, ImportedInstitution currentInstitution,String yearOfInterest, int page, org.w3c.dom.Document doc) throws IOException {
-        String url = buildProperUrl(currentInstitution.getUcasId(), yearOfInterest, page);
-        Document htmlDoc = getHtml(url);
+
+    private void iterateProgramResultSet(org.w3c.dom.Element rootElement, org.w3c.dom.Document doc, int page, String filterUrl, String currentInstitution) throws IOException {
+
+        Document htmlDoc = getHtml(buildProperUrlForAnInstitutionWithFilterAndPage(filterUrl, page));
+        //normal case when pagination reaches a page with no elements in the result
         Elements t = htmlDoc.getElementsByClass("resultscontainer");
         if (t.isEmpty()) {
             return;
         }
-        Iterator<Element> it =t.get(0).getElementsByTag("li").iterator();
+        Iterator<Element> it = t.get(0).getElementsByTag("li").iterator();
         if (!it.hasNext()) {
+            return;
+        }
+        if (page > 50) {
+            log.info("BREAK - more than 50 pages!");
             return;
         }
         while (it.hasNext()) {
@@ -115,41 +126,81 @@ public class ScrapperService {
             if (element.id().startsWith("result-")) {
                 //we are now standing on a program for a given institution
 
-                // program elements
-                org.w3c.dom.Element program = doc.createElement("program");
-                rootElement.appendChild(program);
+                //get the ID of the program
+                String hasKey = buildHashForInstitutionAndProgram(element.getElementsByTag("a").attr("href"), currentInstitution);
+                if (!cache.containsKey(hasKey)) {
+                    counter++;
+                    log.info("[" + counter + "] Adding new " + hasKey);
 
-                // program element itself
-                //id
-                org.w3c.dom.Element importedInstitutionId = doc.createElement("importedInstitutionId");
-                importedInstitutionId.appendChild(doc.createTextNode(currentInstitution.getUcasId()));
-                program.appendChild(importedInstitutionId);
+                    // program elements
+                    org.w3c.dom.Element program = doc.createElement("program");
+                    rootElement.appendChild(program);
 
-                //qualification
-                org.w3c.dom.Element importedInstitutionQualification = doc.createElement("qualification");
-                importedInstitutionQualification.appendChild(doc.createTextNode(element.select(".courseinfooutcome").text()));
-                program.appendChild(importedInstitutionQualification);
 
-                //title
-                org.w3c.dom.Element importedInstitutionTitle = doc.createElement("title");
-                importedInstitutionTitle.appendChild(doc.createTextNode(StringEscapeUtils.escapeXml(element.select(".coursenamearea").select("h4").text())));
-                program.appendChild(importedInstitutionTitle);
+                    // program element itself
+                    //id
+                    org.w3c.dom.Element importedInstitutionId = doc.createElement("importedInstitutionId");
+                    importedInstitutionId.appendChild(doc.createTextNode(currentInstitution));
+                    program.appendChild(importedInstitutionId);
 
-                //level
-                org.w3c.dom.Element importedInstitutionLevel = doc.createElement("level");
-                importedInstitutionLevel.appendChild(doc.createTextNode(extractProgramLevelFromRawHTML(element.select(".resultbottomarea").select(".coursequalarea").html())));
-                program.appendChild(importedInstitutionLevel);
+                    //qualification
+                    org.w3c.dom.Element importedInstitutionQualification = doc.createElement("qualification");
+                    importedInstitutionQualification.appendChild(doc.createTextNode(element.select(".courseinfooutcome").text()));
+                    program.appendChild(importedInstitutionQualification);
 
-                //homepage
-                org.w3c.dom.Element importedInstitutionHomepage = doc.createElement("homepage");
-                importedInstitutionHomepage.appendChild(doc.createTextNode(HOST + element.select(".coursenamearea").select("h4").select("a").attr("href")));
-                program.appendChild(importedInstitutionHomepage);
+                    //title
+                    org.w3c.dom.Element importedInstitutionTitle = doc.createElement("title");
+                    importedInstitutionTitle.appendChild(doc.createTextNode(StringEscapeUtils.escapeXml(element.select(".coursenamearea").select("h4").text())));
+                    program.appendChild(importedInstitutionTitle);
 
-                rootElement.appendChild(program);
+                    //level
+                    org.w3c.dom.Element importedInstitutionLevel = doc.createElement("level");
+                    importedInstitutionLevel.appendChild(doc.createTextNode(extractProgramLevelFromRawHTML(element.select(".resultbottomarea").select(".coursequalarea").html())));
+                    program.appendChild(importedInstitutionLevel);
+
+                    //homepage
+                    org.w3c.dom.Element importedInstitutionHomepage = doc.createElement("homepage");
+                    importedInstitutionHomepage.appendChild(doc.createTextNode(HOST + element.select(".coursenamearea").select("h4").select("a").attr("href")));
+                    program.appendChild(importedInstitutionHomepage);
+
+                    rootElement.appendChild(program);
+                    //add the program to the cache
+                    cache.put(hasKey, null);
+                } else {
+                    log.info("Skipping program ID[" + element.getElementsByTag("a").attr("href") + "] on institution ID[" + currentInstitution + "]");
+                }
             }
         }
         page++;
-        getPrograms(rootElement, currentInstitution, yearOfInterest, page, doc);
+        iterateProgramResultSet(rootElement, doc, page, filterUrl, currentInstitution);
+    }
+
+    private String buildHashForInstitutionAndProgram(String searchUrl, String institutionId) {
+        //institution id  = ucas_id
+        String temp = "/summary/";
+        int start = searchUrl.indexOf(temp) + temp.length();
+        int end = searchUrl.indexOf("/", start);
+        return "I[" + institutionId + "]" + "-P[" + searchUrl.substring(start, end) + "]";
+    }
+
+    private void getProgramsForAnInstitution(org.w3c.dom.Element rootElement, ImportedInstitution currentInstitution, String yearOfInterest, org.w3c.dom.Document doc) throws IOException {
+        String url = buildProperUrlForAnInstitution(currentInstitution.getUcasId(), yearOfInterest);
+        Document htmlDoc = getHtml(url);
+
+        //get all possible filters
+        Iterator<Element> filters = htmlDoc.getElementsByClass("filter").iterator();
+        //iterate through the list of filters
+        while (filters.hasNext()) {
+            Element fe = filters.next();
+            //this filter is same as ALL
+            if (!fe.id().equals("filtercategory-7")) {
+                Iterator<Element> filtersByCategory = fe.getElementsByClass("has-data").iterator();
+                while (filtersByCategory.hasNext()) {
+                    Element fbce = filtersByCategory.next();
+                    iterateProgramResultSet(rootElement, doc, 1, buildTemplateUrlForAnInstitutionWithFilterSelected(fbce.getElementsByTag("a").attr("href")), currentInstitution.getUcasId());
+                }
+            }
+        }
     }
 
     //get whatever is after </div>
@@ -158,13 +209,26 @@ public class ScrapperService {
         return html.substring(start + 6, html.length()).trim();
     }
 
+    private String buildTemplateUrlForAnInstitutionWithFilterSelected(String filter) {
+        //clean from url the page so we can append it outside for iteration
+        int start = filter.indexOf("Page=");
+        int finish = filter.lastIndexOf("&");
+        String pageParameter = filter.substring(start, finish);
+        return filter.replace(pageParameter, "{page}");
+    }
+
     //replace place holders in template by current values
-    private String buildProperUrl(String ucasId, String yearOfInterest, int page) {
+    private String buildProperUrlForAnInstitution(String ucasId, String yearOfInterest) {
         String url = URL_PROGRAMS_TEMPLATE;
         url = url.replace("{ucasId}", ucasId);
         url = url.replace("{yearOfInterest}", yearOfInterest);
-        url = url + page;
-        log.info("built URL :"+url);
+        log.info("built URL for INSTITUTION :" + url);
+        return url;
+    }
+
+    private String buildProperUrlForAnInstitutionWithFilterAndPage(String filter, int page) {
+        String url = HOST + filter.replace("{page}", "Page=" + Integer.toString(page));
+        log.info("built URL for PROGRAM " + url);
         return url;
     }
 
@@ -188,6 +252,19 @@ public class ScrapperService {
         String xmlString = sw.toString();
 
         return xmlString;
+    }
+
+    private void createXmlContentIntoFile(org.w3c.dom.Element doc, String yearOfInterest) throws TransformerException {
+        // write the content into xml file
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File("~/programsUK-" + yearOfInterest + ".xml"));
+
+        // Output to console for testing
+        // StreamResult result = new StreamResult(System.out);
+
+        transformer.transform(source, result);
     }
 
     public void fixDatabase() throws IOException, SAXException, ParserConfigurationException {
@@ -221,6 +298,7 @@ public class ScrapperService {
         }
 
     }
+
     public void importPrograms() throws IOException, SAXException, ParserConfigurationException {
         File fXmlFile = new File("/Users/felipe/druidalabs/ucl/prism-server/src/main/resources/xml/defaultEntities/programs2016.xml");
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -237,7 +315,7 @@ public class ScrapperService {
                 String title = eElement.getElementsByTagName("title").item(0).getTextContent();
                 String homepage = eElement.getElementsByTagName("homepage").item(0).getTextContent();
                 String level = eElement.getElementsByTagName("level").item(0).getTextContent();
-                importedEntityDAO.importProgram(importedInstitutionId, qualification, title, homepage,level );
+                importedEntityDAO.importProgram(importedInstitutionId, qualification, title, homepage, level);
             }
         }
     }

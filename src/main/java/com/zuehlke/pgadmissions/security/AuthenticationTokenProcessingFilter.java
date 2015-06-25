@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Collections;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
@@ -41,9 +41,8 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
             UserDetails userDetails = this.userService.getById(userId);
             TokenValidityStatus tokenValidityStatus = authenticationTokenHelper.validateToken(authToken, userDetails);
             if (tokenValidityStatus.isValid()) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, Collections.emptyList());
                 authentication.setDetails(userDetails);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 if (tokenValidityStatus.getRenewedToken() != null) {
                     httpResponse.setHeader("x-auth-token-renew", tokenValidityStatus.getRenewedToken());

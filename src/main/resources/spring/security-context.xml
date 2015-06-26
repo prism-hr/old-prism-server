@@ -16,6 +16,7 @@
     <security:http realm="Prism API" use-expressions="true" auto-config="false" create-session="stateless"
                    entry-point-ref="unauthorizedEntryPoint"
                    authentication-manager-ref="authenticationManager" disable-url-rewriting="true">
+        <security:custom-filter ref="basicAuthenticationFilter" position="BASIC_AUTH_FILTER" />
         <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
         <security:intercept-url pattern="/api/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()"/>
@@ -30,6 +31,10 @@
 
     <bean id="authenticationTokenProcessingFilter"
           class="com.zuehlke.pgadmissions.security.AuthenticationTokenProcessingFilter">
+    </bean>
+    <bean id="basicAuthenticationFilter"
+          class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+        <constructor-arg ref="authenticationManager"/>
     </bean>
 
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"/>

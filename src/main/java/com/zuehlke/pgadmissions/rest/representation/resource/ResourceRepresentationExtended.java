@@ -7,10 +7,11 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
-public class ResourceRepresentationExtended extends ResourceRepresentationSimple {
+public class ResourceRepresentationExtended extends ResourceRepresentationSimpleWithImages {
 
-    private UserRepresentation userRepresentation;
+    private UserRepresentation user;
 
     private ResourceRepresentationSimple institution;
 
@@ -34,12 +35,20 @@ public class ResourceRepresentationExtended extends ResourceRepresentationSimple
 
     private TimelineRepresentation timeline;
 
-    public UserRepresentation getUserRepresentation() {
-        return userRepresentation;
+    private List<ActionRepresentation> actions;
+
+    private List<ResourceUserRolesRepresentation> userRoles;
+
+    private List<WorkflowPropertyConfigurationRepresentation> workflowConfigurations;
+
+    private List<ResourceConditionRepresentation> conditions;
+
+    public UserRepresentation getUser() {
+        return user;
     }
 
-    public void setUserRepresentation(UserRepresentation userRepresentation) {
-        this.userRepresentation = userRepresentation;
+    public void setUser(UserRepresentation userRepresentation) {
+        this.user = userRepresentation;
     }
 
     public ResourceRepresentationSimple getInstitution() {
@@ -128,6 +137,38 @@ public class ResourceRepresentationExtended extends ResourceRepresentationSimple
 
     public void setTimeline(TimelineRepresentation timeline) {
         this.timeline = timeline;
+    }
+
+    public List<ActionRepresentation> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<ActionRepresentation> actions) {
+        this.actions = actions;
+    }
+
+    public List<ResourceUserRolesRepresentation> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<ResourceUserRolesRepresentation> userRoles) {
+        this.userRoles = userRoles;
+    }
+
+    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowConfigurations() {
+        return workflowConfigurations;
+    }
+
+    public void setWorkflowConfigurations(List<WorkflowPropertyConfigurationRepresentation> workflowConfigurations) {
+        this.workflowConfigurations = workflowConfigurations;
+    }
+
+    public List<ResourceConditionRepresentation> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(List<ResourceConditionRepresentation> conditions) {
+        this.conditions = conditions;
     }
 
 }

@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 
 @Entity
 @Table(name = "ADVERT_FUNCTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "function" }) })
-public class AdvertFunction extends AdvertAttribute {
+public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
 
     @Id
     @GeneratedValue
@@ -58,8 +58,13 @@ public class AdvertFunction extends AdvertAttribute {
     }
 
     @Override
-    public Object getValue() {
+    public PrismAdvertFunction getValue() {
         return function;
+    }
+
+    @Override
+    public void setValue(PrismAdvertFunction value) {
+        setFunction(value);
     }
 
     @Override

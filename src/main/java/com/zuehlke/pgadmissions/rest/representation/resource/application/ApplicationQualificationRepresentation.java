@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
 
 public class ApplicationQualificationRepresentation extends ApplicationSectionRepresentation {
 
@@ -19,7 +19,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     private String grade;
 
-    private FileRepresentation document;
+    private DocumentRepresentation document;
 
     private Boolean completed;
 
@@ -63,11 +63,11 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.grade = grade;
     }
 
-    public FileRepresentation getDocument() {
+    public DocumentRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(DocumentRepresentation document) {
         this.document = document;
     }
 

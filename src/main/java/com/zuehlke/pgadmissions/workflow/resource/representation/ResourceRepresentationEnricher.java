@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.workflow.resource.representation;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceClientRepresentation;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 
-public interface ResourceRepresentationEnricher<T extends ResourceRepresentationExtended & ResourceClientRepresentation> {
+public interface ResourceRepresentationEnricher<T extends Resource, V extends ResourceRepresentationExtended> {
 
-    public void enrich(PrismScope resourceScope, Integer resourceId, T representation) throws Exception;
+    public void enrich(T resource, V representation) throws Exception;
 
 }

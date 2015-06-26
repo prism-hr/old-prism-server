@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import java.util.List;
 import java.util.TimeZone;
 
-import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 
 public class InterviewRepresentation {
 
@@ -17,7 +17,7 @@ public class InterviewRepresentation {
 
     private String interviewLocation;
 
-    private List<AppointmentTimeslotRepresentation> appointmentTimeslots;
+    private List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots;
 
     private List<UserAppointmentPreferencesRepresentation> appointmentPreferences;
 
@@ -61,11 +61,11 @@ public class InterviewRepresentation {
         this.interviewLocation = interviewLocation;
     }
 
-    public List<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
+    public List<CommentAppointmentTimeslotRepresentation> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public void setAppointmentTimeslots(List<AppointmentTimeslotRepresentation> appointmentTimeslots) {
+    public void setAppointmentTimeslots(List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 

@@ -15,7 +15,7 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
 
     private String jobTitle;
 
-    private AddressRepresentation address;
+    private AddressRepresentationApplication address;
     
     private String phone;
 
@@ -63,11 +63,11 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.jobTitle = jobTitle;
     }
 
-    public AddressRepresentation getAddress() {
+    public AddressRepresentationApplication getAddress() {
         return address;
     }
 
-    public void setAddress(AddressRepresentation address) {
+    public void setAddress(AddressRepresentationApplication address) {
         this.address = address;
     }
 

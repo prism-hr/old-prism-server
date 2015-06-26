@@ -6,11 +6,10 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceClientRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceProcessingRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
-public class ApplicationClientRepresentation extends ApplicationRepresentation implements ResourceClientRepresentation {
+public class ApplicationClientRepresentation extends ApplicationRepresentation {
     
     private List<PrismStudyOption> availableStudyOptions;
     
@@ -124,12 +123,10 @@ public class ApplicationClientRepresentation extends ApplicationRepresentation i
         this.recommendedAdverts = recommendedAdverts;
     }
     
-    @Override
     public ResourceProcessingRepresentation getResourceProcessing() {
         return resourceProcessing;
     }
-    
-    @Override
+
     public void setResourceProcessing(ResourceProcessingRepresentation resourceProcessing) {
         this.resourceProcessing = resourceProcessing;
     }

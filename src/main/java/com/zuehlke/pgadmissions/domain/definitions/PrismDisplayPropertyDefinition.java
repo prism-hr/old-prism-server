@@ -1620,9 +1620,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_ADVERT(PROGRAM_COMMENT, "Updated institution advert"),
     INSTITUTION_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated institution fees and payments"),
     INSTITUTION_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated institution categories"),
+    INSTITUTION_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated institution targets"),
     INSTITUTION_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated institution closing dates"),
-    INSTITUTION_COMMENT_UPDATED_SPONSORSHIP_TARGET(INSTITUTION_COMMENT, "Updated institution sponsorship target"),
-    INSTITUTION_COMMENT_REJECTED_SPONSORSHIP(INSTITUTION_COMMENT, "Rejected institution sponsorship"),
 
     /*
      * *************** INSTITUTION FORM *********************
@@ -1675,9 +1674,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_UPDATED_ADVERT(PROGRAM_COMMENT, "Updated program advert"),
     PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated program fees and payments"),
     PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated program categories"),
+    PROGRAM_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated program targets"),
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"),
-    PROGRAM_COMMENT_UPDATED_SPONSORSHIP_TARGET(PROGRAM_COMMENT, "Updated program sponsorship target"),
-    PROGRAM_COMMENT_REJECTED_SPONSORSHIP(PROGRAM_COMMENT, "Rejected program sponsorship"),
 
     /*
      * *************** PROGRAM FORM *********************
@@ -1771,9 +1769,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_UPDATED_ADVERT(PROJECT_COMMENT, "Updated project advert"),
     PROJECT_COMMENT_UPDATED_FEE_AND_PAYMENT(PROJECT_COMMENT, "Updated project fees and payments"),
     PROJECT_COMMENT_UPDATED_CATEGORY(PROJECT_COMMENT, "Updated project categories"),
+    PROJECT_COMMENT_UPDATED_TARGET(PROJECT_COMMENT, "Updated project targets"),
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PROJECT_COMMENT, "Updated project closing dates"),
-    PROJECT_COMMENT_UPDATED_SPONSORSHIP_TARGET(PROJECT_COMMENT, "Updated project sponsorship target"),
-    PROJECT_COMMENT_REJECTED_SPONSORSHIP(PROJECT_COMMENT, "Rejected project sponsorship"),
 
     /*
      * *************** PROJECT FORM *********************

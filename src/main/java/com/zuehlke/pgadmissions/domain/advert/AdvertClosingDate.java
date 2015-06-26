@@ -12,11 +12,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Objects;
-
 @Entity
 @Table(name = "advert_closing_date", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "closing_date" }) })
-public class AdvertClosingDate extends AdvertAttribute {
+public class AdvertClosingDate extends AdvertAttribute<LocalDate> {
 
     @Id
     @GeneratedValue
@@ -30,9 +28,6 @@ public class AdvertClosingDate extends AdvertAttribute {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
 
-    @Column(name = "study_places")
-    private Integer studyPlaces;
-
     @Override
     public Integer getId() {
         return id;
@@ -42,7 +37,7 @@ public class AdvertClosingDate extends AdvertAttribute {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     @Override
     public Advert getAdvert() {
         return advert;
@@ -61,48 +56,14 @@ public class AdvertClosingDate extends AdvertAttribute {
         this.closingDate = closingDate;
     }
 
-    public Integer getStudyPlaces() {
-        return studyPlaces;
-    }
-
-    public void setStudyPlaces(Integer studyPlaces) {
-        this.studyPlaces = studyPlaces;
-    }
-
-    public Object getValue() {
+    @Override
+    public LocalDate getValue() {
         return closingDate;
     }
-    
-    public AdvertClosingDate withAdvert(Advert advert) {
-        this.advert = advert;
-        return this;
-    }
-
-    public AdvertClosingDate withClosingDate(LocalDate closingDate) {
-        this.closingDate = closingDate;
-        return this;
-    }
-
-    public AdvertClosingDate withStudyPlaces(Integer studyPlaces) {
-        this.studyPlaces = studyPlaces;
-        return this;
-    }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(advert, closingDate);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final AdvertClosingDate other = (AdvertClosingDate) object;
-        return Objects.equal(advert, other.getAdvert()) && Objects.equal(closingDate, other.getClosingDate());
+    public void setValue(LocalDate value) {
+        setClosingDate(value);
     }
 
     @Override

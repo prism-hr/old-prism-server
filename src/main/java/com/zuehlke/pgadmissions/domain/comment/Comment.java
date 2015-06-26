@@ -155,16 +155,16 @@ public class Comment {
     private Boolean applicationInterested;
 
     @Embedded
-    private CommentApplicationInterviewAppointment interviewAppointment;
+    private CommentInterviewAppointment interviewAppointment;
 
     @Embedded
-    private CommentApplicationInterviewInstruction interviewInstruction;
+    private CommentInterviewInstruction interviewInstruction;
 
     @Embedded
-    private CommentApplicationPositionDetail positionDetail;
+    private CommentPositionDetail positionDetail;
 
     @Embedded
-    private CommentApplicationOfferDetail offerDetail;
+    private CommentOfferDetail offerDetail;
 
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
@@ -183,16 +183,8 @@ public class Comment {
     @Column(name = "application_rating")
     private BigDecimal applicationRating;
 
-    @Lob
-    @Column(name = "application_export_request")
-    private String exportRequest;
-
-    @Column(name = "application_export_reference")
-    private String exportReference;
-
-    @Lob
-    @Column(name = "application_export_exception")
-    private String exportException;
+    @Embedded
+    private CommentExport applicationExport;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -372,35 +364,35 @@ public class Comment {
         this.applicationEligible = applicationEligible;
     }
 
-    public CommentApplicationInterviewAppointment getInterviewAppointment() {
+    public CommentInterviewAppointment getInterviewAppointment() {
         return interviewAppointment;
     }
 
-    public void setInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+    public void setInterviewAppointment(CommentInterviewAppointment interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
     }
 
-    public CommentApplicationInterviewInstruction getInterviewInstruction() {
+    public CommentInterviewInstruction getInterviewInstruction() {
         return interviewInstruction;
     }
 
-    public void setInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+    public void setInterviewInstruction(CommentInterviewInstruction interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
     }
 
-    public CommentApplicationPositionDetail getPositionDetail() {
+    public CommentPositionDetail getPositionDetail() {
         return positionDetail;
     }
 
-    public void setPositionDetail(CommentApplicationPositionDetail positionDetail) {
+    public void setPositionDetail(CommentPositionDetail positionDetail) {
         this.positionDetail = positionDetail;
     }
 
-    public CommentApplicationOfferDetail getOfferDetail() {
+    public CommentOfferDetail getOfferDetail() {
         return offerDetail;
     }
 
-    public void setOfferDetail(CommentApplicationOfferDetail offerDetail) {
+    public void setOfferDetail(CommentOfferDetail offerDetail) {
         this.offerDetail = offerDetail;
     }
 
@@ -444,28 +436,12 @@ public class Comment {
         this.applicationRating = applicationRating;
     }
 
-    public final String getApplicationExportRequest() {
-        return exportRequest;
+    public CommentExport getApplicationExport() {
+        return applicationExport;
     }
 
-    public final void setApplicationExportRequest(String applicationExportRequest) {
-        this.exportRequest = applicationExportRequest;
-    }
-
-    public String getExportReference() {
-        return exportReference;
-    }
-
-    public void setExportReference(String exportReference) {
-        this.exportReference = exportReference;
-    }
-
-    public String getExportException() {
-        return exportException;
-    }
-
-    public void setExportException(String exportException) {
-        this.exportException = exportException;
+    public void setApplicationExport(CommentExport applicationExport) {
+        this.applicationExport = applicationExport;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
@@ -600,21 +576,6 @@ public class Comment {
         return this;
     }
 
-    public Comment withExportRequest(String exportRequest) {
-        this.exportRequest = exportRequest;
-        return this;
-    }
-
-    public Comment withExportReference(String exportReference) {
-        this.exportReference = exportReference;
-        return this;
-    }
-
-    public Comment withExportException(String exportException) {
-        this.exportException = exportException;
-        return this;
-    }
-
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
@@ -630,12 +591,12 @@ public class Comment {
         return this;
     }
 
-    public Comment withInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+    public Comment withInterviewAppointment(CommentInterviewAppointment interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
         return this;
     }
 
-    public Comment withInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+    public Comment withInterviewInstruction(CommentInterviewInstruction interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
         return this;
     }
@@ -650,6 +611,11 @@ public class Comment {
         return this;
     }
 
+    public Comment withApplicationExport(CommentExport applicationExport) {
+        this.applicationExport = applicationExport;
+        return this;
+    }
+    
     public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
         assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
         return this;

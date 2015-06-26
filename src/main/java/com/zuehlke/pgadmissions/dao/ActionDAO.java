@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -111,10 +111,10 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
-    public List<ResourceListActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
+    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
             Integer partnerId, Integer programId, Integer projectId, Integer applicationId, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
-        return (List<ResourceListActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
@@ -149,11 +149,11 @@ public class ActionDAO {
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.desc("primaryState")) //
                 .addOrder(Order.asc("action.id")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceListActionDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
     }
 
-    public List<ResourceListActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Set<Integer> resourceIds, PrismScope... exclusions) {
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Set<Integer> resourceIds, PrismScope... exclusions) {
         String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -180,9 +180,9 @@ public class ActionDAO {
                     .add(Restrictions.ne("action.creationScope.id", exclusion))); //
         }
 
-        return (List<ResourceListActionDTO>) criteria.add(getResourceStateActionConstraint()) //
+        return (List<ActionDTO>) criteria.add(getResourceStateActionConstraint()) //
                 .addOrder(Order.asc("action.id")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceListActionDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
     }
 

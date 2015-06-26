@@ -122,3 +122,7 @@ alter table application_qualification
 alter table resource_study_option_instance
 	change column academic_year business_year varchar(4) not null
 ;
+
+alter table advert_closing_date
+	drop column study_places
+;

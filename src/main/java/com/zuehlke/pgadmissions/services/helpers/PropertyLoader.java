@@ -68,7 +68,7 @@ public class PropertyLoader {
         HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation value : values) {
             DisplayPropertyConfigurationRepresentation displayValue = (DisplayPropertyConfigurationRepresentation) value;
-            PrismDisplayPropertyDefinition displayPropertyId = (PrismDisplayPropertyDefinition) value.getDefinitionId();
+            PrismDisplayPropertyDefinition displayPropertyId = (PrismDisplayPropertyDefinition) value.getProperty();
             if (!displayProperties.containsKey(displayPropertyId)) {
                 displayProperties.put(displayPropertyId, displayValue.getValue());
             }

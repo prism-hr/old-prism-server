@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.SelectableStateRepresentation;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Service
@@ -252,12 +252,12 @@ public class StateService {
         return stateDAO.getCurrentStates(resource);
     }
 
-    public List<PrismState> getRecommendedNextStates(Resource resource) {
-        List<PrismState> recommendations = Lists.newLinkedList();
+    public List<SelectableStateRepresentation> getRecommendedNextStates(Resource resource) {
+        List<SelectableStateRepresentation> recommendations = Lists.newLinkedList();
         String recommendationTokens = stateDAO.getRecommendedNextStates(resource);
         if (recommendationTokens != null) {
             for (String recommendationToken : recommendationTokens.split("\\|")) {
-                recommendations.add(PrismState.valueOf(recommendationToken));
+                recommendations.add(new SelectableStateRepresentation().withState(PrismState.valueOf(recommendationToken)));
             }
             return recommendations;
         }
@@ -267,12 +267,12 @@ public class StateService {
     public List<State> getSecondaryResourceStates(Resource resource) {
         return stateDAO.getSecondaryResourceStates(resource);
     }
-    
+
     public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
         return stateDAO.getSecondaryResourceStateGroups(resourceScope, resourceId);
     }
 
-    public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
+    public List<SelectableStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
         return stateDAO.getSelectableTransitionStates(state, actionId, importedResource);
     }
 

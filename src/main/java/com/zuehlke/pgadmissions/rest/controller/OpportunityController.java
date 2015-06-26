@@ -19,8 +19,8 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.IntegrationService;
 import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -29,19 +29,24 @@ public class OpportunityController {
 
     @Inject
     private AdvertService advertService;
+    
+    @Inject
+    private IntegrationService integrationService;
 
     @Inject
     private StateService stateService;
-
-    @Inject
-    private AdvertToRepresentationFunction advertToRepresentationFunction;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
-        return Lists.transform(adverts, advertToRepresentationFunction);
+        
+        List<AdvertRepresentation> representations = Lists.newLinkedList();
+        for (Advert advert : adverts) {
+            representations.add(integrationService.getAdvertRepresentation(advert));
+        }
+        return representations;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}")
@@ -50,7 +55,7 @@ public class OpportunityController {
         if (advert == null) {
             throw new ResourceNotFoundException("Advert not found");
         }
-        return advertToRepresentationFunction.apply(advert);
+        return integrationService.getAdvertRepresentation(advert);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")

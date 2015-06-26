@@ -104,8 +104,8 @@ public class InstitutionController {
         Map<String, List<String>> categoryTags = Maps.newLinkedHashMap();
         Institution institution = institutionService.getById(institutionId);
 
-        categoryTags.put("competences", advertService.getAdvertTags(institution, AdvertCompetence.class));
-        categoryTags.put("themes", advertService.getAdvertTags(institution, AdvertTheme.class));
+        categoryTags.put("competences", advertService.getAdvertAttributes(institution, AdvertCompetence.class));
+        categoryTags.put("themes", advertService.getAdvertAttributes(institution, AdvertTheme.class));
         return categoryTags;
     }
 

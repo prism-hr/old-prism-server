@@ -27,8 +27,13 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
+import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -58,6 +63,9 @@ public class AdvertDAO {
     public List<Integer> getAdverts(List<PrismState> programStates, List<PrismState> projectStates, OpportunitiesQueryDTO queryDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty("id")) //
+                .createAlias("categories.industries", "industry", JoinType.INNER_JOIN) //
+                .createAlias("categories.functions", "funtion", JoinType.INNER_JOIN) //
+                .createAlias("categories.themes", "theme", JoinType.INNER_JOIN) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.partner", "programPartner", JoinType.LEFT_OUTER_JOIN) //
@@ -99,6 +107,9 @@ public class AdvertDAO {
 
         appendLocationConstraint(criteria, queryDTO);
         appendKeywordConstraint(queryDTO, criteria);
+
+        appendIndustryConstraint(criteria, queryDTO);
+        appendFunctionConstraint(criteria, queryDTO);
 
         appendOpportunityTypeConstraint(criteria, queryDTO);
         appendStudyOptionConstraint(queryDTO, criteria);
@@ -231,7 +242,7 @@ public class AdvertDAO {
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
     }
 
-    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertAttribute> clazz) {
+    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
         String propertyName = clazz.getSimpleName().replace("Advert", "").toLowerCase();
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
                 .setProjection(Projections.groupProperty(propertyName)) //
@@ -256,13 +267,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<String> getAdvertThemes(Advert advert) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
-                .setProjection(Projections.property("theme")) //
-                .add(Restrictions.eq("advert", advert)) //
-                .list();
-    }
-
     public List<Integer> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.property("id")) //
@@ -275,7 +279,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Advert> getAdvertsWithFeesAndPays(Institution institution) {
+    public List<Advert> getAdvertsWithFinancialDetails(Institution institution) {
         String currency = institution.getCurrency();
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .createAlias("project", "program", JoinType.LEFT_OUTER_JOIN) //
@@ -285,6 +289,36 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("fee.currencySpecified", currency)) //
                         .add(Restrictions.eq("pay.currencySpecified", currency))) //
+                .list();
+    }
+
+    public List<PrismAdvertIndustry> getAdvertIndustries(Advert advert) {
+        return (List<PrismAdvertIndustry>) sessionFactory.getCurrentSession().createCriteria(AdvertIndustry.class) //
+                .setProjection(Projections.property("industry")) //
+                .add(Restrictions.eq("advert", advert)) //
+                .addOrder(Order.asc("industry")) //
+                .list();
+    }
+
+    public List<PrismAdvertFunction> getAdvertFunctions(Advert advert) {
+        return (List<PrismAdvertFunction>) sessionFactory.getCurrentSession().createCriteria(AdvertFunction.class) //
+                .setProjection(Projections.property("function")) //
+                .add(Restrictions.eq("advert", advert)) //
+                .addOrder(Order.asc("function")) //
+                .list();
+    }
+
+    public List<String> getAdvertThemes(Advert advert) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
+                .setProjection(Projections.property("theme")) //
+                .add(Restrictions.eq("advert", advert)) //
+                .addOrder(Order.asc("theme")) //
+                .list();
+    }
+
+    public List<AdvertTarget<?>> getAdvertTargets(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
+        return (List<AdvertTarget<?>>) sessionFactory.getCurrentSession().createCriteria(targetClass) //
+                .add(Restrictions.eq("advert", advert)) //
                 .list();
     }
 
@@ -313,6 +347,7 @@ public class AdvertDAO {
         String keyword = queryDTO.getKeyword();
         if (keyword != null) {
             criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.ilike("theme.theme", MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
@@ -328,6 +363,20 @@ public class AdvertDAO {
                     .add(Restrictions.ilike("projectUser.firstName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectUser.lastName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectUser.email", keyword, MatchMode.ANYWHERE))); //
+        }
+    }
+
+    private void appendIndustryConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+        List<PrismAdvertIndustry> industries = queryDTO.getIndustries();
+        if (CollectionUtils.isNotEmpty(industries)) {
+            criteria.add(Restrictions.in("industry", industries));
+        }
+    }
+
+    private void appendFunctionConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+        List<PrismAdvertFunction> functions = queryDTO.getFunctions();
+        if (CollectionUtils.isNotEmpty(functions)) {
+            criteria.add(Restrictions.in("function", functions));
         }
     }
 

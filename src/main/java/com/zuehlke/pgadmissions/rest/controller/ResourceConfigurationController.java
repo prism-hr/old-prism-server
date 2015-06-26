@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfig
 import com.zuehlke.pgadmissions.rest.validation.validator.ActionCustomQuestionValidator;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.utils.WordUtils;
+import com.zuehlke.pgadmissions.utils.PrismWordUtils;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|institutions|systems}/{resourceId}/configuration")
@@ -226,7 +226,7 @@ public class ResourceConfigurationController {
 
     @ModelAttribute
     private PrismConfiguration getConfigurationType(@PathVariable String configurationType) {
-        String singleForm = WordUtils.singularize(configurationType);
+        String singleForm = PrismWordUtils.singularize(configurationType);
         String typeName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, singleForm);
         return PrismConfiguration.valueOf(typeName);
     }
@@ -241,7 +241,7 @@ public class ResourceConfigurationController {
         Map<PrismDisplayPropertyDefinition, String> index = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation translation : translations) {
             DisplayPropertyConfigurationRepresentation translationRepresentation = (DisplayPropertyConfigurationRepresentation) translation;
-            index.put((PrismDisplayPropertyDefinition) translation.getDefinitionId(), translationRepresentation.getValue());
+            index.put((PrismDisplayPropertyDefinition) translation.getProperty(), translationRepresentation.getValue());
         }
         List<DisplayPropertyConfigurationRepresentation> representations = Lists.newLinkedList();
         for (PrismDisplayPropertyDefinition definition : PrismDisplayPropertyDefinition.getProperties(category)) {

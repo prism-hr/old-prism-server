@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 
 @Entity
 @Table(name = "ADVERT_INDUSTRY", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "industry" }) })
-public class AdvertIndustry extends AdvertAttribute {
+public class AdvertIndustry extends AdvertAttribute<PrismAdvertIndustry> {
 
     @Id
     @GeneratedValue
@@ -58,10 +58,15 @@ public class AdvertIndustry extends AdvertAttribute {
     }
 
     @Override
-    public Object getValue() {
+    public PrismAdvertIndustry getValue() {
         return industry;
     }
-
+    
+    @Override
+    public void setValue(PrismAdvertIndustry value) {
+        setIndustry(value);
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("industry", industry);

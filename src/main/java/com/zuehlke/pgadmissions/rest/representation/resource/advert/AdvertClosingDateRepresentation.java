@@ -8,8 +8,6 @@ public class AdvertClosingDateRepresentation {
 
     private LocalDate closingDate;
 
-    private Integer studyPlaces;
-
     public Integer getId() {
         return id;
     }
@@ -26,11 +24,14 @@ public class AdvertClosingDateRepresentation {
         this.closingDate = closingDate;
     }
 
-    public Integer getStudyPlaces() {
-        return studyPlaces;
+    public AdvertClosingDateRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
     }
 
-    public void setStudyPlaces(Integer studyPlaces) {
-        this.studyPlaces = studyPlaces;
+    public AdvertClosingDateRepresentation withClosingDate(LocalDate closingDate) {
+        this.closingDate = closingDate;
+        return this;
     }
+
 }

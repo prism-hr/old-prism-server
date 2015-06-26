@@ -394,6 +394,11 @@ public class Application extends Resource {
     public Application getApplication() {
         return this;
     }
+    
+    @Override
+    public String getTitle() {
+        return user.getFullName();
+    }
 
     public ApplicationAddress getAddress() {
         return address;

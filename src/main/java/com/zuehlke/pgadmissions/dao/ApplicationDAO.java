@@ -99,9 +99,9 @@ public class ApplicationDAO {
 
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("exportReference")) //
+                .setProjection(Projections.property("applicationExport.exportReference")) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNotNull("exportReference")) //
+                .add(Restrictions.isNotNull("applicationExport.exportReference")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //

@@ -17,7 +17,6 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -38,43 +37,35 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceClientRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceProcessingRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimpleWithImages;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.IntegrationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ResourceRepresentationEnricher;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -87,13 +78,7 @@ public class ResourceController {
     private ResourceService resourceService;
 
     @Inject
-    private CommentService commentService;
-
-    @Inject
     private UserService userService;
-
-    @Inject
-    private ActionService actionService;
 
     @Inject
     private RoleService roleService;
@@ -105,72 +90,21 @@ public class ResourceController {
     private ApplicationService applicationService;
 
     @Inject
+    private IntegrationService integrationService;
+
+    @Inject
     private Mapper mapper;
 
     @Inject
     private ObjectMapper objectMapper;
 
-    @Inject
-    private ApplicationContext applicationContext;
-
     @Transactional
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public <T extends ResourceRepresentationExtended & ResourceClientRepresentation> ResourceRepresentationExtended getResource(
+    public <T extends ResourceRepresentationExtended> ResourceRepresentationExtended getResource(
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
-        User currentUser = userService.getCurrentUser();
         Resource resource = loadResource(resourceId, resourceDescriptor);
-
-        T representation = (T) mapper.map(resource, resourceDescriptor.getRepresentationType());
-        ResourceProcessingRepresentation processingRepresentation = new ResourceProcessingRepresentation();
-        representation.setResourceProcessing(processingRepresentation);
-
-        representation.setTimeline(commentService.getComments(resource, currentUser));
-
-        Set<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
-        if (permittedActions.isEmpty()) {
-            Action action = actionService.getViewEditAction(resource);
-            throw new WorkflowPermissionException(resource, action);
-        }
-
-        processingRepresentation.setActions(permittedActions);
-        processingRepresentation.setRecommendedNextStates(stateService.getRecommendedNextStates(resource));
-
-        List<StateRepresentation> secondaryStateRepresentations = Lists.newArrayList();
-        List<State> secondaryStates = stateService.getSecondaryResourceStates(resource);
-        for (State secondaryState : secondaryStates) {
-            secondaryStateRepresentations.add(mapper.map(secondaryState, StateRepresentation.class));
-        }
-
-        representation.setSecondaryStates(secondaryStateRepresentations);
-
-        List<User> users = userService.getResourceUsers(resource);
-        List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
-        for (User user : users) {
-            UserRepresentation userRepresentation = mapper.map(user, UserRepresentation.class);
-            Set<PrismRole> roles = Sets.newHashSet(roleService.getRolesForResource(resource, user));
-            userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
-        }
-
-        processingRepresentation.setUsers(userRolesRepresentations);
-        processingRepresentation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
-
-        Institution institution = resource.getInstitution();
-        Institution partner = resource.getPartner();
-        if (partner != null && !partner.sameAs(institution)) {
-            ResourceRepresentationSimple partnerRepresentation = mapper.map(partner, ResourceRepresentationSimple.class);
-            representation.setPartner(partnerRepresentation);
-        }
-
-        PrismScope resourceScope = resource.getResourceScope();
-        Class<? extends ResourceRepresentationEnricher<T>> enricher = (Class<? extends ResourceRepresentationEnricher<T>>) resourceScope
-                .getResourceRepresentationEnricher();
-        if (enricher != null) {
-            applicationContext.getBean(enricher).enrich(resourceScope, resourceId, representation);
-        }
-
-        return representation;
+        return integrationService.getResourceClientRepresentation(resource);
     }
 
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
@@ -198,7 +132,7 @@ public class ResourceController {
             representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCamelName() + "Id"));
 
             Set<ActionRepresentation> actionRepresentations = Sets.newLinkedHashSet();
-            for (ResourceListActionDTO actionDTO : rowDTO.getActions()) {
+            for (ActionDTO actionDTO : rowDTO.getActions()) {
                 actionRepresentations.add(mapper.map(actionDTO, ActionRepresentation.class));
             }
             representation.setActions(actionRepresentations);
@@ -209,7 +143,7 @@ public class ResourceController {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
                     Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
                     PropertyUtils.setSimpleProperty(representation, scopeName,
-                            new ResourceRepresentationSimple().withId(id).withTitle(title).withLogoImageId(logoImageId));
+                            new ResourceRepresentationSimpleWithImages().withId(id).withTitle(title).withLogoImage(logoImageId));
                 }
             }
 

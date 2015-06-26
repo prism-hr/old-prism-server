@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
 
 public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
     
@@ -21,7 +21,7 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
 
     private String listeningScore;
 
-    private FileRepresentation document;
+    private DocumentRepresentation document;
 
     public Integer getType() {
         return languageQualificationTypeMapping.getId();
@@ -87,11 +87,11 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         this.listeningScore = listeningScore;
     }
 
-    public FileRepresentation getDocument() {
+    public DocumentRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(DocumentRepresentation document) {
         this.document = document;
     }
 }

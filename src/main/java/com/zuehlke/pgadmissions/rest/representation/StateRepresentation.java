@@ -5,16 +5,16 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class StateRepresentation {
 
-    private PrismState id;
+    private PrismState state;
 
     private PrismStateGroup stateGroup;
 
-    public PrismState getId() {
-        return id;
+    public PrismState getState() {
+        return state;
     }
 
-    public void setId(PrismState id) {
-        this.id = id;
+    public void setState(PrismState state) {
+        this.state = state;
     }
 
     public PrismStateGroup getStateGroup() {
@@ -23,6 +23,16 @@ public class StateRepresentation {
 
     public void setStateGroup(PrismStateGroup stateGroup) {
         this.stateGroup = stateGroup;
+    }
+
+    public StateRepresentation withState(PrismState State) {
+        this.state = State;
+        return this;
+    }
+
+    public StateRepresentation withStateGroup(PrismStateGroup stateGroup) {
+        this.stateGroup = stateGroup;
+        return this;
     }
 
 }

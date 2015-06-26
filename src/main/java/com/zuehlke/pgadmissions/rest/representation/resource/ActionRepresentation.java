@@ -19,7 +19,9 @@ public class ActionRepresentation {
 
     private Set<PrismActionEnhancement> actionEnhancements = Sets.newLinkedHashSet();
 
-    private Set<NextStateRepresentation> nextStates = Sets.newLinkedHashSet();
+    private Set<SelectableStateRepresentation> nextStates = Sets.newLinkedHashSet();
+    
+    private Set<SelectableStateRepresentation> recommendedNextStates = Sets.newLinkedHashSet();
 
     public PrismAction getId() {
         return id;
@@ -33,27 +35,31 @@ public class ActionRepresentation {
         return raisesUrgentFlag;
     }
 
-    public final void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public final Boolean getPrimaryState() {
+    public Boolean getPrimaryState() {
         return primaryState;
     }
-
-    public final Set<PrismActionEnhancement> getActionEnhancements() {
-        return actionEnhancements;
-    }
-
-    public final void addActionEnhancements(Collection<PrismActionEnhancement> actionEnhancement) {
-        actionEnhancements.addAll(actionEnhancement);
-    }
-
-    public final void setPrimaryState(Boolean primaryState) {
+    
+    public void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
 
-    public ActionRepresentation withId(final PrismAction id) {
+    public Set<PrismActionEnhancement> getActionEnhancements() {
+        return actionEnhancements;
+    }
+    
+    public Set<SelectableStateRepresentation> getNextStates() {
+        return nextStates;
+    }
+
+    public Set<SelectableStateRepresentation> getRecommendedNextStates() {
+        return recommendedNextStates;
+    }
+
+    public ActionRepresentation withId(PrismAction id) {
         this.id = id;
         return this;
     }
@@ -67,13 +73,20 @@ public class ActionRepresentation {
         this.primaryState = primaryState;
         return this;
     }
-
-    public final Set<NextStateRepresentation> getNextStates() {
-        return nextStates;
+    
+    public ActionRepresentation addActionEnhancements(Collection<PrismActionEnhancement> actionEnhancement) {
+        actionEnhancements.addAll(actionEnhancement);
+        return this;
     }
-
-    public final void addNextStates(Collection<NextStateRepresentation> nextStates) {
+    
+    public ActionRepresentation addNextStates(Collection<SelectableStateRepresentation> nextStates) {
         this.nextStates.addAll(nextStates);
+        return this;
+    }
+    
+    public ActionRepresentation addRecommendedNextStates(Collection<SelectableStateRepresentation> recommendedNextStates) {
+        this.recommendedNextStates.addAll(recommendedNextStates);
+        return this;
     }
 
     @Override
@@ -89,30 +102,30 @@ public class ActionRepresentation {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ActionRepresentation other = (ActionRepresentation) object;
+        ActionRepresentation other = (ActionRepresentation) object;
         return Objects.equal(id, other.getId());
     }
 
-    public static class NextStateRepresentation {
+    public static class SelectableStateRepresentation {
 
         private PrismState state;
 
         private Boolean parallelizable;
 
-        public final PrismState getState() {
+        public PrismState getState() {
             return state;
         }
 
-        public final Boolean getParallelizable() {
+        public Boolean getParallelizable() {
             return parallelizable;
         }
 
-        public NextStateRepresentation withState(PrismState state) {
+        public SelectableStateRepresentation withState(PrismState state) {
             this.state = state;
             return this;
         }
 
-        public NextStateRepresentation withParallelizable(Boolean parallelizable) {
+        public SelectableStateRepresentation withParallelizable(Boolean parallelizable) {
             this.parallelizable = parallelizable;
             return this;
         }
@@ -130,7 +143,7 @@ public class ActionRepresentation {
             if (getClass() != object.getClass()) {
                 return false;
             }
-            final NextStateRepresentation other = (NextStateRepresentation) object;
+            SelectableStateRepresentation other = (SelectableStateRepresentation) object;
             return Objects.equal(state, other.getState());
         }
 

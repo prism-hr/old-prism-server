@@ -36,4 +36,19 @@ public class CommentAssignedUserRepresentation {
         this.roleTransitionType = roleTransitionType;
     }
     
+    public CommentAssignedUserRepresentation withUser(UserRepresentation user) {
+        this.user = user;
+        return this;
+    }
+    
+    public CommentAssignedUserRepresentation withRole(PrismRole role) {
+        this.role = role;
+        return this;
+    }
+    
+    public CommentAssignedUserRepresentation withRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
+        this.roleTransitionType = roleTransitionType;
+        return this;
+    }
+    
 }

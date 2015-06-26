@@ -1,25 +1,27 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.DepartmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimpleWithImages;
 
 public class AdvertRepresentation {
 
     private Integer id;
+
+    private UserRepresentation user;
+
+    private ResourceRepresentationSimpleWithImages resource;
+
+    private ResourceRepresentationSimpleWithImages institution;
+
+    private ResourceRepresentationSimpleWithImages partner;
+
+    private ResourceRepresentationSimpleWithImages department;
+
+    private PrismOpportunityType opportunityType;
 
     private String title;
 
@@ -35,55 +37,15 @@ public class AdvertRepresentation {
 
     private InstitutionAddressRepresentation address;
 
-    private String sponsorshipPurpose;
-
-    private BigDecimal sponsorshipTarget;
-
-    private BigDecimal sponsorshipSecured;
-
-    private Integer sponsorCount;
-
-    private List<ResourceSponsorRepresentation> topTenSponsors;
-
-    private FinancialDetailsRepresentation fee;
-
-    private FinancialDetailsRepresentation pay;
+    private AdvertFinancialDetailsRepresentation financialDetails;
 
     private AdvertClosingDateRepresentation closingDate;
 
     private List<AdvertClosingDateRepresentation> closingDates;
 
-    private UserRepresentation user;
+    private AdvertCategoriesRepresentation categories;
 
-    private PrismScope resourceScope;
-
-    private Integer resourceId;
-
-    private Set<PrismAdvertDomain> domains;
-
-    private Set<PrismAdvertIndustry> industries;
-
-    private Set<PrismAdvertFunction> functions;
-
-    private List<String> competencies;
-
-    private List<String> themes;
-
-    private PrismOpportunityType opportunityType;
-
-    private List<PrismStudyOption> studyOptions;
-
-    private List<PrismAction> partnerActions;
-
-    private List<String> locations;
-
-    private Integer backgroundImage;
-
-    private InstitutionAdvertRepresentation institution;
-
-    private InstitutionAdvertRepresentation partner;
-
-    private DepartmentRepresentation department;
+    private AdvertTargetsRepresentation targets;
 
     private String sequenceIdentifier;
 
@@ -93,6 +55,54 @@ public class AdvertRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public UserRepresentation getUser() {
+        return user;
+    }
+
+    public void setUser(UserRepresentation user) {
+        this.user = user;
+    }
+
+    public ResourceRepresentationSimpleWithImages getResource() {
+        return resource;
+    }
+
+    public void setResource(ResourceRepresentationSimpleWithImages resource) {
+        this.resource = resource;
+    }
+
+    public ResourceRepresentationSimpleWithImages getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(ResourceRepresentationSimpleWithImages institution) {
+        this.institution = institution;
+    }
+
+    public ResourceRepresentationSimpleWithImages getPartner() {
+        return partner;
+    }
+
+    public void setPartner(ResourceRepresentationSimpleWithImages partner) {
+        this.partner = partner;
+    }
+
+    public ResourceRepresentationSimpleWithImages getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(ResourceRepresentationSimpleWithImages department) {
+        this.department = department;
+    }
+
+    public PrismOpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public String getTitle() {
@@ -151,60 +161,12 @@ public class AdvertRepresentation {
         this.address = address;
     }
 
-    public String getSponsorshipPurpose() {
-        return sponsorshipPurpose;
+    public AdvertFinancialDetailsRepresentation getFinancialDetails() {
+        return financialDetails;
     }
 
-    public void setSponsorshipPurpose(String sponsorshipPurpose) {
-        this.sponsorshipPurpose = sponsorshipPurpose;
-    }
-
-    public BigDecimal getSponsorshipTarget() {
-        return sponsorshipTarget;
-    }
-
-    public void setSponsorshipTarget(BigDecimal sponsorshipTarget) {
-        this.sponsorshipTarget = sponsorshipTarget;
-    }
-
-    public BigDecimal getSponsorshipSecured() {
-        return sponsorshipSecured;
-    }
-
-    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
-        this.sponsorshipSecured = sponsorshipSecured;
-    }
-
-    public Integer getSponsorCount() {
-        return sponsorCount;
-    }
-
-    public void setSponsorCount(Integer sponsorCount) {
-        this.sponsorCount = sponsorCount;
-    }
-
-    public List<ResourceSponsorRepresentation> getTopTenSponsors() {
-        return topTenSponsors;
-    }
-
-    public void setTopTenSponsors(List<ResourceSponsorRepresentation> topTenSponsors) {
-        this.topTenSponsors = topTenSponsors;
-    }
-
-    public FinancialDetailsRepresentation getFee() {
-        return fee;
-    }
-
-    public void setFee(FinancialDetailsRepresentation fee) {
-        this.fee = fee;
-    }
-
-    public FinancialDetailsRepresentation getPay() {
-        return pay;
-    }
-
-    public void setPay(FinancialDetailsRepresentation pay) {
-        this.pay = pay;
+    public void setFinancialDetails(AdvertFinancialDetailsRepresentation financialDetails) {
+        this.financialDetails = financialDetails;
     }
 
     public AdvertClosingDateRepresentation getClosingDate() {
@@ -223,132 +185,20 @@ public class AdvertRepresentation {
         this.closingDates = closingDates;
     }
 
-    public UserRepresentation getUser() {
-        return user;
+    public AdvertCategoriesRepresentation getCategories() {
+        return categories;
     }
 
-    public void setUser(UserRepresentation user) {
-        this.user = user;
+    public void setCategories(AdvertCategoriesRepresentation categories) {
+        this.categories = categories;
     }
 
-    public PrismScope getResourceScope() {
-        return resourceScope;
+    public AdvertTargetsRepresentation getTargets() {
+        return targets;
     }
 
-    public void setResourceScope(PrismScope resourceScope) {
-        this.resourceScope = resourceScope;
-    }
-
-    public Integer getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public Set<PrismAdvertDomain> getDomains() {
-        return domains;
-    }
-
-    public void setDomains(Set<PrismAdvertDomain> domains) {
-        this.domains = domains;
-    }
-
-    public Set<PrismAdvertIndustry> getIndustries() {
-        return industries;
-    }
-
-    public void setIndustries(Set<PrismAdvertIndustry> industries) {
-        this.industries = industries;
-    }
-
-    public Set<PrismAdvertFunction> getFunctions() {
-        return functions;
-    }
-
-    public void setFunctions(Set<PrismAdvertFunction> functions) {
-        this.functions = functions;
-    }
-
-    public List<String> getCompetencies() {
-        return competencies;
-    }
-
-    public void setCompetencies(List<String> competencies) {
-        this.competencies = competencies;
-    }
-
-    public List<String> getThemes() {
-        return themes;
-    }
-
-    public void setThemes(List<String> themes) {
-        this.themes = themes;
-    }
-
-    public PrismOpportunityType getOpportunityType() {
-        return opportunityType;
-    }
-
-    public void setOpportunityType(PrismOpportunityType opportunityType) {
-        this.opportunityType = opportunityType;
-    }
-
-    public List<PrismStudyOption> getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
-        this.studyOptions = studyOptions;
-    }
-
-    public List<PrismAction> getPartnerActions() {
-        return partnerActions;
-    }
-
-    public void setPartnerActions(List<PrismAction> partnerActions) {
-        this.partnerActions = partnerActions;
-    }
-
-    public List<String> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
-    }
-
-    public InstitutionAdvertRepresentation getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(InstitutionAdvertRepresentation institution) {
-        this.institution = institution;
-    }
-
-    public InstitutionAdvertRepresentation getPartner() {
-        return partner;
-    }
-
-    public void setPartner(InstitutionAdvertRepresentation partner) {
-        this.partner = partner;
-    }
-
-    public Integer getBackgroundImage() {
-        return backgroundImage;
-    }
-
-    public void setBackgroundImage(Integer backgroundImage) {
-        this.backgroundImage = backgroundImage;
-    }
-
-    public DepartmentRepresentation getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentRepresentation department) {
-        this.department = department;
+    public void setTargets(AdvertTargetsRepresentation targets) {
+        this.targets = targets;
     }
 
     public String getSequenceIdentifier() {
@@ -357,6 +207,106 @@ public class AdvertRepresentation {
 
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    public AdvertRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public AdvertRepresentation withUser(UserRepresentation user) {
+        this.user = user;
+        return this;
+    }
+
+    public AdvertRepresentation withResource(ResourceRepresentationSimpleWithImages resource) {
+        this.resource = resource;
+        return this;
+    }
+
+    public AdvertRepresentation withInstitution(ResourceRepresentationSimpleWithImages institution) {
+        this.resource = institution;
+        return this;
+    }
+
+    public AdvertRepresentation withPartner(ResourceRepresentationSimpleWithImages partner) {
+        this.partner = partner;
+        return this;
+    }
+
+    public AdvertRepresentation withDepartment(ResourceRepresentationSimpleWithImages department) {
+        this.department = department;
+        return this;
+    }
+
+    public AdvertRepresentation withOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+        return this;
+    }
+
+    public AdvertRepresentation withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public AdvertRepresentation withSummary(String summary) {
+        this.summary = summary;
+        return this;
+    }
+
+    public AdvertRepresentation withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public AdvertRepresentation withHomepage(String homepage) {
+        this.homepage = homepage;
+        return this;
+    }
+
+    public AdvertRepresentation withApplyHomepage(String applyHomepage) {
+        this.applyHomepage = applyHomepage;
+        return this;
+    }
+
+    public AdvertRepresentation withTelephone(String telephone) {
+        this.telephone = telephone;
+        return this;
+    }
+
+    public AdvertRepresentation withAddress(InstitutionAddressRepresentation address) {
+        this.address = address;
+        return this;
+    }
+
+    public AdvertRepresentation withFinancialDetails(AdvertFinancialDetailsRepresentation financialDetails) {
+        this.financialDetails = financialDetails;
+        return this;
+    }
+
+    public AdvertRepresentation withClosingDate(AdvertClosingDateRepresentation closingDate) {
+        this.closingDate = closingDate;
+        return this;
+    }
+
+    public AdvertRepresentation withClosingDates(List<AdvertClosingDateRepresentation> closingDates) {
+        this.closingDates = closingDates;
+        return this;
+    }
+
+    public AdvertRepresentation withCategories(AdvertCategoriesRepresentation categories) {
+        this.categories = categories;
+        return this;
+    }
+
+    public AdvertRepresentation withTargets(AdvertTargetsRepresentation targets) {
+        this.targets = targets;
+        return this;
+    }
+
+    public AdvertRepresentation withSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+        return this;
     }
 
 }

@@ -10,8 +10,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 
 public abstract class ResourceParent extends Resource {
 
-    public abstract String getTitle();
-
     public abstract void setTitle(String title);
 
     public abstract DateTime getUpdatedTimestampSitemap();

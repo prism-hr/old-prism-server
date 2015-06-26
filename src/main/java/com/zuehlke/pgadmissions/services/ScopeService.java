@@ -30,8 +30,8 @@ public class ScopeService {
         return scopeDAO.getScopesDescending();
     }
 
-    public <T extends Resource> List<PrismScope> getParentScopesDescending(PrismScope scopeId) {
-        return scopeDAO.getParentScopesDescending(scopeId);
+    public <T extends Resource> List<PrismScope> getParentScopesDescending(PrismScope prismScope) {
+        return scopeDAO.getParentScopesDescending(prismScope);
     }
 
 }

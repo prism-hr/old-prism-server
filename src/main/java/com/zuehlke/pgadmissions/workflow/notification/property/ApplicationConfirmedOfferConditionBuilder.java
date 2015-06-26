@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.workflow.notification.property;
 
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
@@ -10,7 +10,7 @@ public class ApplicationConfirmedOfferConditionBuilder implements NotificationPr
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        CommentApplicationOfferDetail offerDetail = propertyLoader.getNotificationDefinitionModelDTO().getComment().getOfferDetail();
+        CommentOfferDetail offerDetail = propertyLoader.getNotificationDefinitionModelDTO().getComment().getOfferDetail();
         return offerDetail == null ? null : offerDetail.getAppointmentConditions();
     }
 

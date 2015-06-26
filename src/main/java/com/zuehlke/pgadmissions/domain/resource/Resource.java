@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -45,20 +46,26 @@ public abstract class Resource implements UniqueEntity {
     public abstract Institution getPartner();
 
     public abstract void setPartner(Institution partner);
+    
+    public abstract Department getDepartment();
+
+    public abstract void setDepartment(Department department);
 
     public abstract Program getProgram();
 
     public abstract void setProgram(Program program);
 
     public abstract Project getProject();
+    
+    public abstract void setProject(Project project);
 
     public abstract Advert getAdvert();
 
     public abstract void setAdvert(Advert advert);
 
-    public abstract void setProject(Project project);
-
     public abstract Application getApplication();
+    
+    public abstract String getTitle();
 
     public abstract State getState();
 

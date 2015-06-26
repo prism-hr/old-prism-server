@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
 
 public class ApplicationFundingRepresentation extends ApplicationSectionRepresentation {
 
@@ -13,7 +13,7 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
 
     private String sponsor;
 
-    private FileRepresentation document;
+    private DocumentRepresentation document;
 
     private String description;
 
@@ -55,11 +55,11 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
         this.sponsor = sponsor;
     }
 
-    public FileRepresentation getDocument() {
+    public DocumentRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(DocumentRepresentation document) {
         this.document = document;
     }
 

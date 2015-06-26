@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.department.Department;
 
 @Entity
 @Table(name = "ADVERT_DEPARTMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "department_id" }) })
-public class AdvertDepartment extends AdvertTarget {
+public class AdvertDepartment extends AdvertTarget<Department> {
 
     @Id
     @GeneratedValue
@@ -71,8 +71,18 @@ public class AdvertDepartment extends AdvertTarget {
     }
 
     @Override
-    public Object getValue() {
+    public Department getValue() {
         return department;
+    }
+
+    @Override
+    public void setValue(Department value) {
+        setDepartment(value);
+    }
+    
+    @Override
+    public String getTitle() {
+        return department.getTitle();
     }
 
     @Override

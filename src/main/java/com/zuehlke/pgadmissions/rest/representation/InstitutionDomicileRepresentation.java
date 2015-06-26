@@ -31,5 +31,20 @@ public class InstitutionDomicileRepresentation {
     public void setCurrency(String currency) {
         this.currency = currency;
     }
+    
+    public InstitutionDomicileRepresentation withId(String id) {
+        this.id = id;
+        return this;
+    }
+    
+    public InstitutionDomicileRepresentation withName(String name) {
+        this.name = name;
+        return this;
+    }
+    
+    public InstitutionDomicileRepresentation withCurrency(String currency) {
+        this.currency = currency;
+        return this;
+    }
 
 }

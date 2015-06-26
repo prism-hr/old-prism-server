@@ -14,12 +14,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
 
 @Entity
 @Table(name = "IMPORTED_SUBJECT_AREA")
-public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMapping> {
+public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMapping> implements TargetEntity {
 
     @Id
     @GeneratedValue

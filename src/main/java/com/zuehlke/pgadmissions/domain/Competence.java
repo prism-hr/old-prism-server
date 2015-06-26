@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Table
 @Entity(name = "COMPETENCE")
-public class Competence implements UniqueEntity {
+public class Competence implements UniqueEntity, TargetEntity {
 
     @Id
     @GeneratedValue
@@ -42,6 +42,16 @@ public class Competence implements UniqueEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public Competence withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+    
+    public Competence withDescription(String description) {
+        this.description = description;
+        return this;
     }
 
     @Override

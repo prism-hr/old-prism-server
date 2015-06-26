@@ -50,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
@@ -77,10 +76,10 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
@@ -403,7 +402,7 @@ public class ResourceService {
         boolean hasRedactions = actionService.hasRedactions(resourceScope, assignedResources, user);
 
         if (!assignedResources.isEmpty()) {
-            final HashMultimap<Integer, ResourceListActionDTO> creations = actionService.getCreateResourceActions(resourceScope, assignedResources);
+            final HashMultimap<Integer, ActionDTO> creations = actionService.getCreateResourceActions(resourceScope, assignedResources);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds, assignedResources, filter,
                     lastSequenceIdentifier, maxRecords, hasRedactions);
 
@@ -440,13 +439,11 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) throws Exception {
-        switch (resource.getResourceScope()) {
-        case APPLICATION:
+        if (resource.getResourceScope().equals(PrismScope.APPLICATION)) {
             return applicationService.getWorkflowPropertyConfigurations((Application) resource);
-        default:
-            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                    PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
         }
+        return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
     }
 
     public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) throws Exception {
@@ -517,31 +514,6 @@ public class ResourceService {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
     }
 
-    public List<PrismAction> getPartnerActions(ResourceParent resource) {
-        List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
-        List<ResourceCondition> actionConditions = resourceDAO
-                .getResourceAttributes(resource, ResourceCondition.class, "actionCondition", null);
-
-        PrismScope lastResourceScope = null;
-        for (ResourceCondition actionCondition : actionConditions) {
-            PrismScope thisResourceScope = actionCondition.getResource().getResourceScope();
-            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
-                break;
-            }
-            filteredActionConditions.add(actionCondition.getActionCondition());
-            lastResourceScope = thisResourceScope;
-        }
-
-        if (lastResourceScope != null) {
-            Resource lastResource = resource.getEnclosingResource(lastResourceScope);
-            List<PrismAction> partnerActions = actionService.getPartnerActions(lastResource, filteredActionConditions);
-            return partnerActions;
-        }
-
-        return Lists.newArrayList();
-
-    }
-
     public ResourceStudyOption getStudyOption(ResourceOpportunity resource, ImportedStudyOption studyOption) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
             return resourceDAO.getResourceAttributeStrict(resource, ResourceStudyOption.class, "studyOption", studyOption);
@@ -577,8 +549,8 @@ public class ResourceService {
         return resourceDAO.getFirstStudyOptionInstance(resource, studyOption);
     }
 
-    public List<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
-        List<ResourceStudyLocation> filteredStudylocations = Lists.newLinkedList();
+    public List<String> getStudyLocations(ResourceParent resource) {
+        List<String> filteredStudylocations = Lists.newLinkedList();
         List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource, ResourceStudyLocation.class, "studyLocation", null);
 
         PrismScope lastResourceScope = null;
@@ -587,11 +559,19 @@ public class ResourceService {
             if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
                 break;
             }
-            filteredStudylocations.add(studyLocation);
+            filteredStudylocations.add(studyLocation.getStudyLocation());
             lastResourceScope = thisResourceScope;
         }
 
         return filteredStudylocations;
+    }
+
+    public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName) {
+        return resourceDAO.getResourceAttributes(resource, attributeClass, attributeName, null);
+    }
+
+    public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
+        return resourceDAO.getResourceAttributes(resource, attributeClass, attributeName, orderAttributeName);
     }
 
     public void setResourceAttributes(ResourceOpportunity resource, OpportunityDTO resourceDTO) {
@@ -786,12 +766,16 @@ public class ResourceService {
         return plotsRepresentation;
     }
 
+    public Integer getLogoImage(Resource resource) {
+        return resource.getInstitution().getLogoImage().getId();
+    }
+
     public Integer getBackgroundImage(ResourceParent resource) {
         Document backgroundImage = resource.getAdvert().getBackgroundImage();
         if (backgroundImage == null) {
-            Resource parent = resource.getParentResource();
-            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
-                return getBackgroundImage((ResourceParent) parent);
+            Resource parentResource = resource.getParentResource();
+            if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
+                return getBackgroundImage((ResourceParent) resource.getParentResource());
             }
             return null;
         }

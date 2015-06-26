@@ -6,16 +6,16 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ResourceOpportunityRepresentation extends ResourceParentRepresentation {
-    
+
     private PrismOpportunityType opportunityType;
+
+    private List<PrismStudyOption> studyOptions;
+
+    private List<String> studyLocations;
 
     private Integer durationMinimum;
 
     private Integer durationMaximum;
-
-    private List<PrismStudyOption> studyOptions;
-    
-    private ResourceProcessingRepresentation resourceProcessing;
 
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
@@ -23,6 +23,22 @@ public class ResourceOpportunityRepresentation extends ResourceParentRepresentat
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
+    }
+
+    public List<String> getStudyLocations() {
+        return studyLocations;
+    }
+
+    public void setStudyLocations(List<String> studyLocations) {
+        this.studyLocations = studyLocations;
     }
 
     public Integer getDurationMinimum() {
@@ -41,20 +57,4 @@ public class ResourceOpportunityRepresentation extends ResourceParentRepresentat
         this.durationMaximum = durationMaximum;
     }
 
-    public List<PrismStudyOption> getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
-        this.studyOptions = studyOptions;
-    }
-
-    public ResourceProcessingRepresentation getResourceProcessing() {
-        return resourceProcessing;
-    }
-
-    public void setResourceProcessing(ResourceProcessingRepresentation resourceProcessing) {
-        this.resourceProcessing = resourceProcessing;
-    }
-    
 }

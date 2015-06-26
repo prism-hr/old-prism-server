@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
@@ -32,7 +31,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
-public class ApplicationRepresentationEnricher implements ResourceRepresentationEnricher<ApplicationClientRepresentation> {
+public class ApplicationRepresentationEnricher implements ResourceRepresentationEnricher<Application, ApplicationClientRepresentation> {
 
     @Inject
     private ActionService actionService;
@@ -56,21 +55,19 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
     private Mapper mapper;
 
     @Override
-    public void enrich(PrismScope resourceScope, Integer resourceId, ApplicationClientRepresentation representation) throws Exception {
-        Application application = applicationService.getById(resourceId);
-
+    public void enrich(Application resource, ApplicationClientRepresentation representation) throws Exception {
         HashMap<Integer, ApplicationRefereeRepresentation> refereeRepresentations = Maps.newHashMap();
         for (ApplicationRefereeRepresentation refereeRepresentation : representation.getReferees()) {
             refereeRepresentations.put(refereeRepresentation.getId(), refereeRepresentation);
         }
 
-        for (ApplicationReferee referee : application.getReferees()) {
+        for (ApplicationReferee referee : resource.getReferees()) {
             Comment reference = referee.getComment();
             refereeRepresentations.get(referee.getId()).setCommentId(reference == null ? null : reference.getId());
         }
 
-        List<UserSelectionDTO> interested = userService.getUsersInterestedInApplication(application);
-        List<UserSelectionDTO> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
+        List<UserSelectionDTO> interested = userService.getUsersInterestedInApplication(resource);
+        List<UserSelectionDTO> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(resource, interested);
         List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
         List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
 
@@ -85,14 +82,14 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
         representation.setUsersInterestedInApplication(interestedRepresentations);
         representation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
-        representation.setInterview(commentService.getInterview(application));
+        representation.setInterview(commentService.getInterview(resource));
 
-        representation.setOfferRecommendation(commentService.getOfferRecommendation(application));
-        representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
+        representation.setOfferRecommendation(commentService.getOfferRecommendation(resource));
+        representation.setAssignedSupervisors(commentService.getApplicationSupervisors(resource));
 
-        representation.setPossibleThemes(advertService.getAdvertThemes(application));
+        representation.setPossibleThemes(advertService.getAdvertThemes(resource));
 
-        ResourceParent parent = (ResourceParent) application.getParentResource();
+        ResourceParent parent = (ResourceParent) resource.getParentResource();
 
         List<ResourceStudyLocation> studyLocations = resourceService.getStudyLocations(parent);
         List<String> availableStudyLocations = Lists.newArrayListWithCapacity(studyLocations.size());
@@ -110,11 +107,11 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
             representation.setAvailableStudyOptions(availableStudyOptions);
         }
 
-        if (!actionService.hasRedactions(application, userService.getCurrentUser())) {
-            representation.setApplicationRatingAverage(application.getApplicationRatingAverage());
+        if (!actionService.hasRedactions(resource, userService.getCurrentUser())) {
+            representation.setApplicationRatingAverage(resource.getApplicationRatingAverage());
         }
 
-        representation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
+        representation.setResourceSummary(applicationService.getApplicationSummary(resource.getId()));
     }
 
 }

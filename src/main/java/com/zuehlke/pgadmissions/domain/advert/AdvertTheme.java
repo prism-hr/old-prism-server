@@ -11,7 +11,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "ADVERT_THEME", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }) })
-public class AdvertTheme extends AdvertAttribute {
+public class AdvertTheme extends AdvertAttribute<String> {
 
     @Id
     @GeneratedValue
@@ -53,8 +53,13 @@ public class AdvertTheme extends AdvertAttribute {
     }
 
     @Override
-    public Object getValue() {
+    public String getValue() {
         return theme;
+    }
+
+    @Override
+    public void setValue(String value) {
+        setTheme(value);
     }
 
     @Override

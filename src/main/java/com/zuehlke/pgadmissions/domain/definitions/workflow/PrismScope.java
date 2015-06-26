@@ -20,9 +20,6 @@ import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
 import com.zuehlke.pgadmissions.workflow.resource.representation.ApplicationRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.InstitutionRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ProgramRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ProjectRepresentationEnricher;
 import com.zuehlke.pgadmissions.workflow.resource.representation.ResourceRepresentationEnricher;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.InstitutionSearchRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProgramSearchRepresentationBuilder;
@@ -58,17 +55,17 @@ public enum PrismScope {
     INSTITUTION(Institution.class, "IN", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").getAll(), null, //
             InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, null, null, null, //
-            InstitutionSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, InstitutionRepresentationEnricher.class), //
+            InstitutionSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, null), //
     PROGRAM(Program.class, "PM", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
                     .add("program", "title").getAll(), null, //
             ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, ProgramPreprocessor.class, null, ProgramPostprocessor.class, //
-            ProgramSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProgramRepresentationEnricher.class), //
+            ProgramSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, null), //
     PROJECT(Project.class, "PT", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
                     .add("program", "title").add("project", "title").getAll(), null, //
             ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, ProjectPreprocessor.class, null, ProjectPostprocessor.class, //
-            ProjectSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProjectRepresentationEnricher.class), //
+            ProjectSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, null), //
     APPLICATION(Application.class, "AN", //
             new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
                     .add("program", "title").add("project", "title").getAll(), null, //
@@ -107,7 +104,7 @@ public enum PrismScope {
 
     private Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder;
 
-    private Class<? extends ResourceRepresentationEnricher<?>> resourceRepresentationEnricher;
+    private Class<? extends ResourceRepresentationEnricher<?, ?>> resourceRepresentationEnricher;
 
     private PrismScope(Class<? extends Resource> resourceClass, String shortCode, HashMultimap<String, String> consoleListCustomColumns,
             HashMultimap<String, String> reportListCustomColumns, Class<? extends ActionExecutor> actionExecutor,
@@ -115,7 +112,7 @@ public enum PrismScope {
             Class<? extends ResourceProcessor> resourcePreprocessor, Class<? extends ResourceProcessor> resourceProcessor,
             Class<? extends ResourceProcessor> resourcePostprocessor, Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder,
             Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder,
-            Class<? extends ResourceRepresentationEnricher<?>> resourceRepresentationEnricher) {
+            Class<? extends ResourceRepresentationEnricher<?, ?>> resourceRepresentationEnricher) {
         this.resourceClass = resourceClass;
         this.shortCode = shortCode;
         this.consoleListCustomColumns = consoleListCustomColumns;
@@ -179,7 +176,7 @@ public enum PrismScope {
         return socialRepresentationBuilder;
     }
 
-    public Class<? extends ResourceRepresentationEnricher<?>> getResourceRepresentationEnricher() {
+    public Class<? extends ResourceRepresentationEnricher<?, ?>> getResourceRepresentationEnricher() {
         return resourceRepresentationEnricher;
     }
 

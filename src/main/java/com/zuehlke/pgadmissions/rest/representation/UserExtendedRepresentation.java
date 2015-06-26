@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
 
 public class UserExtendedRepresentation extends UserRepresentation {
 
-    private FileRepresentation portraitDocument;
+    private DocumentRepresentation portraitDocument;
 
     private Boolean sendApplicationRecommendationNotification;
 
@@ -24,11 +24,11 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     private PrismRoleCategory requiredFeedbackRoleCategory;
 
-    public FileRepresentation getPortraitDocument() {
+    public DocumentRepresentation getPortraitDocument() {
         return portraitDocument;
     }
 
-    public void setPortraitDocument(FileRepresentation portraitDocument) {
+    public void setPortraitDocument(DocumentRepresentation portraitDocument) {
         this.portraitDocument = portraitDocument;
     }
 

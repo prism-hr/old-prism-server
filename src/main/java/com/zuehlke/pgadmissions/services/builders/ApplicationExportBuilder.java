@@ -65,8 +65,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.imported.ImportedCountry;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
@@ -330,10 +330,10 @@ public class ApplicationExportBuilder {
 
         Comment offerRecommendationComment = applicationExportDTO.getOfferRecommendationComment();
         if (offerRecommendationComment != null) {
-            CommentApplicationPositionDetail positionDetail = offerRecommendationComment.getPositionDetail();
+            CommentPositionDetail positionDetail = offerRecommendationComment.getPositionDetail();
             applicationTp.setAtasStatement(positionDetail == null ? null : positionDetail.getPositionDescription());
 
-            CommentApplicationOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
+            CommentOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
             if (offerDetail != null) {
                 String none = propertyLoader.load(SYSTEM_NONE);
                 LocalDate positionProvisionalStartDate = offerDetail.getPositionProvisionalStartDate();

@@ -23,4 +23,15 @@ public class ResourceConditionRepresentation {
     public void setPartnerMode(Boolean partnerMode) {
         this.partnerMode = partnerMode;
     }
+    
+    public ResourceConditionRepresentation withActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
+        return this;
+    }
+    
+    public ResourceConditionRepresentation withPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+        return this;
+    }
+    
 }

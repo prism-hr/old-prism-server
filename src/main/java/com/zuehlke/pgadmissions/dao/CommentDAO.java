@@ -23,10 +23,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -173,7 +173,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, PrismStateGroup stateGroupId, List<Comment> exclusions) {
+    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
@@ -181,7 +181,7 @@ public class CommentDAO {
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.eq("action.visibleAction", true)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("state.stateGroup.id", stateGroupId)) //
+                        .add(Restrictions.eq("state.stateGroup", stateGroup)) //
                         .add(Restrictions.isNull("state"))) //
                 .add(Restrictions.ge("createdTimestamp", start.getCreatedTimestamp()));
 

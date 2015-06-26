@@ -4,17 +4,7 @@ import java.util.List;
 
 public class ResourceAttributesRepresentation {
 
-    private List<ResourceConditionRepresentation> resourceConditions;
-
     private List<String> studyLocations;
-
-    public List<ResourceConditionRepresentation> getResourceConditions() {
-        return resourceConditions;
-    }
-
-    public void setResourceConditions(List<ResourceConditionRepresentation> resourceConditions) {
-        this.resourceConditions = resourceConditions;
-    }
 
     public List<String> getStudyLocations() {
         return studyLocations;
@@ -23,4 +13,10 @@ public class ResourceAttributesRepresentation {
     public void setStudyLocations(List<String> studyLocations) {
         this.studyLocations = studyLocations;
     }
+    
+    public ResourceAttributesRepresentation withStudyLocations(List<String> studyLocations) {
+        this.studyLocations = studyLocations;
+        return this;
+    }
+
 }

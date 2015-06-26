@@ -14,10 +14,6 @@ public class ResourceRepresentationSimple {
 
     private String title;
 
-    private Integer logoImageId;
-
-    private Integer backgroundImageId;
-
     public PrismScope getResourceScope() {
         return resourceScope;
     }
@@ -58,22 +54,6 @@ public class ResourceRepresentationSimple {
         this.title = title;
     }
 
-    public Integer getLogoImageId() {
-        return logoImageId;
-    }
-
-    public void setLogoImageId(Integer logoImageId) {
-        this.logoImageId = logoImageId;
-    }
-
-    public Integer getBackgroundImageId() {
-        return backgroundImageId;
-    }
-
-    public void setBackgroundImageId(Integer backgroundImageId) {
-        this.backgroundImageId = backgroundImageId;
-    }
-
     public ResourceRepresentationSimple withResourceScope(PrismScope resourceScope) {
         this.resourceScope = resourceScope;
         return this;
@@ -96,16 +76,6 @@ public class ResourceRepresentationSimple {
     
     public ResourceRepresentationSimple withTitle(String title) {
         this.title = title;
-        return this;
-    }
-    
-    public ResourceRepresentationSimple withLogoImageId(Integer logoImageId) {
-        this.logoImageId = logoImageId;
-        return this;
-    }
-    
-    public ResourceRepresentationSimple withBackgroundImageId(Integer backgroundImageId) {
-        this.backgroundImageId = backgroundImageId;
         return this;
     }
     

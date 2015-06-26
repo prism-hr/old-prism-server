@@ -28,8 +28,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -122,38 +120,12 @@ public class Advert extends ResourceParentAttribute {
 
     @OneToOne(mappedBy = "advert")
     private Project project;
-
-    @OneToMany(mappedBy = "advert")
-    @OrderBy(clause = "industry")
-    private Set<AdvertIndustry> industries = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "advert")
-    @OrderBy(clause = "function")
-    private Set<AdvertFunction> functions = Sets.newHashSet();
-
-    @OrderBy(clause = "theme")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertTheme> themes = Sets.newHashSet();
-
-    @OrderBy(clause = "competence")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertCompetence> competences = Sets.newHashSet();
-
-    @OrderBy(clause = "institution")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertInstitution> institutions = Sets.newHashSet();
-
-    @OrderBy(clause = "department")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertDepartment> departments = Sets.newHashSet();
-
-    @OrderBy(clause = "program")
-    @OneToMany(mappedBy = "advert")
-    private Set<ImportedProgram> programs = Sets.newHashSet();
-
-    @OrderBy(clause = "subjectArea")
-    @OneToMany(mappedBy = "advert")
-    private Set<ImportedSubjectArea> subjectAreas = Sets.newHashSet();
+    
+    @Embedded
+    private AdvertCategories categories;
+    
+    @Embedded
+    private AdvertTargets targets;
 
     @OrderBy(clause = "closing_date desc")
     @OneToMany(mappedBy = "advert")
@@ -304,57 +276,21 @@ public class Advert extends ResourceParentAttribute {
     public void setProject(Project project) {
         this.project = project;
     }
-
-    public final Set<AdvertIndustry> getIndustries() {
-        return industries;
+    
+    public AdvertCategories getCategories() {
+        return categories;
     }
 
-    public final Set<AdvertFunction> getFunctions() {
-        return functions;
+    public void setCategories(AdvertCategories categories) {
+        this.categories = categories;
     }
 
-    public final Set<AdvertTheme> getThemes() {
-        return themes;
+    public AdvertTargets getTargets() {
+        return targets;
     }
 
-    public Set<AdvertCompetence> getCompetences() {
-        return competences;
-    }
-
-    public void setCompetences(Set<AdvertCompetence> competences) {
-        this.competences = competences;
-    }
-
-    public Set<AdvertInstitution> getInstitutions() {
-        return institutions;
-    }
-
-    public void setInstitutions(Set<AdvertInstitution> institutions) {
-        this.institutions = institutions;
-    }
-
-    public Set<AdvertDepartment> getDepartments() {
-        return departments;
-    }
-
-    public void setDepartments(Set<AdvertDepartment> departments) {
-        this.departments = departments;
-    }
-
-    public Set<ImportedProgram> getPrograms() {
-        return programs;
-    }
-
-    public void setPrograms(Set<ImportedProgram> programs) {
-        this.programs = programs;
-    }
-
-    public Set<ImportedSubjectArea> getSubjectAreas() {
-        return subjectAreas;
-    }
-
-    public void setSubjectAreas(Set<ImportedSubjectArea> subjectAreas) {
-        this.subjectAreas = subjectAreas;
+    public void setTargets(AdvertTargets targets) {
+        this.targets = targets;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {

@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 
 @Entity
 @Table(name = "ADVERT_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "imported_program_id" }) })
-public class AdvertProgram extends AdvertTarget {
+public class AdvertProgram extends AdvertTarget<ImportedProgram> {
 
     @Id
     @GeneratedValue
@@ -71,8 +71,18 @@ public class AdvertProgram extends AdvertTarget {
     }
 
     @Override
-    public Object getValue() {
+    public ImportedProgram getValue() {
         return program;
+    }
+    
+    @Override
+    public void setValue(ImportedProgram value) {
+        setProgram(value);
+    }
+    
+    @Override
+    public String getTitle() {
+        return program.getName();
     }
 
     @Override

@@ -1,46 +1,46 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
 
 public class ApplicationDocumentRepresentation extends ApplicationSectionRepresentation {
 
-    private FileRepresentation personalStatement;
+    private DocumentRepresentation personalStatement;
 
-    private FileRepresentation cv;
+    private DocumentRepresentation cv;
 
-    private FileRepresentation coveringLetter;
+    private DocumentRepresentation coveringLetter;
     
-    private FileRepresentation researchStatement;
+    private DocumentRepresentation researchStatement;
 
-    public FileRepresentation getPersonalStatement() {
+    public DocumentRepresentation getPersonalStatement() {
         return personalStatement;
     }
 
-    public void setPersonalStatement(FileRepresentation personalStatement) {
+    public void setPersonalStatement(DocumentRepresentation personalStatement) {
         this.personalStatement = personalStatement;
     }
 
-    public FileRepresentation getCv() {
+    public DocumentRepresentation getCv() {
         return cv;
     }
 
-    public void setCv(FileRepresentation cv) {
+    public void setCv(DocumentRepresentation cv) {
         this.cv = cv;
     }
 
-    public FileRepresentation getCoveringLetter() {
+    public DocumentRepresentation getCoveringLetter() {
         return coveringLetter;
     }
 
-    public void setCoveringLetter(FileRepresentation coveringLetter) {
+    public void setCoveringLetter(DocumentRepresentation coveringLetter) {
         this.coveringLetter = coveringLetter;
     }
 
-    public final FileRepresentation getResearchStatement() {
+    public final DocumentRepresentation getResearchStatement() {
         return researchStatement;
     }
 
-    public final void setResearchStatement(FileRepresentation researchStatement) {
+    public final void setResearchStatement(DocumentRepresentation researchStatement) {
         this.researchStatement = researchStatement;
     }
     

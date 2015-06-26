@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -186,7 +186,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     }
 
     private void synchronizeOfferRecommendation(Application application, Comment comment) {
-        CommentApplicationOfferDetail offerDetail = comment.getOfferDetail();
+        CommentOfferDetail offerDetail = comment.getOfferDetail();
         if (offerDetail != null) {
             application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
             application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);

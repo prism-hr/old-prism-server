@@ -68,7 +68,7 @@ public class ResourceListRowDTO {
 
     private String sequenceIdentifier;
 
-    private Set<ResourceListActionDTO> actions;
+    private Set<ActionDTO> actions;
     
 
     public Integer getSystemId() {
@@ -295,11 +295,11 @@ public class ResourceListRowDTO {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Set<ResourceListActionDTO> getActions() {
+    public Set<ActionDTO> getActions() {
         return actions;
     }
 
-    public void setActions(Set<ResourceListActionDTO> actions) {
+    public void setActions(Set<ActionDTO> actions) {
         this.actions = actions;
     }
 

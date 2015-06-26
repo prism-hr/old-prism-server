@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.SelectableStateRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -247,7 +247,7 @@ public class StateDAO {
                 .list();
     }
 
-    public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
+    public List<SelectableStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("transitionState.id"), "state") //
@@ -263,8 +263,8 @@ public class StateDAO {
 
         appendImportedResourceConstraint(criteria, importedResource);
 
-        return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
-                .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
+        return (List<SelectableStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
+                .setResultTransformer(Transformers.aliasToBean(SelectableStateRepresentation.class)) //
                 .list();
     }
 

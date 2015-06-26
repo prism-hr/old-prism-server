@@ -1,73 +1,28 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-public class InstitutionAddressRepresentation {
+import java.math.BigDecimal;
 
-    private String domicile;
+import com.zuehlke.pgadmissions.rest.representation.AddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 
-    private String addressLine1;
+public class InstitutionAddressRepresentation extends AddressRepresentation {
 
-    private String addressLine2;
-
-    private String addressTown;
-
-    private String addressRegion;
-
-    private String addressCode;
+    private InstitutionDomicileRepresentation domicile;
 
     private String googleId;
 
-    private String locationX;
+    private BigDecimal locationX;
 
-    private String locationY;
+    private BigDecimal locationY;
 
     private String locationString;
 
-    public String getDomicile() {
+    public InstitutionDomicileRepresentation getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(String domicile) {
+    public void setDomicile(InstitutionDomicileRepresentation domicile) {
         this.domicile = domicile;
-    }
-
-    public String getAddressLine1() {
-        return addressLine1;
-    }
-
-    public void setAddressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
-    }
-
-    public String getAddressLine2() {
-        return addressLine2;
-    }
-
-    public void setAddressLine2(String addressLine2) {
-        this.addressLine2 = addressLine2;
-    }
-
-    public String getAddressTown() {
-        return addressTown;
-    }
-
-    public void setAddressTown(String addressTown) {
-        this.addressTown = addressTown;
-    }
-
-    public String getAddressRegion() {
-        return addressRegion;
-    }
-
-    public void setAddressRegion(String addressRegion) {
-        this.addressRegion = addressRegion;
-    }
-
-    public String getAddressCode() {
-        return addressCode;
-    }
-
-    public void setAddressCode(String addressCode) {
-        this.addressCode = addressCode;
     }
 
     public String getGoogleId() {
@@ -78,19 +33,19 @@ public class InstitutionAddressRepresentation {
         this.googleId = googleId;
     }
 
-    public String getLocationX() {
+    public BigDecimal getLocationX() {
         return locationX;
     }
 
-    public void setLocationX(String locationX) {
+    public void setLocationX(BigDecimal locationX) {
         this.locationX = locationX;
     }
 
-    public String getLocationY() {
+    public BigDecimal getLocationY() {
         return locationY;
     }
 
-    public void setLocationY(String locationY) {
+    public void setLocationY(BigDecimal locationY) {
         this.locationY = locationY;
     }
 
@@ -100,6 +55,41 @@ public class InstitutionAddressRepresentation {
 
     public void setLocationString(String locationString) {
         this.locationString = locationString;
+    }
+
+    public InstitutionAddressRepresentation withDomicile(InstitutionDomicileRepresentation domicile) {
+        this.domicile = domicile;
+        return this;
+    }
+
+    public InstitutionAddressRepresentation withAddressLine1(String addressLine1) {
+        setAddressLine1(addressLine1);
+        return this;
+    }
+
+    public InstitutionAddressRepresentation withAddressLine2(String addressLine2) {
+        setAddressLine2(addressLine2);
+        return this;
+    }
+
+    public InstitutionAddressRepresentation withAddressTown(String addressTown) {
+        setAddressTown(addressTown);
+        return this;
+    }
+
+    public InstitutionAddressRepresentation withAddressRegion(String addressRegion) {
+        setAddressRegion(addressRegion);
+        return this;
+    }
+
+    public InstitutionAddressRepresentation withAddressCode(String addressCode) {
+        setAddressCode(addressCode);
+        return this;
+    }
+
+    public InstitutionAddressRepresentation withGoogleId(String googleId) {
+        this.googleId = googleId;
+        return this;
     }
 
 }

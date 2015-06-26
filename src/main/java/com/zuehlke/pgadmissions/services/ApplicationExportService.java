@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentExport;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -166,9 +167,13 @@ public class ApplicationExportService {
         Action exportAction = actionService.getById(APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();
 
-        Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
-                .withExportRequest(exportRequest == null ? null : getRequestContent(exportRequest)).withExportReference(exportId)
-                .withExportException(exportException).withCreatedTimestamp(new DateTime());
+        Comment comment = new Comment()
+                .withUser(exportInstitution.getUser())
+                .withAction(exportAction)
+                .withDeclinedResponse(false)
+                .withApplicationExport(
+                        new CommentExport().withExportRequest(exportRequest == null ? null : getRequestContent(exportRequest)).withExportReference(exportId)
+                                .withExportException(exportException)).withCreatedTimestamp(new DateTime());
         actionService.executeAction(application, exportAction, comment);
 
         if (exportUserId != null) {

@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
@@ -26,32 +25,28 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ValidationUtils;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstruction;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
+import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
+import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
+import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -60,24 +55,18 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationInterviewAppointmentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationInterviewInstructionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewAppointmentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewInstructionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
@@ -90,9 +79,6 @@ public class CommentService {
 
     @Inject
     private CommentDAO commentDAO;
-
-    @Inject
-    private ActionService actionService;
 
     @Inject
     private EntityService entityService;
@@ -145,67 +131,6 @@ public class CommentService {
         return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
     }
 
-    public TimelineRepresentation getComments(Resource resource, User user) {
-        TimelineRepresentation timeline = new TimelineRepresentation();
-        List<Comment> transitionComments = commentDAO.getStateGroupTransitionComments(resource);
-
-        int transitionCommentCount = transitionComments.size();
-        if (transitionCommentCount > 0) {
-            PrismStateGroup stateGroupId = null;
-            List<Comment> previousStateComments = Lists.newArrayList();
-
-            List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
-            List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
-
-            for (int i = 0; i < transitionCommentCount; i++) {
-                Comment start = transitionComments.get(i);
-                Comment close = i == (transitionCommentCount - 1) ? null : transitionComments.get(i + 1);
-
-                stateGroupId = stateGroupId == null ? start.getState().getStateGroup().getId() : stateGroupId;
-                List<Comment> stateComments = commentDAO.getStateComments(resource, start, close, stateGroupId, previousStateComments);
-
-                List<Integer> batchedViewEditCommentIds = null;
-                CommentRepresentation lastViewEditComment = null;
-                TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
-
-                for (Comment comment : stateComments) {
-                    Set<PrismActionRedactionType> commentRedactions = redactions.get(comment.getAction().getId());
-                    if (comment.isViewEditComment()) {
-                        if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
-                            CommentRepresentation representation = getCommentRepresentation(user, comment, rolesOverridingRedactions, commentRedactions,
-                                    creatableRoles);
-                            commentGroup.addComment(representation);
-                            batchedViewEditCommentIds = Lists.newArrayList(comment.getId());
-                            lastViewEditComment = representation;
-                        } else {
-                            String contentNew = comment.getContent();
-                            String contentExisting = lastViewEditComment.getContent();
-                            if (contentExisting == null) {
-                                lastViewEditComment.setContent(contentNew);
-                            } else if (!contentExisting.contains(contentNew)) {
-                                contentExisting = contentExisting + "<br/>" + contentNew;
-                                lastViewEditComment.setContent(contentExisting);
-                            }
-                            batchedViewEditCommentIds.add(comment.getId());
-                            lastViewEditComment.setAssignedUsers(getAssignedUsers(batchedViewEditCommentIds, creatableRoles));
-                        }
-                    } else {
-                        CommentRepresentation representation = getCommentRepresentation(user, comment, rolesOverridingRedactions, commentRedactions,
-                                creatableRoles);
-                        commentGroup.addComment(representation);
-                    }
-                }
-
-                timeline.addCommentGroup(commentGroup);
-                stateGroupId = close == null ? null : close.getTransitionState().getStateGroup().getId();
-                previousStateComments = stateComments;
-            }
-        }
-
-        return timeline;
-    }
-
     public InterviewRepresentation getInterview(Application application) {
         Comment schedulingComment = commentDAO.getLatestComment(application, APPLICATION_ASSIGN_INTERVIEWERS);
         if (schedulingComment == null) {
@@ -213,10 +138,10 @@ public class CommentService {
         }
         InterviewRepresentation interview = new InterviewRepresentation();
 
-        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation> newLinkedList());
+        interview.setAppointmentTimeslots(Lists.<CommentAppointmentTimeslotRepresentation> newLinkedList());
         for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
             interview.getAppointmentTimeslots().add(
-                    new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
+                    new CommentAppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
         interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation> newLinkedList());
@@ -240,12 +165,12 @@ public class CommentService {
             interview.getAppointmentPreferences().add(preferenceRepresentation);
         }
 
-        CommentApplicationInterviewAppointment interviewAppointment = schedulingComment.getInterviewAppointment();
+        CommentInterviewAppointment interviewAppointment = schedulingComment.getInterviewAppointment();
         if (interviewAppointment != null) {
             mapper.map(interviewAppointment, interview);
         }
 
-        CommentApplicationInterviewInstruction interviewInstruction = schedulingComment.getInterviewInstruction();
+        CommentInterviewInstruction interviewInstruction = schedulingComment.getInterviewInstruction();
         if (interviewInstruction != null) {
             mapper.map(interviewInstruction, interview);
         }
@@ -300,7 +225,7 @@ public class CommentService {
                 String positionTitle = null;
                 String positionDescription = null;
 
-                CommentApplicationPositionDetail positionDetail = sourceComment.getPositionDetail();
+                CommentPositionDetail positionDetail = sourceComment.getPositionDetail();
                 if (positionDetail != null) {
                     positionTitle = positionDetail.getPositionTitle();
                     positionDescription = positionDetail.getPositionDescription();
@@ -309,7 +234,7 @@ public class CommentService {
                 LocalDate positionProvisionalStartDate = null;
                 String appointmentConditions = null;
 
-                CommentApplicationOfferDetail offerDetail = sourceComment.getOfferDetail();
+                CommentOfferDetail offerDetail = sourceComment.getOfferDetail();
                 if (offerDetail != null) {
                     positionProvisionalStartDate = offerDetail.getPositionProvisionalStartDate();
                     appointmentConditions = offerDetail.getAppointmentConditions();
@@ -475,6 +400,10 @@ public class CommentService {
     public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
         return commentDAO.getAssignedUsers(comment, roles);
     }
+    
+    public List<CommentAssignedUser> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
+        return commentDAO.getAssignedUsers(commentIds, roleIds);
+    }
 
     public Comment prepareResourceParentComment(ResourceParent resource, User user, Action action, CommentDTO commentDTO, PrismRole... roleAssignments)
             throws Exception {
@@ -486,6 +415,14 @@ public class CommentService {
             comment.addAssignedUser(user, role, CREATE);
         }
         return comment;
+    }
+    
+    public List<Comment> getStateGroupTransitionComments(Resource resource) {
+        return commentDAO.getStateGroupTransitionComments(resource);
+    }
+    
+    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
+        return commentDAO.getStateComments(resource, start, close, stateGroup, exclusions);
     }
 
     private void reassignCommentAssignedUsers(User oldUser, User newUser) {
@@ -508,8 +445,8 @@ public class CommentService {
     }
 
     private OfferRepresentation buildOfferRepresentation(Comment sourceComment) {
-        CommentApplicationPositionDetail positionDetail = sourceComment.getPositionDetail();
-        CommentApplicationOfferDetail offerDetail = sourceComment.getOfferDetail();
+        CommentPositionDetail positionDetail = sourceComment.getPositionDetail();
+        CommentOfferDetail offerDetail = sourceComment.getOfferDetail();
 
         boolean positionDetailNull = positionDetail == null;
         boolean offerDetailNull = offerDetail == null;
@@ -539,69 +476,6 @@ public class CommentService {
         for (CommentAssignedUser assignee : assignees) {
             PrismRoleTransitionType transitionType = assignee.getRoleTransitionType();
             comment.addAssignedUser(assignee.getUser(), assignee.getRole(), transitionType == null ? CREATE : transitionType);
-        }
-    }
-
-    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,
-            Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
-        User author = comment.getUser();
-        User authorDelegate = comment.getDelegateUser();
-
-        CommentRepresentation representation;
-        if (!rolesOverridingRedactions.isEmpty() || redactions.isEmpty() || isCommentOwner(comment, user)) {
-            representation = mapper.map(comment, CommentRepresentation.class);
-            appendCommentAssignedUsers(comment, representation, creatableRoles);
-        } else {
-            UserRepresentation authorRepresentation = new UserRepresentation().withFirstName(author.getFirstName()).withLastName(author.getLastName())
-                    .withEmail(author.getEmail());
-            UserRepresentation authorDelegateRepresenation = authorDelegate == null ? null : new UserRepresentation()
-                    .withFirstName(authorDelegate.getFirstName()).withLastName(authorDelegate.getLastName()).withEmail(authorDelegate.getEmail());
-
-            representation = new CommentRepresentation().addId(comment.getId()).addUser(authorRepresentation).addDelegateUser(authorDelegateRepresenation)
-                    .addAction(comment.getAction().getId()).addDeclinedResponse(comment.getDeclinedResponse())
-                    .addCreatedTimestamp(comment.getCreatedTimestamp());
-
-            Institution partner = comment.getPartner();
-            if (partner != null) {
-                representation.setPartner(mapper.map(partner, ResourceRepresentationSimple.class));
-            }
-
-            if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
-                CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
-                if (interviewAppointment != null) {
-                    representation.setInterviewAppointment(new CommentApplicationInterviewAppointmentRepresentation()
-                            .withInterviewDateTime(interviewAppointment.getInterviewDateTime())
-                            .withInterviewTimeZone(interviewAppointment.getInterviewTimeZone())
-                            .withInterviewDuration(interviewAppointment.getInterviewDuration()));
-                }
-
-                CommentApplicationInterviewInstruction interviewInstruction = comment.getInterviewInstruction();
-                if (interviewInstruction != null) {
-                    representation.setInterviewInstruction(new CommentApplicationInterviewInstructionRepresentation().withIntervieweeInstructions(
-                            interviewInstruction.getIntervieweeInstructions()).withInterviewLocation(interviewInstruction.getInterviewLocation()));
-                }
-
-                Set<AppointmentTimeslotRepresentation> timeslots = Sets.newLinkedHashSet();
-                for (CommentAppointmentTimeslot timeslot : comment.getAppointmentTimeslots()) {
-                    timeslots.add(new AppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
-                }
-                representation.setAppointmentTimeslots(Lists.newLinkedList(timeslots));
-            }
-        }
-
-        return representation;
-    }
-
-    private void appendCommentAssignedUsers(Comment comment, CommentRepresentation representation, List<PrismRole> creatableRoles) {
-        Set<CommentAssignedUser> assignees = comment.getAssignedUsers();
-        if (!assignees.isEmpty()) {
-            List<CommentAssignedUserRepresentation> representations = Lists.newLinkedList();
-            for (CommentAssignedUser assignee : assignees) {
-                if (creatableRoles.contains(assignee.getRole().getId())) {
-                    representations.add(mapper.map(assignee, CommentAssignedUserRepresentation.class));
-                }
-            }
-            representation.setAssignedUsers(representations);
         }
     }
 
@@ -648,25 +522,17 @@ public class CommentService {
     }
 
     private void appendInterviewAppointment(Comment comment, CommentDTO commentDTO) {
-        CommentApplicationInterviewAppointmentDTO interviewAppointmentDTO = commentDTO.getInterviewAppointment();
-        comment.setInterviewAppointment(new CommentApplicationInterviewAppointment().withInterviewDateTime(interviewAppointmentDTO.getInterviewDateTime())
+        CommentInterviewAppointmentDTO interviewAppointmentDTO = commentDTO.getInterviewAppointment();
+        comment.setInterviewAppointment(new CommentInterviewAppointment().withInterviewDateTime(interviewAppointmentDTO.getInterviewDateTime())
                 .withInterviewTimezone(interviewAppointmentDTO.getInterviewTimeZone()).withInterviewDuration(interviewAppointmentDTO.getInterviewDuration()));
     }
 
     private void appendInterviewInstruction(Comment comment, CommentDTO commentDTO) {
-        CommentApplicationInterviewInstructionDTO interviewInstructionDTO = commentDTO.getInterviewInstruction();
-        comment.setInterviewInstruction(new CommentApplicationInterviewInstruction()
+        CommentInterviewInstructionDTO interviewInstructionDTO = commentDTO.getInterviewInstruction();
+        comment.setInterviewInstruction(new CommentInterviewInstruction()
                 .withIntervieweeInstructions(interviewInstructionDTO.getIntervieweeInstructions())
                 .withInterviewerInstructions(interviewInstructionDTO.getInterviewerInstructions())
                 .withInterviewLocation(interviewInstructionDTO.getInterviewLocation()));
-    }
-
-    private List<CommentAssignedUserRepresentation> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
-        List<CommentAssignedUserRepresentation> representations = Lists.newLinkedList();
-        for (CommentAssignedUser assignedUser : commentDAO.getAssignedUsers(commentIds, roleIds)) {
-            representations.add(mapper.map(assignedUser, CommentAssignedUserRepresentation.class));
-        }
-        return representations;
     }
 
 }

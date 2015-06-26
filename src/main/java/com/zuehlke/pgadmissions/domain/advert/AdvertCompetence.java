@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Competence;
 
 @Entity
 @Table(name = "ADVERT_COMPETENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "competence_id" }) })
-public class AdvertCompetence extends AdvertTarget {
+public class AdvertCompetence extends AdvertTarget<Competence> {
 
     @Id
     @GeneratedValue
@@ -65,8 +65,18 @@ public class AdvertCompetence extends AdvertTarget {
     }
 
     @Override
-    public Object getValue() {
+    public Competence getValue() {
         return competence;
+    }
+
+    @Override
+    public void setValue(Competence value) {
+        setCompetence(value);
+    }
+    
+    @Override
+    public String getTitle() {
+        return competence.getTitle();
     }
 
     @Override

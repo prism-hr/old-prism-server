@@ -39,16 +39,16 @@ public class CommentDTO {
     private BigDecimal applicationRating;
 
     @Valid
-    private CommentApplicationInterviewAppointmentDTO interviewAppointment;
+    private CommentInterviewAppointmentDTO interviewAppointment;
 
     @Valid
-    private CommentApplicationInterviewInstructionDTO interviewInstruction;
+    private CommentInterviewInstructionDTO interviewInstruction;
 
     @Valid
-    private CommentApplicationPositionDetailDTO positionDetail;
+    private CommentPositionDetailDTO positionDetail;
 
     @Valid
-    private CommentApplicationOfferDetailDTO offerDetail;
+    private CommentOfferDetailDTO offerDetail;
 
     private Boolean recruiterAcceptAppointment;
 
@@ -63,9 +63,6 @@ public class CommentDTO {
 
     @Valid
     private ResourceDefinitionDTO newResource;
-
-    @Valid
-    private CommentSponsorshipDTO sponsorship;
 
     @Valid
     private List<CommentAssignedUserDTO> assignedUsers;
@@ -165,35 +162,35 @@ public class CommentDTO {
         this.applicationRating = applicationRating;
     }
 
-    public final CommentApplicationInterviewAppointmentDTO getInterviewAppointment() {
+    public final CommentInterviewAppointmentDTO getInterviewAppointment() {
         return interviewAppointment;
     }
 
-    public final void setInterviewAppointment(CommentApplicationInterviewAppointmentDTO interviewAppointment) {
+    public final void setInterviewAppointment(CommentInterviewAppointmentDTO interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
     }
 
-    public final CommentApplicationInterviewInstructionDTO getInterviewInstruction() {
+    public final CommentInterviewInstructionDTO getInterviewInstruction() {
         return interviewInstruction;
     }
 
-    public final void setInterviewInstruction(CommentApplicationInterviewInstructionDTO interviewInstruction) {
+    public final void setInterviewInstruction(CommentInterviewInstructionDTO interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
     }
 
-    public final CommentApplicationPositionDetailDTO getPositionDetail() {
+    public final CommentPositionDetailDTO getPositionDetail() {
         return positionDetail;
     }
 
-    public final void setPositionDetail(CommentApplicationPositionDetailDTO positionDetail) {
+    public final void setPositionDetail(CommentPositionDetailDTO positionDetail) {
         this.positionDetail = positionDetail;
     }
 
-    public final CommentApplicationOfferDetailDTO getOfferDetail() {
+    public final CommentOfferDetailDTO getOfferDetail() {
         return offerDetail;
     }
 
-    public final void setOfferDetail(CommentApplicationOfferDetailDTO offerDetail) {
+    public final void setOfferDetail(CommentOfferDetailDTO offerDetail) {
         this.offerDetail = offerDetail;
     }
 
@@ -227,14 +224,6 @@ public class CommentDTO {
 
     public void setRejectionReason(Integer rejectionReason) {
         this.rejectionReason = rejectionReason;
-    }
-
-    public CommentSponsorshipDTO getSponsorship() {
-        return sponsorship;
-    }
-
-    public void setSponsorship(CommentSponsorshipDTO sponsorship) {
-        this.sponsorship = sponsorship;
     }
 
     public ResourceDefinitionDTO getResource() {

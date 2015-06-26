@@ -17,12 +17,13 @@ import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 
 @Entity
 @Table(name = "IMPORTED_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "name" }) })
-public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> {
+public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> implements TargetEntity {
 
     @Id
     @GeneratedValue

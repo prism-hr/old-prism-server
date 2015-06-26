@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByValueClass;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,27 +20,34 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.dozer.Mapper;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
+import com.zuehlke.pgadmissions.domain.Competence;
+import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttributes;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -59,14 +65,14 @@ import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.FinancialDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
-import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 
 @Service
 @Transactional
@@ -98,21 +104,19 @@ public class AdvertService {
     private ResourceService resourceService;
 
     @Inject
-    private InstitutionService institutionService;
-
-    @Inject
     private StateService stateService;
 
     @Inject
     private GeocodableLocationService geocodableLocationService;
+    
+    @Inject
+    private IntegrationService integrationService;
 
     @Inject
     private Mapper mapper;
 
     @Inject
     private RestTemplate restTemplate;
-
-    private AdvertToRepresentationFunction advertToRepresentationFunction = new AdvertToRepresentationFunction();
 
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
@@ -190,17 +194,17 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
-    public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
+    public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFinancialDetailsDTO feesAndPaymentsDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
         LocalDate baseline = new LocalDate();
         String currencyAtLocale = getCurrencyAtLocale(advert);
 
-        FinancialDetailsDTO feeDTO = feesAndPaymentsDTO.getFee();
+        AdvertFinancialDetailDTO feeDTO = feesAndPaymentsDTO.getFee();
         updateFee(baseline, advert, currencyAtLocale, feeDTO);
 
-        FinancialDetailsDTO payDTO = feesAndPaymentsDTO.getPay();
+        AdvertFinancialDetailDTO payDTO = feesAndPaymentsDTO.getPay();
         updatePay(baseline, advert, currencyAtLocale, payDTO);
 
         advert.setLastCurrencyConversionDate(baseline);
@@ -209,34 +213,75 @@ public class AdvertService {
 
     public void updateFeesAndPayments(Advert advert, String newCurrency) throws Exception {
         Resource resource = advert.getResource();
-        FinancialDetailsDTO feeDTO = getFinancialDetailDTO(advert.getFee(), newCurrency);
-        FinancialDetailsDTO payDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
-        updateFeesAndPayments(resource.getResourceScope(), resource.getId(), new AdvertFeesAndPaymentsDTO().withFee(feeDTO).withPay(payDTO));
+        AdvertFinancialDetailDTO feeDTO = getFinancialDetailDTO(advert.getFee(), newCurrency);
+        AdvertFinancialDetailDTO payDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
+        updateFeesAndPayments(resource.getResourceScope(), resource.getId(), new AdvertFinancialDetailsDTO().withFee(feeDTO).withPay(payDTO));
     }
 
-    @SuppressWarnings("unchecked")
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
-        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme" }) {
-            String propertySetterName = "add" + WordUtils.capitalize(propertyName);
-            List<Object> values = (List<Object>) PrismReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
+        AdvertCategories categories = advert.getCategories();
+        if (categories == null) {
+            categories = new AdvertCategories();
+            advert.setCategories(categories);
+        }
 
-            if (values != null) {
-                Collection<?> persistentMetadata = (Collection<?>) PrismReflectionUtils.getProperty(advert, pluralize(propertyName));
-                persistentMetadata.clear();
-                entityService.flush();
-
-                boolean isInstitutionsProperty = propertyName.equals("institution");
-                for (Object value : values) {
-                    value = isInstitutionsProperty ? institutionService.getById((Integer) value) : value;
-                    PrismReflectionUtils.invokeMethod(advert, propertySetterName, value);
-                }
+        Class<?> valueClass = null;
+        Class<? extends AdvertAttribute<?>> attributeClass = null;
+        for (Object attribute : categoriesDTO.getAttributes()) {
+            Class<?> newValueClass = attribute.getClass();
+            if (valueClass == null || !newValueClass.equals(valueClass)) {
+                valueClass = newValueClass;
+                clearAdvertAttributes(categories, valueClass);
+                attributeClass = getByValueClass(valueClass).getAttributeClass();
             }
+
+            AdvertAttribute<?> entityAttribute = createAdvertAttribute(advert, attributeClass, attribute);
+            entityService.getOrCreate(entityAttribute);
+            categories.storeAttribute(entityAttribute);
         }
 
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
+    }
+
+    public void updateTargeting(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
+
+        AdvertTargets targets = advert.getTargets();
+        if (targets == null) {
+            targets = new AdvertTargets();
+            advert.setTargets(targets);
+        }
+
+        Class<?> valueClass = null;
+        Class<? extends AdvertAttribute<?>> attributeClass = null;
+        for (AdvertTargetDTO target : targetsDTO.getAttributes()) {
+            Class<?> newValueClass = target.getClass();
+            if (valueClass == null || !newValueClass.equals(valueClass)) {
+                valueClass = newValueClass;
+                clearAdvertAttributes(targets, valueClass);
+                attributeClass = getByValueClass(valueClass).getAttributeClass();
+            }
+
+            TargetEntity value = null;
+            Integer valueId = target.getValue();
+            if (valueId == null && target.getClass().equals(AdvertCompetenceDTO.class)) {
+                AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) target;
+                getOrCreateCompetence(competenceDTO);
+            } else if (valueId != null) {
+                value = (TargetEntity) entityService.getById(valueClass, target.getValue());
+            } else {
+                throw new Error();
+            }
+            
+            AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertTarget(advert, attributeClass, value, target.getImportance());
+            targets.storeAttribute(entityTarget);
+        }
+
+        executeUpdate(resource, "COMMENT_UPDATED_TARGET");
     }
 
     public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
@@ -244,8 +289,7 @@ public class AdvertService {
         Advert advert = resource.getAdvert();
 
         if (advert != null) {
-            AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
-                    .withStudyPlaces(advertClosingDateDTO.getStudyPlaces());
+            AdvertClosingDate advertClosingDate = createAdvertClosingDate(advert, advertClosingDateDTO);
             entityService.getOrCreate(advertClosingDate);
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
@@ -262,13 +306,12 @@ public class AdvertService {
 
         AdvertClosingDate persistentAdvertClosingDate = getClosingDateById(closingDateId);
         if (advert.getId().equals(persistentAdvertClosingDate.getAdvert().getId())) {
-            AdvertClosingDate duplicateAdvertClosingDate = entityService.getDuplicateEntity(new AdvertClosingDate().withAdvert(advert)
-                    .withClosingDate(advertClosingDateDTO.getClosingDate()).withStudyPlaces(advertClosingDateDTO.getStudyPlaces()));
+            AdvertClosingDate transientAdvertClosingDate = createAdvertClosingDate(advert, advertClosingDateDTO);
+            AdvertClosingDate duplicateAdvertClosingDate = entityService.getDuplicateEntity(transientAdvertClosingDate);
             if (!duplicateAdvertClosingDate.getId().equals(persistentAdvertClosingDate.getId())) {
                 entityService.delete(persistentAdvertClosingDate);
             } else {
                 persistentAdvertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
-                persistentAdvertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
             }
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
@@ -340,20 +383,8 @@ public class AdvertService {
         return newAddress;
     }
 
-    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertAttribute> clazz) {
+    public List<String> getAdvertAttributes(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
         return advertDAO.getAdvertTags(institution, clazz);
-    }
-
-    public List<String> getAdvertThemes(Application application) {
-        for (ResourceParent resource : new ResourceParent[] { application.getProject(), application.getProgram(), application.getInstitution() }) {
-            if (resource != null) {
-                List<String> themes = advertDAO.getAdvertThemes(resource.getAdvert());
-                if (!themes.isEmpty()) {
-                    return themes;
-                }
-            }
-        }
-        return Lists.newArrayList();
     }
 
     public void setSequenceIdentifier(Advert advert, String prefix) {
@@ -361,10 +392,13 @@ public class AdvertService {
     }
 
     public List<AdvertRepresentation> getRecommendedAdverts(Integer applicationId) {
+        List<AdvertRepresentation> representations = Lists.newLinkedList();
         Application application = applicationService.getById(applicationId);
         List<AdvertRecommendationDTO> advertRecommendations = getRecommendedAdverts(application.getUser());
-        return Lists.transform(advertRecommendations,
-                Functions.compose(advertToRepresentationFunction, new ToPropertyFunction<AdvertRecommendationDTO, Advert>("advert")));
+        for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
+            representations.add(integrationService.getAdvertRepresentation(advertRecommendation.getAdvert()));
+        }
+        return representations;
     }
 
     public InstitutionAddress getAddressCopy(InstitutionAddress address) {
@@ -373,8 +407,48 @@ public class AdvertService {
                 .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId()).withLocation(address.getLocation());
     }
 
-    public List<Advert> getAdvertsWithFeesAndPays(Institution institution) {
-        return advertDAO.getAdvertsWithFeesAndPays(institution);
+    public List<Advert> getAdvertsWithFinancialDetails(Institution institution) {
+        return advertDAO.getAdvertsWithFinancialDetails(institution);
+    }
+    
+    public AdvertCategories getAdvertCategories(Advert advert) {
+        AdvertCategories categories = advert.getCategories();
+        if (categories == null) {
+            Resource resourceParent = advert.getResource().getParentResource();
+            if (ResourceParent.class.isAssignableFrom(resourceParent.getClass())) {
+                return getAdvertCategories(resourceParent.getAdvert());
+            }
+            return null;
+        }
+        return categories;
+    }
+    
+    public AdvertTargets getAdvertTargets(Advert advert) {
+        AdvertTargets targets = advert.getTargets();
+        if (targets == null) {
+            Resource resourceParent = advert.getResource().getParentResource();
+            if (ResourceParent.class.isAssignableFrom(resourceParent.getClass())) {
+                return getAdvertTargets(resourceParent.getAdvert());
+            }
+            return null;
+        }
+        return targets;
+    }
+    
+    public List<PrismAdvertIndustry> getAdvertIndustries(Advert advert) {
+        return advertDAO.getAdvertIndustries(advert);
+    }
+    
+    public List<PrismAdvertFunction> getAdvertFunctions(Advert advert) {
+        return advertDAO.getAdvertFunctions(advert);
+    }
+    
+    public List<String> getAdvertThemes(Advert advert) {
+        return advertDAO.getAdvertThemes(advert);
+    }
+    
+    public List<AdvertTarget<?>> getAdvertTargets(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
+        return advertDAO.getAdvertTargets(advert, targetClass);
     }
 
     private String getCurrencyAtLocale(Advert advert) {
@@ -494,7 +568,7 @@ public class AdvertService {
         }
     }
 
-    private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO feeDTO) {
+    private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO feeDTO) {
         if (feeDTO == null) {
             advert.setFee(null);
             return;
@@ -505,7 +579,7 @@ public class AdvertService {
         updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
     }
 
-    private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO payDTO) {
+    private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO payDTO) {
         if (payDTO == null) {
             advert.setPay(null);
             return;
@@ -516,7 +590,7 @@ public class AdvertService {
         updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
     }
 
-    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
+    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
             LocalDate baseline) {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
@@ -559,9 +633,9 @@ public class AdvertService {
         }
     }
 
-    public FinancialDetailsDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
+    public AdvertFinancialDetailDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
         if (detail != null) {
-            FinancialDetailsDTO detailDTO = new FinancialDetailsDTO();
+            AdvertFinancialDetailDTO detailDTO = new AdvertFinancialDetailDTO();
             detailDTO.setCurrency(newCurrency);
 
             PrismDurationUnit interval = detail.getInterval();
@@ -635,6 +709,42 @@ public class AdvertService {
         }
 
         return address;
+    }
+
+    private AdvertAttribute<?> createAdvertAttribute(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object attribute) {
+        AdvertAttribute<?> entityAttribute = BeanUtils.instantiate(attributeClass);
+        entityAttribute.setAdvert(advert);
+        entityAttribute.forceSetValue(attribute);
+        return entityAttribute;
+    }
+
+    private AdvertAttribute<?> createAdvertTarget(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object attribute, BigDecimal importance) {
+        AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertAttribute(advert, attributeClass, attribute);
+        entityTarget.setImportance(importance);
+        return entityTarget;
+    }
+
+    private AdvertClosingDate createAdvertClosingDate(Advert advert, AdvertClosingDateDTO advertClosingDateDTO) {
+        AdvertClosingDate advertClosingDate = new AdvertClosingDate();
+        advertClosingDate.setAdvert(advert);
+        advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
+        return advertClosingDate;
+    }
+    
+    private Competence getOrCreateCompetence(AdvertCompetenceDTO competenceDTO) {
+        Competence transientCompetence = new Competence().withTitle(competenceDTO.getTitle()).withDescription(competenceDTO.getDescription());
+        Competence persistentCompetence = entityService.getDuplicateEntity(transientCompetence);
+        if (persistentCompetence == null) {
+            entityService.save(transientCompetence);
+            return transientCompetence;
+        } else {
+            return persistentCompetence;
+        }
+    }
+    
+    private void clearAdvertAttributes(AdvertAttributes attributes, Class<?> valueClass) {
+        attributes.clearAttributes(valueClass);
+        entityService.flush();
     }
 
 }

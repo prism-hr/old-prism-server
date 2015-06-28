@@ -55,7 +55,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimpleWithImages;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionOutcomeRepresentation;
@@ -143,7 +142,7 @@ public class ResourceController {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
                     Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
                     PropertyUtils.setSimpleProperty(representation, scopeName,
-                            new ResourceRepresentationSimpleWithImages().withId(id).withTitle(title).withLogoImage(logoImageId));
+                            new ResourceRepresentationSimple().withId(id).withTitle(title).withLogoImage(logoImageId));
                 }
             }
 

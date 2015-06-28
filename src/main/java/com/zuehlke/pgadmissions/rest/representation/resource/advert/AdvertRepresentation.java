@@ -5,7 +5,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimpleWithImages;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 public class AdvertRepresentation {
 
@@ -13,13 +13,13 @@ public class AdvertRepresentation {
 
     private UserRepresentation user;
 
-    private ResourceRepresentationSimpleWithImages resource;
+    private ResourceRepresentationSimple resource;
 
-    private ResourceRepresentationSimpleWithImages institution;
+    private ResourceRepresentationSimple institution;
 
-    private ResourceRepresentationSimpleWithImages partner;
+    private ResourceRepresentationSimple partner;
 
-    private ResourceRepresentationSimpleWithImages department;
+    private ResourceRepresentationSimple department;
 
     private PrismOpportunityType opportunityType;
 
@@ -28,6 +28,8 @@ public class AdvertRepresentation {
     private String summary;
 
     private String description;
+    
+    private Integer backgroundImage;
 
     private String homepage;
 
@@ -65,35 +67,35 @@ public class AdvertRepresentation {
         this.user = user;
     }
 
-    public ResourceRepresentationSimpleWithImages getResource() {
+    public ResourceRepresentationSimple getResource() {
         return resource;
     }
 
-    public void setResource(ResourceRepresentationSimpleWithImages resource) {
+    public void setResource(ResourceRepresentationSimple resource) {
         this.resource = resource;
     }
 
-    public ResourceRepresentationSimpleWithImages getInstitution() {
+    public ResourceRepresentationSimple getInstitution() {
         return institution;
     }
 
-    public void setInstitution(ResourceRepresentationSimpleWithImages institution) {
+    public void setInstitution(ResourceRepresentationSimple institution) {
         this.institution = institution;
     }
 
-    public ResourceRepresentationSimpleWithImages getPartner() {
+    public ResourceRepresentationSimple getPartner() {
         return partner;
     }
 
-    public void setPartner(ResourceRepresentationSimpleWithImages partner) {
+    public void setPartner(ResourceRepresentationSimple partner) {
         this.partner = partner;
     }
 
-    public ResourceRepresentationSimpleWithImages getDepartment() {
+    public ResourceRepresentationSimple getDepartment() {
         return department;
     }
 
-    public void setDepartment(ResourceRepresentationSimpleWithImages department) {
+    public void setDepartment(ResourceRepresentationSimple department) {
         this.department = department;
     }
 
@@ -127,6 +129,14 @@ public class AdvertRepresentation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Integer backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public String getHomepage() {
@@ -219,22 +229,22 @@ public class AdvertRepresentation {
         return this;
     }
 
-    public AdvertRepresentation withResource(ResourceRepresentationSimpleWithImages resource) {
+    public AdvertRepresentation withResource(ResourceRepresentationSimple resource) {
         this.resource = resource;
         return this;
     }
 
-    public AdvertRepresentation withInstitution(ResourceRepresentationSimpleWithImages institution) {
+    public AdvertRepresentation withInstitution(ResourceRepresentationSimple institution) {
         this.resource = institution;
         return this;
     }
 
-    public AdvertRepresentation withPartner(ResourceRepresentationSimpleWithImages partner) {
+    public AdvertRepresentation withPartner(ResourceRepresentationSimple partner) {
         this.partner = partner;
         return this;
     }
 
-    public AdvertRepresentation withDepartment(ResourceRepresentationSimpleWithImages department) {
+    public AdvertRepresentation withDepartment(ResourceRepresentationSimple department) {
         this.department = department;
         return this;
     }
@@ -256,6 +266,11 @@ public class AdvertRepresentation {
 
     public AdvertRepresentation withDescription(String description) {
         this.description = description;
+        return this;
+    }
+    
+    public AdvertRepresentation withBackgroundImage(Integer backgroundImage) {
+        this.backgroundImage = backgroundImage;
         return this;
     }
 

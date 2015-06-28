@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 
 public abstract class ResourceParent extends Resource {
@@ -28,22 +26,17 @@ public abstract class ResourceParent extends Resource {
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
 
-    public abstract Set<ResourceStudyLocation> getStudyLocations();
-
     public ImportedOpportunityType getOpportunityType() {
-        return null;
-    }
-
-    public Department getDepartment() {
         return null;
     }
 
     public void addResourceCondition(ResourceCondition resourceCondition) {
         getResourceConditions().add(resourceCondition);
     }
-
-    public void addStudyLocation(ResourceStudyLocation studyLocation) {
-        getStudyLocations().add(studyLocation);
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("title", getTitle());
     }
 
 }

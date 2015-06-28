@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 @Table(name = "display_property_configuration", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "display_property_definition_id" }) })
 public class DisplayPropertyConfiguration extends WorkflowConfiguration {
@@ -41,6 +43,10 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @JoinColumn(name = "institution_id")
     private Institution institution;
 
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+    
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
@@ -90,6 +96,16 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @Override
     public final void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override

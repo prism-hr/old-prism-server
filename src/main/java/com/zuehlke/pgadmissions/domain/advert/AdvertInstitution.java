@@ -11,11 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
-@Table(name = "ADVERT_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "imported_institution_id" }) })
-public class AdvertInstitution extends AdvertTarget<ImportedInstitution> {
+@Table(name = "ADVERT_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "institution_id" }) })
+public class AdvertInstitution extends AdvertTarget<Institution> {
 
     @Id
     @GeneratedValue
@@ -26,8 +26,8 @@ public class AdvertInstitution extends AdvertTarget<ImportedInstitution> {
     private Advert advert;
 
     @ManyToOne
-    @JoinColumn(name = "imported_institution_id", nullable = false)
-    private ImportedInstitution institution;
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Institution institution;
 
     @Column(name = "importance", nullable = false)
     private BigDecimal importance;
@@ -52,11 +52,11 @@ public class AdvertInstitution extends AdvertTarget<ImportedInstitution> {
         this.advert = advert;
     }
 
-    public ImportedInstitution getInstitution() {
+    public Institution getInstitution() {
         return institution;
     }
 
-    public void setInstitution(ImportedInstitution institution) {
+    public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
@@ -71,18 +71,18 @@ public class AdvertInstitution extends AdvertTarget<ImportedInstitution> {
     }
 
     @Override
-    public ImportedInstitution getValue() {
+    public Institution getValue() {
         return institution;
     }
 
     @Override
-    public void setValue(ImportedInstitution value) {
+    public void setValue(Institution value) {
         setInstitution(value);
     }
-    
+
     @Override
     public String getTitle() {
-        return institution.getName();
+        return institution.getTitle();
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -33,7 +33,7 @@ public class ProjectCreator implements ResourceCreator {
 
     @Override
     public Resource create(User user, ResourceDTO newResource) throws Exception {
-        OpportunityDTO newProject = (OpportunityDTO) newResource;
+        ResourceOpportunityDTO newProject = (ResourceOpportunityDTO) newResource;
 
         PrismScope resourceScope = newProject.getResourceScope();
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, newProject.getResourceId());
@@ -47,10 +47,7 @@ public class ProjectCreator implements ResourceCreator {
         Project project = new Project().withUser(user).withParentResource(resource).withDepartment(department).withAdvert(advert)
                 .withTitle(advert.getTitle()).withDurationMinimum(newProject.getDurationMinimum()).withDurationMaximum(newProject.getDurationMaximum());
 
-        resourceService.updatePartner(user, project, newProject);
-        resourceService.adoptPartnerAddress(project, advert);
         resourceService.setResourceAttributes(project, newProject);
-
         return project;
     }
 

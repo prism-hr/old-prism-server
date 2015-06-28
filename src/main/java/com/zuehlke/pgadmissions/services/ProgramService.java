@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Service
@@ -112,7 +112,7 @@ public class ProgramService {
         return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);
     }
 
-    public void update(Integer programId, OpportunityDTO programDTO, Comment comment) throws Exception {
+    public void update(Integer programId, ResourceOpportunityDTO programDTO, Comment comment) throws Exception {
         resourceService.update(PROGRAM, programId, programDTO, comment);
     }
 

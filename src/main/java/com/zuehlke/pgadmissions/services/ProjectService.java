@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 
 @Service
 @Transactional
@@ -98,7 +98,7 @@ public class ProjectService {
         return projectDAO.getActiveProjectsByInstitution(institutionId, activeStates);
     }
 
-    public void update(Integer projectId, OpportunityDTO projectDTO, Comment comment) throws Exception {
+    public void update(Integer projectId, ResourceOpportunityDTO projectDTO, Comment comment) throws Exception {
         resourceService.update(PROJECT, projectId, projectDTO, comment);
     }
 

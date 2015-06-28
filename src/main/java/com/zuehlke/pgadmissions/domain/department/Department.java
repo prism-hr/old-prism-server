@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.department;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -21,8 +22,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
@@ -32,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "title" }) })
-public class Department extends Resource implements TargetEntity {
+public class Department extends ResourceParent implements TargetEntity {
 
     @Id
     @GeneratedValue
@@ -45,22 +46,16 @@ public class Department extends Resource implements TargetEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Override
     public final Integer getId() {
         return id;
     }
 
+    @Override
     public final void setId(Integer id) {
         this.id = id;
     }
-
-    public final Institution getInstitution() {
-        return institution;
-    }
-
-    public final void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
+    
     public final String getTitle() {
         return title;
     }
@@ -114,15 +109,25 @@ public class Department extends Resource implements TargetEntity {
         // TODO Auto-generated method stub
         
     }
+    
+    @Override
+    public final Institution getInstitution() {
+        return institution;
+    }
 
     @Override
-    public Institution getPartner() {
+    public final void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void setPartner(Institution partner) {
+    public void setDepartment(Department department) {
         // TODO Auto-generated method stub
         
     }
@@ -318,10 +323,58 @@ public class Department extends Resource implements TargetEntity {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public DateTime getUpdatedTimestampSitemap() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Integer getApplicationRatingCount() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setApplicationRatingCount(Integer applicationRatingCount) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingFrequency() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setApplicationRatingFrequency(BigDecimal applicationRatingFrequency) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        // TODO Auto-generated method stub
+        
+    }
     
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", institution).addProperty("title", title);
+        return super.getResourceSignature().addProperty("institution", institution);
     }
 
 }

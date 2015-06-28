@@ -32,7 +32,9 @@ import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 
@@ -48,9 +50,6 @@ public class InstitutionService {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Inject
     private ActionService actionService;
@@ -134,7 +133,9 @@ public class InstitutionService {
         }
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
-        resourceService.setResourceAttributes(institution, institutionDTO.getAttributes());
+        
+        List<ResourceConditionDTO> resourceConditions = institutionDTO.getResourceConditions();
+        // FIXME set the resource conditions
     }
 
     public List<String> listAvailableCurrencies() {

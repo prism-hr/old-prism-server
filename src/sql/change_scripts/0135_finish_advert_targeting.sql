@@ -126,3 +126,169 @@ alter table resource_study_option_instance
 alter table advert_closing_date
 	drop column study_places
 ;
+
+alter table application
+	add column department_id int(10) unsigned after institution_partner_id,
+	add index (department_id, sequence_identifier),
+	add foreign key (department_id) references department (id)
+;
+
+update application inner join program
+	on application.program_id = program.id
+set application.department_id = program.department_id
+;
+
+alter table resource_study_location
+	drop foreign key resource_study_location_ibfk_2,
+	drop index institution_id,
+	drop column institution_id
+;
+
+alter table resource_study_option
+	drop foreign key resource_study_option_ibfk_3,
+	drop index institution_id,
+	drop column institution_id
+;
+
+insert into advert_institution(advert_id, institution_id, importance, enabled)
+	select advert.id, project.institution_id, 1.00, 1
+	from advert inner join project
+		on advert.id = project.advert_id
+	where project.institution_partner_id is not null
+		union
+	select advert.id, program.institution_id, 1.00, 1
+	from advert inner join program
+		on advert.id = program.advert_id
+	where program.institution_partner_id is not null
+;
+
+update project
+set institution_id = institution_partner_id,
+	institution_partner_id = null
+where institution_partner_id is not null
+;
+
+update program
+set institution_id = institution_partner_id,
+	institution_partner_id = null
+where institution_partner_id is not null
+;
+
+alter table display_property_configuration
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, opportunity_type, display_property_definition_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table resource_condition
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, action_condition),
+	add foreign key (department_id) references department (id)
+;
+
+alter table resource_previous_state
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, state_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table resource_state
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, state_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table resource_state_transition_summary
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, state_group_id, transition_state_selection),
+	add foreign key (department_id) references department (id)
+;
+
+alter table system	
+	drop foreign key system_ibfk_3,
+	drop index institution_partner_id,
+	drop column institution_partner_id
+;
+
+alter table institution	
+	drop foreign key institution_ibfk_12,
+	drop index institution_partner_id,
+	drop column institution_partner_id
+;
+
+alter table program	
+	drop foreign key program_ibfk_11,
+	drop index institution_partner_id,
+	drop column institution_partner_id
+;
+
+alter table project
+	drop foreign key project_ibfk_10,
+	drop index institution_partner_id,
+	drop column institution_partner_id
+;
+
+alter table application
+	drop foreign key application_ibfk_7,
+	drop index institution_partner_id,
+	drop column institution_partner_id
+;
+
+alter table user_feedback
+	add column department_id int(10) unsigned after institution_id,
+	add index (department_id, sequence_identifier),
+	add foreign key (department_id) references department (id)
+;
+
+alter table user_notification
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, user_id, notification_definition_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table user_role
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, user_id, role_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table action_custom_question_configuration
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, opportunity_type, action_custom_question_definition_id, version, display_index),
+	add foreign key (department_id) references department (id)
+;
+
+alter table notification_configuration
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, opportunity_type, notification_definition_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table state_duration_configuration
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, opportunity_type, state_duration_definition_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table state_transition_pending
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, action_id),
+	add foreign key (department_id) references department (id)
+;
+
+alter table workflow_property_configuration
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id, opportunity_type, workflow_property_definition_id, version),
+	add foreign key (department_id) references department (id)
+;
+
+alter table comment
+	add column department_id int(10) unsigned after institution_id,
+	add unique index (department_id),
+	add foreign key (department_id) references department (id),
+	drop foreign key comment_ibfk_17,
+	drop index institution_partner_id,
+	drop column institution_partner_id,
+	drop column removed_partner
+;
+

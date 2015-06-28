@@ -16,6 +16,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 @Table(name = "action_custom_question_configuration", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
+        @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "project_id", "action_custom_question_definition_id", "version", "display_index" })})
 public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVersioned {
@@ -41,6 +43,10 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
+    
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne
     @JoinColumn(name = "program_id")
@@ -135,6 +141,16 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override

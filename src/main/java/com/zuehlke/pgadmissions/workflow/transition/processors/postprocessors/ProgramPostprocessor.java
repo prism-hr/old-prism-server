@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProjectService;
-import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Component
@@ -22,9 +21,6 @@ public class ProgramPostprocessor implements ResourceProcessor {
     @Inject
     private ProjectService projectService;
 
-    @Inject
-    private ResourceService resourceService;
-
     @Override
     public void process(Resource resource, Comment comment) throws Exception {
         Program program = (Program) resource;
@@ -33,13 +29,8 @@ public class ProgramPostprocessor implements ResourceProcessor {
         program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
 
-        if (comment.isCreateComment()) {
-            resourceService.synchronizePartner(program, comment);
-        }
-
         if (comment.isProgramApproveComment()) {
             synchronizeProjects(comment, program);
-            resourceService.resynchronizePartner(program, comment);
         }
     }
 

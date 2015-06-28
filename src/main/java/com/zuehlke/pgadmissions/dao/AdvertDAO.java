@@ -68,9 +68,6 @@ public class AdvertDAO {
                 .createAlias("categories.themes", "theme", JoinType.INNER_JOIN) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.partner", "programPartner", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("programPartner.advert", "programPartnerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("programPartnerAdvert.address", "programPartnerAddress", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.resourceStates", "programState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.resourceConditions", "programCondition", JoinType.LEFT_OUTER_JOIN, //
                         getResourceConditionConstraint("programCondition")) //
@@ -80,9 +77,6 @@ public class AdvertDAO {
                 .createAlias("program.studyOptions", "programStudyOptions", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("programStudyOptions.studyOption", "programStudyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.partner", "projectPartner", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("projectPartner.advert", "projectPartnerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("projectPartnerAdvert.address", "projectPartnerAddress", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.resourceStates", "projectState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.resourceConditions", "projectCondition", JoinType.LEFT_OUTER_JOIN, //
                         getResourceConditionConstraint("projectCondition")) //
@@ -330,16 +324,8 @@ public class AdvertDAO {
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.getNeLat() != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.conjunction() //
-                            .add(Restrictions.between("address.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat())) //
-                            .add(Restrictions.between("address.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon()))) //
-                    .add(Restrictions.conjunction() //
-                            .add(Restrictions.between("programPartnerAddress.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat())) //
-                            .add(Restrictions.between("programPartnerAddress.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon())))
-                    .add(Restrictions.conjunction() //
-                            .add(Restrictions.between("projectPartnerAddress.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat())) //
-                            .add(Restrictions.between("projectPartnerAddress.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon()))));
+            criteria.add(Restrictions.between("address.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat())) //
+                    .add(Restrictions.between("address.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon()));
         }
     }
 
@@ -514,15 +500,9 @@ public class AdvertDAO {
 
     private Junction getInstitutionConstraint(Institution institution) {
         return Restrictions.disjunction() //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.isNull("project.partner")) //
-                        .add(Restrictions.isNull("program.partner")) //
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.eq("project.institution", institution)) //
-                                .add(Restrictions.eq("program.institution", institution)) //
-                                .add(Restrictions.eq("institution.id", institution.getId())))) //
-                .add(Restrictions.eq("project.partner", institution)) //
-                .add(Restrictions.eq("program.partner", institution));
+                .add(Restrictions.eq("project.institution", institution)) //
+                .add(Restrictions.eq("program.institution", institution)) //
+                .add(Restrictions.eq("institution.id", institution.getId()));
     }
 
 }

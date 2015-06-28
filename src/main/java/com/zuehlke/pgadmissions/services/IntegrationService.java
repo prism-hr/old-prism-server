@@ -85,7 +85,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunity
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimpleWithImages;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertCategoriesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertClosingDateRepresentation;
@@ -129,40 +128,30 @@ public class IntegrationService {
     private ApplicationContext applicationContext;
 
     public <T extends Resource> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
-        return new ResourceRepresentationSimple().withId(resource.getId()).withCode(resource.getCode()).withImportedCode(resource.getCode())
-                .withTitle(resource.getTitle());
-    }
+        ResourceRepresentationSimple representation = new ResourceRepresentationSimple().withId(resource.getId()).withCode(resource.getCode())
+                .withImportedCode(resource.getCode()).withTitle(resource.getTitle());
 
-    public <T extends ResourceParent> ResourceRepresentationSimpleWithImages getResourceRepresentationSimpleWithImages(T resource) {
-        ResourceRepresentationSimple representation = getResourceRepresentationSimple(resource);
-        ResourceRepresentationSimpleWithImages representationWithImages = (ResourceRepresentationSimpleWithImages) representation;
-        representationWithImages.setLogoImage(resourceService.getLogoImage(resource));
-        representationWithImages.setBackgroundImage(resourceService.getBackgroundImage(resource));
-        return representationWithImages;
-    }
-
-    private <T extends Resource> ResourceRepresentationExtended getResourceRepresentationSimpleWithImages(T resource) {
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            return (ResourceRepresentationExtended) getResourceRepresentationSimpleWithImages((ResourceParent) resource);
-        } else {
-            return (ResourceRepresentationExtended) getResourceRepresentationSimple(resource);
+        if (Institution.class.isAssignableFrom(resource.getClass())) {
+            representation.setLogoImage(resource.getInstitution().getLogoImage().getId());
         }
+
+        return representation;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExtended(T resource) throws Exception {
         User currentUser = userService.getCurrentUser();
 
-        ResourceRepresentationExtended representation = getResourceRepresentationSimpleWithImages(resource);
+        ResourceRepresentationExtended representation = (ResourceRepresentationExtended) getResourceRepresentationSimple(resource);
         representation.setUser(getUserRepresentation(resource.getUser()));
 
         for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
             String parentScopeReference = parentScope.getLowerCamelName();
             Resource parentResource = resource.getEnclosingResource(parentScope);
-            setProperty(representation, parentScopeReference, getResourceRepresentationSimple(parentResource));
+            if (parentResource != null) {
+                setProperty(representation, parentScopeReference, getResourceRepresentationSimple(parentResource));
+            }
         }
-
-        representation.setPartner(getResourcePartnerRepresentation(resource));
 
         representation.setState(getStateRepresentation(resource.getState()));
         representation.setPreviousState(getStateRepresentation(resource.getPreviousState()));
@@ -294,13 +283,12 @@ public class IntegrationService {
         Integer resourceId = resource.getId();
         Integer systemId = resource.getSystem().getId();
         Integer institutionId = resourceService.getResourceId(resource.getInstitution());
-        Integer partnerId = resourceService.getResourceId(resource.getPartner());
         Integer programId = resourceService.getResourceId(resource.getProgram());
         Integer projectId = resourceService.getResourceId(resource.getProject());
         Integer applicationId = resourceService.getResourceId(resource.getApplication());
 
         Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
-        List<ActionDTO> actions = actionService.getPermittedActions(scope, resourceId, systemId, institutionId, partnerId, programId, projectId,
+        List<ActionDTO> actions = actionService.getPermittedActions(scope, resourceId, systemId, institutionId, programId, projectId,
                 applicationId, user);
         for (ActionDTO action : actions) {
             representations.add(getResourceActionRepresentation(resource, action, user));
@@ -346,10 +334,9 @@ public class IntegrationService {
     }
 
     public AdvertRepresentation getAdvertRepresentation(Advert advert) {
-        Resource resource = advert.getResource();
+        ResourceParent resource = advert.getResource();
         return new AdvertRepresentation().withId(advert.getId()).withUser(getUserRepresentation(resource.getUser()))
-                .withResource(getResourceRepresentationSimpleWithImages(resource))
-                .withInstitution(getResourceRepresentationSimpleWithImages(resource.getInstitution()))
+                .withResource(getResourceRepresentationSimple(resource)).withInstitution(getResourceRepresentationSimple(resource.getInstitution()))
                 .withDepartment(getResourceDepartmentRepresentation(resource)).withOpportunityType(advert.getOpportunityType()).withTitle(advert.getTitle())
                 .withSummary(advert.getSummary()).withDescription(advert.getDescription()).withHomepage(advert.getHomepage())
                 .withApplyHomepage(advert.getApplyHomepage()).withTelephone(advert.getTelephone())
@@ -366,7 +353,7 @@ public class IntegrationService {
             representation.setAssignedUsers(getCommentAssignedUserRepresentations(comment, creatableRoles));
             return representation;
         } else {
-            CommentRepresentation representation = getCommentRepresentationSimple(comment).withPartner(getCommentPartnerRepresentation(comment));
+            CommentRepresentation representation = getCommentRepresentationSimple(comment);
 
             if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
                 representation.setInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment));
@@ -387,8 +374,7 @@ public class IntegrationService {
     private CommentRepresentation getCommentRepresentationExtended(Comment comment) {
         return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
                 .withTransitionState(comment.getTransitionState().getId()).withApplicationEligible(comment.getApplicationEligible())
-                .withApplicationInterested(comment.getApplicationInterested()).withPartner(getCommentPartnerRepresentation(comment))
-                .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
+                .withApplicationInterested(comment.getApplicationInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true))
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withApplicationReserveStatus(comment.getApplicationReserveStatus())
@@ -447,11 +433,6 @@ public class IntegrationService {
             return representation;
         }
         return null;
-    }
-
-    private ResourceRepresentationSimple getCommentPartnerRepresentation(Comment comment) {
-        Institution partner = comment.getPartner();
-        return partner == null ? null : getResourceRepresentationSimple(partner);
     }
 
     private List<CommentAppointmentTimeslotRepresentation> getCommentAppointmentTimeslotRepresentations(Comment comment) {
@@ -531,14 +512,9 @@ public class IntegrationService {
         return secondaryStates;
     }
 
-    private ResourceRepresentationSimpleWithImages getResourcePartnerRepresentation(Resource resource) {
-        Institution partner = resource.getPartner();
-        return (partner == null || partner.sameAs(resource)) ? null : getResourceRepresentationSimpleWithImages(partner);
-    }
-
-    private ResourceRepresentationSimpleWithImages getResourceDepartmentRepresentation(Resource resource) {
+    private ResourceRepresentationSimple getResourceDepartmentRepresentation(Resource resource) {
         Department department = resource.getDepartment();
-        return (department == null || department.sameAs(resource)) ? null : getResourceRepresentationSimpleWithImages(department);
+        return (department == null || department.sameAs(resource)) ? null : getResourceRepresentationSimple(department);
     }
 
     private InstitutionAddressRepresentation getInstitutionAddressRepresentation(Advert advert) {

@@ -42,10 +42,6 @@ public abstract class Resource implements UniqueEntity {
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);
-
-    public abstract Institution getPartner();
-
-    public abstract void setPartner(Institution partner);
     
     public abstract Department getDepartment();
 
@@ -150,7 +146,7 @@ public abstract class Resource implements UniqueEntity {
         if (parentResource.getId() != null) {
             setProject(parentResource.getProject());
             setProgram(parentResource.getProgram());
-            setPartner(parentResource.getPartner());
+            setDepartment(parentResource.getDepartment());
             setInstitution(parentResource.getInstitution());
             setSystem(parentResource.getSystem());
         }

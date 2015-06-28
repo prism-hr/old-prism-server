@@ -43,8 +43,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
-import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
+import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -112,7 +112,7 @@ public class ActionDAO {
     }
 
     public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
-            Integer partnerId, Integer programId, Integer projectId, Integer applicationId, User user) {
+            Integer programId, Integer projectId, Integer applicationId, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -140,10 +140,7 @@ public class ActionDAO {
                                         .add(Restrictions.eq("userRole.program.id", programId)) //
                                         .add(Restrictions.eq("userRole.institution.id", institutionId)) //
                                         .add(Restrictions.eq("userRole.system.id", systemId)))
-                                .add(Restrictions.eq("stateActionAssignment.partnerMode", false))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("stateActionAssignment.partnerMode", true)) //
-                                .add(Restrictions.eq("userRole.institution.id", partnerId)))) //
+                                .add(Restrictions.eq("stateActionAssignment.partnerMode", false)))) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //

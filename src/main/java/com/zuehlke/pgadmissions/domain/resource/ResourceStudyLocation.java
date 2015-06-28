@@ -10,23 +10,18 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 
 @Entity
-@Table(name = "resource_study_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "study_location" }),
-        @UniqueConstraint(columnNames = { "program_id", "study_location" }), @UniqueConstraint(columnNames = { "project_id", "study_location" }) })
-public class ResourceStudyLocation extends ResourceParentAttribute {
+@Table(name = "resource_study_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_location" }),
+        @UniqueConstraint(columnNames = { "project_id", "study_location" }) })
+public class ResourceStudyLocation extends ResourceOpportunityAttribute {
 
     @Id
     @GeneratedValue
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "institution_id", insertable = false, updatable = false)
-    private Institution institution;
-
+    
     @ManyToOne
     @JoinColumn(name = "program_id", insertable = false, updatable = false)
     private Program program;
@@ -44,16 +39,6 @@ public class ResourceStudyLocation extends ResourceParentAttribute {
 
     public final void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
     }
 
     @Override

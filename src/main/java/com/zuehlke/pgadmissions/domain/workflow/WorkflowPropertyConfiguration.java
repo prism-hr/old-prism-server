@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -22,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 @Table(name = "workflow_property_configuration", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "workflow_property_definition_id", "version" }),
+        @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "project_id", "workflow_property_definition_id", "version" })})
 public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned {
@@ -37,6 +39,10 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
+    
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne
     @JoinColumn(name = "program_id")
@@ -101,6 +107,16 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @Override
     public final void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override

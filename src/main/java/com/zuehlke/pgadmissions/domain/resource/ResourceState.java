@@ -14,6 +14,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -22,8 +23,9 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "resource_state", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "state_id" }), @UniqueConstraint(columnNames = { "application_id", "state_id" }) })
+        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "department_id", "state_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "state_id" }), @UniqueConstraint(columnNames = { "project_id", "state_id" }),
+        @UniqueConstraint(columnNames = { "application_id", "state_id" }) })
 public class ResourceState extends ResourceStateDefinition {
 
     @Id
@@ -37,6 +39,10 @@ public class ResourceState extends ResourceStateDefinition {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deparatment_id")
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -89,6 +95,16 @@ public class ResourceState extends ResourceStateDefinition {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override

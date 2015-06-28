@@ -26,6 +26,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -437,12 +438,12 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public Institution getPartner() {
-        return partner;
+    public Department getDepartment() {
+        return null;
     }
 
     @Override
-    public void setPartner(Institution partner) {
+    public void setDepartment(Department department) {
         return;
     }
 
@@ -581,11 +582,6 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public Set<ResourceStudyLocation> getStudyLocations() {
-        return studyLocations;
-    }
-
-    @Override
     public Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
@@ -609,10 +605,7 @@ public class Institution extends ResourceParent {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        if (googleId == null) {
-            return new ResourceSignature().addProperty("user", user).addProperty("title", title);
-        }
-        return new ResourceSignature().addProperty("googleId", googleId).addProperty("title", title);
+        return googleId == null ? super.getResourceSignature().addProperty("user", user) : super.getResourceSignature().addProperty("googleId", googleId);
     }
 
 }

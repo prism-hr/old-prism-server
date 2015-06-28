@@ -76,11 +76,6 @@ public class Program extends ResourceOpportunity {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "department_id")
     private Department department;
 
@@ -215,16 +210,6 @@ public class Program extends ResourceOpportunity {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
-    }
-
-    @Override
-    public Institution getPartner() {
-        return partner;
-    }
-
-    @Override
-    public void setPartner(Institution partner) {
-        this.partner = partner;
     }
 
     @Override

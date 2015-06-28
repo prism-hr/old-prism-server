@@ -114,6 +114,11 @@ public class Application extends Resource {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "project_id")
     private Project project;
 
@@ -353,13 +358,13 @@ public class Application extends Resource {
     }
 
     @Override
-    public Institution getPartner() {
-        return partner;
+    public Department getDepartment() {
+        return department;
     }
 
     @Override
-    public void setPartner(Institution partner) {
-        this.partner = partner;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override
@@ -394,7 +399,7 @@ public class Application extends Resource {
     public Application getApplication() {
         return this;
     }
-    
+
     @Override
     public String getTitle() {
         return user.getFullName();
@@ -858,10 +863,6 @@ public class Application extends Resource {
             }
         }
         return parentResources;
-    }
-
-    public Department getDepartment() {
-        return program.getDepartment();
     }
 
     public String getInstitutionDisplay() {

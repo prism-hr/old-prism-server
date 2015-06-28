@@ -91,13 +91,13 @@ public class ActionService {
     }
 
     public List<ActionDTO> getPermittedActions(PrismScope resourceScope, ResourceListRowDTO row, User user) {
-        return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getPartnerId(),
-                row.getProgramId(), row.getProjectId(), row.getApplicationId(), user);
+        return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getProgramId(),
+                row.getProjectId(), row.getApplicationId(), user);
     }
 
     public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
-            Integer partnerId, Integer programId, Integer projectId, Integer applicationId, User user) {
-        return actionDAO.getPermittedActions(resourceScope, resourceId, systemId, institutionId, partnerId, programId, projectId, applicationId, user);
+            Integer programId, Integer projectId, Integer applicationId, User user) {
+        return actionDAO.getPermittedActions(resourceScope, resourceId, systemId, institutionId, programId, projectId, applicationId, user);
     }
 
     public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Set<Integer> resourceIds, PrismScope... exclusions) {

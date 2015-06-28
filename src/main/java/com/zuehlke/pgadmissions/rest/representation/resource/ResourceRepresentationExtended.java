@@ -9,13 +9,11 @@ import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
-public class ResourceRepresentationExtended extends ResourceRepresentationSimpleWithImages {
+public class ResourceRepresentationExtended extends ResourceRepresentationSimple {
 
     private UserRepresentation user;
 
     private ResourceRepresentationSimple institution;
-
-    private ResourceRepresentationSimple partner;
 
     private ResourceRepresentationSimple department;
 
@@ -58,15 +56,7 @@ public class ResourceRepresentationExtended extends ResourceRepresentationSimple
     public void setInstitution(ResourceRepresentationSimple institution) {
         this.institution = institution;
     }
-
-    public ResourceRepresentationSimple getPartner() {
-        return partner;
-    }
-
-    public void setPartner(ResourceRepresentationSimple partner) {
-        this.partner = partner;
-    }
-
+    
     public ResourceRepresentationSimple getDepartment() {
         return department;
     }

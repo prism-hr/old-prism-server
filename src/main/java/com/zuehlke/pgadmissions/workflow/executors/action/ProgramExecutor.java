@@ -15,8 +15,7 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -50,20 +49,19 @@ public class ProgramExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        OpportunityDTO programDTO = commentDTO.getResource().getProgram();
+        ResourceOpportunityDTO programDTO = commentDTO.getResource().getProgram();
         Comment comment = prepareProcessResourceComment(program, user, action, programDTO, commentDTO);
         programService.update(resourceId, programDTO, comment);
         return actionService.executeUserAction(program, action, comment);
     }
 
-    public Comment prepareProcessResourceComment(Program program, User user, Action action, OpportunityDTO programDTO, CommentDTO commentDTO) throws Exception {
+    public Comment prepareProcessResourceComment(Program program, User user, Action action, ResourceOpportunityDTO programDTO, CommentDTO commentDTO)
+            throws Exception {
         String commentContent = action.getId().equals(PROGRAM_VIEW_EDIT) ? applicationContext.getBean(PropertyLoader.class).localize(program)
                 .load(PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
-        InstitutionPartnerDTO partnerDTO = programDTO.getPartner();
         Comment comment = new Comment().withUser(user).withResource(program).withContent(commentContent).withAction(action)
-                .withRemovedPartner(partnerDTO != null && partnerDTO.isEmpty()).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(false);
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
         return comment;

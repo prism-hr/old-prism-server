@@ -14,6 +14,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 @Table(name = "user_role", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), //
+        @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
@@ -42,6 +44,10 @@ public class UserRole extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -93,6 +99,16 @@ public class UserRole extends WorkflowResourceExecution {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;   
     }
 
     @Override

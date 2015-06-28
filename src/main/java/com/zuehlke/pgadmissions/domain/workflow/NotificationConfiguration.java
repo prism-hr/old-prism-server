@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -23,8 +24,9 @@ import com.zuehlke.pgadmissions.domain.system.System;
 @Table(name = "notification_configuration", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "notification_definition_id" })})
+        @UniqueConstraint(columnNames = { "project_id", "notification_definition_id" }) })
 public class NotificationConfiguration extends WorkflowConfiguration {
 
     @Id
@@ -38,6 +40,10 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne
     @JoinColumn(name = "program_id")
@@ -106,6 +112,16 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override

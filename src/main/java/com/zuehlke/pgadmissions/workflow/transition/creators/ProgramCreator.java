@@ -11,8 +11,8 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
@@ -36,7 +36,7 @@ public class ProgramCreator implements ResourceCreator {
 
     @Override
     public Resource create(User user, ResourceDTO newResource) throws Exception {
-        OpportunityDTO newProgram = (OpportunityDTO) newResource;
+        ResourceOpportunityDTO newProgram = (ResourceOpportunityDTO) newResource;
         Institution institution = institutionService.getById(newProgram.getResourceId());
 
         AdvertDTO advertDTO = newProgram.getAdvert();
@@ -49,10 +49,7 @@ public class ProgramCreator implements ResourceCreator {
                 .withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum()).withDurationMaximum(newProgram.getDurationMaximum())
                 .withRequireProjectDefinition(false);
 
-        resourceService.updatePartner(user, program, newProgram);
-        resourceService.adoptPartnerAddress(program, advert);
         resourceService.setResourceAttributes(program, newProgram);
-
         return program;
     }
 

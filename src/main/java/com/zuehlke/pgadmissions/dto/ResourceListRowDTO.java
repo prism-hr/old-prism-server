@@ -16,8 +16,6 @@ public class ResourceListRowDTO {
 
     private Integer institutionId;
 
-    private Integer partnerId;
-
     private Integer programId;
 
     private Integer projectId;
@@ -59,17 +57,16 @@ public class ResourceListRowDTO {
     private PrismState stateId;
 
     private PrismStateGroup stateGroupId;
-    
+
     private List<PrismStateGroup> secondaryStateGroupIds;
 
     private DateTime createdTimestamp;
-    
+
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
 
     private Set<ActionDTO> actions;
-    
 
     public Integer getSystemId() {
         return systemId;
@@ -85,14 +82,6 @@ public class ResourceListRowDTO {
 
     public void setInstitutionId(Integer institutionId) {
         this.institutionId = institutionId;
-    }
-
-    public Integer getPartnerId() {
-        return partnerId;
-    }
-
-    public void setPartnerId(Integer partnerId) {
-        this.partnerId = partnerId;
     }
 
     public Integer getProgramId() {
@@ -270,7 +259,7 @@ public class ResourceListRowDTO {
     public void setCreatorAccountImageUrl(String creatorAccountImageUrl) {
         this.creatorAccountImageUrl = creatorAccountImageUrl;
     }
-    
+
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }

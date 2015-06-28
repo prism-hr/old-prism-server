@@ -58,7 +58,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -84,17 +83,13 @@ import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDefinitionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
@@ -154,9 +149,6 @@ public class ResourceService {
 
     @Inject
     private DepartmentService departmentService;
-
-    @Inject
-    private InstitutionService institutionService;
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -368,14 +360,8 @@ public class ResourceService {
         return resourceDAO.getResourcesToEscalate(resourceScope, actionId, baseline);
     }
 
-    public Set<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
-        List<Integer> resources = resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
-        Set<Integer> resourcesFiltered = Sets.newHashSet(resources);
-        if (propagatingScope.equals(INSTITUTION)) {
-            List<Integer> partnerResources = resourceDAO.getPartnerResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
-            resourcesFiltered.addAll(partnerResources);
-        }
-        return resourcesFiltered;
+    public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
+        return resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
     }
 
     public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
@@ -430,11 +416,6 @@ public class ResourceService {
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
             final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
         return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
-    }
-
-    public List<Integer> getAssignedPartnerResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
-        return resourceDAO.getAssignedPartnerResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     @SuppressWarnings("unchecked")
@@ -545,11 +526,11 @@ public class ResourceService {
         return filteredStudyOptions;
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, ImportedStudyOption studyOption) {
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource, ImportedStudyOption studyOption) {
         return resourceDAO.getFirstStudyOptionInstance(resource, studyOption);
     }
 
-    public List<String> getStudyLocations(ResourceParent resource) {
+    public List<String> getStudyLocations(ResourceOpportunity resource) {
         List<String> filteredStudylocations = Lists.newLinkedList();
         List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource, ResourceStudyLocation.class, "studyLocation", null);
 
@@ -566,15 +547,15 @@ public class ResourceService {
         return filteredStudylocations;
     }
 
-    public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName) {
+    public <T> List<T> getResourceAttributes(ResourceOpportunity resource, Class<T> attributeClass, String attributeName) {
         return resourceDAO.getResourceAttributes(resource, attributeClass, attributeName, null);
     }
 
-    public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
+    public <T> List<T> getResourceAttributes(ResourceOpportunity resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return resourceDAO.getResourceAttributes(resource, attributeClass, attributeName, orderAttributeName);
     }
 
-    public void setResourceAttributes(ResourceOpportunity resource, OpportunityDTO resourceDTO) {
+    public void setResourceAttributes(ResourceOpportunity resource, ResourceOpportunityDTO resourceDTO) {
         Program program = resource.getProgram();
         if (!program.sameAs(resource) && program.getAdvert().isImported()) {
             resource.setOpportunityType(program.getOpportunityType());
@@ -589,7 +570,7 @@ public class ResourceService {
         }
     }
 
-    public void setResourceAttributes(ResourceParent resource, ResourceParentAttributesDTO attributes) {
+    public void setResourceAttributes(ResourceOpportunity resource, ResourceParentAttributesDTO attributes) {
         setResourceConditions(resource, attributes.getResourceConditions());
         setStudyLocations(resource, attributes.getStudyLocations());
     }
@@ -643,7 +624,7 @@ public class ResourceService {
         }
     }
 
-    public void setStudyLocations(ResourceParent resource, List<String> studyLocations) {
+    public void setStudyLocations(ResourceOpportunity resource, List<String> studyLocations) {
         resource.getStudyLocations().clear();
         entityService.flush();
 
@@ -654,9 +635,8 @@ public class ResourceService {
         }
     }
 
-    public void update(PrismScope resourceScope, Integer resourceId, OpportunityDTO resourceDTO, Comment comment) throws Exception {
+    public void update(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO, Comment comment) throws Exception {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
-        updatePartner(comment.getUser(), resource, resourceDTO);
 
         DepartmentDTO departmentDTO = resourceDTO.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(resource.getInstitution(), departmentDTO);
@@ -684,55 +664,10 @@ public class ResourceService {
         }
     }
 
-    public void updatePartner(User user, ResourceOpportunity resource, OpportunityDTO newResource) throws Exception {
-        InstitutionPartnerDTO partnerDTO = newResource.getPartner();
-        if (partnerDTO != null) {
-            Integer partnerId = partnerDTO.getPartnerId();
-            InstitutionDTO newPartnerDTO = partnerDTO.getPartner();
-            if (newPartnerDTO != null) {
-                Institution partner = institutionService.createPartner(user, partnerDTO.getPartner());
-                resource.setPartner(partner);
-            } else if (partnerId != null) {
-                Institution partner = institutionService.getById(partnerId);
-                if (partner == null) {
-                    throw new WorkflowEngineException("Invalid partner institution");
-                }
-                resource.setPartner(partner);
-            }
-        }
-    }
-
-    public void adoptPartnerAddress(ResourceOpportunity resource, Advert advert) {
-        Institution partner = resource.getPartner();
-        if (partner != null) {
-            InstitutionAddress address = advertService.getAddressCopy(partner.getAdvert().getAddress());
-            entityService.save(address);
-            advert.setAddress(address);
-        }
-    }
-
     public void deleteElapsedStudyOptions() {
         LocalDate baseline = new LocalDate();
         resourceDAO.deleteElapsedStudyOptionInstances(baseline);
         resourceDAO.deleteElapsedStudyOptions(baseline);
-    }
-
-    public void synchronizePartner(Resource resource, Comment comment) {
-        comment.setPartner(resource.getPartner());
-    }
-
-    public void resynchronizePartner(ResourceOpportunity resource, Comment comment) {
-        Institution newPartner = resource.getPartner();
-        Institution oldPartner = resourceDAO.getPreviousPartner(resource);
-        if (oldPartner == null) {
-            comment.setPartner(newPartner);
-        } else if (!(oldPartner == null || newPartner == null) && !oldPartner.getId().equals(newPartner.getId())) {
-            comment.setPartner(newPartner);
-        }
-    }
-
-    public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
-        return resourceDAO.getResourcesByPartner(scope, searchTerm);
     }
 
     public ResourceSummaryRepresentation getResourceSummaryRepresentation(PrismScope resourceScope, Integer resourceId) {
@@ -764,10 +699,6 @@ public class ResourceService {
             plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
         }
         return plotsRepresentation;
-    }
-
-    public Integer getLogoImage(Resource resource) {
-        return resource.getInstitution().getLogoImage().getId();
     }
 
     public Integer getBackgroundImage(ResourceParent resource) {

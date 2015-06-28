@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 public class CommentRepresentation {
 
@@ -35,9 +34,7 @@ public class CommentRepresentation {
     private PrismYesNoUnsureResponse applicationEligible;
 
     private Boolean applicationInterested;
-
-    private ResourceRepresentationSimple partner;
-
+    
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
     private CommentInterviewInstructionRepresentation interviewInstruction;
@@ -149,15 +146,7 @@ public class CommentRepresentation {
     public void setApplicationInterested(Boolean applicationInterested) {
         this.applicationInterested = applicationInterested;
     }
-
-    public ResourceRepresentationSimple getPartner() {
-        return partner;
-    }
-
-    public void setPartner(ResourceRepresentationSimple partner) {
-        this.partner = partner;
-    }
-
+    
     public final CommentInterviewAppointmentRepresentation getInterviewAppointment() {
         return interviewAppointment;
     }
@@ -333,11 +322,6 @@ public class CommentRepresentation {
 
     public CommentRepresentation withApplicationInterested(Boolean applicationInterested) {
         this.applicationInterested = applicationInterested;
-        return this;
-    }
-
-    public CommentRepresentation withPartner(ResourceRepresentationSimple partner) {
-        this.partner = partner;
         return this;
     }
 

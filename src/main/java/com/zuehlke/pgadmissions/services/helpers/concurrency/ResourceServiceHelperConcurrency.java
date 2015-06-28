@@ -50,14 +50,6 @@ public class ResourceServiceHelperConcurrency {
             dispatchThread(workers, parentScopeRunner);
         }
 
-        Runnable partnerRunner = new Runnable() {
-            @Override
-            public void run() {
-                assigned.addAll(resourceService.getAssignedPartnerResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition));
-            }
-        };
-
-        dispatchThread(workers, partnerRunner);
         concludeThreads(workers);
         return assigned;
     }

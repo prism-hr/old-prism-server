@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -218,15 +219,15 @@ public class System extends Resource {
     }
 
     @Override
-    public Institution getPartner() {
-        return partner;
+    public Department getDepartment() {
+        return null;
     }
-
+    
     @Override
-    public void setPartner(Institution partner) {
+    public void setDepartment(Department department) {
         return;
     }
-
+    
     @Override
     public Program getProgram() {
         return null;

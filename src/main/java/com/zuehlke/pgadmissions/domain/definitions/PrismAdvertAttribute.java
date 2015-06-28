@@ -17,9 +17,9 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertProgram;
 import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 public enum PrismAdvertAttribute {
 
@@ -28,7 +28,7 @@ public enum PrismAdvertAttribute {
     FUNCTION_CATEGORY(AdvertFunction.class, PrismAdvertFunction.class),
     THEME_CATEGORY(AdvertTheme.class, String.class),
     COMPETENCE_TARGET(AdvertCompetence.class, Competence.class),
-    INSTITUTION_TARGET(AdvertInstitution.class, ImportedInstitution.class),
+    INSTITUTION_TARGET(AdvertInstitution.class, Institution.class),
     DEPARTMENT_TARGET(AdvertDepartment.class, Department.class),
     PROGRAM_TARGET(AdvertProgram.class, ImportedProgram.class),
     SUBJECT_AREA_TARGET(AdvertSubjectArea.class, ImportedSubjectArea.class);

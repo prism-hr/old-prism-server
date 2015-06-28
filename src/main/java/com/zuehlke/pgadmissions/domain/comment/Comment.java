@@ -56,7 +56,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -71,6 +70,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -83,11 +83,11 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
 @Table(name = "comment")
-public class Comment {
+public class Comment extends WorkflowResourceExecution {
 
     @Id
     @GeneratedValue
@@ -100,6 +100,10 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -139,13 +143,6 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
-
-    @ManyToOne
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
-    @Column(name = "removed_partner")
-    private Boolean removedPartner;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
@@ -251,6 +248,16 @@ public class Comment {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 
     public Program getProgram() {
         return program;
@@ -330,22 +337,6 @@ public class Comment {
 
     public void setTransitionState(State transitionState) {
         this.transitionState = transitionState;
-    }
-
-    public Institution getPartner() {
-        return partner;
-    }
-
-    public void setPartner(Institution partner) {
-        this.partner = partner;
-    }
-
-    public Boolean getRemovedPartner() {
-        return removedPartner;
-    }
-
-    public void setRemovedPartner(Boolean removedPartner) {
-        this.removedPartner = removedPartner;
     }
 
     public PrismYesNoUnsureResponse getApplicationEligible() {
@@ -488,14 +479,6 @@ public class Comment {
         secondaryTransitionStates.add(state);
     }
 
-    public Resource getResource() {
-        return ObjectUtils.firstNonNull(system, institution, program, project, application);
-    }
-
-    public void setResource(Resource resource) {
-        PrismReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
-    }
-
     public Comment withId(Integer id) {
         this.id = id;
         return this;
@@ -558,11 +541,6 @@ public class Comment {
 
     public Comment withState(State state) {
         this.state = state;
-        return this;
-    }
-
-    public Comment withRemovedPartner(Boolean removedPartner) {
-        this.removedPartner = removedPartner;
         return this;
     }
 
@@ -802,10 +780,6 @@ public class Comment {
         return applicationReserveStatus != null;
     }
 
-    public boolean isPartnershipComment() {
-        return partner != null;
-    }
-
     public boolean isProjectPartnerApproveComment() {
         return action.getId().equals(PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE) && transitionState.getId().equals(PROJECT_APPROVAL);
     }
@@ -843,6 +817,11 @@ public class Comment {
     public String getInterviewTimeZoneDisplay() {
         TimeZone interviewTimezone = interviewAppointment == null ? null : interviewAppointment.getInterviewTimeZone();
         return interviewTimezone == null ? null : interviewTimezone.getDisplayName();
+    }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return null;
     }
 
 }

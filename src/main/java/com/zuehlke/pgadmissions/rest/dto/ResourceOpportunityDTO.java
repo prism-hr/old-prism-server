@@ -9,10 +9,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 
-public class OpportunityDTO extends ResourceParentDTO {
-
-    @Valid
-    private InstitutionPartnerDTO partner;
+public class ResourceOpportunityDTO extends ResourceParentDTO {
 
     @Valid
     private DepartmentDTO department;
@@ -26,13 +23,7 @@ public class OpportunityDTO extends ResourceParentDTO {
 
     private List<PrismStudyOption> studyOptions;
 
-    public InstitutionPartnerDTO getPartner() {
-        return partner;
-    }
-
-    public void setPartner(InstitutionPartnerDTO partner) {
-        this.partner = partner;
-    }
+    private List<String> studyLocations;
 
     public DepartmentDTO getDepartment() {
         return department;
@@ -72,6 +63,14 @@ public class OpportunityDTO extends ResourceParentDTO {
 
     public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
+    }
+
+    public List<String> getStudyLocations() {
+        return studyLocations;
+    }
+
+    public void setStudyLocations(List<String> studyLocations) {
+        this.studyLocations = studyLocations;
     }
 
 }

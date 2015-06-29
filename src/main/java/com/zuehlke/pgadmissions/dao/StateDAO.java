@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.SelectableStateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation.SelectableStateRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")

@@ -8,7 +8,7 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
 
     private String employerName;
 
-    private AddressRepresentationApplication employerAddress;
+    private ApplicationAddressRepresentationApplication employerAddress;
 
     private String position;
 
@@ -36,11 +36,11 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         this.employerName = employerName;
     }
 
-    public AddressRepresentationApplication getEmployerAddress() {
+    public ApplicationAddressRepresentationApplication getEmployerAddress() {
         return employerAddress;
     }
 
-    public void setEmployerAddress(AddressRepresentationApplication employerAddress) {
+    public void setEmployerAddress(ApplicationAddressRepresentationApplication employerAddress) {
         this.employerAddress = employerAddress;
     }
 

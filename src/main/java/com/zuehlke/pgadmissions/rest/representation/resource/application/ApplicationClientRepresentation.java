@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceProcessingRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 public class ApplicationClientRepresentation extends ApplicationRepresentation {
@@ -21,9 +19,9 @@ public class ApplicationClientRepresentation extends ApplicationRepresentation {
 
     private List<UserRepresentation> usersPotentiallyInterestedInApplication;
 
-    private InterviewRepresentation interview;
+    private ApplicationInterviewRepresentation interview;
 
-    private OfferRepresentation offerRecommendation;
+    private ApplicationOfferRepresentation offerRecommendation;
 
     private List<ApplicationAssignedSupervisorRepresentation> assignedSupervisors;
 
@@ -32,8 +30,6 @@ public class ApplicationClientRepresentation extends ApplicationRepresentation {
     private ApplicationSummaryRepresentation resourceSummary;
 
     private List<AdvertRepresentation> recommendedAdverts;
-    
-    private ResourceProcessingRepresentation resourceProcessing;
 
     public List<PrismStudyOption> getAvailableStudyOptions() {
         return availableStudyOptions;
@@ -75,19 +71,19 @@ public class ApplicationClientRepresentation extends ApplicationRepresentation {
         this.usersPotentiallyInterestedInApplication = usersPotentiallyInterestedInApplication;
     }
 
-    public InterviewRepresentation getInterview() {
+    public ApplicationInterviewRepresentation getInterview() {
         return interview;
     }
 
-    public void setInterview(InterviewRepresentation interview) {
+    public void setInterview(ApplicationInterviewRepresentation interview) {
         this.interview = interview;
     }
 
-    public OfferRepresentation getOfferRecommendation() {
+    public ApplicationOfferRepresentation getOfferRecommendation() {
         return offerRecommendation;
     }
 
-    public void setOfferRecommendation(OfferRepresentation offerRecommendation) {
+    public void setOfferRecommendation(ApplicationOfferRepresentation offerRecommendation) {
         this.offerRecommendation = offerRecommendation;
     }
 
@@ -121,14 +117,6 @@ public class ApplicationClientRepresentation extends ApplicationRepresentation {
 
     public void setRecommendedAdverts(List<AdvertRepresentation> recommendedAdverts) {
         this.recommendedAdverts = recommendedAdverts;
-    }
-    
-    public ResourceProcessingRepresentation getResourceProcessing() {
-        return resourceProcessing;
-    }
-
-    public void setResourceProcessing(ResourceProcessingRepresentation resourceProcessing) {
-        this.resourceProcessing = resourceProcessing;
     }
     
 }

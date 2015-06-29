@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.SystemService;
 

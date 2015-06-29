@@ -26,12 +26,11 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
@@ -69,7 +68,7 @@ public class Advert extends ResourceParentAttribute {
 
     @OneToOne
     @JoinColumn(name = "institution_address_id")
-    private InstitutionAddress address;
+    private AdvertAddress address;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -199,11 +198,11 @@ public class Advert extends ResourceParentAttribute {
         this.telephone = telephone;
     }
 
-    public InstitutionAddress getAddress() {
+    public AdvertAddress getAddress() {
         return address;
     }
 
-    public void setAddress(InstitutionAddress address) {
+    public void setAddress(AdvertAddress address) {
         this.address = address;
     }
 

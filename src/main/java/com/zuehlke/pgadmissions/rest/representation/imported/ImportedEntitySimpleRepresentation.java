@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation.imported;
 
 public class ImportedEntitySimpleRepresentation {
-
+    
     private Integer id;
 
     private String name;
-
+    
     private String code;
 
     public Integer getId() {
@@ -34,6 +34,16 @@ public class ImportedEntitySimpleRepresentation {
 
     public ImportedEntitySimpleRepresentation withId(Integer id) {
         this.id = id;
+        return this;
+    }
+    
+    public ImportedEntitySimpleRepresentation withName(String name) {
+        this.name = name;
+        return this;
+    }
+    
+    public ImportedEntitySimpleRepresentation withCode(String code) {
+        this.code = code;
         return this;
     }
 

@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-public class ResourceOpportunityClientRepresentation extends ResourceOpportunityRepresentation {
+public class ResourceOpportunityClientRepresentation extends ResourceOpportunityRepresentation implements ResourceClientRepresentation {
 
-    private ResourceProcessingRepresentation resourceProcessing;
+    private ResourceSummaryRepresentation resourceSummary;
 
-    public ResourceProcessingRepresentation getResourceProcessing() {
-        return resourceProcessing;
+    public ResourceSummaryRepresentation getResourceSummary() {
+        return resourceSummary;
     }
 
-    public void setResourceProcessing(ResourceProcessingRepresentation resourceProcessing) {
-        this.resourceProcessing = resourceProcessing;
+    public void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
+        this.resourceSummary = resourceSummary;
     }
 
 }

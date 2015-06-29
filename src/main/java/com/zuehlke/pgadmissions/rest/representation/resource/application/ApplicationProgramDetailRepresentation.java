@@ -2,23 +2,22 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 
 public class ApplicationProgramDetailRepresentation extends ApplicationSectionRepresentation {
 
-    private PrismStudyOption studyOption;
+    private ImportedEntitySimpleRepresentation referrralSource;
 
     private LocalDate startDate;
 
-    private ImportedEntitySimpleRepresentation referralSourceMapping;
+    private ImportedEntitySimpleRepresentation referralSource;
 
-    public PrismStudyOption getStudyOption() {
-        return studyOption;
+    public ImportedEntitySimpleRepresentation getReferrralSource() {
+        return referrralSource;
     }
 
-    public void setStudyOption(PrismStudyOption studyOption) {
-        this.studyOption = studyOption;
+    public void setReferrralSource(ImportedEntitySimpleRepresentation studyOption) {
+        this.referrralSource = studyOption;
     }
 
     public LocalDate getStartDate() {
@@ -29,20 +28,27 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
         this.startDate = startDate;
     }
 
-    public Integer getReferralSource() {
-        return referralSourceMapping.getId();
+    public ImportedEntitySimpleRepresentation getReferralSource() {
+        return referralSource;
     }
 
-    public void setReferralSource(Integer referralSource) {
-        this.referralSourceMapping = new ImportedEntitySimpleRepresentation().withId(referralSource);
+    public void setReferralSource(ImportedEntitySimpleRepresentation referralSource) {
+        this.referralSource = referralSource;
     }
-
-    public ImportedEntitySimpleRepresentation getReferralSourceMapping() {
-        return referralSourceMapping;
+    
+    public ApplicationProgramDetailRepresentation withStudyOption(ImportedEntitySimpleRepresentation studyOption) {
+        this.referrralSource = studyOption;
+        return this;
     }
-
-    public void setReferralSource(ImportedEntitySimpleRepresentation referralSourceMapping) {
-        this.referralSourceMapping = referralSourceMapping;
+    
+    public ApplicationProgramDetailRepresentation withStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+    
+    public ApplicationProgramDetailRepresentation withReferralSource(ImportedEntitySimpleRepresentation referralSource) {
+        this.referrralSource = referralSource;
+        return this;
     }
 
 }

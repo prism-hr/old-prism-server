@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
 
 public class ApplicationFundingRepresentation extends ApplicationSectionRepresentation {
 

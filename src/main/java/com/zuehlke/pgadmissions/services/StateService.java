@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.SelectableStateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation.SelectableStateRepresentation;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Service

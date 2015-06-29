@@ -16,7 +16,7 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     private Boolean visaRequired;
 
-    private PassportRepresentation passport;
+    private ApplicationPassportRepresentation passport;
 
     private ImportedEntitySimpleRepresentation firstNationalityMapping;
     
@@ -76,11 +76,11 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.visaRequired = visaRequired;
     }
 
-    public PassportRepresentation getPassport() {
+    public ApplicationPassportRepresentation getPassport() {
         return passport;
     }
 
-    public void setPassport(PassportRepresentation passport) {
+    public void setPassport(ApplicationPassportRepresentation passport) {
         this.passport = passport;
     }
 

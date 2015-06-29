@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain.resource;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public abstract class ResourceOpportunityAttribute implements UniqueEntity {

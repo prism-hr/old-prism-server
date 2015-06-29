@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -10,7 +9,7 @@ public class ResourceReportFilterDTO {
     private List<ResourceReportFilterPropertyDTO> properties;
 
     public List<ResourceReportFilterPropertyDTO> getProperties() {
-        return properties == null ? Collections.<ResourceReportFilterPropertyDTO> emptyList() : properties;
+        return properties;
     }
 
     public void setProperties(List<ResourceReportFilterPropertyDTO> getFilters) {
@@ -20,7 +19,7 @@ public class ResourceReportFilterDTO {
     public static class ResourceReportFilterPropertyDTO {
 
         private Integer entityId;
-        
+
         private PrismImportedEntity entityType;
 
         public Integer getEntityId() {
@@ -30,7 +29,7 @@ public class ResourceReportFilterDTO {
         public void setEntityId(Integer entityId) {
             this.entityId = entityId;
         }
-        
+
         public PrismImportedEntity getEntityType() {
             return entityType;
         }

@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -58,8 +58,8 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategor
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedSubjectAreaRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation.FilterExpressionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
@@ -183,13 +183,13 @@ public class StaticDataService {
     public Map<String, Object> getFilterProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListFilter.values().length);
+        List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListFilter.values().length);
         for (PrismResourceListFilter filterProperty : PrismResourceListFilter.values()) {
             List<FilterExpressionRepresentation> filterExpressions = Lists.newArrayList();
             for (PrismResourceListFilterExpression filterExpression : filterProperty.getPermittedExpressions()) {
                 filterExpressions.add(new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()));
             }
-            filters.add(new FilterRepresentation(filterProperty, filterExpressions, filterProperty.getPropertyType(), filterProperty.getPermittedScopes()));
+            filters.add(new ResourceListFilterRepresentation(filterProperty, filterExpressions, filterProperty.getPropertyType(), filterProperty.getPermittedScopes()));
         }
 
         staticData.put("filters", filters);

@@ -20,10 +20,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertDomicileRepresentation;
 
 @Service
 @Transactional
@@ -77,17 +77,17 @@ public class InstitutionService {
         return institutionDAO.getApprovedInstitutions();
     }
 
-    public List<InstitutionDomicileRepresentation> getInstitutionDomiciles() {
-        List<InstitutionDomicileRepresentation> representations = Lists.newLinkedList();
-        List<InstitutionDomicile> institutionDomiciles = institutionDAO.getInstitutionDomiciles();
-        for (InstitutionDomicile institutionDomicile : institutionDomiciles) {
-            representations.add(mapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
+    public List<AdvertDomicileRepresentation> getInstitutionDomiciles() {
+        List<AdvertDomicileRepresentation> representations = Lists.newLinkedList();
+        List<AdvertDomicile> institutionDomiciles = institutionDAO.getInstitutionDomiciles();
+        for (AdvertDomicile institutionDomicile : institutionDomiciles) {
+            representations.add(mapper.map(institutionDomicile, AdvertDomicileRepresentation.class));
         }
         return representations;
     }
 
-    public List<Institution> getApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
-        return institutionDAO.getApprovedInstitutionsByCountry(domicile);
+    public List<Institution> getApprovedInstitutionsByDomicile(AdvertDomicile domicile) {
+        return institutionDAO.getApprovedInstitutionsByDomicile(domicile);
     }
 
     public Institution getUclInstitution() {
@@ -118,7 +118,6 @@ public class InstitutionService {
         institution.setGoogleId(advert.getAddress().getGoogleId());
 
         institution.setTitle(advert.getTitle());
-        institution.setDomicile(advert.getAddress().getDomicile());
 
         String oldCurrency = institution.getCurrency();
         String newCurrency = institutionDTO.getCurrency();
@@ -181,7 +180,7 @@ public class InstitutionService {
     }
 
     public String mergeInstitutionDomicile(InstitutionDomiciles.InstitutionDomicile instituitionDomicileDefinition) throws DeduplicationException {
-        InstitutionDomicile persistentInstitutionDomicile = entityService.getOrCreate(new InstitutionDomicile()
+        AdvertDomicile persistentInstitutionDomicile = entityService.getOrCreate(new AdvertDomicile()
                 .withId(instituitionDomicileDefinition.getIsoCode()).withName(instituitionDomicileDefinition.getName())
                 .withCurrency(instituitionDomicileDefinition.getCurrency()).withEnabled(true));
         return persistentInstitutionDomicile.getId();

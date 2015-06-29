@@ -50,21 +50,21 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.IntegrationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -89,7 +89,7 @@ public class ResourceController {
     private ApplicationService applicationService;
 
     @Inject
-    private IntegrationService integrationService;
+    private IntegrationResourceService integrationResourceService;
 
     @Inject
     private Mapper mapper;
@@ -103,7 +103,7 @@ public class ResourceController {
     public <T extends ResourceRepresentationExtended> ResourceRepresentationExtended getResource(
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return integrationService.getResourceClientRepresentation(resource);
+        return integrationResourceService.getResourceClientRepresentation(resource);
     }
 
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
@@ -186,12 +186,13 @@ public class ResourceController {
         } else if (resourceScope == APPLICATION) {
             return applicationService.getApplicationSummary(resourceId);
         }
-        return resourceService.getResourceSummaryRepresentation(resourceScope, resourceId);
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        return integrationResourceService.getResourceSummaryRepresentation(resource);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
     @PreAuthorize("isAuthenticated()")
-    public ResourceSummaryPlotsRepresentation getPlot(
+    public ResourceSummaryPlotRepresentation getPlot(
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @RequestParam(required = false) String filter) throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
@@ -199,7 +200,7 @@ public class ResourceController {
             throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
         }
         ResourceReportFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceReportFilterDTO.class) : null;
-        return resourceService.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
+        return integrationResourceService.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)

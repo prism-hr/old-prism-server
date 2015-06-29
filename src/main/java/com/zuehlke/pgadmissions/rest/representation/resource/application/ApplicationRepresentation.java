@@ -41,7 +41,7 @@ public class ApplicationRepresentation extends ResourceRepresentationExtended {
 
     private ApplicationDocumentRepresentation document;
 
-    private AdditionalInformationRepresentation additionalInformation;
+    private ApplicationAdditionalInformationRepresentation additionalInformation;
 
     public LocalDate getClosingDate() {
         return closingDate;
@@ -171,11 +171,11 @@ public class ApplicationRepresentation extends ResourceRepresentationExtended {
         this.document = document;
     }
 
-    public AdditionalInformationRepresentation getAdditionalInformation() {
+    public ApplicationAdditionalInformationRepresentation getAdditionalInformation() {
         return additionalInformation;
     }
 
-    public void setAdditionalInformation(AdditionalInformationRepresentation additionalInformation) {
+    public void setAdditionalInformation(ApplicationAdditionalInformationRepresentation additionalInformation) {
         this.additionalInformation = additionalInformation;
     }
 

@@ -68,7 +68,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropert
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -84,14 +84,14 @@ import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -383,14 +383,14 @@ public class ApplicationService {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraint);
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
     public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
+            List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraint);
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
             index.put(processingSummary.getApplicationYear(), processingSummary);
         }
@@ -398,9 +398,9 @@ public class ApplicationService {
     }
 
     public LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
+            List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraint);
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
             index.put(new ApplicationProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
         }

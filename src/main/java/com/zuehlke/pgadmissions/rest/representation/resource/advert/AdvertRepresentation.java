@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 public class AdvertRepresentation {
@@ -37,7 +36,7 @@ public class AdvertRepresentation {
 
     private String telephone;
 
-    private InstitutionAddressRepresentation address;
+    private AdvertAddressRepresentation address;
 
     private AdvertFinancialDetailsRepresentation financialDetails;
 
@@ -163,11 +162,11 @@ public class AdvertRepresentation {
         this.telephone = telephone;
     }
 
-    public InstitutionAddressRepresentation getAddress() {
+    public AdvertAddressRepresentation getAddress() {
         return address;
     }
 
-    public void setAddress(InstitutionAddressRepresentation address) {
+    public void setAddress(AdvertAddressRepresentation address) {
         this.address = address;
     }
 
@@ -289,7 +288,7 @@ public class AdvertRepresentation {
         return this;
     }
 
-    public AdvertRepresentation withAddress(InstitutionAddressRepresentation address) {
+    public AdvertRepresentation withAddress(AdvertAddressRepresentation address) {
         this.address = address;
         return this;
     }

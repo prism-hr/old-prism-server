@@ -14,8 +14,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.user.Address;
-
 @Entity
 @Table(name = "application_employment_position")
 public class ApplicationEmploymentPosition extends ApplicationSection {

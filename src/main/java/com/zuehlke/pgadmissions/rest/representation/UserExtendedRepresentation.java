@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
 
 public class UserExtendedRepresentation extends UserRepresentation {
 

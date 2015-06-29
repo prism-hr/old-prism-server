@@ -28,9 +28,9 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
@@ -49,9 +49,10 @@ public class InstitutionDAO {
     @Inject
     private FreeMarkerConfig freemarkerConfig;
 
-    public List<Institution> getApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
+    public List<Institution> getApprovedInstitutionsByDomicile(AdvertDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .add(Restrictions.eq("domicile", domicile)) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("advert.domicile", domicile)) //
                 .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
                 .addOrder(Order.asc("title")) //
                 .list();
@@ -64,7 +65,7 @@ public class InstitutionDAO {
     }
 
     public List<String> listAvailableCurrencies() {
-        return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
+        return sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("currency")) //
@@ -201,8 +202,8 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public List<InstitutionDomicile> getInstitutionDomiciles() {
-        return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
+    public List<AdvertDomicile> getInstitutionDomiciles() {
+        return sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("name")) //
                 .list();

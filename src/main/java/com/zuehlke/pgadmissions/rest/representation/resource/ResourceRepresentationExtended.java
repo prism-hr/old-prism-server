@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+
 import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -159,6 +162,10 @@ public class ResourceRepresentationExtended extends ResourceRepresentationSimple
 
     public void setConditions(List<ResourceConditionRepresentation> conditions) {
         this.conditions = conditions;
+    }
+    
+    public void setParentResource(ResourceRepresentationSimple parentResource) {
+        setProperty(this, parentResource.getResourceScope().getLowerCamelName(), parentResource);
     }
 
 }

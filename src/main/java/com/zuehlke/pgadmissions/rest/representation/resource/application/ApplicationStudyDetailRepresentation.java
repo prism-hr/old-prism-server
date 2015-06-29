@@ -53,5 +53,30 @@ public class ApplicationStudyDetailRepresentation {
     public final void setStudyStartDate(LocalDate studyStartDate) {
         this.studyStartDate = studyStartDate;
     }
+    
+    public ApplicationStudyDetailRepresentation withStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
+        return this;
+    }
+    
+    public ApplicationStudyDetailRepresentation withStudyDivision(String studyDivision) {
+        this.studyDivision = studyDivision;
+        return this;
+    }
+    
+    public ApplicationStudyDetailRepresentation withStudyArea(String studyArea) {
+        this.studyArea = studyArea;
+        return this;
+    }
+    
+    public ApplicationStudyDetailRepresentation withStudyApplicationId(String studyApplicationId) {
+        this.studyApplicationId = studyApplicationId;
+        return this;
+    }
+    
+    public ApplicationStudyDetailRepresentation withStudyStartDate(LocalDate studyStartDate) {
+        this.studyStartDate = studyStartDate;
+        return this;
+    }
 
 }

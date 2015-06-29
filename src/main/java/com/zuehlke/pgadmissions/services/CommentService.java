@@ -68,9 +68,9 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAppointmentPreferencesRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentValidator;
 
 @Service
@@ -131,12 +131,12 @@ public class CommentService {
         return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
     }
 
-    public InterviewRepresentation getInterview(Application application) {
+    public ApplicationInterviewRepresentation getInterview(Application application) {
         Comment schedulingComment = commentDAO.getLatestComment(application, APPLICATION_ASSIGN_INTERVIEWERS);
         if (schedulingComment == null) {
             return null;
         }
-        InterviewRepresentation interview = new InterviewRepresentation();
+        ApplicationInterviewRepresentation interview = new ApplicationInterviewRepresentation();
 
         interview.setAppointmentTimeslots(Lists.<CommentAppointmentTimeslotRepresentation> newLinkedList());
         for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
@@ -144,10 +144,10 @@ public class CommentService {
                     new CommentAppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
-        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation> newLinkedList());
+        interview.setAppointmentPreferences(Lists.<ApplicationAppointmentPreferencesRepresentation> newLinkedList());
         for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
             UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
-            UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
+            ApplicationAppointmentPreferencesRepresentation preferenceRepresentation = new ApplicationAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
 
             List<Integer> inviteePreferences = Lists.newLinkedList();
 
@@ -204,7 +204,7 @@ public class CommentService {
         return Lists.newArrayList();
     }
 
-    public OfferRepresentation getOfferRecommendation(Application application) {
+    public ApplicationOfferRepresentation getOfferRecommendation(Application application) {
         Comment sourceComment = getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         if (sourceComment != null) {
@@ -213,7 +213,7 @@ public class CommentService {
 
         sourceComment = getLatestComment(application, APPLICATION_ASSIGN_SUPERVISORS);
         if (sourceComment != null) {
-            OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
+            ApplicationOfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
 
             User primarySupervisor = Iterables.getFirst(commentDAO.getAssignedUsers(sourceComment, APPLICATION_PRIMARY_SUPERVISOR), null);
             if (primarySupervisor != null) {
@@ -249,7 +249,7 @@ public class CommentService {
             return offerRepresentation;
         }
 
-        return new OfferRepresentation();
+        return new ApplicationOfferRepresentation();
     }
 
     public void persistComment(Resource resource, Comment comment) {
@@ -444,14 +444,14 @@ public class CommentService {
                 : preferenceComment;
     }
 
-    private OfferRepresentation buildOfferRepresentation(Comment sourceComment) {
+    private ApplicationOfferRepresentation buildOfferRepresentation(Comment sourceComment) {
         CommentPositionDetail positionDetail = sourceComment.getPositionDetail();
         CommentOfferDetail offerDetail = sourceComment.getOfferDetail();
 
         boolean positionDetailNull = positionDetail == null;
         boolean offerDetailNull = offerDetail == null;
 
-        return new OfferRepresentation().withPositionTitle(positionDetailNull ? null : positionDetail.getPositionTitle())
+        return new ApplicationOfferRepresentation().withPositionTitle(positionDetailNull ? null : positionDetail.getPositionTitle())
                 .withPositionDescription(positionDetailNull ? null : positionDetail.getPositionDescription())
                 .withPositionProvisionalStartDate(offerDetailNull ? null : offerDetail.getPositionProvisionalStartDate())
                 .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());

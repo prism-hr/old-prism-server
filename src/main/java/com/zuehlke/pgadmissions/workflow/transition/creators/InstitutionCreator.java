@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
@@ -43,10 +43,10 @@ public class InstitutionCreator implements ResourceCreator {
         Advert advert = advertService.createAdvert(system, advertDTO);
         Document logoImage = newInstitution.getLogoImage() != null ? documentService.getById(newInstitution.getLogoImage().getId()) : null;
 
-        Institution institution = new Institution().withUser(user).withParentResource(system).withDomicile(advert.getAddress().getDomicile())
-                .withAdvert(advert).withTitle(advert.getTitle()).withCurrency(newInstitution.getCurrency())
-                .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withMinimumWage(newInstitution.getMinimumWage())
-                .withGoogleId(advert.getAddress().getGoogleId()).withUclInstitution(false).withCreatedTimestamp(new DateTime()).withLogoImage(logoImage);
+        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withTitle(advert.getTitle())
+                .withCurrency(newInstitution.getCurrency()).withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth())
+                .withMinimumWage(newInstitution.getMinimumWage()).withGoogleId(advert.getAddress().getGoogleId()).withUclInstitution(false)
+                .withCreatedTimestamp(new DateTime()).withLogoImage(logoImage);
         advert.setInstitution(institution);
 
         resourceService.setResourceAttributes(institution, newInstitution.getAttributes());

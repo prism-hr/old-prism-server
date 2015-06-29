@@ -9,9 +9,9 @@ import org.hibernate.annotations.OrderBy;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 
 @Embeddable
 public class AdvertTargets extends AdvertAttributes {

@@ -25,9 +25,9 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMappi
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.dto.imported.ImportedEntityPivotDTO;
 import com.zuehlke.pgadmissions.dto.imported.ImportedInstitutionPivotDTO;
 import com.zuehlke.pgadmissions.dto.imported.ImportedProgramPivotDTO;

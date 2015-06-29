@@ -13,7 +13,7 @@ public class ResourceRepresentationSimple {
     private String importedCode;
 
     private String title;
-    
+
     private Integer logoImage;
 
     public PrismScope getResourceScope() {
@@ -55,7 +55,7 @@ public class ResourceRepresentationSimple {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     public Integer getLogoImage() {
         return logoImage;
     }
@@ -73,25 +73,20 @@ public class ResourceRepresentationSimple {
         this.id = id;
         return this;
     }
-    
+
     public ResourceRepresentationSimple withCode(String code) {
         this.code = code;
         return this;
     }
-    
-    public ResourceRepresentationSimple withImportedCode(String importedCode) {
-        this.importedCode = importedCode;
-        return this;
-    }
-    
+
     public ResourceRepresentationSimple withTitle(String title) {
         this.title = title;
         return this;
     }
-    
+
     public ResourceRepresentationSimple withLogoImage(Integer logoImage) {
         this.logoImage = logoImage;
         return this;
     }
-    
+
 }

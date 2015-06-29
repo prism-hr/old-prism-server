@@ -10,8 +10,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
 
 @Entity
 @Table(name = "resource_study_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_location" }),

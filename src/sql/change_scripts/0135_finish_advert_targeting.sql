@@ -292,3 +292,17 @@ alter table comment
 	drop column removed_partner
 ;
 
+rename table institution_domicile to advert_domicile
+;
+
+alter table institution_address
+	drop foreign key institution_address_ibfk_2
+;
+
+alter table institution_address
+	change column institution_domicile_id advert_domicile_id varchar(10) not null,
+	add foreign key (advert_domicile_id) references advert_domicile (id)
+;
+
+rename table institution_address to advert_address
+;

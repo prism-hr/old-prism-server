@@ -13,7 +13,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
 @Table(name = "IMPORTED_AGE_RANGE_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_age_range_id, code" }) })

@@ -66,8 +66,8 @@ import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 
 import freemarker.template.Template;
 
@@ -308,16 +308,16 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
@@ -325,8 +325,8 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_week.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .addScalar("applicationWeek", IntegerType.INSTANCE) //
@@ -370,15 +370,14 @@ public class ApplicationDAO {
                 .list();
     }
 
-    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, Set<ResourceSummaryPlotConstraintRepresentation> constraints,
-            String templateLocation) {
+    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
         List<String> filterConstraintExpressions = Lists.newLinkedList();
         if (constraints != null) {
             HashMultimap<PrismImportedEntity, Integer> flattenedConstraints = HashMultimap.create();
-            for (ResourceSummaryPlotConstraintRepresentation constraint : constraints) {
-                flattenedConstraints.put(constraint.getType(), constraint.getId());
+            for (ResourceReportFilterPropertyDTO constraint : constraints) {
+                flattenedConstraints.put(constraint.getEntityType(), constraint.getEntityId());
             }
 
             for (PrismImportedEntity entity : flattenedConstraints.keySet()) {

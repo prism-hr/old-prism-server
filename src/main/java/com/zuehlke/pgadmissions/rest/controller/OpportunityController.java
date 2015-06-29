@@ -19,8 +19,8 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.IntegrationService;
 import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationAdvertService;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -31,7 +31,7 @@ public class OpportunityController {
     private AdvertService advertService;
     
     @Inject
-    private IntegrationService integrationService;
+    private IntegrationAdvertService integrationAdvertService;
 
     @Inject
     private StateService stateService;
@@ -44,7 +44,7 @@ public class OpportunityController {
         
         List<AdvertRepresentation> representations = Lists.newLinkedList();
         for (Advert advert : adverts) {
-            representations.add(integrationService.getAdvertRepresentation(advert));
+            representations.add(integrationAdvertService.getAdvertRepresentation(advert));
         }
         return representations;
     }
@@ -55,7 +55,7 @@ public class OpportunityController {
         if (advert == null) {
             throw new ResourceNotFoundException("Advert not found");
         }
-        return integrationService.getAdvertRepresentation(advert);
+        return integrationAdvertService.getAdvertRepresentation(advert);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")

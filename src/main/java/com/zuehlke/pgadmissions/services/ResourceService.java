@@ -6,10 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +16,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.dozer.Mapper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
@@ -32,10 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -53,12 +47,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
-import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -77,7 +70,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -90,21 +82,9 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotsRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepresentation;
-import com.zuehlke.pgadmissions.services.ApplicationService.ApplicationProcessingMonth;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelperConcurrency;
@@ -142,12 +122,6 @@ public class ResourceService {
     private ApplicationService applicationService;
 
     @Inject
-    private ProjectService projectService;
-
-    @Inject
-    private ProgramService programService;
-
-    @Inject
     private DepartmentService departmentService;
 
     @Inject
@@ -183,19 +157,12 @@ public class ResourceService {
     @Inject
     private ApplicationContext applicationContext;
 
-    @Inject
-    Mapper mapper;
-
     public Resource getById(PrismScope resourceScope, Integer id) {
         return entityService.getById(resourceScope.getResourceClass(), id);
     }
 
     public <T extends Resource> T getById(Class<T> resourceClass, Integer id) {
         return entityService.getById(resourceClass, id);
-    }
-
-    public Integer getResourceId(Resource resource) {
-        return resource == null ? null : resource.getId();
     }
 
     public ActionOutcomeDTO create(User user, Action action, ResourceDTO resourceDTO, Integer workflowPropertyConfigurationVersion)
@@ -670,37 +637,6 @@ public class ResourceService {
         resourceDAO.deleteElapsedStudyOptions(baseline);
     }
 
-    public ResourceSummaryRepresentation getResourceSummaryRepresentation(PrismScope resourceScope, Integer resourceId) {
-        ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
-        ResourceSummaryRepresentation representation = new ResourceSummaryRepresentation();
-
-        if (resourceScope == INSTITUTION) {
-            representation.setProgramCount(programService.getActiveProgramCount((Institution) resource));
-            representation.setProjectCount(projectService.getActiveProjectCount(resource));
-        } else if (resourceScope == PROGRAM) {
-            representation.setProjectCount(projectService.getActiveProjectCount(resource));
-        }
-
-        representation.setPlot(getResourceSummaryPlotRepresentation(resource, null).getPlots().iterator().next());
-        return representation;
-    }
-
-    public ResourceSummaryPlotsRepresentation getResourceSummaryPlotRepresentation(ResourceParent resource, ResourceReportFilterDTO filterDTO) {
-        ResourceSummaryPlotsRepresentation plotsRepresentation = new ResourceSummaryPlotsRepresentation();
-        if (filterDTO == null) {
-            ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, null);
-            plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(null).withData(plotDataRepresentation));
-        } else {
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint = Sets.newHashSet();
-            for (ResourceReportFilterPropertyDTO propertyDTO : filterDTO.getProperties()) {
-                constraint.add(mapper.map(propertyDTO, ResourceSummaryPlotConstraintRepresentation.class));
-            }
-            ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, constraint);
-            plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
-        }
-        return plotsRepresentation;
-    }
-
     public Integer getBackgroundImage(ResourceParent resource) {
         Document backgroundImage = resource.getAdvert().getBackgroundImage();
         if (backgroundImage == null) {
@@ -782,65 +718,6 @@ public class ResourceService {
                 persistentResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
             }
         }
-    }
-
-    private ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
-
-        List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
-        List<ApplicationProcessingSummaryDTO> yearSummaries = applicationService.getApplicationProcessingSummariesByYear(resource, constraint);
-        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = applicationService //
-                .getApplicationProcessingSummariesByMonth(resource, constraint);
-        LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> weekSummaries = applicationService //
-                .getApplicationProcessingSummariesByWeek(resource, constraint);
-
-        for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
-            ApplicationProcessingSummaryRepresentationYear yearRepresentation = new ApplicationProcessingSummaryRepresentationYear();
-            String applicationYear = yearSummary.getApplicationYear();
-            yearRepresentation.setApplicationYear(applicationYear);
-
-            populateApplicationProcessingSummary(yearSummary, yearRepresentation);
-
-            List<ApplicationProcessingSummaryRepresentationMonth> monthRepresentations = Lists.newLinkedList();
-            for (ApplicationProcessingSummaryDTO monthSummary : monthSummaries.get(applicationYear)) {
-                ApplicationProcessingSummaryRepresentationMonth monthRepresentation = new ApplicationProcessingSummaryRepresentationMonth();
-                populateApplicationProcessingSummary(monthSummary, monthRepresentation);
-                monthRepresentation.setApplicationMonth(monthSummary.getApplicationMonth());
-                monthRepresentations.add(monthRepresentation);
-
-                Integer applicationMonth = monthSummary.getApplicationMonth();
-                List<ApplicationProcessingSummaryRepresentationWeek> weekRepresentations = Lists.newLinkedList();
-                for (ApplicationProcessingSummaryDTO weekSummary : weekSummaries.get(new ApplicationProcessingMonth(applicationYear, applicationMonth))) {
-                    ApplicationProcessingSummaryRepresentationWeek weekRepresentation = new ApplicationProcessingSummaryRepresentationWeek();
-                    populateApplicationProcessingSummary(weekSummary, weekRepresentation);
-                    weekRepresentation.setApplicationWeek(weekSummary.getApplicationWeek());
-                    weekRepresentations.add(weekRepresentation);
-                }
-
-                monthRepresentation.setProcessingSummaries(weekRepresentations);
-            }
-
-            yearRepresentation.setProcessingSummaries(monthRepresentations);
-            yearRepresentations.add(yearRepresentation);
-        }
-
-        summary.setProcessingSummaries(yearRepresentations);
-        return summary;
-    }
-
-    private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary, ApplicationProcessingSummaryRepresentation yearRepresentation) {
-        yearRepresentation.setAdvertCount(longToInteger(yearSummary.getAdvertCount()));
-        yearRepresentation.setSubmittedApplicationCount(longToInteger(yearSummary.getSubmittedApplicationCount()));
-        yearRepresentation.setApprovedApplicationCount(longToInteger(yearSummary.getApprovedApplicationCount()));
-        yearRepresentation.setRejectedApplicationCount(longToInteger(yearSummary.getRejectedApplicationCount()));
-        yearRepresentation.setWithdrawnApplicationCount(longToInteger(yearSummary.getWithdrawnApplicationCount()));
-        yearRepresentation.setSubmittedApplicationRatio(doubleToBigDecimal(yearSummary.getSubmittedApplicationRatio(), 2));
-        yearRepresentation.setApprovedApplicationRatio(doubleToBigDecimal(yearSummary.getApprovedApplicationRatio(), 2));
-        yearRepresentation.setRejectedApplicationRatio(doubleToBigDecimal(yearSummary.getRejectedApplicationRatio(), 2));
-        yearRepresentation.setWithdrawnApplicationRatio(doubleToBigDecimal(yearSummary.getWithdrawnApplicationRatio(), 2));
-        yearRepresentation.setAverageRating(doubleToBigDecimal(yearSummary.getAverageRating(), 2));
-        yearRepresentation.setAverageProcessingTime(doubleToBigDecimal(yearSummary.getAverageProcessingTime(), 2));
     }
 
 }

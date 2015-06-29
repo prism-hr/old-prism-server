@@ -12,8 +12,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.user.Address;
-
 @Entity
 @Table(name = "application_address")
 public class ApplicationAddress extends ApplicationSection {

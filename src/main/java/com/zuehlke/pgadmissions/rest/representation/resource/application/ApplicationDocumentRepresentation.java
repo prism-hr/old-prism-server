@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ApplicationDocumentRepresentation extends ApplicationSectionRepresentation {
 

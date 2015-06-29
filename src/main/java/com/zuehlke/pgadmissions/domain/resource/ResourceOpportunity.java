@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.resource;
 
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
 
 public abstract class ResourceOpportunity extends ResourceParent {

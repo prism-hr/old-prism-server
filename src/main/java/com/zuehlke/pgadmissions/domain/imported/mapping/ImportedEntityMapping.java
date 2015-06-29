@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 public abstract class ImportedEntityMapping <T extends ImportedEntity<?>> implements UniqueEntity {
 

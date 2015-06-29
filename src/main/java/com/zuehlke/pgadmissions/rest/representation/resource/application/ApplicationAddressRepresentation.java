@@ -2,23 +2,23 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 public class ApplicationAddressRepresentation extends ApplicationSectionRepresentation {
 
-    private AddressRepresentationApplication currentAddress;
+    private ApplicationAddressRepresentationApplication currentAddress;
 
-    private AddressRepresentationApplication contactAddress;
+    private ApplicationAddressRepresentationApplication contactAddress;
 
-    public AddressRepresentationApplication getCurrentAddress() {
+    public ApplicationAddressRepresentationApplication getCurrentAddress() {
         return currentAddress;
     }
 
-    public void setCurrentAddress(AddressRepresentationApplication currentAddress) {
+    public void setCurrentAddress(ApplicationAddressRepresentationApplication currentAddress) {
         this.currentAddress = currentAddress;
     }
 
-    public AddressRepresentationApplication getContactAddress() {
+    public ApplicationAddressRepresentationApplication getContactAddress() {
         return contactAddress;
     }
 
-    public void setContactAddress(AddressRepresentationApplication contactAddress) {
+    public void setContactAddress(ApplicationAddressRepresentationApplication contactAddress) {
         this.contactAddress = contactAddress;
     }
 }

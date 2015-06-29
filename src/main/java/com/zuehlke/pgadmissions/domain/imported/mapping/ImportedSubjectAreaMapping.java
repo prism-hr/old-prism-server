@@ -13,7 +13,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
 @Table(name = "IMPORTED_SUBJECT_AREA_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_subject_area_id, code" }) })

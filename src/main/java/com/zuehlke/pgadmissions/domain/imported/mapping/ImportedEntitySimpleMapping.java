@@ -13,7 +13,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
 @Table(name = "IMPORTED_ENTITY_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_entity_id, code" }) })

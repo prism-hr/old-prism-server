@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -81,7 +81,7 @@ public class Project extends ResourceOpportunity {
 
     @ManyToOne
     @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
-    private ImportedOpportunityType opportunityType;
+    private ImportedEntitySimple opportunityType;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -264,12 +264,12 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public ImportedOpportunityType getOpportunityType() {
+    public ImportedEntitySimple getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public void setOpportunityType(ImportedOpportunityType opportunityType) {
+    public void setOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -529,7 +529,7 @@ public class Project extends ResourceOpportunity {
         return this;
     }
 
-    public Project withOpportunityType(ImportedOpportunityType opportunityType) {
+    public Project withOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

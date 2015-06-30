@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.auth.UsernamePasswordLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.AuthenticationService;
 
@@ -115,7 +115,7 @@ public class AuthenticationController {
     private Map<String, Object> generateTokenOrSuggestedDetails(User user, HttpServletRequest request, HttpServletResponse response) {
         if (user == null) {
             OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(AuthenticationService.OAUTH_USER_TO_CONFIRM);
-            UserRepresentation suggestedDetails = new UserRepresentation().withFirstName(userDefinition.getFirstName())
+            UserRepresentationSimple suggestedDetails = new UserRepresentationSimple().withFirstName(userDefinition.getFirstName())
                     .withLastName(userDefinition.getLastName()).withEmail(userDefinition.getEmail());
             response.setStatus(HttpStatus.I_AM_A_TEAPOT.value());
             return ImmutableMap.of("suggestedUserDetails", (Object) suggestedDetails);

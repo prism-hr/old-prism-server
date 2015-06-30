@@ -2,13 +2,11 @@ package com.zuehlke.pgadmissions.rest.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
-import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -40,16 +37,15 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserLinkingValidator;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserFeedbackService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationUserService;
 
 @RestController
 @RequestMapping("/api/user")
@@ -57,55 +53,34 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
+    @Inject
+    private AuthenticationTokenHelper authenticationTokenHelper;
+
     @Resource(name = "prismUserDetailsService")
     private UserDetailsService userDetailsService;
-
-    @Inject
-    private UserRegistrationValidator userRegistrationValidator;
-
-    @Inject
-    private RoleService roleService;
-
-    @Inject
-    private UserService userService;
 
     @Inject
     private EntityService entityService;
 
     @Inject
+    private IntegrationUserService integrationUserService;
+
+    @Inject
     private ResourceListFilterService resourceListFilterService;
 
     @Inject
-    private UserFeedbackService userFeedbackService;
-
-    @Inject
-    private AuthenticationTokenHelper authenticationTokenHelper;
+    private UserService userService;
 
     @Inject
     private UserLinkingValidator userLinkingValidator;
 
     @Inject
-    private Mapper dozerBeanMapper;
+    private UserRegistrationValidator userRegistrationValidator;
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.GET)
     public UserExtendedRepresentation getUser() {
-        User user = userService.getCurrentUser();
-        UserExtendedRepresentation userRepresentation = dozerBeanMapper.map(user, UserExtendedRepresentation.class);
-        userRepresentation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
-        List<String> linkedUserAccounts = userService.getLinkedUserAccounts(user);
-        userRepresentation.setLinkedUsers(linkedUserAccounts);
-        userRepresentation.setParentUser(user.getEmail());
-
-        Set<UserAccountExternal> externalAccounts = user.getUserAccount().getExternalAccounts();
-        List<String> oauthProviders = Lists.newArrayListWithCapacity(externalAccounts.size());
-        for (UserAccountExternal externalAccount : externalAccounts) {
-            oauthProviders.add(externalAccount.getAccountType().getName());
-        }
-        userRepresentation.setOauthProviders(oauthProviders);
-        userRepresentation.setRequiredFeedbackRoleCategory(userFeedbackService.getRoleCategoryUserFeedbackRequiredFor(user));
-
-        return userRepresentation;
+        return integrationUserService.getUserRepresentationExtended(userService.getCurrentUser());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -116,11 +91,11 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/linkedUsers", method = RequestMethod.POST)
-    public UserRepresentation linkUsers(@RequestBody @Valid UserLinkingDTO userLinkingDTO) {
+    public UserRepresentationSimple linkUsers(@RequestBody @Valid UserLinkingDTO userLinkingDTO) {
         User parentUser = userService.getCurrentUser().getParentUser();
         User otherUser = userService.getUserByEmail(userLinkingDTO.getOtherEmail());
         userService.linkUsers(parentUser, otherUser);
-        return dozerBeanMapper.map(otherUser, UserRepresentation.class);
+        return integrationUserService.getUserRepresentationSimple(otherUser);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -172,7 +147,7 @@ public class UserController {
             UserAccountExternal primaryExternalAccount = user.getUserAccount().getPrimaryExternalAccount();
             loginProvider = primaryExternalAccount != null ? primaryExternalAccount.getAccountType().getName() : null;
         }
-        UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);
+        UserRepresentationSimple userRepresentation = integrationUserService.getUserRepresentationSimple(user);
 
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", status);
@@ -191,7 +166,7 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/suggestion", method = RequestMethod.GET, params = "searchTerm")
-    public List<UserRepresentation> getSimilarUsers(@RequestParam String searchTerm) {
+    public List<UserRepresentationSimple> getSimilarUsers(@RequestParam String searchTerm) {
         return userService.getSimilarUsers(searchTerm);
     }
 

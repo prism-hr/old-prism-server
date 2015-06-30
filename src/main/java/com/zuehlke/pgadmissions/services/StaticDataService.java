@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.WordUtils;
-import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -42,27 +41,30 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedSubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
+import com.zuehlke.pgadmissions.services.integration.IntegrationAdvertService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationImportedEntityService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationStateService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 @Service
@@ -76,7 +78,7 @@ public class StaticDataService {
     private BigDecimal systemMinimumWage;
 
     private ToIdFunction toIdFunction = new ToIdFunction();
-
+    
     @Inject
     private CustomizationService customizationService;
 
@@ -93,7 +95,16 @@ public class StaticDataService {
     private InstitutionService institutionService;
 
     @Inject
-    private Mapper mapper;
+    private IntegrationAdvertService integrationAdvertService;
+    
+    @Inject
+    private IntegrationImportedEntityService integrationImportedEntityService;
+
+    @Inject
+    private IntegrationStateService integrationStateService;
+
+    @Inject
+    private IntegrationResourceService integrationResourceService;
 
     public Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
@@ -114,9 +125,9 @@ public class StaticDataService {
         Map<String, Object> staticData = Maps.newHashMap();
 
         List<State> states = entityService.list(State.class);
-        List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
+        List<StateRepresentationSimple> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
-            stateRepresentations.add(mapper.map(state, StateRepresentation.class));
+            stateRepresentations.add(integrationStateService.getStateRepresentationSimple(state));
         }
 
         staticData.put("states", stateRepresentations);
@@ -139,7 +150,7 @@ public class StaticDataService {
 
     public Map<String, Object> getInstitutionDomiciles() {
         Map<String, Object> staticData = Maps.newHashMap();
-        staticData.put("institutionDomiciles", institutionService.getInstitutionDomiciles());
+        staticData.put("institutionDomiciles", integrationAdvertService.getAdvertDomicileRepresentations());
         return staticData;
     }
 
@@ -189,7 +200,8 @@ public class StaticDataService {
             for (PrismResourceListFilterExpression filterExpression : filterProperty.getPermittedExpressions()) {
                 filterExpressions.add(new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()));
             }
-            filters.add(new ResourceListFilterRepresentation(filterProperty, filterExpressions, filterProperty.getPropertyType(), filterProperty.getPermittedScopes()));
+            filters.add(new ResourceListFilterRepresentation(filterProperty, filterExpressions, filterProperty.getPropertyType(), filterProperty
+                    .getPermittedScopes()));
         }
 
         staticData.put("filters", filters);
@@ -251,21 +263,21 @@ public class StaticDataService {
     }
 
     @Cacheable("importedInstitutionData")
-    public Map<String, Object> getInstitutionData(Integer institutionId) {
+    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> Map<String, Object> getInstitutionData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
         for (PrismImportedEntity prismImportedEntity : getPrefetchimports()) {
-            List<? extends ImportedEntity<?>> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
-            List<Object> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
-            for (Object entity : entities) {
-                entityRepresentations.add(mapper.map(entity, prismImportedEntity.getClass()));
+            List<T> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
+            List<ImportedEntitySimpleRepresentation> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
+            for (T entity : entities) {
+                entityRepresentations.add(integrationImportedEntityService.getImportedEntityRepresentation(entity));
             }
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
 
-        staticData.put("institution", mapper.map(institution, ResourceRepresentationSimple.class));
+        staticData.put("institution", integrationResourceService.getResourceRepresentationSimple(institution));
         staticData.put("departments", departmentService.getDepartments(institutionId));
         staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;
@@ -273,12 +285,12 @@ public class StaticDataService {
 
     public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer institutionId, Integer domicileId) {
         Institution institution = institutionService.getById(institutionId);
-        ImportedDomicile domicile = entityService.getById(ImportedDomicile.class, domicileId);
+        ImportedEntitySimple domicile = entityService.getById(ImportedEntitySimple.class, domicileId);
         List<ImportedInstitution> importedInstitutions = importedEntityService.getEnabledImportedInstitutions(institution, domicile);
 
         List<ImportedInstitutionRepresentation> representations = Lists.newArrayListWithCapacity(importedInstitutions.size());
         for (ImportedInstitution importedInstitution : importedInstitutions) {
-            representations.add(mapper.map(importedInstitution, ImportedInstitutionRepresentation.class));
+            representations.add(integrationImportedEntityService.getImportedInstitutionRepresentation(importedInstitution));
         }
 
         return representations;
@@ -291,19 +303,7 @@ public class StaticDataService {
 
         List<ImportedProgramRepresentation> representations = Lists.newArrayListWithCapacity(importedprograms.size());
         for (ImportedProgram importedProgram : importedprograms) {
-            representations.add(mapper.map(importedProgram, ImportedProgramRepresentation.class));
-        }
-
-        return representations;
-    }
-
-    public List<ImportedSubjectAreaRepresentation> getImportedSubjectAreas(Integer institutionId) {
-        Institution institution = institutionService.getById(institutionId);
-        List<ImportedSubjectArea> importedSubjectAreas = importedEntityService.getEnabledImportedSubjectAreas(institution);
-
-        List<ImportedSubjectAreaRepresentation> representations = Lists.newArrayListWithCapacity(importedSubjectAreas.size());
-        for (ImportedSubjectArea importedSubjectArea : importedSubjectAreas) {
-            representations.add(mapper.map(importedSubjectArea, ImportedSubjectAreaRepresentation.class));
+            representations.add(integrationImportedEntityService.getImportedProgramRepresentation(importedProgram));
         }
 
         return representations;

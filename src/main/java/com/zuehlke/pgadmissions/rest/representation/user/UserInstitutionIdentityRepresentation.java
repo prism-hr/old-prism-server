@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.user;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 

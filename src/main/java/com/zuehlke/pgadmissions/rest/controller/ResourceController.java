@@ -7,16 +7,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
@@ -40,31 +34,28 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
-import com.zuehlke.pgadmissions.rest.RestApiUtils;
+import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationList;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationActionService;
 import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationUserService;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -83,16 +74,16 @@ public class ResourceController {
     private RoleService roleService;
 
     @Inject
-    private StateService stateService;
+    private ApplicationService applicationService;
 
     @Inject
-    private ApplicationService applicationService;
+    private IntegrationActionService integrationActionService;
 
     @Inject
     private IntegrationResourceService integrationResourceService;
 
     @Inject
-    private Mapper mapper;
+    private IntegrationUserService integrationUserService;
 
     @Inject
     private ObjectMapper objectMapper;
@@ -118,48 +109,13 @@ public class ResourceController {
 
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceRepresentationList> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
-        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
-        List<ResourceListRowRepresentation> representations = Lists.newArrayList();
-        DateTime baseline = new DateTime().minusDays(1);
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
+        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
 
-        for (ResourceListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
-            ResourceListRowRepresentation representation = mapper.map(rowDTO, ResourceListRowRepresentation.class);
-            representation.setResourceScope(resourceScope);
-            representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCamelName() + "Id"));
-
-            Set<ActionRepresentation> actionRepresentations = Sets.newLinkedHashSet();
-            for (ActionDTO actionDTO : rowDTO.getActions()) {
-                actionRepresentations.add(mapper.map(actionDTO, ActionRepresentation.class));
-            }
-            representation.setActions(actionRepresentations);
-
-            for (String scopeName : new String[] { "institution", "partner" }) {
-                Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
-                if (id != null && (scopeName.equals("institution") || scopeName.equals("partner") && !id.equals(representation.getInstitution().getId()))) {
-                    String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
-                    Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
-                    PropertyUtils.setSimpleProperty(representation, scopeName,
-                            new ResourceRepresentationSimple().withId(id).withTitle(title).withLogoImage(logoImageId));
-                }
-            }
-
-            for (String scopeName : new String[] { "program", "project" }) {
-                Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
-                if (id != null) {
-                    String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
-                    PropertyUtils.setSimpleProperty(representation, scopeName, new ResourceRepresentationSimple().withId(id).withTitle(title));
-                }
-            }
-
-            representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
-            representation.setSecondaryStateGroups(stateService.getSecondaryResourceStateGroups(resourceScope, rowDTO.getResourceId()));
-            representations.add(representation);
-        }
-
-        return representations;
+        return integrationResourceService.getResourceRepresentations(resourceScope,
+                resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
@@ -224,14 +180,14 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        UserRepresentation newUser = userRolesRepresentation.getUser();
+        UserRepresentationSimple newUser = userRolesRepresentation.getUser();
 
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
-        return mapper.map(user, UserRepresentation.class);
+        return integrationUserService.getUserRepresentationSimple(user);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
@@ -268,12 +224,12 @@ public class ResourceController {
         }
 
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
-        return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        return integrationActionService.getActionOutcomeRepresentation(actionOutcome);
     }
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return RestApiUtils.getResourceDescriptor(resourceScope);
+        return RestUtils.getResourceDescriptor(resourceScope);
     }
 
     private Resource loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {

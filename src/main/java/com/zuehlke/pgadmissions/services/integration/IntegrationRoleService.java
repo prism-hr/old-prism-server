@@ -37,7 +37,7 @@ public class IntegrationRoleService {
     }
 
     private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user) {
-        return new ResourceUserRolesRepresentation().withUser(integrationUserService.getUserRepresentation(user)).withRoles(
+        return new ResourceUserRolesRepresentation().withUser(integrationUserService.getUserRepresentationSimple(user)).withRoles(
                 roleService.getRolesForResource(resource, user));
     }
 

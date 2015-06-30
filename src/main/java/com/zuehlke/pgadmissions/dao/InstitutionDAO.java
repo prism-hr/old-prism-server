@@ -201,14 +201,7 @@ public class InstitutionDAO {
                 .setParameterList("updates", updates) //
                 .executeUpdate();
     }
-
-    public List<AdvertDomicile> getInstitutionDomiciles() {
-        return sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class) //
-                .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("name")) //
-                .list();
-    }
-
+    
     public void changeInstitutionBusinessYear(Integer institutionId, Integer businessYearEndMonth) throws Exception {
         String templateLocation;
 

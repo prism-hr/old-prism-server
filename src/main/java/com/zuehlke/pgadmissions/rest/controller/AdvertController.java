@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
-import com.zuehlke.pgadmissions.rest.RestApiUtils;
+import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
@@ -67,7 +67,7 @@ public class AdvertController {
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return RestApiUtils.getResourceDescriptor(resourceScope);
+        return RestUtils.getResourceDescriptor(resourceScope);
     }
 
 }

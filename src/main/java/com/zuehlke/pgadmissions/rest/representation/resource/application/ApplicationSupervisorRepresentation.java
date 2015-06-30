@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationSupervisorRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
     private Boolean acceptedSupervision;
 
@@ -18,11 +18,11 @@ public class ApplicationSupervisorRepresentation extends ApplicationSectionRepre
         this.id = id;
     }
 
-    public UserRepresentation getUser() {
+    public UserRepresentationSimple getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
@@ -32,6 +32,21 @@ public class ApplicationSupervisorRepresentation extends ApplicationSectionRepre
 
     public void setAcceptedSupervision(Boolean acceptedSupervision) {
         this.acceptedSupervision = acceptedSupervision;
+    }
+        
+    public ApplicationSupervisorRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public ApplicationSupervisorRepresentation withUser(UserRepresentationSimple user) {
+        this.user = user;
+        return this;
+    }
+    
+    public ApplicationSupervisorRepresentation withAcceptedSupervisor(Boolean acceptedSupervision) {
+        this.acceptedSupervision = acceptedSupervision;
+        return this;
     }
     
 }

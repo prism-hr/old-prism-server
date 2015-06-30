@@ -6,8 +6,8 @@ import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 
 public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
-    
-    private ImportedEntitySimpleRepresentation languageQualificationTypeMapping;
+
+    private ImportedEntitySimpleRepresentation languageQualificationType;
 
     private LocalDate examDate;
 
@@ -23,20 +23,12 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
 
     private DocumentRepresentation document;
 
-    public Integer getType() {
-        return languageQualificationTypeMapping.getId();
-    }
-    
-    public void setType(Integer languageQualificationType) {
-        this.languageQualificationTypeMapping = new ImportedEntitySimpleRepresentation().withId(languageQualificationType);
-    }
-    
-    public ImportedEntitySimpleRepresentation getLanguageQualificationTypeMapping() {
-        return languageQualificationTypeMapping;
+    public ImportedEntitySimpleRepresentation getLanguageQualificationType() {
+        return languageQualificationType;
     }
 
-    public void setLanguageQualificationTypeMapping(ImportedEntitySimpleRepresentation languageQualificationTypeMapping) {
-        this.languageQualificationTypeMapping = languageQualificationTypeMapping;
+    public void setLanguageQualificationType(ImportedEntitySimpleRepresentation languageQualificationType) {
+        this.languageQualificationType = languageQualificationType;
     }
 
     public LocalDate getExamDate() {
@@ -94,4 +86,45 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
     public void setDocument(DocumentRepresentation document) {
         this.document = document;
     }
+
+    public ApplicationLanguageQualificationRepresentation withLanguageQualificationType(ImportedEntitySimpleRepresentation languageQualificationType) {
+        this.languageQualificationType = languageQualificationType;
+        return this;
+    }
+
+    public ApplicationLanguageQualificationRepresentation withExamDate(LocalDate examDate) {
+        this.examDate = examDate;
+        return this;
+    }
+    
+    public ApplicationLanguageQualificationRepresentation withOverallScore(String overallScore) {
+        this.overallScore = overallScore;
+        return this;
+    }
+
+    public ApplicationLanguageQualificationRepresentation withReadingScore(String readingScore) {
+        this.readingScore = readingScore;
+        return this;
+    }
+    
+    public ApplicationLanguageQualificationRepresentation withWritingScore(String writingScore) {
+        this.writingScore = writingScore;
+        return this;
+    }
+    
+    public ApplicationLanguageQualificationRepresentation withSpeakingScore(String speakingScore) {
+        this.speakingScore = speakingScore;
+        return this;
+    }
+    
+    public ApplicationLanguageQualificationRepresentation withListeningScore(String listeningScore) {
+        this.listeningScore = listeningScore;
+        return this;
+    }
+    
+    public ApplicationLanguageQualificationRepresentation withDocument(DocumentRepresentation document) {
+        this.document = document;
+        return this;
+    }
+    
 }

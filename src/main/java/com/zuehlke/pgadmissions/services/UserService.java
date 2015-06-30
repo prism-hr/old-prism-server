@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 
 import java.util.List;
 import java.util.Map;
@@ -31,8 +32,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -48,7 +47,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -102,11 +101,6 @@ public class UserService {
         return null;
     }
 
-    public UserRepresentation getUserRepresentation(User user) {
-        return new UserRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
-                .withLastName(user.getLastName()).withEmail(user.getEmail());
-    }
-
     public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
@@ -149,21 +143,20 @@ public class UserService {
         user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
         user.setEmail(userDTO.getEmail());
 
-        Document portraitDocument = null;
-        if (userDTO.getPortraitDocument() != null) {
-            portraitDocument = documentService.getById(userDTO.getPortraitDocument(), PrismFileCategory.IMAGE);
+        UserAccount userAccount = user.getUserAccount();
+
+        Integer portraitDocumentId = userDTO.getPortraitDocument();
+        if (portraitDocumentId != null) {
+            userAccount.setPortraitImage(documentService.getById(userDTO.getPortraitDocument(), IMAGE));
         }
 
-        user.setPortraitImage(portraitDocument);
-
-        UserAccount account = user.getUserAccount();
-        account.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
+        userAccount.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
 
         String password = userDTO.getPassword();
         if (password != null) {
-            account.setPassword(EncryptionUtils.getMD5(password));
-            account.setTemporaryPassword(null);
-            account.setTemporaryPasswordExpiryTimestamp(null);
+            userAccount.setPassword(EncryptionUtils.getMD5(password));
+            userAccount.setTemporaryPassword(null);
+            userAccount.setTemporaryPasswordExpiryTimestamp(null);
         }
     }
 
@@ -271,7 +264,7 @@ public class UserService {
         return usersToInclude;
     }
 
-    public List<UserRepresentation> getSimilarUsers(String searchTerm) {
+    public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
 
         if (trimmedSearchTerm.length() >= 1) {

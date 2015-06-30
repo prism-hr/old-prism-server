@@ -4,7 +4,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.URL;
 
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertAddressDTO;
 
 public class AdvertDetailsDTO {
 
@@ -15,7 +15,7 @@ public class AdvertDetailsDTO {
     @Size(max = 2048)
     private String homepage;
 
-    private InstitutionAddressDTO address;
+    private AdvertAddressDTO address;
 
     public String getDescription() {
         return description;
@@ -33,11 +33,11 @@ public class AdvertDetailsDTO {
         this.homepage = homepage;
     }
 
-    public InstitutionAddressDTO getAddress() {
+    public AdvertAddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(InstitutionAddressDTO address) {
+    public void setAddress(AdvertAddressDTO address) {
         this.address = address;
     }
 

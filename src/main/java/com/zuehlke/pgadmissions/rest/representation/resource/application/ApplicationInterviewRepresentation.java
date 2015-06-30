@@ -1,64 +1,36 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import java.util.List;
-import java.util.TimeZone;
 
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 
 public class ApplicationInterviewRepresentation {
 
-    private TimeZone interviewTimeZone;
-
-    private Integer interviewDuration;
-
-    private String intervieweeInstructions;
-
-    private String interviewerInstructions;
-
-    private String interviewLocation;
+    private CommentInterviewAppointmentRepresentation interviewAppointment;
+    
+    private CommentInterviewInstructionRepresentation interviewInstruction;
 
     private List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots;
 
-    private List<ApplicationAppointmentPreferencesRepresentation> appointmentPreferences;
+    private List<CommentAppointmentPreferenceRepresentation> appointmentPreferences;
 
-    public TimeZone getInterviewTimeZone() {
-        return interviewTimeZone;
+    public CommentInterviewAppointmentRepresentation getInterviewAppointment() {
+        return interviewAppointment;
     }
 
-    public void setInterviewTimeZone(TimeZone interviewTimeZone) {
-        this.interviewTimeZone = interviewTimeZone;
+    public void setInterviewAppointment(CommentInterviewAppointmentRepresentation interviewAppointment) {
+        this.interviewAppointment = interviewAppointment;
     }
 
-    public Integer getInterviewDuration() {
-        return interviewDuration;
+    public CommentInterviewInstructionRepresentation getInterviewInstruction() {
+        return interviewInstruction;
     }
 
-    public void setInterviewDuration(Integer interviewDuration) {
-        this.interviewDuration = interviewDuration;
-    }
-
-    public String getIntervieweeInstructions() {
-        return intervieweeInstructions;
-    }
-
-    public void setIntervieweeInstructions(String intervieweeInstructions) {
-        this.intervieweeInstructions = intervieweeInstructions;
-    }
-
-    public String getInterviewerInstructions() {
-        return interviewerInstructions;
-    }
-
-    public void setInterviewerInstructions(String interviewerInstructions) {
-        this.interviewerInstructions = interviewerInstructions;
-    }
-
-    public String getInterviewLocation() {
-        return interviewLocation;
-    }
-
-    public void setInterviewLocation(String interviewLocation) {
-        this.interviewLocation = interviewLocation;
+    public void setInterviewInstruction(CommentInterviewInstructionRepresentation interviewInstruction) {
+        this.interviewInstruction = interviewInstruction;
     }
 
     public List<CommentAppointmentTimeslotRepresentation> getAppointmentTimeslots() {
@@ -69,11 +41,12 @@ public class ApplicationInterviewRepresentation {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 
-    public List<ApplicationAppointmentPreferencesRepresentation> getAppointmentPreferences() {
+    public List<CommentAppointmentPreferenceRepresentation> getAppointmentPreferences() {
         return appointmentPreferences;
     }
 
-    public void setAppointmentPreferences(List<ApplicationAppointmentPreferencesRepresentation> appointmentPreferences) {
+    public void setAppointmentPreferences(List<CommentAppointmentPreferenceRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
+
 }

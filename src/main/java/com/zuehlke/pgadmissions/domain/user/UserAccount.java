@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.user;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +18,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 
@@ -32,11 +32,15 @@ public class UserAccount {
 
     @Column(name = "password")
     private String password;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    
+    @OneToOne
     @JoinColumn(name = "user_account_external_id", unique = true)
     private UserAccountExternal primaryExternalAccount;
 
+    @OneToOne
+    @JoinColumn(name = "portrait_image_id")
+    private Document portraitImage;
+    
     @Column(name = "temporary_password")
     private String temporaryPassword;
 
@@ -71,6 +75,14 @@ public class UserAccount {
 
     public void setPrimaryExternalAccount(UserAccountExternal externalAccount) {
         this.primaryExternalAccount = externalAccount;
+    }
+
+    public Document getPortraitImage() {
+        return portraitImage;
+    }
+
+    public void setPortraitImage(Document portraitImage) {
+        this.portraitImage = portraitImage;
     }
 
     public String getTemporaryPassword() {

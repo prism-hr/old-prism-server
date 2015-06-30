@@ -14,9 +14,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
 @Table(name = "application_program_detail")
@@ -31,11 +29,11 @@ public class ApplicationProgramDetail extends ApplicationSection {
 
     @ManyToOne
     @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
-    private ImportedOpportunityType opportunityType;
+    private ImportedEntitySimple opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "imported_study_option_id", nullable = false)
-    private ImportedStudyOption studyOption;
+    private ImportedEntitySimple studyOption;
 
     @Column(name = "start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -43,7 +41,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
 
     @ManyToOne
     @JoinColumn(name = "imported_referral_source_id", nullable = false)
-    private ImportedReferralSource referralSource;
+    private ImportedEntitySimple referralSource;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -65,19 +63,19 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.application = application;
     }
 
-    public ImportedOpportunityType getOpportunityType() {
+    public ImportedEntitySimple getOpportunityType() {
         return opportunityType;
     }
 
-    public void setOpportunityType(ImportedOpportunityType opportunityType) {
+    public void setOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
     }
 
-    public ImportedStudyOption getStudyOption() {
+    public ImportedEntitySimple getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(ImportedStudyOption studyOption) {
+    public void setStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -89,11 +87,11 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.startDate = startDate;
     }
 
-    public ImportedReferralSource getReferralSource() {
+    public ImportedEntitySimple getReferralSource() {
         return referralSource;
     }
 
-    public void setReferralSource(ImportedReferralSource referralSource) {
+    public void setReferralSource(ImportedEntitySimple referralSource) {
         this.referralSource = referralSource;
     }
 
@@ -112,12 +110,12 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withOpportunityType(ImportedOpportunityType opportunityType) {
+    public ApplicationProgramDetail withOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }
 
-    public ApplicationProgramDetail withStudyOption(ImportedStudyOption studyOption) {
+    public ApplicationProgramDetail withStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
         return this;
     }
@@ -127,7 +125,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withReferralSource(ImportedReferralSource referralSource) {
+    public ApplicationProgramDetail withReferralSource(ImportedEntitySimple referralSource) {
         this.referralSource = referralSource;
         return this;
     }

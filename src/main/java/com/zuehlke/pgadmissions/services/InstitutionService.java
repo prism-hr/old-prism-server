@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,6 @@ import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertDomicileRepresentation;
 
 @Service
 @Transactional
@@ -64,9 +62,6 @@ public class InstitutionService {
     private UserService userService;
 
     @Inject
-    private Mapper mapper;
-
-    @Inject
     private ApplicationContext applicationContext;
 
     public Institution getById(Integer id) {
@@ -75,15 +70,6 @@ public class InstitutionService {
 
     public List<Integer> getApprovedInstitutions() {
         return institutionDAO.getApprovedInstitutions();
-    }
-
-    public List<AdvertDomicileRepresentation> getInstitutionDomiciles() {
-        List<AdvertDomicileRepresentation> representations = Lists.newLinkedList();
-        List<AdvertDomicile> institutionDomiciles = institutionDAO.getInstitutionDomiciles();
-        for (AdvertDomicile institutionDomicile : institutionDomiciles) {
-            representations.add(mapper.map(institutionDomicile, AdvertDomicileRepresentation.class));
-        }
-        return representations;
     }
 
     public List<Institution> getApprovedInstitutionsByDomicile(AdvertDomicile domicile) {

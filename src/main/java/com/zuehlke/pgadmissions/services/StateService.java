@@ -3,11 +3,13 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -40,10 +42,10 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation.SelectableStateRepresentation;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Service
@@ -252,27 +254,28 @@ public class StateService {
         return stateDAO.getCurrentStates(resource);
     }
 
-    public List<SelectableStateRepresentation> getRecommendedNextStates(Resource resource) {
-        List<SelectableStateRepresentation> recommendations = Lists.newLinkedList();
-        String recommendationTokens = stateDAO.getRecommendedNextStates(resource);
-        if (recommendationTokens != null) {
-            for (String recommendationToken : recommendationTokens.split("\\|")) {
-                recommendations.add(new SelectableStateRepresentation().withState(PrismState.valueOf(recommendationToken)));
+    public List<PrismState> getRecommendedNextStates(Resource resource) {
+        List<PrismState> states = Lists.newLinkedList();
+        String tokens = stateDAO.getRecommendedNextStates(resource);
+        if (StringUtils.isNotEmpty(tokens)) {
+            for (String token : tokens.split("|")) {
+                states.add(PrismState.valueOf(token));
             }
-            return recommendations;
+            return states;
         }
-        return null;
+
+        return Collections.<PrismState> emptyList();
     }
 
-    public List<State> getSecondaryResourceStates(Resource resource) {
-        return stateDAO.getSecondaryResourceStates(resource);
+    public List<PrismState> getSecondaryResourceStates(Resource resource) {
+        return stateDAO.getSecondaryResourceStates(resource.getResourceScope(), resource.getId());
     }
 
-    public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
-        return stateDAO.getSecondaryResourceStateGroups(resourceScope, resourceId);
+    public List<PrismState> getSecondaryResourceStates(PrismScope resourceScope, Integer resourceId) {
+        return stateDAO.getSecondaryResourceStates(resourceScope, resourceId);
     }
 
-    public List<SelectableStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
+    public List<StateSelectableDTO> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
         return stateDAO.getSelectableTransitionStates(state, actionId, importedResource);
     }
 
@@ -333,8 +336,8 @@ public class StateService {
         Resource operativeResource = resourceService.getOperativeResource(resource, action);
 
         List<StateTransition> stateTransitions = Lists.newArrayList();
-        List<State> states = stateDAO.getSecondaryResourceStates(operativeResource);
-        for (State state : states) {
+        List<PrismState> states = getSecondaryResourceStates(operativeResource);
+        for (PrismState state : states) {
             stateTransitions.add(stateDAO.getSecondaryStateTransition(operativeResource, state, action));
         }
 

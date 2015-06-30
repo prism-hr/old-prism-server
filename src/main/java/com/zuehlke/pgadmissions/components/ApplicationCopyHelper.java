@@ -46,9 +46,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.services.CustomizationService;
@@ -104,8 +103,8 @@ public class ApplicationCopyHelper {
                     WORKFLOW_PROPERTY, APPLICATION_DEMOGRAPHIC, to.getWorkflowPropertyConfigurationVersion());
 
             if (BooleanUtils.isTrue(demographicConfiguration.getEnabled())) {
-                ImportedEthnicity ethnicity = from.getPersonalDetail().getEthnicity();
-                ImportedDisability disability = from.getPersonalDetail().getDisability();
+                ImportedEntitySimple ethnicity = from.getPersonalDetail().getEthnicity();
+                ImportedEntitySimple disability = from.getPersonalDetail().getDisability();
 
                 personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, ethnicity, personalDetail));
                 personalDetail.setDisability(getEnabledImportedObject(toInstitution, disability, personalDetail));

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 public abstract class ResourceParent extends Resource {
 
@@ -26,7 +26,7 @@ public abstract class ResourceParent extends Resource {
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
 
-    public ImportedOpportunityType getOpportunityType() {
+    public ImportedEntitySimple getOpportunityType() {
         return null;
     }
 

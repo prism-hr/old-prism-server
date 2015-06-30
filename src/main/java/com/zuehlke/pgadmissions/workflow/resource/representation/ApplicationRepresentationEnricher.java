@@ -20,9 +20,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationClientRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -68,15 +68,15 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
 
         List<UserSelectionDTO> interested = userService.getUsersInterestedInApplication(resource);
         List<UserSelectionDTO> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(resource, interested);
-        List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
-        List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
+        List<UserRepresentationSimple> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
+        List<UserRepresentationSimple> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
 
         for (UserSelectionDTO user : interested) {
-            interestedRepresentations.add(mapper.map(user, UserRepresentation.class));
+            interestedRepresentations.add(mapper.map(user, UserRepresentationSimple.class));
         }
 
         for (UserSelectionDTO user : potentiallyInterested) {
-            potentiallyInterestedRepresentations.add(mapper.map(user, UserRepresentation.class));
+            potentiallyInterestedRepresentations.add(mapper.map(user, UserRepresentationSimple.class));
         }
 
         representation.setUsersInterestedInApplication(interestedRepresentations);
@@ -87,7 +87,7 @@ public class ApplicationRepresentationEnricher implements ResourceRepresentation
         representation.setOfferRecommendation(commentService.getOfferRecommendation(resource));
         representation.setAssignedSupervisors(commentService.getApplicationSupervisors(resource));
 
-        representation.setPossibleThemes(advertService.getAdvertThemes(resource));
+        representation.setPossibleThemes(advertService.getAdvertThemes(resource.getAdvert()));
 
         ResourceParent parent = (ResourceParent) resource.getParentResource();
 

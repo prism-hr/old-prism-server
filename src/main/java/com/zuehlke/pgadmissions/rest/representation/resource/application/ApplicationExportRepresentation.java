@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import com.zuehlke.pgadmissions.rest.representation.UserInstitutionIdentityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
 
 public class ApplicationExportRepresentation extends ApplicationRepresentation {
 

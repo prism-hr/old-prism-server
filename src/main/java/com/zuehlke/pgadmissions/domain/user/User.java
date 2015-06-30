@@ -24,7 +24,6 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.document.Document;
 
 @Entity
 @Table(name = "user")
@@ -57,10 +56,6 @@ public class User implements UserDetails, UniqueEntity {
     @Lob
     @Column(name = "email_bounced_message")
     private String emailBouncedMessage;
-
-    @OneToOne
-    @JoinColumn(name = "portrait_image_id")
-    private Document portraitImage;
 
     @Column(name = "activation_code", unique = true)
     private String activationCode;
@@ -157,14 +152,6 @@ public class User implements UserDetails, UniqueEntity {
 
     public void setEmailBouncedMessage(String emailBouncedMessage) {
         this.emailBouncedMessage = emailBouncedMessage;
-    }
-
-    public Document getPortraitImage() {
-        return portraitImage;
-    }
-
-    public void setPortraitImage(Document portraitDocument) {
-        this.portraitImage = portraitDocument;
     }
 
     public String getActivationCode() {

@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
-import com.zuehlke.pgadmissions.rest.RestApiUtils;
+import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
@@ -221,7 +221,7 @@ public class ResourceConfigurationController {
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return RestApiUtils.getResourceDescriptor(resourceScope);
+        return RestUtils.getResourceDescriptor(resourceScope);
     }
 
     @ModelAttribute

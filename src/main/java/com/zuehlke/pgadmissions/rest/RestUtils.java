@@ -22,9 +22,9 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentClien
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationClientRepresentation;
 
-public class RestApiUtils {
+public class RestUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestApiUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestUtils.class);
 
     public static ResourceDescriptor getResourceDescriptor(String resourceScope) {
         if ("applications".equals(resourceScope)) {

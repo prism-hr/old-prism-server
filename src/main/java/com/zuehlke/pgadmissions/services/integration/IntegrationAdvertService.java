@@ -27,6 +27,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.rest.dto.AdvertAddressDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertCategoriesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertClosingDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertCompetenceRepresentation;
@@ -36,7 +38,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertFinanc
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertTargetsRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertAddressRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Service
@@ -55,17 +56,32 @@ public class IntegrationAdvertService {
     public AdvertRepresentation getAdvertRepresentation(Advert advert) {
         ResourceParent resource = advert.getResource();
         Department department = resource.getDepartment();
-        
-        return new AdvertRepresentation().withId(advert.getId()).withUser(integrationUserService.getUserRepresentation(resource.getUser()))
+
+        return new AdvertRepresentation().withId(advert.getId()).withUser(integrationUserService.getUserRepresentationSimple(resource.getUser()))
                 .withResource(integrationResourceService.getResourceRepresentationSimple(resource))
                 .withInstitution(integrationResourceService.getResourceRepresentationSimple(resource.getInstitution()))
                 .withDepartment(department == null ? null : integrationResourceService.getResourceRepresentationSimple(department))
                 .withOpportunityType(advert.getOpportunityType()).withTitle(advert.getTitle()).withSummary(advert.getSummary())
                 .withDescription(advert.getDescription()).withHomepage(advert.getHomepage()).withApplyHomepage(advert.getApplyHomepage())
-                .withTelephone(advert.getTelephone()).withAddress(getAddressRepresentation(advert))
+                .withTelephone(advert.getTelephone()).withAddress(getAdvertAddressRepresentation(advert))
                 .withFinancialDetails(getAdvertFinancialDetailsRepresentation(advert)).withClosingDate(getAdvertClosingDateReprentation(advert))
                 .withClosingDates(getAdvertClosingDateReprentations(advert)).withCategories(getAdvertCategoriesRepresentation(advert))
                 .withTargets(getAdvertTargetsRepresentation(advert)).withSequenceIdentifier(advert.getSequenceIdentifier());
+    }
+
+    public AdvertAddressDTO getAddressDTO(AdvertAddress address) {
+        return new AdvertAddressDTO().withDomicile(address.getDomicile().getId()).withAddressLine1(address.getAddressLine1())
+                .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
+                .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId());
+    }
+    
+    public List<AdvertDomicileRepresentation> getAdvertDomicileRepresentations() {
+        List<AdvertDomicile> advertDomiciles = advertService.getAdvertDomiciles();
+        List<AdvertDomicileRepresentation> representations = Lists.newLinkedList();
+        for (AdvertDomicile advertDomicile : advertDomiciles) {
+            representations.add(getAdvertDomicileRepresentation(advertDomicile));
+        }
+        return representations;
     }
 
     private AdvertFinancialDetailsRepresentation getAdvertFinancialDetailsRepresentation(Advert advert) {
@@ -145,11 +161,11 @@ public class IntegrationAdvertService {
         return representations;
     }
 
-    private AdvertAddressRepresentation getAddressRepresentation(Advert advert) {
+    private AdvertAddressRepresentation getAdvertAddressRepresentation(Advert advert) {
         AdvertAddress address = advert.getAddress();
         if (address != null) {
             AdvertAddressRepresentation representation = new AdvertAddressRepresentation()
-                    .withDomicile(getDomicileRepresentation(address.getDomicile())).withAddressLine1(address.getAddressLine1())
+                    .withDomicile(getAdvertDomicileRepresentation(address.getDomicile())).withAddressLine1(address.getAddressLine1())
                     .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
                     .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId());
 
@@ -166,7 +182,7 @@ public class IntegrationAdvertService {
         return null;
     }
 
-    private AdvertDomicileRepresentation getDomicileRepresentation(AdvertDomicile domicile) {
+    private AdvertDomicileRepresentation getAdvertDomicileRepresentation(AdvertDomicile domicile) {
         return new AdvertDomicileRepresentation().withId(domicile.getId()).withName(domicile.getName()).withCurrency(domicile.getCurrency());
     }
 

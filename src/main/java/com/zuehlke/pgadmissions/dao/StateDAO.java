@@ -33,9 +33,9 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation.SelectableStateRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -73,13 +73,13 @@ public class StateDAO {
                 .list();
     }
 
-    public StateTransition getSecondaryStateTransition(Resource resource, State state, Action action) {
+    public StateTransition getSecondaryStateTransition(Resource resource, PrismState state, Action action) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getPreviousState())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("transitionState", state)) //
+                .add(Restrictions.eq("transitionState.id", state)) //
                 .uniqueResult();
     }
 
@@ -230,10 +230,10 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public List<State> getSecondaryResourceStates(Resource resource) {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("state")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+    public List<PrismState> getSecondaryResourceStates(PrismScope resourceScope, Integer resourceId) {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("state.id")) //
+                .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
                 .add(Restrictions.eq("primaryState", false)) //
                 .list();
     }
@@ -247,10 +247,10 @@ public class StateDAO {
                 .list();
     }
 
-    public List<SelectableStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
+    public List<StateSelectableDTO> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("transitionState.id"), "state") //
+                        .add(Projections.groupProperty("transitionState.id"), "state") //
                         .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
@@ -263,8 +263,8 @@ public class StateDAO {
 
         appendImportedResourceConstraint(criteria, importedResource);
 
-        return (List<SelectableStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
-                .setResultTransformer(Transformers.aliasToBean(SelectableStateRepresentation.class)) //
+        return (List<StateSelectableDTO>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
+                .setResultTransformer(Transformers.aliasToBean(StateSelectableDTO.class)) //
                 .list();
     }
 

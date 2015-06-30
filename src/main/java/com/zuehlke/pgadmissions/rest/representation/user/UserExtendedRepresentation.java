@@ -1,17 +1,12 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.user;
 
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public class UserExtendedRepresentation extends UserRepresentation {
-
-    private DocumentRepresentation portraitDocument;
+public class UserExtendedRepresentation extends UserRepresentationSimple {
 
     private Boolean sendApplicationRecommendationNotification;
-
-    private PrismScope latestCreationScope;
 
     private Integer permissionPrecedence;
 
@@ -23,28 +18,12 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     private PrismRoleCategory requiredFeedbackRoleCategory;
 
-    public DocumentRepresentation getPortraitDocument() {
-        return portraitDocument;
-    }
-
-    public void setPortraitDocument(DocumentRepresentation portraitDocument) {
-        this.portraitDocument = portraitDocument;
-    }
-
     public Boolean getSendApplicationRecommendationNotification() {
         return sendApplicationRecommendationNotification;
     }
 
     public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
-    }
-
-    public PrismScope getLatestCreationScope() {
-        return latestCreationScope;
-    }
-
-    public void setLatestCreationScope(PrismScope latestCreationScope) {
-        this.latestCreationScope = latestCreationScope;
     }
 
     public Integer getPermissionPrecedence() {

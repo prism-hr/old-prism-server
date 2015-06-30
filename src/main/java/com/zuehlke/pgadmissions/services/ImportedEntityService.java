@@ -46,12 +46,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
@@ -142,7 +142,7 @@ public class ImportedEntityService {
         return entities;
     }
 
-    public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedDomicile domicile) {
+    public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedEntitySimple domicile) {
         List<ImportedInstitution> institutions = importedEntityDAO.getEnabledImportedInstitutionsWithMappings(institution, domicile);
         if (institutions.isEmpty()) {
             institutions = importedEntityDAO.getEnabledImportedInstitutions(institution, domicile);
@@ -196,6 +196,7 @@ public class ImportedEntityService {
         }
     }
 
+    // FIXME remove dozer mapper when new classes are available (Jakub)
     public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> void mergeImportedEntities(Integer importedEntityFeedId) throws Exception {
         ImportedEntityFeed importedEntityFeed = getImportedEntityFeedById(importedEntityFeedId);
         Institution institution = importedEntityFeed.getInstitution();
@@ -441,7 +442,7 @@ public class ImportedEntityService {
     }
 
     private ImportedInstitution createImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
-        ImportedDomicile domicile = getById(institution, ImportedDomicile.class, importedInstitutionDTO.getDomicile());
+        ImportedEntitySimple domicile = getById(institution, ImportedEntitySimple.class, importedInstitutionDTO.getDomicile());
         ImportedInstitution importedInstitution = new ImportedInstitution().withDomicile(domicile).withName(importedInstitutionDTO.getName())
                 .withEnabled(false);
         entityService.save(importedInstitution);
@@ -450,7 +451,7 @@ public class ImportedEntityService {
     }
 
     private ImportedProgram createImportedProgram(Institution institution, ImportedInstitution importedInstitution, ImportedProgramDTO importedProgramDTO) {
-        ImportedQualificationType qualificationType = getById(institution, ImportedQualificationType.class, importedProgramDTO.getQualificationType());
+        ImportedEntitySimple qualificationType = getById(institution, ImportedEntitySimple.class, importedProgramDTO.getQualificationType());
         ImportedProgram program = new ImportedProgram().withInstitution(importedInstitution).withQualificationType(qualificationType)
                 .withName(importedProgramDTO.getName()).withEnabled(false);
         entityService.save(program);

@@ -6,50 +6,92 @@ import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpl
 
 public class ApplicationPersonalDetailRepresentation extends ApplicationSectionRepresentation {
 
-    private String skype;
+    private ImportedEntitySimpleRepresentation title;
 
-    private String phone;
+    private ImportedEntitySimpleRepresentation gender;
+
+    private LocalDate dateOfBirth;
+
+    private ImportedEntitySimpleRepresentation ageRange;
+
+    private ImportedEntitySimpleRepresentation firstNationality;
+
+    private ImportedEntitySimpleRepresentation secondNationality;
+
+    private ImportedEntitySimpleRepresentation country;
 
     private Boolean firstLanguageLocale;
 
     private ApplicationLanguageQualificationRepresentation languageQualification;
 
+    private ImportedEntitySimpleRepresentation domicile;
+
     private Boolean visaRequired;
 
     private ApplicationPassportRepresentation passport;
 
-    private ImportedEntitySimpleRepresentation firstNationalityMapping;
-    
-    private ImportedEntitySimpleRepresentation secondNationalityMapping;
-    
-    private ImportedEntitySimpleRepresentation titleMapping;
-    
-    private ImportedEntitySimpleRepresentation genderMapping;
+    private String skype;
 
-    private LocalDate dateOfBirth;
-    
-    private ImportedEntitySimpleRepresentation countryMapping;
+    private String phone;
 
-    private ImportedEntitySimpleRepresentation ethnicityMapping;
+    private ImportedEntitySimpleRepresentation ethnicity;
 
-    private ImportedEntitySimpleRepresentation disabilityMapping;
+    private ImportedEntitySimpleRepresentation disability;
 
-    private ImportedEntitySimpleRepresentation domicileMapping;
-
-    public String getSkype() {
-        return skype;
+    public ImportedEntitySimpleRepresentation getTitle() {
+        return title;
     }
 
-    public void setSkype(String skype) {
-        this.skype = skype;
+    public void setTitle(ImportedEntitySimpleRepresentation title) {
+        this.title = title;
     }
 
-    public String getPhone() {
-        return phone;
+    public ImportedEntitySimpleRepresentation getGender() {
+        return gender;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setGender(ImportedEntitySimpleRepresentation gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public ImportedEntitySimpleRepresentation getAgeRange() {
+        return ageRange;
+    }
+
+    public void setAgeRange(ImportedEntitySimpleRepresentation ageRange) {
+        this.ageRange = ageRange;
+    }
+
+    public ImportedEntitySimpleRepresentation getFirstNationality() {
+        return firstNationality;
+    }
+
+    public void setFirstNationality(ImportedEntitySimpleRepresentation firstNationality) {
+        this.firstNationality = firstNationality;
+    }
+
+    public ImportedEntitySimpleRepresentation getSecondNationality() {
+        return secondNationality;
+    }
+
+    public void setSecondNationality(ImportedEntitySimpleRepresentation secondNationality) {
+        this.secondNationality = secondNationality;
+    }
+
+    public ImportedEntitySimpleRepresentation getCountry() {
+        return country;
+    }
+
+    public void setCountry(ImportedEntitySimpleRepresentation country) {
+        this.country = country;
     }
 
     public Boolean getFirstLanguageLocale() {
@@ -68,6 +110,14 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.languageQualification = languageQualification;
     }
 
+    public ImportedEntitySimpleRepresentation getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(ImportedEntitySimpleRepresentation domicile) {
+        this.domicile = domicile;
+    }
+
     public Boolean getVisaRequired() {
         return visaRequired;
     }
@@ -84,140 +134,116 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.passport = passport;
     }
 
-    public Integer getFirstNationality() {
-        return firstNationalityMapping.getId();
-    }
-    
-    public void setFirstNationality(Integer firstNationality) {
-        this.firstNationalityMapping = new ImportedEntitySimpleRepresentation().withId(firstNationality);
+    public String getSkype() {
+        return skype;
     }
 
-    public ImportedEntitySimpleRepresentation getFirstNationalityMapping() {
-        return firstNationalityMapping;
+    public void setSkype(String skype) {
+        this.skype = skype;
     }
 
-    public void setFirstNationalityMapping(ImportedEntitySimpleRepresentation firstNationalityMapping) {
-        this.firstNationalityMapping = firstNationalityMapping;
+    public String getPhone() {
+        return phone;
     }
 
-    public Integer getSecondNationality() {
-        return secondNationalityMapping.getId();
-    }
-    
-    public void setSecondNationality(Integer secondNationality) {
-        this.secondNationalityMapping = new ImportedEntitySimpleRepresentation().withId(secondNationality);
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public ImportedEntitySimpleRepresentation getSecondNationalityMapping() {
-        return secondNationalityMapping;
+    public ImportedEntitySimpleRepresentation getEthnicity() {
+        return ethnicity;
     }
 
-    public void setSecondNationalityMapping(ImportedEntitySimpleRepresentation secondNationalityMapping) {
-        this.secondNationalityMapping = secondNationalityMapping;
+    public void setEthnicity(ImportedEntitySimpleRepresentation ethnicity) {
+        this.ethnicity = ethnicity;
     }
 
-    public Integer getTitle() {
-        return titleMapping.getId();
-    }
-    
-    public void setTitle(Integer title) {
-        this.titleMapping = new ImportedEntitySimpleRepresentation().withId(title);
+    public ImportedEntitySimpleRepresentation getDisability() {
+        return disability;
     }
 
-    public ImportedEntitySimpleRepresentation getTitleMapping() {
-        return titleMapping;
+    public void setDisability(ImportedEntitySimpleRepresentation disability) {
+        this.disability = disability;
     }
 
-    public void setTitleMapping(ImportedEntitySimpleRepresentation titleMapping) {
-        this.titleMapping = titleMapping;
+    public ApplicationPersonalDetailRepresentation withTitle(ImportedEntitySimpleRepresentation title) {
+        this.title = title;
+        return this;
     }
 
-    public Integer getGender() {
-        return genderMapping.getId();
-    }
-    
-    public void setGender(Integer gender) {
-        this.genderMapping = new ImportedEntitySimpleRepresentation().withId(gender);
+    public ApplicationPersonalDetailRepresentation withGender(ImportedEntitySimpleRepresentation gender) {
+        this.gender = gender;
+        return this;
     }
 
-    public ImportedEntitySimpleRepresentation getGenderMapping() {
-        return genderMapping;
-    }
-
-    public void setGenderMapping(ImportedEntitySimpleRepresentation genderMapping) {
-        this.genderMapping = genderMapping;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public ApplicationPersonalDetailRepresentation withDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+        return this;
     }
 
-    public Integer getCountry() {
-        return countryMapping.getId();
-    }
-    
-    public void setCountry(Integer country) {
-        this.countryMapping = new ImportedEntitySimpleRepresentation().withId(country);
+    public ApplicationPersonalDetailRepresentation withAgeRange(ImportedEntitySimpleRepresentation ageRange) {
+        this.ageRange = ageRange;
+        return this;
     }
 
-    public ImportedEntitySimpleRepresentation getCountryMapping() {
-        return countryMapping;
+    public ApplicationPersonalDetailRepresentation withFirstNationality(ImportedEntitySimpleRepresentation firstNationality) {
+        this.firstNationality = firstNationality;
+        return this;
     }
 
-    public void setCountryMapping(ImportedEntitySimpleRepresentation countryMapping) {
-        this.countryMapping = countryMapping;
+    public ApplicationPersonalDetailRepresentation withSecondNationality(ImportedEntitySimpleRepresentation secondNationality) {
+        this.secondNationality = secondNationality;
+        return this;
     }
 
-    public Integer getEthnicity() {
-        return ethnicityMapping.getId();
+    public ApplicationPersonalDetailRepresentation withCountry(ImportedEntitySimpleRepresentation country) {
+        this.country = country;
+        return this;
     }
 
-    public void setEthnicity(Integer ethnicity) {
-        this.ethnicityMapping = new ImportedEntitySimpleRepresentation().withId(ethnicity);
+    public ApplicationPersonalDetailRepresentation withFirstLanguageLocale(Boolean firstLanguageLocale) {
+        this.firstLanguageLocale = firstLanguageLocale;
+        return this;
     }
 
-    public ImportedEntitySimpleRepresentation getEthnicityMapping() {
-        return ethnicityMapping;
+    public ApplicationPersonalDetailRepresentation withLanguageQualification(ApplicationLanguageQualificationRepresentation languageQualification) {
+        this.languageQualification = languageQualification;
+        return this;
     }
 
-    public void setEthnicityMapping(ImportedEntitySimpleRepresentation ethnicityMapping) {
-        this.ethnicityMapping = ethnicityMapping;
+    public ApplicationPersonalDetailRepresentation withDomicile(ImportedEntitySimpleRepresentation domicile) {
+        this.domicile = domicile;
+        return this;
     }
 
-    public Integer getDisability() {
-        return disabilityMapping.getId();
+    public ApplicationPersonalDetailRepresentation withVisaRequired(Boolean visaRequired) {
+        this.visaRequired = visaRequired;
+        return this;
     }
 
-    public void setDisability(Integer disability) {
-        this.disabilityMapping = new ImportedEntitySimpleRepresentation().withId(disability);
-    }
-    
-    public ImportedEntitySimpleRepresentation getDisabilityMapping() {
-        return disabilityMapping;
+    public ApplicationPersonalDetailRepresentation withPassport(ApplicationPassportRepresentation passport) {
+        this.passport = passport;
+        return this;
     }
 
-    public void setDisabilityMapping(ImportedEntitySimpleRepresentation disabilityMapping) {
-        this.disabilityMapping = disabilityMapping;
+    public ApplicationPersonalDetailRepresentation withPhone(String phone) {
+        this.phone = phone;
+        return this;
     }
 
-    public Integer getDomicile() {
-        return domicileMapping.getId();
+    public ApplicationPersonalDetailRepresentation withSkype(String skype) {
+        this.skype = skype;
+        return this;
     }
 
-    public void setDomicile(Integer domicile) {
-        this.domicileMapping = new ImportedEntitySimpleRepresentation().withId(domicile);
+    public ApplicationPersonalDetailRepresentation withEthnicity(ImportedEntitySimpleRepresentation ethnicity) {
+        this.ethnicity = ethnicity;
+        return this;
     }
 
-    public ImportedEntitySimpleRepresentation getDomicileMapping() {
-        return domicileMapping;
+    public ApplicationPersonalDetailRepresentation withDisability(ImportedEntitySimpleRepresentation disability) {
+        this.disability = disability;
+        return this;
     }
 
-    public void setDomicileMapping(ImportedEntitySimpleRepresentation domicileMapping) {
-        this.domicileMapping = domicileMapping;
-    }
-    
 }

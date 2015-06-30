@@ -2,9 +2,7 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class InstitutionAddressDTO {
-
-    private String googleId;
+public class AdvertAddressDTO {
 
     @NotEmpty
     private String domicile;
@@ -21,13 +19,7 @@ public class InstitutionAddressDTO {
 
     private String addressCode;
 
-    public String getGoogleId() {
-        return googleId;
-    }
-
-    public void setGoogleId(String googleId) {
-        this.googleId = googleId;
-    }
+    private String googleId;
 
     public String getDomicile() {
         return domicile;
@@ -76,5 +68,49 @@ public class InstitutionAddressDTO {
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
     }
+    
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+    
+    public AdvertAddressDTO withDomicile(String domicile) {
+        this.domicile = domicile;
+        return this;
+    }
+
+    public AdvertAddressDTO withAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+        return this;
+    }
+
+    public AdvertAddressDTO withAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
+        return this;
+    }
+    
+    public AdvertAddressDTO withAddressTown(String addressTown) {
+        this.addressTown = addressTown;
+        return this;
+    }
+
+    public AdvertAddressDTO withAddressRegion(String addressRegion) {
+        this.addressRegion = addressRegion;
+        return this;
+    }
+    
+    public AdvertAddressDTO withAddressCode(String addressCode) {
+        this.addressCode = addressCode;
+        return this;
+    }
+    
+    public AdvertAddressDTO withGoogleId(String googleId) {
+        this.googleId = googleId;
+        return this;
+    }
+    
 }
 

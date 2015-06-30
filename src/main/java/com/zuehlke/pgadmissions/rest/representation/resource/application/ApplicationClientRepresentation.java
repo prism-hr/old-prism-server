@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationClientRepresentation extends ApplicationRepresentation {
     
@@ -15,9 +15,9 @@ public class ApplicationClientRepresentation extends ApplicationRepresentation {
 
     private List<String> possibleLocations;
     
-    private List<UserRepresentation> usersInterestedInApplication;
+    private List<UserRepresentationSimple> usersInterestedInApplication;
 
-    private List<UserRepresentation> usersPotentiallyInterestedInApplication;
+    private List<UserRepresentationSimple> usersPotentiallyInterestedInApplication;
 
     private ApplicationInterviewRepresentation interview;
 
@@ -55,19 +55,19 @@ public class ApplicationClientRepresentation extends ApplicationRepresentation {
         this.possibleLocations = possibleLocations;
     }
 
-    public List<UserRepresentation> getUsersInterestedInApplication() {
+    public List<UserRepresentationSimple> getUsersInterestedInApplication() {
         return usersInterestedInApplication;
     }
 
-    public void setUsersInterestedInApplication(List<UserRepresentation> usersInterestedInApplication) {
+    public void setUsersInterestedInApplication(List<UserRepresentationSimple> usersInterestedInApplication) {
         this.usersInterestedInApplication = usersInterestedInApplication;
     }
 
-    public List<UserRepresentation> getUsersPotentiallyInterestedInApplication() {
+    public List<UserRepresentationSimple> getUsersPotentiallyInterestedInApplication() {
         return usersPotentiallyInterestedInApplication;
     }
 
-    public void setUsersPotentiallyInterestedInApplication(List<UserRepresentation> usersPotentiallyInterestedInApplication) {
+    public void setUsersPotentiallyInterestedInApplication(List<UserRepresentationSimple> usersPotentiallyInterestedInApplication) {
         this.usersPotentiallyInterestedInApplication = usersPotentiallyInterestedInApplication;
     }
 

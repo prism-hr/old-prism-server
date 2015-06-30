@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 
@@ -42,25 +42,25 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Service
 @Transactional
-public class IntegrationAdvertService {
+public class AdvertMapper {
 
     @Inject
     private AdvertService advertService;
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     public AdvertRepresentation getAdvertRepresentation(Advert advert) {
         ResourceParent resource = advert.getResource();
         Department department = resource.getDepartment();
 
-        return new AdvertRepresentation().withId(advert.getId()).withUser(integrationUserService.getUserRepresentationSimple(resource.getUser()))
-                .withResource(integrationResourceService.getResourceRepresentationSimple(resource))
-                .withInstitution(integrationResourceService.getResourceRepresentationSimple(resource.getInstitution()))
-                .withDepartment(department == null ? null : integrationResourceService.getResourceRepresentationSimple(department))
+        return new AdvertRepresentation().withId(advert.getId()).withUser(userMapper.getUserRepresentationSimple(resource.getUser()))
+                .withResource(resourceMapper.getResourceRepresentationSimple(resource))
+                .withInstitution(resourceMapper.getResourceRepresentationSimple(resource.getInstitution()))
+                .withDepartment(department == null ? null : resourceMapper.getResourceRepresentationSimple(department))
                 .withOpportunityType(advert.getOpportunityType()).withTitle(advert.getTitle()).withSummary(advert.getSummary())
                 .withDescription(advert.getDescription()).withHomepage(advert.getHomepage()).withApplyHomepage(advert.getApplyHomepage())
                 .withTelephone(advert.getTelephone()).withAddress(getAdvertAddressRepresentation(advert))

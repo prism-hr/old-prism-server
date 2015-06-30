@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
@@ -52,6 +52,10 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.mappers.AdvertMapper;
+import com.zuehlke.pgadmissions.mappers.ImportedEntityMapper;
+import com.zuehlke.pgadmissions.mappers.ResourceMapper;
+import com.zuehlke.pgadmissions.mappers.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
@@ -61,10 +65,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterR
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
-import com.zuehlke.pgadmissions.services.integration.IntegrationAdvertService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationImportedEntityService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationStateService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 @Service
@@ -95,16 +95,16 @@ public class StaticDataService {
     private InstitutionService institutionService;
 
     @Inject
-    private IntegrationAdvertService integrationAdvertService;
+    private AdvertMapper advertMapper;
     
     @Inject
-    private IntegrationImportedEntityService integrationImportedEntityService;
+    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
-    private IntegrationStateService integrationStateService;
+    private StateMapper stateMapper;
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     public Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
@@ -127,7 +127,7 @@ public class StaticDataService {
         List<State> states = entityService.list(State.class);
         List<StateRepresentationSimple> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
-            stateRepresentations.add(integrationStateService.getStateRepresentationSimple(state));
+            stateRepresentations.add(stateMapper.getStateRepresentationSimple(state));
         }
 
         staticData.put("states", stateRepresentations);
@@ -150,7 +150,7 @@ public class StaticDataService {
 
     public Map<String, Object> getInstitutionDomiciles() {
         Map<String, Object> staticData = Maps.newHashMap();
-        staticData.put("institutionDomiciles", integrationAdvertService.getAdvertDomicileRepresentations());
+        staticData.put("institutionDomiciles", advertMapper.getAdvertDomicileRepresentations());
         return staticData;
     }
 
@@ -194,8 +194,8 @@ public class StaticDataService {
     public Map<String, Object> getFilterProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListFilter.values().length);
-        for (PrismResourceListFilter filterProperty : PrismResourceListFilter.values()) {
+        List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListContraint.values().length);
+        for (PrismResourceListContraint filterProperty : PrismResourceListContraint.values()) {
             List<FilterExpressionRepresentation> filterExpressions = Lists.newArrayList();
             for (PrismResourceListFilterExpression filterExpression : filterProperty.getPermittedExpressions()) {
                 filterExpressions.add(new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()));
@@ -272,12 +272,12 @@ public class StaticDataService {
             List<T> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
             List<ImportedEntitySimpleRepresentation> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
             for (T entity : entities) {
-                entityRepresentations.add(integrationImportedEntityService.getImportedEntityRepresentation(entity));
+                entityRepresentations.add(importedEntityMapper.getImportedEntityRepresentation(entity));
             }
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
 
-        staticData.put("institution", integrationResourceService.getResourceRepresentationSimple(institution));
+        staticData.put("institution", resourceMapper.getResourceRepresentationSimple(institution));
         staticData.put("departments", departmentService.getDepartments(institutionId));
         staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;
@@ -290,7 +290,7 @@ public class StaticDataService {
 
         List<ImportedInstitutionRepresentation> representations = Lists.newArrayListWithCapacity(importedInstitutions.size());
         for (ImportedInstitution importedInstitution : importedInstitutions) {
-            representations.add(integrationImportedEntityService.getImportedInstitutionRepresentation(importedInstitution));
+            representations.add(importedEntityMapper.getImportedInstitutionRepresentation(importedInstitution));
         }
 
         return representations;
@@ -303,7 +303,7 @@ public class StaticDataService {
 
         List<ImportedProgramRepresentation> representations = Lists.newArrayListWithCapacity(importedprograms.size());
         for (ImportedProgram importedProgram : importedprograms) {
-            representations.add(integrationImportedEntityService.getImportedProgramRepresentation(importedProgram));
+            representations.add(importedEntityMapper.getImportedProgramRepresentation(importedProgram));
         }
 
         return representations;

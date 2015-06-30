@@ -181,7 +181,7 @@ public class Comment extends WorkflowResourceExecution {
     private BigDecimal applicationRating;
 
     @Embedded
-    private CommentExport applicationExport;
+    private CommentExport export;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -427,12 +427,12 @@ public class Comment extends WorkflowResourceExecution {
         this.applicationRating = applicationRating;
     }
 
-    public CommentExport getApplicationExport() {
-        return applicationExport;
+    public CommentExport getExport() {
+        return export;
     }
 
-    public void setApplicationExport(CommentExport applicationExport) {
-        this.applicationExport = applicationExport;
+    public void setExport(CommentExport export) {
+        this.export = export;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
@@ -589,8 +589,8 @@ public class Comment extends WorkflowResourceExecution {
         return this;
     }
 
-    public Comment withApplicationExport(CommentExport applicationExport) {
-        this.applicationExport = applicationExport;
+    public Comment withApplicationExport(CommentExport export) {
+        this.export = export;
         return this;
     }
     

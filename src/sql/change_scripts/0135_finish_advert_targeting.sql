@@ -332,3 +332,13 @@ alter table user_account
 	add index (portrait_image_id),
 	add foreign key (portrait_image_id) references document (id)
 ;
+
+alter table comment
+	add column application_export_succeeded int(1) unsigned after application_rating
+;
+
+update comment
+set application_export_succeeded = 
+	if((action_id = "APPLICATION_EXPORT" and application_export_reference is not null), 1, 0)
+where action_id = "APPLICATION_EXPORT"
+;

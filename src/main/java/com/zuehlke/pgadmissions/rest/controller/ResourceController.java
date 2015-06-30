@@ -36,6 +36,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mappers.ActionMapper;
+import com.zuehlke.pgadmissions.mappers.ResourceMapper;
+import com.zuehlke.pgadmissions.mappers.UserMapper;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
@@ -44,7 +47,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationList;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationListExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -53,9 +56,6 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationActionService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationUserService;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -77,13 +77,13 @@ public class ResourceController {
     private ApplicationService applicationService;
 
     @Inject
-    private IntegrationActionService integrationActionService;
+    private ActionMapper actionMapper;
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     @Inject
     private ObjectMapper objectMapper;
@@ -94,7 +94,7 @@ public class ResourceController {
     public <T extends ResourceRepresentationExtended> ResourceRepresentationExtended getResource(
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return integrationResourceService.getResourceClientRepresentation(resource);
+        return resourceMapper.getResourceRepresentationClient(resource);
     }
 
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
@@ -109,12 +109,12 @@ public class ResourceController {
 
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<ResourceRepresentationList> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceRepresentationListExtended> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
 
-        return integrationResourceService.getResourceRepresentations(resourceScope,
+        return resourceMapper.getResourceRepresentations(resourceScope,
                 resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
     }
 
@@ -143,7 +143,7 @@ public class ResourceController {
             return applicationService.getApplicationSummary(resourceId);
         }
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        return integrationResourceService.getResourceSummaryRepresentation(resource);
+        return resourceMapper.getResourceSummaryRepresentation(resource);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
@@ -156,7 +156,7 @@ public class ResourceController {
             throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
         }
         ResourceReportFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceReportFilterDTO.class) : null;
-        return integrationResourceService.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
+        return resourceMapper.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
@@ -187,7 +187,7 @@ public class ResourceController {
 
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
-        return integrationUserService.getUserRepresentationSimple(user);
+        return userMapper.getUserRepresentationSimple(user);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
@@ -224,7 +224,7 @@ public class ResourceController {
         }
 
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
-        return integrationActionService.getActionOutcomeRepresentation(actionOutcome);
+        return actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
 
     @ModelAttribute

@@ -5,12 +5,10 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 
-public class ResourceRepresentationList extends ResourceRepresentationStandard {
-    
+public class ResourceRepresentationListExtended extends ResourceRepresentationListSimple {
+
     private List<ActionRepresentationSimple> actions;
-    
-    private String sequenceIdentifier;
-    
+
     public List<ActionRepresentationSimple> getActions() {
         return actions;
     }
@@ -18,23 +16,15 @@ public class ResourceRepresentationList extends ResourceRepresentationStandard {
     public void setActions(List<ActionRepresentationSimple> actions) {
         this.actions = actions;
     }
-    
-    public String getSequenceIdentifier() {
-        return sequenceIdentifier;
-    }
 
-    public void setSequenceIdentifier(String sequenceIdentifier) {
-        this.sequenceIdentifier = sequenceIdentifier;
-    }
-
-    public ResourceRepresentationList withResourceScope(PrismScope resourceScope) {
+    public ResourceRepresentationListExtended withResourceScope(PrismScope resourceScope) {
         setResourceScope(resourceScope);
         return this;
     }
-    
-    public ResourceRepresentationList withId(Integer id) {
+
+    public ResourceRepresentationListExtended withId(Integer id) {
         setId(id);
         return this;
     }
-    
+
 }

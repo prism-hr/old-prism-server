@@ -6,6 +6,9 @@ import javax.persistence.Lob;
 
 @Embeddable
 public class CommentExport {
+    
+    @Column(name = "application_export_succeeded")
+    private Boolean exportSucceeded;
 
     @Lob
     @Column(name = "application_export_request")
@@ -17,6 +20,14 @@ public class CommentExport {
     @Lob
     @Column(name = "application_export_exception")
     private String exportException;
+
+    public Boolean getExportSucceeded() {
+        return exportSucceeded;
+    }
+
+    public void setExportSucceeded(Boolean exportSucceeded) {
+        this.exportSucceeded = exportSucceeded;
+    }
 
     public String getExportRequest() {
         return exportRequest;
@@ -40,6 +51,11 @@ public class CommentExport {
 
     public void setExportException(String exportException) {
         this.exportException = exportException;
+    }
+    
+    public CommentExport withExportSucceeded(Boolean exportSucceeded) {
+        this.exportSucceeded = exportSucceeded;
+        return this;
     }
     
     public CommentExport withExportRequest(String exportRequest) {

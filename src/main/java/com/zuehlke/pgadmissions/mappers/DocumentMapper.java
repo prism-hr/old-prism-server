@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import javax.transaction.Transactional;
 
@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 @Service
 @Transactional
-public class IntegrationDocumentService {
+public class DocumentMapper {
 
     public DocumentRepresentation getDocumentRepresentation(Document document) {
         return new DocumentRepresentation().withId(document.getId()).withFileName(document.getFileName());

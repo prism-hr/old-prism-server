@@ -84,7 +84,7 @@ public class ImportedEntityService {
 
     @Inject
     private AdvertService advertService;
-
+    
     @Inject
     private CommentService commentService;
 

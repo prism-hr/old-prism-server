@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zuehlke.pgadmissions.mappers.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationUserService;
 
 @RestController
 @RequestMapping("api/messages")
@@ -24,14 +24,14 @@ import com.zuehlke.pgadmissions.services.integration.IntegrationUserService;
 public class MessagesController {
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
     
     @Inject
     private UserService userService;
 
     @RequestMapping(value = "bouncedUsers", method = RequestMethod.GET)
     public List<UserRepresentationUnverified> getBouncedOrUnverifiedUsers(UserListFilterDTO filterDTO) throws Exception {
-        return integrationUserService.getUserUnverifiedRepresentations(filterDTO);
+        return userMapper.getUserUnverifiedRepresentations(filterDTO);
     }
 
     @RequestMapping(value = "bouncedUsers/{userId}", method = RequestMethod.PUT)

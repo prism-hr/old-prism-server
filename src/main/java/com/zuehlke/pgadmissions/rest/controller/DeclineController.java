@@ -11,18 +11,18 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.mappers.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
 
 @RestController
 @RequestMapping(value = { "api/decline" })
 public class DeclineController {
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     @Inject
     private ResourceService resourceService;
@@ -49,7 +49,7 @@ public class DeclineController {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");
         }
 
-        return integrationResourceService.getResourceRepresentationExtended(resource);
+        return resourceMapper.getResourceRepresentationExtended(resource);
     }
 
 }

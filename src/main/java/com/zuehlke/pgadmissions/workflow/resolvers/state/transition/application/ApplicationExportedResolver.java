@@ -21,7 +21,7 @@ public class ApplicationExportedResolver implements StateTransitionResolver {
 
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
-		String exportException = comment.getApplicationExport().getExportException();
+		String exportException = comment.getExport().getExportException();
 		if (exportException == null || exportException.contains(SYSTEM_NO_EXPORT_PROGRAM_INSTANCE.name())) {
 			return stateService.getStateTransition(resource, comment.getAction(),
 			        PrismState.valueOf(resource.getState().getStateGroup().getId() + "_COMPLETED"));

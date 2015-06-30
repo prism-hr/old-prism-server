@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
@@ -41,22 +41,22 @@ import com.zuehlke.pgadmissions.services.CommentService;
 
 @Service
 @Transactional
-public class IntegrationApplicationService {
+public class ApplicationMapper {
 
     @Inject
     private CommentService commentService;
     
     @Inject
-    private IntegrationCommentService integrationCommentService;
+    private CommentMapper commentMapper;
 
     @Inject
-    private IntegrationImportedEntityService integrationImportedEntityService;
+    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     public ApplicationClientRepresentation getApplicationClientRepresentation(Application application) throws Exception {
         ApplicationClientRepresentation representation = (ApplicationClientRepresentation) getApplicationRepresentation(application, null);
@@ -87,7 +87,7 @@ public class IntegrationApplicationService {
     }
 
     private ApplicationRepresentation getApplicationRepresentation(Application application, Institution institution) throws Exception {
-        ApplicationRepresentation representation = (ApplicationRepresentation) integrationResourceService.getResourceRepresentationExtended(application);
+        ApplicationRepresentation representation = (ApplicationRepresentation) resourceMapper.getResourceRepresentationExtended(application);
         representation.setClosingDate(application.getClosingDate());
         representation.setSubmittedTimestamp(application.getSubmittedTimestamp());
         representation.setPreviousApplication(application.getPreviousApplication());
@@ -125,7 +125,7 @@ public class IntegrationApplicationService {
 
     private ApplicationSupervisorRepresentation getApplicationSupervisorRepresentation(ApplicationSupervisor applicationSupervisor) {
         return new ApplicationSupervisorRepresentation().withId(applicationSupervisor.getId())
-                .withUser(integrationUserService.getUserRepresentationSimple(applicationSupervisor.getUser()))
+                .withUser(userMapper.getUserRepresentationSimple(applicationSupervisor.getUser()))
                 .withAcceptedSupervisor(applicationSupervisor.getAcceptedSupervision());
     }
 
@@ -139,7 +139,7 @@ public class IntegrationApplicationService {
 
     private <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedEntitySimpleRepresentation getImportedEntityRepresentation(T entity,
             Institution institution) {
-        return entity == null ? null : integrationImportedEntityService.getImportedEntityRepresentation(entity, institution);
+        return entity == null ? null : importedEntityMapper.getImportedEntityRepresentation(entity, institution);
     }
 
     private List<String> getApplicationThemeRepresentation(String themes) {
@@ -153,11 +153,11 @@ public class IntegrationApplicationService {
             ApplicationInterviewRepresentation representation = new ApplicationInterviewRepresentation();
             
             Set<CommentAppointmentTimeslot> timeslots = schedulingComment.getAppointmentTimeslots();
-            representation.setAppointmentTimeslots(integrationCommentService.getCommentAppointmentTimeslotRepresentations(timeslots));
-            representation.setAppointmentPreferences(integrationCommentService.getCommentAppointmentPreferenceRepresentations(schedulingComment, timeslots));
+            representation.setAppointmentTimeslots(commentMapper.getCommentAppointmentTimeslotRepresentations(timeslots));
+            representation.setAppointmentPreferences(commentMapper.getCommentAppointmentPreferenceRepresentations(schedulingComment, timeslots));
             
-            representation.setInterviewAppointment(integrationCommentService.getCommentInterviewAppointmentRepresentation(schedulingComment));
-            representation.setInterviewInstruction(integrationCommentService.getCommentInterviewInstructionRepresentation(schedulingComment, true));
+            representation.setInterviewAppointment(commentMapper.getCommentInterviewAppointmentRepresentation(schedulingComment));
+            representation.setInterviewInstruction(commentMapper.getCommentInterviewInstructionRepresentation(schedulingComment, true));
     
             return representation;
         }

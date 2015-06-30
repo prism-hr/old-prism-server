@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 
@@ -33,10 +33,10 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
-public class IntegrationUserService {
+public class UserMapper {
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     @Inject
     private RoleService roleService;
@@ -100,7 +100,7 @@ public class IntegrationUserService {
 
     public UserFeedbackRepresentation getUserFeedbackRepresentation(UserFeedback userFeedback) {
         UserFeedbackRepresentation representation = new UserFeedbackRepresentation()
-                .withResource(integrationResourceService.getResourceRepresentationSimple(userFeedback.getResource()))
+                .withResource(resourceMapper.getResourceRepresentationSimple(userFeedback.getResource()))
                 .withUser(getUserRepresentationSimple(userFeedback.getUser())).withRoleCategory(userFeedback.getRoleCategory());
 
         if (BooleanUtils.isFalse(userFeedback.getDeclinedResponse())) {

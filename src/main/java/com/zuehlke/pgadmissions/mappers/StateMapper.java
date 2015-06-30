@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 
 @Service
 @Transactional
-public class IntegrationStateService {
+public class StateMapper {
 
     @Inject
     private StateService stateService;

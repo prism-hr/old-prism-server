@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import java.util.List;
 
@@ -16,10 +16,10 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 @Transactional
-public class IntegrationRoleService {
+public class RoleMapper {
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     @Inject
     private RoleService roleService;
@@ -37,7 +37,7 @@ public class IntegrationRoleService {
     }
 
     private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user) {
-        return new ResourceUserRolesRepresentation().withUser(integrationUserService.getUserRepresentationSimple(user)).withRoles(
+        return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimple(user)).withRoles(
                 roleService.getRolesForResource(resource, user));
     }
 

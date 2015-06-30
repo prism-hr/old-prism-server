@@ -136,7 +136,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 
     @CacheEvict("importedInstitutionData")
     private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
+        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getApiEntityClass());
 
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());

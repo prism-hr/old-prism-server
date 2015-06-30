@@ -29,6 +29,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>uk.co.alumeni</groupId>
+            <artifactId>prism-sdk</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>

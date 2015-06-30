@@ -8,6 +8,13 @@
     <packaging>war</packaging>
     <version>4.0.2-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>prism.dev.repository</id>
+            <url>http://mercurial.alumeni.co.uk/maven2</url>
+        </repository>
+    </repositories>
+
     <properties>
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring.security.version>4.0.1.RELEASE</spring.security.version>

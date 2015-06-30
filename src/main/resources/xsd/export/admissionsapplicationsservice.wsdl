@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="admissionsApplicationService_V1" targetNamespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1" xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1" xmlns:v1_0="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0"
+  xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <wsdl:documentation>
+    The following web service contract should be used to submit Admissions applications and applicants to UCL.
+  </wsdl:documentation>
+
+
+  <wsdl:types>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" schemaLocation="../export/admissionsApplicationsService_v1.xsd"></xsd:import>
+    </xsd:schema>
+  </wsdl:types>
+
+
+  <wsdl:message name="SubmitAdmissionsApplicationRequest_v1_0">
+    <wsdl:part element="v1_0:SubmitAdmissionsApplicantRequest" name="parameters" />
+  </wsdl:message>
+
+  <wsdl:message name="AdmissionsApplicationResponse_v1_0">
+    <wsdl:part element="v1_0:AdmissionsApplicationResponse" name="parameters" />
+  </wsdl:message>
+
+  <wsdl:message name="SubmitAdmissionsApplicantRequest_v1_0">
+    <wsdl:part element="v1_0:SubmitAdmissionsApplicantRequest" name="parameters" />
+  </wsdl:message>
+
+
+  <wsdl:message name="FaultDtlMsg_v1_0">
+    <wsdl:part element="v1_0:ExtendedFaultDtl" name="parameters" />
+  </wsdl:message>
+
+
+  <wsdl:portType name="admissionsApplicationsService_v1_0">
+    <wsdl:operation name="SubmitAdmissionsApplication_v1_0">
+      <wsdl:input message="tns:SubmitAdmissionsApplicationRequest_v1_0" />
+      <wsdl:output message="tns:AdmissionsApplicationResponse_v1_0" />
+      <wsdl:fault name="FaultDtlMsg_v1_0" message="tns:FaultDtlMsg_v1_0" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitAdmissionsApplicant_v1_0">
+      <wsdl:input message="tns:SubmitAdmissionsApplicantRequest_v1_0" />
+    </wsdl:operation>
+  </wsdl:portType>
+
+
+  <wsdl:binding name="admissionsApplicationsServiceSoap11_v1_0" type="tns:admissionsApplicationsService_v1_0">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SubmitAdmissionsApplication_v1_0">
+      <soap:operation soapAction="" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDtlMsg_v1_0">
+        <soap:fault name="FaultDtlMsg_v1_0" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitAdmissionsApplicant_v1_0">
+      <soap:operation soapAction="" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDtlMsg_v1_0">
+        <soap:fault name="FaultDtlMsg_v1_0" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+
+
+  <wsdl:service name="admissionsApplicationsService_v1_0">
+    <wsdl:port binding="tns:admissionsApplicationsServiceSoap11_v1_0" name="admissionsApplicationsServiceSoap11_v1_0">
+      <!-- Note: Spring WS is configured to override the location attribute of the soap:address element during application deployment; that will reflect the name 
+        of the machine where the services run -->
+      <soap:address location="http://localhost:8080/registryws/" />
+    </wsdl:port>
+  </wsdl:service>
+
+
+</wsdl:definitions>

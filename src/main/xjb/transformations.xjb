@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings xmlns="http://java.sun.com/xml/ns/jaxb" version="2.0">
+    <globalBindings>
+        <javaType xmlns="http://java.sun.com/xml/ns/jaxb"
+                       name="org.joda.time.DateTime" xmlType="gMonth"
+                       parseMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.parse"
+                       printMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.print"/>
+    </globalBindings>
+</bindings>

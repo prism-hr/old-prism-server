@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rejectionReasons>
+	<rejectionReason>
+		<code>APPLICATION_INCOMPLETE</code>
+		<name>We are unable to form a judgement on your suitability based upon
+			the information that you have supplied in your application.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>UNQUALIFIED_FOR_INSTITUTION</code>
+		<name>Your qualifications and experience are not sufficient to satisfy
+			the entrance requirements for our organisation.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>UNQUALIFIED_FOR_OPPORTUNITYY</code>
+		<name>Your qualifications and experience are not appropriate for your
+			preferred course of study.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>UNABLE_TO_FIND_SUPERVISOR</code>
+		<name>At the present time, we are unable to allocate a supervisor to support
+			you in your preferred course of study.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>DID_NOT_ATTEND_INTERVIEW</code>
+		<name>You failed to present for interview as arranged.</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>OPPORTUNITY_OVERSUBSCRIBED</code>
+		<name>Although you may be suitable for your preferred course of study,
+			the competition for places was such that we were unable to progress
+			your application on this occasion.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>OPPORTUNITY_DISCONTINUED</code>
+		<name>We are no longer able to offer your preferred course of study.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>WITHDRAWN</code>
+		<name>You have informed us that you no longer wish to be considered.
+		</name>
+	</rejectionReason>
+</rejectionReasons>

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
@@ -26,13 +26,13 @@ import com.zuehlke.pgadmissions.services.ActionService;
 
 @Service
 @Transactional
-public class IntegrationActionService {
+public class ActionMapper {
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     @Inject
-    private IntegrationStateService integrationStateService;
+    private StateMapper stateMapper;
 
     @Inject
     private ActionService actionService;
@@ -84,15 +84,15 @@ public class IntegrationActionService {
         representation.addActionEnhancements(actionService.getGlobalActionEnhancements(resource, prismAction, user));
         representation.addActionEnhancements(actionService.getCustomActionEnhancements(resource, prismAction, user));
 
-        representation.addNextStates(integrationStateService.getStateRepresentations(resource, prismAction));
-        representation.addRecommendedNextStates(integrationStateService.getRecommendedNextStateRepresentations(resource));
+        representation.addNextStates(stateMapper.getStateRepresentations(resource, prismAction));
+        representation.addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
 
         return representation;
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
         return new ActionOutcomeRepresentation().withTransitionResource(
-                integrationResourceService.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(
+                resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(
                 actionOutcomeDTO.getTransitionAction().getId());
     }
 

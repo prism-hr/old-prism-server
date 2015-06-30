@@ -167,7 +167,9 @@ public class ApplicationDAO {
                 .setProjection(Projections.property("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("userRole.role.id", APPLICATION_REFEREE))
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("userRole.application", application)) //
+                                .add(Restrictions.eq("userRole.role.id", APPLICATION_REFEREE))) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNull("comment")) //
                 .add(Restrictions.isNull("userRole.id")) //

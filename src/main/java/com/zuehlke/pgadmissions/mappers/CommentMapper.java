@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 
 @Service
 @Transactional
-public class IntegrationCommentService {
+public class CommentMapper {
 
     @Inject
     private ActionService actionService;
@@ -60,10 +60,10 @@ public class IntegrationCommentService {
     private CommentService commentService;
 
     @Inject
-    private IntegrationDocumentService integrationDocumentService;
+    private DocumentMapper documentMapper;
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     @Inject
     private RoleService roleService;
@@ -143,7 +143,7 @@ public class IntegrationCommentService {
 
         for (User user : commentService.getAppointmentInvitees(schedulingComment)) {
             CommentAppointmentPreferenceRepresentation representation = new CommentAppointmentPreferenceRepresentation()
-                    .withUser(integrationUserService.getUserRepresentationSimple(user));
+                    .withUser(userMapper.getUserRepresentationSimple(user));
 
             List<Integer> inviteePreferences = Lists.newLinkedList();
             Comment preferenceComment = commentService.getLatestAppointmentPreferenceComment(schedulingComment.getApplication(), schedulingComment, user);
@@ -162,7 +162,7 @@ public class IntegrationCommentService {
 
         return representations;
     }
-    
+
     public CommentInterviewAppointmentRepresentation getCommentInterviewAppointmentRepresentation(Comment comment) {
         CommentInterviewAppointment appointment = comment.getInterviewAppointment();
         if (appointment != null) {
@@ -205,7 +205,7 @@ public class IntegrationCommentService {
     }
 
     private CommentRepresentation getCommentRepresentationSimple(Comment comment) {
-        return new CommentRepresentation().withId(comment.getId()).withUser(integrationUserService.getUserRepresentationSimple(comment.getUser()))
+        return new CommentRepresentation().withId(comment.getId()).withUser(userMapper.getUserRepresentationSimple(comment.getUser()))
                 .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(comment.getAction().getId())
                 .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp());
     }
@@ -226,7 +226,7 @@ public class IntegrationCommentService {
     }
 
     private CommentAssignedUserRepresentation getCommentAssignedUserRepresentation(CommentAssignedUser commentAssignedUser) {
-        return new CommentAssignedUserRepresentation().withUser(integrationUserService.getUserRepresentationSimple(commentAssignedUser.getUser()))
+        return new CommentAssignedUserRepresentation().withUser(userMapper.getUserRepresentationSimple(commentAssignedUser.getUser()))
                 .withRole(commentAssignedUser.getRole().getId()).withRoleTransitionType(commentAssignedUser.getRoleTransitionType());
     }
 
@@ -250,7 +250,7 @@ public class IntegrationCommentService {
 
     private UserRepresentationSimple getCommentDelegateUserRepresentation(Comment comment) {
         User delegate = comment.getDelegateUser();
-        return delegate == null ? null : integrationUserService.getUserRepresentationSimple(delegate);
+        return delegate == null ? null : userMapper.getUserRepresentationSimple(delegate);
     }
 
     private CommentPositionDetailRepresentation getCommentPositionDetailRepresentation(Comment comment) {
@@ -266,9 +266,9 @@ public class IntegrationCommentService {
     }
 
     private CommentExportRepresentation getCommentExportRepresentation(Comment comment) {
-        CommentExport export = comment.getApplicationExport();
-        return export == null ? null : new CommentExportRepresentation().withExportRequest(export.getExportRequest())
-                .withExportException(export.getExportException()).withExportReference(export.getExportReference());
+        CommentExport export = comment.getExport();
+        return export == null ? null : new CommentExportRepresentation().withExportSucceeded(export.getExportSucceeded())
+                .withExportRequest(export.getExportRequest()).withExportException(export.getExportException()).withExportReference(export.getExportReference());
     }
 
     private List<LocalDateTime> getCommentAppointmentPreferenceRepresentations(Comment comment) {
@@ -282,7 +282,7 @@ public class IntegrationCommentService {
     private List<DocumentRepresentation> getCommentDocumentRepresentations(Comment comment) {
         List<DocumentRepresentation> representations = Lists.newLinkedList();
         for (Document document : comment.getDocuments()) {
-            representations.add(integrationDocumentService.getDocumentRepresentation(document));
+            representations.add(documentMapper.getDocumentRepresentation(document));
         }
         return representations;
     }

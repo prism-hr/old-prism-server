@@ -60,6 +60,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
+import com.zuehlke.pgadmissions.mappers.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AdvertAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
@@ -72,7 +73,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
-import com.zuehlke.pgadmissions.services.integration.IntegrationAdvertService;
 
 @Service
 @Transactional
@@ -110,7 +110,7 @@ public class AdvertService {
     private GeocodableLocationService geocodableLocationService;
 
     @Inject
-    private IntegrationAdvertService integrationAdvertService;
+    private AdvertMapper advertMapper;
 
     @Inject
     private RestTemplate restTemplate;
@@ -177,7 +177,7 @@ public class AdvertService {
             updateAddress(advert, addressDTO);
         } else if (address == null) {
             address = getResourceAddress(parentResource);
-            addressDTO = integrationAdvertService.getAddressDTO(address);
+            addressDTO = advertMapper.getAddressDTO(address);
             updateAddress(advert, addressDTO);
         }
     }
@@ -393,7 +393,7 @@ public class AdvertService {
         Application application = applicationService.getById(applicationId);
         List<AdvertRecommendationDTO> advertRecommendations = getRecommendedAdverts(application.getUser());
         for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
-            representations.add(integrationAdvertService.getAdvertRepresentation(advertRecommendation.getAdvert()));
+            representations.add(advertMapper.getAdvertRepresentation(advertRecommendation.getAdvert()));
         }
         return representations;
     }

@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.mappers.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
 
 @RestController
 @RequestMapping("api/domiciles/{domicileId}")
@@ -26,7 +26,7 @@ public class InstitutionDomicileController {
     private EntityService entityService;
 
     @Inject
-    private IntegrationResourceService integrationResourceService;
+    private ResourceMapper resourceMapper;
 
     @Inject
     private InstitutionService institutionService;
@@ -38,7 +38,7 @@ public class InstitutionDomicileController {
         List<Institution> institutions = institutionService.getApprovedInstitutionsByDomicile(domicile);
         List<ResourceRepresentationSimple> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
-            institutionRepresentations.add(integrationResourceService.getResourceRepresentationSimple(institution));
+            institutionRepresentations.add(resourceMapper.getResourceRepresentationSimple(institution));
         }
         return institutionRepresentations;
     }

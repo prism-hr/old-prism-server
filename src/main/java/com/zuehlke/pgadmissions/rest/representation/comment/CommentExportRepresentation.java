@@ -2,11 +2,21 @@ package com.zuehlke.pgadmissions.rest.representation.comment;
 
 public class CommentExportRepresentation {
 
+    private Boolean exportSucceeded;
+    
     private String exportRequest;
 
     private String exportException;
 
     private String exportReference;
+    
+    public Boolean getExportSucceeded() {
+        return exportSucceeded;
+    }
+
+    public void setExportSucceeded(Boolean exportSucceeded) {
+        this.exportSucceeded = exportSucceeded;
+    }
 
     public String getExportRequest() {
         return exportRequest;
@@ -30,6 +40,11 @@ public class CommentExportRepresentation {
 
     public void setExportReference(String exportReference) {
         this.exportReference = exportReference;
+    }
+    
+    public CommentExportRepresentation withExportSucceeded(Boolean exportSucceeded) {
+        this.exportSucceeded = exportSucceeded;
+        return this;
     }
     
     public CommentExportRepresentation withExportRequest(String exportRequest) {

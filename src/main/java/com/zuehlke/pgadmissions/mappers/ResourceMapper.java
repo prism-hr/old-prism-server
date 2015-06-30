@@ -1,12 +1,10 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -38,9 +37,9 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunity
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentClientRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationList;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationListExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationListSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
@@ -60,7 +59,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 @Transactional
-public class IntegrationResourceService {
+public class ResourceMapper {
 
     @Inject
     private ActionService actionService;
@@ -69,25 +68,25 @@ public class IntegrationResourceService {
     private ApplicationService applicationService;
 
     @Inject
-    private IntegrationActionService integrationActionService;
+    private ActionMapper actionMapper;
 
     @Inject
-    private IntegrationAdvertService integrationAdvertService;
+    private AdvertMapper advertMapper;
 
     @Inject
-    private IntegrationApplicationService integrationApplicationService;
+    private ApplicationMapper applicationMapper;
 
     @Inject
-    private IntegrationCommentService integrationCommentService;
+    private CommentMapper commentMapper;
 
     @Inject
-    private IntegrationRoleService integrationRoleService;
+    private RoleMapper roleMapper;
 
     @Inject
-    private IntegrationStateService integrationStateService;
+    private StateMapper stateMapper;
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     @Inject
     private ProgramService programService;
@@ -104,12 +103,12 @@ public class IntegrationResourceService {
     @Inject
     private UserService userService;
 
-    public List<ResourceRepresentationList> getResourceRepresentations(PrismScope resourceScope, List<ResourceListRowDTO> rows) {
+    public List<ResourceRepresentationListExtended> getResourceRepresentations(PrismScope resourceScope, List<ResourceListRowDTO> rows) {
         DateTime baseline = new DateTime();
-        List<ResourceRepresentationList> representations = Lists.newArrayListWithCapacity(LIST_PAGE_ROW_COUNT);
+        List<ResourceRepresentationListExtended> representations = Lists.newArrayListWithCapacity(rows.size());
 
         for (ResourceListRowDTO row : rows) {
-            ResourceRepresentationList representation = new ResourceRepresentationList().withResourceScope(resourceScope).withId(row.getResourceId());
+            ResourceRepresentationListExtended representation = new ResourceRepresentationListExtended().withResourceScope(resourceScope).withId(row.getResourceId());
 
             Integer institutionId = row.getInstitutionId();
             Integer departmentId = row.getDepartmentId();
@@ -150,10 +149,10 @@ public class IntegrationResourceService {
 
             representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
 
-            representation.setState(integrationStateService.getStateRepresentationSimple(row.getStateId()));
-            representation.setSecondaryStates(integrationStateService.getStateRepresentations(row.getSecondaryStateIds()));
+            representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
+            representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
 
-            List<ActionRepresentationSimple> actions = integrationActionService.getActionRepresentations(row.getActions());
+            List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row.getActions());
             DateTime updatedTimestamp = row.getUpdatedTimestamp();
 
             representation.setCreatedTimestamp(row.getCreatedTimestamp());
@@ -194,7 +193,7 @@ public class IntegrationResourceService {
         User currentUser = userService.getCurrentUser();
 
         ResourceRepresentationExtended representation = (ResourceRepresentationExtended) getResourceRepresentationSimple(resource);
-        representation.setUser(integrationUserService.getUserRepresentationSimple(resource.getUser()));
+        representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
 
         for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
             Resource parentResource = resource.getEnclosingResource(parentScope);
@@ -203,22 +202,22 @@ public class IntegrationResourceService {
             }
         }
 
-        representation.setState(integrationStateService.getStateRepresentationSimple(resource.getState()));
-        representation.setPreviousState(integrationStateService.getStateRepresentationSimple(resource.getPreviousState()));
-        representation.setSecondaryStates(integrationStateService.getSecondaryStateRepresentations(resource));
+        representation.setState(stateMapper.getStateRepresentationSimple(resource.getState()));
+        representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));
+        representation.setSecondaryStates(stateMapper.getSecondaryStateRepresentations(resource));
 
-        List<ActionRepresentationExtended> actions = integrationActionService.getActionRepresentations(resource, currentUser);
+        List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
 
         representation.setCreatedTimestamp(resource.getCreatedTimestamp());
         representation.setUpdatedTimestamp(updatedTimestamp);
 
-        setRaisesUrgentFlag((ResourceRepresentationStandard) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
-        setRaisesUpdateFlag((ResourceRepresentationStandard) representation, baseline, updatedTimestamp);
+        setRaisesUrgentFlag((ResourceRepresentationListSimple) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
+        setRaisesUpdateFlag((ResourceRepresentationListSimple) representation, baseline, updatedTimestamp);
 
         representation.setActions(actions);
-        representation.setTimeline(integrationCommentService.getTimelineRepresentation(resource, currentUser));
-        representation.setUserRoles(integrationRoleService.getResourceUserRoleRepresentations(resource));
+        representation.setTimeline(commentMapper.getTimelineRepresentation(resource, currentUser));
+        representation.setUserRoles(roleMapper.getResourceUserRoleRepresentations(resource));
 
         representation.setWorkflowConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
         representation.setConditions(getResourceConditionRepresentations(resource));
@@ -227,7 +226,7 @@ public class IntegrationResourceService {
         if (ResourceParent.class.isAssignableFrom(resourceClass)) {
             ResourceParent resourceParent = (ResourceParent) resource;
             ResourceParentRepresentation representationParent = (ResourceParentRepresentation) representation;
-            representationParent.setAdvert(integrationAdvertService.getAdvertRepresentation(resourceParent.getAdvert()));
+            representationParent.setAdvert(advertMapper.getAdvertRepresentation(resourceParent.getAdvert()));
             representationParent.setBackgroundImage(resourceService.getBackgroundImage(resourceParent));
             representationParent.setPartnerActions(actionService.getPartnerActions(resourceParent));
 
@@ -247,18 +246,18 @@ public class IntegrationResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> ResourceRepresentationExtended getResourceClientRepresentation(T resource) throws Exception {
+    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationClient(T resource) throws Exception {
         Class<T> resourceClass = (Class<T>) resource.getClass();
 
         if (resourceClass.equals(Application.class)) {
-            return integrationApplicationService.getApplicationClientRepresentation((Application) resource);
+            return applicationMapper.getApplicationClientRepresentation((Application) resource);
         } else if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             ResourceParentClientRepresentation representation = (ResourceParentClientRepresentation) getResourceRepresentationExtended(resource);
             representation.setResourceSummary(getResourceSummaryRepresentation((ResourceParent) resource));
             return representation;
         } else if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ResourceOpportunityClientRepresentation representation = (ResourceOpportunityClientRepresentation) getResourceRepresentationExtended(resource);
-            representation.setResourceSummary(getResourceSummaryRepresentation((ResourceParent) resource));
+            representation.setResourceSummary(getResourceSummaryRepresentation((ResourceOpportunity) resource));
             return representation;
         }
 
@@ -266,24 +265,25 @@ public class IntegrationResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> ResourceRepresentationExtended getResourceExportRepresentation(T resource) throws Exception {
+    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
         Class<T> resourceClass = (Class<T>) resource.getClass();
 
         if (resourceClass.equals(Application.class)) {
-            return integrationApplicationService.getApplicationExportRepresentation((Application) resource);
+            return applicationMapper.getApplicationExportRepresentation((Application) resource);
         }
 
         return getResourceRepresentationExtended(resource);
     }
 
-    public ResourceSummaryRepresentation getResourceSummaryRepresentation(ResourceParent resource) {
-        PrismScope resourceScope = resource.getResourceScope();
+    @SuppressWarnings("unchecked")
+    public <T extends ResourceParent> ResourceSummaryRepresentation getResourceSummaryRepresentation(T resource) {
         ResourceSummaryRepresentation representation = new ResourceSummaryRepresentation();
 
-        if (Arrays.asList(INSTITUTION, DEPARTMENT).contains(resourceScope)) {
+        Class<T> resourceClass = (Class<T>) resource.getClass();
+        if (ResourceParent.class.isAssignableFrom(resourceClass)) {
             representation.setProgramCount(programService.getActiveProgramCount((Institution) resource));
             representation.setProjectCount(projectService.getActiveProjectCount(resource));
-        } else if (resourceScope == PROGRAM) {
+        } else if (Program.class.equals(resourceClass)) {
             representation.setProjectCount(projectService.getActiveProjectCount(resource));
         }
 
@@ -316,13 +316,13 @@ public class IntegrationResourceService {
         for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
             String applicationYear = yearSummary.getApplicationYear();
 
-            ApplicationProcessingSummaryRepresentationYear yearRepresentation = (ApplicationProcessingSummaryRepresentationYear) integrationApplicationService
+            ApplicationProcessingSummaryRepresentationYear yearRepresentation = (ApplicationProcessingSummaryRepresentationYear) applicationMapper
                     .getApplicationProcessingSummaryRepresentation(yearSummary);
             yearRepresentation.setApplicationYear(applicationYear);
 
             List<ApplicationProcessingSummaryRepresentationMonth> monthRepresentations = Lists.newLinkedList();
             for (ApplicationProcessingSummaryDTO monthSummary : monthSummaries.get(applicationYear)) {
-                ApplicationProcessingSummaryRepresentationMonth monthRepresentation = (ApplicationProcessingSummaryRepresentationMonth) integrationApplicationService
+                ApplicationProcessingSummaryRepresentationMonth monthRepresentation = (ApplicationProcessingSummaryRepresentationMonth) applicationMapper
                         .getApplicationProcessingSummaryRepresentation(monthSummary);
                 monthRepresentation.setApplicationMonth(monthSummary.getApplicationMonth());
                 monthRepresentations.add(monthRepresentation);
@@ -330,7 +330,7 @@ public class IntegrationResourceService {
                 Integer applicationMonth = monthSummary.getApplicationMonth();
                 List<ApplicationProcessingSummaryRepresentationWeek> weekRepresentations = Lists.newLinkedList();
                 for (ApplicationProcessingSummaryDTO weekSummary : weekSummaries.get(new ApplicationProcessingMonth(applicationYear, applicationMonth))) {
-                    ApplicationProcessingSummaryRepresentationWeek weekRepresentation = (ApplicationProcessingSummaryRepresentationWeek) integrationApplicationService
+                    ApplicationProcessingSummaryRepresentationWeek weekRepresentation = (ApplicationProcessingSummaryRepresentationWeek) applicationMapper
                             .getApplicationProcessingSummaryRepresentation(weekSummary);
                     weekRepresentation.setApplicationWeek(weekSummary.getApplicationWeek());
                     weekRepresentations.add(weekRepresentation);
@@ -364,7 +364,7 @@ public class IntegrationResourceService {
         return constraint;
     }
 
-    private void setRaisesUrgentFlag(ResourceRepresentationStandard representation, List<ActionRepresentationSimple> actions) {
+    private void setRaisesUrgentFlag(ResourceRepresentationListSimple representation, List<ActionRepresentationSimple> actions) {
         for (ActionRepresentationSimple action : actions) {
             if (BooleanUtils.isTrue(action.getRaisesUrgentFlag())) {
                 representation.setRaisesUrgentFlag(true);
@@ -373,7 +373,7 @@ public class IntegrationResourceService {
         }
     }
 
-    private void setRaisesUpdateFlag(ResourceRepresentationStandard representation, DateTime baseline, DateTime updatedTimestamp) {
+    private void setRaisesUpdateFlag(ResourceRepresentationListSimple representation, DateTime baseline, DateTime updatedTimestamp) {
         representation.setRaisesUpdateFlag(updatedTimestamp.isAfter(baseline.minusDays(1)));
     }
 

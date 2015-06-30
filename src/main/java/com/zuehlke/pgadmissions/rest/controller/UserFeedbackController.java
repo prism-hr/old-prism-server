@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
+import com.zuehlke.pgadmissions.mappers.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
 import com.zuehlke.pgadmissions.services.UserFeedbackService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationUserService;
 
 @RestController
 @RequestMapping("/api/feedback")
 public class UserFeedbackController {
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     @Inject
     private UserFeedbackService userFeedbackService;
@@ -42,7 +42,7 @@ public class UserFeedbackController {
         List<UserFeedback> userFeedbacks = userFeedbackService.getUserFeedback(ratingThreshold, lastSequenceIdentifier);
         List<UserFeedbackRepresentation> representations = Lists.newArrayListWithCapacity(userFeedbacks.size());
         for (UserFeedback userFeedback : userFeedbacks) {
-            representations.add(integrationUserService.getUserFeedbackRepresentation(userFeedback));
+            representations.add(userMapper.getUserFeedbackRepresentation(userFeedback));
         }
         return representations;
     }

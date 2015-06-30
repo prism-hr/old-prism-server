@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mappers.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
@@ -45,7 +46,6 @@ import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.integration.IntegrationUserService;
 
 @RestController
 @RequestMapping("/api/user")
@@ -63,7 +63,7 @@ public class UserController {
     private EntityService entityService;
 
     @Inject
-    private IntegrationUserService integrationUserService;
+    private UserMapper userMapper;
 
     @Inject
     private ResourceListFilterService resourceListFilterService;
@@ -80,7 +80,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.GET)
     public UserExtendedRepresentation getUser() {
-        return integrationUserService.getUserRepresentationExtended(userService.getCurrentUser());
+        return userMapper.getUserRepresentationExtended(userService.getCurrentUser());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -95,7 +95,7 @@ public class UserController {
         User parentUser = userService.getCurrentUser().getParentUser();
         User otherUser = userService.getUserByEmail(userLinkingDTO.getOtherEmail());
         userService.linkUsers(parentUser, otherUser);
-        return integrationUserService.getUserRepresentationSimple(otherUser);
+        return userMapper.getUserRepresentationSimple(otherUser);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -147,7 +147,7 @@ public class UserController {
             UserAccountExternal primaryExternalAccount = user.getUserAccount().getPrimaryExternalAccount();
             loginProvider = primaryExternalAccount != null ? primaryExternalAccount.getAccountType().getName() : null;
         }
-        UserRepresentationSimple userRepresentation = integrationUserService.getUserRepresentationSimple(user);
+        UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user);
 
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", status);

@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
-public class ResourceRepresentationStandard extends ResourceRepresentationSimple {
+public class ResourceRepresentationListSimple extends ResourceRepresentationSimple {
 
     private UserRepresentationSimple user;
 
@@ -35,6 +35,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private DateTime createdTimestamp;
 
     private DateTime updatedTimestamp;
+    
+    private String sequenceIdentifier;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -138,6 +140,14 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+    
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
 }

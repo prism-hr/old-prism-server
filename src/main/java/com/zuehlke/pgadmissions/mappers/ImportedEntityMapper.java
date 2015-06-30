@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.integration;
+package com.zuehlke.pgadmissions.mappers;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Service
 @Transactional
-public class IntegrationImportedEntityService {
+public class ImportedEntityMapper {
 
     @Inject
     private ImportedEntityService importedEntityService;

@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationE
 import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
-public class ResourceRepresentationExtended extends ResourceRepresentationStandard {
+public class ResourceRepresentationExtended extends ResourceRepresentationListSimple {
 
     private Set<ActionRepresentationExtended> actions = Sets.newLinkedHashSet();
     

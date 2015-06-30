@@ -2,14 +2,14 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceListFilterRepresentation {
 
-	private PrismResourceListFilter propertyName;
+	private PrismResourceListContraint propertyName;
 
 	private List<FilterExpressionRepresentation> permittedExpressions;
 
@@ -17,7 +17,7 @@ public class ResourceListFilterRepresentation {
 
 	private List<PrismScope> permittedScopes;
 
-	public ResourceListFilterRepresentation(PrismResourceListFilter propertyName, List<FilterExpressionRepresentation> permittedExpressions,
+	public ResourceListFilterRepresentation(PrismResourceListContraint propertyName, List<FilterExpressionRepresentation> permittedExpressions,
 	        PrismResourceListFilterPropertyType valueType, List<PrismScope> permittedScopes) {
 		this.propertyName = propertyName;
 		this.permittedExpressions = permittedExpressions;
@@ -25,7 +25,7 @@ public class ResourceListFilterRepresentation {
 		this.permittedScopes = permittedScopes;
 	}
 
-	public PrismResourceListFilter getPropertyName() {
+	public PrismResourceListContraint getPropertyName() {
 		return propertyName;
 	}
 

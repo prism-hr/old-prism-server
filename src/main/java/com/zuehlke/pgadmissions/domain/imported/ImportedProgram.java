@@ -35,7 +35,7 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> impl
 
     @ManyToOne
     @JoinColumn(name = "imported_qualification_type_id", nullable = false)
-    private ImportedQualificationType qualificationType;
+    private ImportedEntitySimple qualificationType;
 
     @Column(name = "level")
     private String level;
@@ -79,11 +79,11 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> impl
         this.institution = institution;
     }
 
-    public ImportedQualificationType getQualificationType() {
+    public ImportedEntitySimple getQualificationType() {
         return qualificationType;
     }
 
-    public void setQualificationType(ImportedQualificationType qualificationType) {
+    public void setQualificationType(ImportedEntitySimple qualificationType) {
         this.qualificationType = qualificationType;
     }
 
@@ -141,7 +141,7 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> impl
         return this;
     }
     
-    public ImportedProgram withQualificationType(ImportedQualificationType qualificationType) {
+    public ImportedProgram withQualificationType(ImportedEntitySimple qualificationType) {
         this.qualificationType = qualificationType;
         return this;
     }

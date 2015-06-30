@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
 @Table(name = "address")
@@ -21,7 +21,7 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "imported_domicile_id")
-    private ImportedDomicile domicile;
+    private ImportedEntitySimple domicile;
 
     @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
@@ -46,11 +46,11 @@ public class Address {
         this.id = id;
     }
 
-    public ImportedDomicile getDomicile() {
+    public ImportedEntitySimple getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedDomicile domicile) {
+    public void setDomicile(ImportedEntitySimple domicile) {
         this.domicile = domicile;
     }
 

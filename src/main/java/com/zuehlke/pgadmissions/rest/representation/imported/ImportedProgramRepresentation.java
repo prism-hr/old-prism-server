@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.imported;
 
 public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresentation {
 
-    private ImportedEntitySimpleRepresentation institutionMapping;
+    private Integer institution;
 
-    private ImportedEntitySimpleRepresentation qualificationTypeMapping;
+    private ImportedEntitySimpleRepresentation qualificationType;
 
     private String level;
 
@@ -13,35 +13,19 @@ public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresent
     private String homepage;
 
     public Integer getInstitution() {
-        return institutionMapping.getId();
+        return institution;
     }
 
     public void setInstitution(Integer institution) {
-        this.institutionMapping = new ImportedInstitutionRepresentation().withId(institution);
+        this.institution = institution;
     }
 
-    public ImportedEntitySimpleRepresentation getInstitutionMapping() {
-        return institutionMapping;
+    public ImportedEntitySimpleRepresentation getQualificationType() {
+        return qualificationType;
     }
 
-    public void setInstitutionMapping(ImportedEntitySimpleRepresentation institutionMapping) {
-        this.institutionMapping = institutionMapping;
-    }
-
-    public Integer getQualificationType() {
-        return qualificationTypeMapping.getId();
-    }
-
-    public void setQualificationType(Integer qualificationType) {
-        this.qualificationTypeMapping = new ImportedEntitySimpleRepresentation().withId(qualificationType);
-    }
-
-    public ImportedEntitySimpleRepresentation getQualificationTypeMapping() {
-        return qualificationTypeMapping;
-    }
-
-    public void setQualificationTypeMapping(ImportedEntitySimpleRepresentation qualificationTypeMapping) {
-        this.qualificationTypeMapping = qualificationTypeMapping;
+    public void setQualificationType(ImportedEntitySimpleRepresentation qualificationType) {
+        this.qualificationType = qualificationType;
     }
 
     public String getLevel() {

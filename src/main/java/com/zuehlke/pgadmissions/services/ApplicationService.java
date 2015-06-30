@@ -66,8 +66,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -86,7 +86,6 @@ import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
@@ -156,7 +155,7 @@ public class ApplicationService {
         LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
 
-        ImportedStudyOption studyOption = importedEntityService.getByName(ImportedStudyOption.class, studyOptionId.name());
+        ImportedEntitySimple studyOption = importedEntityService.getByName(ImportedEntitySimple.class, studyOptionId.name());
         ResourceStudyOption resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
 
         if (resourceStudyOption == null && !application.getParentResource().sameAs(application.getInstitution())) {
@@ -194,7 +193,7 @@ public class ApplicationService {
 
             if (!(applicationStartDate == null || applicationCloseDate == null)) {
                 LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
-                        resourceStudyOption.getResource().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
+                        PrismOpportunityType.valueOf(resourceStudyOption.getResource().getOpportunityType().getName()).getDefaultStartBuffer());
                 LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
                 return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
             }
@@ -249,12 +248,6 @@ public class ApplicationService {
 
     public List<User> getUnassignedApplicationReferees(Application application) {
         return applicationDAO.getUnassignedApplicationReferees(application);
-    }
-
-    public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
-        if (currentUser.getId().equals(representation.getUser().getId())) {
-            representation.setApplicationRatingAverage(null);
-        }
     }
 
     public List<Integer> getApplicationsForExport() {
@@ -470,7 +463,7 @@ public class ApplicationService {
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
         if (!application.getParentResource().sameAs(application.getInstitution())) {
-            PrismOpportunityType opportunityType = application.getProgram().getOpportunityType().getPrismOpportunityType();
+            PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(application.getAdvert().getOpportunityType().name());
             DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
 
             LocalDate immediate = defaults.getImmediate();

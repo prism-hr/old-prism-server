@@ -68,17 +68,10 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
-import com.zuehlke.pgadmissions.domain.imported.ImportedCountry;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDisability;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEthnicity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedNationality;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ImportedReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -159,7 +152,7 @@ public class ApplicationExportBuilder {
 
     private DomicileTp buildDomicile(Application application) {
         DomicileTp domicileTp = objectFactory.createDomicileTp();
-        ImportedDomicile domicile = application.getPersonalDetail().getDomicile();
+        ImportedEntitySimple domicile = application.getPersonalDetail().getDomicile();
         domicileTp.setCode(getImportedEntityCode(application.getInstitution(), domicile));
         domicileTp.setName(domicile.getName());
         return domicileTp;
@@ -188,7 +181,7 @@ public class ApplicationExportBuilder {
 
     private NationalityTp buildFirstNationality(Application application) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        ImportedNationality firstNationality = personalDetail.getFirstNationality();
+        ImportedEntitySimple firstNationality = personalDetail.getFirstNationality();
         NationalityTp nationalityTp = objectFactory.createNationalityTp();
         nationalityTp.setCode(getImportedEntityCode(application.getInstitution(), firstNationality));
         nationalityTp.setName(firstNationality.getName());
@@ -196,7 +189,7 @@ public class ApplicationExportBuilder {
     }
 
     private NationalityTp buildSecondNationality(Application application) {
-        ImportedNationality secondNationality = application.getPersonalDetail().getSecondNationality();
+        ImportedEntitySimple secondNationality = application.getPersonalDetail().getSecondNationality();
         NationalityTp nationalityTp = objectFactory.createNationalityTp();
 
         if (secondNationality == null) {
@@ -211,7 +204,7 @@ public class ApplicationExportBuilder {
     private CountryTp buildCountry(Application application) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         CountryTp countryTp = objectFactory.createCountryTp();
-        ImportedCountry country = personalDetail.getCountry();
+        ImportedEntitySimple country = personalDetail.getCountry();
         countryTp.setCode(getImportedEntityCode(application.getInstitution(), country));
         countryTp.setName(country.getName());
         return countryTp;
@@ -240,7 +233,7 @@ public class ApplicationExportBuilder {
     private DisabilityTp buildDisability(Application application) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         DisabilityTp disabilityTp = objectFactory.createDisabilityTp();
-        ImportedDisability disability = personalDetail.getDisability();
+        ImportedEntitySimple disability = personalDetail.getDisability();
         disabilityTp.setCode(getImportedEntityCode(application.getInstitution(), disability));
         disabilityTp.setName(disability.getName());
         return disabilityTp;
@@ -249,7 +242,7 @@ public class ApplicationExportBuilder {
     private EthnicityTp buildEthnicity(Application application) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         EthnicityTp ethnicityTp = objectFactory.createEthnicityTp();
-        ImportedEthnicity ethnicity = personalDetail.getEthnicity();
+        ImportedEntitySimple ethnicity = personalDetail.getEthnicity();
         ethnicityTp.setCode(getImportedEntityCode(application.getInstitution(), ethnicity));
         ethnicityTp.setName(ethnicity.getName());
         return ethnicityTp;
@@ -369,7 +362,7 @@ public class ApplicationExportBuilder {
     private ModeofattendanceTp buildModeofattendance(Application application) {
         ApplicationProgramDetail programmeDetails = application.getProgramDetail();
         ModeofattendanceTp modeofattendanceTp = objectFactory.createModeofattendanceTp();
-        ImportedStudyOption studyOption = programmeDetails.getStudyOption();
+        ImportedEntitySimple studyOption = programmeDetails.getStudyOption();
         modeofattendanceTp.setCode(getImportedEntityCode(application.getInstitution(), studyOption));
         modeofattendanceTp.setName(studyOption.getName());
         return modeofattendanceTp;
@@ -388,7 +381,7 @@ public class ApplicationExportBuilder {
     private SourceOfInterestTp buildSourcesOfInterest(Application application, CourseApplicationTp applicationTp) {
         ApplicationProgramDetail programmeDetails = application.getProgramDetail();
         SourceOfInterestTp interestTp = objectFactory.createSourceOfInterestTp();
-        ImportedReferralSource sourceOfInterest = programmeDetails.getReferralSource();
+        ImportedEntitySimple sourceOfInterest = programmeDetails.getReferralSource();
         if (sourceOfInterest == null) {
             return null;
         }
@@ -415,7 +408,7 @@ public class ApplicationExportBuilder {
                 qualificationsTp.setMainSubject(importedProgram.getName());
 
                 QualificationTp qualificationTp = objectFactory.createQualificationTp();
-                ImportedQualificationType qualificationType = importedProgram.getQualificationType();
+                ImportedEntitySimple qualificationType = importedProgram.getQualificationType();
                 qualificationTp.setCode(getImportedEntityCode(application.getInstitution(), qualificationType));
                 qualificationTp.setName(qualificationType.getName());
                 qualificationsTp.setQualification(qualificationTp);
@@ -427,7 +420,7 @@ public class ApplicationExportBuilder {
                 institutionTp.setName(qualification.getProgram().getName());
 
                 CountryTp countryTp = objectFactory.createCountryTp();
-                ImportedDomicile domicile = institution.getDomicile();
+                ImportedEntitySimple domicile = institution.getDomicile();
                 countryTp.setCode(getImportedEntityCode(application.getInstitution(), domicile));
                 countryTp.setName(domicile.getName());
                 institutionTp.setCountry(countryTp);

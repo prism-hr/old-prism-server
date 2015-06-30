@@ -11,15 +11,15 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class CommentRepresentation {
 
     private Integer id;
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
-    private UserRepresentation delegateUser;
+    private UserRepresentationSimple delegateUser;
 
     private PrismAction action;
 
@@ -75,19 +75,19 @@ public class CommentRepresentation {
         this.id = id;
     }
 
-    public UserRepresentation getUser() {
+    public UserRepresentationSimple getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
-    public UserRepresentation getDelegateUser() {
+    public UserRepresentationSimple getDelegateUser() {
         return delegateUser;
     }
 
-    public void setDelegateUser(UserRepresentation delegateUser) {
+    public void setDelegateUser(UserRepresentationSimple delegateUser) {
         this.delegateUser = delegateUser;
     }
 
@@ -280,12 +280,12 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withUser(UserRepresentation user) {
+    public CommentRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }
 
-    public CommentRepresentation withDelegateUser(UserRepresentation delegateUser) {
+    public CommentRepresentation withDelegateUser(UserRepresentationSimple delegateUser) {
         this.delegateUser = delegateUser;
         return this;
     }

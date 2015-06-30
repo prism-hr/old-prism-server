@@ -21,7 +21,6 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.application.Address;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -105,7 +104,7 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedDomicile domicile) {
+    public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedEntitySimple domicile) {
         PrismImportedEntity prismImportedEntity = IMPORTED_INSTITUTION;
         String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
@@ -117,7 +116,7 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedInstitution> getEnabledImportedInstitutionsWithMappings(Institution institution, ImportedDomicile domicile) {
+    public List<ImportedInstitution> getEnabledImportedInstitutionsWithMappings(Institution institution, ImportedEntitySimple domicile) {
         PrismImportedEntity prismImportedEntity = IMPORTED_INSTITUTION;
         String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)

@@ -78,8 +78,6 @@ public enum PrismScope {
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("partner", "title") //
-                    .withColumn("partner", "logoImage.id") //
                     .withColumn("department", "title") //
                     .withColumn("program", "title")) //
             .withActionExecutor(ProgramExecutor.class) //
@@ -94,8 +92,6 @@ public enum PrismScope {
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("partner", "title") //
-                    .withColumn("partner", "logoImage.id") //
                     .withColumn("department", "title") //
                     .withColumn("program", "title") //
                     .withColumn("project", "title")) //
@@ -111,8 +107,6 @@ public enum PrismScope {
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("partner", "title")
-                    .withColumn("partner", "logoImage.id") //
                     .withColumn("department", "title") //
                     .withColumn("program", "title") //
                     .withColumn("project", "title")) //

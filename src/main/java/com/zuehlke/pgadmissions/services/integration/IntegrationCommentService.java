@@ -27,14 +27,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation;
@@ -44,26 +42,29 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInst
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentOfferDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentPositionDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation.TimelineCommentGroupRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Service
 @Transactional
-class IntegrationCommentService {
-    
+public class IntegrationCommentService {
+
     @Inject
     private ActionService actionService;
-    
+
     @Inject
     private CommentService commentService;
-    
+
     @Inject
     private IntegrationDocumentService integrationDocumentService;
-    
+
     @Inject
     private IntegrationUserService integrationUserService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -127,7 +128,63 @@ class IntegrationCommentService {
 
         return timeline;
     }
+
+    public List<CommentAppointmentTimeslotRepresentation> getCommentAppointmentTimeslotRepresentations(Set<CommentAppointmentTimeslot> timeslots) {
+        List<CommentAppointmentTimeslotRepresentation> representations = Lists.newLinkedList();
+        for (CommentAppointmentTimeslot timeslot : timeslots) {
+            representations.add(new CommentAppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
+        }
+        return representations;
+    }
+
+    public List<CommentAppointmentPreferenceRepresentation> getCommentAppointmentPreferenceRepresentations(Comment schedulingComment,
+            Set<CommentAppointmentTimeslot> timeslots) {
+        List<CommentAppointmentPreferenceRepresentation> representations = Lists.newLinkedList();
+
+        for (User user : commentService.getAppointmentInvitees(schedulingComment)) {
+            CommentAppointmentPreferenceRepresentation representation = new CommentAppointmentPreferenceRepresentation()
+                    .withUser(integrationUserService.getUserRepresentationSimple(user));
+
+            List<Integer> inviteePreferences = Lists.newLinkedList();
+            Comment preferenceComment = commentService.getLatestAppointmentPreferenceComment(schedulingComment.getApplication(), schedulingComment, user);
+            if (preferenceComment != null) {
+                List<LocalDateTime> preferences = commentService.getAppointmentPreferences(preferenceComment);
+                for (CommentAppointmentTimeslot timeslot : timeslots) {
+                    if (preferences.contains(timeslot.getDateTime())) {
+                        inviteePreferences.add(timeslot.getId());
+                    }
+                }
+                representation.setPreferences(inviteePreferences);
+            }
+
+            representations.add(representation);
+        }
+
+        return representations;
+    }
     
+    public CommentInterviewAppointmentRepresentation getCommentInterviewAppointmentRepresentation(Comment comment) {
+        CommentInterviewAppointment appointment = comment.getInterviewAppointment();
+        if (appointment != null) {
+            return new CommentInterviewAppointmentRepresentation().withInterviewDateTime(appointment.getInterviewDateTime())
+                    .withInterviewTimeZone(appointment.getInterviewTimeZone()).withInterviewDuration(appointment.getInterviewDuration());
+        }
+        return null;
+    }
+
+    public CommentInterviewInstructionRepresentation getCommentInterviewInstructionRepresentation(Comment comment, boolean interviewer) {
+        CommentInterviewInstruction instruction = comment.getInterviewInstruction();
+        if (instruction != null) {
+            CommentInterviewInstructionRepresentation representation = new CommentInterviewInstructionRepresentation().withIntervieweeInstructions(
+                    instruction.getIntervieweeInstructions()).withInterviewLocation(instruction.getInterviewLocation());
+            if (interviewer) {
+                representation.setInterviewerInstructions(instruction.getInterviewerInstructions());
+            }
+            return representation;
+        }
+        return null;
+    }
+
     private CommentRepresentation getCommentRepresentationSecured(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,
             Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
         if (!rolesOverridingRedactions.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user)) {
@@ -140,35 +197,36 @@ class IntegrationCommentService {
             if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
                 representation.setInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment));
                 representation.setInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, false));
-                representation.setAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment));
+                representation.setAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()));
             }
 
             return representation;
         }
     }
-    
+
     private CommentRepresentation getCommentRepresentationSimple(Comment comment) {
-        return new CommentRepresentation().withId(comment.getId()).withUser(integrationUserService.getUserRepresentation(comment.getUser()))
+        return new CommentRepresentation().withId(comment.getId()).withUser(integrationUserService.getUserRepresentationSimple(comment.getUser()))
                 .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(comment.getAction().getId())
                 .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp());
     }
 
     private CommentRepresentation getCommentRepresentationExtended(Comment comment) {
+        ImportedEntitySimple rejectionReason = comment.getRejectionReason();
         return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
                 .withTransitionState(comment.getTransitionState().getId()).withApplicationEligible(comment.getApplicationEligible())
                 .withApplicationInterested(comment.getApplicationInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true))
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withApplicationReserveStatus(comment.getApplicationReserveStatus())
-                .withRejectionReason(getCommentRejectionReasonRepresentation(comment)).withRejectionReasonSystem(comment.getRejectionReasonSystem())
+                .withRejectionReason(rejectionReason == null ? null : rejectionReason.getName()).withRejectionReasonSystem(comment.getRejectionReasonSystem())
                 .withApplicationRating(comment.getApplicationRating()).withExport(getCommentExportRepresentation(comment))
-                .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment))
+                .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment))
                 .withCustomResponses(getCommentCustomResponseRepresentations(comment));
     }
-    
+
     private CommentAssignedUserRepresentation getCommentAssignedUserRepresentation(CommentAssignedUser commentAssignedUser) {
-        return new CommentAssignedUserRepresentation().withUser(integrationUserService.getUserRepresentation(commentAssignedUser.getUser()))
+        return new CommentAssignedUserRepresentation().withUser(integrationUserService.getUserRepresentationSimple(commentAssignedUser.getUser()))
                 .withRole(commentAssignedUser.getRole().getId()).withRoleTransitionType(commentAssignedUser.getRoleTransitionType());
     }
 
@@ -190,39 +248,9 @@ class IntegrationCommentService {
         return representations;
     }
 
-    private UserRepresentation getCommentDelegateUserRepresentation(Comment comment) {
+    private UserRepresentationSimple getCommentDelegateUserRepresentation(Comment comment) {
         User delegate = comment.getDelegateUser();
-        return delegate == null ? null : integrationUserService.getUserRepresentation(delegate);
-    }
-
-    private CommentInterviewAppointmentRepresentation getCommentInterviewAppointmentRepresentation(Comment comment) {
-        CommentInterviewAppointment appointment = comment.getInterviewAppointment();
-        if (appointment != null) {
-            return new CommentInterviewAppointmentRepresentation().withInterviewDateTime(appointment.getInterviewDateTime())
-                    .withInterviewTimeZone(appointment.getInterviewTimeZone()).withInterviewDuration(appointment.getInterviewDuration());
-        }
-        return null;
-    }
-
-    private CommentInterviewInstructionRepresentation getCommentInterviewInstructionRepresentation(Comment comment, boolean interviewer) {
-        CommentInterviewInstruction instruction = comment.getInterviewInstruction();
-        if (instruction != null) {
-            CommentInterviewInstructionRepresentation representation = new CommentInterviewInstructionRepresentation().withIntervieweeInstructions(
-                    instruction.getIntervieweeInstructions()).withInterviewLocation(instruction.getInterviewLocation());
-            if (interviewer) {
-                representation.setInterviewerInstructions(instruction.getInterviewerInstructions());
-            }
-            return representation;
-        }
-        return null;
-    }
-
-    private List<CommentAppointmentTimeslotRepresentation> getCommentAppointmentTimeslotRepresentations(Comment comment) {
-        List<CommentAppointmentTimeslotRepresentation> timeslots = Lists.newLinkedList();
-        for (CommentAppointmentTimeslot timeslot : comment.getAppointmentTimeslots()) {
-            timeslots.add(new CommentAppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
-        }
-        return timeslots;
+        return delegate == null ? null : integrationUserService.getUserRepresentationSimple(delegate);
     }
 
     private CommentPositionDetailRepresentation getCommentPositionDetailRepresentation(Comment comment) {
@@ -235,11 +263,6 @@ class IntegrationCommentService {
         CommentOfferDetail offer = comment.getOfferDetail();
         return offer == null ? null : new CommentOfferDetailRepresentation().withPositionProvisionalStartDate(offer.getPositionProvisionalStartDate())
                 .withAppointmentConditions(offer.getAppointmentConditions());
-    }
-
-    private String getCommentRejectionReasonRepresentation(Comment comment) {
-        ImportedRejectionReason rejection = comment.getRejectionReason();
-        return rejection == null ? null : rejection.getName();
     }
 
     private CommentExportRepresentation getCommentExportRepresentation(Comment comment) {
@@ -263,14 +286,18 @@ class IntegrationCommentService {
         }
         return representations;
     }
-    
+
     private List<CommentCustomResponseRepresentation> getCommentCustomResponseRepresentations(Comment comment) {
         List<CommentCustomResponseRepresentation> representations = Lists.newLinkedList();
         for (CommentCustomResponse response : comment.getCustomResponses()) {
-            representations.add(new CommentCustomResponseRepresentation().withLabel(response.getActionCustomQuestionConfiguration().getLabel())
-                    .withPropertyValue(response.getPropertyValue()));
+            getCommentCustomResponseRepresentation(representations, response);
         }
         return representations;
     }
-    
+
+    private void getCommentCustomResponseRepresentation(List<CommentCustomResponseRepresentation> representations, CommentCustomResponse response) {
+        representations.add(new CommentCustomResponseRepresentation().withLabel(response.getActionCustomQuestionConfiguration().getLabel())
+                .withPropertyValue(response.getPropertyValue()));
+    }
+
 }

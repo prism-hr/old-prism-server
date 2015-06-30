@@ -306,3 +306,29 @@ alter table institution_address
 
 rename table institution_address to advert_address
 ;
+
+alter table application_personal_detail
+	modify column imported_nationality_id1 int(10) unsigned after imported_domicile_id,
+	modify column imported_nationality_id2 int(10) unsigned after imported_nationality_id1,
+	modify column first_language_locale int(1) unsigned after imported_nationality_id2,
+	modify column application_language_qualification_id int(10) unsigned after first_language_locale,
+	modify column imported_domicile_id int(10) unsigned after application_language_qualification_id,
+	modify column visa_required int(1) unsigned after imported_domicile_id,
+	modify column application_passport_id int(10) unsigned after visa_required,
+	modify column phone varchar(50) not null after application_passport_id,
+	modify column skype varchar(50) after phone,
+	modify column imported_ethnicity_id int(10) unsigned after skype,
+	modify column imported_disability_id int(10) unsigned after imported_ethnicity_id
+;
+
+alter table user
+	drop foreign key user_ibfk_2,
+	drop index portrait_image_id,
+	drop column portrait_image_id
+;
+
+alter table user_account
+	add column portrait_image_id int(10) unsigned after user_account_external_id,
+	add index (portrait_image_id),
+	add foreign key (portrait_image_id) references document (id)
+;

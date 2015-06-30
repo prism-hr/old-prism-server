@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Entity
@@ -86,7 +87,7 @@ public class Document {
     private ApplicationDocument applicationCv;
 
     @OneToOne(mappedBy = "portraitImage")
-    private User portraitImage;
+    private UserAccount portraitImage;
 
     @OneToOne(mappedBy = "logoImage")
     private Institution logoImage;
@@ -190,7 +191,7 @@ public class Document {
         return applicationCoveringLetter;
     }
 
-    public User getPortraitImage() {
+    public UserAccount getPortraitImage() {
         return portraitImage;
     }
 

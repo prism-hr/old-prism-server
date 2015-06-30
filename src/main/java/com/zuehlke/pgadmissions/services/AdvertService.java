@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.dozer.Mapper;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
@@ -109,12 +108,9 @@ public class AdvertService {
 
     @Inject
     private GeocodableLocationService geocodableLocationService;
-    
-    @Inject
-    private IntegrationAdvertService integrationAdvertService;
 
     @Inject
-    private Mapper mapper;
+    private IntegrationAdvertService integrationAdvertService;
 
     @Inject
     private RestTemplate restTemplate;
@@ -176,12 +172,12 @@ public class AdvertService {
         advert.setTelephone(advertDTO.getTelephone());
 
         AdvertAddress address = advert.getAddress();
-        InstitutionAddressDTO addressDTO = advertDTO.getAddress();
+        AdvertAddressDTO addressDTO = advertDTO.getAddress();
         if (addressDTO != null) {
             updateAddress(advert, addressDTO);
         } else if (address == null) {
             address = getResourceAddress(parentResource);
-            addressDTO = mapper.map(address, InstitutionAddressDTO.class);
+            addressDTO = integrationAdvertService.getAddressDTO(address);
             updateAddress(advert, addressDTO);
         }
     }
@@ -277,7 +273,7 @@ public class AdvertService {
             } else {
                 throw new Error();
             }
-            
+
             AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertTarget(advert, attributeClass, value, target.getImportance());
             targets.storeAttribute(entityTarget);
         }
@@ -411,7 +407,7 @@ public class AdvertService {
     public List<Advert> getAdvertsWithFinancialDetails(Institution institution) {
         return advertDAO.getAdvertsWithFinancialDetails(institution);
     }
-    
+
     public AdvertCategories getAdvertCategories(Advert advert) {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {
@@ -423,7 +419,7 @@ public class AdvertService {
         }
         return categories;
     }
-    
+
     public AdvertTargets getAdvertTargets(Advert advert) {
         AdvertTargets targets = advert.getTargets();
         if (targets == null) {
@@ -435,21 +431,25 @@ public class AdvertService {
         }
         return targets;
     }
-    
+
     public List<PrismAdvertIndustry> getAdvertIndustries(Advert advert) {
         return advertDAO.getAdvertIndustries(advert);
     }
-    
+
     public List<PrismAdvertFunction> getAdvertFunctions(Advert advert) {
         return advertDAO.getAdvertFunctions(advert);
     }
-    
+
     public List<String> getAdvertThemes(Advert advert) {
         return advertDAO.getAdvertThemes(advert);
     }
-    
+
     public List<AdvertTarget<?>> getAdvertTargets(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
         return advertDAO.getAdvertTargets(advert, targetClass);
+    }
+    
+    public List<AdvertDomicile> getAdvertDomiciles() {
+        return advertDAO.getAdvertDomiciles();
     }
 
     private String getCurrencyAtLocale(Advert advert) {
@@ -666,13 +666,13 @@ public class AdvertService {
         return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 
-    private AdvertAddress createAddress(InstitutionAddressDTO addressDTO) {
+    private AdvertAddress createAddress(AdvertAddressDTO addressDTO) {
         AdvertAddress address = new AdvertAddress();
         updateAddress(addressDTO, address);
         return address;
     }
 
-    private void updateAddress(Advert advert, InstitutionAddressDTO addressDTO) {
+    private void updateAddress(Advert advert, AdvertAddressDTO addressDTO) {
         AdvertAddress address = advert.getAddress();
         if (address == null) {
             address = createAddress(addressDTO);
@@ -684,7 +684,7 @@ public class AdvertService {
         geocodableLocationService.setLocation(addressDTO.getGoogleId(), advert.getTitle(), address);
     }
 
-    private void updateAddress(InstitutionAddressDTO addressDTO, AdvertAddress address) {
+    private void updateAddress(AdvertAddressDTO addressDTO, AdvertAddress address) {
         address.setDomicile(entityService.getById(AdvertDomicile.class, addressDTO.getDomicile()));
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
@@ -731,7 +731,7 @@ public class AdvertService {
         advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
         return advertClosingDate;
     }
-    
+
     private Competence getOrCreateCompetence(AdvertCompetenceDTO competenceDTO) {
         Competence transientCompetence = new Competence().withTitle(competenceDTO.getTitle()).withDescription(competenceDTO.getDescription());
         Competence persistentCompetence = entityService.getDuplicateEntity(transientCompetence);
@@ -742,7 +742,7 @@ public class AdvertService {
             return persistentCompetence;
         }
     }
-    
+
     private void clearAdvertAttributes(AdvertAttributes attributes, Class<?> valueClass) {
         attributes.clearAttributes(valueClass);
         entityService.flush();

@@ -4,21 +4,11 @@ import java.math.BigDecimal;
 
 public class InstitutionRepresentation extends ResourceParentRepresentation {
 
-    private String domicile;
-
     private String currency;
 
     private BigDecimal minimumWage;
 
     private Integer businessYearStartMonth;
-
-    public String getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(String domicile) {
-        this.domicile = domicile;
-    }
 
     public String getCurrency() {
         return currency;

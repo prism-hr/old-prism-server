@@ -318,7 +318,7 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_LABEL),
                     propertyLoader.load(SYSTEM_YES, SYSTEM_NO, visaRequired), body);
 
-            passportAvailable = personalDetailNull ? false : personalDetail.getPassportAvailable();
+            passportAvailable = personalDetailNull ? false : personalDetail.getPassport() != null;
 
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_LABEL),
                     propertyLoader.load(SYSTEM_YES, SYSTEM_NO, passportAvailable), body);

@@ -71,7 +71,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -172,7 +172,7 @@ public class Comment extends WorkflowResourceExecution {
 
     @ManyToOne
     @JoinColumn(name = "application_imported_rejection_reason_id")
-    private ImportedRejectionReason rejectionReason;
+    private ImportedEntitySimple rejectionReason;
 
     @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
@@ -403,11 +403,11 @@ public class Comment extends WorkflowResourceExecution {
         this.applicationReserveStatus = applicationReserveRating;
     }
 
-    public ImportedRejectionReason getRejectionReason() {
+    public ImportedEntitySimple getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(ImportedRejectionReason rejectionReason) {
+    public void setRejectionReason(ImportedEntitySimple rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
 

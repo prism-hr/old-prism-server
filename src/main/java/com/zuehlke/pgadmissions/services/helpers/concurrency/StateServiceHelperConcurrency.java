@@ -26,7 +26,7 @@ public class StateServiceHelperConcurrency {
             Runnable runner = new Runnable() {
                 @Override
                 public void run() {
-                    row.setSecondaryStateGroupIds(stateService.getSecondaryResourceStateGroups(resourceScope, row.getResourceId()));
+                    row.setSecondaryStateIds(stateService.getSecondaryResourceStates(resourceScope, row.getResourceId()));
                 }
             };
             dispatchThread(workers, runner);

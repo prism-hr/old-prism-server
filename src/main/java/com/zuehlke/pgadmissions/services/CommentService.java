@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
@@ -16,7 +15,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -46,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedRejectionReason;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -65,12 +63,9 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAppointmentPreferencesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentValidator;
 
 @Service
@@ -94,9 +89,6 @@ public class CommentService {
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private Mapper mapper;
 
     @Inject
     private CommentValidator commentValidator;
@@ -129,53 +121,6 @@ public class CommentService {
         Integer userId = user.getId();
         User ownerDelegate = comment.getDelegateUser();
         return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
-    }
-
-    public ApplicationInterviewRepresentation getInterview(Application application) {
-        Comment schedulingComment = commentDAO.getLatestComment(application, APPLICATION_ASSIGN_INTERVIEWERS);
-        if (schedulingComment == null) {
-            return null;
-        }
-        ApplicationInterviewRepresentation interview = new ApplicationInterviewRepresentation();
-
-        interview.setAppointmentTimeslots(Lists.<CommentAppointmentTimeslotRepresentation> newLinkedList());
-        for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-            interview.getAppointmentTimeslots().add(
-                    new CommentAppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
-        }
-
-        interview.setAppointmentPreferences(Lists.<ApplicationAppointmentPreferencesRepresentation> newLinkedList());
-        for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
-            UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
-            ApplicationAppointmentPreferencesRepresentation preferenceRepresentation = new ApplicationAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
-
-            List<Integer> inviteePreferences = Lists.newLinkedList();
-
-            Comment preferenceComment = getLatestAppointmentPreferenceComment(application, schedulingComment, invitee);
-            if (preferenceComment != null) {
-                List<LocalDateTime> inviteeResponses = commentDAO.getAppointmentPreferences(preferenceComment);
-                for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-                    if (inviteeResponses.contains(timeslot.getDateTime())) {
-                        inviteePreferences.add(timeslot.getId());
-                    }
-                }
-                preferenceRepresentation.setPreferences(inviteePreferences);
-            }
-
-            interview.getAppointmentPreferences().add(preferenceRepresentation);
-        }
-
-        CommentInterviewAppointment interviewAppointment = schedulingComment.getInterviewAppointment();
-        if (interviewAppointment != null) {
-            mapper.map(interviewAppointment, interview);
-        }
-
-        CommentInterviewInstruction interviewInstruction = schedulingComment.getInterviewInstruction();
-        if (interviewInstruction != null) {
-            mapper.map(interviewInstruction, interview);
-        }
-
-        return interview;
     }
 
     public List<ApplicationAssignedSupervisorRepresentation> getApplicationSupervisors(Application application) {
@@ -344,7 +289,7 @@ public class CommentService {
     }
 
     public void appendRejectionReason(Comment comment, CommentDTO commentDTO) {
-        ImportedRejectionReason rejectionReason = entityService.getById(ImportedRejectionReason.class, commentDTO.getRejectionReason());
+        ImportedEntitySimple rejectionReason = entityService.getById(ImportedEntitySimple.class, commentDTO.getRejectionReason());
         comment.setRejectionReason(rejectionReason);
     }
 
@@ -391,16 +336,20 @@ public class CommentService {
         return preferenceComment;
     }
 
+    public List<LocalDateTime> getAppointmentPreferences(Comment comment) {
+        return commentDAO.getAppointmentPreferences(comment);
+    }
+
     public List<LocalDateTime> getAppointmentPreferences(Application application, User user) {
         Comment preferenceComment = getLatestComment(application, user, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY,
                 APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
-        return commentDAO.getAppointmentPreferences(preferenceComment);
+        return getAppointmentPreferences(preferenceComment);
     }
 
     public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
         return commentDAO.getAssignedUsers(comment, roles);
     }
-    
+
     public List<CommentAssignedUser> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
         return commentDAO.getAssignedUsers(commentIds, roleIds);
     }
@@ -416,13 +365,24 @@ public class CommentService {
         }
         return comment;
     }
-    
+
     public List<Comment> getStateGroupTransitionComments(Resource resource) {
         return commentDAO.getStateGroupTransitionComments(resource);
     }
-    
+
     public List<Comment> getStateComments(Resource resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
         return commentDAO.getStateComments(resource, start, close, stateGroup, exclusions);
+    }
+
+    public List<User> getAppointmentInvitees(Comment comment) {
+        return commentDAO.getAppointmentInvitees(comment);
+    }
+
+    public Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
+        DateTime baseline = schedulingComment.getCreatedTimestamp();
+        Comment preferenceComment = getLatestComment(application, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
+        return preferenceComment == null ? getLatestComment(application, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user, baseline)
+                : preferenceComment;
     }
 
     private void reassignCommentAssignedUsers(User oldUser, User newUser) {
@@ -435,13 +395,6 @@ public class CommentService {
                 entityService.delete(commentAssignedUser);
             }
         }
-    }
-
-    private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
-        DateTime baseline = schedulingComment.getCreatedTimestamp();
-        Comment preferenceComment = getLatestComment(application, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
-        return preferenceComment == null ? getLatestComment(application, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user, baseline)
-                : preferenceComment;
     }
 
     private ApplicationOfferRepresentation buildOfferRepresentation(Comment sourceComment) {
@@ -462,7 +415,7 @@ public class CommentService {
 
         for (CommentAssignedUser assignee : commentDAO.getAssignedSupervisors(assignmentComment)) {
             User user = assignee.getUser();
-            UserRepresentation userRepresentation = new UserRepresentation().withFirstName(user.getFirstName()).withLastName(user.getLastName())
+            UserRepresentationSimple userRepresentation = new UserRepresentationSimple().withFirstName(user.getFirstName()).withLastName(user.getLastName())
                     .withEmail(user.getEmail());
             ApplicationAssignedSupervisorRepresentation assignedSupervisorRepresentation = new ApplicationAssignedSupervisorRepresentation()
                     .withUser(userRepresentation).withRole(assignee.getRole().getId()).withAcceptedSupervision(true);

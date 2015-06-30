@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,19 +15,20 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
 
 @RestController
 @RequestMapping(value = { "api/decline" })
 public class DeclineController {
 
-    @Autowired
+    @Inject
+    private IntegrationResourceService integrationResourceService;
+
+    @Inject
     private ResourceService resourceService;
 
-    @Autowired
+    @Inject
     private UserService userService;
-
-    @Autowired
-    private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.POST)
     public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode) throws Exception {
@@ -41,14 +42,14 @@ public class DeclineController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResourceRepresentationExtended getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
-            @RequestParam String activationCode) {
+            @RequestParam String activationCode) throws Exception {
         userService.getUserByActivationCode(activationCode);
         Resource resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
         if (actionId.getScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");
         }
 
-        return dozerBeanMapper.map(resource, ResourceRepresentationExtended.class);
+        return integrationResourceService.getResourceRepresentationExtended(resource);
     }
 
 }

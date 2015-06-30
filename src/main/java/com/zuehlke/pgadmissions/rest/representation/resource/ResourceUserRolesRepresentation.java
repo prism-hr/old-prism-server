@@ -3,19 +3,19 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ResourceUserRolesRepresentation {
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
     private List<PrismRole> roles;
 
-    public UserRepresentation getUser() {
+    public UserRepresentationSimple getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
@@ -27,7 +27,7 @@ public class ResourceUserRolesRepresentation {
         this.roles = roles;
     }
     
-    public ResourceUserRolesRepresentation withUser(UserRepresentation user)  {
+    public ResourceUserRolesRepresentation withUser(UserRepresentationSimple user)  {
         this.user = user;
         return this;
     }

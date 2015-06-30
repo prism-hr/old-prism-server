@@ -2,14 +2,13 @@ package com.zuehlke.pgadmissions.services.integration;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
@@ -19,23 +18,35 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
-import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ActionRepresentation.SelectableStateRepresentation;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.StateService;
 
 @Service
 @Transactional
 public class IntegrationActionService {
 
     @Inject
-    private ActionService actionService;
+    private IntegrationResourceService integrationResourceService;
 
     @Inject
-    private StateService stateService;
+    private IntegrationStateService integrationStateService;
 
-    //FIXME department
-    public List<ActionRepresentation> getActionRepresentations(Resource resource, User user) {
+    @Inject
+    private ActionService actionService;
+
+    public List<ActionRepresentationSimple> getActionRepresentations(Collection<ActionDTO> actions) {
+        List<ActionRepresentationSimple> representations = Lists.newLinkedList();
+        for (ActionDTO action : actions) {
+            representations.add(getActionRepresentationSimple(action));
+        }
+        return representations;
+    }
+
+    // FIXME department
+    public List<ActionRepresentationExtended> getActionRepresentations(Resource resource, User user) {
         PrismScope scope = resource.getResourceScope();
         Integer resourceId = resource.getId();
         Integer systemId = resource.getSystem().getId();
@@ -44,34 +55,45 @@ public class IntegrationActionService {
         Integer projectId = getResourceId(resource.getProject());
         Integer applicationId = getResourceId(resource.getApplication());
 
-        Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
+        Set<ActionRepresentationExtended> representations = Sets.newLinkedHashSet();
         List<ActionDTO> actions = actionService.getPermittedActions(scope, resourceId, systemId, institutionId, programId, projectId,
                 applicationId, user);
         for (ActionDTO action : actions) {
-            representations.add(getResourceActionRepresentation(resource, action, user));
+            representations.add(getActionRepresentationExtended(resource, action, user));
         }
 
         List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, Sets.newHashSet(resource.getId()), APPLICATION);
         for (ActionDTO publicAction : publicActions) {
-            representations.add(getResourceActionRepresentation(resource, publicAction, user));
+            representations.add(getActionRepresentationExtended(resource, publicAction, user));
         }
 
         return Lists.newLinkedList(representations);
     }
 
-    public ActionRepresentation getResourceActionRepresentation(Resource resource, ActionDTO action, User user) {
-        PrismAction prismAction = action.getActionId();
-        boolean primaryState = BooleanUtils.toBoolean(action.getPrimaryState());
-        return new ActionRepresentation()
-                .withId(prismAction)
+    public ActionRepresentationSimple getActionRepresentationSimple(ActionDTO action) {
+        return new ActionRepresentationSimple()
+                .withId(action.getActionId())
                 .withRaisesUrgentFlag(action.getRaisesUrgentFlag())
-                .withPrimaryState(primaryState)
-                .addActionEnhancements(actionService.getGlobalActionEnhancements(resource, prismAction, user))
-                .addActionEnhancements(actionService.getCustomActionEnhancements(resource, prismAction, user))
-                .addNextStates(
-                        primaryState ? stateService.getSelectableTransitionStates(resource.getState(), prismAction, resource.getAdvert().isImported())
-                                : Collections.<SelectableStateRepresentation> emptyList())
-                .addRecommendedNextStates(stateService.getRecommendedNextStates(resource));
+                .withPrimaryState(action.getPrimaryState());
+    }
+
+    public ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
+        PrismAction prismAction = action.getActionId();
+        ActionRepresentationExtended representation = (ActionRepresentationExtended) getActionRepresentationSimple(action);
+
+        representation.addActionEnhancements(actionService.getGlobalActionEnhancements(resource, prismAction, user));
+        representation.addActionEnhancements(actionService.getCustomActionEnhancements(resource, prismAction, user));
+
+        representation.addNextStates(integrationStateService.getStateRepresentations(resource, prismAction));
+        representation.addRecommendedNextStates(integrationStateService.getRecommendedNextStateRepresentations(resource));
+
+        return representation;
+    }
+
+    public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
+        return new ActionOutcomeRepresentation().withTransitionResource(
+                integrationResourceService.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(
+                actionOutcomeDTO.getTransitionAction().getId());
     }
 
     private <T extends Resource> Integer getResourceId(T resource) {

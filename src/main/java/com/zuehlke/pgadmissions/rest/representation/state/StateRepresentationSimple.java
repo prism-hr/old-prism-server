@@ -1,9 +1,9 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.state;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
-public class StateRepresentation {
+public class StateRepresentationSimple {
 
     private PrismState state;
 
@@ -25,12 +25,12 @@ public class StateRepresentation {
         this.stateGroup = stateGroup;
     }
 
-    public StateRepresentation withState(PrismState State) {
+    public StateRepresentationSimple withState(PrismState State) {
         this.state = State;
         return this;
     }
 
-    public StateRepresentation withStateGroup(PrismStateGroup stateGroup) {
+    public StateRepresentationSimple withStateGroup(PrismStateGroup stateGroup) {
         this.stateGroup = stateGroup;
         return this;
     }

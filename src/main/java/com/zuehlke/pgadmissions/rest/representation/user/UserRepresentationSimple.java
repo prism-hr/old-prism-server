@@ -1,6 +1,6 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.user;
 
-public class UserRepresentation {
+public class UserRepresentationSimple {
 
     private Integer id;
 
@@ -17,6 +17,8 @@ public class UserRepresentation {
     private String accountProfileUrl;
 
     private String accountImageUrl;
+
+    private Integer portraitImageId;
 
     public Integer getId() {
         return id;
@@ -82,34 +84,47 @@ public class UserRepresentation {
         this.accountImageUrl = accountImageUrl;
     }
 
-    public UserRepresentation withId(Integer id) {
+    public Integer getPortraitImageId() {
+        return portraitImageId;
+    }
+
+    public void setPortraitImageId(Integer portraitImageId) {
+        this.portraitImageId = portraitImageId;
+    }
+
+    public UserRepresentationSimple withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public UserRepresentation withFirstName(String firstName) {
+    public UserRepresentationSimple withFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
 
-    public UserRepresentation withFirstName2(String firstName2) {
+    public UserRepresentationSimple withFirstName2(String firstName2) {
         this.firstName2 = firstName2;
         return this;
     }
 
-    public UserRepresentation withFirstName3(String firstName3) {
+    public UserRepresentationSimple withFirstName3(String firstName3) {
         this.firstName3 = firstName3;
         return this;
     }
 
-    public UserRepresentation withLastName(String lastName) {
+    public UserRepresentationSimple withLastName(String lastName) {
         this.lastName = lastName;
         return this;
     }
 
-    public UserRepresentation withEmail(String email) {
+    public UserRepresentationSimple withEmail(String email) {
         this.email = email;
         return this;
     }
 
+    public UserRepresentationSimple withAccountImageUrl(String accountImageUrl) {
+        this.accountImageUrl = accountImageUrl;
+        return this;
+    }
+    
 }

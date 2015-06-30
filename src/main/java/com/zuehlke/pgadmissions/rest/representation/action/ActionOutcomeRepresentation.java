@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.action;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
@@ -23,6 +23,16 @@ public class ActionOutcomeRepresentation {
 
     public void setTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
+    }
+    
+    public ActionOutcomeRepresentation withTransitionResource(ResourceRepresentationSimple transitionResource) {
+        this.transitionResource = transitionResource;
+        return this;
+    }
+    
+    public ActionOutcomeRepresentation withTransitionAction(PrismAction transitionAction) {
+        this.transitionAction = transitionAction;
+        return this;
     }
 
 }

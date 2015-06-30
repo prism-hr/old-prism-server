@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedSubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.services.StaticDataService;
 
 @RestController
@@ -56,11 +55,6 @@ public class StaticDataController {
     @RequestMapping(method = RequestMethod.GET, value = "/importedInstitutions/{importedInstitutionId}/importedPrograms")
     public List<ImportedProgramRepresentation> getImportedPrograms(@PathVariable Integer importedInstitutionId, @RequestParam Integer institutionId) {
         return staticDataService.getImportedPrograms(institutionId, importedInstitutionId);
-    }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/subjectAreas/")
-    public List<ImportedSubjectAreaRepresentation> getSubjectAreas(@RequestParam Integer institutionId) {
-        return staticDataService.getImportedSubjectAreas(institutionId);
     }
 
 }

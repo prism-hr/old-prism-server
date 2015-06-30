@@ -3,14 +3,14 @@ package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class AdvertRepresentation {
 
     private Integer id;
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
     private ResourceRepresentationSimple resource;
 
@@ -58,11 +58,11 @@ public class AdvertRepresentation {
         this.id = id;
     }
 
-    public UserRepresentation getUser() {
+    public UserRepresentationSimple getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
@@ -223,7 +223,7 @@ public class AdvertRepresentation {
         return this;
     }
 
-    public AdvertRepresentation withUser(UserRepresentation user) {
+    public AdvertRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }

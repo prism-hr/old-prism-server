@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Repository
@@ -216,8 +216,8 @@ public class UserDAO {
                 .list();
     }
 
-    public List<UserRepresentation> getSimilarUsers(String searchTerm) {
-        return (List<UserRepresentation>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+    public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
+        return (List<UserRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("firstName"), "firstName") //
                         .add(Projections.property("lastName"), "lastName") //
@@ -242,7 +242,7 @@ public class UserDAO {
                 .addOrder(Order.desc("lastName")) //
                 .addOrder(Order.desc("firstName")) //
                 .setMaxResults(10) //
-                .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
+                .setResultTransformer(Transformers.aliasToBean(UserRepresentationSimple.class)) //
                 .list();
     }
 

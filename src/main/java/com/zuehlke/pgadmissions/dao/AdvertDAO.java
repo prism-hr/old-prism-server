@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
@@ -313,6 +314,13 @@ public class AdvertDAO {
     public List<AdvertTarget<?>> getAdvertTargets(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
         return (List<AdvertTarget<?>>) sessionFactory.getCurrentSession().createCriteria(targetClass) //
                 .add(Restrictions.eq("advert", advert)) //
+                .list();
+    }
+    
+    public List<AdvertDomicile> getAdvertDomiciles() {
+        return sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("name")) //
                 .list();
     }
 

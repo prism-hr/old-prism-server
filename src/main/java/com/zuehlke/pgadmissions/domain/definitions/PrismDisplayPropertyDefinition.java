@@ -165,6 +165,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_LINK(SYSTEM_GLOBAL, "Link"),
     SYSTEM_NOW(SYSTEM_GLOBAL, "Now"),
     SYSTEM_NA(SYSTEM_GLOBAL, "N/A"),
+    SYSTEM_NO_DIAGNOSTIC_INFORMATION(SYSTEM_GLOBAL, "Diagnostic information not available"), 
 
     /*
      * *************** SYSTEM COMMENT *********************

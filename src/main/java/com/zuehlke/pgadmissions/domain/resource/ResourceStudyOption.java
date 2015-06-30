@@ -17,7 +17,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
 @Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option_id" }),
@@ -38,7 +38,7 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute {
 
     @ManyToOne
     @JoinColumn(name = "imported_study_option_id", nullable = false)
-    private ImportedStudyOption studyOption;
+    private ImportedEntitySimple studyOption;
 
     @Column(name = "application_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -79,11 +79,11 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute {
         this.project = project;
     }
 
-    public ImportedStudyOption getStudyOption() {
+    public ImportedEntitySimple getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(ImportedStudyOption studyOption) {
+    public void setStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -112,7 +112,7 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute {
         return this;
     }
 
-    public ResourceStudyOption withStudyOption(ImportedStudyOption studyOption) {
+    public ResourceStudyOption withStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
         return this;
     }

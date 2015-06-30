@@ -30,7 +30,7 @@ public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMappi
 
     @ManyToOne
     @JoinColumn(name = "imported_domicile_id", nullable = false)
-    private ImportedDomicile domicile;
+    private ImportedEntitySimple domicile;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -62,11 +62,11 @@ public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMappi
         return IMPORTED_INSTITUTION;
     }
 
-    public ImportedDomicile getDomicile() {
+    public ImportedEntitySimple getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedDomicile domicile) {
+    public void setDomicile(ImportedEntitySimple domicile) {
         this.domicile = domicile;
     }
 
@@ -111,7 +111,7 @@ public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMappi
         return mappings;
     }
 
-    public ImportedInstitution withDomicile(ImportedDomicile domicile) {
+    public ImportedInstitution withDomicile(ImportedEntitySimple domicile) {
         this.domicile = domicile;
         return this;
     }

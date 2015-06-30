@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.dozer.Mapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,16 +21,16 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertAddress;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.helpers.DozerMapperHelper;
+import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -48,10 +47,7 @@ public class InstitutionController {
     private InstitutionService institutionService;
 
     @Inject
-    private DozerMapperHelper dozerMapperHelper;
-
-    @Inject
-    private Mapper dozerBeanMapper;
+    private IntegrationResourceService integrationResourceService;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
     public List<ResourceRepresentationSimple> getInstitutions() {
@@ -68,9 +64,13 @@ public class InstitutionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "query")
-    public List<InstitutionRepresentation> getInstitutions(@RequestParam String query, @RequestParam(required = false) String[] googleIds) {
+    public List<ResourceRepresentationSimple> getInstitutions(@RequestParam String query, @RequestParam(required = false) String[] googleIds) {
+        List<ResourceRepresentationSimple> representations = Lists.newLinkedList();
         List<Institution> institutions = institutionService.getInstitutions(query, googleIds);
-        return Lists.transform(institutions, dozerMapperHelper.createFunction(InstitutionRepresentation.class));
+        for (Institution institution : institutions) {
+            representations.add(integrationResourceService.getResourceRepresentationSimple(institution));
+        }
+        return representations;
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "accepting")
@@ -94,9 +94,9 @@ public class InstitutionController {
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
     @ResponseBody
-    public InstitutionRepresentation getInstitution(String googleId) {
+    public ResourceRepresentationSimple getInstitution(String googleId) {
         Institution institution = institutionService.getActivatedInstitutionByGoogleId(googleId);
-        return institution == null ? null : dozerBeanMapper.map(institution, InstitutionRepresentation.class);
+        return institution == null ? null : integrationResourceService.getResourceRepresentationSimple(institution);
     }
 
     @RequestMapping(value = "/{institutionId}/categoryTags", method = RequestMethod.GET)
@@ -124,8 +124,9 @@ public class InstitutionController {
         @Override
         public ResourceChildCreationRepresentation apply(ResourceForWhichUserCanCreateChildDTO input) {
             ResourceParent resource = input.getResource();
-            PrismOpportunityType opportunityType = resource.getOpportunityType() == null ? null : resource.getOpportunityType().getPrismOpportunityType();
-            return new ResourceChildCreationRepresentation().withId(resource.getId()).withTitle(resource.getTitle()).withOpportunityType(opportunityType)
+            ImportedEntitySimple opportunityType = resource.getOpportunityType();
+            PrismOpportunityType prismOpportunityType = opportunityType == null ? null : PrismOpportunityType.valueOf(opportunityType.getName());
+            return new ResourceChildCreationRepresentation().withId(resource.getId()).withTitle(resource.getTitle()).withOpportunityType(prismOpportunityType)
                     .withPartnerMode(input.getPartnerMode());
         }
     }

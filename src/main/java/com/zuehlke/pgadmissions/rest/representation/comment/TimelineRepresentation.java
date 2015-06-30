@@ -1,10 +1,9 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.comment;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 
 public class TimelineRepresentation {
 

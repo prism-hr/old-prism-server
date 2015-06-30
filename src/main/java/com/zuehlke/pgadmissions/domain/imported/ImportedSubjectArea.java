@@ -34,7 +34,7 @@ public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMappi
 
     @ManyToOne
     @JoinColumn(name = "parent_imported_subject_area_id")
-    private ImportedSubjectArea importedSubjectArea;
+    private ImportedSubjectArea parentSubjectArea;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -75,12 +75,12 @@ public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMappi
         this.name = name;
     }
 
-    public ImportedSubjectArea getImportedSubjectArea() {
-        return importedSubjectArea;
+    public ImportedSubjectArea getParentSubjectArea() {
+        return parentSubjectArea;
     }
 
-    public void setImportedSubjectArea(ImportedSubjectArea importedSubjectArea) {
-        this.importedSubjectArea = importedSubjectArea;
+    public void setParentSubjectArea(ImportedSubjectArea parentSubjectArea) {
+        this.parentSubjectArea = parentSubjectArea;
     }
 
     @Override

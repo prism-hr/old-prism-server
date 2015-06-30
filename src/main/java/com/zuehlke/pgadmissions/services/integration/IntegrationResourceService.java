@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.services.integration;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.LinkedHashMultimap;
@@ -23,15 +27,20 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityClientRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentClientRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationList;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
@@ -39,6 +48,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlot
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ApplicationService.ApplicationProcessingMonth;
@@ -94,10 +104,76 @@ public class IntegrationResourceService {
     @Inject
     private UserService userService;
 
+    public List<ResourceRepresentationList> getResourceRepresentations(PrismScope resourceScope, List<ResourceListRowDTO> rows) {
+        DateTime baseline = new DateTime();
+        List<ResourceRepresentationList> representations = Lists.newArrayListWithCapacity(LIST_PAGE_ROW_COUNT);
+
+        for (ResourceListRowDTO row : rows) {
+            ResourceRepresentationList representation = new ResourceRepresentationList().withResourceScope(resourceScope).withId(row.getResourceId());
+
+            Integer institutionId = row.getInstitutionId();
+            Integer departmentId = row.getDepartmentId();
+            Integer programId = row.getProgramId();
+            Integer projectId = row.getProjectId();
+
+            if (resourceScope.equals(INSTITUTION)) {
+                representation.setTitle(row.getInstitutionTitle());
+                representation.setLogoImage(row.getInstitutionLogoImageId());
+            } else {
+                representation.setInstitution(new ResourceRepresentationSimple().withId(institutionId).withTitle(row.getInstitutionTitle())
+                        .withLogoImage(row.getInstitutionLogoImageId()));
+            }
+
+            if (resourceScope.equals(DEPARTMENT)) {
+                representation.setTitle(row.getDepartmentTitle());
+            } else if (departmentId != null) {
+                representation.setDepartment(new ResourceRepresentationSimple().withId(departmentId).withTitle(row.getDepartmentTitle()));
+            }
+
+            if (resourceScope.equals(PROGRAM)) {
+                representation.setTitle(row.getProgramTitle());
+            } else if (programId != null) {
+                representation.setProgram(new ResourceRepresentationSimple().withId(programId).withTitle(row.getProgramTitle()));
+            }
+
+            if (resourceScope.equals(PROJECT)) {
+                representation.setTitle(row.getProjectTitle());
+            } else if (projectId != null) {
+                representation.setProject(new ResourceRepresentationSimple().withId(projectId).withTitle(row.getProjectTitle()));
+            }
+
+            representation.setCode(row.getCode());
+
+            representation.setUser(new UserRepresentationSimple().withId(row.getUserId()).withFirstName(row.getUserFirstName())
+                    .withFirstName2(row.getUserFirstName2()).withFirstName3(row.getUserFirstName3()).withLastName(row.getUserLastName())
+                    .withEmail(row.getUserEmail()).withAccountImageUrl(row.getUserAccountImageUrl()));
+
+            representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
+
+            representation.setState(integrationStateService.getStateRepresentationSimple(row.getStateId()));
+            representation.setSecondaryStates(integrationStateService.getStateRepresentations(row.getSecondaryStateIds()));
+
+            List<ActionRepresentationSimple> actions = integrationActionService.getActionRepresentations(row.getActions());
+            DateTime updatedTimestamp = row.getUpdatedTimestamp();
+
+            representation.setCreatedTimestamp(row.getCreatedTimestamp());
+            representation.setUpdatedTimestamp(updatedTimestamp);
+
+            setRaisesUrgentFlag(representation, actions);
+            setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
+
+            representation.setActions(actions);
+            representation.setSequenceIdentifier(row.getSequenceIdentifier());
+            representations.add(representation);
+        }
+
+        return representations;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Resource> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
-        ResourceRepresentationSimple representation = new ResourceRepresentationSimple().withId(resource.getId()).withCode(resource.getCode())
-                .withTitle(resource.getTitle());
+        ResourceRepresentationSimple representation = new ResourceRepresentationSimple().withResourceScope(resource.getResourceScope())
+                .withId(resource.getId()).withCode(resource.getCode()).withTitle(resource.getTitle());
 
         Class<T> resourceClass = (Class<T>) resource.getClass();
         if (ResourceParent.class.isAssignableFrom(resourceClass)) {
@@ -114,10 +190,11 @@ public class IntegrationResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExtended(T resource) throws Exception {
+        DateTime baseline = new DateTime();
         User currentUser = userService.getCurrentUser();
 
         ResourceRepresentationExtended representation = (ResourceRepresentationExtended) getResourceRepresentationSimple(resource);
-        representation.setUser(integrationUserService.getUserRepresentation(resource.getUser()));
+        representation.setUser(integrationUserService.getUserRepresentationSimple(resource.getUser()));
 
         for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
             Resource parentResource = resource.getEnclosingResource(parentScope);
@@ -126,15 +203,21 @@ public class IntegrationResourceService {
             }
         }
 
-        representation.setState(integrationStateService.getStateRepresentation(resource.getState()));
-        representation.setPreviousState(integrationStateService.getStateRepresentation(resource.getPreviousState()));
+        representation.setState(integrationStateService.getStateRepresentationSimple(resource.getState()));
+        representation.setPreviousState(integrationStateService.getStateRepresentationSimple(resource.getPreviousState()));
         representation.setSecondaryStates(integrationStateService.getSecondaryStateRepresentations(resource));
 
-        representation.setCreatedTimestamp(resource.getCreatedTimestamp());
-        representation.setUpdatedTimestamp(resource.getUpdatedTimestamp());
+        List<ActionRepresentationExtended> actions = integrationActionService.getActionRepresentations(resource, currentUser);
+        DateTime updatedTimestamp = resource.getUpdatedTimestamp();
 
+        representation.setCreatedTimestamp(resource.getCreatedTimestamp());
+        representation.setUpdatedTimestamp(updatedTimestamp);
+
+        setRaisesUrgentFlag((ResourceRepresentationStandard) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
+        setRaisesUpdateFlag((ResourceRepresentationStandard) representation, baseline, updatedTimestamp);
+
+        representation.setActions(actions);
         representation.setTimeline(integrationCommentService.getTimelineRepresentation(resource, currentUser));
-        representation.setActions(integrationActionService.getActionRepresentations(resource, currentUser));
         representation.setUserRoles(integrationRoleService.getResourceUserRoleRepresentations(resource));
 
         representation.setWorkflowConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
@@ -279,6 +362,19 @@ public class IntegrationResourceService {
             constraint.add(new ResourceSummaryPlotConstraintRepresentation().withEntityId(propertyDTO.getEntityId()).withType(propertyDTO.getEntityType()));
         }
         return constraint;
+    }
+
+    private void setRaisesUrgentFlag(ResourceRepresentationStandard representation, List<ActionRepresentationSimple> actions) {
+        for (ActionRepresentationSimple action : actions) {
+            if (BooleanUtils.isTrue(action.getRaisesUrgentFlag())) {
+                representation.setRaisesUrgentFlag(true);
+                break;
+            }
+        }
+    }
+
+    private void setRaisesUpdateFlag(ResourceRepresentationStandard representation, DateTime baseline, DateTime updatedTimestamp) {
+        representation.setRaisesUpdateFlag(updatedTimestamp.isAfter(baseline.minusDays(1)));
     }
 
 }

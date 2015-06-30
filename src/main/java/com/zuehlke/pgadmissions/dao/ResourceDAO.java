@@ -26,12 +26,11 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.ImportedStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -149,15 +148,14 @@ public class ResourceDAO {
         }
 
         projectionList.add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
-                .add(Projections.property("user.id"), "creatorId") //
-                .add(Projections.property("user.firstName"), "creatorFirstName") //
-                .add(Projections.property("user.firstName2"), "creatorFirstName2") //
-                .add(Projections.property("user.firstName3"), "creatorFirstName3") //
-                .add(Projections.property("user.lastName"), "creatorLastName") //
-                .add(Projections.property("user.email"), "creatorEmail") //
-                .add(Projections.property("primaryExternalAccount.accountImageUrl"), "creatorAccountImageUrl")
-                .add(Projections.property("externalAccount.accountProfileUrl"), "creatorLinkedinProfileUrl")
-                .add(Projections.property("code"), "code");
+                .add(Projections.property("code"), "code") //
+                .add(Projections.property("user.id"), "userId") //
+                .add(Projections.property("user.firstName"), "userFirstName") //
+                .add(Projections.property("user.firstName2"), "userFirstName2") //
+                .add(Projections.property("user.firstName3"), "userFirstName3") //
+                .add(Projections.property("user.lastName"), "userLastName") //
+                .add(Projections.property("user.email"), "userEmail") //
+                .add(Projections.property("primaryExternalAccount.accountImageUrl"), "userAccountImageUrl");
 
         addResourceListCustomColumns(scopeId, projectionList);
 
@@ -166,8 +164,6 @@ public class ResourceDAO {
         }
 
         projectionList.add(Projections.property("state.id"), "stateId") //
-                .add(Projections.property("state.stateGroup.id"), "stateGroupId") //
-                .add(Projections.property("user.email"), "creatorEmail") //
                 .add(Projections.property("createdTimestamp"), "createdTimestamp") //
                 .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
                 .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
@@ -176,9 +172,7 @@ public class ResourceDAO {
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN)
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN));
+                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
 
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
         criteria.add(Restrictions.in("id", assignedResources));
@@ -326,7 +320,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource, ImportedStudyOption studyOption) {
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
         return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOptionInstance.class) //
                 .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("studyOption." + resource.getResourceScope().getLowerCamelName(), resource)) //

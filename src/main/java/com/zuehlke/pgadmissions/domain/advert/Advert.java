@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -119,10 +117,10 @@ public class Advert extends ResourceParentAttribute {
 
     @OneToOne(mappedBy = "advert")
     private Project project;
-    
+
     @Embedded
     private AdvertCategories categories;
-    
+
     @Embedded
     private AdvertTargets targets;
 
@@ -275,7 +273,7 @@ public class Advert extends ResourceParentAttribute {
     public void setProject(Project project) {
         this.project = project;
     }
-    
+
     public AdvertCategories getCategories() {
         return categories;
     }
@@ -298,12 +296,11 @@ public class Advert extends ResourceParentAttribute {
 
     public PrismOpportunityType getOpportunityType() {
         ResourceParent resource = getResource();
-        PrismScope resourceScope = resource.getResourceScope();
-        if (resourceScope.equals(INSTITUTION)) {
-            return null;
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            ResourceOpportunity opportunity = (ResourceOpportunity) resource;
+            return PrismOpportunityType.valueOf(opportunity.getOpportunityType().getName());
         }
-        ResourceOpportunity opportunity = (ResourceOpportunity) resource;
-        return opportunity.getOpportunityType().getPrismOpportunityType();
+        return null;
     }
 
     public boolean isImported() {

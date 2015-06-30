@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.dozer.Mapper;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.integration.IntegrationResourceService;
 
 @RestController
 @RequestMapping("api/domiciles/{domicileId}")
@@ -26,10 +26,10 @@ public class InstitutionDomicileController {
     private EntityService entityService;
 
     @Inject
-    private InstitutionService institutionService;
+    private IntegrationResourceService integrationResourceService;
 
     @Inject
-    private Mapper dozerBeanMapper;
+    private InstitutionService institutionService;
 
     @RequestMapping(value = "institutions", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -38,7 +38,7 @@ public class InstitutionDomicileController {
         List<Institution> institutions = institutionService.getApprovedInstitutionsByDomicile(domicile);
         List<ResourceRepresentationSimple> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
-            institutionRepresentations.add(dozerBeanMapper.map(institution, ResourceRepresentationSimple.class));
+            institutionRepresentations.add(integrationResourceService.getResourceRepresentationSimple(institution));
         }
         return institutionRepresentations;
     }

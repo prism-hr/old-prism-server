@@ -57,7 +57,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -929,8 +929,8 @@ public class Application extends Resource {
     }
 
     public PrismOpportunityType getOpportunityType() {
-        ImportedOpportunityType opportunityType = ((ResourceParent) getParentResource()).getOpportunityType();
-        return opportunityType == null ? null : opportunityType.getPrismOpportunityType();
+        ImportedEntitySimple opportunityType = ((ResourceParent) getParentResource()).getOpportunityType();
+        return opportunityType == null ? null : PrismOpportunityType.valueOf(opportunityType.getName());
     }
 
     public PrismProgramStartType getDefaultStartType() {

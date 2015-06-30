@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.resource;
 
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 public abstract class ResourceOpportunity extends ResourceParent {
 
@@ -10,9 +10,7 @@ public abstract class ResourceOpportunity extends ResourceParent {
 
     public abstract void setImportedCode(String importedCode);
 
-    public abstract ImportedOpportunityType getOpportunityType();
-
-    public abstract void setOpportunityType(ImportedOpportunityType opportunityType);
+    public abstract void setOpportunityType(ImportedEntitySimple opportunityType);
 
     public abstract Department getDepartment();
 

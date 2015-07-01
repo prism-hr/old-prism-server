@@ -19,10 +19,10 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "WORKFLOW_PROPERTY_CONFIGURATION", uniqueConstraints = {
+@Table(name = "workflow_property_configuration", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "workflow_property_definition_id", "version" }),
-        @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id", "version" }), 
+        @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "project_id", "workflow_property_definition_id", "version" })})
 public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned {
 
@@ -41,7 +41,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-    
+
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
@@ -112,15 +112,15 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     public final void setProgram(Program program) {
         this.program = program;
     }
-    
+
     @Override
     public Project getProject() {
         return project;
     }
-    
+
     @Override
     public void setProject(Project project) {
-        this.project = project;   
+        this.project = project;
     }
 
     @Override

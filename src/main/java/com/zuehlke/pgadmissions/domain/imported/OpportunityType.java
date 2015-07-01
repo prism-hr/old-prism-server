@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 @Entity
-@DiscriminatorValue("OPPORTUNITY_TYPE")
+@DiscriminatorValue("opportunity_type")
 public class OpportunityType extends ImportedEntitySimple {
 
     public OpportunityType withInstitution(Institution institution) {

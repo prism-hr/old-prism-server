@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
+@Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
 public class Institution extends ResourceParent {
 
     @Id
@@ -95,7 +95,7 @@ public class Institution extends ResourceParent {
 
     @Column(name = "business_year_start_month", nullable = false)
     private Integer businessYearStartMonth;
-    
+
     @Column(name = "minimum_wage", nullable = false)
     private BigDecimal minimumWage;
 
@@ -399,11 +399,11 @@ public class Institution extends ResourceParent {
         this.businessYearStartMonth = businessYearStartMonth;
         return this;
     }
-    
+
     public Institution withMinimumWage(BigDecimal minimumWage) {
         this.minimumWage = minimumWage;
         return this;
-    }    
+    }
 
     public Institution withState(State state) {
         this.state = state;

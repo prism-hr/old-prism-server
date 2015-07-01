@@ -1,21 +1,13 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "NOTIFICATION_DEFINITION")
+@Table(name = "notification_definition")
 public class NotificationDefinition extends WorkflowDefinition {
 
     @Id

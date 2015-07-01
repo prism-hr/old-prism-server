@@ -18,7 +18,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
-@Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
+@Table(name = "state_transition", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
 public class StateTransition implements UniqueEntity {
 
 	@Id

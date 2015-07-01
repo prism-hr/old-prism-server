@@ -1,22 +1,14 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.AGE_RANGE;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
+import javax.persistence.*;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.AGE_RANGE;
+
 @Entity
-@Table(name = "IMPORTED_AGE_RANGE", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
+@Table(name = "imported_age_range", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
 public class AgeRange extends ImportedEntity {
 
     @Id
@@ -67,7 +59,7 @@ public class AgeRange extends ImportedEntity {
     public PrismImportedEntity getType() {
         return AGE_RANGE;
     }
-    
+
     @Override
     public String getCode() {
         return code;
@@ -133,7 +125,7 @@ public class AgeRange extends ImportedEntity {
         this.lowerBound = lowerBound;
         return this;
     }
-    
+
     public AgeRange withUpperBound(Integer upperBound) {
         this.upperBound = upperBound;
         return this;

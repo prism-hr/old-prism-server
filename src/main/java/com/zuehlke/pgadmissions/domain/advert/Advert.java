@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
 
 @Entity
-@Table(name = "ADVERT")
+@Table(name = "advert")
 public class Advert extends ResourceParentAttribute {
 
     @Id
@@ -63,7 +63,7 @@ public class Advert extends ResourceParentAttribute {
 
     @Column(name = "apply_homepage")
     private String applyHomepage;
-    
+
     @Column(name = "telephone")
     private String telephone;
 
@@ -73,7 +73,7 @@ public class Advert extends ResourceParentAttribute {
 
     @Column(name = "sponsorship_purpose")
     private String sponsorshipPurpose;
-    
+
     @Column(name = "sponsorship_target")
     private BigDecimal sponsorshipTarget;
 

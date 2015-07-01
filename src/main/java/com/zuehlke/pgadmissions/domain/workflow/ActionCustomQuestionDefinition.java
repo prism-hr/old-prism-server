@@ -1,18 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "ACTION_CUSTOM_QUESTION_DEFINITION")
+@Table(name = "action_custom_question_definition")
 public class ActionCustomQuestionDefinition extends WorkflowDefinition {
 
     @Id

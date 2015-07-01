@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
-@Table(name = "USER_FEEDBACK")
+@Table(name = "user_feedback")
 public class UserFeedback extends WorkflowResourceExecution {
 
 	@Id
@@ -35,7 +35,7 @@ public class UserFeedback extends WorkflowResourceExecution {
 	@ManyToOne
 	@JoinColumn(name = "system_id")
 	private System system;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "institution_id")
 	private Institution institution;
@@ -47,23 +47,23 @@ public class UserFeedback extends WorkflowResourceExecution {
 	@ManyToOne
 	@JoinColumn(name = "project_id")
 	private Project project;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "application_id")
-	private Application application;	
-	
+	private Application application;
+
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role_category", nullable = false)
 	private PrismRoleCategory roleCategory;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "action_id", nullable = false)
 	private Action action;
-	
+
     @Column(name = "declined_response", nullable = false)
     private Boolean declinedResponse;
 
@@ -100,12 +100,12 @@ public class UserFeedback extends WorkflowResourceExecution {
     public System getSystem() {
 	    return system;
     }
-	
+
 	@Override
     public void setSystem(System system) {
 		this.system = system;
     }
-	
+
 	@Override
 	public Institution getInstitution() {
 		return institution;
@@ -115,7 +115,7 @@ public class UserFeedback extends WorkflowResourceExecution {
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
 	}
-	
+
 	@Override
     public Program getProgram() {
 	    return program;
@@ -125,7 +125,7 @@ public class UserFeedback extends WorkflowResourceExecution {
     public void setProgram(Program program) {
 		this.program = program;
     }
-	
+
 	@Override
     public Project getProject() {
 	    return project;
@@ -145,7 +145,7 @@ public class UserFeedback extends WorkflowResourceExecution {
     public void setApplication(Application application) {
 		this.application = application;
     }
-	
+
 	public User getUser() {
 		return user;
 	}
@@ -153,7 +153,7 @@ public class UserFeedback extends WorkflowResourceExecution {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
 	public PrismRoleCategory getRoleCategory() {
 		return roleCategory;
 	}
@@ -161,7 +161,7 @@ public class UserFeedback extends WorkflowResourceExecution {
 	public void setRoleCategory(PrismRoleCategory roleCategory) {
 		this.roleCategory = roleCategory;
 	}
-	
+
 	public Action getAction() {
 		return action;
 	}
@@ -169,7 +169,7 @@ public class UserFeedback extends WorkflowResourceExecution {
 	public void setAction(Action action) {
 		this.action = action;
 	}
-	
+
 	public Boolean getDeclinedResponse() {
 		return declinedResponse;
 	}
@@ -230,12 +230,12 @@ public class UserFeedback extends WorkflowResourceExecution {
 		setResource(resource);
 		return this;
 	}
-	
+
 	public UserFeedback withUser(User user) {
 		this.user = user;
 		return this;
 	}
-	
+
 	public UserFeedback withAction(Action action) {
 		this.action = action;
 		return this;
@@ -265,7 +265,7 @@ public class UserFeedback extends WorkflowResourceExecution {
 		this.featureRequest = featureRequest;
 		return this;
 	}
-	
+
 	public UserFeedback withRecommended(Boolean recommended) {
 		this.recommended = recommended;
 		return this;

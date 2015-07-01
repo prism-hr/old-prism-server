@@ -1,18 +1,11 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "COMMENT_CUSTOM_RESPONSE")
+@Table(name = "comment_custom_response")
 public class CommentCustomResponse {
 
     @Id

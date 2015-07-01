@@ -13,15 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mappers.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.helpers.AdvertToExtendedRepresentationFunction;
-import com.zuehlke.pgadmissions.services.helpers.AdvertToRepresentationFunction;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -30,22 +31,27 @@ public class OpportunityController {
 
     @Inject
     private AdvertService advertService;
+    
+    @Inject
+    private AdvertMapper advertMapper;
+    
+    @Inject
+    private ApplicationService applicationService;
 
     @Inject
     private StateService stateService;
-
-    @Inject
-    private AdvertToRepresentationFunction advertToRepresentationFunction;
-    
-    @Inject 
-    private AdvertToExtendedRepresentationFunction advertToExtendedRepresentationFunction;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
-        return Lists.transform(adverts, advertToRepresentationFunction);
+        
+        List<AdvertRepresentation> representations = Lists.newLinkedList();
+        for (Advert advert : adverts) {
+            representations.add(advertMapper.getAdvertRepresentation(advert));
+        }
+        return representations;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}")
@@ -54,12 +60,13 @@ public class OpportunityController {
         if (advert == null) {
             throw new ResourceNotFoundException("Advert not found");
         }
-        return advertToExtendedRepresentationFunction.apply(advert);
+        return advertMapper.getAdvertRepresentation(advert);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
     public List<AdvertRepresentation> getRecommendedAdverts(@PathVariable Integer applicationId) {
-        return advertService.getRecommendedAdverts(applicationId);
+        Application application = applicationService.getById(applicationId);
+        return advertMapper.getRecommendedAdvertRepresentations(application);
     }
 
 }

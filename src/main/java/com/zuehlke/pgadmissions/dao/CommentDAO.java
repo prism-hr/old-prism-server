@@ -17,16 +17,15 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -109,17 +108,10 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<CommentAppointmentTimeslot> getAppointmentTimeslots(Comment schedulingComment) {
-        return (List<CommentAppointmentTimeslot>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentTimeslot.class) //
-                .add(Restrictions.eq("comment", schedulingComment)) //
-                .addOrder(Order.asc("dateTime")) //
-                .list();
-    }
-
-    public List<LocalDateTime> getAppointmentPreferences(Comment preferenceComment) {
+    public List<LocalDateTime> getAppointmentPreferences(Comment comment) {
         return (List<LocalDateTime>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentPreference.class) //
                 .setProjection(Projections.property("dateTime")) //
-                .add(Restrictions.eq("comment", preferenceComment)) //
+                .add(Restrictions.eq("comment", comment)) //
                 .addOrder(Order.asc("dateTime")) //
                 .list();
     }
@@ -136,11 +128,11 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<String> getDeclinedSupervisors(Comment assignmentComment) {
+    public List<String> getDeclinedSupervisors(Comment comment) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("user.email")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.ge("createdTimestamp", assignmentComment.getCreatedTimestamp())) //
+                .add(Restrictions.ge("createdTimestamp", comment.getCreatedTimestamp())) //
                 .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_SUPERVISORS)) //
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
                 .list();
@@ -173,7 +165,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, PrismStateGroup stateGroupId, List<Comment> exclusions) {
+    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
@@ -181,7 +173,7 @@ public class CommentDAO {
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.eq("action.visibleAction", true)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("state.stateGroup.id", stateGroupId)) //
+                        .add(Restrictions.eq("state.stateGroup", stateGroup)) //
                         .add(Restrictions.isNull("state"))) //
                 .add(Restrictions.ge("createdTimestamp", start.getCreatedTimestamp()));
 

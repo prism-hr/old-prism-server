@@ -70,27 +70,31 @@ public class EntityDAO {
 
     public <T extends UniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         ResourceSignature resourceSignature = uniqueResource.getResourceSignature();
-
-        Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
-
-        HashMap<String, Object> properties = resourceSignature.getProperties();
-
-        for (Map.Entry<String, Object> property : properties.entrySet()) {
-            Object value = property.getValue();
-            if (value == null) {
-                criteria.add(Restrictions.isNull(property.getKey()));
-            } else {
-                criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
+        
+        if (resourceSignature != null) {
+            Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
+    
+            HashMap<String, Object> properties = resourceSignature.getProperties();
+    
+            for (Map.Entry<String, Object> property : properties.entrySet()) {
+                Object value = property.getValue();
+                if (value == null) {
+                    criteria.add(Restrictions.isNull(property.getKey()));
+                } else {
+                    criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
+                }
             }
+    
+            HashMultimap<String, Object> exclusions = resourceSignature.getExclusions();
+            for (String key : exclusions.keySet()) {
+                criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
+            }
+    
+            return (T) criteria.uniqueResult();
         }
-
-        HashMultimap<String, Object> exclusions = resourceSignature.getExclusions();
-        for (String key : exclusions.keySet()) {
-            criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
-        }
-
-        return (T) criteria.uniqueResult();
+        
+        return null;
     }
 
     public void delete(Object entity) {

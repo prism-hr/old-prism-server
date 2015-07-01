@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.DESCENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter.getPermittedFilters;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint.getPermittedFilters;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
 import com.zuehlke.pgadmissions.domain.resource.ResourceListFilterConstraint;
@@ -49,7 +49,7 @@ public class ResourceListFilterService {
 		if (constraints != null) {
 			for (int i = 0; i < constraints.size(); i++) {
 				ResourceListFilterConstraintDTO constraintDTO = filterDTO.getConstraints().get(i);
-				PrismResourceListFilter filterProperty = constraintDTO.getFilterProperty();
+				PrismResourceListContraint filterProperty = constraintDTO.getFilterProperty();
 
 				ResourceListFilterConstraint transientConstraint = new ResourceListFilterConstraint().withFilter(persistentFilter)
 				        .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.getNegated())
@@ -57,7 +57,7 @@ public class ResourceListFilterService {
 				        .withValueDateClose(constraintDTO.getValueDateClose()).withValueReserveStatus(constraintDTO.getValueReserveStatus())
 				        .withValueDecimalStart(constraintDTO.getValueDecimalStart()).withValueDecimalClose(constraintDTO.getValueDecimalClose());
 
-				if (filterProperty == PrismResourceListFilter.STATE_GROUP_TITLE) {
+				if (filterProperty == PrismResourceListContraint.STATE_GROUP_TITLE) {
 					transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
 				}
 
@@ -79,7 +79,7 @@ public class ResourceListFilterService {
 
 			List<ResourceListFilterConstraintDTO> constraints = Lists.newArrayListWithCapacity(filter.getConstraints().size());
 			for (ResourceListFilterConstraint constraint : filter.getConstraints()) {
-				PrismResourceListFilter filterProperty = constraint.getFilterProperty();
+				PrismResourceListContraint filterProperty = constraint.getFilterProperty();
 
 				ResourceListFilterConstraintDTO constraintDTO = new ResourceListFilterConstraintDTO().withFilterProperty(filterProperty)
 				        .withFilterExpression(constraint.getFilterExpression()).withNegated(constraint.getNegated())
@@ -116,7 +116,7 @@ public class ResourceListFilterService {
 		if (!Strings.isNullOrEmpty(valueString) && constraintDTOs == null) {
 			List<ResourceListFilterConstraintDTO> constraints = Lists.newLinkedList();
 			int displayPosition = 0;
-			for (PrismResourceListFilter property : getPermittedFilters(scope.getId())) {
+			for (PrismResourceListContraint property : getPermittedFilters(scope.getId())) {
 				if (property.getPermittedExpressions().contains(CONTAIN)) {
 					ResourceListFilterConstraintDTO constraintDTO = new ResourceListFilterConstraintDTO().withFilterProperty(property)
 					        .withFilterExpression(CONTAIN).withNegated(false).withDisplayPosition(displayPosition)

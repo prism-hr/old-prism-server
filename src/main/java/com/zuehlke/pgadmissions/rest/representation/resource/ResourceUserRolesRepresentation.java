@@ -1,37 +1,40 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.Set;
+import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ResourceUserRolesRepresentation {
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
-    private Set<PrismRole> roles;
+    private List<PrismRole> roles;
 
-    public ResourceUserRolesRepresentation(UserRepresentation user, Set<PrismRole> roles) {
-        this.user = user;
-        this.roles = roles;
-    }
-
-    public ResourceUserRolesRepresentation() {
-    }
-
-    public UserRepresentation getUser() {
+    public UserRepresentationSimple getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
-    public Set<PrismRole> getRoles() {
+    public List<PrismRole> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<PrismRole> roles) {
+    public void setRoles(List<PrismRole> roles) {
         this.roles = roles;
     }
+    
+    public ResourceUserRolesRepresentation withUser(UserRepresentationSimple user)  {
+        this.user = user;
+        return this;
+    }
+    
+    public ResourceUserRolesRepresentation withRoles(List<PrismRole> roles) {
+        this.roles = roles;
+        return this;
+    }
+    
 }

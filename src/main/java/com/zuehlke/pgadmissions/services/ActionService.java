@@ -9,7 +9,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,23 +34,23 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 @Service
 @Transactional
@@ -76,9 +74,6 @@ public class ActionService {
     @Inject
     private UserService userService;
 
-    @Inject
-    private Mapper mapper;
-
     public Action getById(PrismAction id) {
         return entityService.getById(Action.class, id);
     }
@@ -95,54 +90,31 @@ public class ActionService {
         throw new WorkflowPermissionException(resource, action);
     }
 
-    public List<ResourceListActionDTO> getPermittedActions(PrismScope resourceScope, ResourceListRowDTO row, User user) {
-        return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getPartnerId(),
-                row.getProgramId(), row.getProjectId(), row.getApplicationId(), user);
+    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, ResourceListRowDTO row, User user) {
+        return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getProgramId(),
+                row.getProjectId(), row.getApplicationId(), user);
     }
 
-    public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
-        PrismScope scope = resource.getResourceScope();
-
-        Integer resourceId = resource.getId();
-        Integer systemId = resource.getSystem().getId();
-        Integer institutionId = resourceService.getResourceId(resource.getInstitution());
-        Integer partnerId = resourceService.getResourceId(resource.getPartner());
-
-        Program program = resource.getProgram();
-        Integer programId = resourceService.getResourceId(program);
-
-        Integer projectId = resourceService.getResourceId(resource.getProject());
-        Integer applicationId = resourceService.getResourceId(resource.getApplication());
-
-        Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
-        List<ResourceListActionDTO> actions = actionDAO.getPermittedActions(scope, resourceId, systemId, institutionId, partnerId, programId, projectId,
-                applicationId, user);
-        for (ResourceListActionDTO action : actions) {
-            representations.add(mapper.map(action, ActionRepresentation.class));
-        }
-
-        List<ResourceListActionDTO> creationActions = actionDAO.getPermittedUnsecuredActions(scope, Sets.newHashSet(resource.getId()), APPLICATION);
-        for (ResourceListActionDTO creationAction : creationActions) {
-            representations.add(mapper.map(creationAction, ActionRepresentation.class));
-        }
-
-        for (ActionRepresentation action : representations) {
-            PrismAction actionId = action.getId();
-            action.addActionEnhancements(actionDAO.getGlobalActionEnhancements(resource, actionId, user));
-            action.addActionEnhancements(actionDAO.getCustomActionEnhancements(resource, actionId, user));
-
-            if (BooleanUtils.isTrue(action.getPrimaryState())) {
-                action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId,
-                        scope == PROGRAM && program.getImported()));
-            }
-        }
-
-        return representations;
+    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
+            Integer programId, Integer projectId, Integer applicationId, User user) {
+        return actionDAO.getPermittedActions(resourceScope, resourceId, systemId, institutionId, programId, projectId, applicationId, user);
     }
 
-    public HashMultimap<Integer, ResourceListActionDTO> getCreateResourceActions(PrismScope resourceScope, Set<Integer> resourceIds) {
-        HashMultimap<Integer, ResourceListActionDTO> creationActions = HashMultimap.create();
-        for (ResourceListActionDTO resourceListActionDTO : actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, APPLICATION)) {
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Set<Integer> resourceIds, PrismScope... exclusions) {
+        return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, exclusions);
+    }
+
+    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
+        return actionDAO.getGlobalActionEnhancements(resource, actionId, user);
+    }
+
+    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, PrismAction actionId, User user) {
+        return actionDAO.getCustomActionEnhancements(resource, actionId, user);
+    }
+
+    public HashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Set<Integer> resourceIds) {
+        HashMultimap<Integer, ActionDTO> creationActions = HashMultimap.create();
+        for (ActionDTO resourceListActionDTO : actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, APPLICATION)) {
             creationActions.put(resourceListActionDTO.getResourceId(), resourceListActionDTO);
         }
         return creationActions;
@@ -307,8 +279,27 @@ public class ActionService {
         return createResourceActions;
     }
 
-    public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
-        return actionDAO.getPartnerActions(resource, actionConditions);
+    public List<PrismAction> getPartnerActions(ResourceParent resource) {
+        List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
+        List<ResourceCondition> actionConditions = resourceService.getResourceAttributes(resource, ResourceCondition.class, "actionCondition");
+
+        PrismScope lastResourceScope = null;
+        for (ResourceCondition actionCondition : actionConditions) {
+            PrismScope thisResourceScope = actionCondition.getResource().getResourceScope();
+            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
+                break;
+            }
+            filteredActionConditions.add(actionCondition.getActionCondition());
+            lastResourceScope = thisResourceScope;
+        }
+
+        if (lastResourceScope != null) {
+            List<PrismAction> partnerActions = actionDAO.getPartnerActions(resource, filteredActionConditions);
+            return partnerActions;
+        }
+
+        return Lists.newArrayList();
+
     }
 
     public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {

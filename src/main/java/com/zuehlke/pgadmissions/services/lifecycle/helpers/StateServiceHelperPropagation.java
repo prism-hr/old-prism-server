@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -34,7 +33,7 @@ public class StateServiceHelperPropagation implements AbstractServiceHelper {
             for (StateTransitionPendingDTO stateTransitionPending : stateTransitionsPending) {
                 PrismAction actionId = stateTransitionPending.getActionId();
                 PrismScope actionScope = actionId.getScope();
-                Set<Integer> resourceIds = resourceService
+                List<Integer> resourceIds = resourceService
                         .getResourcesToPropagate(resourceScope, stateTransitionPending.getResourceId(), actionScope, actionId);
                 for (Integer resourceId : resourceIds) {
                     stateService.executeDeferredStateTransition(actionScope, resourceId, actionId);

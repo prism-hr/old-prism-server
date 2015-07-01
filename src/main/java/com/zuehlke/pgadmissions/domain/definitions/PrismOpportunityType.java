@@ -10,7 +10,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.PART_
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static org.joda.time.DateTimeConstants.MONDAY;
@@ -66,7 +65,6 @@ public enum PrismOpportunityType {
             null, null, MONDAY, 4, 1, new String[] {}), //
     VOLUNTEERING(EXPERIENCE, null, null, IMMEDIATE, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROJECT, true), //
-                    new PrismResourceCondition(ACCEPT_SPONSOR, true), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(FULL_TIME), //
             null, null, MONDAY, 4, 1, new String[] {}), //

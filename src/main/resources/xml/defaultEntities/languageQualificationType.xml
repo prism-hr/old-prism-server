@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <languageQualificationTypes>
 	<languageQualificationType>
-		<code>OTHER</code>
-		<name>Other Language Qualification</name>
-	</languageQualificationType>
-	<languageQualificationType>
-		<code>IELTS_ACADEMIC</code>
 		<name>IELTS Academic</name>
 		<minimumOverallScore>4.00</minimumOverallScore>
 		<maximumOverallScore>9.00</maximumOverallScore>
@@ -19,7 +14,9 @@
 		<maximumListeningScore>9.00</maximumListeningScore>
 	</languageQualificationType>
 	<languageQualificationType>
-		<code>TOEFL_INTERNET</code>
+		<name>Other Language Qualification</name>
+	</languageQualificationType>
+	<languageQualificationType>
 		<name>TOEFL iBT Internet</name>
 		<minimumOverallScore>0.00</minimumOverallScore>
 		<maximumOverallScore>120.00</maximumOverallScore>
@@ -33,7 +30,6 @@
 		<maximumListeningScore>30.00</maximumListeningScore>
 	</languageQualificationType>
 	<languageQualificationType>
-		<code>TOEFL_PAPER</code>
 		<name>TOEFL iBT Paper</name>
 		<minimumOverallScore>0.00</minimumOverallScore>
 		<maximumOverallScore>120.00</maximumOverallScore>

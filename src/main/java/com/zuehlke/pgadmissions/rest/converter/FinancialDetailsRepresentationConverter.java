@@ -7,20 +7,20 @@ import org.dozer.DozerConverter;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.FinancialDetailsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
 
-public class FinancialDetailsRepresentationConverter extends DozerConverter<AdvertFinancialDetail, FinancialDetailsRepresentation> {
+public class FinancialDetailsRepresentationConverter extends DozerConverter<AdvertFinancialDetail, AdvertFinancialDetailRepresentation> {
 
     public FinancialDetailsRepresentationConverter() {
-        super(AdvertFinancialDetail.class, FinancialDetailsRepresentation.class);
+        super(AdvertFinancialDetail.class, AdvertFinancialDetailRepresentation.class);
     }
 
     @Override
-    public FinancialDetailsRepresentation convertTo(AdvertFinancialDetail source, FinancialDetailsRepresentation destination) {
+    public AdvertFinancialDetailRepresentation convertTo(AdvertFinancialDetail source, AdvertFinancialDetailRepresentation destination) {
         if(source == null) {
             return null;
         }
-        destination = new FinancialDetailsRepresentation();
+        destination = new AdvertFinancialDetailRepresentation();
         PrismDurationUnit interval = source.getInterval();
 
         destination.setCurrency(source.getCurrencySpecified());
@@ -38,7 +38,7 @@ public class FinancialDetailsRepresentationConverter extends DozerConverter<Adve
     }
 
     @Override
-    public AdvertFinancialDetail convertFrom(FinancialDetailsRepresentation source, AdvertFinancialDetail destination) {
+    public AdvertFinancialDetail convertFrom(AdvertFinancialDetailRepresentation source, AdvertFinancialDetail destination) {
         throw new UnsupportedOperationException();
     }
 

@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
 import java.util.List;
@@ -15,14 +18,18 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.user.Address;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 
 @Repository
@@ -31,42 +38,6 @@ public class ImportedEntityDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public <T extends ImportedEntity> T getById(Integer id) {
-        return (T) sessionFactory.getCurrentSession().get(ImportedEntity.class, id);
-    }
-
-    public <T extends ImportedEntity> T getImportedEntityByCode(Class<? extends ImportedEntity> entityClass, Institution institution, String code) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eq("code", code)) //
-                .uniqueResult();
-    }
-
-    public ImportedInstitution getCustomImportedInstitutionByName(Integer domicileId, String name) {
-        return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("domicile.id", domicileId)) //
-                .add(Restrictions.eq("name", name)) //
-                .add(Restrictions.eq("custom", true)) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public <T extends ImportedEntity> List<T> getEnabledImportedEntities(Institution institution, Class<T> entityClass) {
-        return sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("name")) //
-                .list();
-    }
-
-    public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)//
-                .add(Restrictions.eq("domicile", domicile)) //
-                .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("name")) //
-                .list();
-    }
 
     public List<ImportedEntityFeed> getImportedEntityFeeds(Integer institution, PrismImportedEntity... exclusions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
@@ -83,31 +54,162 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public void save(ImportedEntity entity) {
-        sessionFactory.getCurrentSession().save(entity);
+    public <T extends ImportedEntity<?>> T getImportedEntityByName(Class<T> entityClass, String name) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .add(Restrictions.eq("name", name)) //
+                .uniqueResult();
     }
 
-    public void update(ImportedEntity entity) {
-        sessionFactory.getCurrentSession().update(entity);
+    public ImportedInstitution getImportedInstitutionByName(Integer domicile, String name) {
+        return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
+                .add(Restrictions.eq("importedDomicile.id", domicile)) //
+                .add(Restrictions.eq("name", name)) //
+                .uniqueResult();
     }
 
-    public void disableImportedEntities(Class<?> entityClass, Institution institution) {
+    public ImportedProgram getImportedProgramByName(ImportedInstitution importedInstitution, String name) {
+        return (ImportedProgram) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
+                .add(Restrictions.eq("importedInstitution", importedInstitution)) //
+                .add(Restrictions.eq("name", name)) //
+                .uniqueResult();
+    }
+
+    public <T extends ImportedEntity<?>> List<T> getEnabledImportedEntities(Institution institution,
+            PrismImportedEntity prismImportedEntity) {
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
+                .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN); //
+
+        if (prismImportedEntity.getEntityClass().equals(ImportedEntitySimple.class)) {
+            criteria.add(Restrictions.eq(entityReference + ".type", prismImportedEntity));
+        }
+
+        return (List<T>) appendUmappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".name")) //
+                .list();
+    }
+
+    public <T extends ImportedEntity<?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution,
+            PrismImportedEntity prismImportedEntity) {
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference) //
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN); //
+
+        if (prismImportedEntity.getEntityClass().equals(ImportedEntitySimple.class)) {
+            criteria.add(Restrictions.eq(entityReference + ".type", prismImportedEntity));
+        }
+
+        return (List<T>) appendMappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".name")) //
+                .list();
+    }
+
+    public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedEntitySimple domicile) {
+        PrismImportedEntity prismImportedEntity = IMPORTED_INSTITUTION;
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
+                .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN) //
+                .add(Restrictions.eq(entityReference + ".domicile", domicile)); //
+
+        return (List<ImportedInstitution>) appendUmappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".name")) //
+                .list();
+    }
+
+    public List<ImportedInstitution> getEnabledImportedInstitutionsWithMappings(Institution institution, ImportedEntitySimple domicile) {
+        PrismImportedEntity prismImportedEntity = IMPORTED_INSTITUTION;
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(entityReference + ".domicile", domicile)); //
+
+        return (List<ImportedInstitution>) appendMappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".name")) //
+                .list();
+    }
+
+    public List<ImportedProgram> getEnabledImportedPrograms(Institution institution, ImportedInstitution importedInstitution) {
+        PrismImportedEntity prismImportedEntity = IMPORTED_PROGRAM;
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
+                .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN) //
+                .add(Restrictions.eq(entityReference + ".institution", importedInstitution)); //
+
+        return (List<ImportedProgram>) appendUmappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".name")) //
+                .list();
+    }
+
+    public List<ImportedProgram> getEnabledImportedProgramsWithMappings(Institution institution, ImportedInstitution importedInstitution) {
+        PrismImportedEntity prismImportedEntity = IMPORTED_PROGRAM;
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(entityReference + ".institution", importedInstitution)); //
+
+        return (List<ImportedProgram>) appendMappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".name")) //
+                .list();
+    }
+
+    public List<ImportedSubjectArea> getEnabledImportedSubjectAreas(Institution institution) {
+        PrismImportedEntity prismImportedEntity = IMPORTED_SUBJECT_AREA;
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
+                .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN); //
+
+        return (List<ImportedSubjectArea>) appendUmappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".code")) //
+                .list();
+    }
+
+    public List<ImportedSubjectArea> getEnabledImportedSubjectAreasWithMappings(Institution institution) {
+        PrismImportedEntity prismImportedEntity = IMPORTED_SUBJECT_AREA;
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
+        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN); //
+
+        return (List<ImportedSubjectArea>) appendMappedEntityRestriction(institution, entityReference, criteria) //
+                .addOrder(Order.asc(entityReference + ".code")) //
+                .list();
+    }
+
+    public <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
+            PrismImportedEntity prismImportedEntity) {
+        return getImportedEntityMappings(institution, prismImportedEntity, null);
+    }
+
+    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> List<V> getEnabledImportedEntityMapping(Institution institution, T importedEntity) {
+        return getImportedEntityMapping(institution, importedEntity, true);
+    }
+
+    public <T extends ImportedEntityMapping<?>> List<T> getEnabledImportedEntityMappings(Institution institution,
+            PrismImportedEntity prismImportedEntity) {
+        return getImportedEntityMappings(institution, prismImportedEntity, true);
+    }
+
+    public void disableImportedEntities(PrismImportedEntity importedEntity) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update " + entityClass.getSimpleName() + " " //
+                "update " + importedEntity.getEntityClass().getSimpleName() + " " //
+                        + "set enabled = false") //
+                .executeUpdate();
+    }
+
+    public void mergeImportedEntities(String table, String columns, String inserts, String updates) {
+        executeBulkMerge(table, columns, inserts, updates);
+    }
+
+    public <T extends ImportedEntityMapping<?>> void disableImportedEntityMappings(Institution institution, PrismImportedEntity importedEntity) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + importedEntity.getMappingEntityClass().getSimpleName() + " " //
                         + "set enabled = false " //
                         + "where institution = :institution") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
     }
 
-    public void disableImportedInstitutions(Institution institution) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update ImportedInstitution " //
-                        + "set enabled = false " //
-                        + "where institution = :institution " //
-                        + "and custom is false") //
-                .setParameter("institution", institution) //
-                .executeUpdate();
+    public void mergeImportedEntityMappings(String table, String columns, String inserts, String updates) {
+        executeBulkMerge(table, columns, inserts, updates);
     }
 
     public void disableImportedPrograms(Institution institution, List<Integer> updates, LocalDate baseline) {
@@ -153,18 +255,10 @@ public class ImportedEntityDAO {
 
     }
 
-    public void mergeImportedEntities(String table, String columns, String values) {
-        sessionFactory.getCurrentSession().createSQLQuery(
-                "insert into " + table + " (" + columns + ") "
-                        + "values " + values + " "
-                        + "on duplicate key update enabled = '1'")
-                .executeUpdate();
-    }
-
     public DomicileUseDTO getMostUsedDomicile(Institution institution) {
-        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(Address.class, "address") //
+        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(AddressApplication.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("domicile.code"), "code") //
+                        .add(Projections.groupProperty("domicile.id"), "id") //
                         .add(Projections.count("id").as("useCount"), "useCount")) //
                 .createAlias("domicile", "domicile", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("domicile.institution", institution)) //
@@ -175,8 +269,8 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public AgeRange getAgeRange(Institution institution, Integer age) {
-        return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class) //
+    public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
+        return (ImportedAgeRange) sessionFactory.getCurrentSession().createCriteria(ImportedAgeRange.class) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.ge("lowerBound", age)) //
                 .add(Restrictions.disjunction() //
@@ -186,9 +280,79 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public List<ImportedInstitution> getAllWhereUcasIdIsNotNull(){
-        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
-                .add(Restrictions.isNotNull("ucasId")).list();
+    public List<ImportedInstitution> getInstitutionsWithUcasId() {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
+                .add(Restrictions.isNotNull("ucasId")) //
+                .list();
+    }
+
+    private <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
+            Boolean enabled) {
+        String entityReference = importedEntity.getType().getEntityClassLowerCamelName();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingEntityClass()) //
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(entityReference + ".type", importedEntity)) //
+                .add(Restrictions.eq(entityReference, importedEntity)) //
+                .add(Restrictions.eq("institution", institution));
+
+        if (enabled != null) {
+            criteria.add(Restrictions.eq("enabled", true));
+        }
+
+        return (List<V>) criteria.addOrder(Order.desc("importedTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .list();
+    }
+
+    private <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
+            PrismImportedEntity importedEntity, Boolean enabled) {
+        String entityReference = importedEntity.getEntityClassLowerCamelName();
+        Class<T> mappingClass = (Class<T>) importedEntity.getMappingEntityClass();
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(mappingClass) //
+                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN);
+
+        if (ImportedEntitySimpleMapping.class.isAssignableFrom(mappingClass)) {
+            criteria.add(Restrictions.eq(entityReference + ".type", importedEntity));
+        }
+
+        criteria.add(Restrictions.eq("institution", institution));
+
+        if (enabled != null) {
+            criteria.add(Restrictions.eq("enabled", enabled));
+        }
+
+        return (List<T>) criteria.addOrder(Order.desc("importedTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .list();
+    }
+
+    private void executeBulkMerge(String table, String columns, String inserts, String updates) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "insert into " + table + " (" + columns + ") "
+                        + "values " + inserts + " "
+                        + "on duplicate key update " + updates)
+                .executeUpdate();
+    }
+
+    private Criteria getEntitySelectStatement(PrismImportedEntity prismImportedEntity, String entityReference) {
+        return sessionFactory.getCurrentSession().createCriteria(prismImportedEntity.getMappingEntityClass()) //
+                .setProjection(Projections.groupProperty(entityReference));
+    }
+
+    private Criteria appendUmappedEntityRestriction(Institution institution, String entityReference, Criteria criteria) {
+        return criteria.add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq(entityReference + ".enabled", true)) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNull("code")) //
+                                .add(Restrictions.eq("enabled", true))));
+    }
+
+    private Criteria appendMappedEntityRestriction(Institution institution, String entityReference, Criteria criteria) {
+        return criteria.add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.isNotNull("code")) //
+                .add(Restrictions.eq("enabled", true)); //
     }
 
 }

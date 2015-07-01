@@ -16,7 +16,7 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
 @Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type" }) })
@@ -33,12 +33,6 @@ public class ImportedEntityFeed implements UniqueEntity {
     @Column(name = "imported_entity_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismImportedEntity importedEntityType;
-
-    @Column(name = "username")
-    private String username;
-
-    @Column(name = "password")
-    private String password;
 
     @Column(name = "location", nullable = false)
     private String location;
@@ -69,22 +63,6 @@ public class ImportedEntityFeed implements UniqueEntity {
 
     public void setImportedEntityType(PrismImportedEntity importedEntityType) {
         this.importedEntityType = importedEntityType;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getLocation() {
@@ -118,23 +96,9 @@ public class ImportedEntityFeed implements UniqueEntity {
         return this;
     }
 
-    public ImportedEntityFeed withUserName(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public ImportedEntityFeed withPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
     public ImportedEntityFeed withLastUploadedTimestamp(DateTime lastUploadedTimestamp) {
         this.lastImportedTimestamp = lastUploadedTimestamp;
         return this;
-    }
-
-    public boolean isAuthenticated() {
-        return !(username == null || password == null);
     }
 
     @Override

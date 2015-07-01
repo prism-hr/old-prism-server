@@ -22,7 +22,7 @@ public class ApplicationWithdrawnResolver implements StateTransitionResolver {
 
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
-		if (BooleanUtils.isTrue(resource.getProgram().getImported())) {
+		if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
 			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_WITHDRAWN_PENDING_EXPORT);
 		} else {
 			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_WITHDRAWN_COMPLETED);

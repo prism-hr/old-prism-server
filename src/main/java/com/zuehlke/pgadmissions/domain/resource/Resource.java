@@ -11,10 +11,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -41,28 +37,26 @@ public abstract class Resource implements UniqueEntity {
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);
+    
+    public abstract Department getDepartment();
 
-    public abstract Institution getPartner();
-
-    public abstract void setPartner(Institution partner);
+    public abstract void setDepartment(Department department);
 
     public abstract Program getProgram();
 
     public abstract void setProgram(Program program);
 
     public abstract Project getProject();
+    
+    public abstract void setProject(Project project);
 
     public abstract Advert getAdvert();
 
     public abstract void setAdvert(Advert advert);
 
-    public abstract void setProject(Project project);
-
     public abstract Application getApplication();
-
-    public abstract String getReferrer();
-
-    public abstract void setReferrer(String referrer);
+    
+    public abstract String getTitle();
 
     public abstract State getState();
 
@@ -147,7 +141,7 @@ public abstract class Resource implements UniqueEntity {
         if (parentResource.getId() != null) {
             setProject(parentResource.getProject());
             setProgram(parentResource.getProgram());
-            setPartner(parentResource.getPartner());
+            setDepartment(parentResource.getDepartment());
             setInstitution(parentResource.getInstitution());
             setSystem(parentResource.getSystem());
         }

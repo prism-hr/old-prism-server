@@ -1,13 +1,21 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 
-import javax.persistence.*;
-
 @Entity
-@Table(name = "advert_function", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "function" }),
-        @UniqueConstraint(columnNames = { "function", "advert_id" }) })
-public class AdvertFunction extends AdvertFilterCategory {
+@Table(name = "ADVERT_FUNCTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "function" }) })
+public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
 
     @Id
     @GeneratedValue
@@ -50,8 +58,13 @@ public class AdvertFunction extends AdvertFilterCategory {
     }
 
     @Override
-    public Object getValue() {
-        return getFunction();
+    public PrismAdvertFunction getValue() {
+        return function;
+    }
+
+    @Override
+    public void setValue(PrismAdvertFunction value) {
+        setFunction(value);
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.dozer.DozerConverter;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 
+@SuppressWarnings("rawtypes")
 public class ImportedEntityDisplayConverter extends DozerConverter<ImportedEntity, String> {
 
     public ImportedEntityDisplayConverter() {

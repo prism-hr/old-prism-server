@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.auth.UsernamePasswordLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentation;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.AuthenticationService;
 
@@ -75,7 +75,7 @@ public class AuthenticationController {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/oauth/{provider}", method = RequestMethod.POST)
     public Map<String, Object> oauthLogin(@PathVariable String provider, @Valid @RequestBody OauthLoginDTO oauthLoginDTO, HttpServletRequest request,
-                                          HttpServletResponse response) {
+            HttpServletResponse response) {
         OauthProvider oauthProvider = OauthProvider.getByName(provider);
         User user = authenticationService.getOrCreateUserAccountExternal(oauthProvider, oauthLoginDTO, request.getSession());
         return generateTokenOrSuggestedDetails(user, request, response);
@@ -84,9 +84,9 @@ public class AuthenticationController {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/oauth/twitter", method = RequestMethod.GET)
     public Map<String, Object> oauthRequestToken(@RequestParam(required = false) OauthAssociationType associationType,
-                                                 @RequestParam(value = "activationCode", required = false) String activationCode,
-                                                 @RequestParam(value = "oauth_token", required = false) String oAuthToken,
-                                                 @RequestParam(value = "oauth_verifier", required = false) String oAuthVerifier, HttpServletRequest request, HttpServletResponse response)
+            @RequestParam(value = "activationCode", required = false) String activationCode,
+            @RequestParam(value = "oauth_token", required = false) String oAuthToken,
+            @RequestParam(value = "oauth_verifier", required = false) String oAuthVerifier, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         if (oAuthToken == null) {
             String authorizeUrl = authenticationService.requestToken(request.getSession(), OauthProvider.TWITTER);
@@ -109,13 +109,14 @@ public class AuthenticationController {
     public Map<String, String> unlinkExternalAccount(@PathVariable String provider) {
         OauthProvider oauthProvider = OauthProvider.getByName(provider);
         UserAccountExternal newPrimaryExternalAccount = authenticationService.unlinkExternalAccount(oauthProvider);
-        return Collections.singletonMap("primaryExternalAccount", newPrimaryExternalAccount != null ? newPrimaryExternalAccount.getAccountType().getName() : null);
+        return Collections.singletonMap("primaryExternalAccount", newPrimaryExternalAccount != null ? newPrimaryExternalAccount.getAccountType().getName()
+                : null);
     }
 
     private Map<String, Object> generateTokenOrSuggestedDetails(User user, HttpServletRequest request, HttpServletResponse response) {
         if (user == null) {
             OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(AuthenticationService.OAUTH_USER_TO_CONFIRM);
-            UserRepresentationSimple suggestedDetails = new UserRepresentationSimple().withFirstName(userDefinition.getFirstName())
+            UserRepresentation suggestedDetails = new UserRepresentation().withFirstName(userDefinition.getFirstName())
                     .withLastName(userDefinition.getLastName()).withEmail(userDefinition.getEmail());
             response.setStatus(HttpStatus.I_AM_A_TEAPOT.value());
             return ImmutableMap.of("suggestedUserDetails", (Object) suggestedDetails);

@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -351,6 +352,18 @@ public class ResourceDAO {
                 .setProjection(Projections.property("applicationCloseDate")) //
                 .addOrder(Order.desc("applicationCloseDate")) //
                 .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public <T extends ResourceParent> Long getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(childResourceScope.getResourceClass()) //
+                .setProjection(Projections.countDistinct("id")) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN, //
+                        Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .uniqueResult();
     }
 

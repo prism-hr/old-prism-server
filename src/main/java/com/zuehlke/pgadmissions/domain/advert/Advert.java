@@ -21,6 +21,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -66,7 +67,7 @@ public class Advert extends ResourceParentAttribute {
 
     @OneToOne
     @JoinColumn(name = "institution_address_id")
-    private AdvertAddress address;
+    private AddressAdvert address;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -196,11 +197,11 @@ public class Advert extends ResourceParentAttribute {
         this.telephone = telephone;
     }
 
-    public AdvertAddress getAddress() {
+    public AddressAdvert getAddress() {
         return address;
     }
 
-    public void setAddress(AdvertAddress address) {
+    public void setAddress(AddressAdvert address) {
         this.address = address;
     }
 

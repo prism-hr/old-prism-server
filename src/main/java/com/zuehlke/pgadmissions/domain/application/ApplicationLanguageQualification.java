@@ -30,7 +30,7 @@ public class ApplicationLanguageQualification extends ApplicationSection {
 
     @ManyToOne
     @JoinColumn(name = "imported_language_qualification_type_id")
-    private ImportedLanguageQualificationType type;
+    private ImportedLanguageQualificationType languageQualificationType;
 
     @Column(name = "exam_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -75,12 +75,12 @@ public class ApplicationLanguageQualification extends ApplicationSection {
         this.personalDetail = personalDetail;
     }
 
-    public ImportedLanguageQualificationType getType() {
-        return type;
+    public ImportedLanguageQualificationType getLanguageQualificationType() {
+        return languageQualificationType;
     }
 
-    public void setType(ImportedLanguageQualificationType type) {
-        this.type = type;
+    public void setLanguageQualificationType(ImportedLanguageQualificationType languageQualificationType) {
+        this.languageQualificationType = languageQualificationType;
     }
 
     public LocalDate getExamDate() {
@@ -149,8 +149,8 @@ public class ApplicationLanguageQualification extends ApplicationSection {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
-    public ApplicationLanguageQualification withType(ImportedLanguageQualificationType type) {
-        this.type = type;
+    public ApplicationLanguageQualification withLanguageQualificationType(ImportedLanguageQualificationType languageQualificationType) {
+        this.languageQualificationType = languageQualificationType;
         return this;
     }
 
@@ -194,7 +194,7 @@ public class ApplicationLanguageQualification extends ApplicationSection {
     }
 
     public String getTypeDisplay() {
-        return type == null ? null : type.getName();
+        return languageQualificationType == null ? null : languageQualificationType.getName();
     }
 
 }

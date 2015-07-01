@@ -10,8 +10,8 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAddress;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
@@ -23,21 +23,23 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertProgram;
 import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.rest.dto.AdvertAddressDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertCategoriesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertClosingDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertDomicileRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertFinancialDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertFinancialDetailsRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertTargetRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertTargetsRepresentation;
+import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
+import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertDomicileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Service
@@ -46,6 +48,9 @@ public class AdvertMapper {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private AddressMapper addressMapper;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -69,17 +74,29 @@ public class AdvertMapper {
                 .withTargets(getAdvertTargetsRepresentation(advert)).withSequenceIdentifier(advert.getSequenceIdentifier());
     }
 
-    public AdvertAddressDTO getAddressDTO(AdvertAddress address) {
-        return new AdvertAddressDTO().withDomicile(address.getDomicile().getId()).withAddressLine1(address.getAddressLine1())
-                .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
-                .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId());
+    public AddressAdvertDTO getAddressDTO(AddressAdvert address) {
+        AddressAdvertDTO addressDTO = addressMapper.transform(address, AddressAdvertDTO.class);
+
+        addressDTO.setDomicile(address.getDomicile().getId());
+        addressDTO.setGoogleId(address.getGoogleId());
+
+        return addressDTO;
     }
-    
+
     public List<AdvertDomicileRepresentation> getAdvertDomicileRepresentations() {
         List<AdvertDomicile> advertDomiciles = advertService.getAdvertDomiciles();
         List<AdvertDomicileRepresentation> representations = Lists.newLinkedList();
         for (AdvertDomicile advertDomicile : advertDomiciles) {
             representations.add(getAdvertDomicileRepresentation(advertDomicile));
+        }
+        return representations;
+    }
+
+    public List<AdvertRepresentation> getRecommendedAdvertRepresentations(Application application) {
+        List<AdvertRepresentation> representations = Lists.newLinkedList();
+        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(application.getUser());
+        for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
+            representations.add(getAdvertRepresentation(advertRecommendation.getAdvert()));
         }
         return representations;
     }
@@ -161,13 +178,13 @@ public class AdvertMapper {
         return representations;
     }
 
-    private AdvertAddressRepresentation getAdvertAddressRepresentation(Advert advert) {
-        AdvertAddress address = advert.getAddress();
+    private AddressAdvertRepresentation getAdvertAddressRepresentation(Advert advert) {
+        AddressAdvert address = advert.getAddress();
         if (address != null) {
-            AdvertAddressRepresentation representation = new AdvertAddressRepresentation()
-                    .withDomicile(getAdvertDomicileRepresentation(address.getDomicile())).withAddressLine1(address.getAddressLine1())
-                    .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
-                    .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId());
+            AddressAdvertRepresentation representation = addressMapper.transform(address, AddressAdvertRepresentation.class);
+
+            representation.setDomicile(getAdvertDomicileRepresentation(address.getDomicile()));
+            representation.setGoogleId(address.getGoogleId());
 
             GeographicLocation location = address.getLocation();
             if (location != null) {

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationRefereeRepresentation extends ApplicationSectionRepresentation {
@@ -10,18 +11,18 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
     private UserRepresentationSimple user;
 
     private PrismRefereeType refereeType;
-    
+
     private String jobEmployer;
 
     private String jobTitle;
 
-    private ApplicationAddressRepresentationApplication address;
-    
+    private AddressApplicationRepresentation address;
+
     private String phone;
 
     private String skype;
-    
-    private Integer commentId;
+
+    private Integer comment;
 
     public Integer getId() {
         return id;
@@ -38,7 +39,7 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
     public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
-    
+
     public final PrismRefereeType getRefereeType() {
         return refereeType;
     }
@@ -63,11 +64,11 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.jobTitle = jobTitle;
     }
 
-    public ApplicationAddressRepresentationApplication getAddress() {
+    public AddressApplicationRepresentation getAddress() {
         return address;
     }
 
-    public void setAddress(ApplicationAddressRepresentationApplication address) {
+    public void setAddress(AddressApplicationRepresentation address) {
         this.address = address;
     }
 
@@ -86,13 +87,58 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
     public void setSkype(String skype) {
         this.skype = skype;
     }
-    
-    public final Integer getCommentId() {
-        return commentId;
+
+    public final Integer getComment() {
+        return comment;
     }
 
-    public final void setCommentId(Integer commentId) {
-        this.commentId = commentId;
+    public final void setComment(Integer comment) {
+        this.comment = comment;
+    }
+
+    public ApplicationRefereeRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withUser(UserRepresentationSimple user) {
+        this.user = user;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withRefereeType(PrismRefereeType refereeType) {
+        this.refereeType = refereeType;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withJobEmployer(String jobEmployer) {
+        this.jobEmployer = jobEmployer;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withAddress(AddressApplicationRepresentation address) {
+        this.address = address;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withPhone(String phone) {
+        this.phone = phone;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withSkype(String skype) {
+        this.skype = skype;
+        return this;
+    }
+
+    public ApplicationRefereeRepresentation withComment(Integer comment) {
+        this.comment = comment;
+        return this;
     }
 
 }

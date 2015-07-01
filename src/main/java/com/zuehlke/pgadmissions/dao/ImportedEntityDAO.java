@@ -18,7 +18,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.application.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -256,7 +256,7 @@ public class ImportedEntityDAO {
     }
 
     public DomicileUseDTO getMostUsedDomicile(Institution institution) {
-        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(Address.class) //
+        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(AddressApplication.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("domicile.id"), "id") //
                         .add(Projections.count("id").as("useCount"), "useCount")) //

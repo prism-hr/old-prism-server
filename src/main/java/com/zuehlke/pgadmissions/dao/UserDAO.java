@@ -91,10 +91,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getSuggestedSupervisors(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email")) //
+                        .add(Projections.property("user.parentUser"), "user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
                 .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
@@ -112,10 +109,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email") //
+                        .add(Projections.groupProperty("user.parentUser"), "user") //
                         .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
@@ -134,10 +128,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersNotInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email") //
+                        .add(Projections.groupProperty("user.parentUser"), "user")
                         .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
@@ -154,10 +145,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects, List<Integer> relatedApplications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email")) //
+                        .add(Projections.groupProperty("user.parentUser"), "user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
                 .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //

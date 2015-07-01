@@ -17,7 +17,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAddress;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -55,9 +55,9 @@ public class InstitutionController {
         institutions = institutionService.list();
         List<ResourceRepresentationSimple> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
-            AdvertAddress address = institution.getAdvert().getAddress();
+            AddressAdvert address = institution.getAdvert().getAddress();
             String title = Joiner.on(" - ").skipNulls().join(institution.getTitle(), address.getAddressTown(), address.getAddressCode());
-            ResourceRepresentationSimple institutionRepresentation = new ResourceRepresentationSimple().withId(institution.getId()).withTitle(title);
+            ResourceRepresentationSimple institutionRepresentation = new ResourceRepresentationSimple().withResourceId(institution.getId()).withTitle(title);
             institutionRepresentations.add(institutionRepresentation);
         }
         return institutionRepresentations;
@@ -126,7 +126,7 @@ public class InstitutionController {
             ResourceParent resource = input.getResource();
             ImportedEntitySimple opportunityType = resource.getOpportunityType();
             PrismOpportunityType prismOpportunityType = opportunityType == null ? null : PrismOpportunityType.valueOf(opportunityType.getName());
-            return new ResourceChildCreationRepresentation().withId(resource.getId()).withTitle(resource.getTitle()).withOpportunityType(prismOpportunityType)
+            return new ResourceChildCreationRepresentation().withResourceId(resource.getId()).withTitle(resource.getTitle()).withOpportunityType(prismOpportunityType)
                     .withPartnerMode(input.getPartnerMode());
         }
     }

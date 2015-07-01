@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
 
@@ -16,15 +12,12 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ValidationUtils;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -35,8 +28,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
-import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -63,9 +54,6 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentValidator;
 
 @Service
@@ -121,80 +109,6 @@ public class CommentService {
         Integer userId = user.getId();
         User ownerDelegate = comment.getDelegateUser();
         return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
-    }
-
-    public List<ApplicationAssignedSupervisorRepresentation> getApplicationSupervisors(Application application) {
-        Comment assignmentComment = getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-
-        if (assignmentComment != null) {
-            return Lists.newArrayList(buildApplicationSupervisorRepresentation(assignmentComment));
-        } else {
-            assignmentComment = getLatestComment(application, APPLICATION_ASSIGN_SUPERVISORS);
-
-            if (assignmentComment != null) {
-                Set<ApplicationAssignedSupervisorRepresentation> assignedSupervisors = buildApplicationSupervisorRepresentation(assignmentComment);
-
-                List<String> declinedSupervisors = commentDAO.getDeclinedSupervisors(assignmentComment);
-
-                for (ApplicationAssignedSupervisorRepresentation assignedSupervisor : assignedSupervisors) {
-                    if (declinedSupervisors.contains(assignedSupervisor.getUser().getEmail())) {
-                        assignedSupervisors.remove(assignedSupervisor);
-                    }
-                }
-
-                return Lists.newArrayList(assignedSupervisors);
-            }
-        }
-
-        return Lists.newArrayList();
-    }
-
-    public ApplicationOfferRepresentation getOfferRecommendation(Application application) {
-        Comment sourceComment = getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-
-        if (sourceComment != null) {
-            return buildOfferRepresentation(sourceComment);
-        }
-
-        sourceComment = getLatestComment(application, APPLICATION_ASSIGN_SUPERVISORS);
-        if (sourceComment != null) {
-            ApplicationOfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
-
-            User primarySupervisor = Iterables.getFirst(commentDAO.getAssignedUsers(sourceComment, APPLICATION_PRIMARY_SUPERVISOR), null);
-            if (primarySupervisor != null) {
-                sourceComment = getLatestComment(application, APPLICATION_CONFIRM_PRIMARY_SUPERVISION, primarySupervisor,
-                        sourceComment.getCreatedTimestamp());
-            }
-
-            if (sourceComment != null) {
-                String positionTitle = null;
-                String positionDescription = null;
-
-                CommentPositionDetail positionDetail = sourceComment.getPositionDetail();
-                if (positionDetail != null) {
-                    positionTitle = positionDetail.getPositionTitle();
-                    positionDescription = positionDetail.getPositionDescription();
-                }
-
-                LocalDate positionProvisionalStartDate = null;
-                String appointmentConditions = null;
-
-                CommentOfferDetail offerDetail = sourceComment.getOfferDetail();
-                if (offerDetail != null) {
-                    positionProvisionalStartDate = offerDetail.getPositionProvisionalStartDate();
-                    appointmentConditions = offerDetail.getAppointmentConditions();
-                }
-
-                offerRepresentation.setPositionTitle(positionTitle);
-                offerRepresentation.setPositionDescription(positionDescription);
-                offerRepresentation.setPositionProvisionalStartDate(positionProvisionalStartDate);
-                offerRepresentation.setAppointmentConditions(appointmentConditions);
-            }
-
-            return offerRepresentation;
-        }
-
-        return new ApplicationOfferRepresentation();
     }
 
     public void persistComment(Resource resource, Comment comment) {
@@ -385,6 +299,14 @@ public class CommentService {
                 : preferenceComment;
     }
 
+    public List<CommentAssignedUser> getAssignedSupervisors(Comment comment) {
+        return commentDAO.getAssignedSupervisors(comment);
+    }
+
+    public List<String> getDeclinedSupervisors(Comment comment) {
+        return commentDAO.getDeclinedSupervisors(comment);
+    }
+
     private void reassignCommentAssignedUsers(User oldUser, User newUser) {
         List<CommentAssignedUser> commentAssignedUsers = commentDAO.getCommentAssignedUsers(oldUser);
         for (CommentAssignedUser commentAssignedUser : commentAssignedUsers) {
@@ -395,34 +317,6 @@ public class CommentService {
                 entityService.delete(commentAssignedUser);
             }
         }
-    }
-
-    private ApplicationOfferRepresentation buildOfferRepresentation(Comment sourceComment) {
-        CommentPositionDetail positionDetail = sourceComment.getPositionDetail();
-        CommentOfferDetail offerDetail = sourceComment.getOfferDetail();
-
-        boolean positionDetailNull = positionDetail == null;
-        boolean offerDetailNull = offerDetail == null;
-
-        return new ApplicationOfferRepresentation().withPositionTitle(positionDetailNull ? null : positionDetail.getPositionTitle())
-                .withPositionDescription(positionDetailNull ? null : positionDetail.getPositionDescription())
-                .withPositionProvisionalStartDate(offerDetailNull ? null : offerDetail.getPositionProvisionalStartDate())
-                .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());
-    }
-
-    private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
-        Set<ApplicationAssignedSupervisorRepresentation> supervisors = Sets.newLinkedHashSet();
-
-        for (CommentAssignedUser assignee : commentDAO.getAssignedSupervisors(assignmentComment)) {
-            User user = assignee.getUser();
-            UserRepresentationSimple userRepresentation = new UserRepresentationSimple().withFirstName(user.getFirstName()).withLastName(user.getLastName())
-                    .withEmail(user.getEmail());
-            ApplicationAssignedSupervisorRepresentation assignedSupervisorRepresentation = new ApplicationAssignedSupervisorRepresentation()
-                    .withUser(userRepresentation).withRole(assignee.getRole().getId()).withAcceptedSupervision(true);
-            supervisors.add(assignedSupervisorRepresentation);
-        }
-
-        return supervisors;
     }
 
     private void assignUsers(Comment comment, Set<CommentAssignedUser> assignees) {

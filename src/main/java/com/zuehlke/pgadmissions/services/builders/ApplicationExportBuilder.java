@@ -58,7 +58,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
@@ -251,7 +251,7 @@ public class ApplicationExportBuilder {
     private ContactDtlsTp buildHomeAddress(Application application) throws Exception {
         ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
         AddressTp addressTp = objectFactory.createAddressTp();
-        Address currentAddress = application.getAddress().getCurrentAddress();
+        AddressApplication currentAddress = application.getAddress().getCurrentAddress();
         addressTp.setAddressLine1(currentAddress.getAddressLine1());
         addressTp.setAddressLine2(currentAddress.getAddressLine2());
         addressTp.setAddressLine3(currentAddress.getAddressTown());
@@ -268,7 +268,7 @@ public class ApplicationExportBuilder {
     }
 
     private ContactDtlsTp buildCorrespondenceAddress(Application application) throws Exception {
-        Address contactAddress = application.getAddress().getContactAddress();
+        AddressApplication contactAddress = application.getAddress().getContactAddress();
         ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
         AddressTp addressTp = objectFactory.createAddressTp();
         addressTp.setAddressLine1(contactAddress.getAddressLine1());
@@ -520,7 +520,7 @@ public class ApplicationExportBuilder {
             EnglishLanguageTp englishLanguageTp = objectFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(applicationExportBuilderHelper.buildXmlDate(languageQualification.getExamDate()));
 
-            String languageQualificationTypeCode = getImportedEntityCode(application.getInstitution(), languageQualification.getType());
+            String languageQualificationTypeCode = getImportedEntityCode(application.getInstitution(), languageQualification.getLanguageQualificationType());
             if (languageQualificationTypeCode.startsWith("OTHER")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
                 englishLanguageTp.setOtherLanguageExam(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));

@@ -20,8 +20,6 @@ import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ApplicationRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ResourceRepresentationEnricher;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.InstitutionSearchRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProgramSearchRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProjectSearchRepresentationBuilder;
@@ -115,8 +113,7 @@ public enum PrismScope {
             .withResourcePersister(ApplicationPersister.class) //
             .withResourcePreprocessor(ApplicationPreprocessor.class) //
             .withResourceProcessor(ApplicationProcessor.class) //
-            .withResourcePostprocessor(ApplicationPostprocessor.class) //
-            .withResourceRepresentationEnricher(ApplicationRepresentationEnricher.class));
+            .withResourcePostprocessor(ApplicationPostprocessor.class));
 
     private PrismScopeDefinition definition;
 
@@ -176,10 +173,6 @@ public enum PrismScope {
         return definition.getSocialRepresentationBuilder();
     }
 
-    public Class<? extends ResourceRepresentationEnricher<?, ?>> getResourceRepresentationEnricher() {
-        return definition.getResourceRepresentationEnricher();
-    }
-
     public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {
         return byResourceClass.get(resourceClass);
     }
@@ -215,8 +208,6 @@ public enum PrismScope {
         private Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder;
 
         private Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder;
-
-        private Class<? extends ResourceRepresentationEnricher<?, ?>> resourceRepresentationEnricher;
 
         public Class<? extends Resource> getResourceClass() {
             return resourceClass;
@@ -260,10 +251,6 @@ public enum PrismScope {
 
         public Class<? extends SocialRepresentationBuilder> getSocialRepresentationBuilder() {
             return socialRepresentationBuilder;
-        }
-
-        public Class<? extends ResourceRepresentationEnricher<?, ?>> getResourceRepresentationEnricher() {
-            return resourceRepresentationEnricher;
         }
 
         public PrismScopeDefinition withResourceClass(Class<? extends Resource> resourceClass) {
@@ -318,11 +305,6 @@ public enum PrismScope {
 
         public PrismScopeDefinition withSocialRepresentationBuilder(Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder) {
             this.socialRepresentationBuilder = socialRepresentationBuilder;
-            return this;
-        }
-
-        public PrismScopeDefinition withResourceRepresentationEnricher(Class<? extends ResourceRepresentationEnricher<?, ?>> resourceRepresentationEnricher) {
-            this.resourceRepresentationEnricher = resourceRepresentationEnricher;
             return this;
         }
 

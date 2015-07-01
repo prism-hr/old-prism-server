@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,10 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
+import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.user.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -54,26 +56,11 @@ public class UserMapper {
     private ApplicationContext applicationContext;
 
     public UserRepresentationSimple getUserRepresentationSimple(User user) {
-        UserRepresentationSimple representation = new UserRepresentationSimple().withId(user.getId()).withFirstName(user.getFirstName())
-                .withFirstName2(user.getFirstName2()).withFirstName3(user.getEmail());
-
-        UserAccount userAccount = user.getUserAccount();
-        if (userAccount != null) {
-            UserAccountExternal userAccountExternal = userAccount.getPrimaryExternalAccount();
-            if (userAccountExternal != null) {
-                representation.setAccountProfileUrl(userAccountExternal.getAccountProfileUrl());
-                representation.setAccountImageUrl(userAccountExternal.getAccountImageUrl());
-            }
-
-            Document portraitImage = userAccount.getPortraitImage();
-            representation.setPortraitImageId(portraitImage == null ? null : portraitImage.getId());
-        }
-
-        return representation;
+        return getUserRepresentation(user, UserRepresentationSimple.class);
     }
 
-    public UserExtendedRepresentation getUserRepresentationExtended(User user) {
-        UserExtendedRepresentation representation = (UserExtendedRepresentation) getUserRepresentationSimple(user);
+    public UserRepresentationExtended getUserRepresentationExtended(User user) {
+        UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
 
         representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
         representation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
@@ -115,7 +102,7 @@ public class UserMapper {
     }
 
     private UserRepresentationUnverified getUserRepresentationUnverified(User user, String noDiagnosisMessage) {
-        UserRepresentationUnverified representation = (UserRepresentationUnverified) getUserRepresentationSimple(user);
+        UserRepresentationUnverified representation = getUserRepresentation(user, UserRepresentationUnverified.class);
 
         String bounceMessage = user.getEmailBouncedMessage();
         if (bounceMessage != null) {
@@ -124,6 +111,39 @@ public class UserMapper {
         }
 
         return representation;
+    }
+
+    public <T extends UserRepresentationSimple> T getUserRepresentation(User user, Class<T> returnType) {
+        T representation = BeanUtils.instantiate(returnType);
+
+        representation.setId(user.getId());
+        representation.setFirstName(user.getFirstName());
+        representation.setFirstName2(user.getFirstName2());
+        representation.setFirstName3(user.getFirstName3());
+        representation.setLastName(user.getLastName());
+        representation.setEmail(user.getEmail());
+
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount != null) {
+            UserAccountExternal userAccountExternal = userAccount.getPrimaryExternalAccount();
+            if (userAccountExternal != null) {
+                representation.setAccountProfileUrl(userAccountExternal.getAccountProfileUrl());
+                representation.setAccountImageUrl(userAccountExternal.getAccountImageUrl());
+            }
+
+            Document portraitImage = userAccount.getPortraitImage();
+            representation.setPortraitImageId(portraitImage == null ? null : portraitImage.getId());
+        }
+
+        return representation;
+    }
+
+    public List<UserRepresentationSimple> getUserRepresentations(List<UserSelectionDTO> users) {
+        List<UserRepresentationSimple> representations = Lists.newLinkedList();
+        for (UserSelectionDTO user : users) {
+            representations.add(getUserRepresentationSimple(user.getUser()));
+        }
+        return representations;
     }
 
     private List<String> getOathProviderRepresentations(User user) {

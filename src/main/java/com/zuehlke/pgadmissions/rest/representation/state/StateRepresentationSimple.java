@@ -25,14 +25,4 @@ public class StateRepresentationSimple {
         this.stateGroup = stateGroup;
     }
 
-    public StateRepresentationSimple withState(PrismState State) {
-        this.state = State;
-        return this;
-    }
-
-    public StateRepresentationSimple withStateGroup(PrismStateGroup stateGroup) {
-        this.stateGroup = stateGroup;
-        return this;
-    }
-
 }

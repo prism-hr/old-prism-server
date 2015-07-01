@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mappers;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
@@ -38,9 +39,9 @@ public class ImportedEntityMapper {
 
         Class<T> entityClass = (Class<T>) entity.getClass();
         if (ImportedAgeRange.class.equals(entityClass)) {
-            return getImportedAgeRangeRepresentation(entity, institution);
+            return getImportedAgeRangeRepresentation((ImportedAgeRange) entity, institution);
         } else if (ImportedInstitution.class.equals(entityClass)) {
-            return getImportedInstitutionRepresentation(entity, institution);
+            return getImportedInstitutionRepresentation((ImportedInstitution) entity, institution);
         } else if (ImportedLanguageQualificationType.class.equals(entityClass)) {
             return getImportedLanguageQualificationTypeRepresentation((ImportedLanguageQualificationType) entity, institution);
         } else if (ImportedProgram.class.equals(entityClass)) {
@@ -49,17 +50,15 @@ public class ImportedEntityMapper {
             return getImportedSubjectAreaRepresentation((ImportedSubjectArea) entity, institution);
         }
 
-        return getImportedEntitySimpleRepresentation(entity, institution);
+        return getImportedEntitySimpleRepresentation(entity, institution, ImportedEntitySimpleRepresentation.class);
     }
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedEntitySimpleRepresentation getImportedEntitySimpleRepresentation(
-            T entity) {
-        return getImportedEntityRepresentation(entity, null);
-    }
+    private <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>, W extends ImportedEntitySimpleRepresentation> W getImportedEntitySimpleRepresentation(
+            T entity, Institution institution, Class<W> returnType) {
+        W representation = BeanUtils.instantiate(returnType);
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedEntitySimpleRepresentation getImportedEntitySimpleRepresentation(
-            T entity, Institution institution) {
-        ImportedEntitySimpleRepresentation representation = new ImportedEntitySimpleRepresentation().withId(entity.getId()).withName(entity.getName());
+        representation.setId(entity.getId());
+        representation.setName(entity.getName());
 
         if (institution != null) {
             V mapping = importedEntityService.getEnabledImportedEntityMapping(institution, entity);
@@ -69,44 +68,36 @@ public class ImportedEntityMapper {
         return representation;
     }
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedEntitySimpleRepresentation getImportedAgeRangeRepresentation(
-            T entity) {
-        return getImportedAgeRangeRepresentation(entity, null);
-    }
+    private ImportedEntitySimpleRepresentation getImportedAgeRangeRepresentation(ImportedAgeRange ageRange, Institution institution) {
+        ImportedAgeRangeRepresentation representation = getImportedEntitySimpleRepresentation(ageRange, institution, ImportedAgeRangeRepresentation.class);
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedEntitySimpleRepresentation getImportedAgeRangeRepresentation(
-            T entity, Institution institution) {
-        ImportedAgeRange ageRange = (ImportedAgeRange) entity;
-        ImportedAgeRangeRepresentation representation = (ImportedAgeRangeRepresentation) getImportedEntitySimpleRepresentation(entity, institution);
         representation.setLowerBound(ageRange.getLowerBound());
         representation.setUpperBound(ageRange.getUpperBound());
+
         return representation;
     }
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedInstitutionRepresentation getImportedInstitutionRepresentation(
-            T entity) {
-        return getImportedInstitutionRepresentation(entity, null);
+    public ImportedInstitutionRepresentation getImportedInstitutionRepresentation(ImportedInstitution importedInstitution) {
+        return getImportedInstitutionRepresentation(importedInstitution, null);
     }
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedInstitutionRepresentation getImportedInstitutionRepresentation(
-            T entity, Institution institution) {
-        ImportedInstitution importedInstitution = (ImportedInstitution) entity;
-        ImportedInstitutionRepresentation representation = (ImportedInstitutionRepresentation) getImportedEntitySimpleRepresentation(entity, institution);
-        representation.setDomicile(importedInstitution.getDomicile().getId());
+    public ImportedInstitutionRepresentation getImportedInstitutionRepresentation(ImportedInstitution importedInstitution, Institution institution) {
+        ImportedInstitutionRepresentation representation = getImportedEntitySimpleRepresentation(importedInstitution, institution,
+                ImportedInstitutionRepresentation.class);
+
+        representation.setDomicile(getImportedEntitySimpleRepresentation(importedInstitution.getDomicile(), institution,
+                ImportedEntitySimpleRepresentation.class));
         representation.setUcasId(importedInstitution.getUcasId());
         representation.setFacebookId(importedInstitution.getFacebookId());
-        return representation;
-    }
 
-    public ImportedLanguageQualificationTypeRepresentation getImportedLanguageQualificationTypeRepresentation(
-            ImportedLanguageQualificationType languageQualificationType) {
-        return getImportedLanguageQualificationTypeRepresentation(languageQualificationType, null);
+        return representation;
     }
 
     public ImportedLanguageQualificationTypeRepresentation getImportedLanguageQualificationTypeRepresentation(
             ImportedLanguageQualificationType languageQualificationType, Institution institution) {
-        ImportedLanguageQualificationTypeRepresentation representation = (ImportedLanguageQualificationTypeRepresentation) getImportedEntitySimpleRepresentation(
-                languageQualificationType, institution);
+        ImportedLanguageQualificationTypeRepresentation representation = getImportedEntitySimpleRepresentation(languageQualificationType, institution,
+                ImportedLanguageQualificationTypeRepresentation.class);
+
         representation.setMinimumOverallScore(languageQualificationType.getMinimumOverallScore());
         representation.setMaximumOverallScore(languageQualificationType.getMaximumOverallScore());
         representation.setMinimumReadingScore(languageQualificationType.getMinimumReadingScore());
@@ -117,6 +108,7 @@ public class ImportedEntityMapper {
         representation.setMaximumSpeakingScore(languageQualificationType.getMaximumSpeakingScore());
         representation.setMinimumListeningScore(languageQualificationType.getMinimumListeningScore());
         representation.setMaximumListeningScore(languageQualificationType.getMaximumListeningScore());
+
         return representation;
     }
 
@@ -125,21 +117,22 @@ public class ImportedEntityMapper {
     }
 
     public ImportedProgramRepresentation getImportedProgramRepresentation(ImportedProgram program, Institution institution) {
-        ImportedProgramRepresentation representation = (ImportedProgramRepresentation) getImportedEntitySimpleRepresentation(program, institution);
-        representation.setInstitution(program.getInstitution().getId());
+        ImportedProgramRepresentation representation = getImportedEntitySimpleRepresentation(program, institution, ImportedProgramRepresentation.class);
+
+        representation.setInstitution(getImportedInstitutionRepresentation(program.getInstitution(), institution));
+        representation.setQualificationType(getImportedEntitySimpleRepresentation(program.getQualificationType(), institution,
+                ImportedEntitySimpleRepresentation.class));
         representation.setLevel(program.getLevel());
         representation.setQualification(program.getQualification());
         representation.setHomepage(program.getHomepage());
-        return representation;
-    }
 
-    public ImportedSubjectAreaRepresentation getImportedSubjectAreaRepresentation(ImportedSubjectArea subjectArea) {
-        return getImportedSubjectAreaRepresentation(subjectArea);
+        return representation;
     }
 
     public ImportedSubjectAreaRepresentation getImportedSubjectAreaRepresentation(ImportedSubjectArea subjectArea, Institution institution) {
         ImportedSubjectArea parentSubjectArea = subjectArea.getParentSubjectArea();
-        ImportedSubjectAreaRepresentation representation = (ImportedSubjectAreaRepresentation) getImportedEntitySimpleRepresentation(subjectArea, institution);
+        ImportedSubjectAreaRepresentation representation = getImportedEntitySimpleRepresentation(subjectArea, institution,
+                ImportedSubjectAreaRepresentation.class);
         representation.setParentSubjectArea(parentSubjectArea == null ? null : parentSubjectArea.getId());
         return representation;
     }

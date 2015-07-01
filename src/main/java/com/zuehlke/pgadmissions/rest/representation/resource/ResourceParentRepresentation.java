@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
 
 public class ResourceParentRepresentation extends ResourceRepresentationExtended {
 

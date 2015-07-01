@@ -2,17 +2,17 @@ package com.zuehlke.pgadmissions.rest.representation.imported;
 
 public class ImportedInstitutionRepresentation extends ImportedEntitySimpleRepresentation {
 
-    private Integer domicile;
-    
+    private ImportedEntitySimpleRepresentation domicile;
+
     private String ucasId;
-    
+
     private String facebookId;
 
-    public Integer getDomicile() {
+    public ImportedEntitySimpleRepresentation getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(Integer domicile) {
+    public void setDomicile(ImportedEntitySimpleRepresentation domicile) {
         this.domicile = domicile;
     }
 

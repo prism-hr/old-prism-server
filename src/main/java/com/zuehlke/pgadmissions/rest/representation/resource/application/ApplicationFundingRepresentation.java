@@ -8,12 +8,10 @@ import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpl
 public class ApplicationFundingRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
-    
-    private ImportedEntitySimpleRepresentation fundingSourceMapping;
+
+    private ImportedEntitySimpleRepresentation fundingSource;
 
     private String sponsor;
-
-    private DocumentRepresentation document;
 
     private String description;
 
@@ -23,6 +21,8 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
 
     private String terms;
 
+    private DocumentRepresentation document;
+
     public Integer getId() {
         return id;
     }
@@ -31,20 +31,12 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
         this.id = id;
     }
 
-    public Integer getFundingSource() {
-        return fundingSourceMapping.getId();
+    public ImportedEntitySimpleRepresentation getFundingSource() {
+        return fundingSource;
     }
 
-    public void setFundingSource(Integer fundingSource) {
-        this.fundingSourceMapping = new ImportedEntitySimpleRepresentation().withId(fundingSource);
-    }
-    
-    public ImportedEntitySimpleRepresentation getFundingSourceMapping() {
-        return fundingSourceMapping;
-    }
-
-    public void setFundingSourceMapping(ImportedEntitySimpleRepresentation fundingSourceMapping) {
-        this.fundingSourceMapping = fundingSourceMapping;
+    public void setFundingSource(ImportedEntitySimpleRepresentation fundingSource) {
+        this.fundingSource = fundingSource;
     }
 
     public final String getSponsor() {
@@ -53,14 +45,6 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
 
     public final void setSponsor(String sponsor) {
         this.sponsor = sponsor;
-    }
-
-    public DocumentRepresentation getDocument() {
-        return document;
-    }
-
-    public void setDocument(DocumentRepresentation document) {
-        this.document = document;
     }
 
     public String getDescription() {
@@ -93,6 +77,54 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
 
     public final void setTerms(String terms) {
         this.terms = terms;
+    }
+
+    public DocumentRepresentation getDocument() {
+        return document;
+    }
+
+    public void setDocument(DocumentRepresentation document) {
+        this.document = document;
+    }
+
+    public ApplicationFundingRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withFundingSource(ImportedEntitySimpleRepresentation fundingSource) {
+        this.fundingSource = fundingSource;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withSponsor(String sponsor) {
+        this.sponsor = sponsor;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withValue(String value) {
+        this.value = value;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withAwardDate(LocalDate awardDate) {
+        this.awardDate = awardDate;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withTerms(String terms) {
+        this.terms = terms;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withDocument(DocumentRepresentation document) {
+        this.document = document;
+        return this;
     }
 
 }

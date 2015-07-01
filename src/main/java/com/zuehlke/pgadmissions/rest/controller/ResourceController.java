@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mappers.ActionMapper;
+import com.zuehlke.pgadmissions.mappers.ApplicationMapper;
 import com.zuehlke.pgadmissions.mappers.ResourceMapper;
 import com.zuehlke.pgadmissions.mappers.UserMapper;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
@@ -46,8 +48,8 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationListExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -72,6 +74,9 @@ public class ResourceController {
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private ApplicationMapper applicationMapper;
 
     @Inject
     private ApplicationService applicationService;
@@ -109,12 +114,12 @@ public class ResourceController {
 
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<ResourceRepresentationListExtended> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
 
-        return resourceMapper.getResourceRepresentations(resourceScope,
+        return resourceMapper.getResourceListRowRepresentations(resourceScope,
                 resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
     }
 
@@ -139,11 +144,13 @@ public class ResourceController {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         if (resourceScope == SYSTEM) {
             throw new UnsupportedOperationException("Summary cannot be created for system");
-        } else if (resourceScope == APPLICATION) {
-            return applicationService.getApplicationSummary(resourceId);
+        } else {
+            Resource resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+            if (resourceScope == APPLICATION) {
+                return applicationMapper.getApplicationSummary((Application) resource);
+            }
+            return resourceMapper.getResourceSummaryRepresentation((ResourceParent) resource);
         }
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        return resourceMapper.getResourceSummaryRepresentation(resource);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")

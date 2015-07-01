@@ -44,4 +44,19 @@ public class ApplicationDocumentRepresentation extends ApplicationSectionReprese
         this.researchStatement = researchStatement;
     }
     
+    public ApplicationDocumentRepresentation withPersonalStatement(DocumentRepresentation personalStatement) {
+        this.personalStatement = personalStatement;
+        return this;
+    }
+    
+    public ApplicationDocumentRepresentation withCv(DocumentRepresentation cv) {
+        this.cv = cv;
+        return this;
+    }
+    
+    public ApplicationDocumentRepresentation withCoveringLetter(DocumentRepresentation coveringLetter) {
+        this.coveringLetter = coveringLetter;
+        return this;
+    }
+    
 }

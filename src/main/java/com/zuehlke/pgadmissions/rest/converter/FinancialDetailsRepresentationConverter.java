@@ -7,7 +7,7 @@ import org.dozer.DozerConverter;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertFinancialDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
 
 public class FinancialDetailsRepresentationConverter extends DozerConverter<AdvertFinancialDetail, AdvertFinancialDetailRepresentation> {
 

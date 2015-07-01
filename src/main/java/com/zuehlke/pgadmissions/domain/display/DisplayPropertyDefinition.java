@@ -1,22 +1,14 @@
 package com.zuehlke.pgadmissions.domain.display;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "DISPLAY_PROPERTY_DEFINITION")
+@Table(name = "display_property_definition")
 public class DisplayPropertyDefinition extends WorkflowDefinition {
 
     @Id

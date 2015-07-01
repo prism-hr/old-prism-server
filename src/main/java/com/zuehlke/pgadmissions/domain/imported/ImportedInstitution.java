@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
-@Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
+@Table(name = "imported_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
 public class ImportedInstitution extends ImportedEntity {
 
     @Id

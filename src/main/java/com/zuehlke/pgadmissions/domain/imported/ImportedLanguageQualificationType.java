@@ -1,24 +1,15 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
-
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
+
 @Entity
-@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
+@Table(name = "imported_language_qualification_type", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
 public class ImportedLanguageQualificationType extends ImportedEntity {
 
     @Id
@@ -93,7 +84,7 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     public PrismImportedEntity getType() {
         return LANGUAGE_QUALIFICATION_TYPE;
     }
-    
+
     @Override
     public String getCode() {
         return code;

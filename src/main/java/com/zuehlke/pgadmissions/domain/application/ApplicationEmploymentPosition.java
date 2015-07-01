@@ -1,23 +1,14 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.user.Address;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.user.Address;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "APPLICATION_EMPLOYMENT_POSITION")
+@Table(name = "application_employment_position")
 public class ApplicationEmploymentPosition extends ApplicationSection {
 
     @Id

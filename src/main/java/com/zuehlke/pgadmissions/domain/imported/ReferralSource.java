@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-
 @Entity
-@DiscriminatorValue("REFERRAL_SOURCE")
+@DiscriminatorValue("referral_source")
 public class ReferralSource extends ImportedEntitySimple {
 
     public ReferralSource withInstitution(Institution institution) {

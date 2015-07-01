@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 @Entity
-@Table(name = "STATE_GROUP", uniqueConstraints = { @UniqueConstraint(columnNames = { "scope_id", "ordinal" }) })
+@Table(name = "state_group", uniqueConstraints = { @UniqueConstraint(columnNames = { "scope_id", "ordinal" }) })
 public class StateGroup extends WorkflowDefinition {
 
 	@Id

@@ -1,21 +1,13 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "RESOURCE_STUDY_OPTION_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "academic_year" }) )
+@Table(name = "resource_study_option_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "academic_year" }) )
 public class ResourceStudyOptionInstance implements UniqueEntity {
 
     @Id

@@ -1,18 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "STATE_ACTION_NOTIFICATION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "role_id", "partner_mode"})})
+@Table(name = "state_action_notification", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "role_id", "partner_mode"})})
 public class StateActionNotification implements UniqueEntity {
 
     @Id
@@ -26,7 +19,7 @@ public class StateActionNotification implements UniqueEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-    
+
     @Column(name = "partner_mode", nullable = false)
     private Boolean partnerMode;
 
@@ -88,7 +81,7 @@ public class StateActionNotification implements UniqueEntity {
         this.partnerMode = partnerMode;
         return this;
     }
-    
+
     public StateActionNotification withNotificationDefinition(NotificationDefinition notificationTemplate) {
         this.notificationDefinition = notificationTemplate;
         return this;

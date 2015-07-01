@@ -35,7 +35,7 @@ import java.util.Set;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.PROGRAM;
 
 @Component
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class ImportedEntityServiceHelperInstitution implements AbstractServiceHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
@@ -114,7 +114,12 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
             DateTime lastImportedTimestamp = importedEntityFeed.getLastImportedTimestamp();
             PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
 
+            // FIXME jaxrs template for import
+//            Client client = ClientBuilder.newBuilder().register(new BasicAuthentication("prism", "dupa")).build();
+//            ImportedEntity entity = (ImportedEntity) client.target(importedEntityFeed.getLocation()).request().buildGet().invoke(importedEntityType.getEntityClass());
+
             URL fileUrl = new DefaultResourceLoader().getResource(importedEntityFeed.getLocation()).getURL();
+
             URLConnection connection = fileUrl.openConnection();
             Long lastModifiedTimestamp = connection.getLastModified();
 
@@ -131,7 +136,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 
     @CacheEvict("importedInstitutionData")
     private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
+        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getApiEntityClass());
 
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());

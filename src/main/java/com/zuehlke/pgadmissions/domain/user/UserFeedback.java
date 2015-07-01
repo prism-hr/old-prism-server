@@ -16,11 +16,12 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
@@ -28,171 +29,185 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 @Table(name = "user_feedback")
 public class UserFeedback extends WorkflowResourceExecution {
 
-	@Id
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "system_id")
-	private System system;
+    @ManyToOne
+    @JoinColumn(name = "system_id")
+    private System system;
 
-	@ManyToOne
-	@JoinColumn(name = "institution_id")
-	private Institution institution;
+    @ManyToOne
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
 
-	@ManyToOne
-	@JoinColumn(name = "program_id")
-	private Program program;
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
-	@ManyToOne
-	@JoinColumn(name = "project_id")
-	private Project project;
+    @ManyToOne
+    @JoinColumn(name = "program_id")
+    private Program program;
 
-	@ManyToOne
-	@JoinColumn(name = "application_id")
-	private Application application;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "application_id")
+    private Application application;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "role_category", nullable = false)
-	private PrismRoleCategory roleCategory;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-	@ManyToOne
-	@JoinColumn(name = "action_id", nullable = false)
-	private Action action;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_category", nullable = false)
+    private PrismRoleCategory roleCategory;
+
+    @ManyToOne
+    @JoinColumn(name = "action_id", nullable = false)
+    private Action action;
 
     @Column(name = "declined_response", nullable = false)
     private Boolean declinedResponse;
 
-	@Column(name = "rating")
-	private Integer rating;
+    @Column(name = "rating")
+    private Integer rating;
 
-	@Lob
-	@Column(name = "content")
-	private String content;
+    @Lob
+    @Column(name = "content")
+    private String content;
 
     @Lob
     @Column(name = "feature_request")
     private String featureRequest;
 
-	@Column(name = "recommended")
-	private Boolean recommended;
+    @Column(name = "recommended")
+    private Boolean recommended;
 
-	@Column(name = "created_timestamp", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime createdTimestamp;
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
-	@Column(name = "sequence_identifier")
-	private String sequenceIdentifier;
+    @Column(name = "sequence_identifier")
+    private String sequenceIdentifier;
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@Override
+    @Override
     public System getSystem() {
-	    return system;
+        return system;
     }
 
-	@Override
+    @Override
     public void setSystem(System system) {
-		this.system = system;
+        this.system = system;
     }
 
-	@Override
-	public Institution getInstitution() {
-		return institution;
-	}
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
 
-	@Override
-	public void setInstitution(Institution institution) {
-		this.institution = institution;
-	}
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
 
-	@Override
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    @Override
     public Program getProgram() {
-	    return program;
+        return program;
     }
 
-	@Override
+    @Override
     public void setProgram(Program program) {
-		this.program = program;
+        this.program = program;
     }
 
-	@Override
+    @Override
     public Project getProject() {
-	    return project;
+        return project;
     }
 
-	@Override
+    @Override
     public void setProject(Project project) {
-		this.project = project;
+        this.project = project;
     }
 
-	@Override
+    @Override
     public Application getApplication() {
-	    return application;
+        return application;
     }
 
-	@Override
+    @Override
     public void setApplication(Application application) {
-		this.application = application;
+        this.application = application;
     }
 
-	public User getUser() {
-		return user;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public PrismRoleCategory getRoleCategory() {
-		return roleCategory;
-	}
+    public PrismRoleCategory getRoleCategory() {
+        return roleCategory;
+    }
 
-	public void setRoleCategory(PrismRoleCategory roleCategory) {
-		this.roleCategory = roleCategory;
-	}
+    public void setRoleCategory(PrismRoleCategory roleCategory) {
+        this.roleCategory = roleCategory;
+    }
 
-	public Action getAction() {
-		return action;
-	}
+    public Action getAction() {
+        return action;
+    }
 
-	public void setAction(Action action) {
-		this.action = action;
-	}
+    public void setAction(Action action) {
+        this.action = action;
+    }
 
-	public Boolean getDeclinedResponse() {
-		return declinedResponse;
-	}
+    public Boolean getDeclinedResponse() {
+        return declinedResponse;
+    }
 
-	public void setDeclinedResponse(Boolean declinedResponse) {
-		this.declinedResponse = declinedResponse;
-	}
+    public void setDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
+    }
 
-	public Integer getRating() {
-		return rating;
-	}
+    public Integer getRating() {
+        return rating;
+    }
 
-	public void setRating(Integer rating) {
-		this.rating = rating;
-	}
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public String getFeatureRequest() {
         return featureRequest;
@@ -203,77 +218,82 @@ public class UserFeedback extends WorkflowResourceExecution {
     }
 
     public Boolean getRecommended() {
-		return recommended;
-	}
+        return recommended;
+    }
 
-	public void setRecommended(Boolean recommended) {
-		this.recommended = recommended;
-	}
+    public void setRecommended(Boolean recommended) {
+        this.recommended = recommended;
+    }
 
-	public DateTime getCreatedTimestamp() {
-		return createdTimestamp;
-	}
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
 
-	public void setCreatedTimestamp(DateTime createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
-	}
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
 
-	public String getSequenceIdentifier() {
-		return sequenceIdentifier;
-	}
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
 
-	public void setSequenceIdentifier(String sequenceIdentifier) {
-		this.sequenceIdentifier = sequenceIdentifier;
-	}
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
 
-	public UserFeedback withResource(Resource resource) {
-		setResource(resource);
-		return this;
-	}
+    public UserFeedback withResource(Resource resource) {
+        setResource(resource);
+        return this;
+    }
 
-	public UserFeedback withUser(User user) {
-		this.user = user;
-		return this;
-	}
+    public UserFeedback withUser(User user) {
+        this.user = user;
+        return this;
+    }
 
-	public UserFeedback withAction(Action action) {
-		this.action = action;
-		return this;
-	}
+    public UserFeedback withAction(Action action) {
+        this.action = action;
+        return this;
+    }
 
-	public UserFeedback withRoleCategory(PrismRoleCategory roleCategory) {
-		this.roleCategory = roleCategory;
-		return this;
-	}
+    public UserFeedback withRoleCategory(PrismRoleCategory roleCategory) {
+        this.roleCategory = roleCategory;
+        return this;
+    }
 
-	public UserFeedback withDeclinedResponse(Boolean declinedResponse) {
-		this.declinedResponse = declinedResponse;
-		return this;
-	}
+    public UserFeedback withDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
+        return this;
+    }
 
-	public UserFeedback withRating(Integer rating) {
-		this.rating = rating;
-		return this;
-	}
+    public UserFeedback withRating(Integer rating) {
+        this.rating = rating;
+        return this;
+    }
 
-	public UserFeedback withContent(String content) {
-		this.content = content;
-		return this;
-	}
+    public UserFeedback withContent(String content) {
+        this.content = content;
+        return this;
+    }
 
-	public UserFeedback withFeatureRequest(String featureRequest) {
-		this.featureRequest = featureRequest;
-		return this;
-	}
+    public UserFeedback withFeatureRequest(String featureRequest) {
+        this.featureRequest = featureRequest;
+        return this;
+    }
 
-	public UserFeedback withRecommended(Boolean recommended) {
-		this.recommended = recommended;
-		return this;
-	}
+    public UserFeedback withRecommended(Boolean recommended) {
+        this.recommended = recommended;
+        return this;
+    }
 
-	public UserFeedback withCreatedTimestamp(DateTime createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
-		return this;
-	}
+    public UserFeedback withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return null;
+    }
 
 }

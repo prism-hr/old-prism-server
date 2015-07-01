@@ -22,7 +22,7 @@ public class ProgramEscalatedResolver implements StateTransitionResolver {
 	
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
-		if (BooleanUtils.isTrue(resource.getProgram().getImported())) {
+		if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
 			return stateService.getStateTransition(resource, comment.getAction(), PROGRAM_DISABLED_PENDING_REACTIVATION);
 		} else {
 			return stateService.getStateTransition(resource, comment.getAction(), PROGRAM_DISABLED_COMPLETED);

@@ -1,5 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -14,12 +32,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.*;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserConnection;
+import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
@@ -27,24 +47,9 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 
 @Service
 @Transactional
@@ -96,11 +101,6 @@ public class UserService {
         return null;
     }
 
-    public UserRepresentation getUserRepresentation(User user) {
-        return new UserRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
-                .withLastName(user.getLastName()).withEmail(user.getEmail());
-    }
-
     public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
@@ -114,8 +114,7 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, Set<PrismRole> roles)
-            throws Exception {
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) throws Exception {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.assignUserRoles(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
@@ -144,21 +143,20 @@ public class UserService {
         user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
         user.setEmail(userDTO.getEmail());
 
-        Document portraitDocument = null;
-        if (userDTO.getPortraitDocument() != null) {
-            portraitDocument = documentService.getById(userDTO.getPortraitDocument(), PrismFileCategory.IMAGE);
+        UserAccount userAccount = user.getUserAccount();
+
+        Integer portraitDocumentId = userDTO.getPortraitDocument();
+        if (portraitDocumentId != null) {
+            userAccount.setPortraitImage(documentService.getById(userDTO.getPortraitDocument(), IMAGE));
         }
 
-        user.setPortraitImage(portraitDocument);
-
-        UserAccount account = user.getUserAccount();
-        account.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
+        userAccount.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
 
         String password = userDTO.getPassword();
         if (password != null) {
-            account.setPassword(EncryptionUtils.getMD5(password));
-            account.setTemporaryPassword(null);
-            account.setTemporaryPasswordExpiryTimestamp(null);
+            userAccount.setPassword(EncryptionUtils.getMD5(password));
+            userAccount.setTemporaryPassword(null);
+            userAccount.setTemporaryPasswordExpiryTimestamp(null);
         }
     }
 
@@ -266,7 +264,7 @@ public class UserService {
         return usersToInclude;
     }
 
-    public List<UserRepresentation> getSimilarUsers(String searchTerm) {
+    public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
 
         if (trimmedSearchTerm.length() >= 1) {

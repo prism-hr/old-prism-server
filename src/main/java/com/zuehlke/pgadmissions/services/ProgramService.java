@@ -13,14 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Service
 @Transactional
@@ -61,11 +61,11 @@ public class ProgramService {
         return programDAO.getProgramByImportedCode(institution, importedCode);
     }
 
-    public List<Program> getPrograms() {
-        return programDAO.getPrograms();
+    public List<ResourceRepresentationSimple> getApprovedPrograms(Integer institutionId) {
+        return programDAO.getApprovedPrograms(institutionId);
     }
 
-    public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
+    public List<ResourceRepresentationSimple> getSimilarPrograms(Integer institutionId, String searchTerm) {
         return programDAO.getSimilarPrograms(institutionId, searchTerm);
     }
 
@@ -77,11 +77,6 @@ public class ProgramService {
     public List<String> getSuggestedStudyAreas(Integer programId, String location, String division) {
         Program program = getById(programId);
         return programDAO.getSuggestedStudyAreas(program, location, division);
-    }
-
-    public Integer getActiveProgramCount(Institution institution) {
-        Long count = programDAO.getActiveProgramCount(institution);
-        return count == null ? null : count.intValue();
     }
 
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
@@ -112,7 +107,7 @@ public class ProgramService {
         return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);
     }
 
-    public void update(Integer programId, OpportunityDTO programDTO, Comment comment) throws Exception {
+    public void update(Integer programId, ResourceOpportunityDTO programDTO, Comment comment) throws Exception {
         resourceService.update(PROGRAM, programId, programDTO, comment);
     }
 

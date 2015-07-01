@@ -1,29 +1,32 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import java.util.Set;
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
-@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "study_option_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "study_option_id" }), @UniqueConstraint(columnNames = { "project_id", "study_option_id" }) })
-public class ResourceStudyOption extends ResourceParentAttribute {
+@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "study_option_id" }) })
+public class ResourceStudyOption extends ResourceOpportunityAttribute {
 
     @Id
     @GeneratedValue
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "institution_id", insertable = false, updatable = false)
-    private Institution institution;
 
     @ManyToOne
     @JoinColumn(name = "program_id", insertable = false, updatable = false)
@@ -34,14 +37,14 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "study_option_id", nullable = false)
-    private StudyOption studyOption;
+    @JoinColumn(name = "imported_study_option_id", nullable = false)
+    private ImportedEntitySimple studyOption;
 
-    @Column(name = "application_start_date", nullable = false)
+    @Column(name = "application_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationStartDate;
 
-    @Column(name = "application_close_date", nullable = false)
+    @Column(name = "application_close_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationCloseDate;
 
@@ -54,16 +57,6 @@ public class ResourceStudyOption extends ResourceParentAttribute {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
     }
 
     @Override
@@ -86,11 +79,11 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         this.project = project;
     }
 
-    public StudyOption getStudyOption() {
+    public ImportedEntitySimple getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(StudyOption studyOption) {
+    public void setStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -119,7 +112,7 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         return this;
     }
 
-    public ResourceStudyOption withStudyOption(StudyOption studyOption) {
+    public ResourceStudyOption withStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
         return this;
     }

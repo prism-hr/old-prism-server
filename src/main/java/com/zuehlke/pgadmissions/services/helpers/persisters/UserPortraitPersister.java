@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
@@ -17,7 +18,10 @@ public class UserPortraitPersister implements ImageDocumentPersister {
     @Override
     public void persist(Integer userId, Document image) {
         User user = userService.getById(userId);
-        user.setPortraitImage(image);
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount != null) {
+            userAccount.setPortraitImage(image);
+        }
     }
 
 }

@@ -1,15 +1,24 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
-@Table(name = "application_funding")
+@Table(name = "APPLICATION_FUNDING")
 public class ApplicationFunding extends ApplicationSection {
 
     @Id
@@ -21,8 +30,8 @@ public class ApplicationFunding extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "funding_source_id")
-    private FundingSource fundingSource;
+    @JoinColumn(name = "imported_funding_source_id")
+    private ImportedEntitySimple fundingSource;
 
     @Column(name = "sponsor")
     private String sponsor;
@@ -64,11 +73,11 @@ public class ApplicationFunding extends ApplicationSection {
         this.application = application;
     }
 
-    public FundingSource getFundingSource() {
+    public ImportedEntitySimple getFundingSource() {
         return fundingSource;
     }
 
-    public void setFundingSource(FundingSource fundingSource) {
+    public void setFundingSource(ImportedEntitySimple fundingSource) {
         this.fundingSource = fundingSource;
     }
 
@@ -135,7 +144,7 @@ public class ApplicationFunding extends ApplicationSection {
         return this;
     }
 
-    public ApplicationFunding withType(FundingSource fundingSource) {
+    public ApplicationFunding withType(ImportedEntitySimple fundingSource) {
         this.fundingSource = fundingSource;
         return this;
     }

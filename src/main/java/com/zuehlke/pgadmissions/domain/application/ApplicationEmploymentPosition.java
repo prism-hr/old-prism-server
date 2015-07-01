@@ -1,11 +1,20 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.zuehlke.pgadmissions.domain.user.Address;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 
 @Entity
 @Table(name = "application_employment_position")
@@ -24,7 +33,7 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
-    private Address employerAddress;
+    private AddressApplication employerAddress;
 
     @Column(name = "position", nullable = false)
     private String position;
@@ -111,11 +120,11 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
         this.endDate = endDate;
     }
 
-    public Address getEmployerAddress() {
+    public AddressApplication getEmployerAddress() {
         return employerAddress;
     }
 
-    public void setEmployerAddress(Address employerAdress) {
+    public void setEmployerAddress(AddressApplication employerAdress) {
         this.employerAddress = employerAdress;
     }
 
@@ -144,7 +153,7 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
         return this;
     }
 
-    public ApplicationEmploymentPosition withEmployerAddress(Address employerAddress) {
+    public ApplicationEmploymentPosition withEmployerAddress(AddressApplication employerAddress) {
         this.employerAddress = employerAddress;
         return this;
     }

@@ -2,21 +2,21 @@ package com.zuehlke.pgadmissions.rest.representation.comment;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class CommentAssignedUserRepresentation {
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
     private PrismRole role;
     
     private PrismRoleTransitionType roleTransitionType;
 
-    public UserRepresentation getUser() {
+    public UserRepresentationSimple getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
@@ -34,6 +34,21 @@ public class CommentAssignedUserRepresentation {
 
     public final void setRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
         this.roleTransitionType = roleTransitionType;
+    }
+    
+    public CommentAssignedUserRepresentation withUser(UserRepresentationSimple user) {
+        this.user = user;
+        return this;
+    }
+    
+    public CommentAssignedUserRepresentation withRole(PrismRole role) {
+        this.role = role;
+        return this;
+    }
+    
+    public CommentAssignedUserRepresentation withRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
+        this.roleTransitionType = roleTransitionType;
+        return this;
     }
     
 }

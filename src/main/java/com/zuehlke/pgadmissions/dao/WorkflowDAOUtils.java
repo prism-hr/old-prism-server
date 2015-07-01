@@ -4,7 +4,6 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -20,13 +19,8 @@ public class WorkflowDAOUtils {
                                 .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                                 .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                         .add(Restrictions.eq(targetEntity + ".partnerMode", false))); //
-
-        Institution partner = resource.getPartner();
-        if (partner != null) {
-            constraint.add(Restrictions.conjunction() //
-                    .add(Restrictions.eq(targetEntity + ".partnerMode", true)) //
-                    .add(Restrictions.eq("userRole.institution", partner)));
-        }
+        
+        // FIXME: Add constraints for partner access
 
         return constraint;
     }

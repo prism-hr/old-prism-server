@@ -1,216 +1,164 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<qualifications>
-  <qualification>
-    <code>DEGCZ</code>
-    <name>Bachelors degree - Czech Republic / Slovakia</name>
-  </qualification>
-  <qualification>
-    <code>DEGTRE</code>
-    <name>Bachelors Degree - France</name>
-  </qualification>
-  <qualification>
-    <code>DEGHIN</code>
-    <name>Bachelors Degree - India</name>
-  </qualification>
-  <qualification>
-    <code>DEGREE</code>
-    <name>Bachelors Degree - not listed elsewhere</name>
-  </qualification>
-  <qualification>
-    <code>DEGSPN</code>
-    <name>Bachelors Degree - Spain</name>
-  </qualification>
-  <qualification>
-    <code>DEGSWE</code>
-    <name>Bachelors Degree - Sweden</name>
-  </qualification>
-  <qualification>
-    <code>DEGP40</code>
-    <name>Bachelors degree CGPA 4.0 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEGP43</code>
-    <name>Bachelors degree CGPA 4.3 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEGP45</code>
-    <name>Bachelors degree CGPA 4.5 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG10</code>
-    <name>Bachelors degree with 1-10 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG12</code>
-    <name>Bachelors degree with 1-12 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG20</code>
-    <name>Bachelors degree with 1-20 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG5</code>
-    <name>Bachelors degree with 1-5 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG6</code>
-    <name>Bachelors degree with 1-6 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG7</code>
-    <name>Bachelors degree with 1-7 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG9</code>
-    <name>Bachelors degree with 1-9 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG110</code>
-    <name>Bachelors degree with 110 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEG510</code>
-    <name>Bachelors degree with 5-10 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEGA+</code>
-    <name>Bachelors degree with A+ - F grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEGCRD</code>
-    <name>Bachelors degree with credit / merit grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEGEXL</code>
-    <name>Bachelors degree with grading scheme of Excel, V.Good, Good, Satisfactory</name>
-  </qualification>
-  <qualification>
-    <code>DEGPAS</code>
-    <name>Bachelors degree with grading scheme of honours (pass)</name>
-  </qualification>
-  <qualification>
-    <code>DEG_%</code>
-    <name>Bachelors degree with precentage grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEGHON</code>
-    <name>Bachelors degree with UK honours grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MSTTRE</code>
-    <name>Masters Degree - France</name>
-  </qualification>
-  <qualification>
-    <code>MASTER</code>
-    <name>Masters Degree - not listed elsewhere
-</name>
-  </qualification>
-  <qualification>
-    <code>MSTSPN</code>
-    <name>Masters Degree - Spain</name>
-  </qualification>
-  <qualification>
-    <code>MSTSWE</code>
-    <name>Masters Degree - Sweden</name>
-  </qualification>
-  <qualification>
-    <code>MSTP40</code>
-    <name>Masters degree CGPA 4.0 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MSTP43</code>
-    <name>Masters degree CGPA 4.3 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MSTP45</code>
-    <name>Masters degree CGPA 4.5 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MSTCZ</code>
-    <name>Masters degree Czech Republic / Slovakia</name>
-  </qualification>
-  <qualification>
-    <code>MST10</code>
-    <name>Masters degree with 1-10 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST12</code>
-    <name>Masters degree with 1-12 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST20</code>
-    <name>Masters degree with 1-20 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST5</code>
-    <name>Masters degree with 1-5 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST6</code>
-    <name>Masters degree with 1-6 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST7</code>
-    <name>Masters degree with 1-7 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST9</code>
-    <name>Masters degree with 1-9 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST110</code>
-    <name>Masters degree with 110 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MST510</code>
-    <name>Masters degree with 5-10 grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MSTA+</code>
-    <name>Masters degree with A+ - F grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MSTCRD</code>
-    <name>Masters degree with credit / merit grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MSTEXL</code>
-    <name>Masters degree with grading scheme of Excel, V.Good, Good, Satisisfactory</name>
-  </qualification>
-  <qualification>
-    <code>MSTPAS</code>
-    <name>Masters degree with grading scheme of honours (pass)</name>
-  </qualification>
-  <qualification>
-    <code>MSTHIN</code>
-    <name>Masters degree with grading scheme of honours - India</name>
-  </qualification>
-  <qualification>
-    <code>MST_%</code>
-    <name>Masters degree with percentage grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>DEGHONMENG</code>
-    <name>MEng UK degree with honours grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>MPHIL</code>
-    <name>MPhil degree (Postgraduate)</name>
-  </qualification>
-  <qualification>
-    <code>DEGHONMSCI</code>
-    <name>MSci UK degree with honours grading scheme</name>
-  </qualification>
-  <qualification>
-    <code>ORD</code>
-    <name>Non-Honours Ordinary Degree</name>
-  </qualification>
-  <qualification>
-    <code>6</code>
-    <name>Other examinations and/or information</name>
-  </qualification>
-  <qualification>
-    <code>PHD</code>
-    <name>PhD degree (postgraduate)</name>
-  </qualification>
-</qualifications>
+<qualificationTypes>
+	<qualificationType>
+		<name>Bachelors degree - Czech Republic / Slovakia</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors Degree - France</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors Degree - India</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors Degree - not listed elsewhere</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors Degree - Spain</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors Degree - Sweden</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree CGPA 4.0 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree CGPA 4.3 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree CGPA 4.5 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 1-10 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 1-12 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 1-20 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 1-5 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 1-6 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 1-7 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 1-9 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 110 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with 5-10 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with A+ - F grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with credit / merit grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with grading scheme of Excel, V.Good, Good,
+			Satisfactory</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with grading scheme of honours (pass)</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with precentage grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Bachelors degree with UK honours grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters Degree - France</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters Degree - not listed elsewhere </name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters Degree - Spain</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters Degree - Sweden</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree CGPA 4.0 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree CGPA 4.3 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree CGPA 4.5 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree Czech Republic / Slovakia</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 1-10 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 1-12 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 1-20 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 1-5 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 1-6 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 1-7 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 1-9 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 110 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with 5-10 grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with A+ - F grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with credit / merit grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with grading scheme of Excel, V.Good, Good,
+			Satisisfactory</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with grading scheme of honours (pass)</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with grading scheme of honours - India</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Masters degree with percentage grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>MEng UK degree with honours grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>MPhil degree (Postgraduate)</name>
+	</qualificationType>
+	<qualificationType>
+		<name>MSci UK degree with honours grading scheme</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Non-Honours Ordinary Degree</name>
+	</qualificationType>
+	<qualificationType>
+		<name>Other examinations and/or information</name>
+	</qualificationType>
+	<qualificationType>
+		<name>PhD degree (postgraduate)</name>
+	</qualificationType>
+</qualificationTypes>

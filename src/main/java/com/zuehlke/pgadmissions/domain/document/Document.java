@@ -1,23 +1,34 @@
 package com.zuehlke.pgadmissions.domain.document;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
-import javax.persistence.*;
 
 @Entity
-@Table(name = "document")
+@Table(name = "DOCUMENT")
 public class Document {
 
     @Id
@@ -76,19 +87,13 @@ public class Document {
     private ApplicationDocument applicationCv;
 
     @OneToOne(mappedBy = "portraitImage")
-    private User portraitImage;
+    private UserAccount portraitImage;
 
     @OneToOne(mappedBy = "logoImage")
     private Institution logoImage;
 
     @OneToOne(mappedBy = "backgroundImage")
-    private Institution institutionBackgroundImage;
-
-    @OneToOne(mappedBy = "backgroundImage")
-    private Program programBackgroundImage;
-
-    @OneToOne(mappedBy = "backgroundImage")
-    private Project projectBackgroundImage;
+    private Advert backgroundImage;
 
     public void setId(Integer id) {
         this.id = id;
@@ -186,7 +191,7 @@ public class Document {
         return applicationCoveringLetter;
     }
 
-    public User getPortraitImage() {
+    public UserAccount getPortraitImage() {
         return portraitImage;
     }
 
@@ -194,16 +199,8 @@ public class Document {
         return logoImage;
     }
 
-    public Institution getInstitutionBackgroundImage() {
-        return institutionBackgroundImage;
-    }
-
-    public Program getProgramBackgroundImage() {
-        return programBackgroundImage;
-    }
-
-    public Project getProjectBackgroundImage() {
-        return projectBackgroundImage;
+    public Advert getBackgroundImage() {
+        return backgroundImage;
     }
 
     public Document withId(Integer id) {

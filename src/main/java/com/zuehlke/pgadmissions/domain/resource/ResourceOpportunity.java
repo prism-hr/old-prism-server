@@ -2,14 +2,15 @@ package com.zuehlke.pgadmissions.domain.resource;
 
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 public abstract class ResourceOpportunity extends ResourceParent {
 
-    public abstract OpportunityType getOpportunityType();
+    public abstract String getImportedCode();
 
-    public abstract void setOpportunityType(OpportunityType opportunityType);
+    public abstract void setImportedCode(String importedCode);
+
+    public abstract void setOpportunityType(ImportedEntitySimple opportunityType);
 
     public abstract Department getDepartment();
 
@@ -23,18 +24,21 @@ public abstract class ResourceOpportunity extends ResourceParent {
 
     public abstract void setDurationMaximum(Integer maximum);
 
-    public abstract Boolean getImported();
-
     public abstract Set<ResourceStudyOption> getStudyOptions();
+
+    public abstract Set<ResourceStudyLocation> getStudyLocations();
 
     public void addStudyOption(ResourceStudyOption studyOption) {
         getStudyOptions().add(studyOption);
     }
 
+    public void addStudyLocation(ResourceStudyLocation studyLocation) {
+        getStudyLocations().add(studyLocation);
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("partner", getPartner())
-                .addProperty("opportunityType", getOpportunityType()).addProperty("title", getTitle());
+        return super.getResourceSignature().addProperty("institution", getInstitution()).addProperty("opportunityType", getOpportunityType());
     }
 
 }

@@ -1,16 +1,24 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 
 @Entity
-@Table(name = "application_qualification")
+@Table(name = "APPLICATION_QUALIFICATION")
 public class ApplicationQualification extends ApplicationSection {
 
     @Id
@@ -21,11 +29,9 @@ public class ApplicationQualification extends ApplicationSection {
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
-    @Column(name = "subject", nullable = false)
-    private String subject;
-
-    @Column(name = "title")
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "imported_program_id", nullable = false)
+    private ImportedProgram program;
 
     @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -38,20 +44,12 @@ public class ApplicationQualification extends ApplicationSection {
     @Column(name = "qualification_language", nullable = false)
     private String language;
 
-    @ManyToOne
-    @JoinColumn(name = "qualification_type_id")
-    private QualificationType type;
-
     @Column(name = "grade", nullable = false)
     private String grade;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", unique = true)
     private Document document;
-
-    @ManyToOne
-    @JoinColumn(name = "institution_id")
-    private ImportedInstitution institution;
 
     @Column(name = "completed", nullable = false)
     private Boolean completed;
@@ -92,28 +90,12 @@ public class ApplicationQualification extends ApplicationSection {
         this.awardDate = awardDate;
     }
 
-    public String getSubject() {
-        return subject;
+    public ImportedProgram getProgram() {
+        return program;
     }
 
-    public void setSubject(String qualificationSubject) {
-        this.subject = qualificationSubject;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public ImportedInstitution getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(ImportedInstitution institution) {
-        this.institution = institution;
+    public void setProgram(ImportedProgram program) {
+        this.program = program;
     }
 
     public String getLanguage() {
@@ -122,14 +104,6 @@ public class ApplicationQualification extends ApplicationSection {
 
     public void setLanguage(String language) {
         this.language = language;
-    }
-
-    public QualificationType getType() {
-        return type;
-    }
-
-    public void setType(QualificationType type) {
-        this.type = type;
     }
 
     public String getGrade() {
@@ -171,16 +145,6 @@ public class ApplicationQualification extends ApplicationSection {
         return this;
     }
 
-    public ApplicationQualification withSubject(String subject) {
-        this.subject = subject;
-        return this;
-    }
-
-    public ApplicationQualification withTitle(String title) {
-        this.title = title;
-        return this;
-    }
-
     public ApplicationQualification withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
@@ -196,11 +160,6 @@ public class ApplicationQualification extends ApplicationSection {
         return this;
     }
 
-    public ApplicationQualification withType(QualificationType type) {
-        this.type = type;
-        return this;
-    }
-
     public ApplicationQualification withGrade(String grade) {
         this.grade = grade;
         return this;
@@ -211,8 +170,8 @@ public class ApplicationQualification extends ApplicationSection {
         return this;
     }
 
-    public ApplicationQualification withInstitution(ImportedInstitution institution) {
-        this.institution = institution;
+    public ApplicationQualification withProgram(ImportedProgram program) {
+        this.program = program;
         return this;
     }
 
@@ -234,12 +193,16 @@ public class ApplicationQualification extends ApplicationSection {
         return awardDate == null ? null : awardDate.toString(dateFormat);
     }
 
-    public String getTypeDisplay() {
-        return type == null ? null : type.getName();
+    public String getProgramDisplay() {
+        return program == null ? null : program.getName();
     }
 
     public String getInstitutionDisplay() {
-        return institution == null ? null : institution.getName();
+        return program == null ? null : program.getInstitution().getName();
+    }
+
+    public String getQualificationTypeDisplay() {
+        return program == null ? null : program.getQualificationType().getName();
     }
 
 }

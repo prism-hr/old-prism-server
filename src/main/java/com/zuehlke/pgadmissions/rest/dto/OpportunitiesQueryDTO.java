@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-
-import javax.validation.constraints.NotNull;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public class OpportunitiesQueryDTO {
 
@@ -17,6 +19,12 @@ public class OpportunitiesQueryDTO {
     private List<PrismOpportunityCategory> programCategories;
 
     private String keyword;
+    
+    private List<PrismAdvertIndustry> industries;
+    
+    private List<PrismAdvertFunction> functions;
+    
+    private List<String> themes;
 
     private List<PrismOpportunityType> opportunityTypes;
 
@@ -72,6 +80,30 @@ public class OpportunitiesQueryDTO {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public List<PrismAdvertIndustry> getIndustries() {
+        return industries;
+    }
+
+    public void setIndustries(List<PrismAdvertIndustry> industries) {
+        this.industries = industries;
+    }
+
+    public List<PrismAdvertFunction> getFunctions() {
+        return functions;
+    }
+
+    public void setFunctions(List<PrismAdvertFunction> functions) {
+        this.functions = functions;
+    }
+
+    public List<String> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<String> themes) {
+        this.themes = themes;
     }
 
     public List<PrismOpportunityType> getOpportunityTypes() {

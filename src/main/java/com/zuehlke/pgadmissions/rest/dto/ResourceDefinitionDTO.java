@@ -12,10 +12,10 @@ public class ResourceDefinitionDTO {
     private InstitutionDTO institution;
 
     @Valid
-    private OpportunityDTO program;
+    private ResourceOpportunityDTO program;
 
     @Valid
-    private OpportunityDTO project;
+    private ResourceOpportunityDTO project;
 
     @Valid
     private ResourceDTO application;
@@ -36,19 +36,19 @@ public class ResourceDefinitionDTO {
         this.institution = institution;
     }
 
-    public OpportunityDTO getProgram() {
+    public ResourceOpportunityDTO getProgram() {
         return program;
     }
 
-    public void setProgram(OpportunityDTO program) {
+    public void setProgram(ResourceOpportunityDTO program) {
         this.program = program;
     }
 
-    public OpportunityDTO getProject() {
+    public ResourceOpportunityDTO getProject() {
         return project;
     }
 
-    public void setProject(OpportunityDTO project) {
+    public void setProject(ResourceOpportunityDTO project) {
         this.project = project;
     }
 

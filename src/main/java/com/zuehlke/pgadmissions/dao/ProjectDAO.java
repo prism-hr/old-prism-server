@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_PENDING_REACTIVATION;
 
 import java.util.List;
@@ -18,9 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -31,17 +28,6 @@ public class ProjectDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public void synchronizeProjectEndDates(Program program) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update Project " //
-                        + "set endDate = :baseline " //
-                        + "where program = :program " //
-                        + "and endDate < :baseline") //
-                .setParameter("program", program) //
-                .setParameter("baseline", program.getEndDate()) //
-                .executeUpdate();
-    }
 
     public void synchronizeProjectDueDates(Program program) {
         sessionFactory.getCurrentSession().createQuery( //
@@ -54,26 +40,10 @@ public class ProjectDAO {
                 .executeUpdate();
     }
 
-    public Long getActiveProjectCount(ResourceParent resource) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Project.class) //
-                .setProjection(Projections.countDistinct("id")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
-                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION))
-                .add(Restrictions.eq("stateAction.action.id", PROJECT_CREATE_APPLICATION)) //
-                .uniqueResult();
-    }
-
     public List<Project> getProjectsPendingReactivation(Program program, LocalDate baseline) {
         return (List<Project>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("state.id", PROJECT_DISABLED_PENDING_REACTIVATION)) //
-                .add(Restrictions.ge("endDate", baseline)) //
                 .list();
     }
 

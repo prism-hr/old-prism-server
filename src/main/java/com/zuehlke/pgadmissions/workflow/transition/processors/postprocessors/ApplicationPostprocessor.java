@@ -27,9 +27,9 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
+import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
@@ -61,9 +60,6 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     private ApplicationService applicationService;
 
     @Inject
-    private ResourceService resourceService;
-
-    @Inject
     private RoleService roleService;
 
     @Inject
@@ -72,10 +68,6 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     @Override
     public void process(Resource resource, Comment comment) throws Exception {
         Application application = (Application) resource;
-
-        if (comment.isCreateComment()) {
-            resourceService.synchronizePartner(resource, comment);
-        }
 
         if (comment.isProjectCreateApplicationComment()) {
             synchronizeProjectSupervisors(application);
@@ -186,7 +178,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     }
 
     private void synchronizeOfferRecommendation(Application application, Comment comment) {
-        CommentApplicationOfferDetail offerDetail = comment.getOfferDetail();
+        CommentOfferDetail offerDetail = comment.getOfferDetail();
         if (offerDetail != null) {
             application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
             application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);

@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.workflow.executors.action;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_SPONSOR;
 
 import javax.inject.Inject;
 
@@ -13,12 +11,11 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -52,25 +49,19 @@ public class ProgramExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        if (action.getActionCategory().equals(SPONSOR_RESOURCE)) {
-            Comment comment = commentService.prepareResourceParentComment(program, user, action, commentDTO, PROGRAM_SPONSOR);
-            return actionService.executeUserAction(program, action, comment);
-        } else {
-            OpportunityDTO programDTO = commentDTO.getResource().getProgram();
-            Comment comment = prepareProcessResourceComment(program, user, action, programDTO, commentDTO);
-            programService.update(resourceId, programDTO, comment);
-            return actionService.executeUserAction(program, action, comment);
-        }
+        ResourceOpportunityDTO programDTO = commentDTO.getResource().getProgram();
+        Comment comment = prepareProcessResourceComment(program, user, action, programDTO, commentDTO);
+        programService.update(resourceId, programDTO, comment);
+        return actionService.executeUserAction(program, action, comment);
     }
 
-    public Comment prepareProcessResourceComment(Program program, User user, Action action, OpportunityDTO programDTO, CommentDTO commentDTO) throws Exception {
+    public Comment prepareProcessResourceComment(Program program, User user, Action action, ResourceOpportunityDTO programDTO, CommentDTO commentDTO)
+            throws Exception {
         String commentContent = action.getId().equals(PROGRAM_VIEW_EDIT) ? applicationContext.getBean(PropertyLoader.class).localize(program)
                 .load(PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
-        InstitutionPartnerDTO partnerDTO = programDTO.getPartner();
         Comment comment = new Comment().withUser(user).withResource(program).withContent(commentContent).withAction(action)
-                .withRemovedPartner(partnerDTO != null && partnerDTO.isEmpty()).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(false);
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
         return comment;

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<studyOptions>
+  <studyOption>
+  	<code>MODULAR_FLEXIBLE</code>
+    <name>B+++++</name>
+  </studyOption>
+  <studyOption>
+    <code>FULL_TIME</code>
+    <name>F+++++</name>
+  </studyOption>
+  <studyOption>
+    <code>PART_TIME</code>
+    <name>P+++++</name>
+  </studyOption>
+</studyOptions>

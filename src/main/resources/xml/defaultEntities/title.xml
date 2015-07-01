@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<titles>
+  <title>
+    <code>CAPTAIN</code>
+    <name>Captain</name>
+  </title>
+  <title>
+    <code>DR</code>
+    <name>Dr</name>
+  </title>
+  <title>
+    <code>EUROPEAN_ENGINEER</code>
+    <name>European Engineer</name>
+  </title>
+  <title>
+    <code>LADY</code>
+    <name>Lady</name>
+  </title>
+  <title>
+    <code>MISS</code>
+    <name>Miss</name>
+  </title>
+  <title>
+    <code>MR</code>
+    <name>Mr</name>
+  </title>
+  <title>
+    <code>MRS</code>
+    <name>Mrs</name>
+  </title>
+  <title>
+    <code>PROFESSOR</code>
+    <name>Professor</name>
+  </title>
+  <title>
+    <code>PROFESSOR_DR</code>
+    <name>Professor / Dr</name>
+  </title>
+  <title>
+    <code>REVEREND</code>
+    <name>Reverend</name>
+  </title>
+  <title>
+    <code>SIR</code>
+    <name>Sir</name>
+  </title>
+  <title>
+    <code>SISTER</code>
+    <name>Sister</name>
+  </title>
+</titles>

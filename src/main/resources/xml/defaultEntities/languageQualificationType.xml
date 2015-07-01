@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languageQualificationTypes>
+	<languageQualificationType>
+		<code>OTHER</code>
+		<name>Other Language Qualification</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>IELTS_ACADEMIC</code>
+		<name>IELTS Academic</name>
+		<minimumOverallScore>4.00</minimumOverallScore>
+		<maximumOverallScore>9.00</maximumOverallScore>
+		<minimumReadingScore>4.00</minimumReadingScore>
+		<maximumReadingScore>9.00</maximumReadingScore>
+		<minimumWritingScore>4.00</minimumWritingScore>
+		<maximumWritingScore>9.00</maximumWritingScore>
+		<minimumSpeakingScore>4.00</minimumSpeakingScore>
+		<maximumSpeakingScore>9.00</maximumSpeakingScore>
+		<minimumListeningScore>4.00</minimumListeningScore>
+		<maximumListeningScore>9.00</maximumListeningScore>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>TOEFL_INTERNET</code>
+		<name>TOEFL iBT Internet</name>
+		<minimumOverallScore>0.00</minimumOverallScore>
+		<maximumOverallScore>120.00</maximumOverallScore>
+		<minimumReadingScore>0.00</minimumReadingScore>
+		<maximumReadingScore>30.00</maximumReadingScore>
+		<minimumWritingScore>0.00</minimumWritingScore>
+		<maximumWritingScore>30.00</maximumWritingScore>
+		<minimumSpeakingScore>0.00</minimumSpeakingScore>
+		<maximumSpeakingScore>30.00</maximumSpeakingScore>
+		<minimumListeningScore>0.00</minimumListeningScore>
+		<maximumListeningScore>30.00</maximumListeningScore>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>TOEFL_PAPER</code>
+		<name>TOEFL iBT Paper</name>
+		<minimumOverallScore>0.00</minimumOverallScore>
+		<maximumOverallScore>120.00</maximumOverallScore>
+		<minimumReadingScore>0.00</minimumReadingScore>
+		<maximumReadingScore>30.00</maximumReadingScore>
+		<minimumWritingScore>0.00</minimumWritingScore>
+		<maximumWritingScore>30.00</maximumWritingScore>
+		<minimumSpeakingScore>0.00</minimumSpeakingScore>
+		<maximumSpeakingScore>30.00</maximumSpeakingScore>
+		<minimumListeningScore>0.00</minimumListeningScore>
+		<maximumListeningScore>30.00</maximumListeningScore>
+	</languageQualificationType>
+</languageQualificationTypes>

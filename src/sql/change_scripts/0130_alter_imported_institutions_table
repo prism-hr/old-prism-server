@@ -1,0 +1,4 @@
+alter table imported_institution
+	add column ucas_id VARCHAR(10) after custom,
+	add column facebook_id VARCHAR(50)
+;

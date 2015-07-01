@@ -13,18 +13,17 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -245,8 +244,8 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public Domicile getDomicile() {
-        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
+    public ImportedEntitySimple getDomicile() {
+        return (ImportedEntitySimple) sessionFactory.getCurrentSession().createCriteria(ImportedEntitySimple.class).setMaxResults(1).uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -254,12 +253,12 @@ public class TestObjectProvider {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass).setMaxResults(1).uniqueResult();
     }
 
-    public InstitutionDomicile getInstitutionDomicile() {
-        return (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class).setMaxResults(1).uniqueResult();
+    public AdvertDomicile getInstitutionDomicile() {
+        return (AdvertDomicile) sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class).setMaxResults(1).uniqueResult();
     }
 
-    public InstitutionDomicile getAlternativeInstitutionDomicile(InstitutionDomicile domicile) {
-        return (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class)//
+    public AdvertDomicile getAlternativeInstitutionDomicile(AdvertDomicile domicile) {
+        return (AdvertDomicile) sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class)//
                 .add(Restrictions.ne("id", domicile.getId())) //
                 .setMaxResults(1).uniqueResult();
     }
@@ -274,8 +273,8 @@ public class TestObjectProvider {
                 .uniqueResult();
     }
 
-    public QualificationType getQualificationType() {
-        return (QualificationType) sessionFactory.getCurrentSession().createCriteria(QualificationType.class).setMaxResults(1).uniqueResult();
+    public ImportedEntitySimple getQualificationType() {
+        return (ImportedEntitySimple) sessionFactory.getCurrentSession().createCriteria(ImportedEntitySimple.class).setMaxResults(1).uniqueResult();
     }
 
 }

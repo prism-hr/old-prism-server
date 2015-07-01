@@ -10,16 +10,15 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "advert_theme", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }),
-        @UniqueConstraint(columnNames = { "theme", "advert_id" }) })
-public class AdvertTheme extends AdvertFilterCategory {
+@Table(name = "ADVERT_THEME", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }) })
+public class AdvertTheme extends AdvertAttribute<String> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "advert_id", updatable = false, insertable = false)
+    @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
     @Column(name = "theme", nullable = false)
@@ -54,8 +53,13 @@ public class AdvertTheme extends AdvertFilterCategory {
     }
 
     @Override
-    public Object getValue() {
-        return getTheme();
+    public String getValue() {
+        return theme;
+    }
+
+    @Override
+    public void setValue(String value) {
+        setTheme(value);
     }
 
     @Override

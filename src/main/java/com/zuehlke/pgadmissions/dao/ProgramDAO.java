@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
@@ -28,16 +27,16 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -61,13 +60,20 @@ public class ProgramDAO {
                 .uniqueResult();
     }
 
-    public List<Program> getPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class) //
+    public List<ResourceRepresentationSimple> getApprovedPrograms(Integer institutionId) {
+        return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id")) //
+                        .add(Projections.property("title"))) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("institution.id", institutionId)) //
+                .add(Restrictions.eq("resourceState.state.id", PROGRAM_APPROVED)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
                 .list();
     }
 
-    public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
-        return (List<ProgramRepresentation>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+    public List<ResourceRepresentationSimple> getSimilarPrograms(Integer institutionId, String searchTerm) {
+        return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
                         .add(Projections.property("title"), "title")) //
@@ -76,6 +82,7 @@ public class ProgramDAO {
                         Restrictions.in("state.id", Arrays.asList(PROGRAM_REJECTED, PROGRAM_WITHDRAWN, PROGRAM_DISABLED_COMPLETED)))) //
                 .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE)) //
                 .addOrder(Order.desc("title")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
                 .list();
     }
 
@@ -100,20 +107,6 @@ public class ProgramDAO {
                         .setProjection(Projections.property("studyLocation")) //
                         .add(Restrictions.eq("program", program)))) //
                 .list();
-    }
-
-    public Long getActiveProgramCount(Institution institution) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.countDistinct("id")) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                .add(Restrictions.eq("stateAction.action.id", PROGRAM_CREATE_APPLICATION)) //
-                .uniqueResult();
     }
 
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {

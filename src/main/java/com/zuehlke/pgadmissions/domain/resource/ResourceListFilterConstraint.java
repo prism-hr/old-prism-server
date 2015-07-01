@@ -1,14 +1,25 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Entity
 @Table(name = "resource_list_filter_constraint", uniqueConstraints = {
@@ -28,7 +39,7 @@ public class ResourceListFilterConstraint {
 
     @Column(name = "filter_property", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismResourceListFilter filterProperty;
+    private PrismResourceListContraint filterProperty;
 
     @Column(name = "filter_expression", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -81,11 +92,11 @@ public class ResourceListFilterConstraint {
         this.filter = filter;
     }
 
-    public final PrismResourceListFilter getFilterProperty() {
+    public final PrismResourceListContraint getFilterProperty() {
         return filterProperty;
     }
 
-    public final void setFilterProperty(PrismResourceListFilter filterProperty) {
+    public final void setFilterProperty(PrismResourceListContraint filterProperty) {
         this.filterProperty = filterProperty;
     }
 
@@ -174,7 +185,7 @@ public class ResourceListFilterConstraint {
         return this;
     }
 
-    public ResourceListFilterConstraint withFilterProperty(PrismResourceListFilter filterProperty) {
+    public ResourceListFilterConstraint withFilterProperty(PrismResourceListContraint filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }

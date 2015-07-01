@@ -1,14 +1,20 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
 @Table(name = "application_program_detail")
@@ -22,23 +28,20 @@ public class ApplicationProgramDetail extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "opportunity_type_id", nullable = false)
-    private OpportunityType opportunityType;
+    @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
+    private ImportedEntitySimple opportunityType;
 
     @ManyToOne
-    @JoinColumn(name = "study_option_id", nullable = false)
-    private StudyOption studyOption;
+    @JoinColumn(name = "imported_study_option_id", nullable = false)
+    private ImportedEntitySimple studyOption;
 
     @Column(name = "start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
 
     @ManyToOne
-    @JoinColumn(name = "referral_source_id", nullable = false)
-    private ReferralSource referralSource;
-
-    @Transient
-    private String sourceOfInterestText;
+    @JoinColumn(name = "imported_referral_source_id", nullable = false)
+    private ImportedEntitySimple referralSource;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -60,19 +63,19 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.application = application;
     }
 
-    public OpportunityType getOpportunityType() {
+    public ImportedEntitySimple getOpportunityType() {
         return opportunityType;
     }
 
-    public void setOpportunityType(OpportunityType opportunityType) {
+    public void setOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
     }
 
-    public StudyOption getStudyOption() {
+    public ImportedEntitySimple getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(StudyOption studyOption) {
+    public void setStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -84,20 +87,12 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.startDate = startDate;
     }
 
-    public ReferralSource getReferralSource() {
+    public ImportedEntitySimple getReferralSource() {
         return referralSource;
     }
 
-    public void setReferralSource(ReferralSource referralSource) {
+    public void setReferralSource(ImportedEntitySimple referralSource) {
         this.referralSource = referralSource;
-    }
-
-    public String getSourceOfInterestText() {
-        return sourceOfInterestText;
-    }
-
-    public void setSourceOfInterestText(String sourceOfInterest) {
-        this.sourceOfInterestText = sourceOfInterest;
     }
 
     @Override
@@ -115,12 +110,12 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withOpportunityType(OpportunityType opportunityType) {
+    public ApplicationProgramDetail withOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }
 
-    public ApplicationProgramDetail withStudyOption(StudyOption studyOption) {
+    public ApplicationProgramDetail withStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
         return this;
     }
@@ -130,13 +125,8 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withReferralSource(ReferralSource referralSource) {
+    public ApplicationProgramDetail withReferralSource(ImportedEntitySimple referralSource) {
         this.referralSource = referralSource;
-        return this;
-    }
-
-    public ApplicationProgramDetail withSourceOfInterestText(String sourceOfInterestText) {
-        this.sourceOfInterestText = sourceOfInterestText;
         return this;
     }
 
@@ -154,7 +144,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     }
 
     public PrismStudyOption getStudyOptionDisplay() {
-        return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getCode());
+        return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getName());
     }
 
 }

@@ -1,30 +1,30 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Set;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 
 @Entity
-@Table(name = "imported_language_qualification_type", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
-public class ImportedLanguageQualificationType extends ImportedEntity {
+@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
+public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLanguageQualificationTypeMapping> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
-
-    @Column(name = "code", nullable = false)
-    private String code;
-
-    @Lob
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "minimum_overall_score")
@@ -59,6 +59,9 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+    
+    @OneToMany(mappedBy = "importedLanguageQualificationType")
+    private Set<ImportedLanguageQualificationTypeMapping> mappings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -71,28 +74,8 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     }
 
     @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    @Override
     public PrismImportedEntity getType() {
-        return LANGUAGE_QUALIFICATION_TYPE;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
+        return IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
     }
 
     @Override
@@ -194,15 +177,10 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-
-    public ImportedLanguageQualificationType withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public ImportedLanguageQualificationType withCode(String code) {
-        this.code = code;
-        return this;
+    
+    @Override
+    public Set<ImportedLanguageQualificationTypeMapping> getMappings() {
+        return mappings;
     }
 
     public ImportedLanguageQualificationType withName(String name) {

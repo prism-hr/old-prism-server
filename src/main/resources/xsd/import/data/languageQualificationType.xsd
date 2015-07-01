@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="languageQualificationTypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="languageQualificationType" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:string" name="name"/>
+              <xs:element type="xs:float" name="minimumOverallScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="maximumOverallScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="minimumReadingScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="maximumReadingScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="minimumWritingScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="maximumWritingScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="minimumSpeakingScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="maximumSpeakingScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="minimumListeningScore" minOccurs="0"/>
+              <xs:element type="xs:float" name="maximumListeningScore" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

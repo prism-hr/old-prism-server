@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EXPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
@@ -52,7 +53,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
@@ -66,8 +66,8 @@ import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 
 import freemarker.template.Template;
 
@@ -99,9 +99,9 @@ public class ApplicationDAO {
 
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("exportReference")) //
+                .setProjection(Projections.property("applicationExport.exportReference")) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNotNull("exportReference")) //
+                .add(Restrictions.isNotNull("applicationExport.exportReference")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
@@ -167,7 +167,9 @@ public class ApplicationDAO {
                 .setProjection(Projections.property("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("userRole.role.id", APPLICATION_REFEREE))
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("userRole.application", application)) //
+                                .add(Restrictions.eq("userRole.role.id", APPLICATION_REFEREE))) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNull("comment")) //
                 .add(Restrictions.isNull("userRole.id")) //
@@ -180,7 +182,7 @@ public class ApplicationDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
+                .add(Restrictions.eq("action.actionCategory", EXPORT_RESOURCE)) //
                 .list();
     }
 
@@ -308,16 +310,16 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
@@ -325,8 +327,8 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_week.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .addScalar("applicationWeek", IntegerType.INSTANCE) //
@@ -370,21 +372,20 @@ public class ApplicationDAO {
                 .list();
     }
 
-    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, Set<ResourceSummaryPlotConstraintRepresentation> constraints,
-            String templateLocation) {
+    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
         List<String> filterConstraintExpressions = Lists.newLinkedList();
         if (constraints != null) {
             HashMultimap<PrismImportedEntity, Integer> flattenedConstraints = HashMultimap.create();
-            for (ResourceSummaryPlotConstraintRepresentation constraint : constraints) {
-                flattenedConstraints.put(constraint.getType(), constraint.getId());
+            for (ResourceReportFilterPropertyDTO constraint : constraints) {
+                flattenedConstraints.put(constraint.getEntityType(), constraint.getEntityId());
             }
 
             for (PrismImportedEntity entity : flattenedConstraints.keySet()) {
                 String columnConstraintExpression = "(";
                 List<String> columnConstraint = Lists.newArrayList();
-                for (String column : entity.getDatabaseReferenceColumns()) {
+                for (String column : entity.getReportDefinition()) {
                     columnConstraint.add(column + " in (" + Joiner.on(", ").join(flattenedConstraints.get(entity)) + ")");
                 }
                 filterConstraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tand ").join(columnConstraint) + ")");

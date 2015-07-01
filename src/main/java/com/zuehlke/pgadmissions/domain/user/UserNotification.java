@@ -14,17 +14,19 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
 @Table(name = "user_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "user_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "department_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "application_id", "user_id", "notification_definition_id" }) })
@@ -41,6 +43,10 @@ public class UserNotification extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -92,6 +98,16 @@ public class UserNotification extends WorkflowResourceExecution {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override

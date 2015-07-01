@@ -1,13 +1,25 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.domain.user.Address;
-import com.zuehlke.pgadmissions.domain.user.User;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
 @Table(name = "application_referee", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
@@ -41,7 +53,7 @@ public class ApplicationReferee extends ApplicationAssignmentSection {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
+    private AddressApplication address;
 
     @Column(name = "phone", nullable = false)
     private String phone;
@@ -105,11 +117,11 @@ public class ApplicationReferee extends ApplicationAssignmentSection {
         this.jobTitle = jobTitle;
     }
 
-    public Address getAddress() {
+    public AddressApplication getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressApplication address) {
         this.address = address;
     }
 

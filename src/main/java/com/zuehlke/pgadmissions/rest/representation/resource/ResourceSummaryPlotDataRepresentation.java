@@ -5,18 +5,17 @@ import java.util.List;
 
 public class ResourceSummaryPlotDataRepresentation {
 
-    private List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear> processingSummaries;
+    private List<ApplicationProcessingSummaryRepresentationYear> processingSummaries;
 
-    public List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear> getProcessingSummaries() {
+    public List<ApplicationProcessingSummaryRepresentationYear> getProcessingSummaries() {
         return processingSummaries;
     }
 
-    public void setProcessingSummaries(List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
+    public void setProcessingSummaries(List<ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
         this.processingSummaries = processingSummaries;
     }
 
-    public ResourceSummaryPlotDataRepresentation withProcessingSummaries(
-            List<ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
+    public ResourceSummaryPlotDataRepresentation withProcessingSummaries(List<ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
         this.processingSummaries = processingSummaries;
         return this;
     }

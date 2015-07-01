@@ -2,10 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
@@ -21,8 +17,6 @@ import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -39,10 +33,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
@@ -50,10 +41,7 @@ import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
@@ -65,9 +53,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -83,14 +70,10 @@ import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -155,7 +138,7 @@ public class ApplicationService {
         LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
 
-        StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
+        ImportedEntitySimple studyOption = importedEntityService.getByName(ImportedEntitySimple.class, studyOptionId.name());
         ResourceStudyOption resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
 
         if (resourceStudyOption == null && !application.getParentResource().sameAs(application.getInstitution())) {
@@ -172,24 +155,34 @@ public class ApplicationService {
 
     public LocalDate getEarliestStartDate(ResourceStudyOption resourceStudyOption, LocalDate baseline) {
         if (resourceStudyOption != null) {
-            LocalDate studyOptionStart = resourceStudyOption.getApplicationStartDate();
-            LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
-            earliestStartDate = earliestStartDate.withDayOfWeek(MONDAY);
-            return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
-        } else {
-            return new LocalDate().withDayOfWeek(MONDAY);
+            LocalDate applicationStartDate = resourceStudyOption.getApplicationStartDate();
+            LocalDate applicationCloseDate = resourceStudyOption.getApplicationCloseDate();
+
+            if (!(applicationStartDate == null || applicationCloseDate == null)) {
+                LocalDate studyOptionStart = resourceStudyOption.getApplicationStartDate();
+                LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
+                earliestStartDate = earliestStartDate.withDayOfWeek(MONDAY);
+                return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
+            }
         }
+
+        return new LocalDate().withDayOfWeek(MONDAY);
     }
 
     public LocalDate getLatestStartDate(Application application, ResourceStudyOption resourceStudyOption) {
         if (resourceStudyOption != null) {
-            LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
-                    resourceStudyOption.getResource().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
-            LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
-            return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
-        } else {
-            return application.getInstitution().getEndDate();
+            LocalDate applicationStartDate = resourceStudyOption.getApplicationStartDate();
+            LocalDate applicationCloseDate = resourceStudyOption.getApplicationCloseDate();
+
+            if (!(applicationStartDate == null || applicationCloseDate == null)) {
+                LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
+                        PrismOpportunityType.valueOf(resourceStudyOption.getResource().getOpportunityType().getName()).getDefaultStartBuffer());
+                LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
+                return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
+            }
         }
+
+        return new LocalDate().plusYears(1);
     }
 
     public String getApplicationExportReference(Application application) {
@@ -240,75 +233,8 @@ public class ApplicationService {
         return applicationDAO.getUnassignedApplicationReferees(application);
     }
 
-    public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
-        if (currentUser.getId().equals(representation.getUser().getId())) {
-            representation.setApplicationRatingAverage(null);
-        }
-    }
-
     public List<Integer> getApplicationsForExport() {
         return applicationDAO.getApplicationsForExport();
-    }
-
-    public ApplicationSummaryRepresentation getApplicationSummary(Integer applicationId) {
-        Application application = getById(applicationId);
-
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
-        String dateFormat = loader.load(SYSTEM_DATE_FORMAT);
-
-        ApplicationProgramDetail programDetail = application.getProgramDetail();
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-
-        boolean programDetailNull = programDetail == null;
-        boolean personalDetailNull = personalDetail == null;
-
-        PrismStudyOption studyOption = programDetailNull ? null : programDetail.getStudyOptionDisplay();
-        ApplicationSummaryRepresentation summary = new ApplicationSummaryRepresentation().withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
-                .withSubmittedDate(application.getSubmittedTimestampDisplay(dateFormat)).withClosingDate(application.getClosingDateDisplay(dateFormat))
-                .withPrimaryThemes(application.getPrimaryThemeDisplay()).withSecondaryThemes(application.getSecondaryThemeDisplay())
-                .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personalDetailNull ? null : personalDetail.getSkype())
-                .withStudyOption(studyOption == null ? null : loader.load(programDetail.getStudyOptionDisplay().getDisplayProperty()))
-                .withReferralSource(programDetail == null ? null : programDetail.getReferralSourceDisplay()).withReferrer(application.getReferrer());
-
-        ApplicationQualification latestQualification = applicationDAO.getLatestApplicationQualification(application);
-        if (latestQualification != null) {
-            summary.setLatestQualification(new QualificationSummaryRepresentation().withTitle(latestQualification.getTitle())
-                    .withSubject(latestQualification.getSubject()).withGrade(latestQualification.getGrade())
-                    .withInstitution(latestQualification.getInstitutionDisplay()).withStartDate(latestQualification.getStartDateDisplay(dateFormat))
-                    .withEndDate(latestQualification.getAwardDateDisplay(dateFormat)));
-        }
-
-        ApplicationEmploymentPosition latestEmploymentPosition = applicationDAO.getLatestApplicationEmploymentPosition(application);
-        if (latestEmploymentPosition != null) {
-            summary.setLatestEmploymentPosition(new EmploymentPositionSummaryRepresentation().withPosition(latestEmploymentPosition.getPosition())
-                    .withEmployer(latestEmploymentPosition.getEmployerName()).withStartDate(latestEmploymentPosition.getStartDateDisplay(dateFormat))
-                    .withEndDate(latestEmploymentPosition.getEndDateDisplay(dateFormat)));
-        }
-
-        ApplicationDocument applicationDocument = application.getDocument();
-        if (applicationDocument != null) {
-            Map<String, PrismDisplayPropertyDefinition> documentProperties = ImmutableMap.of( //
-                    "personalStatement", APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL, //
-                    "researchStatement", APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL, //
-                    "cv", APPLICATION_DOCUMENT_CV_LABEL, //
-                    "coveringLetter", APPLICATION_DOCUMENT_COVERING_LETTER_LABEL);
-
-            for (Entry<String, PrismDisplayPropertyDefinition> documentProperty : documentProperties.entrySet()) {
-                Document document = (Document) PrismReflectionUtils.getProperty(applicationDocument, documentProperty.getKey());
-                if (document != null) {
-                    summary.addDocument(new DocumentSummaryRepresentation().withId(document.getId()).withLabel(loader.load(documentProperty.getValue())));
-                }
-            }
-        }
-
-        Long providedReferenceCount = applicationDAO.getProvidedReferenceCount(application);
-        summary.setReferenceProvidedCount(providedReferenceCount == null ? null : providedReferenceCount.intValue());
-
-        Long declinedReferenceCount = applicationDAO.getDeclinedReferenceCount(application);
-        summary.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
-
-        summary.setOtherLiveApplications(applicationDAO.getOtherLiveApplications(application));
-        return summary;
     }
 
     public DataTable getApplicationReport(ResourceListFilterDTO filter) throws Exception {
@@ -370,41 +296,16 @@ public class ApplicationService {
         return dataTable;
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraint);
-    }
-
-    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraint);
-        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
-            index.put(processingSummary.getApplicationYear(), processingSummary);
-        }
-        return index;
-    }
-
-    public LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
-        LinkedHashMultimap<ApplicationProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraint);
-        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
-            index.put(new ApplicationProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
-        }
-        return index;
-    }
-
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
         List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
         customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
                 application.getWorkflowPropertyConfigurationVersion());
         if (application.isSubmitted()) {
             for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
-                PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
-                if (definitionId == APPLICATION_ASSIGN_REFEREE) {
-                    configuration.setMaximum(definitionId.getMaximumPermitted());
-                } else if (definitionId == APPLICATION_POSITION_DETAIL
+                PrismWorkflowPropertyDefinition property = (PrismWorkflowPropertyDefinition) configuration.getProperty();
+                if (property == APPLICATION_ASSIGN_REFEREE) {
+                    configuration.setMaximum(property.getMaximumPermitted());
+                } else if (property == APPLICATION_POSITION_DETAIL
                         && BooleanUtils.isTrue(application.getProgram().getRequireProjectDefinition())) {
                     configuration.setEnabled(true);
                     configuration.setRequired(true);
@@ -456,9 +357,44 @@ public class ApplicationService {
         return applicationDAO.getApplicationsByMatchingSuggestedSupervisor(searchTerm);
     }
 
+    public ApplicationQualification getLatestApplicationQualification(Application application) {
+        return applicationDAO.getLatestApplicationQualification(application);
+    }
+
+    public ApplicationEmploymentPosition getLatestApplicationEmploymentPosition(Application application) {
+        return applicationDAO.getLatestApplicationEmploymentPosition(application);
+    }
+
+    public Long getProvidedReferenceCount(Application application) {
+        return applicationDAO.getProvidedReferenceCount(application);
+    }
+
+    public Long getDeclinedReferenceCount(Application application) {
+        return applicationDAO.getDeclinedReferenceCount(application);
+    }
+
+    public List<OtherApplicationSummaryRepresentation> getOtherLiveApplications(Application application) {
+        return applicationDAO.getOtherLiveApplications(application);
+    }
+
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints);
+    }
+
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints);
+    }
+
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
+    }
+
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
         if (!application.getParentResource().sameAs(application.getInstitution())) {
-            PrismOpportunityType opportunityType = application.getProgram().getOpportunityType().getPrismOpportunityType();
+            PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(application.getAdvert().getOpportunityType().name());
             DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
 
             LocalDate immediate = defaults.getImmediate();
@@ -475,47 +411,9 @@ public class ApplicationService {
             }
 
             return recommended;
-        } else {
-            return baseline.withDayOfWeek(MONDAY).plusWeeks(4);
-        }
-    }
-
-    public static class ApplicationProcessingMonth {
-
-        private String applicationYear;
-
-        private Integer applicationMonth;
-
-        public ApplicationProcessingMonth(String applicationYear, Integer applicationMonth) {
-            this.applicationYear = applicationYear;
-            this.applicationMonth = applicationMonth;
         }
 
-        public String getApplicationYear() {
-            return applicationYear;
-        }
-
-        public Integer getApplicationMonth() {
-            return applicationMonth;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(applicationYear, applicationMonth);
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            if (object == null) {
-                return false;
-            }
-            if (getClass() != object.getClass()) {
-                return false;
-            }
-            final ApplicationProcessingMonth other = (ApplicationProcessingMonth) object;
-            return Objects.equal(applicationYear, other.getApplicationYear()) && Objects.equal(applicationMonth, other.getApplicationMonth());
-        }
-
+        return baseline.withDayOfWeek(MONDAY).plusWeeks(4);
     }
 
 }

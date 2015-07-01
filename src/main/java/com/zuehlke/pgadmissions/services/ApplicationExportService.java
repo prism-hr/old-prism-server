@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.comment.CommentExport;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationExportResponseDTO;
 import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
 import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -163,14 +164,30 @@ public class ApplicationExportService {
 
     protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
             String exportException) throws Exception {
-        Action exportAction = actionService.getById(APPLICATION_EXPORT);
-        Institution exportInstitution = application.getInstitution();
+        Integer userId = application.getInstitution().getUser().getId();
+        executeExportAction(new ApplicationExportResponseDTO().withUserId(userId).withApplicationId(application.getId())
+                .withExportSucceeded(exportId != null).withExportRequest(exportRequest == null ? null : getRequestContent(exportRequest))
+                .withExportId(exportId).withExportUserId(exportUserId).withExportException(exportException));
+    }
 
-        Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
-                .withExportRequest(exportRequest == null ? null : getRequestContent(exportRequest)).withExportReference(exportId)
-                .withExportException(exportException).withCreatedTimestamp(new DateTime());
+    // TODO: expose as end point to post export outcomes - need to try catch and
+    // return exception to client
+    public void executeExportAction(ApplicationExportResponseDTO exportResponseDTO) throws Exception {
+        User user = userService.getById(exportResponseDTO.getUserId());
+        Application application = applicationService.getById(exportResponseDTO.getApplicationId());
+
+        Action exportAction = actionService.getById(APPLICATION_EXPORT);
+        Comment comment = new Comment()
+                .withUser(user)
+                .withAction(exportAction)
+                .withDeclinedResponse(false)
+                .withApplicationExport(
+                        new CommentExport().withExportSucceeded(exportResponseDTO.getExportSucceeded()).withExportRequest(exportResponseDTO.getExportRequest())
+                                .withExportReference(exportResponseDTO.getExportId()).withExportException(exportResponseDTO.getExportException()))
+                .withCreatedTimestamp(new DateTime());
         actionService.executeAction(application, exportAction, comment);
 
+        String exportUserId = exportResponseDTO.getExportUserId();
         if (exportUserId != null) {
             userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
         }

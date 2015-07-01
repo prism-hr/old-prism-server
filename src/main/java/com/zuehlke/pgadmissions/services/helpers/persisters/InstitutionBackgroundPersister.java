@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 
 @Component
@@ -17,7 +17,7 @@ public class InstitutionBackgroundPersister implements ImageDocumentPersister {
     @Override
     public void persist(Integer institutionId, Document image) {
         Institution institution = institutionService.getById(institutionId);
-        institution.setBackgroundImage(image);
+        institution.getAdvert().setBackgroundImage(image);
     }
 
 }

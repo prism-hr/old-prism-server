@@ -10,7 +10,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PROCESS_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PROPAGATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_RESOURCE_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
@@ -225,7 +224,6 @@ public enum PrismAction {
     INSTITUTION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, INSTITUTION, null), //
     INSTITUTION_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, INSTITUTION, null), //
     INSTITUTION_IMPORT_PROGRAM(SYSTEM_INVOCATION, IMPORT_RESOURCE, false, false, false, null, INSTITUTION, null), //
-    INSTITUTION_PROVIDE_SPONSORSHIP(USER_INVOCATION, SPONSOR_RESOURCE, false, false, true, null, INSTITUTION, null), //
     INSTITUTION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, INSTITUTION, null), //
     PROGRAM_STARTUP(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROGRAM, null), //
     PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROGRAM, null), //
@@ -237,7 +235,6 @@ public enum PrismAction {
     PROGRAM_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, PROGRAM, null), //
     PROGRAM_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, PROGRAM, null), //
     PROGRAM_RESTORE(SYSTEM_INVOCATION, PROCESS_RESOURCE, false, false, false, null, PROGRAM, null), //
-    PROGRAM_PROVIDE_SPONSORSHIP(USER_INVOCATION, SPONSOR_RESOURCE, false, false, true, null, PROGRAM, null), //
     PROGRAM_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, PROGRAM, null), //
     PROJECT_STARTUP(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROJECT, null), //
@@ -248,7 +245,6 @@ public enum PrismAction {
     PROJECT_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, PROJECT, null), //
     PROJECT_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, PROJECT, null), //
     PROJECT_RESTORE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, false, null, PROJECT, null), //
-    PROJECT_PROVIDE_SPONSORSHIP(USER_INVOCATION, SPONSOR_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_SUSPEND(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_TERMINATE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, PROJECT, null), //

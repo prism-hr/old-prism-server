@@ -1,16 +1,26 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.domain.imported.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
-@Table(name = "application_personal_detail")
+@Table(name = "APPLICATION_PERSONAL_DETAIL")
 public class ApplicationPersonalDetail extends ApplicationSection {
 
     @Id
@@ -20,13 +30,33 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @OneToOne(mappedBy = "personalDetail")
     private Application application;
 
-    @Column(name = "skype")
-    @Size(min = 6, max = 32)
-    private String skype;
+    @ManyToOne
+    @JoinColumn(name = "imported_title_id")
+    private ImportedEntitySimple title;
 
-    @Column(name = "phone", nullable = false)
-    @Size(max = 50)
-    private String phone;
+    @ManyToOne
+    @JoinColumn(name = "imported_gender_id")
+    private ImportedEntitySimple gender;
+
+    @Column(name = "date_of_birth", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dateOfBirth;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_age_range_id")
+    private ImportedAgeRange ageRange;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_country_id")
+    private ImportedEntitySimple country;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_nationality_id1")
+    private ImportedEntitySimple firstNationality;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_nationality_id2")
+    private ImportedEntitySimple secondNationality;
 
     @Column(name = "first_language_locale")
     private Boolean firstLanguageLocale;
@@ -42,45 +72,25 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @JoinColumn(name = "application_passport_id")
     private ApplicationPassport passport;
 
-    @ManyToOne
-    @JoinColumn(name = "nationality_id1")
-    private Nationality firstNationality;
+    @Column(name = "skype")
+    @Size(min = 6, max = 32)
+    private String skype;
+
+    @Column(name = "phone", nullable = false)
+    @Size(max = 50)
+    private String phone;
 
     @ManyToOne
-    @JoinColumn(name = "nationality_id2")
-    private Nationality secondNationality;
+    @JoinColumn(name = "imported_ethnicity_id")
+    private ImportedEntitySimple ethnicity;
 
     @ManyToOne
-    @JoinColumn(name = "title_id")
-    private Title title;
+    @JoinColumn(name = "imported_disability_id")
+    private ImportedEntitySimple disability;
 
     @ManyToOne
-    @JoinColumn(name = "gender_id")
-    private Gender gender;
-
-    @Column(name = "date_of_birth", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate dateOfBirth;
-
-    @ManyToOne
-    @JoinColumn(name = "age_range_id")
-    private AgeRange ageRange;
-
-    @ManyToOne
-    @JoinColumn(name = "country_id")
-    private Country country;
-
-    @ManyToOne
-    @JoinColumn(name = "ethnicity_id")
-    private Ethnicity ethnicity;
-
-    @ManyToOne
-    @JoinColumn(name = "disability_id")
-    private Disability disability;
-
-    @ManyToOne
-    @JoinColumn(name = "domicile_id")
-    private Domicile domicile;
+    @JoinColumn(name = "imported_domicile_id")
+    private ImportedEntitySimple domicile;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -94,35 +104,27 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return id;
     }
 
-    public Nationality getFirstNationality() {
-        return firstNationality;
+    public Application getApplication() {
+        return application;
     }
 
-    public void setFirstNationality(Nationality firstNationality) {
-        this.firstNationality = firstNationality;
+    public void setApplication(Application application) {
+        this.application = application;
     }
 
-    public Nationality getSecondNationality() {
-        return secondNationality;
-    }
-
-    public void setSecondNationality(Nationality secondNationality) {
-        this.secondNationality = secondNationality;
-    }
-
-    public Title getTitle() {
+    public ImportedEntitySimple getTitle() {
         return title;
     }
 
-    public void setTitle(Title title) {
+    public void setTitle(ImportedEntitySimple title) {
         this.title = title;
     }
 
-    public Gender getGender() {
+    public ImportedEntitySimple getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(ImportedEntitySimple gender) {
         this.gender = gender;
     }
 
@@ -134,52 +136,80 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public AgeRange getAgeRange() {
+    public ImportedAgeRange getAgeRange() {
         return ageRange;
     }
 
-    public void setAgeRange(AgeRange ageRange) {
+    public void setAgeRange(ImportedAgeRange ageRange) {
         this.ageRange = ageRange;
     }
 
-    public Domicile getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(Domicile domicile) {
-        this.domicile = domicile;
-    }
-
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
-    public Country getCountry() {
+    public ImportedEntitySimple getCountry() {
         return country;
     }
 
-    public void setCountry(Country country) {
+    public void setCountry(ImportedEntitySimple country) {
         this.country = country;
     }
 
-    public void setEthnicity(Ethnicity eth) {
-        this.ethnicity = eth;
+    public ImportedEntitySimple getFirstNationality() {
+        return firstNationality;
     }
 
-    public Ethnicity getEthnicity() {
-        return ethnicity;
+    public void setFirstNationality(ImportedEntitySimple firstNationality) {
+        this.firstNationality = firstNationality;
     }
 
-    public void setDisability(Disability disability) {
-        this.disability = disability;
+    public ImportedEntitySimple getSecondNationality() {
+        return secondNationality;
     }
 
-    public Disability getDisability() {
-        return disability;
+    public void setSecondNationality(ImportedEntitySimple secondNationality) {
+        this.secondNationality = secondNationality;
+    }
+
+    public Boolean getFirstLanguageLocale() {
+        return firstLanguageLocale;
+    }
+
+    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
+        this.firstLanguageLocale = firstLanguageLocale;
+    }
+
+    public Boolean getLanguageQualificationAvailable() {
+        return languageQualification != null;
+    }
+
+    public ApplicationLanguageQualification getLanguageQualification() {
+        return languageQualification;
+    }
+
+    public void setLanguageQualification(ApplicationLanguageQualification languageQualification) {
+        this.languageQualification = languageQualification;
+    }
+
+    public ImportedEntitySimple getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(ImportedEntitySimple domicile) {
+        this.domicile = domicile;
+    }
+
+    public Boolean getVisaRequired() {
+        return visaRequired;
+    }
+
+    public void setVisaRequired(Boolean visaRequired) {
+        this.visaRequired = visaRequired;
+    }
+
+    public ApplicationPassport getPassport() {
+        return passport;
+    }
+
+    public void setPassport(ApplicationPassport passport) {
+        this.passport = passport;
     }
 
     public String getPhone() {
@@ -198,44 +228,20 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.skype = skype;
     }
 
-    public Boolean getFirstLanguageLocale() {
-        return firstLanguageLocale;
+    public ImportedEntitySimple getEthnicity() {
+        return ethnicity;
     }
 
-    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
-        this.firstLanguageLocale = firstLanguageLocale;
+    public void setEthnicity(ImportedEntitySimple ethnicity) {
+        this.ethnicity = ethnicity;
     }
 
-    public Boolean getVisaRequired() {
-        return visaRequired;
+    public ImportedEntitySimple getDisability() {
+        return disability;
     }
 
-    public void setVisaRequired(Boolean visaRequired) {
-        this.visaRequired = visaRequired;
-    }
-
-    public Boolean getPassportAvailable() {
-        return passport != null;
-    }
-
-    public ApplicationPassport getPassport() {
-        return passport;
-    }
-
-    public void setPassport(ApplicationPassport passport) {
-        this.passport = passport;
-    }
-
-    public Boolean getLanguageQualificationAvailable() {
-        return languageQualification != null;
-    }
-
-    public ApplicationLanguageQualification getLanguageQualification() {
-        return languageQualification;
-    }
-
-    public void setLanguageQualification(ApplicationLanguageQualification languageQualification) {
-        this.languageQualification = languageQualification;
+    public void setDisability(ImportedEntitySimple disability) {
+        this.disability = disability;
     }
 
     @Override
@@ -258,12 +264,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withTitle(Title title) {
+    public ApplicationPersonalDetail withTitle(ImportedEntitySimple title) {
         this.title = title;
         return this;
     }
 
-    public ApplicationPersonalDetail withGender(Gender gender) {
+    public ApplicationPersonalDetail withGender(ImportedEntitySimple gender) {
         this.gender = gender;
         return this;
     }
@@ -273,17 +279,17 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withCountry(Country country) {
+    public ApplicationPersonalDetail withCountry(ImportedEntitySimple country) {
         this.country = country;
         return this;
     }
 
-    public ApplicationPersonalDetail withFirstNationality(Nationality firstNationality) {
+    public ApplicationPersonalDetail withFirstNationality(ImportedEntitySimple firstNationality) {
         this.firstNationality = firstNationality;
         return this;
     }
 
-    public ApplicationPersonalDetail withSecondNationality(Nationality secondNationality) {
+    public ApplicationPersonalDetail withSecondNationality(ImportedEntitySimple secondNationality) {
         this.secondNationality = secondNationality;
         return this;
     }
@@ -298,7 +304,7 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withDomicile(final Domicile domicile) {
+    public ApplicationPersonalDetail withDomicile(final ImportedEntitySimple domicile) {
         this.domicile = domicile;
         return this;
     }
@@ -323,12 +329,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationPersonalDetail withEthnicity(Ethnicity ethnicity) {
+    public ApplicationPersonalDetail withEthnicity(ImportedEntitySimple ethnicity) {
         this.ethnicity = ethnicity;
         return this;
     }
 
-    public ApplicationPersonalDetail withDisability(Disability disability) {
+    public ApplicationPersonalDetail withDisability(ImportedEntitySimple disability) {
         this.disability = disability;
         return this;
     }

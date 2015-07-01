@@ -26,17 +26,15 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -44,7 +42,6 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -65,20 +62,6 @@ public class ResourceDAO {
 
     public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
         String propagatedAlias = propagatedScope.getLowerCamelName();
-        String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
-
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
-                .setProjection(Projections.property(propagatedAlias + ".id")) //
-                .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
-                .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("id", propagatingId)) //
-                .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .list();
-    }
-
-    public List<Integer> getPartnerResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
-        String propagatedAlias = "partner" + propagatedScope.getUpperCamelName();
         String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
 
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
@@ -165,17 +148,15 @@ public class ResourceDAO {
             projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
 
-        projectionList.add(Projections.property("partner.id"), "partnerId") //
-                .add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
-                .add(Projections.property("user.id"), "creatorId") //
-                .add(Projections.property("user.firstName"), "creatorFirstName") //
-                .add(Projections.property("user.firstName2"), "creatorFirstName2") //
-                .add(Projections.property("user.firstName3"), "creatorFirstName3") //
-                .add(Projections.property("user.lastName"), "creatorLastName") //
-                .add(Projections.property("user.email"), "creatorEmail") //
-                .add(Projections.property("primaryExternalAccount.accountImageUrl"), "creatorAccountImageUrl")
-                .add(Projections.property("externalAccount.accountProfileUrl"), "creatorLinkedinProfileUrl")
-                .add(Projections.property("code"), "code");
+        projectionList.add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
+                .add(Projections.property("code"), "code") //
+                .add(Projections.property("user.id"), "userId") //
+                .add(Projections.property("user.firstName"), "userFirstName") //
+                .add(Projections.property("user.firstName2"), "userFirstName2") //
+                .add(Projections.property("user.firstName3"), "userFirstName3") //
+                .add(Projections.property("user.lastName"), "userLastName") //
+                .add(Projections.property("user.email"), "userEmail") //
+                .add(Projections.property("primaryExternalAccount.accountImageUrl"), "userAccountImageUrl");
 
         addResourceListCustomColumns(scopeId, projectionList);
 
@@ -184,8 +165,6 @@ public class ResourceDAO {
         }
 
         projectionList.add(Projections.property("state.id"), "stateId") //
-                .add(Projections.property("state.stateGroup.id"), "stateGroupId") //
-                .add(Projections.property("user.email"), "creatorEmail") //
                 .add(Projections.property("createdTimestamp"), "createdTimestamp") //
                 .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
                 .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
@@ -194,9 +173,7 @@ public class ResourceDAO {
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN)
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN));
+                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
 
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
         criteria.add(Restrictions.in("id", assignedResources));
@@ -246,29 +223,6 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
-                .add(Restrictions.isNull("state.hidden"));
-
-        appendResourceListFilterCriterion(criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
-        return (List<Integer>) criteria.list();
-    }
-
-    public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
-                .setProjection(Projections.groupProperty("id")) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("partner", "partner", JoinType.INNER_JOIN) //
-                .createAlias("partner.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN, //
-                        Restrictions.eq("stateActionAssignment.partnerMode", true)) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
-                .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(criteria, conditions, filter);
@@ -327,7 +281,7 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public <T> T getResourceAttribute(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
+    public <T> T getResourceAttribute(ResourceOpportunity resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("project", resource.getProject())) //
@@ -341,27 +295,25 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public <T> T getResourceAttributeStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
+    public <T> T getResourceAttributeStrict(ResourceOpportunity resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq(attributeName, attributeValue)) //
                 .uniqueResult();
     }
 
-    public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
+    public <T> List<T> getResourceAttributes(ResourceOpportunity resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("project", resource.getProject())) //
-                        .add(Restrictions.eq("program", resource.getProgram())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
+                        .add(Restrictions.eq("program", resource.getProgram()))) //
                 .addOrder(Order.desc("project")) //
                 .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
                 .addOrder(Order.asc(Joiner.on(".").skipNulls().join(attributeName, orderAttributeName))) //
                 .list();
     }
 
-    public <T> List<T> getResourceAttributesStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
+    public <T> List<T> getResourceAttributesStrict(ResourceOpportunity resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .createAlias(attributeName, attributeName, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
@@ -369,7 +321,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, StudyOption studyOption) {
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
         return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOptionInstance.class) //
                 .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("studyOption." + resource.getResourceScope().getLowerCamelName(), resource)) //
@@ -395,62 +347,28 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public Institution getPreviousPartner(ResourceOpportunity resource) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("partner")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
+    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
+        return (LocalDate) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .setProjection(Projections.property("applicationCloseDate")) //
+                .addOrder(Order.desc("applicationCloseDate")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
 
-    public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
-                .setProjection(Projections.property("id")) //
-                .createAlias("partner", "partner", JoinType.INNER_JOIN) //
-                .add(Restrictions.ilike("partner.title", searchTerm, MatchMode.ANYWHERE))
-                .list();
-    }
-
-    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.groupProperty(scope.getLowerCamelName() + ".id")) //
-                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
-                .add(Restrictions.ilike("sponsor.title", searchTerm, MatchMode.ANYWHERE))
-                .list();
-    }
-
-    public Long getResourceSponsorCount(Resource resource) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.countDistinct("sponsorship.sponsor")) //
+    public <T extends ResourceParent> Long getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(childResourceScope.getResourceClass()) //
+                .setProjection(Projections.countDistinct("id")) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN, //
+                        Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
-                .add(Restrictions.isNull("sponsorship.rejection")) //
                 .uniqueResult();
     }
 
-    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
-        return (List<ResourceSponsorRepresentation>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("sponsor.id"), "sponsorId") //
-                        .add(Projections.property("sponsor.title"), "sponsorTitle") //
-                        .add(Projections.property("sponsor.logoImage.id"), "sponsorLogoId") //
-                        .add(Projections.sum("sponsorship.amountConverted").as("sponsorshipProvided"), "sponsorshipProvided")) //
-                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
-                .add(Restrictions.isNull("sponsorship.rejection")) //
-                .addOrder(Order.desc("sponsorshipProvided")) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(10) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceSponsorRepresentation.class))
-                .list();
-    }
-
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
-        HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
+        HashMultimap<String, String> customColumns = scopeId.getResourceListCustomColumns();
         for (String tableName : customColumns.keySet()) {
             boolean prefixColumnName = !tableName.equals(scopeId.getLowerCamelName());
             for (String columnName : customColumns.get(tableName)) {
@@ -469,7 +387,7 @@ public class ResourceDAO {
     }
 
     private void addResourceListCustomJoins(PrismScope scopeId, String resourceReference, Criteria criteria) {
-        for (String tableName : scopeId.getConsoleListCustomColumns().keySet()) {
+        for (String tableName : scopeId.getResourceListCustomColumns().keySet()) {
             if (!tableName.equals(resourceReference)) {
                 criteria.createAlias(tableName, tableName, JoinType.LEFT_OUTER_JOIN); //
             }

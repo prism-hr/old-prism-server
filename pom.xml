@@ -476,50 +476,6 @@
 							<schemaDirectory>${project.basedir}/src/main/resources/xsd/iso</schemaDirectory>
 						</configuration>
 					</execution>
-					<execution>
-						<id>xjc-2</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<packageName>com.zuehlke.pgadmissions.referencedata.jaxb.data</packageName>
-							<outputDirectory>${project.build.directory}/generated-sources/jaxb/import/data</outputDirectory>
-							<schemaDirectory>${project.basedir}/src/main/resources/xsd/import/data</schemaDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>xjc-3</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<packageName>com.zuehlke.pgadmissions.referencedata.jaxb.mapping</packageName>
-							<outputDirectory>${project.build.directory}/generated-sources/jaxb/import/mapping</outputDirectory>
-							<schemaDirectory>${project.basedir}/src/main/resources/xsd/import/mapping</schemaDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>xjc-4</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<packageName>com.zuehlke.pgadmissions.referencedata.jaxb.resource</packageName>
-							<outputDirectory>${project.build.directory}/generated-sources/jaxb/import/resource</outputDirectory>
-							<schemaDirectory>${project.basedir}/src/main/resources/xsd/import/resource</schemaDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>xjc-5</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb</packageName>
-							<outputDirectory>${project.build.directory}/generated-sources/jaxb/export</outputDirectory>
-							<schemaDirectory>${project.basedir}/src/main/resources/xsd/export</schemaDirectory>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 

@@ -208,7 +208,7 @@ public class ImportedEntityService {
         for (Object mappingDefinition : mappingDefinitions) {
             entityDefinitions.add(mapper.map(mappingDefinition, prismImportedEntity.getEntityJaxbClass()));
         }
-
+        
         insertImportedEntities(prismImportedEntity, entityDefinitions, false);
 
         importedEntityDAO.disableImportedEntityMappings(institution, prismImportedEntity);

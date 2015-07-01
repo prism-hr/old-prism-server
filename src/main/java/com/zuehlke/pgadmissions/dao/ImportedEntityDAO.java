@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.user.Address;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -15,15 +16,9 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.user.Address;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -186,9 +181,44 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public List<ImportedInstitution> getAllWhereUcasIdIsNotNull(){
+    public List<ImportedInstitution> getAllWhereUcasIdIsNotNull() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
                 .add(Restrictions.isNotNull("ucasId")).list();
+    }
+
+    //temporary workaround to update imported_institution table based on XML;  until importer gets fixed
+    public void fixDatabase(String ucasId, String facebookId, String code, String domicile) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "update imported_institution " //
+                        + "set ucas_id = :ucasId , facebook_id = :facebookId " //
+                        + "where institution_id = 5243 " //
+                        + "and domicile_id = (select id from imported_entity where institution_id = 5243 and imported_entity_type = 'DOMICILE' and code = :domicile )" //
+                        + "and code = :code") //
+                .setParameter("ucasId", ucasId) //
+                .setParameter("facebookId", facebookId) //
+                .setParameter("domicile", domicile)
+                .setParameter("code", code)
+                .executeUpdate();
+    }
+
+    //temporary workaround to load program table based on XML created 'manually'
+    public void importProgram(String institutionId, String qualification, String title, String homepage, String level) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "insert ignore into imported_program (imported_institution_id, qualification, title, homepage, level, enabled) values (:institutionId, :qualification, :title, :homepage,:level, :enabled)")
+                .setParameter("institutionId", institutionId)
+                .setParameter("qualification", qualification)
+                .setParameter("title", title)
+                .setParameter("homepage", homepage)
+                .setParameter("level", level)
+                .setParameter("enabled", true)
+                .executeUpdate();
+//        `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+//        `imported_institution_id` int(10) unsigned NOT NULL,
+//        `qualification` varchar(50) NOT NULL,
+//        `title` varchar(255) NOT NULL,
+//        `homepage` text,
+//        `level` varchar(50) DEFAULT NULL,
+//        `enabled` int(1) unsigned NOT NULL
     }
 
 }

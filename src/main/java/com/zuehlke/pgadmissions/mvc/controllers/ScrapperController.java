@@ -9,7 +9,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.ws.spi.http.HttpContext;
 import java.io.IOException;
 import java.util.List;
 
@@ -58,5 +57,11 @@ public class ScrapperController {
     @ResponseBody
     @RequestMapping(value= "/importPrograms", method = RequestMethod.POST)
     public void importPrograms() throws IOException, SAXException, ParserConfigurationException {
+    }
+
+    @ResponseBody
+    @RequestMapping(value= "/createScoring", method = RequestMethod.GET)
+    public void generateScoringForProgramsAndSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
+        scrapperService.generateScoringForProgramsAndSubjectAreas();
     }
 }

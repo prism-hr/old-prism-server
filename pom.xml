@@ -12,6 +12,12 @@
         <repository>
             <id>prism.dev.repository</id>
             <url>http://mercurial.alumeni.co.uk/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -39,7 +45,7 @@
         <dependency>
             <groupId>uk.co.alumeni</groupId>
             <artifactId>prism-sdk</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Hibernate -->

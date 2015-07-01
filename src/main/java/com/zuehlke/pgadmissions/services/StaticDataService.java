@@ -39,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpres
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -52,10 +51,12 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.mappers.ActionMapper;
 import com.zuehlke.pgadmissions.mappers.AdvertMapper;
 import com.zuehlke.pgadmissions.mappers.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mappers.ResourceMapper;
 import com.zuehlke.pgadmissions.mappers.StateMapper;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
@@ -63,7 +64,6 @@ import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepr
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
@@ -78,7 +78,7 @@ public class StaticDataService {
     private BigDecimal systemMinimumWage;
 
     private ToIdFunction toIdFunction = new ToIdFunction();
-    
+
     @Inject
     private CustomizationService customizationService;
 
@@ -95,8 +95,11 @@ public class StaticDataService {
     private InstitutionService institutionService;
 
     @Inject
+    private ActionMapper actionMapper;
+
+    @Inject
     private AdvertMapper advertMapper;
-    
+
     @Inject
     private ImportedEntityMapper importedEntityMapper;
 
@@ -112,9 +115,7 @@ public class StaticDataService {
         List<Action> actions = entityService.list(Action.class);
         List<ActionRepresentation> actionRepresentations = Lists.newArrayListWithExpectedSize(actions.size());
         for (Action action : actions) {
-            PrismActionCustomQuestionDefinition customQuestionDefinitionId = action.getActionCustomQuestionDefinition() != null ? action
-                    .getActionCustomQuestionDefinition().getId() : null;
-            actionRepresentations.add(new ActionRepresentation(action.getId(), action.getActionCategory(), customQuestionDefinitionId));
+            actionRepresentations.add(actionMapper.getActionRepresentation(action.getId()));
         }
 
         staticData.put("actions", actionRepresentations);
@@ -219,7 +220,7 @@ public class StaticDataService {
                 List<? extends WorkflowDefinition> definitions = customizationService.getDefinitions(prismConfiguration, prismScope);
                 List<WorkflowDefinitionRepresentation> parameters = Lists.newArrayList();
                 for (WorkflowDefinition definition : definitions) {
-                    parameters.add(mapper.map(definition, prismConfiguration.getDefinitionRepresentationClass()));
+                    parameters.add(mapper.downcast(definition, prismConfiguration.getDefinitionRepresentationClass()));
                 }
                 if (!parameters.isEmpty()) {
                     scopeConfigurations.put(prismScope, parameters);

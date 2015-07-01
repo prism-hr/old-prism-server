@@ -34,4 +34,8 @@ public class ScopeService {
         return scopeDAO.getParentScopesDescending(prismScope);
     }
 
+    public <T extends Resource> List<PrismScope> getChildScopesAscending(PrismScope prismScope) {
+        return scopeDAO.getChildScopesAscending(prismScope);
+    }
+
 }

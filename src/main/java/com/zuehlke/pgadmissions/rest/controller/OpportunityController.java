@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mappers.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.StateService;
 
 @RestController
@@ -32,6 +34,9 @@ public class OpportunityController {
     
     @Inject
     private AdvertMapper advertMapper;
+    
+    @Inject
+    private ApplicationService applicationService;
 
     @Inject
     private StateService stateService;
@@ -60,7 +65,8 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
     public List<AdvertRepresentation> getRecommendedAdverts(@PathVariable Integer applicationId) {
-        return advertService.getRecommendedAdverts(applicationId);
+        Application application = applicationService.getById(applicationId);
+        return advertMapper.getRecommendedAdvertRepresentations(application);
     }
 
 }

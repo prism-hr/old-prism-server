@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+
 @Entity
 @Table(name = "application_address")
 public class ApplicationAddress extends ApplicationSection {
@@ -25,11 +27,11 @@ public class ApplicationAddress extends ApplicationSection {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "current_address_id", nullable = false)
-    private Address currentAddress;
+    private AddressApplication currentAddress;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "contact_address_id", nullable = false)
-    private Address contactAddress;
+    private AddressApplication contactAddress;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -51,19 +53,19 @@ public class ApplicationAddress extends ApplicationSection {
         this.application = application;
     }
 
-    public Address getCurrentAddress() {
+    public AddressApplication getCurrentAddress() {
         return currentAddress;
     }
 
-    public void setCurrentAddress(Address currentAddress) {
+    public void setCurrentAddress(AddressApplication currentAddress) {
         this.currentAddress = currentAddress;
     }
 
-    public Address getContactAddress() {
+    public AddressApplication getContactAddress() {
         return contactAddress;
     }
 
-    public void setContactAddress(Address contactAddress) {
+    public void setContactAddress(AddressApplication contactAddress) {
         this.contactAddress = contactAddress;
     }
 
@@ -81,13 +83,13 @@ public class ApplicationAddress extends ApplicationSection {
         return currentAddress == contactAddress;
     }
 
-    public ApplicationAddress withCurrentAddress(Address address) {
-        this.currentAddress = address;
+    public ApplicationAddress withCurrentAddress(AddressApplication addressApplication) {
+        this.currentAddress = addressApplication;
         return this;
     }
 
-    public ApplicationAddress withContactAddress(Address address) {
-        this.contactAddress = address;
+    public ApplicationAddress withContactAddress(AddressApplication addressApplication) {
+        this.contactAddress = addressApplication;
         return this;
     }
 

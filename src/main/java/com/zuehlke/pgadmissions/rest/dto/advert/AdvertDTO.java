@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
-import com.zuehlke.pgadmissions.rest.dto.AdvertAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
 
 public class AdvertDTO {
@@ -28,7 +28,7 @@ public class AdvertDTO {
     private String telephone;
 
     @Valid
-    private AdvertAddressDTO address;
+    private AddressAdvertDTO address;
 
     public String getTitle() {
         return title;
@@ -62,11 +62,11 @@ public class AdvertDTO {
         this.telephone = telephone;
     }
 
-    public AdvertAddressDTO getAddress() {
+    public AddressAdvertDTO getAddress() {
         return address;
     }
 
-    public void setAddress(AdvertAddressDTO address) {
+    public void setAddress(AddressAdvertDTO address) {
         this.address = address;
     }
 

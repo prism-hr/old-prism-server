@@ -33,7 +33,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.application.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -262,17 +262,17 @@ public class ApplicationSectionService {
         }
 
         AddressDTO currentAddressDTO = addressDTO.getCurrentAddress();
-        Address currentAddress = address.getCurrentAddress();
+        AddressApplication currentAddress = address.getCurrentAddress();
         if (currentAddress == null) {
-            currentAddress = new Address();
+            currentAddress = new AddressApplication();
             address.setCurrentAddress(currentAddress);
         }
         copyAddress(institution, currentAddress, currentAddressDTO);
 
         AddressDTO contactAddressDTO = addressDTO.getContactAddress();
-        Address contactAddress = address.getContactAddress();
+        AddressApplication contactAddress = address.getContactAddress();
         if (contactAddress == null) {
-            contactAddress = new Address();
+            contactAddress = new AddressApplication();
             address.setContactAddress(contactAddress);
         }
         copyAddress(institution, contactAddress, contactAddressDTO);
@@ -342,9 +342,9 @@ public class ApplicationSectionService {
         employmentPosition.setEmployerName(employmentPositionDTO.getEmployerName());
 
         AddressDTO employerAddressDTO = employmentPositionDTO.getEmployerAddress();
-        Address employerAddress = employmentPosition.getEmployerAddress();
+        AddressApplication employerAddress = employmentPosition.getEmployerAddress();
         if (employerAddress == null) {
-            employerAddress = new Address();
+            employerAddress = new AddressApplication();
             employmentPosition.setEmployerAddress(employerAddress);
         }
         copyAddress(application.getInstitution(), employerAddress, employerAddressDTO);
@@ -457,14 +457,14 @@ public class ApplicationSectionService {
         referee.setJobTitle(refereeDTO.getJobTitle());
 
         AddressDTO addressDTO = refereeDTO.getAddress();
-        Address address = referee.getAddress();
+        AddressApplication addressApplication = referee.getAddress();
 
-        if (address == null) {
-            address = new Address();
-            referee.setAddress(address);
+        if (addressApplication == null) {
+            addressApplication = new AddressApplication();
+            referee.setAddress(addressApplication);
         }
 
-        copyAddress(application.getInstitution(), address, addressDTO);
+        copyAddress(application.getInstitution(), addressApplication, addressDTO);
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
         referee.setLastUpdatedTimestamp(DateTime.now());
@@ -582,7 +582,7 @@ public class ApplicationSectionService {
 
             ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(institution, ImportedLanguageQualificationType.class,
                     languageQualificationDTO.getType());
-            languageQualification.setType(languageQualificationType);
+            languageQualification.setLanguageQualificationType(languageQualificationType);
             languageQualification.setExamDate(languageQualificationDTO.getExamDate());
             languageQualification.setOverallScore(languageQualificationDTO.getOverallScore());
             languageQualification.setReadingScore(languageQualificationDTO.getReadingScore());
@@ -598,7 +598,7 @@ public class ApplicationSectionService {
         }
     }
 
-    private void copyAddress(Institution institution, Address to, AddressDTO from) {
+    private void copyAddress(Institution institution, AddressApplication to, AddressDTO from) {
         ImportedEntitySimple currentAddressDomicile = importedEntityService.getById(institution, ImportedEntitySimple.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());

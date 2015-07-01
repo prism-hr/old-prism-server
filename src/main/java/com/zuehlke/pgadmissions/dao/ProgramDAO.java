@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
@@ -109,20 +107,6 @@ public class ProgramDAO {
                         .setProjection(Projections.property("studyLocation")) //
                         .add(Restrictions.eq("program", program)))) //
                 .list();
-    }
-
-    public Long getActiveProgramCount(Institution institution) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.countDistinct("id")) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                .add(Restrictions.eq("stateAction.action.id", PROGRAM_CREATE_APPLICATION)) //
-                .uniqueResult();
     }
 
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {

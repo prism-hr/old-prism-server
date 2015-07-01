@@ -16,6 +16,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -52,7 +53,7 @@ public class ApplicationReferee extends ApplicationAssignmentSection {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
+    private AddressApplication address;
 
     @Column(name = "phone", nullable = false)
     private String phone;
@@ -116,11 +117,11 @@ public class ApplicationReferee extends ApplicationAssignmentSection {
         this.jobTitle = jobTitle;
     }
 
-    public Address getAddress() {
+    public AddressApplication getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressApplication address) {
         this.address = address;
     }
 

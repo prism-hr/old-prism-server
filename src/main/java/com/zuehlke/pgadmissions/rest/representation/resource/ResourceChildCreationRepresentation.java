@@ -24,8 +24,8 @@ public class ResourceChildCreationRepresentation extends ResourceRepresentationS
         this.partnerMode = partnerMode;
     }
 
-    public ResourceChildCreationRepresentation withId(Integer id) {
-        setId(id);
+    public ResourceChildCreationRepresentation withResourceId(Integer id) {
+        setResourceId(id);
         return this;
     }
 

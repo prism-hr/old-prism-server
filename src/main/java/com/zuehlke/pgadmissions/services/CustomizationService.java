@@ -83,7 +83,7 @@ public class CustomizationService {
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
 
         WorkflowConfiguration configuration = getConfiguration(configurationType, configuredResource, configuredOpportunityType, definition);
-        WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
+        WorkflowConfigurationRepresentation representation = mapper.downcast(configuration, configurationType.getConfigurationRepresentationClass());
 
         return representation;
     }
@@ -277,7 +277,7 @@ public class CustomizationService {
     private WorkflowConfiguration createConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
-        WorkflowConfiguration configuration = mapper.map(workflowConfigurationDTO, configurationType.getConfigurationClass());
+        WorkflowConfiguration configuration = mapper.downcast(workflowConfigurationDTO, configurationType.getConfigurationClass());
         configuration.setResource(resource);
         configuration.setOpportunityType(opportunityType);
         PrismReflectionUtils.setProperty(configuration, configurationType.getDefinitionPropertyName(), definition);
@@ -304,7 +304,7 @@ public class CustomizationService {
             for (WorkflowConfiguration configuration : configurations) {
                 if (Objects.equal(configuration.getResource(), stereotypeResource)
                         && Objects.equal(configuration.getOpportunityType(), stereotypeOpportunityType)) {
-                    WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
+                    WorkflowConfigurationRepresentation representation = mapper.downcast(configuration, configurationType.getConfigurationRepresentationClass());
                     representations.add(representation);
                 }
             }

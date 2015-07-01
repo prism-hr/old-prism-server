@@ -35,8 +35,8 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAddress;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttributes;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
@@ -60,8 +59,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
+import com.zuehlke.pgadmissions.mappers.AddressMapper;
 import com.zuehlke.pgadmissions.mappers.AdvertMapper;
-import com.zuehlke.pgadmissions.rest.dto.AdvertAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
@@ -72,7 +72,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 @Service
 @Transactional
@@ -95,9 +94,6 @@ public class AdvertService {
     private AdvertDAO advertDAO;
 
     @Inject
-    private ApplicationService applicationService;
-
-    @Inject
     private EntityService entityService;
 
     @Inject
@@ -111,6 +107,9 @@ public class AdvertService {
 
     @Inject
     private AdvertMapper advertMapper;
+
+    @Inject
+    private AddressMapper addressMapper;
 
     @Inject
     private RestTemplate restTemplate;
@@ -171,8 +170,8 @@ public class AdvertService {
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
         advert.setTelephone(advertDTO.getTelephone());
 
-        AdvertAddress address = advert.getAddress();
-        AdvertAddressDTO addressDTO = advertDTO.getAddress();
+        AddressAdvert address = advert.getAddress();
+        AddressAdvertDTO addressDTO = advertDTO.getAddress();
         if (addressDTO != null) {
             updateAddress(advert, addressDTO);
         } else if (address == null) {
@@ -365,10 +364,9 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
 
-    public AdvertAddress createAddressCopy(AdvertAddress address) {
-        AdvertAddress newAddress = new AdvertAddress().withDomicile(address.getDomicile()).withAddressLine1(address.getAddressLine1())
-                .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
-                .withAddressCode(address.getAddressCode());
+    public AddressAdvert createAddressCopy(AddressAdvert address) {
+        AddressAdvert newAddress = addressMapper.transform(address, AddressAdvert.class);
+        newAddress.setDomicile(address.getDomicile());
 
         GeographicLocation oldLocation = address.getLocation();
         if (oldLocation != null) {
@@ -386,22 +384,6 @@ public class AdvertService {
 
     public void setSequenceIdentifier(Advert advert, String prefix) {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
-    }
-
-    public List<AdvertRepresentation> getRecommendedAdverts(Integer applicationId) {
-        List<AdvertRepresentation> representations = Lists.newLinkedList();
-        Application application = applicationService.getById(applicationId);
-        List<AdvertRecommendationDTO> advertRecommendations = getRecommendedAdverts(application.getUser());
-        for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
-            representations.add(advertMapper.getAdvertRepresentation(advertRecommendation.getAdvert()));
-        }
-        return representations;
-    }
-
-    public AdvertAddress getAddressCopy(AdvertAddress address) {
-        return new AdvertAddress().withDomicile(address.getDomicile()).withAddressLine1(address.getAddressLine1())
-                .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
-                .withAddressCode(address.getAddressCode()).withGoogleId(address.getGoogleId()).withLocation(address.getLocation());
     }
 
     public List<Advert> getAdvertsWithFinancialDetails(Institution institution) {
@@ -433,27 +415,51 @@ public class AdvertService {
     }
 
     public List<PrismAdvertIndustry> getAdvertIndustries(Advert advert) {
-        return advertDAO.getAdvertIndustries(advert);
+        List<PrismAdvertIndustry> industries = advertDAO.getAdvertIndustries(advert);
+        if (industries.isEmpty()) {
+            Resource parent = advert.getResource().getParentResource();
+            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
+                return getAdvertIndustries(parent.getAdvert());
+            }
+            return null;
+        }
+        return industries;
     }
 
     public List<PrismAdvertFunction> getAdvertFunctions(Advert advert) {
-        return advertDAO.getAdvertFunctions(advert);
+        List<PrismAdvertFunction> functions = advertDAO.getAdvertFunctions(advert);
+        if (functions.isEmpty()) {
+            Resource parent = advert.getResource().getParentResource();
+            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
+                return getAdvertFunctions(parent.getAdvert());
+            }
+            return null;
+        }
+        return functions;
     }
 
     public List<String> getAdvertThemes(Advert advert) {
-        return advertDAO.getAdvertThemes(advert);
+        List<String> themes = advertDAO.getAdvertThemes(advert);
+        if (themes.isEmpty()) {
+            Resource parent = advert.getResource().getParentResource();
+            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
+                return getAdvertThemes(parent.getAdvert());
+            }
+            return null;
+        }
+        return themes;
     }
 
     public List<AdvertTarget<?>> getAdvertTargets(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
         return advertDAO.getAdvertTargets(advert, targetClass);
     }
-    
+
     public List<AdvertDomicile> getAdvertDomiciles() {
         return advertDAO.getAdvertDomiciles();
     }
 
     private String getCurrencyAtLocale(Advert advert) {
-        AdvertAddress addressAtLocale = advert.getAddress();
+        AddressAdvert addressAtLocale = advert.getAddress();
         addressAtLocale = addressAtLocale == null ? advert.getResource().getInstitution().getAdvert().getAddress() : addressAtLocale;
         return addressAtLocale.getDomicile().getCurrency();
     }
@@ -666,14 +672,14 @@ public class AdvertService {
         return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 
-    private AdvertAddress createAddress(AdvertAddressDTO addressDTO) {
-        AdvertAddress address = new AdvertAddress();
+    private AddressAdvert createAddress(AddressAdvertDTO addressDTO) {
+        AddressAdvert address = new AddressAdvert();
         updateAddress(addressDTO, address);
         return address;
     }
 
-    private void updateAddress(Advert advert, AdvertAddressDTO addressDTO) {
-        AdvertAddress address = advert.getAddress();
+    private void updateAddress(Advert advert, AddressAdvertDTO addressDTO) {
+        AddressAdvert address = advert.getAddress();
         if (address == null) {
             address = createAddress(addressDTO);
             entityService.save(address);
@@ -684,7 +690,7 @@ public class AdvertService {
         geocodableLocationService.setLocation(addressDTO.getGoogleId(), advert.getTitle(), address);
     }
 
-    private void updateAddress(AdvertAddressDTO addressDTO, AdvertAddress address) {
+    private void updateAddress(AddressAdvertDTO addressDTO, AddressAdvert address) {
         address.setDomicile(entityService.getById(AdvertDomicile.class, addressDTO.getDomicile()));
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
@@ -694,13 +700,13 @@ public class AdvertService {
         address.setGoogleId(addressDTO.getGoogleId());
     }
 
-    private AdvertAddress getResourceAddress(Resource resource) {
+    private AddressAdvert getResourceAddress(Resource resource) {
         Advert advert = resource.getAdvert();
         if (advert == null) {
             return null;
         }
 
-        AdvertAddress address = advert.getAddress();
+        AddressAdvert address = advert.getAddress();
         if (address == null) {
             Resource parentResource = resource.getParentResource();
             if (parentResource.sameAs(resource)) {

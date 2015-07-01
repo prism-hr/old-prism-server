@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.imported;
 
 public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresentation {
 
-    private Integer institution;
+    private ImportedInstitutionRepresentation institution;
 
     private ImportedEntitySimpleRepresentation qualificationType;
 
@@ -11,12 +11,12 @@ public class ImportedProgramRepresentation extends ImportedEntitySimpleRepresent
     private String qualification;
 
     private String homepage;
-
-    public Integer getInstitution() {
+    
+    public ImportedInstitutionRepresentation getInstitution() {
         return institution;
     }
 
-    public void setInstitution(Integer institution) {
+    public void setInstitution(ImportedInstitutionRepresentation institution) {
         this.institution = institution;
     }
 

@@ -79,11 +79,6 @@ public class ProgramService {
         return programDAO.getSuggestedStudyAreas(program, location, division);
     }
 
-    public Integer getActiveProgramCount(Institution institution) {
-        Long count = programDAO.getActiveProgramCount(institution);
-        return count == null ? null : count.intValue();
-    }
-
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
         return programDAO.getLatestUpdatedTimestampSitemap(states);
     }

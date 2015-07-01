@@ -11,4 +11,10 @@ public class ApplicationAdditionalInformationRepresentation extends ApplicationS
     public void setConvictionsText(String convictionsText) {
         this.convictionsText = convictionsText;
     }
+
+    public ApplicationAdditionalInformationRepresentation withConvictionsText(String convictionsText) {
+        this.convictionsText = convictionsText;
+        return this;
+    }
+
 }

@@ -53,5 +53,30 @@ public class ApplicationPrizeRepresentation extends ApplicationSectionRepresenta
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
+    
+    public ApplicationPrizeRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public ApplicationPrizeRepresentation withProvider(String provider) {
+        this.provider = provider;
+        return this;
+    }
+
+    public ApplicationPrizeRepresentation withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+    
+    public ApplicationPrizeRepresentation withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+    
+    public ApplicationPrizeRepresentation withAwardDate(LocalDate awardDate) {
+        this.awardDate = awardDate;
+        return this;
+    }
 
 }

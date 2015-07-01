@@ -9,7 +9,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     private Integer id;
 
-    private ImportedProgramRepresentation programMapping;
+    private ImportedProgramRepresentation program;
 
     private LocalDate startDate;
 
@@ -29,6 +29,14 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public ImportedProgramRepresentation getProgram() {
+        return program;
+    }
+
+    public void setProgram(ImportedProgramRepresentation program) {
+        this.program = program;
     }
 
     public LocalDate getStartDate() {
@@ -71,22 +79,6 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.document = document;
     }
 
-    public Integer getProgram() {
-        return programMapping.getId();
-    }
-    
-    public void setProgram(Integer program) {
-        this.programMapping = new ImportedProgramRepresentation().withId(program);
-    }
-    
-    public ImportedProgramRepresentation getProgramMapping() {
-        return programMapping;
-    }
-
-    public void setProgramMapping(ImportedProgramRepresentation programMapping) {
-        this.programMapping = programMapping;
-    }
-
     public Boolean getCompleted() {
         return completed;
     }
@@ -94,5 +86,45 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
     public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
+    
+    public ApplicationQualificationRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public ApplicationQualificationRepresentation withProgram(ImportedProgramRepresentation program) {
+        this.program = program;
+        return this;
+    }
+    
+    public ApplicationQualificationRepresentation withStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+        return this;
+    }
 
+    public ApplicationQualificationRepresentation withAwardDate(LocalDate awardDate) {
+        this.awardDate = awardDate;
+        return this;
+    }
+    
+    public ApplicationQualificationRepresentation withLanguage(String language) {
+        this.language = language;
+        return this;
+    }
+    
+    public ApplicationQualificationRepresentation withGrade(String grade) {
+        this.grade = grade;
+        return this;
+    }
+    
+    public ApplicationQualificationRepresentation withDocumentRepresentation(DocumentRepresentation document) {
+        this.document = document;
+        return this;
+    }
+    
+    public ApplicationQualificationRepresentation withCompleted(Boolean completed) {
+        this.completed = completed;
+        return this;
+    }
+    
 }

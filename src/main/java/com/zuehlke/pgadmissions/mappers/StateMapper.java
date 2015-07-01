@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
@@ -29,7 +30,13 @@ public class StateMapper {
     }
 
     public StateRepresentationSimple getStateRepresentationSimple(PrismState state) {
-        return new StateRepresentationSimple().withState(state).withStateGroup(state.getStateGroup());
+        return getStateRepresentation(state, StateRepresentationSimple.class);
+    }
+
+    public StateRepresentationExtended getStateRepresentationExtended(PrismState state, boolean parallelizable) {
+        StateRepresentationExtended representation = getStateRepresentation(state, StateRepresentationExtended.class);
+        representation.setParallelizable(parallelizable);
+        return representation;
     }
 
     public List<StateRepresentationSimple> getSecondaryStateRepresentations(Resource resource) {
@@ -48,9 +55,7 @@ public class StateMapper {
         List<StateRepresentationExtended> representations = Lists.newLinkedList();
         List<StateSelectableDTO> states = stateService.getSelectableTransitionStates(resource.getState(), action, resource.getAdvert().isImported());
         for (StateSelectableDTO state : states) {
-            PrismState prismState = state.getState();
-            representations.add(new StateRepresentationExtended().withState(prismState).withStateGroup(prismState.getStateGroup())
-                    .withParallelizable(state.getParallelizable()));
+            representations.add(getStateRepresentationExtended(state.getState(), state.getParallelizable()));
         }
         return representations;
     }
@@ -61,6 +66,15 @@ public class StateMapper {
             representations.add(getStateRepresentationSimple(state));
         }
         return representations;
+    }
+
+    private <T extends StateRepresentationSimple> T getStateRepresentation(PrismState state, Class<T> returnType) {
+        T representation = BeanUtils.instantiate(returnType);
+
+        representation.setState(state);
+        representation.setStateGroup(state.getStateGroup());
+
+        return representation;
     }
 
 }

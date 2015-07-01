@@ -32,19 +32,4 @@ public class ImportedEntitySimpleRepresentation {
         this.code = code;
     }
 
-    public ImportedEntitySimpleRepresentation withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-    
-    public ImportedEntitySimpleRepresentation withName(String name) {
-        this.name = name;
-        return this;
-    }
-    
-    public ImportedEntitySimpleRepresentation withCode(String code) {
-        this.code = code;
-        return this;
-    }
-
 }

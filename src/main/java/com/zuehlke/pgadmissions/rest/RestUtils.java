@@ -17,10 +17,10 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityClientRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentClientRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationClientRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 
 public class RestUtils {
 
@@ -28,15 +28,15 @@ public class RestUtils {
 
     public static ResourceDescriptor getResourceDescriptor(String resourceScope) {
         if ("applications".equals(resourceScope)) {
-            return new ResourceDescriptor(Application.class, ApplicationClientRepresentation.class, APPLICATION);
+            return new ResourceDescriptor(Application.class, ApplicationRepresentationClient.class, APPLICATION);
         } else if ("projects".equals(resourceScope)) {
-            return new ResourceDescriptor(Project.class, ResourceOpportunityClientRepresentation.class, PROJECT);
+            return new ResourceDescriptor(Project.class, ResourceOpportunityRepresentationClient.class, PROJECT);
         } else if ("programs".equals(resourceScope)) {
-            return new ResourceDescriptor(Program.class, ResourceOpportunityClientRepresentation.class, PROGRAM);
+            return new ResourceDescriptor(Program.class, ResourceOpportunityRepresentationClient.class, PROGRAM);
         } else if ("departments".equals(resourceScope)) {
-            return new ResourceDescriptor(Department.class, ResourceParentClientRepresentation.class, DEPARTMENT);
+            return new ResourceDescriptor(Department.class, ResourceParentRepresentationClient.class, DEPARTMENT);
         } else if ("institutions".equals(resourceScope)) {
-            return new ResourceDescriptor(Institution.class, ResourceParentClientRepresentation.class, INSTITUTION);
+            return new ResourceDescriptor(Institution.class, ResourceParentRepresentationClient.class, INSTITUTION);
         } else if ("systems".equals(resourceScope)) {
             return new ResourceDescriptor(System.class, ResourceRepresentationSimple.class, SYSTEM);
         }

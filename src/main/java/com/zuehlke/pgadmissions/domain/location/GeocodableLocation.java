@@ -2,41 +2,38 @@ package com.zuehlke.pgadmissions.domain.location;
 
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.address.Address;
 
-public abstract class GeocodableLocation implements UniqueEntity {
-
-    public abstract Object getId();
+public abstract class GeocodableLocation extends Address {
 
     public abstract GeographicLocation getLocation();
 
     public abstract void setLocation(GeographicLocation location);
 
-    public abstract String getLocationString();
+    public List<String> getLocationTokens() {
+        List<String> tokens = Lists.newLinkedList();
 
-    public boolean isGeocoded() {
-        return getLocation() != null;
-    }
+        tokens.add(getAddressLine1());
 
-    protected String buildLocationString(String... tokens) {
-        return Joiner.on(", ").join(filterLocationTokens(tokens));
-    }
-
-    protected List<String> filterLocationTokens(String... tokens) {
-        List<String> filteredTokens = Lists.newLinkedList();
-        for (String token : tokens) {
-            if (token != null) {
-                filteredTokens.add(token);
-            }
+        String addressLine2 = getAddressLine2();
+        if (addressLine2 != null) {
+            tokens.add(addressLine2);
         }
-        return filteredTokens;
-    }
 
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("id", getId());
+        tokens.add(getAddressTown());
+
+        String addressRegion = getAddressRegion();
+        if (addressRegion != null) {
+            tokens.add(addressRegion);
+        }
+
+        String addressCode = getAddressCode();
+        if (addressCode != null) {
+            tokens.add(addressCode);
+        }
+
+        return tokens;
     }
 
 }

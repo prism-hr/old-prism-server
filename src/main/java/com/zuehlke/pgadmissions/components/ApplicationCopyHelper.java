@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.application.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -401,11 +401,11 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    private Address copyAddress(Institution toInstitution, Address fromAddress, ApplicationSection toSection) {
+    private AddressApplication copyAddress(Institution toInstitution, AddressApplication fromAddress, ApplicationSection toSection) {
         if (fromAddress == null) {
             return null;
         }
-        Address toAddress = new Address();
+        AddressApplication toAddress = new AddressApplication();
         toAddress.setAddressLine1(fromAddress.getAddressLine1());
         toAddress.setAddressLine2(fromAddress.getAddressLine2());
         toAddress.setAddressTown(fromAddress.getAddressTown());
@@ -436,7 +436,7 @@ public class ApplicationCopyHelper {
             return null;
         }
         ApplicationLanguageQualification to = new ApplicationLanguageQualification();
-        to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
+        to.setLanguageQualificationType(getEnabledImportedObject(toInstitution, from.getLanguageQualificationType(), to));
         to.setExamDate(from.getExamDate());
         to.setOverallScore(from.getOverallScore());
         to.setReadingScore(from.getReadingScore());

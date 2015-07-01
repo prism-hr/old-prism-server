@@ -25,7 +25,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -90,7 +89,6 @@ import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelper
 import com.zuehlke.pgadmissions.services.helpers.concurrency.ResourceServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.StateServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
-import com.zuehlke.pgadmissions.utils.ToPropertyFunction;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.SearchRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.resource.seo.social.SocialRepresentationBuilder;
@@ -470,10 +468,12 @@ public class ResourceService {
 
     public List<PrismStudyOption> getStudyOptions(ResourceOpportunity resource) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
+            List<PrismStudyOption> prismStudyOptions = Lists.newArrayList();
             List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
-            return Lists.transform(studyOptions, Functions.compose(
-                    new ToPropertyFunction<ImportedEntitySimple, PrismStudyOption>("prismStudyOption"),
-                    new ToPropertyFunction<ResourceStudyOption, ImportedEntitySimple>("studyOption")));
+            for (ResourceStudyOption studyOption : studyOptions) {
+                prismStudyOptions.add(PrismStudyOption.valueOf(studyOption.getStudyOption().getName()));
+            }
+            return prismStudyOptions;
         }
 
         List<PrismStudyOption> filteredStudyOptions = Lists.newLinkedList();
@@ -661,6 +661,11 @@ public class ResourceService {
 
     public LocalDate getResourceEndDate(ResourceOpportunity resource) {
         return resourceDAO.getResourceEndDate(resource);
+    }
+
+    public <T extends ResourceParent> Integer getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
+        Long count = resourceDAO.getActiveChildResourceCount(resource, childResourceScope);
+        return count == null ? 0 : count.intValue();
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

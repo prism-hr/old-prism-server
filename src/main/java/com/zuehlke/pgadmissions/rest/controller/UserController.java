@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
-import com.zuehlke.pgadmissions.rest.representation.user.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserLinkingValidator;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
@@ -79,7 +79,7 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.GET)
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentationExtended getUser() {
         return userMapper.getUserRepresentationExtended(userService.getCurrentUser());
     }
 

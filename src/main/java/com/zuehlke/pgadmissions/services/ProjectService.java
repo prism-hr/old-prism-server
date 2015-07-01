@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -69,14 +68,6 @@ public class ProjectService {
                 entityService.createOrUpdate(new ResourcePreviousState().withResource(project).withState(previousState).withPrimaryState(true));
             }
         }
-    }
-
-    public Integer getActiveProjectCount(ResourceParent resource) {
-        if (resource.getResourceScope() == PROJECT) {
-            throw new Error();
-        }
-        Long count = projectDAO.getActiveProjectCount(resource);
-        return count == null ? null : count.intValue();
     }
 
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {

@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAddress;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.dto.json.EstablishmentSearchResponseDTO;
@@ -48,7 +48,7 @@ public class GeocodableLocationService {
     @Inject
     private RestTemplate restTemplate;
 
-    public void setLocation(String googleIdentifier, String establishment, AdvertAddress address) {
+    public void setLocation(String googleIdentifier, String establishment, AddressAdvert address) {
         try {
             if (googleIdentifier == null || !setEstablishmentLocation(googleIdentifier, address)) {
                 setGeocodeLocation(googleIdentifier, establishment, address);
@@ -64,7 +64,7 @@ public class GeocodableLocationService {
         return restTemplate.getForObject(request, EstablishmentSearchResponseDTO.class);
     }
 
-    private boolean setEstablishmentLocation(String googleIdentifier, AdvertAddress address) throws Exception {
+    private boolean setEstablishmentLocation(String googleIdentifier, AddressAdvert address) throws Exception {
         EstablishmentSearchResponseDTO response = getEstablishmentLocation(googleIdentifier);
         if (response.getStatus().equals(OK)) {
             GoogleResultDTO result = response.getResult();
@@ -83,8 +83,8 @@ public class GeocodableLocationService {
         return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
     }
 
-    private void setGeocodeLocation(String googleIdentifier, String establishment, AdvertAddress address) throws Exception {
-        List<String> addressTokens = Lists.reverse(address.getAddressTokens());
+    private void setGeocodeLocation(String googleIdentifier, String establishment, AddressAdvert address) throws Exception {
+        List<String> addressTokens = Lists.reverse(address.getLocationTokens());
         addressTokens.add(establishment);
         for (int i = addressTokens.size(); i >= 0; i--) {
             List<String> requestTokens = addressTokens.subList(0, i);

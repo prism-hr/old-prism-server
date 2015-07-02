@@ -64,4 +64,10 @@ public class ScrapperController {
     public void generateScoringForProgramsAndSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
         scrapperService.generateScoringForProgramsAndSubjectAreas();
     }
+
+    @ResponseBody
+    @RequestMapping(value= "/importSubjectAreas", method = RequestMethod.POST)
+    public void importSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
+        scrapperService.importSubjectAreas();
+    }
 }

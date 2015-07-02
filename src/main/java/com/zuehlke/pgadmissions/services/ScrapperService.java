@@ -5,6 +5,8 @@ import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.services.scoring.ImportedProgram;
 import com.zuehlke.pgadmissions.services.scoring.ScoringManager;
+import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -41,7 +43,7 @@ import java.util.List;
  * Created by felipe on 02/06/2015.
  * This class will query http://search.ucas.com/search with a known URL we worked out manually that we could iterate
  * to get institution ID's, Programs, etc based on countries. UK to start with.
- * <p/>
+ * <p>
  */
 @Service
 public class ScrapperService {
@@ -55,6 +57,8 @@ public class ScrapperService {
     private static String URL_INSTITUTIONS_TEMPLATE = HOST + "/search/providers?CountryCode=1%7C2%7C3%7C4%7C5&Feather=7&flt8=2&Vac=1&AvailableIn=2015&Location=united%20kingdom&MaxResults=1000&page=";
     //for programs
     private static String URL_PROGRAMS_TEMPLATE = HOST + "/search/results?Vac=1&AvailableIn={yearOfInterest}&providerids={ucasId}";
+    //for subject areas
+    private static String URL_SUBJECT_AREAS = "https://www.hesa.ac.uk/component/content/article?id=1787";
 
     private HashMap<String, String> cache = new HashMap();
 
@@ -85,6 +89,7 @@ public class ScrapperService {
         log.debug("getInstitutionIdsBasedInUK() - finish method");
         return jsonResult;
     }
+
     //this method is to scrap from UCAS website all programs for each imported_institution
     public void getProgramsForImportedInstitutions(String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
         log.debug("getProgramsForImportedInstitutions() - start method");
@@ -109,6 +114,7 @@ public class ScrapperService {
         //return createXmlStringRepresentation(rootElement); - disabled at the moment and replaced by previous line to write into disk directly as the size is huge
 
     }
+
     //helper method to iterate through all programs given an institution
     private void iterateProgramResultSet(org.w3c.dom.Element rootElement, org.w3c.dom.Document doc, int page, String filterUrl, String currentInstitution) throws IOException {
 
@@ -179,6 +185,7 @@ public class ScrapperService {
         page++;
         iterateProgramResultSet(rootElement, doc, page, filterUrl, currentInstitution);
     }
+
     //helper method to build a unique key for each institution + program so when we run the service with different parameters (yearOfInteres) we avoid duplicates
     private String buildHashForInstitutionAndProgram(String searchUrl, String institutionId) {
         //institution id  = ucas_id
@@ -187,6 +194,7 @@ public class ScrapperService {
         int end = searchUrl.indexOf("/", start);
         return "I[" + institutionId + "]" + "-P[" + searchUrl.substring(start, end) + "]";
     }
+
     //helper method
     private void getProgramsForAnInstitution(org.w3c.dom.Element rootElement, ImportedInstitution currentInstitution, String yearOfInterest, org.w3c.dom.Document doc) throws IOException {
         String url = buildProperUrlForAnInstitution(currentInstitution.getUcasId(), yearOfInterest);
@@ -213,6 +221,7 @@ public class ScrapperService {
         int start = html.lastIndexOf("</div>");
         return html.substring(start + 6, html.length()).trim();
     }
+
     //helper method
     private String buildTemplateUrlForAnInstitutionWithFilterSelected(String filter) {
         //clean from url the page so we can append it outside for iteration
@@ -230,6 +239,7 @@ public class ScrapperService {
         log.info("built URL for INSTITUTION :" + url);
         return url;
     }
+
     //helper method
     private String buildProperUrlForAnInstitutionWithFilterAndPage(String filter, int page) {
         String url = HOST + filter.replace("{page}", "Page=" + Integer.toString(page));
@@ -241,6 +251,7 @@ public class ScrapperService {
     private Document getHtml(String givenUrl) throws IOException {
         return Jsoup.connect(givenUrl).get();
     }
+
     //helper method - to generate XML representation. Proved to be too heavy so writting to file instead
     private String createXmlStringRepresentation(org.w3c.dom.Element doc) throws TransformerException {
         TransformerFactory transfac = TransformerFactory.newInstance();
@@ -258,6 +269,7 @@ public class ScrapperService {
 
         return xmlString;
     }
+
     //helper method - write XML content to disk directly
     private void createXmlContentIntoFile(org.w3c.dom.Element doc, String yearOfInterest) throws TransformerException {
         // write the content into xml file
@@ -268,6 +280,7 @@ public class ScrapperService {
         //actual write to disk
         transformer.transform(source, result);
     }
+
     //one off to fix XML schemas
     public void fixDatabase() throws IOException, SAXException, ParserConfigurationException {
         File fXmlFile = new File("/Users/felipe/druidalabs/ucl/prism-server/src/main/resources/xml/defaultEntities/institution.xml");
@@ -310,6 +323,7 @@ public class ScrapperService {
         doc.getDocumentElement().normalize();
         return doc.getElementsByTagName("program");
     }
+
     //one off method to impor
     public void importPrograms() throws IOException, SAXException, ParserConfigurationException {
         NodeList nList = readProgramsFromXML("/Users/felipe/druidalabs/ucl/prism-server/src/main/resources/xml/defaultEntities/programs2016.xml");
@@ -387,4 +401,37 @@ public class ScrapperService {
         scoringManager.generateScoring();
 
     }
+
+    public void importSubjectAreas() throws IOException {
+        ScrappingManager scrappingManager = new ScrappingManager();
+        Document html = getHtml(URL_SUBJECT_AREAS);
+        Elements container = html.getElementsByAttributeValue("itemprop", "articlebody");
+        Iterator iterator = container.get(0).children().iterator();
+        int count = 0;
+        ImportedSubjectArea currentRootSubject = null;
+        while (iterator.hasNext()) {
+            Element next = (Element) iterator.next();
+            if (next.tag().getName().equals("h3") && count > 0) {
+                currentRootSubject = scrappingManager.addSubjectArea(ImportedSubjectArea.readH3(next), null);//we know its a root node
+            } else if (count > 0) {
+                //it's a table
+                int nestedCount = 0;
+                Iterator<Element> it = next.children().get(0).children().iterator();
+                while (it.hasNext()) {
+                    Element e = (Element) it.next();
+                    if (nestedCount == 0)
+                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrHead(e), currentRootSubject);
+                    else
+                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrTail(e), currentRootSubject);
+                    nestedCount++;
+                }
+                //= next.children().get(0).children().get(0).getElementsByTag("tr");
+            }
+            //Elements e = next.getElementsByClass("he");
+            count++;
+        }
+        return;
+    }
+
+
 }

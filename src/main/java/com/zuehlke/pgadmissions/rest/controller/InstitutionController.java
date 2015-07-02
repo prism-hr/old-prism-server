@@ -140,8 +140,8 @@ public class InstitutionController {
     }
 
     @RequestMapping(value = "/{institutionId}/importedData/{type}", method = RequestMethod.POST)
-    public void importData(@PathVariable PrismImportedEntity type, HttpServletRequest request) throws IOException {
-        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, type.getApiEntityClass());
+    public void importData(@PathVariable uk.co.alumeni.prism.enums.PrismImportedEntity type, HttpServletRequest request) throws IOException {
+        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, type.getEntityClass());
         List<Object> entities = objectMapper.readValue(request.getInputStream(), collectionType);
         LOGGER.info("Loaded entities: " + entities.size() + ", type: " + type);
     }

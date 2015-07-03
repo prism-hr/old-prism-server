@@ -5,8 +5,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotPast;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
+import uk.co.alumeni.prism.utils.validation.DateNotPast;
 
 public class ApplicationPassportDTO {
 

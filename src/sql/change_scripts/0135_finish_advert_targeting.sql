@@ -342,3 +342,7 @@ set application_export_succeeded =
 	if((action_id = "APPLICATION_EXPORT" and application_export_reference is not null), 1, 0)
 where action_id = "APPLICATION_EXPORT"
 ;
+
+drop table imported_entity_feed
+;
+

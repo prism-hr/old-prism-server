@@ -54,7 +54,7 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
-import com.zuehlke.pgadmissions.rest.validation.validator.CommentValidator;
+import com.zuehlke.pgadmissions.rest.validation.CommentValidator;
 
 @Service
 @Transactional

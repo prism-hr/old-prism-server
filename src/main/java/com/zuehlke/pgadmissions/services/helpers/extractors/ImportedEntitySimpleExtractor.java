@@ -9,14 +9,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.api.model.imported.ImportedEntity;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 @Component
-public class ImportedEntitySimpleExtractor implements ImportedEntityExtractor {
+public class ImportedEntitySimpleExtractor implements ImportedEntityExtractor<ImportedEntity> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions, boolean enable) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedEntity> definitions, boolean enable) throws Exception {
         List<String> rows = Lists.newLinkedList();
         for (Object definition : definitions) {
             List<String> cells = Lists.newLinkedList();

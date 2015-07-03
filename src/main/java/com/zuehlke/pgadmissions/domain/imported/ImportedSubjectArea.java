@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import uk.co.alumeni.prism.api.model.ImportedSubjectAreaDefinition;
+
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -20,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMappi
 
 @Entity
 @Table(name = "IMPORTED_SUBJECT_AREA")
-public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMapping> implements TargetEntity {
+public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMapping> implements TargetEntity, ImportedSubjectAreaDefinition {
 
     @Id
     @GeneratedValue
@@ -31,6 +33,9 @@ public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMappi
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "parent_imported_subject_area_id")
@@ -73,6 +78,14 @@ public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMappi
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public ImportedSubjectArea getParentSubjectArea() {

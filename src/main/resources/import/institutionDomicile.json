@@ -1,0 +1,1251 @@
+{
+    "institutionDomiciles": {
+        "institutionDomicile": [
+            {
+                "isoCode": "AD",
+                "name": "Andorra",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "AE",
+                "name": "United Arab Emirates (the)",
+                "currency": "AED"
+            },
+            {
+                "isoCode": "AF",
+                "name": "Afghanistan",
+                "currency": "AFN"
+            },
+            {
+                "isoCode": "AG",
+                "name": "Antigua and Barbuda",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "AI",
+                "name": "French Afars and Issas",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "AL",
+                "name": "Albania",
+                "currency": "ALL"
+            },
+            {
+                "isoCode": "AM",
+                "name": "Armenia",
+                "currency": "AMD"
+            },
+            {
+                "isoCode": "AO",
+                "name": "Angola",
+                "currency": "AOA"
+            },
+            {
+                "isoCode": "AQ",
+                "name": "Antarctica",
+                "currency": "TEMPORARY"
+            },
+            {
+                "isoCode": "AR",
+                "name": "Argentina",
+                "currency": "ARS"
+            },
+            {
+                "isoCode": "AS",
+                "name": "American Samoa",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "AT",
+                "name": "Austria",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "AU",
+                "name": "Australia",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "AW",
+                "name": "Aruba",
+                "currency": "AWG"
+            },
+            {
+                "isoCode": "AX",
+                "name": "Åland Islands",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "AZ",
+                "name": "Azerbaijan",
+                "currency": "AZN"
+            },
+            {
+                "isoCode": "BA",
+                "name": "Bosnia and Herzegovina",
+                "currency": "BAM"
+            },
+            {
+                "isoCode": "BB",
+                "name": "Barbados",
+                "currency": "BBD"
+            },
+            {
+                "isoCode": "BD",
+                "name": "Bangladesh",
+                "currency": "BDT"
+            },
+            {
+                "isoCode": "BE",
+                "name": "Belgium",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "BF",
+                "name": "Burkina Faso",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "BG",
+                "name": "Bulgaria",
+                "currency": "BGN"
+            },
+            {
+                "isoCode": "BH",
+                "name": "Bahrain",
+                "currency": "BHD"
+            },
+            {
+                "isoCode": "BI",
+                "name": "Burundi",
+                "currency": "BIF"
+            },
+            {
+                "isoCode": "BJ",
+                "name": "Benin",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "BL",
+                "name": "Saint Barthélemy",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "BM",
+                "name": "Bermuda",
+                "currency": "BMD"
+            },
+            {
+                "isoCode": "BN",
+                "name": "Brunei Darussalam",
+                "currency": "BND"
+            },
+            {
+                "isoCode": "BO",
+                "name": "Bolivia, Plurinational State of",
+                "currency": "BOB"
+            },
+            {
+                "isoCode": "BQ",
+                "name": "Bonaire, Sint Eustatius and Saba",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "BR",
+                "name": "Brazil",
+                "currency": "BRL"
+            },
+            {
+                "isoCode": "BS",
+                "name": "Bahamas (the)",
+                "currency": "BSD"
+            },
+            {
+                "isoCode": "BT",
+                "name": "Bhutan",
+                "currency": "INR"
+            },
+            {
+                "isoCode": "BV",
+                "name": "Bouvet Island",
+                "currency": "NOK"
+            },
+            {
+                "isoCode": "BW",
+                "name": "Botswana",
+                "currency": "BWP"
+            },
+            {
+                "isoCode": "BY",
+                "name": "Belarus",
+                "currency": "BYR"
+            },
+            {
+                "isoCode": "BZ",
+                "name": "Belize",
+                "currency": "BZD"
+            },
+            {
+                "isoCode": "CA",
+                "name": "Canada",
+                "currency": "CAD"
+            },
+            {
+                "isoCode": "CC",
+                "name": "Cocos (Keeling) Islands (the)",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "CD",
+                "name": "Congo (the Democratic Republic of the)",
+                "currency": "CDF"
+            },
+            {
+                "isoCode": "CF",
+                "name": "Central African Republic (the)",
+                "currency": "XAF"
+            },
+            {
+                "isoCode": "CG",
+                "name": "Congo",
+                "currency": "XAF"
+            },
+            {
+                "isoCode": "CH",
+                "name": "Switzerland",
+                "currency": "CHF"
+            },
+            {
+                "isoCode": "CI",
+                "name": "Côte d'Ivoire",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "CK",
+                "name": "Cook Islands (the)",
+                "currency": "NZD"
+            },
+            {
+                "isoCode": "CL",
+                "name": "Chile",
+                "currency": "CLP"
+            },
+            {
+                "isoCode": "CM",
+                "name": "Cameroon",
+                "currency": "XAF"
+            },
+            {
+                "isoCode": "CN",
+                "name": "China",
+                "currency": "CNY"
+            },
+            {
+                "isoCode": "CO",
+                "name": "Colombia",
+                "currency": "COP"
+            },
+            {
+                "isoCode": "CR",
+                "name": "Costa Rica",
+                "currency": "CRC"
+            },
+            {
+                "isoCode": "CU",
+                "name": "Cuba",
+                "currency": "CUP"
+            },
+            {
+                "isoCode": "CV",
+                "name": "Cabo Verde",
+                "currency": "CVE"
+            },
+            {
+                "isoCode": "CW",
+                "name": "Curaçao",
+                "currency": "ANG"
+            },
+            {
+                "isoCode": "CX",
+                "name": "Christmas Island",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "CY",
+                "name": "Cyprus",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "CZ",
+                "name": "Czech Republic (the)",
+                "currency": "CZK"
+            },
+            {
+                "isoCode": "DE",
+                "name": "Germany",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "DJ",
+                "name": "Djibouti",
+                "currency": "DJF"
+            },
+            {
+                "isoCode": "DK",
+                "name": "Denmark",
+                "currency": "DKK"
+            },
+            {
+                "isoCode": "DM",
+                "name": "Dominica",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "DO",
+                "name": "Dominican Republic (the)",
+                "currency": "DOP"
+            },
+            {
+                "isoCode": "DZ",
+                "name": "Algeria",
+                "currency": "DZD"
+            },
+            {
+                "isoCode": "EC",
+                "name": "Ecuador",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "EE",
+                "name": "Estonia",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "EG",
+                "name": "Egypt",
+                "currency": "EGP"
+            },
+            {
+                "isoCode": "EH",
+                "name": "Western Sahara*",
+                "currency": "MAD"
+            },
+            {
+                "isoCode": "ER",
+                "name": "Eritrea",
+                "currency": "ERN"
+            },
+            {
+                "isoCode": "ES",
+                "name": "Spain",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "ET",
+                "name": "Ethiopia",
+                "currency": "ETB"
+            },
+            {
+                "isoCode": "FI",
+                "name": "Finland",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "FJ",
+                "name": "Fiji",
+                "currency": "FJD"
+            },
+            {
+                "isoCode": "FK",
+                "name": "Falkland Islands (the) [Malvinas]",
+                "currency": "FKP"
+            },
+            {
+                "isoCode": "FM",
+                "name": "Micronesia (the Federated States of)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "FO",
+                "name": "Faroe Islands (the)",
+                "currency": "DKK"
+            },
+            {
+                "isoCode": "FR",
+                "name": "France",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "GA",
+                "name": "Gabon",
+                "currency": "XAF"
+            },
+            {
+                "isoCode": "GB",
+                "name": "United Kingdom (the)",
+                "currency": "GBP"
+            },
+            {
+                "isoCode": "GD",
+                "name": "Grenada",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "GE",
+                "name": "Georgia",
+                "currency": "GEL"
+            },
+            {
+                "isoCode": "GF",
+                "name": "French Guiana",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "GG",
+                "name": "Guernsey",
+                "currency": "GBP"
+            },
+            {
+                "isoCode": "GH",
+                "name": "Ghana",
+                "currency": "GHS"
+            },
+            {
+                "isoCode": "GI",
+                "name": "Gibraltar",
+                "currency": "GIP"
+            },
+            {
+                "isoCode": "GL",
+                "name": "Greenland",
+                "currency": "DKK"
+            },
+            {
+                "isoCode": "GM",
+                "name": "Gambia (The)",
+                "currency": "GMD"
+            },
+            {
+                "isoCode": "GN",
+                "name": "Guinea",
+                "currency": "GNF"
+            },
+            {
+                "isoCode": "GP",
+                "name": "Guadeloupe",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "GQ",
+                "name": "Equatorial Guinea",
+                "currency": "XAF"
+            },
+            {
+                "isoCode": "GR",
+                "name": "Greece",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "GS",
+                "name": "South Georgia and the South Sandwich Islands",
+                "currency": "TEMPORARY"
+            },
+            {
+                "isoCode": "GT",
+                "name": "Guatemala",
+                "currency": "GTQ"
+            },
+            {
+                "isoCode": "GU",
+                "name": "Guam",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "GW",
+                "name": "Guinea-Bissau",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "GY",
+                "name": "Guyana",
+                "currency": "GYD"
+            },
+            {
+                "isoCode": "HK",
+                "name": "Hong Kong",
+                "currency": "HKD"
+            },
+            {
+                "isoCode": "HM",
+                "name": "Heard Island and McDonald Islands",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "HN",
+                "name": "Honduras",
+                "currency": "HNL"
+            },
+            {
+                "isoCode": "HR",
+                "name": "Croatia",
+                "currency": "HRK"
+            },
+            {
+                "isoCode": "HT",
+                "name": "Haiti",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "HU",
+                "name": "Hungary",
+                "currency": "HUF"
+            },
+            {
+                "isoCode": "ID",
+                "name": "Indonesia",
+                "currency": "IDR"
+            },
+            {
+                "isoCode": "IE",
+                "name": "Ireland",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "IL",
+                "name": "Israel",
+                "currency": "ILS"
+            },
+            {
+                "isoCode": "IM",
+                "name": "Isle of Man",
+                "currency": "GBP"
+            },
+            {
+                "isoCode": "IN",
+                "name": "India",
+                "currency": "INR"
+            },
+            {
+                "isoCode": "IO",
+                "name": "British Indian Ocean Territory (the)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "IQ",
+                "name": "Iraq",
+                "currency": "IQD"
+            },
+            {
+                "isoCode": "IR",
+                "name": "Iran (the Islamic Republic of)",
+                "currency": "IRR"
+            },
+            {
+                "isoCode": "IS",
+                "name": "Iceland",
+                "currency": "ISK"
+            },
+            {
+                "isoCode": "IT",
+                "name": "Italy",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "JE",
+                "name": "Jersey",
+                "currency": "GBP"
+            },
+            {
+                "isoCode": "JM",
+                "name": "Jamaica",
+                "currency": "JMD"
+            },
+            {
+                "isoCode": "JO",
+                "name": "Jordan",
+                "currency": "JOD"
+            },
+            {
+                "isoCode": "JP",
+                "name": "Japan",
+                "currency": "JPY"
+            },
+            {
+                "isoCode": "KE",
+                "name": "Kenya",
+                "currency": "KES"
+            },
+            {
+                "isoCode": "KG",
+                "name": "Kyrgyzstan",
+                "currency": "KGS"
+            },
+            {
+                "isoCode": "KH",
+                "name": "Cambodia",
+                "currency": "KHR"
+            },
+            {
+                "isoCode": "KI",
+                "name": "Kiribati",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "KM",
+                "name": "Comoros",
+                "currency": "KMF"
+            },
+            {
+                "isoCode": "KN",
+                "name": "Saint Kitts and Nevis",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "KP",
+                "name": "Korea (the Democratic People's Republic of)",
+                "currency": "KPW"
+            },
+            {
+                "isoCode": "KR",
+                "name": "Korea (the Republic of)",
+                "currency": "KRW"
+            },
+            {
+                "isoCode": "KW",
+                "name": "Kuwait",
+                "currency": "KWD"
+            },
+            {
+                "isoCode": "KY",
+                "name": "Cayman Islands (the)",
+                "currency": "KYD"
+            },
+            {
+                "isoCode": "KZ",
+                "name": "Kazakhstan",
+                "currency": "KZT"
+            },
+            {
+                "isoCode": "LA",
+                "name": "Lao People's Democratic Republic (the)",
+                "currency": "LAK"
+            },
+            {
+                "isoCode": "LB",
+                "name": "Lebanon",
+                "currency": "LBP"
+            },
+            {
+                "isoCode": "LC",
+                "name": "Saint Lucia",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "LI",
+                "name": "Liechtenstein",
+                "currency": "CHF"
+            },
+            {
+                "isoCode": "LK",
+                "name": "Sri Lanka",
+                "currency": "LKR"
+            },
+            {
+                "isoCode": "LR",
+                "name": "Liberia",
+                "currency": "LRD"
+            },
+            {
+                "isoCode": "LS",
+                "name": "Lesotho",
+                "currency": "ZAR"
+            },
+            {
+                "isoCode": "LT",
+                "name": "Lithuania",
+                "currency": "LTL"
+            },
+            {
+                "isoCode": "LU",
+                "name": "Luxembourg",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "LV",
+                "name": "Latvia",
+                "currency": "LVL"
+            },
+            {
+                "isoCode": "LY",
+                "name": "Libya",
+                "currency": "LYD"
+            },
+            {
+                "isoCode": "MA",
+                "name": "Morocco",
+                "currency": "MAD"
+            },
+            {
+                "isoCode": "MC",
+                "name": "Monaco",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "MD",
+                "name": "Moldova (the Republic of)",
+                "currency": "MDL"
+            },
+            {
+                "isoCode": "ME",
+                "name": "Montenegro",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "MF",
+                "name": "Saint Martin (French part)",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "MG",
+                "name": "Madagascar",
+                "currency": "MGA"
+            },
+            {
+                "isoCode": "MH",
+                "name": "Marshall Islands (the)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "MK",
+                "name": "Macedonia (the former Yugoslav Republic of)",
+                "currency": "MKD"
+            },
+            {
+                "isoCode": "ML",
+                "name": "Mali",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "MM",
+                "name": "Myanmar",
+                "currency": "MMK"
+            },
+            {
+                "isoCode": "MN",
+                "name": "Mongolia",
+                "currency": "MNT"
+            },
+            {
+                "isoCode": "MO",
+                "name": "Macao",
+                "currency": "MOP"
+            },
+            {
+                "isoCode": "MP",
+                "name": "Northern Mariana Islands (the)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "MQ",
+                "name": "Martinique",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "MR",
+                "name": "Mauritania",
+                "currency": "MRO"
+            },
+            {
+                "isoCode": "MS",
+                "name": "Montserrat",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "MT",
+                "name": "Malta",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "MU",
+                "name": "Mauritius",
+                "currency": "MUR"
+            },
+            {
+                "isoCode": "MV",
+                "name": "Maldives",
+                "currency": "MVR"
+            },
+            {
+                "isoCode": "MW",
+                "name": "Malawi",
+                "currency": "MWK"
+            },
+            {
+                "isoCode": "MX",
+                "name": "Mexico",
+                "currency": "MXN"
+            },
+            {
+                "isoCode": "MY",
+                "name": "Malaysia",
+                "currency": "MYR"
+            },
+            {
+                "isoCode": "MZ",
+                "name": "Mozambique",
+                "currency": "MZN"
+            },
+            {
+                "isoCode": "NA",
+                "name": "Namibia",
+                "currency": "ZAR"
+            },
+            {
+                "isoCode": "NC",
+                "name": "New Caledonia",
+                "currency": "XPF"
+            },
+            {
+                "isoCode": "NE",
+                "name": "Niger (the)",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "NF",
+                "name": "Norfolk Island",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "NG",
+                "name": "Nigeria",
+                "currency": "NGN"
+            },
+            {
+                "isoCode": "NI",
+                "name": "Nicaragua",
+                "currency": "NIO"
+            },
+            {
+                "isoCode": "NL",
+                "name": "Netherlands (the)",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "NO",
+                "name": "Norway",
+                "currency": "NOK"
+            },
+            {
+                "isoCode": "NP",
+                "name": "Nepal",
+                "currency": "NPR"
+            },
+            {
+                "isoCode": "NR",
+                "name": "Nauru",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "NU",
+                "name": "Niue",
+                "currency": "NZD"
+            },
+            {
+                "isoCode": "NZ",
+                "name": "New Zealand",
+                "currency": "NZD"
+            },
+            {
+                "isoCode": "OM",
+                "name": "Oman",
+                "currency": "OMR"
+            },
+            {
+                "isoCode": "PA",
+                "name": "Panama",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "PE",
+                "name": "Peru",
+                "currency": "PEN"
+            },
+            {
+                "isoCode": "PF",
+                "name": "French Polynesia",
+                "currency": "XPF"
+            },
+            {
+                "isoCode": "PG",
+                "name": "Papua New Guinea",
+                "currency": "PGK"
+            },
+            {
+                "isoCode": "PH",
+                "name": "Philippines (the)",
+                "currency": "PHP"
+            },
+            {
+                "isoCode": "PK",
+                "name": "Pakistan",
+                "currency": "PKR"
+            },
+            {
+                "isoCode": "PL",
+                "name": "Poland",
+                "currency": "PLN"
+            },
+            {
+                "isoCode": "PM",
+                "name": "Saint Pierre and Miquelon",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "PN",
+                "name": "Pitcairn",
+                "currency": "NZD"
+            },
+            {
+                "isoCode": "PR",
+                "name": "Puerto Rico",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "PS",
+                "name": "Palestine, State of",
+                "currency": "TEMPORARY"
+            },
+            {
+                "isoCode": "PT",
+                "name": "Portugal",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "PW",
+                "name": "Palau",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "PY",
+                "name": "Paraguay",
+                "currency": "PYG"
+            },
+            {
+                "isoCode": "QA",
+                "name": "Qatar",
+                "currency": "QAR"
+            },
+            {
+                "isoCode": "RE",
+                "name": "Réunion",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "RO",
+                "name": "Romania",
+                "currency": "RON"
+            },
+            {
+                "isoCode": "RS",
+                "name": "Serbia",
+                "currency": "RSD"
+            },
+            {
+                "isoCode": "RU",
+                "name": "Russian Federation (the)",
+                "currency": "RUB"
+            },
+            {
+                "isoCode": "RW",
+                "name": "Rwanda",
+                "currency": "RWF"
+            },
+            {
+                "isoCode": "SA",
+                "name": "Saudi Arabia",
+                "currency": "SAR"
+            },
+            {
+                "isoCode": "SB",
+                "name": "Solomon Islands (the)",
+                "currency": "SBD"
+            },
+            {
+                "isoCode": "SC",
+                "name": "Seychelles",
+                "currency": "SCR"
+            },
+            {
+                "isoCode": "SD",
+                "name": "Sudan (the)",
+                "currency": "SDG"
+            },
+            {
+                "isoCode": "SE",
+                "name": "Sweden",
+                "currency": "SEK"
+            },
+            {
+                "isoCode": "SG",
+                "name": "Singapore",
+                "currency": "SGD"
+            },
+            {
+                "isoCode": "SH",
+                "name": "Saint Helena, Ascension and Tristan da Cunha",
+                "currency": "SHP"
+            },
+            {
+                "isoCode": "SI",
+                "name": "Slovenia",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "SJ",
+                "name": "Svalbard and Jan Mayen",
+                "currency": "NOK"
+            },
+            {
+                "isoCode": "SK",
+                "name": "Sikkim",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "SL",
+                "name": "Sierra Leone",
+                "currency": "SLL"
+            },
+            {
+                "isoCode": "SM",
+                "name": "San Marino",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "SN",
+                "name": "Senegal",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "SO",
+                "name": "Somalia",
+                "currency": "SOS"
+            },
+            {
+                "isoCode": "SR",
+                "name": "Suriname",
+                "currency": "SRD"
+            },
+            {
+                "isoCode": "SS",
+                "name": "South Sudan ",
+                "currency": "SSP"
+            },
+            {
+                "isoCode": "ST",
+                "name": "Sao Tome and Principe",
+                "currency": "STD"
+            },
+            {
+                "isoCode": "SV",
+                "name": "El Salvador",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "SX",
+                "name": "Sint Maarten (Dutch part)",
+                "currency": "ANG"
+            },
+            {
+                "isoCode": "SY",
+                "name": "Syrian Arab Republic (the)",
+                "currency": "SYP"
+            },
+            {
+                "isoCode": "SZ",
+                "name": "Swaziland",
+                "currency": "SZL"
+            },
+            {
+                "isoCode": "TC",
+                "name": "Turks and Caicos Islands (the)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "TD",
+                "name": "Chad",
+                "currency": "XAF"
+            },
+            {
+                "isoCode": "TF",
+                "name": "French Southern Territories (the)",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "TG",
+                "name": "Togo",
+                "currency": "XOF"
+            },
+            {
+                "isoCode": "TH",
+                "name": "Thailand",
+                "currency": "THB"
+            },
+            {
+                "isoCode": "TJ",
+                "name": "Tajikistan",
+                "currency": "TJS"
+            },
+            {
+                "isoCode": "TK",
+                "name": "Tokelau",
+                "currency": "NZD"
+            },
+            {
+                "isoCode": "TL",
+                "name": "Timor-Leste",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "TM",
+                "name": "Turkmenistan",
+                "currency": "TMT"
+            },
+            {
+                "isoCode": "TN",
+                "name": "Tunisia",
+                "currency": "TND"
+            },
+            {
+                "isoCode": "TO",
+                "name": "Tonga",
+                "currency": "TOP"
+            },
+            {
+                "isoCode": "TR",
+                "name": "Turkey",
+                "currency": "TRY"
+            },
+            {
+                "isoCode": "TT",
+                "name": "Trinidad and Tobago",
+                "currency": "TTD"
+            },
+            {
+                "isoCode": "TV",
+                "name": "Tuvalu",
+                "currency": "AUD"
+            },
+            {
+                "isoCode": "TW",
+                "name": "Taiwan (Province of China)",
+                "currency": "TWD"
+            },
+            {
+                "isoCode": "TZ",
+                "name": "Tanzania, United Republic of",
+                "currency": "TZS"
+            },
+            {
+                "isoCode": "UA",
+                "name": "Ukraine",
+                "currency": "UAH"
+            },
+            {
+                "isoCode": "UG",
+                "name": "Uganda",
+                "currency": "UGX"
+            },
+            {
+                "isoCode": "UM",
+                "name": "United States Minor Outlying Islands (the)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "US",
+                "name": "United States (the)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "UY",
+                "name": "Uruguay",
+                "currency": "UYU"
+            },
+            {
+                "isoCode": "UZ",
+                "name": "Uzbekistan",
+                "currency": "UZS"
+            },
+            {
+                "isoCode": "VA",
+                "name": "Holy See (the) [Vatican City State]",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "VC",
+                "name": "Saint Vincent and the Grenadines",
+                "currency": "XCD"
+            },
+            {
+                "isoCode": "VE",
+                "name": "Venezuela, Bolivarian Republic of ",
+                "currency": "VEF"
+            },
+            {
+                "isoCode": "VG",
+                "name": "Virgin Islands (British)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "VI",
+                "name": "Virgin Islands (U.S.)",
+                "currency": "USD"
+            },
+            {
+                "isoCode": "VN",
+                "name": "Viet Nam",
+                "currency": "VND"
+            },
+            {
+                "isoCode": "VU",
+                "name": "Vanuatu",
+                "currency": "VUV"
+            },
+            {
+                "isoCode": "WF",
+                "name": "Wallis and Futuna",
+                "currency": "XPF"
+            },
+            {
+                "isoCode": "WS",
+                "name": "Samoa",
+                "currency": "WST"
+            },
+            {
+                "isoCode": "YE",
+                "name": "Yemen",
+                "currency": "YER"
+            },
+            {
+                "isoCode": "YT",
+                "name": "Mayotte",
+                "currency": "EUR"
+            },
+            {
+                "isoCode": "ZA",
+                "name": "South Africa",
+                "currency": "ZAR"
+            },
+            {
+                "isoCode": "ZM",
+                "name": "Zambia",
+                "currency": "ZMW"
+            },
+            {
+                "isoCode": "ZW",
+                "name": "Zimbabwe",
+                "currency": "ZWL"
+            }
+        ]
+    }
+}

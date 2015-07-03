@@ -11,28 +11,27 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.LanguageQualificationTypes.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 
 @Component
-public class ImportedLanguageQualificationTypeExtractor implements ImportedEntityExtractor {
+public class ImportedLanguageQualificationTypeExtractor implements ImportedEntityExtractor<ImportedLanguageQualificationType> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions, boolean enable) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedLanguageQualificationType> definitions, boolean enable) throws Exception {
         List<String> rows = Lists.newLinkedList();
-        for (Object definition : definitions) {
-            LanguageQualificationType data = (LanguageQualificationType) definition;
+        for (ImportedLanguageQualificationType definition : definitions) {
             List<String> cells = Lists.newLinkedList();
-            cells.add(prepareStringForSqlInsert(data.getName()));
-            cells.add(prepareDecimalForSqlInsert(data.getMinimumOverallScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMaximumOverallScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMinimumReadingScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMaximumReadingScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMinimumWritingScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMaximumWritingScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMinimumSpeakingScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMaximumSpeakingScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMinimumListeningScore()));
-            cells.add(prepareDecimalForSqlInsert(data.getMaximumListeningScore()));
+            cells.add(prepareStringForSqlInsert(definition.getName()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMinimumOverallScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMaximumOverallScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMinimumReadingScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMaximumReadingScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMinimumWritingScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMaximumWritingScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMinimumSpeakingScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMaximumSpeakingScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMinimumListeningScore()));
+            cells.add(prepareDecimalForSqlInsert(definition.getMaximumListeningScore()));
             cells.add(prepareBooleanForSqlInsert(enable));
             rows.add(prepareCellsForSqlInsert(cells));
         }

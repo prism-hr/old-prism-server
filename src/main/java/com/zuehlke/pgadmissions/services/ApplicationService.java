@@ -74,7 +74,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportF
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
+import com.zuehlke.pgadmissions.rest.validation.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 

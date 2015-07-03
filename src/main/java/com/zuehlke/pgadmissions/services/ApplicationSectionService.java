@@ -69,7 +69,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.AddressApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
@@ -261,7 +261,7 @@ public class ApplicationSectionService {
             application.setAddress(address);
         }
 
-        AddressDTO currentAddressDTO = addressDTO.getCurrentAddress();
+        AddressApplicationDTO currentAddressDTO = addressDTO.getCurrentAddress();
         AddressApplication currentAddress = address.getCurrentAddress();
         if (currentAddress == null) {
             currentAddress = new AddressApplication();
@@ -269,7 +269,7 @@ public class ApplicationSectionService {
         }
         copyAddress(institution, currentAddress, currentAddressDTO);
 
-        AddressDTO contactAddressDTO = addressDTO.getContactAddress();
+        AddressApplicationDTO contactAddressDTO = addressDTO.getContactAddress();
         AddressApplication contactAddress = address.getContactAddress();
         if (contactAddress == null) {
             contactAddress = new AddressApplication();
@@ -341,7 +341,7 @@ public class ApplicationSectionService {
 
         employmentPosition.setEmployerName(employmentPositionDTO.getEmployerName());
 
-        AddressDTO employerAddressDTO = employmentPositionDTO.getEmployerAddress();
+        AddressApplicationDTO employerAddressDTO = employmentPositionDTO.getEmployerAddress();
         AddressApplication employerAddress = employmentPosition.getEmployerAddress();
         if (employerAddress == null) {
             employerAddress = new AddressApplication();
@@ -456,7 +456,7 @@ public class ApplicationSectionService {
         referee.setJobEmployer(refereeDTO.getJobEmployer());
         referee.setJobTitle(refereeDTO.getJobTitle());
 
-        AddressDTO addressDTO = refereeDTO.getAddress();
+        AddressApplicationDTO addressApplicationDTO = refereeDTO.getAddress();
         AddressApplication addressApplication = referee.getAddress();
 
         if (addressApplication == null) {
@@ -464,7 +464,7 @@ public class ApplicationSectionService {
             referee.setAddress(addressApplication);
         }
 
-        copyAddress(application.getInstitution(), addressApplication, addressDTO);
+        copyAddress(application.getInstitution(), addressApplication, addressApplicationDTO);
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
         referee.setLastUpdatedTimestamp(DateTime.now());
@@ -598,7 +598,7 @@ public class ApplicationSectionService {
         }
     }
 
-    private void copyAddress(Institution institution, AddressApplication to, AddressDTO from) {
+    private void copyAddress(Institution institution, AddressApplication to, AddressApplicationDTO from) {
         ImportedEntitySimple currentAddressDomicile = importedEntityService.getById(institution, ImportedEntitySimple.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());

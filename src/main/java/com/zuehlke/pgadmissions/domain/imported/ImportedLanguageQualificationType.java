@@ -12,13 +12,16 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import uk.co.alumeni.prism.api.model.ImportedLanguageQualificationTypeDefinition;
+
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 
 @Entity
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
-public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLanguageQualificationTypeMapping> {
+public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLanguageQualificationTypeMapping> implements
+        ImportedLanguageQualificationTypeDefinition {
 
     @Id
     @GeneratedValue
@@ -59,7 +62,7 @@ public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLa
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
     @OneToMany(mappedBy = "importedLanguageQualificationType")
     private Set<ImportedLanguageQualificationTypeMapping> mappings = Sets.newHashSet();
 
@@ -177,7 +180,7 @@ public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLa
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public Set<ImportedLanguageQualificationTypeMapping> getMappings() {
         return mappings;

@@ -7,9 +7,10 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
 
 public class ApplicationRefereeDTO {
 
@@ -31,7 +32,7 @@ public class ApplicationRefereeDTO {
     private String jobTitle;
 
     @NotNull
-    private AddressDTO address;
+    private AddressApplicationDTO address;
 
     @NotEmpty
     @PhoneNumber
@@ -80,11 +81,11 @@ public class ApplicationRefereeDTO {
         this.jobTitle = jobTitle;
     }
 
-    public AddressDTO getAddress() {
+    public AddressApplicationDTO getAddress() {
         return address;
     }
 
-    public void setAddress(AddressDTO address) {
+    public void setAddress(AddressApplicationDTO address) {
         this.address = address;
     }
 

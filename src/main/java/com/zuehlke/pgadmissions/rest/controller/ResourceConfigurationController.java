@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.ActionCustomQuestionValidator;
+import com.zuehlke.pgadmissions.rest.validation.ActionCustomQuestionValidator;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.PrismWordUtils;

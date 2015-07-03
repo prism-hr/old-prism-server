@@ -9,22 +9,22 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.api.model.imported.ImportedAgeRange;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.AgeRanges.AgeRange;
 
 @Component
-public class ImportedAgeRangeExtractor implements ImportedEntityExtractor {
+public class ImportedAgeRangeExtractor implements ImportedEntityExtractor<ImportedAgeRange> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions, boolean enable) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedAgeRange> definitions, boolean enable) throws Exception {
         List<String> rows = Lists.newLinkedList();
-        for (Object definition : definitions) {
-            AgeRange ageRange = (AgeRange) definition;
+        for (ImportedAgeRange definition : definitions) {
             List<String> cells = Lists.newLinkedList();
-            cells.add(prepareStringForSqlInsert(ageRange.getName()));
-            cells.add(prepareStringForSqlInsert(ageRange.getLowerBound().toString()));
-            cells.add(prepareIntegerForSqlInsert(ageRange.getUpperBound()));
+            cells.add(prepareStringForSqlInsert(definition.getName()));
+            cells.add(prepareStringForSqlInsert(definition.getLowerBound().toString()));
+            cells.add(prepareIntegerForSqlInsert(definition.getUpperBound()));
             cells.add(prepareBooleanForSqlInsert(enable));
             rows.add(prepareCellsForSqlInsert(cells));
         }

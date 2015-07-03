@@ -4,25 +4,28 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import uk.co.alumeni.prism.api.model.AddressDefinition;
 
 import com.google.common.base.Joiner;
 
 @MappedSuperclass
-public class Address {
+public class Address implements AddressDefinition {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
 
     @Column(name = "address_line_2")
     private String addressLine2;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "address_town", nullable = false)
     private String addressTown;
 

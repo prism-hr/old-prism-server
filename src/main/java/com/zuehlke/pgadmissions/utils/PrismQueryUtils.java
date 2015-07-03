@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.utils;
 
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.floatToBigDecimal;
+import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -32,8 +33,8 @@ public class PrismQueryUtils {
         return value == null ? "null" : "'" + escapeSql(value.toString()) + "'";
     }
 
-    public static String prepareDecimalForSqlInsert(Float Value) {
-        return Value == null ? "null" : "'" + escapeSql(floatToBigDecimal(Value, 2).toPlainString()) + "'";
+    public static String prepareDecimalForSqlInsert(BigDecimal value) {
+        return value == null ? "null" : "'" + escapeSql(value.setScale(2, HALF_UP).toPlainString()) + "'";
     }
 
     public static String prepareBooleanForSqlInsert(boolean value) {

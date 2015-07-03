@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import uk.co.alumeni.prism.api.model.ImportedInstitutionDefinition;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
@@ -22,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMappi
 
 @Entity
 @Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
-public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMapping> implements TargetEntity {
+public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMapping> implements TargetEntity, ImportedInstitutionDefinition {
 
     @Id
     @GeneratedValue
@@ -152,6 +154,11 @@ public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMappi
         }
         ImportedInstitution other = (ImportedInstitution) object;
         return Objects.equal(domicile, other.getDomicile());
+    }
+
+    @Override
+    public int index() {
+        return Objects.hashCode(domicile.getId(), name);
     }
 
     @Override

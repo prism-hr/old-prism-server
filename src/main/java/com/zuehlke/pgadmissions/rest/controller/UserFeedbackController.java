@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
-import com.zuehlke.pgadmissions.mappers.UserMapper;
+import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
 import com.zuehlke.pgadmissions.services.UserFeedbackService;

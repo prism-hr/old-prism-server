@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -29,7 +30,6 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -37,10 +37,10 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mappers.ActionMapper;
-import com.zuehlke.pgadmissions.mappers.ApplicationMapper;
-import com.zuehlke.pgadmissions.mappers.ResourceMapper;
-import com.zuehlke.pgadmissions.mappers.UserMapper;
+import com.zuehlke.pgadmissions.mapping.ActionMapper;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
+import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
@@ -215,13 +215,13 @@ public class ResourceController {
         roleService.setResourceOwner(resource, user);
     }
 
-    @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
+    @RequestMapping(value = "/{resourceId}/", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ActionOutcomeRepresentation executeAction(
             @PathVariable Integer resourceId,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody CommentDTO commentDTO) throws Exception {
-        if (commentDTO.getAction().getActionCategory().equals(PrismActionCategory.CREATE_RESOURCE)) {
+        if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             ResourceDTO newResource = commentDTO.getNewResource().getResource();
             if (newResource == null) {
                 throw new Error("Cannot create new resource for " + resourceDescriptor.getResourceScope() + '#' + resourceId);

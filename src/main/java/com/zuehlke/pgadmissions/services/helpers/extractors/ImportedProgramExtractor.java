@@ -9,24 +9,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.api.model.imported.ImportedProgram;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.Programs.Program;
 
 @Component
-public class ImportedProgramExtractor implements ImportedEntityExtractor {
+public class ImportedProgramExtractor implements ImportedEntityExtractor<ImportedProgram> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions, boolean enable) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedProgram> definitions, boolean enable) throws Exception {
         List<String> rows = Lists.newLinkedList();
-        for (Object definition : definitions) {
-            Program data = (Program) definition;
+        for (ImportedProgram definition : definitions) {
             List<String> cells = Lists.newLinkedList();
-            cells.add(prepareIntegerForSqlInsert(data.getInstitution()));
-            cells.add(prepareStringForSqlInsert(data.getLevel()));
-            String qualification = data.getQualification();
+            cells.add(prepareIntegerForSqlInsert(definition.getInstitution()));
+            cells.add(prepareStringForSqlInsert(definition.getLevel()));
+            String qualification = definition.getQualification();
             cells.add(prepareStringForSqlInsert(qualification));
-            cells.add(prepareStringForSqlInsert(qualification + " " + data.getName()));
+            cells.add(prepareStringForSqlInsert(qualification + " " + definition.getName()));
             cells.add(prepareBooleanForSqlInsert(enable));
             rows.add(prepareCellsForSqlInsert(cells));
         }

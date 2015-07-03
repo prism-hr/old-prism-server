@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.dto.comment;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.ATASConstraint;
+import uk.co.alumeni.prism.utils.validation.ATASConstraint;
 
 public class CommentPositionDetailDTO {
 

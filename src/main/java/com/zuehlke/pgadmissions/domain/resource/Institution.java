@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -150,9 +149,6 @@ public class Institution extends ResourceParent {
 
     @OneToMany(mappedBy = "institution")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "institution")
-    private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Program> programs = Sets.newHashSet();
@@ -304,10 +300,6 @@ public class Institution extends ResourceParent {
     @Override
     public Set<ResourceCondition> getResourceConditions() {
         return resourceConditions;
-    }
-
-    public Set<ImportedEntityFeed> getImportedEntityFeeds() {
-        return importedEntityFeeds;
     }
 
     @Override

@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import uk.co.alumeni.prism.api.model.ImportedProgramDefinition;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
@@ -23,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 
 @Entity
 @Table(name = "IMPORTED_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "name" }) })
-public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> implements TargetEntity {
+public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> implements TargetEntity, ImportedProgramDefinition {
 
     @Id
     @GeneratedValue
@@ -135,22 +137,22 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> impl
     public Set<ImportedProgramMapping> getMappings() {
         return mappings;
     }
-    
+
     public ImportedProgram withInstitution(ImportedInstitution institution) {
         this.institution = institution;
         return this;
     }
-    
+
     public ImportedProgram withQualificationType(ImportedEntitySimple qualificationType) {
         this.qualificationType = qualificationType;
         return this;
     }
-    
+
     public ImportedProgram withName(String name) {
         this.name = name;
         return this;
     }
-    
+
     public ImportedProgram withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -168,6 +170,11 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> impl
         }
         ImportedProgram other = (ImportedProgram) object;
         return Objects.equal(institution, other.getInstitution());
+    }
+
+    @Override
+    public int index() {
+        return Objects.hashCode(institution.getId(), name);
     }
 
     @Override

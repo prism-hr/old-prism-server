@@ -2,12 +2,14 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import java.util.Set;
 
+import uk.co.alumeni.prism.api.model.ImportedEntityDefinition;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 
-public abstract class ImportedEntity<T extends ImportedEntityMapping<?>> implements UniqueEntity {
+public abstract class ImportedEntity<T extends ImportedEntityMapping<?>> implements UniqueEntity, ImportedEntityDefinition {
 
     public abstract Integer getId();
 
@@ -22,7 +24,7 @@ public abstract class ImportedEntity<T extends ImportedEntityMapping<?>> impleme
     public abstract void setEnabled(Boolean enabled);
 
     public abstract PrismImportedEntity getType();
-    
+
     public abstract Set<T> getMappings();
 
     @Override
@@ -37,6 +39,11 @@ public abstract class ImportedEntity<T extends ImportedEntityMapping<?>> impleme
         }
         ImportedEntity<?> other = (ImportedEntity<?>) object;
         return Objects.equal(getName(), other.getName());
+    }
+
+    @Override
+    public int index() {
+        return Objects.hashCode(getName());
     }
 
     @Override

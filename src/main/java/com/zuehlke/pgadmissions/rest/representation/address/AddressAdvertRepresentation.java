@@ -2,12 +2,13 @@ package com.zuehlke.pgadmissions.rest.representation.address;
 
 import java.math.BigDecimal;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+
 import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertDomicileRepresentation;
 
 public class AddressAdvertRepresentation extends Address {
 
-    private AdvertDomicileRepresentation domicile;
+    private ImportedAdvertDomicileResponse domicile;
 
     private String googleId;
 
@@ -17,11 +18,11 @@ public class AddressAdvertRepresentation extends Address {
 
     private String locationString;
 
-    public AdvertDomicileRepresentation getDomicile() {
+    public ImportedAdvertDomicileResponse getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(AdvertDomicileRepresentation domicile) {
+    public void setDomicile(ImportedAdvertDomicileResponse domicile) {
         this.domicile = domicile;
     }
 

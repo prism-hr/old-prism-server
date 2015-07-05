@@ -1,21 +1,22 @@
 package com.zuehlke.pgadmissions.rest.representation.address;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
 import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 
 public class AddressApplicationRepresentation extends Address {
 
-    private ImportedEntitySimpleRepresentation domicile;
+    private ImportedEntityResponse domicile;
 
-    public ImportedEntitySimpleRepresentation getDomicile() {
+    public ImportedEntityResponse getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedEntitySimpleRepresentation domicile) {
+    public void setDomicile(ImportedEntityResponse domicile) {
         this.domicile = domicile;
     }
 
-    public AddressApplicationRepresentation withDomicile(ImportedEntitySimpleRepresentation domicile) {
+    public AddressApplicationRepresentation withDomicile(ImportedEntityResponse domicile) {
         this.domicile = domicile;
         return this;
     }

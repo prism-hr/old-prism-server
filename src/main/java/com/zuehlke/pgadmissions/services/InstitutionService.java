@@ -19,9 +19,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -72,7 +72,7 @@ public class InstitutionService {
         return institutionDAO.getApprovedInstitutions();
     }
 
-    public List<Institution> getApprovedInstitutionsByDomicile(AdvertDomicile domicile) {
+    public List<Institution> getApprovedInstitutionsByDomicile(ImportedAdvertDomicile domicile) {
         return institutionDAO.getApprovedInstitutionsByDomicile(domicile);
     }
 
@@ -166,8 +166,8 @@ public class InstitutionService {
     }
 
     public String mergeInstitutionDomicile(InstitutionDomiciles.InstitutionDomicile instituitionDomicileDefinition) throws DeduplicationException {
-        AdvertDomicile persistentInstitutionDomicile = entityService.getOrCreate(new AdvertDomicile()
-                .withId(instituitionDomicileDefinition.getIsoCode()).withName(instituitionDomicileDefinition.getName())
+        ImportedAdvertDomicile persistentInstitutionDomicile = entityService.getOrCreate(new ImportedAdvertDomicile()
+                .withId(instituitionDomicileDefinition.getId()).withName(instituitionDomicileDefinition.getName())
                 .withCurrency(instituitionDomicileDefinition.getCurrency()).withEnabled(true));
         return persistentInstitutionDomicile.getId();
     }

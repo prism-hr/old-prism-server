@@ -7,7 +7,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import uk.co.alumeni.prism.api.model.AddressDefinition;
+import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
 import com.google.common.base.Joiner;
 

@@ -2,14 +2,15 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 
 public class ApplicationFundingRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private ImportedEntitySimpleRepresentation fundingSource;
+    private ImportedEntityResponse fundingSource;
 
     private String sponsor;
 
@@ -31,11 +32,11 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
         this.id = id;
     }
 
-    public ImportedEntitySimpleRepresentation getFundingSource() {
+    public ImportedEntityResponse getFundingSource() {
         return fundingSource;
     }
 
-    public void setFundingSource(ImportedEntitySimpleRepresentation fundingSource) {
+    public void setFundingSource(ImportedEntityResponse fundingSource) {
         this.fundingSource = fundingSource;
     }
 
@@ -92,7 +93,7 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
         return this;
     }
 
-    public ApplicationFundingRepresentation withFundingSource(ImportedEntitySimpleRepresentation fundingSource) {
+    public ApplicationFundingRepresentation withFundingSource(ImportedEntityResponse fundingSource) {
         this.fundingSource = fundingSource;
         return this;
     }

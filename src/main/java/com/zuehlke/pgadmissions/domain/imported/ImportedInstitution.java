@@ -14,7 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import uk.co.alumeni.prism.api.model.ImportedInstitutionDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
@@ -24,7 +25,8 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMappi
 
 @Entity
 @Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
-public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMapping> implements TargetEntity, ImportedInstitutionDefinition {
+public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitutionMapping> implements TargetEntity,
+        ImportedInstitutionDefinition<ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
@@ -64,10 +66,12 @@ public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMappi
         return IMPORTED_INSTITUTION;
     }
 
+    @Override
     public ImportedEntitySimple getDomicile() {
         return domicile;
     }
 
+    @Override
     public void setDomicile(ImportedEntitySimple domicile) {
         this.domicile = domicile;
     }
@@ -82,18 +86,22 @@ public class ImportedInstitution extends ImportedEntity<ImportedInstitutionMappi
         this.name = name;
     }
 
+    @Override
     public String getUcasId() {
         return ucasId;
     }
 
+    @Override
     public void setUcasId(String ucasId) {
         this.ucasId = ucasId;
     }
 
+    @Override
     public String getFacebookId() {
         return facebookId;
     }
 
+    @Override
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
     }

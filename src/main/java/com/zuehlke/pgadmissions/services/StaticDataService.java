@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchimports;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 
@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -44,7 +46,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -58,9 +59,6 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
@@ -264,14 +262,14 @@ public class StaticDataService {
     }
 
     @Cacheable("importedInstitutionData")
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> Map<String, Object> getInstitutionData(Integer institutionId) {
+    public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> Map<String, Object> getInstitutionData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (PrismImportedEntity prismImportedEntity : getPrefetchimports()) {
+        for (PrismImportedEntity prismImportedEntity : getPrefetchEntities()) {
             List<T> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
-            List<ImportedEntitySimpleRepresentation> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
+            List<U> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
             for (T entity : entities) {
                 entityRepresentations.add(importedEntityMapper.getImportedEntityRepresentation(entity));
             }

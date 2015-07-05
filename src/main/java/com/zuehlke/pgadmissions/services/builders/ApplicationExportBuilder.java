@@ -565,9 +565,7 @@ public class ApplicationExportBuilder {
         return englishLanguageQualificationDetailsTp;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> String getImportedEntityCode(Institution institution,
-            ImportedEntity<?> importedEntity) {
+    public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> String getImportedEntityCode(Institution institution, T importedEntity) {
         V mapping = importedEntityService.getEnabledImportedEntityMapping(institution, (T) importedEntity);
         return mapping == null ? null : mapping.getCode();
     }

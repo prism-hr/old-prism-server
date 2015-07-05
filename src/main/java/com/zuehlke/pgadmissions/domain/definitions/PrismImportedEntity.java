@@ -7,10 +7,24 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import java.util.List;
 import java.util.Set;
 
-import com.amazonaws.auth.policy.Resource;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedAdvertDomicileRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedAgeRangeRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedLanguageQualificationTypeRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaResponse;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -18,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAdvertDomicileMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
@@ -30,12 +45,6 @@ import com.zuehlke.pgadmissions.mapping.helpers.ImportedInstitutionTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedLanguageQualificationTypeTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedProgramTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedSubjectAreaTransformer;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedAgeRangeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedLanguageQualificationTypeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedSubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimpleExtractor;
@@ -44,8 +53,21 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtra
 
 public enum PrismImportedEntity {
 
+    IMPORTED_ADVERT_DOMICILE(new PrismImportedEntityImportDefinition() //
+            .withImportClass(ImportedAdvertDomicileRequest.class) //
+            .withEntityClass(ImportedAdvertDomicile.class), //
+            new PrismImportedEntityImportInsertDefinition() //
+                    .withTable("imported_advert_domicile") //
+                    .withPivotColumn("name") //
+                    .withColumn("currency") //
+                    .withColumn("enabled"), //
+            new PrismImportedEntityMappingInsertDefinition() //
+                    .withMappingClass(ImportedAdvertDomicileMapping.class) //
+                    .withTable("imported_advert_domicile_mapping"), 
+                    ImportedAdvertDomicileResponse.class, // 
+                    null, true, false), //
     IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition() //
-            .withImportClass(uk.co.alumeni.prism.api.model.imported.ImportedAgeRange.class) //
+            .withImportClass(ImportedAgeRangeRequest.class) //
             .withEntityClass(ImportedAgeRange.class), //
             new PrismImportedEntityImportInsertDefinition() //
                     .withTable("imported_age_range")
@@ -57,41 +79,41 @@ public enum PrismImportedEntity {
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedAgeRangeMapping.class) //
                     .withTable("imported_age_range_mapping"), //
-            ImportedAgeRangeRepresentation.class, //
+            ImportedAgeRangeResponse.class, //
             new String[] { "application_personal_detail.age_range_id" }, true, false), //
     IMPORTED_COUNTRY(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_personal_detail.country_id" }, true, false), //
     IMPORTED_DISABILITY(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_personal_detail.disability_id" }, true, false), //
     IMPORTED_DOMICILE(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_personal_detail.domicile_id" }, true, false), //
     IMPORTED_ETHNICITY(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_personal_detail.ethnicity_id" }, true, false), //
     IMPORTED_FUNDING_SOURCE(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             null, true, false), //
     IMPORTED_GENDER(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_personal_detail.gender_id" }, true, false), //
     // TODO: add as chart filter
     IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition() //
-            .withImportClass(uk.co.alumeni.prism.api.model.imported.ImportedInstitution.class)
+            .withImportClass(uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest.class)
             .withEntityClass(ImportedInstitution.class) //
             .withTransformerClass(ImportedInstitutionTransformer.class), //
             new PrismImportedEntityImportInsertDefinition() //
@@ -105,10 +127,10 @@ public enum PrismImportedEntity {
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedInstitutionMapping.class) //
                     .withTable("imported_institution_mapping"),
-            ImportedInstitutionRepresentation.class, //
+                    ImportedEntityResponse.class, //
             new String[] { "application_qualification.institution_id" }, false, true),
     IMPORTED_LANGUAGE_QUALIFICATION_TYPE(new PrismImportedEntityImportDefinition() //
-            .withImportClass(uk.co.alumeni.prism.api.model.imported.ImportedLanguageQualificationType.class) //
+            .withImportClass(ImportedLanguageQualificationTypeRequest.class) //
             .withEntityClass(ImportedLanguageQualificationType.class) //
             .withTransformerClass(ImportedLanguageQualificationTypeTransformer.class),
             new PrismImportedEntityImportInsertDefinition() //
@@ -129,21 +151,21 @@ public enum PrismImportedEntity {
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedLanguageQualificationTypeMapping.class) //
                     .withTable("imported_language_qualification_type_mapping"), //
-            ImportedLanguageQualificationTypeRepresentation.class, //
+            ImportedLanguageQualificationTypeResponse.class, //
             null, true, false), //
     IMPORTED_NATIONALITY(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, true, false), //
     IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_program_detail.opportunity_type_id" }, true, false), //
     // TODO: add as chart filter
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition() //
-            .withImportClass(uk.co.alumeni.prism.api.model.imported.ImportedProgram.class) //
+            .withImportClass(ImportedProgramRequest.class) //
             .withEntityClass(ImportedProgram.class) //
             .withTransformerClass(ImportedProgramTransformer.class), //
             new PrismImportedEntityImportInsertDefinition() //
@@ -159,31 +181,31 @@ public enum PrismImportedEntity {
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedProgramMapping.class) //
                     .withTable("imported_program_mapping"), //
-            ImportedProgramRepresentation.class, //
+            ImportedProgramResponse.class, //
             null, false, true), //
     IMPORTED_QUALIFICATION_TYPE(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             null, true, false), //
     IMPORTED_REFERRAL_SOURCE(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_program_detail.referral_source_id" }, true, false), //
     IMPORTED_REJECTION_REASON(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             null, true, false), //
     IMPORTED_STUDY_OPTION(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_program_detail.study_option_id" }, true, false), //
     // TODO: add as chart filter
     IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition() //
-            .withImportClass(uk.co.alumeni.prism.api.model.imported.ImportedSubjectArea.class) //
+            .withImportClass(ImportedSubjectAreaRequest.class) //
             .withEntityClass(ImportedSubjectArea.class) //
             .withTransformerClass(ImportedSubjectAreaTransformer.class), //
             new PrismImportedEntityImportInsertDefinition() //
@@ -195,12 +217,12 @@ public enum PrismImportedEntity {
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedSubjectAreaMapping.class) //
                     .withTable("imported_subject_area_mapping"), //
-            ImportedSubjectAreaRepresentation.class,
+            ImportedSubjectAreaResponse.class,
             null, true, false), //
     IMPORTED_TITLE(getImportedEntitySimpleImportDefinition(), //
             getImportedEntitySimpleImportInsertDefinition(), //
             getImportedEntitySimpleMappingInsertDefinition(), //
-            ImportedEntitySimpleRepresentation.class, //
+            ImportedEntityResponse.class, //
             null, true, false); //
 
     private PrismImportedEntityImportDefinition importDefinition;
@@ -209,7 +231,7 @@ public enum PrismImportedEntity {
 
     private PrismImportedEntityMappingInsertDefinition mappingInsertDefinition;
 
-    private Class<? extends ImportedEntitySimpleRepresentation> representationClass;
+    private Class<? extends ImportedEntityResponseDefinition<?>> representationClass;
 
     private String[] reportDefinition;
 
@@ -217,26 +239,14 @@ public enum PrismImportedEntity {
 
     private boolean extensibleImport;
 
-    private static final List<PrismImportedEntity> entityImports = Lists.newLinkedList();
-
-    private static final List<PrismImportedEntity> resourceImports = Lists.newLinkedList();
-
-    private static final List<PrismImportedEntity> prefetchImports = Lists.newLinkedList();
+    private static final List<PrismImportedEntity> prefetchEntities = Lists.newLinkedList();
 
     private static final List<PrismImportedEntity> resourceReportFilterProperties = Lists.newLinkedList();
 
     static {
         for (PrismImportedEntity entity : values()) {
-            if (isEntityImport(entity)) {
-                entityImports.add(entity);
-            }
-
-            if (isResourceImport(entity)) {
-                resourceImports.add(entity);
-            }
-
-            if (isPrefetchImport(entity)) {
-                prefetchImports.add(entity);
+            if (entity.isPrefetchImport()) {
+                prefetchEntities.add(entity);
             }
 
             if (entity.getReportDefinition() != null) {
@@ -246,7 +256,7 @@ public enum PrismImportedEntity {
     }
 
     private PrismImportedEntity(PrismImportedEntityImportDefinition importDefinition, PrismImportedEntityImportInsertDefinition importInsertDefinition,
-            PrismImportedEntityMappingInsertDefinition mappingInsertDefinition, Class<? extends ImportedEntitySimpleRepresentation> representationClass,
+            PrismImportedEntityMappingInsertDefinition mappingInsertDefinition, Class<? extends ImportedEntityResponseDefinition<?>> representationClass,
             String[] reportDefinition, boolean prefetchImport, boolean extensibleImport) {
         this.importDefinition = importDefinition;
         this.importInsertDefinition = importInsertDefinition;
@@ -257,11 +267,11 @@ public enum PrismImportedEntity {
         this.extensibleImport = extensibleImport;
     }
 
-    public Class<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity> getImportClass() {
+    public Class<? extends ImportedEntityRequest> getImportClass() {
         return importDefinition.getImportClass();
     }
 
-    public Class<? extends ImportedEntity<?>> getEntityClass() {
+    public Class<? extends ImportedEntity<?, ?>> getEntityClass() {
         return importDefinition.getEntityClass();
     }
 
@@ -269,7 +279,7 @@ public enum PrismImportedEntity {
         return mappingInsertDefinition.getMappingClass();
     }
 
-    public Class<? extends ImportedEntityTransformer<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity, ? extends ImportedEntity<?>>> getTransformerClass() {
+    public Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> getTransformerClass() {
         return this.importDefinition.getTransformerClass();
     }
 
@@ -301,7 +311,7 @@ public enum PrismImportedEntity {
         return "enabled = values(enabled)";
     }
 
-    public Class<? extends ImportedEntitySimpleRepresentation> getRepresentationClass() {
+    public Class<? extends ImportedEntityResponseDefinition<?>> getRepresentationClass() {
         return representationClass;
     }
 
@@ -317,16 +327,8 @@ public enum PrismImportedEntity {
         return extensibleImport;
     }
 
-    public static List<PrismImportedEntity> getEntityimports() {
-        return entityImports;
-    }
-
-    public static List<PrismImportedEntity> getResourceimports() {
-        return resourceImports;
-    }
-
-    public static List<PrismImportedEntity> getPrefetchimports() {
-        return prefetchImports;
+    public static List<PrismImportedEntity> getPrefetchEntities() {
+        return prefetchEntities;
     }
 
     public static List<PrismImportedEntity> getResourceReportFilterProperties() {
@@ -341,50 +343,43 @@ public enum PrismImportedEntity {
         return UPPER_CAMEL.to(LOWER_CAMEL, getEntityClass().getSimpleName());
     }
 
-    public static boolean isEntityImport(PrismImportedEntity entity) {
-        return ImportedEntity.class.isAssignableFrom(entity.getEntityClass());
-    }
-
-    public static boolean isResourceImport(PrismImportedEntity entity) {
-        return Resource.class.isAssignableFrom(entity.getEntityClass());
-    }
-
     public static boolean isPrefetchImport(PrismImportedEntity entity) {
         return entity.isPrefetchImport();
     }
 
     private static class PrismImportedEntityImportDefinition {
 
-        private Class<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity> importClass;
+        private Class<? extends ImportedEntityRequest> importClass;
 
-        private Class<? extends ImportedEntity<?>> entityClass;
+        private Class<? extends ImportedEntity<?, ?>> entityClass;
 
-        private Class<? extends ImportedEntityTransformer<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity, ? extends ImportedEntity<?>>> transformerClass;
+        private Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> transformerClass;
 
-        public Class<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity> getImportClass() {
+        public Class<? extends ImportedEntityRequest> getImportClass() {
             return importClass;
         }
 
-        public Class<? extends ImportedEntity<?>> getEntityClass() {
+        public Class<? extends ImportedEntity<?, ?>> getEntityClass() {
             return entityClass;
         }
 
-        public Class<? extends ImportedEntityTransformer<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity, ? extends ImportedEntity<?>>> getTransformerClass() {
+        public Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> getTransformerClass() {
             return transformerClass;
         }
 
-        public PrismImportedEntityImportDefinition withImportClass(Class<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity> importClass) {
+        public PrismImportedEntityImportDefinition withImportClass(
+                Class<? extends ImportedEntityRequest> importClass) {
             this.importClass = importClass;
             return this;
         }
 
-        public PrismImportedEntityImportDefinition withEntityClass(Class<? extends ImportedEntity<?>> entityClass) {
+        public PrismImportedEntityImportDefinition withEntityClass(Class<? extends ImportedEntity<?, ?>> entityClass) {
             this.entityClass = entityClass;
             return this;
         }
 
         public PrismImportedEntityImportDefinition withTransformerClass(
-                Class<? extends ImportedEntityTransformer<? extends uk.co.alumeni.prism.api.model.imported.ImportedEntity, ? extends ImportedEntity<?>>> transformerClass) {
+                Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> transformerClass) {
             this.transformerClass = transformerClass;
             return this;
         }
@@ -474,7 +469,7 @@ public enum PrismImportedEntity {
 
     private static PrismImportedEntityImportDefinition getImportedEntitySimpleImportDefinition() {
         return new PrismImportedEntityImportDefinition() //
-                .withImportClass(uk.co.alumeni.prism.api.model.imported.ImportedEntity.class) //
+                .withImportClass(ImportedEntityRequest.class) //
                 .withEntityClass(ImportedEntitySimple.class);
     }
 

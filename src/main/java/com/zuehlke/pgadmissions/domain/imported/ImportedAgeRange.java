@@ -11,13 +11,17 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import uk.co.alumeni.prism.api.model.imported.ImportedAgeRangeDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
 
 @Entity
 @Table(name = "IMPORTED_AGE_RANGE")
-public class ImportedAgeRange extends ImportedEntity<ImportedAgeRangeMapping> {
+public class ImportedAgeRange extends ImportedEntity<Integer, ImportedAgeRangeMapping> implements ImportedAgeRangeDefinition,
+        ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
@@ -34,7 +38,7 @@ public class ImportedAgeRange extends ImportedEntity<ImportedAgeRangeMapping> {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
     @OneToMany(mappedBy = "importedAgeRange")
     private Set<ImportedAgeRangeMapping> mappings = Sets.newHashSet();
 
@@ -63,18 +67,22 @@ public class ImportedAgeRange extends ImportedEntity<ImportedAgeRangeMapping> {
         this.name = name;
     }
 
+    @Override
     public Integer getLowerBound() {
         return lowerBound;
     }
 
+    @Override
     public void setLowerBound(Integer lowerBound) {
         this.lowerBound = lowerBound;
     }
 
+    @Override
     public Integer getUpperBound() {
         return upperBound;
     }
-
+    
+    @Override
     public void setUpperBound(Integer upperBound) {
         this.upperBound = upperBound;
     }
@@ -88,7 +96,7 @@ public class ImportedAgeRange extends ImportedEntity<ImportedAgeRangeMapping> {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public Set<ImportedAgeRangeMapping> getMappings() {
         return mappings;

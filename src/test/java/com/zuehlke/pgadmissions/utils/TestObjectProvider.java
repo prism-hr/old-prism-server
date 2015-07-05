@@ -13,11 +13,11 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -253,12 +253,12 @@ public class TestObjectProvider {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass).setMaxResults(1).uniqueResult();
     }
 
-    public AdvertDomicile getInstitutionDomicile() {
-        return (AdvertDomicile) sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class).setMaxResults(1).uniqueResult();
+    public ImportedAdvertDomicile getInstitutionDomicile() {
+        return (ImportedAdvertDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class).setMaxResults(1).uniqueResult();
     }
 
-    public AdvertDomicile getAlternativeInstitutionDomicile(AdvertDomicile domicile) {
-        return (AdvertDomicile) sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class)//
+    public ImportedAdvertDomicile getAlternativeInstitutionDomicile(ImportedAdvertDomicile domicile) {
+        return (ImportedAdvertDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class)//
                 .add(Restrictions.ne("id", domicile.getId())) //
                 .setMaxResults(1).uniqueResult();
     }

@@ -29,6 +29,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -59,7 +64,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -67,8 +71,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
@@ -223,9 +225,9 @@ public class ApplicationMapper {
             Institution institution) {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
         return new ApplicationProgramDetailRepresentation()
-                .withStudyOption(getImportedEntityRepresentation(applicationProgramDetail.getStudyOption(), institution))
+                .withStudyOption((ImportedEntityResponse) getImportedEntityRepresentation(applicationProgramDetail.getStudyOption(), institution))
                 .withStartDate(applicationProgramDetail.getStartDate())
-                .withReferralSource(getImportedEntityRepresentation(applicationProgramDetail.getReferralSource(), institution));
+                .withReferralSource((ImportedEntityResponse) getImportedEntityRepresentation(applicationProgramDetail.getReferralSource(), institution));
     }
 
     private ApplicationStudyDetailRepresentation getApplicationStudyDetailRepresentation(Application application) {
@@ -258,21 +260,24 @@ public class ApplicationMapper {
         ApplicationPersonalDetail applicationPersonalDetail = application.getPersonalDetail();
 
         if (applicationPersonalDetail != null) {
-            return new ApplicationPersonalDetailRepresentation().withTitle(getImportedEntityRepresentation(applicationPersonalDetail.getTitle(), institution))
-                    .withGender(getImportedEntityRepresentation(applicationPersonalDetail.getGender(), institution))
+            return new ApplicationPersonalDetailRepresentation()
+                    .withTitle((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getTitle(), institution))
+                    .withGender((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getGender(), institution))
                     .withDateOfBirth(applicationPersonalDetail.getDateOfBirth())
-                    .withAgeRange(getImportedEntityRepresentation(applicationPersonalDetail.getAgeRange(), institution))
-                    .withFirstNationality(getImportedEntityRepresentation(applicationPersonalDetail.getFirstNationality(), institution))
-                    .withSecondNationality(getImportedEntityRepresentation(applicationPersonalDetail.getSecondNationality(), institution))
-                    .withCountry(getImportedEntityRepresentation(applicationPersonalDetail.getCountry(), institution))
+                    .withAgeRange((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getAgeRange(), institution))
+                    .withFirstNationality(
+                            (ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getFirstNationality(), institution))
+                    .withSecondNationality(
+                            (ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getSecondNationality(), institution))
+                    .withCountry((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getCountry(), institution))
                     .withFirstLanguageLocale(applicationPersonalDetail.getFirstLanguageLocale())
                     .withLanguageQualification(getApplicationLanguageQualificationRepresentation(applicationPersonalDetail, institution))
-                    .withDomicile(getImportedEntityRepresentation(applicationPersonalDetail.getDomicile(), institution))
+                    .withDomicile((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getDomicile(), institution))
                     .withVisaRequired(applicationPersonalDetail.getVisaRequired())
                     .withPassport(getApplicationPassportRepresentation(applicationPersonalDetail, institution)).withPhone(applicationPersonalDetail.getPhone())
                     .withSkype(applicationPersonalDetail.getSkype())
-                    .withEthnicity(getImportedEntityRepresentation(applicationPersonalDetail.getEthnicity(), institution))
-                    .withDisability(getImportedEntityRepresentation(applicationPersonalDetail.getDisability(), institution));
+                    .withEthnicity((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getEthnicity(), institution))
+                    .withDisability((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getDisability(), institution));
         }
 
         return null;
@@ -288,7 +293,7 @@ public class ApplicationMapper {
 
         if (applicationLanguageQualification != null) {
             Document document = applicationLanguageQualification.getDocument();
-            return new ApplicationLanguageQualificationRepresentation().withLanguageQualificationType(
+            return new ApplicationLanguageQualificationRepresentation().withLanguageQualificationType((ImportedLanguageQualificationTypeResponse)
                     getImportedEntityRepresentation(applicationLanguageQualification.getLanguageQualificationType(), institution)).withExamDate(
                     applicationLanguageQualification.getExamDate()).withOverallScore(applicationLanguageQualification.getOverallScore())
                     .withReadingScore(applicationLanguageQualification.getReadingScore()).withWritingScore(applicationLanguageQualification.getWritingScore())
@@ -336,7 +341,7 @@ public class ApplicationMapper {
             Institution institution) {
         Document document = applicationQualification.getDocument();
         return new ApplicationQualificationRepresentation().withId(applicationQualification.getId()).withProgram(
-                (ImportedProgramRepresentation) getImportedEntityRepresentation(applicationQualification.getProgram(), institution))
+                (ImportedProgramResponse) getImportedEntityRepresentation(applicationQualification.getProgram(), institution))
                 .withStartDate(applicationQualification.getStartDate()).withAwardDate(applicationQualification.getAwardDate())
                 .withLanguage(applicationQualification.getLanguage()).withGrade(applicationQualification.getGrade())
                 .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document))
@@ -370,7 +375,7 @@ public class ApplicationMapper {
 
     private ApplicationFundingRepresentation getApplicationFundingRepresentation(ApplicationFunding applicationFunding, Institution institution) {
         Document document = applicationFunding.getDocument();
-        return new ApplicationFundingRepresentation().withId(applicationFunding.getId()).withFundingSource(
+        return new ApplicationFundingRepresentation().withId(applicationFunding.getId()).withFundingSource((ImportedEntityResponse)
                 getImportedEntityRepresentation(applicationFunding.getFundingSource(), institution)).withSponsor(applicationFunding.getSponsor())
                 .withDescription(applicationFunding.getDescription()).withValue(applicationFunding.getValue()).withAwardDate(applicationFunding.getAwardDate())
                 .withTerms(applicationFunding.getTerms()).withDocument(document == null ? null : documentMapper.getDocumentRepresentation(document));
@@ -618,13 +623,13 @@ public class ApplicationMapper {
 
     private AddressApplicationRepresentation getAddressApplicationRepresentation(AddressApplication address, Institution institution) {
         AddressApplicationRepresentation representation = addressMapper.transform(address, AddressApplicationRepresentation.class);
-        representation.setDomicile(getImportedEntityRepresentation(address.getDomicile(), institution));
+        representation.setDomicile((ImportedEntityResponse) getImportedEntityRepresentation(address.getDomicile(), institution));
         return representation;
     }
 
-    private <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> ImportedEntitySimpleRepresentation getImportedEntityRepresentation(T entity,
-            Institution institution) {
-        return entity == null ? null : importedEntityMapper.getImportedEntityRepresentation(entity, institution);
+    @SuppressWarnings("unchecked")
+    private <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity, Institution institution) {
+        return entity == null ? null : (U) importedEntityMapper.getImportedEntityRepresentation(entity, institution);
     }
 
 }

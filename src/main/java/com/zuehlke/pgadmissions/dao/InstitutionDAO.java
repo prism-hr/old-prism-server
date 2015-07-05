@@ -28,8 +28,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
@@ -49,7 +49,7 @@ public class InstitutionDAO {
     @Inject
     private FreeMarkerConfig freemarkerConfig;
 
-    public List<Institution> getApprovedInstitutionsByDomicile(AdvertDomicile domicile) {
+    public List<Institution> getApprovedInstitutionsByDomicile(ImportedAdvertDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("advert.domicile", domicile)) //
@@ -65,7 +65,7 @@ public class InstitutionDAO {
     }
 
     public List<String> listAvailableCurrencies() {
-        return sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class) //
+        return sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("currency")) //

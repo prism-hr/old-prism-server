@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.Pri
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -28,15 +27,12 @@ public enum PrismRole {
     INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, INSTITUTION), //
     INSTITUTION_ADVERTISER(RECRUITER, INSTITUTION), //
     INSTITUTION_ADMITTER(RECRUITER, INSTITUTION), //
-    INSTITUTION_SPONSOR(SPONSOR, INSTITUTION), //
     PROGRAM_ADMINISTRATOR(ADMINISTRATOR, PROGRAM), //
     PROGRAM_APPROVER(RECRUITER, PROGRAM), //
     PROGRAM_VIEWER(RECRUITER, PROGRAM), //
-    PROGRAM_SPONSOR(SPONSOR, PROGRAM), //
     PROJECT_ADMINISTRATOR(ADMINISTRATOR, PROJECT), //
     PROJECT_PRIMARY_SUPERVISOR(RECRUITER, PROJECT), //
     PROJECT_SECONDARY_SUPERVISOR(RECRUITER, PROJECT), //
-    PROJECT_SPONSOR(SPONSOR, PROJECT), //
     SYSTEM_ADMINISTRATOR(ADMINISTRATOR, SYSTEM);
 
     private PrismRoleCategory roleCategory;
@@ -61,8 +57,7 @@ public enum PrismRole {
         ADMINISTRATOR, //
         RECRUITER, //
         APPLICANT, //
-        REFEREE, //
-        SPONSOR;
+        REFEREE;
 
     }
 

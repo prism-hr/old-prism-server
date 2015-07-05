@@ -6,8 +6,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
+import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "endDate")
 public class ApplicationEmploymentPositionDTO {
@@ -19,7 +19,7 @@ public class ApplicationEmploymentPositionDTO {
     private String employerName;
 
     @NotNull
-    private AddressDTO employerAddress;
+    private AddressApplicationDTO employerAddress;
 
     @NotEmpty
     @Size(max = 200)
@@ -53,11 +53,11 @@ public class ApplicationEmploymentPositionDTO {
         this.employerName = employerName;
     }
 
-    public AddressDTO getEmployerAddress() {
+    public AddressApplicationDTO getEmployerAddress() {
         return employerAddress;
     }
 
-    public void setEmployerAddress(AddressDTO employerAddress) {
+    public void setEmployerAddress(AddressApplicationDTO employerAddress) {
         this.employerAddress = employerAddress;
     }
 

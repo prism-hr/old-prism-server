@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.workflow.executors.action;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
 
 import javax.inject.Inject;
 
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -56,15 +54,10 @@ public class InstitutionExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        if (action.getActionCategory().equals(SPONSOR_RESOURCE)) {
-            Comment comment = commentService.prepareResourceParentComment(institution, user, action, commentDTO, INSTITUTION_SPONSOR);
-            return actionService.executeUserAction(institution, action, comment);
-        } else {
-            InstitutionDTO institutionDTO = commentDTO.getResource().getInstitution();
-            Comment comment = prepareProcessResourceComment(institution, user, action, institutionDTO, commentDTO);
-            institutionService.update(institution, institutionDTO);
-            return actionService.executeUserAction(institution, action, comment);
-        }
+        InstitutionDTO institutionDTO = commentDTO.getResource().getInstitution();
+        Comment comment = prepareProcessResourceComment(institution, user, action, institutionDTO, commentDTO);
+        institutionService.update(institution, institutionDTO);
+        return actionService.executeUserAction(institution, action, comment);
     }
 
     public Comment prepareProcessResourceComment(Institution institution, User user, Action action, InstitutionDTO institutionDTO, CommentDTO commentDTO)

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -22,8 +21,8 @@ import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -34,8 +33,8 @@ import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 
 @Service
 @Transactional
@@ -51,9 +50,6 @@ public class InstitutionService {
     private EntityService entityService;
 
     @Inject
-    private ResourceService resourceService;
-
-    @Inject
     private ActionService actionService;
 
     @Inject
@@ -66,9 +62,6 @@ public class InstitutionService {
     private UserService userService;
 
     @Inject
-    private Mapper mapper;
-
-    @Inject
     private ApplicationContext applicationContext;
 
     public Institution getById(Integer id) {
@@ -79,17 +72,8 @@ public class InstitutionService {
         return institutionDAO.getApprovedInstitutions();
     }
 
-    public List<InstitutionDomicileRepresentation> getInstitutionDomiciles() {
-        List<InstitutionDomicileRepresentation> representations = Lists.newLinkedList();
-        List<InstitutionDomicile> institutionDomiciles = institutionDAO.getInstitutionDomiciles();
-        for (InstitutionDomicile institutionDomicile : institutionDomiciles) {
-            representations.add(mapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
-        }
-        return representations;
-    }
-
-    public List<Institution> getApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
-        return institutionDAO.getApprovedInstitutionsByCountry(domicile);
+    public List<Institution> getApprovedInstitutionsByDomicile(ImportedAdvertDomicile domicile) {
+        return institutionDAO.getApprovedInstitutionsByDomicile(domicile);
     }
 
     public Institution getUclInstitution() {
@@ -120,7 +104,6 @@ public class InstitutionService {
         institution.setGoogleId(advert.getAddress().getGoogleId());
 
         institution.setTitle(advert.getTitle());
-        institution.setDomicile(advert.getAddress().getDomicile());
 
         String oldCurrency = institution.getCurrency();
         String newCurrency = institutionDTO.getCurrency();
@@ -135,7 +118,9 @@ public class InstitutionService {
         }
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
-        resourceService.setResourceAttributes(institution, institutionDTO.getAttributes());
+        
+        List<ResourceConditionDTO> resourceConditions = institutionDTO.getResourceConditions();
+        // FIXME set the resource conditions
     }
 
     public List<String> listAvailableCurrencies() {
@@ -152,10 +137,6 @@ public class InstitutionService {
 
     public Institution getActivatedInstitutionByGoogleId(String googleId) {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
-    }
-
-    public boolean hasAuthenticatedFeeds(Institution institution) {
-        return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
     }
 
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
@@ -185,8 +166,8 @@ public class InstitutionService {
     }
 
     public String mergeInstitutionDomicile(InstitutionDomiciles.InstitutionDomicile instituitionDomicileDefinition) throws DeduplicationException {
-        InstitutionDomicile persistentInstitutionDomicile = entityService.getOrCreate(new InstitutionDomicile()
-                .withId(instituitionDomicileDefinition.getIsoCode()).withName(instituitionDomicileDefinition.getName())
+        ImportedAdvertDomicile persistentInstitutionDomicile = entityService.getOrCreate(new ImportedAdvertDomicile()
+                .withId(instituitionDomicileDefinition.getId()).withName(instituitionDomicileDefinition.getName())
                 .withCurrency(instituitionDomicileDefinition.getCurrency()).withEnabled(true));
         return persistentInstitutionDomicile.getId();
     }
@@ -240,16 +221,10 @@ public class InstitutionService {
     }
 
     private void changeInstitutionCurrency(Institution institution, String oldCurrency, String newCurrency) throws Exception {
-        List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFeesAndPays(institution);
+        List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
         for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
             advertService.updateFeesAndPayments(advertWithFeesAndPays, newCurrency);
         }
-
-        List<Advert> advertsWithSponsorship = advertService.getAdvertsWithSponsorship(institution);
-        for (Advert advertWithSponsorship : advertsWithSponsorship) {
-            advertService.updateSponsorship(advertWithSponsorship, oldCurrency, newCurrency);
-        }
-
         institution.setCurrency(newCurrency);
     }
 

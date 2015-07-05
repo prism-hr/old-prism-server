@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-
 import java.util.List;
 
-public interface ImportedEntityExtractor {
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
-    List<String> extract(Institution institution, PrismImportedEntity prismImportedEntity, List<Object> definitions) throws Exception;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+
+public interface ImportedEntityExtractor<T extends ImportedEntityRequest> {
+
+    List<String> extract(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable) throws Exception;
 
 }

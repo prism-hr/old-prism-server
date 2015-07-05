@@ -1,30 +1,34 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Set;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedLanguageQualificationTypeDefinition;
+
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 
 @Entity
-@Table(name = "imported_language_qualification_type", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
-public class ImportedLanguageQualificationType extends ImportedEntity {
+@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
+public class ImportedLanguageQualificationType extends ImportedEntity<Integer, ImportedLanguageQualificationTypeMapping> implements
+        ImportedLanguageQualificationTypeDefinition, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
-
-    @Column(name = "code", nullable = false)
-    private String code;
-
-    @Lob
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "minimum_overall_score")
@@ -60,6 +64,9 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @OneToMany(mappedBy = "importedLanguageQualificationType")
+    private Set<ImportedLanguageQualificationTypeMapping> mappings = Sets.newHashSet();
+
     @Override
     public Integer getId() {
         return id;
@@ -71,28 +78,8 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     }
 
     @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    @Override
     public PrismImportedEntity getType() {
-        return LANGUAGE_QUALIFICATION_TYPE;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
+        return IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
     }
 
     @Override
@@ -105,82 +92,102 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
         this.name = name;
     }
 
+    @Override
     public BigDecimal getMinimumOverallScore() {
         return minimumOverallScore;
     }
 
+    @Override
     public void setMinimumOverallScore(BigDecimal minimumOverallScore) {
         this.minimumOverallScore = minimumOverallScore;
     }
 
+    @Override
     public BigDecimal getMaximumOverallScore() {
         return maximumOverallScore;
     }
 
+    @Override
     public void setMaximumOverallScore(BigDecimal maximumOverallScore) {
         this.maximumOverallScore = maximumOverallScore;
     }
 
+    @Override
     public BigDecimal getMinimumReadingScore() {
         return minimumReadingScore;
     }
 
+    @Override
     public void setMinimumReadingScore(BigDecimal minimumReadingScore) {
         this.minimumReadingScore = minimumReadingScore;
     }
 
+    @Override
     public BigDecimal getMaximumReadingScore() {
         return maximumReadingScore;
     }
 
+    @Override
     public void setMaximumReadingScore(BigDecimal maximumReadingScore) {
         this.maximumReadingScore = maximumReadingScore;
     }
 
+    @Override
     public BigDecimal getMinimumWritingScore() {
         return minimumWritingScore;
     }
 
+    @Override
     public void setMinimumWritingScore(BigDecimal minimumWritingScore) {
         this.minimumWritingScore = minimumWritingScore;
     }
 
+    @Override
     public BigDecimal getMaximumWritingScore() {
         return maximumWritingScore;
     }
 
+    @Override
     public void setMaximumWritingScore(BigDecimal maximumWritingScore) {
         this.maximumWritingScore = maximumWritingScore;
     }
 
+    @Override
     public BigDecimal getMinimumSpeakingScore() {
         return minimumSpeakingScore;
     }
 
+    @Override
     public void setMinimumSpeakingScore(BigDecimal minimumSpeakingScore) {
         this.minimumSpeakingScore = minimumSpeakingScore;
     }
 
+    @Override
     public BigDecimal getMaximumSpeakingScore() {
         return maximumSpeakingScore;
     }
 
+    @Override
     public void setMaximumSpeakingScore(BigDecimal maximumSpeakingScore) {
         this.maximumSpeakingScore = maximumSpeakingScore;
     }
 
+    @Override
     public BigDecimal getMinimumListeningScore() {
         return minimumListeningScore;
     }
 
+    @Override
     public void setMinimumListeningScore(BigDecimal minimumListeningScore) {
         this.minimumListeningScore = minimumListeningScore;
     }
 
+    @Override
     public BigDecimal getMaximumListeningScore() {
         return maximumListeningScore;
     }
 
+    @Override
     public void setMaximumListeningScore(BigDecimal maximumListeningScore) {
         this.maximumListeningScore = maximumListeningScore;
     }
@@ -195,14 +202,9 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
         this.enabled = enabled;
     }
 
-    public ImportedLanguageQualificationType withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public ImportedLanguageQualificationType withCode(String code) {
-        this.code = code;
-        return this;
+    @Override
+    public Set<ImportedLanguageQualificationTypeMapping> getMappings() {
+        return mappings;
     }
 
     public ImportedLanguageQualificationType withName(String name) {

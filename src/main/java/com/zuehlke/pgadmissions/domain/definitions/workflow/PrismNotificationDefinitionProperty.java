@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
@@ -47,7 +46,6 @@ import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationParent
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationRejectionReasonBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentContentBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentDateTimeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.CommentSponsorshipBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentTransitionOutcomeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionCodeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionDataImportErrorBuilder;
@@ -101,7 +99,6 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
-    COMMENT_SPONSORSHIP(COMMENT_SPONSOR, true, CommentSponsorshipBuilder.class), //
     APPLICATION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CODE(APPLICATION_GLOBAL, true, ApplicationCodeBuilder.class), //
     APPLICATION_PARENT_RESOURCE_TITLE(APPLICATION_GLOBAL, true, ApplicationParentResourceTitleBuilder.class), //

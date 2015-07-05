@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
@@ -51,12 +51,9 @@ public class PropertyLoader {
 
     public PropertyLoader localize(Resource resource) {
         this.resource = resource;
-        Program program = resource.getProgram();
-        if (program != null) {
-            this.opportunityType = program == null ? resource.getProject().getOpportunityType().getPrismOpportunityType() : program.getOpportunityType()
-                    .getPrismOpportunityType();
-        } else {
-            this.opportunityType = null;
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
+            this.opportunityType = PrismOpportunityType.valueOf(resourceOpportunity.getOpportunityType().getName());
         }
         return this;
     }
@@ -68,7 +65,7 @@ public class PropertyLoader {
         HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation value : values) {
             DisplayPropertyConfigurationRepresentation displayValue = (DisplayPropertyConfigurationRepresentation) value;
-            PrismDisplayPropertyDefinition displayPropertyId = (PrismDisplayPropertyDefinition) value.getDefinitionId();
+            PrismDisplayPropertyDefinition displayPropertyId = (PrismDisplayPropertyDefinition) value.getProperty();
             if (!displayProperties.containsKey(displayPropertyId)) {
                 displayProperties.put(displayPropertyId, displayValue.getValue());
             }

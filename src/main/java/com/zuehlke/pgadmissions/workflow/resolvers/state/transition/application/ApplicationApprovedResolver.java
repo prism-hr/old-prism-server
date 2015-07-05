@@ -17,16 +17,16 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransit
 @Component
 public class ApplicationApprovedResolver implements StateTransitionResolver {
 
-	@Inject
-	private StateService stateService;
+    @Inject
+    private StateService stateService;
 
-	@Override
-	public StateTransition resolve(Resource resource, Comment comment) {
-		if (BooleanUtils.isTrue(resource.getProgram().getImported())) {
-			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_EXPORT);
-		} else {
-			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_COMPLETED);
-		}
-	}
+    @Override
+    public StateTransition resolve(Resource resource, Comment comment) {
+        if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_EXPORT);
+        } else {
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_COMPLETED);
+        }
+    }
 
 }

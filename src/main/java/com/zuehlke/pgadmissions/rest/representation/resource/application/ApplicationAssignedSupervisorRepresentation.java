@@ -1,21 +1,21 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationAssignedSupervisorRepresentation {
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
     private PrismRole role;
 
     private Boolean acceptedSupervision;
 
-    public final UserRepresentation getUser() {
+    public final UserRepresentationSimple getUser() {
         return user;
     }
 
-    public final void setUser(UserRepresentation user) {
+    public final void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
@@ -35,7 +35,7 @@ public class ApplicationAssignedSupervisorRepresentation {
         this.acceptedSupervision = acceptedSupervision;
     }
 
-    public ApplicationAssignedSupervisorRepresentation withUser(UserRepresentation user) {
+    public ApplicationAssignedSupervisorRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }

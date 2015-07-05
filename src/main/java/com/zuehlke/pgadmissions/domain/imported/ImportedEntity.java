@@ -1,23 +1,21 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import java.util.Set;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 
-public abstract class ImportedEntity implements UniqueEntity {
+public abstract class ImportedEntity<T, U extends ImportedEntityMapping<?>> implements UniqueEntity, ImportedEntityDefinition,
+        ImportedEntityResponseDefinition<T> {
 
-    public abstract Integer getId();
+    public abstract T getId();
 
-    public abstract void setId(Integer id);
-
-    public abstract Institution getInstitution();
-
-    public abstract void setInstitution(Institution institution);
-
-    public abstract String getCode();
-
-    public abstract void setCode(String code);
+    public abstract void setId(T id);
 
     public abstract String getName();
 
@@ -29,32 +27,35 @@ public abstract class ImportedEntity implements UniqueEntity {
 
     public abstract PrismImportedEntity getType();
 
-    @Override
-    public String toString() {
-        return getId().toString() + "-" + getCode() + "-" + getName();
-    }
+    public abstract Set<U> getMappings();
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getInstitution(), getType(), getCode());
+        return Objects.hashCode(getName());
     }
 
     @Override
     public boolean equals(Object object) {
-        if (object == null) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final ImportedEntity other = (ImportedEntity) object;
-        return Objects.equal(getInstitution(), other.getInstitution()) && Objects.equal(getType(), other.getType())
-                && Objects.equal(getCode(), other.getCode());
+        ImportedEntity<?, ?> other = (ImportedEntity<?, ?>) object;
+        return Objects.equal(getName(), other.getName());
+    }
+
+    @Override
+    public int index() {
+        return Objects.hashCode(getName());
+    }
+
+    @Override
+    public String toString() {
+        return getId().toString() + "-" + getType() + "-" + getName();
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
+        return new ResourceSignature().addProperty("name", getName());
     }
 
 }

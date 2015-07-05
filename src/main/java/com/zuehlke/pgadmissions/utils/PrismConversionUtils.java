@@ -12,10 +12,6 @@ public class PrismConversionUtils {
         return input == null ? null : BigDecimal.valueOf(input).setScale(precision, HALF_UP);
     }
 
-    public static BigDecimal floatToBigDecimal(Float input, int precision) {
-        return input == null ? null : BigDecimal.valueOf(input).setScale(precision, HALF_UP);
-    }
-
     public static Integer longToInteger(Long input) {
         return input == null ? null : input.intValue();
     }
@@ -32,4 +28,5 @@ public class PrismConversionUtils {
         }
         return map;
     }
+
 }

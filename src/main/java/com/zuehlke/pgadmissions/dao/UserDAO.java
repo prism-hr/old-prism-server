@@ -1,5 +1,25 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -9,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -18,22 +38,8 @@ import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -85,10 +91,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getSuggestedSupervisors(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email")) //
+                        .add(Projections.property("user.parentUser"), "user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
                 .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
@@ -106,10 +109,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email") //
+                        .add(Projections.groupProperty("user.parentUser"), "user") //
                         .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
@@ -128,10 +128,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersNotInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email") //
+                        .add(Projections.groupProperty("user.parentUser"), "user")
                         .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
@@ -148,10 +145,7 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects, List<Integer> relatedApplications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("parentUser.id"), "id") //
-                        .add(Projections.property("parentUser.firstName"), "firstName") //
-                        .add(Projections.property("parentUser.lastName"), "lastName") //
-                        .add(Projections.property("parentUser.email"), "email")) //
+                        .add(Projections.groupProperty("user.parentUser"), "user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
                 .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
@@ -210,8 +204,8 @@ public class UserDAO {
                 .list();
     }
 
-    public List<UserRepresentation> getSimilarUsers(String searchTerm) {
-        return (List<UserRepresentation>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+    public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
+        return (List<UserRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("firstName"), "firstName") //
                         .add(Projections.property("lastName"), "lastName") //
@@ -236,7 +230,7 @@ public class UserDAO {
                 .addOrder(Order.desc("lastName")) //
                 .addOrder(Order.desc("firstName")) //
                 .setMaxResults(10) //
-                .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
+                .setResultTransformer(Transformers.aliasToBean(UserRepresentationSimple.class)) //
                 .list();
     }
 

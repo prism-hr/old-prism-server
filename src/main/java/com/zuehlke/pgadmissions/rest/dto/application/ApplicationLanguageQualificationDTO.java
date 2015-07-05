@@ -5,8 +5,9 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.utils.validation.DatePast;
+
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
 
 public class ApplicationLanguageQualificationDTO {
 

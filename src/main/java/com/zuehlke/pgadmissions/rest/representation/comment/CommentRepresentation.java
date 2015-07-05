@@ -4,22 +4,22 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class CommentRepresentation {
 
     private Integer id;
 
-    private UserRepresentation user;
+    private UserRepresentationSimple user;
 
-    private UserRepresentation delegateUser;
+    private UserRepresentationSimple delegateUser;
 
     private PrismAction action;
 
@@ -27,25 +27,21 @@ public class CommentRepresentation {
 
     private String content;
 
+    private PrismState state;
+
     private PrismState transitionState;
 
     private PrismYesNoUnsureResponse applicationEligible;
 
     private Boolean applicationInterested;
     
-    private InstitutionRepresentation partner;
-    
-    private Boolean removedPartner;
-    
-    private CommentSponsorshipRepresentation sponsorship;
+    private CommentInterviewAppointmentRepresentation interviewAppointment;
 
-    private CommentApplicationInterviewAppointmentRepresentation interviewAppointment;
+    private CommentInterviewInstructionRepresentation interviewInstruction;
 
-    private CommentApplicationInterviewInstructionRepresentation interviewInstruction;
+    private CommentPositionDetailRepresentation positionDetail;
 
-    private CommentApplicationPositionDetailRepresentation positionDetail;
-
-    private CommentApplicationOfferDetailRepresentation offerDetail;
+    private CommentOfferDetailRepresentation offerDetail;
 
     private Boolean recruiterAcceptAppointment;
 
@@ -57,31 +53,17 @@ public class CommentRepresentation {
 
     private BigDecimal applicationRating;
 
-    private Boolean useCustomRefereeQuestions;
-
-    private Boolean useCustomRecruiterQuestions;
-
-    private Integer customQuestionVersionId;
-
-    private String customQuestionResponse;
-
-    private String exportRequest;
-
-    private String exportResponse;
-
-    private String exportException;
-
-    private String exportReference;
+    private CommentExportRepresentation export;
 
     private DateTime createdTimestamp;
 
     private List<CommentAssignedUserRepresentation> assignedUsers;
 
-    private List<AppointmentTimeslotRepresentation> appointmentTimeslots;
+    private List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots;
 
-    private List<AppointmentPreferenceRepresentation> appointmentPreferences;
+    private List<LocalDateTime> appointmentPreferences;
 
-    private List<FileRepresentation> documents;
+    private List<DocumentRepresentation> documents;
 
     private List<CommentCustomResponseRepresentation> customResponses;
 
@@ -93,19 +75,19 @@ public class CommentRepresentation {
         this.id = id;
     }
 
-    public UserRepresentation getUser() {
+    public UserRepresentationSimple getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
 
-    public UserRepresentation getDelegateUser() {
+    public UserRepresentationSimple getDelegateUser() {
         return delegateUser;
     }
 
-    public void setDelegateUser(UserRepresentation delegateUser) {
+    public void setDelegateUser(UserRepresentationSimple delegateUser) {
         this.delegateUser = delegateUser;
     }
 
@@ -116,7 +98,7 @@ public class CommentRepresentation {
     public void setAction(PrismAction action) {
         this.action = action;
     }
-    
+
     public Boolean getDeclinedResponse() {
         return declinedResponse;
     }
@@ -131,6 +113,14 @@ public class CommentRepresentation {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public PrismState getState() {
+        return state;
+    }
+
+    public void setState(PrismState state) {
+        this.state = state;
     }
 
     public PrismState getTransitionState() {
@@ -156,60 +146,36 @@ public class CommentRepresentation {
     public void setApplicationInterested(Boolean applicationInterested) {
         this.applicationInterested = applicationInterested;
     }
-
-    public InstitutionRepresentation getPartner() {
-        return partner;
-    }
-
-    public void setPartner(InstitutionRepresentation partner) {
-        this.partner = partner;
-    }
     
-    public Boolean getRemovedPartner() {
-        return removedPartner;
-    }
-
-    public void setRemovedPartner(Boolean removedPartner) {
-        this.removedPartner = removedPartner;
-    }
-
-    public CommentSponsorshipRepresentation getSponsorship() {
-        return sponsorship;
-    }
-
-    public void setSponsorship(CommentSponsorshipRepresentation sponsorship) {
-        this.sponsorship = sponsorship;
-    }
-
-    public final CommentApplicationInterviewAppointmentRepresentation getInterviewAppointment() {
+    public final CommentInterviewAppointmentRepresentation getInterviewAppointment() {
         return interviewAppointment;
     }
 
-    public final void setInterviewAppointment(CommentApplicationInterviewAppointmentRepresentation interviewAppointment) {
+    public final void setInterviewAppointment(CommentInterviewAppointmentRepresentation interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
     }
 
-    public final CommentApplicationInterviewInstructionRepresentation getInterviewInstruction() {
+    public final CommentInterviewInstructionRepresentation getInterviewInstruction() {
         return interviewInstruction;
     }
 
-    public final void setInterviewInstruction(CommentApplicationInterviewInstructionRepresentation interviewInstruction) {
+    public final void setInterviewInstruction(CommentInterviewInstructionRepresentation interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
     }
 
-    public CommentApplicationPositionDetailRepresentation getPositionDetail() {
+    public CommentPositionDetailRepresentation getPositionDetail() {
         return positionDetail;
     }
 
-    public void setPositionDetail(CommentApplicationPositionDetailRepresentation positionDetail) {
+    public void setPositionDetail(CommentPositionDetailRepresentation positionDetail) {
         this.positionDetail = positionDetail;
     }
 
-    public CommentApplicationOfferDetailRepresentation getOfferDetail() {
+    public CommentOfferDetailRepresentation getOfferDetail() {
         return offerDetail;
     }
 
-    public void setOfferDetail(CommentApplicationOfferDetailRepresentation offerDetail) {
+    public void setOfferDetail(CommentOfferDetailRepresentation offerDetail) {
         this.offerDetail = offerDetail;
     }
 
@@ -222,14 +188,14 @@ public class CommentRepresentation {
     }
 
     public PrismApplicationReserveStatus getApplicationReserveStatus() {
-		return applicationReserveStatus;
-	}
+        return applicationReserveStatus;
+    }
 
-	public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
-		this.applicationReserveStatus = applicationReserveStatus;
-	}
+    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
+        this.applicationReserveStatus = applicationReserveStatus;
+    }
 
-	public final String getRejectionReason() {
+    public final String getRejectionReason() {
         return rejectionReason;
     }
 
@@ -253,68 +219,12 @@ public class CommentRepresentation {
         this.applicationRating = applicationRating;
     }
 
-    public Boolean getUseCustomRefereeQuestions() {
-        return useCustomRefereeQuestions;
+    public CommentExportRepresentation getExport() {
+        return export;
     }
 
-    public void setUseCustomRefereeQuestions(Boolean useCustomRefereeQuestions) {
-        this.useCustomRefereeQuestions = useCustomRefereeQuestions;
-    }
-
-    public Boolean getUseCustomRecruiterQuestions() {
-        return useCustomRecruiterQuestions;
-    }
-
-    public void setUseCustomRecruiterQuestions(Boolean useCustomRecruiterQuestions) {
-        this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
-    }
-
-    public Integer getCustomQuestionVersionId() {
-        return customQuestionVersionId;
-    }
-
-    public void setCustomQuestionVersionId(Integer customQuestionVersionId) {
-        this.customQuestionVersionId = customQuestionVersionId;
-    }
-
-    public String getCustomQuestionResponse() {
-        return customQuestionResponse;
-    }
-
-    public void setCustomQuestionResponse(String customQuestionResponse) {
-        this.customQuestionResponse = customQuestionResponse;
-    }
-
-    public String getExportRequest() {
-        return exportRequest;
-    }
-
-    public void setExportRequest(String exportRequest) {
-        this.exportRequest = exportRequest;
-    }
-
-    public String getExportResponse() {
-        return exportResponse;
-    }
-
-    public void setExportResponse(String exportResponse) {
-        this.exportResponse = exportResponse;
-    }
-
-    public String getExportException() {
-        return exportException;
-    }
-
-    public void setExportException(String exportException) {
-        this.exportException = exportException;
-    }
-
-    public String getExportReference() {
-        return exportReference;
-    }
-
-    public void setExportReference(String exportReference) {
-        this.exportReference = exportReference;
+    public void setExport(CommentExportRepresentation export) {
+        this.export = export;
     }
 
     public DateTime getCreatedTimestamp() {
@@ -333,27 +243,27 @@ public class CommentRepresentation {
         this.assignedUsers = assignedUsers;
     }
 
-    public List<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
+    public List<CommentAppointmentTimeslotRepresentation> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public void setAppointmentTimeslots(List<AppointmentTimeslotRepresentation> appointmentTimeslots) {
+    public void setAppointmentTimeslots(List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 
-    public List<AppointmentPreferenceRepresentation> getAppointmentPreferences() {
+    public List<LocalDateTime> getAppointmentPreferences() {
         return appointmentPreferences;
     }
 
-    public void setAppointmentPreferences(List<AppointmentPreferenceRepresentation> appointmentPreferences) {
+    public void setAppointmentPreferences(List<LocalDateTime> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public List<FileRepresentation> getDocuments() {
+    public List<DocumentRepresentation> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<FileRepresentation> documents) {
+    public void setDocuments(List<DocumentRepresentation> documents) {
         this.documents = documents;
     }
 
@@ -365,33 +275,128 @@ public class CommentRepresentation {
         this.customResponses = customResponses;
     }
 
-    public CommentRepresentation addId(Integer id) {
+    public CommentRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public CommentRepresentation addUser(UserRepresentation user) {
+    public CommentRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }
 
-    public CommentRepresentation addDelegateUser(UserRepresentation delegateUser) {
+    public CommentRepresentation withDelegateUser(UserRepresentationSimple delegateUser) {
         this.delegateUser = delegateUser;
         return this;
     }
 
-    public CommentRepresentation addAction(PrismAction action) {
+    public CommentRepresentation withAction(PrismAction action) {
         this.action = action;
         return this;
     }
 
-    public CommentRepresentation addDeclinedResponse(Boolean declinedResponse) {
+    public CommentRepresentation withDeclinedResponse(Boolean declinedResponse) {
         this.declinedResponse = declinedResponse;
         return this;
     }
 
-    public CommentRepresentation addCreatedTimestamp(DateTime createdTimestamp) {
+    public CommentRepresentation withContent(String content) {
+        this.content = content;
+        return this;
+    }
+
+    public CommentRepresentation withState(PrismState state) {
+        this.state = state;
+        return this;
+    }
+
+    public CommentRepresentation withTransitionState(PrismState transitionState) {
+        this.transitionState = transitionState;
+        return this;
+    }
+
+    public CommentRepresentation withApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
+        this.applicationEligible = applicationEligible;
+        return this;
+    }
+
+    public CommentRepresentation withApplicationInterested(Boolean applicationInterested) {
+        this.applicationInterested = applicationInterested;
+        return this;
+    }
+
+    public CommentRepresentation withInterviewAppointment(CommentInterviewAppointmentRepresentation interviewAppointment) {
+        this.interviewAppointment = interviewAppointment;
+        return this;
+    }
+
+    public CommentRepresentation withInterviewInstruction(CommentInterviewInstructionRepresentation interviewInstruction) {
+        this.interviewInstruction = interviewInstruction;
+        return this;
+    }
+
+    public CommentRepresentation withPositionDetail(CommentPositionDetailRepresentation positionDetail) {
+        this.positionDetail = positionDetail;
+        return this;
+    }
+
+    public CommentRepresentation withOfferDetail(CommentOfferDetailRepresentation offerDetail) {
+        this.offerDetail = offerDetail;
+        return this;
+    }
+
+    public CommentRepresentation withRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
+        this.recruiterAcceptAppointment = recruiterAcceptAppointment;
+        return this;
+    }
+
+    public CommentRepresentation withApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
+        this.applicationReserveStatus = applicationReserveStatus;
+        return this;
+    }
+
+    public CommentRepresentation withRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+        return this;
+    }
+
+    public CommentRepresentation withRejectionReasonSystem(String rejectionReasonSystem) {
+        this.rejectionReasonSystem = rejectionReasonSystem;
+        return this;
+    }
+
+    public CommentRepresentation withApplicationRating(BigDecimal applicationRating) {
+        this.applicationRating = applicationRating;
+        return this;
+    }
+
+    public CommentRepresentation withExport(CommentExportRepresentation export) {
+        this.export = export;
+        return this;
+    }
+
+    public CommentRepresentation withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public CommentRepresentation withAppointmentTimeslots(List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots) {
+        this.appointmentTimeslots = appointmentTimeslots;
+        return this;
+    }
+
+    public CommentRepresentation withAppointmentPreferences(List<LocalDateTime> appointmentPreferences) {
+        this.appointmentPreferences = appointmentPreferences;
+        return this;
+    }
+
+    public CommentRepresentation withDocuments(List<DocumentRepresentation> documents) {
+        this.documents = documents;
+        return this;
+    }
+
+    public CommentRepresentation withCustomResponses(List<CommentCustomResponseRepresentation> customResponses) {
+        this.customResponses = customResponses;
         return this;
     }
 

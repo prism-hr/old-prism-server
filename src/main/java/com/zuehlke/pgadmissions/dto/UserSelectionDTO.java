@@ -3,78 +3,49 @@ package com.zuehlke.pgadmissions.dto;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 public class UserSelectionDTO {
 
-	private Integer id;
-	
-	private String firstName;
-	
-	private String lastName;
-	
-	private String email;
-	
-	private DateTime eventTimestamp;
+    private User user;
 
-	public Integer getId() {
-		return id;
-	}
+    private DateTime eventTimestamp;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public DateTime getEventTimestamp() {
+        return eventTimestamp;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public void setEventTimestamp(DateTime eventTimestamp) {
+        this.eventTimestamp = eventTimestamp;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public String getIndexName() {
+        return user.getFullName();
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(user.getId());
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final UserSelectionDTO other = (UserSelectionDTO) object;
+        return Objects.equal(user.getId(), other.getUser().getId());
+    }
 
-	public DateTime getEventTimestamp() {
-		return eventTimestamp;
-	}
-
-	public void setEventTimestamp(DateTime eventTimestamp) {
-		this.eventTimestamp = eventTimestamp;
-	}
-	
-	public String getIndexName() {
-		return firstName + " " + lastName;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
-	}
-
-	@Override
-	public boolean equals(Object object) {
-		if (object == null) {
-			return false;
-		}
-		if (getClass() != object.getClass()) {
-			return false;
-		}
-		final UserSelectionDTO other = (UserSelectionDTO) object;
-		return Objects.equal(id, other.getId());
-	}
-	
 }

@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
 
 import java.util.List;
 
@@ -32,9 +33,9 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -72,13 +73,13 @@ public class StateDAO {
                 .list();
     }
 
-    public StateTransition getSecondaryStateTransition(Resource resource, State state, Action action) {
+    public StateTransition getSecondaryStateTransition(Resource resource, PrismState state, Action action) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getPreviousState())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("transitionState", state)) //
+                .add(Restrictions.eq("transitionState.id", state)) //
                 .uniqueResult();
     }
 
@@ -229,28 +230,27 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public List<State> getSecondaryResourceStates(Resource resource) {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("state")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+    public List<PrismState> getSecondaryResourceStates(PrismScope resourceScope, Integer resourceId) {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("state.id")) //
+                .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
                 .add(Restrictions.eq("primaryState", false)) //
                 .list();
     }
 
     public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
         return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("state.stateGroup.id")) //
+                .setProjection(Projections.groupProperty("state.stateGroup.id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
                 .add(Restrictions.eq("primaryState", false)) //
                 .list();
     }
 
-    public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
+    public List<StateSelectableDTO> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("transitionState.id"), "state") //
+                        .add(Projections.groupProperty("transitionState.id"), "state") //
                         .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
@@ -263,28 +263,8 @@ public class StateDAO {
 
         appendImportedResourceConstraint(criteria, importedResource);
 
-        return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
-                .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
-                .list();
-    }
-
-    public List<NextStateRepresentation> getSelectableTransitionStates(State state, boolean importedResource) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("transitionState.id"), "state") //
-                        .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
-                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
-                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", state)) //
-                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
-                .add(Restrictions.isNotNull("transitionState"));
-
-        appendImportedResourceConstraint(criteria, importedResource);
-
-        return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
-                .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
+        return (List<StateSelectableDTO>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
+                .setResultTransformer(Transformers.aliasToBean(StateSelectableDTO.class)) //
                 .list();
     }
 
@@ -341,7 +321,8 @@ public class StateDAO {
 
     private void appendImportedResourceConstraint(Criteria criteria, boolean importedResource) {
         if (importedResource) {
-            criteria.add(Restrictions.ne("transitionState.id", PROGRAM_DISABLED_COMPLETED)); //
+            criteria.add(Restrictions.not(
+                    Restrictions.in("transitionState.id", new PrismState[] { PROGRAM_DISABLED_COMPLETED, PROJECT_DISABLED_COMPLETED })));
         }
     }
 

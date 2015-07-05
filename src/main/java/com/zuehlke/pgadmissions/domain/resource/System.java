@@ -43,10 +43,6 @@ public class System extends Resource {
     @Column(name = "minimum_wage", nullable = false)
     private BigDecimal minimumWage;
 
-    @Column(name = "last_data_import_timestamp")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime lastDataImportTimestamp;
-
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -162,15 +158,7 @@ public class System extends Resource {
     public void setMinimumWage(BigDecimal minimumWage) {
         this.minimumWage = minimumWage;
     }
-
-    public final DateTime getLastDataImportTimestamp() {
-        return lastDataImportTimestamp;
-    }
-
-    public final void setLastDataImportTimestamp(DateTime lastDataImportTimestamp) {
-        this.lastDataImportTimestamp = lastDataImportTimestamp;
-    }
-
+    
     @Override
     public State getState() {
         return state;

@@ -1,10 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
+<<<<<<< local
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 
 import java.util.List;
 
+=======
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.user.Address;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+>>>>>>> other
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -16,6 +24,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+<<<<<<< local
 import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
@@ -27,6 +36,11 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+=======
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+>>>>>>> other
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -57,7 +71,7 @@ public class ImportedEntityDAO {
 
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntities(Institution institution,
             PrismImportedEntity prismImportedEntity) {
-        String entityReference = prismImportedEntity.getLowerCamelName();
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
                 .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN); //
 
@@ -72,7 +86,7 @@ public class ImportedEntityDAO {
 
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution,
             PrismImportedEntity prismImportedEntity) {
-        String entityReference = prismImportedEntity.getLowerCamelName();
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference) //
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN); //
 
@@ -87,7 +101,7 @@ public class ImportedEntityDAO {
 
     public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedEntitySimple domicile) {
         PrismImportedEntity prismImportedEntity = IMPORTED_INSTITUTION;
-        String entityReference = prismImportedEntity.getLowerCamelName();
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
                 .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN) //
                 .add(Restrictions.eq(entityReference + ".domicile", domicile)); //
@@ -99,7 +113,7 @@ public class ImportedEntityDAO {
 
     public List<ImportedInstitution> getEnabledImportedInstitutionsWithMappings(Institution institution, ImportedEntitySimple domicile) {
         PrismImportedEntity prismImportedEntity = IMPORTED_INSTITUTION;
-        String entityReference = prismImportedEntity.getLowerCamelName();
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(entityReference + ".domicile", domicile)); //
@@ -111,7 +125,7 @@ public class ImportedEntityDAO {
 
     public List<ImportedProgram> getEnabledImportedPrograms(Institution institution, ImportedInstitution importedInstitution) {
         PrismImportedEntity prismImportedEntity = IMPORTED_PROGRAM;
-        String entityReference = prismImportedEntity.getLowerCamelName();
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
                 .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN) //
                 .add(Restrictions.eq(entityReference + ".institution", importedInstitution)); //
@@ -123,7 +137,7 @@ public class ImportedEntityDAO {
 
     public List<ImportedProgram> getEnabledImportedProgramsWithMappings(Institution institution, ImportedInstitution importedInstitution) {
         PrismImportedEntity prismImportedEntity = IMPORTED_PROGRAM;
-        String entityReference = prismImportedEntity.getLowerCamelName();
+        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(entityReference + ".institution", importedInstitution)); //
@@ -240,6 +254,7 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
+<<<<<<< local
     public List<ImportedInstitution> getInstitutionsWithUcasId() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
                 .add(Restrictions.isNotNull("ucasId")) //
@@ -248,7 +263,7 @@ public class ImportedEntityDAO {
 
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
             Boolean enabled) {
-        String entityReference = importedEntity.getType().getLowerCamelName();
+        String entityReference = importedEntity.getType().getEntityClassLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(entityReference + ".type", importedEntity)) //
@@ -266,7 +281,7 @@ public class ImportedEntityDAO {
 
     private <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
             PrismImportedEntity importedEntity, Boolean enabled) {
-        String entityReference = importedEntity.getLowerCamelName();
+        String entityReference = importedEntity.getEntityClassLowerCamelName();
         Class<T> mappingClass = (Class<T>) importedEntity.getMappingClass();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(mappingClass) //
@@ -313,6 +328,46 @@ public class ImportedEntityDAO {
         return criteria.add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.isNotNull("code")) //
                 .add(Restrictions.eq("enabled", true)); //
+=======
+    public List<ImportedInstitution> getAllWhereUcasIdIsNotNull() {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
+                .add(Restrictions.isNotNull("ucasId")).list();
+>>>>>>> other
+    }
+
+    //temporary workaround to update imported_institution table based on XML;  until importer gets fixed
+    public void fixDatabase(String ucasId, String facebookId, String code, String domicile) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "update imported_institution " //
+                        + "set ucas_id = :ucasId , facebook_id = :facebookId " //
+                        + "where institution_id = 5243 " //
+                        + "and domicile_id = (select id from imported_entity where institution_id = 5243 and imported_entity_type = 'DOMICILE' and code = :domicile )" //
+                        + "and code = :code") //
+                .setParameter("ucasId", ucasId) //
+                .setParameter("facebookId", facebookId) //
+                .setParameter("domicile", domicile)
+                .setParameter("code", code)
+                .executeUpdate();
+    }
+
+    //temporary workaround to load program table based on XML created 'manually'
+    public void importProgram(String institutionId, String qualification, String title, String homepage, String level) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "insert ignore into imported_program (imported_institution_id, qualification, title, homepage, level, enabled) values (:institutionId, :qualification, :title, :homepage,:level, :enabled)")
+                .setParameter("institutionId", institutionId)
+                .setParameter("qualification", qualification)
+                .setParameter("title", title)
+                .setParameter("homepage", homepage)
+                .setParameter("level", level)
+                .setParameter("enabled", true)
+                .executeUpdate();
+//        `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+//        `imported_institution_id` int(10) unsigned NOT NULL,
+//        `qualification` varchar(50) NOT NULL,
+//        `title` varchar(255) NOT NULL,
+//        `homepage` text,
+//        `level` varchar(50) DEFAULT NULL,
+//        `enabled` int(1) unsigned NOT NULL
     }
 
 }

@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
+import static com.zuehlke.pgadmissions.utils.PrismFileUtils.getContentStream;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.google.common.base.Objects;
@@ -36,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
@@ -83,6 +87,7 @@ import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
@@ -92,7 +97,7 @@ import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.FileUtils;
+import com.zuehlke.pgadmissions.utils.PrismFileUtils;
 
 @Service
 public class SystemService {
@@ -119,7 +124,7 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
-    
+
     @Value("${system.minimum.wage}")
     private BigDecimal systemMinimumWage;
 
@@ -128,6 +133,9 @@ public class SystemService {
 
     @Value("${system.default.email.content.directory}")
     private String defaultEmailContentDirectory;
+
+    @Value("${system.default.import.directory}")
+    private String defaultImportDirectory;
 
     @Inject
     private ActionService actionService;
@@ -155,6 +163,12 @@ public class SystemService {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private ImportedEntityService importedEntityService;
+
+    @Inject
+    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -253,8 +267,12 @@ public class SystemService {
     }
 
     @Transactional
-    public void setLastDataImportTimestamp(DateTime lastDataImportTimestamp) {
-        getSystem().setLastDataImportTimestamp(lastDataImportTimestamp);
+    public <T extends ImportedEntityRequest> void initializeSystemData() throws Exception {
+        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
+            List<T> representations = importedEntityMapper.getImportedEntityRepresentations(prismImportedEntity, getContentStream(defaultImportDirectory + "/"
+                    + prismImportedEntity.getUpperCamelName() + ".json"));
+            importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
+        }
     }
 
     @Transactional
@@ -486,8 +504,8 @@ public class SystemService {
     private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
             IllegalAccessException {
         for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
-            String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
-            String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
+            String subject = PrismFileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
+            String content = PrismFileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
             PrismOpportunityType opportunityType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismOpportunityType
                     .getSystemOpportunityType() : null;

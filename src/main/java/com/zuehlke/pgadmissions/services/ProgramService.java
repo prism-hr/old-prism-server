@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -101,7 +101,7 @@ public class ProgramService {
         return programDAO.getApplications(program);
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId) {
+    public List<ResourceChildCreationDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId) {
         List<PrismState> states = stateService.getActiveProgramStates();
         boolean userLoggedIn = userService.getCurrentUser() != null;
         return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);

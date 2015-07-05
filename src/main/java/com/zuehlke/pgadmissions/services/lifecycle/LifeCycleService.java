@@ -19,46 +19,42 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
 
 @Service
 public class LifeCycleService {
 
-	private static final Logger logger = LoggerFactory.getLogger(LifeCycleService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LifeCycleService.class);
 
-	private Object lock = new Object();
+    private Object lock = new Object();
 
-	private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
+    private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
 
-	private ExecutorService executorService;
+    private ExecutorService executorService;
 
-	@Value("${startup.display.initialize}")
-	private Boolean initializeDisplayProperties;
+    @Value("${startup.workflow.initialize}")
+    private Boolean initializeWorkflow;
 
-	@Value("${startup.display.initialize.drop}")
-	private Boolean destroyDisplayProperties;
+    @Value("${startup.display.initialize}")
+    private Boolean initializeDisplayProperties;
 
-	@Value("${startup.workflow.initialize}")
-	private Boolean initializeWorkflow;
+    @Value("${startup.display.initialize.drop}")
+    private Boolean destroyDisplayProperties;
 
-	@Value("${startup.import.system.data}")
-	private Boolean initializeData;
+    @Value("${startup.import.system.data}")
+    private Boolean initializeData;
 
-	@Value("${maintenance.run}")
-	private Boolean maintain;
+    @Value("${maintenance.run}")
+    private Boolean maintain;
 
-	@Inject
-	private ImportedEntityServiceHelperSystem importedEntityServiceHelperSystem;
+    @Inject
+    private SystemService systemService;
 
-	@Inject
-	private SystemService systemService;
+    @Inject
+    private ApplicationContext applicationContext;
 
-	@Inject
-	private ApplicationContext applicationContext;
-
-	@PostConstruct
-	public void startup() throws Exception {
-		boolean doInitializeWorkflow = BooleanUtils.isTrue(initializeWorkflow);
+    @PostConstruct
+    public void startup() throws Exception {
+        boolean doInitializeWorkflow = BooleanUtils.isTrue(initializeWorkflow);
 
         if (doInitializeWorkflow) {
             systemService.initializeWorkflow();
@@ -77,50 +73,50 @@ public class LifeCycleService {
         }
 
         if (BooleanUtils.isTrue(initializeData)) {
-            importedEntityServiceHelperSystem.execute();
+            systemService.initializeSystemData();
         }
 
         if (BooleanUtils.isTrue(maintain)) {
             executorService = Executors.newFixedThreadPool(PrismMaintenanceTask.values().length);
         }
-	}
+    }
 
-	@PreDestroy
-	public void shutdown() {
-		if (BooleanUtils.isTrue(maintain)) {
-			try {
-				executorService.shutdownNow();
-			} catch (Exception e) {
-				logger.error("Error shutting down maintenance task executor", e);
-			}
-		}
-	}
+    @PreDestroy
+    public void shutdown() {
+        if (BooleanUtils.isTrue(maintain)) {
+            try {
+                executorService.shutdownNow();
+            } catch (Exception e) {
+                logger.error("Error shutting down maintenance task executor", e);
+            }
+        }
+    }
 
-	@Scheduled(fixedDelay = 60000)
-	private void maintain() {
-		if (BooleanUtils.isTrue(maintain)) {
-			for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {
-				synchronized (lock) {
-					if (!executions.contains(execution)) {
-						executions.add(execution);
-						executorService.submit(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									applicationContext.getBean(execution.getExecutor()).execute();
-								} catch (Throwable e) {
-									logger.error("Error performing maintenance task: " + execution.name(), e);
-								} finally {
-									synchronized (lock) {
-										executions.remove(execution);
-									}
-								}
-							}
-						});
-					}
-				}
-			}
-		}
-	}
+    @Scheduled(fixedDelay = 60000)
+    private void maintain() {
+        if (BooleanUtils.isTrue(maintain)) {
+            for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {
+                synchronized (lock) {
+                    if (!executions.contains(execution)) {
+                        executions.add(execution);
+                        executorService.submit(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    applicationContext.getBean(execution.getExecutor()).execute();
+                                } catch (Throwable e) {
+                                    logger.error("Error performing maintenance task: " + execution.name(), e);
+                                } finally {
+                                    synchronized (lock) {
+                                        executions.remove(execution);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
 
 }

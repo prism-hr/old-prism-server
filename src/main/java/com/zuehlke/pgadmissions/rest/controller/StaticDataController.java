@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.services.StaticDataService;
 
 @RestController
@@ -50,12 +48,12 @@ public class StaticDataController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/domiciles/{domicileId}/importedInstitutions")
-    public List<ImportedInstitutionResponse> getImportedInstitutions(@PathVariable Integer domicileId, @RequestParam Integer institutionId) {
+    public List<ImportedEntityResponse> getImportedInstitutions(@PathVariable Integer domicileId, @RequestParam Integer institutionId) {
         return staticDataService.getImportedInstitutions(institutionId, domicileId);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/importedInstitutions/{importedInstitutionId}/importedPrograms")
-    public List<ImportedProgramRepresentation> getImportedPrograms(@PathVariable Integer importedInstitutionId, @RequestParam Integer institutionId) {
+    public List<ImportedEntityResponse> getImportedPrograms(@PathVariable Integer importedInstitutionId, @RequestParam Integer institutionId) {
         return staticDataService.getImportedPrograms(institutionId, importedInstitutionId);
     }
 

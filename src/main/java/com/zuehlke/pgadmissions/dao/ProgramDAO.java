@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
-import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -180,9 +180,9 @@ public class ProgramDAO {
                 .list();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId, List<PrismState> states,
+    public List<ResourceChildCreationDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId, List<PrismState> states,
             boolean userLoggedIn) {
-        return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("program"), "resource") //
                         .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
@@ -196,7 +196,7 @@ public class ProgramDAO {
                 .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROJECT))
                 .addOrder(Order.asc("program.title")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }
 

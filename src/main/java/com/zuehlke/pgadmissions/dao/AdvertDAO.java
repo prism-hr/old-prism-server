@@ -237,7 +237,7 @@ public class AdvertDAO {
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
     }
 
-    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
+    public List<String> getAdvertAttributes(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
         String propertyName = clazz.getSimpleName().replace("Advert", "").toLowerCase();
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
                 .setProjection(Projections.groupProperty(propertyName)) //

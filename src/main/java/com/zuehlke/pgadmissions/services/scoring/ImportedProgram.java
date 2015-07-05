@@ -5,25 +5,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Created by felipe on 25/06/2015.
- * This is a temporary class until Alaister finishes the refactor
+ * Created by felipe on 25/06/2015. This is a temporary class until Alaister
+ * finishes the refactor
  * <p/>
  * This class is used to map XML programs we've got from UCAS scrapper
  */
 public class ImportedProgram {
     private String title;
     private String ucasId;
-    private HashMap<Integer, ArrayList> scoring;
+    private HashMap<Integer, ArrayList<String>> scoring;
 
     public ImportedProgram(String title, String ucasId) {
-        //4 places as we've got 4 partitions
-        this.scoring = new HashMap<Integer, ArrayList>(4);
+        // 4 places as we've got 4 partitions
+        this.scoring = new HashMap<Integer, ArrayList<String>>(4);
         this.setTitle(title);
         this.setUcasId(ucasId);
     }
 
     public String getTitle() {
-
         return title;
     }
 
@@ -40,8 +39,9 @@ public class ImportedProgram {
     }
 
     public void calculateScoring(ArrayList<String> subjectAreas, int i) {
-        if (i == 4) return;
-        int j = i+1;
+        if (i == 4)
+            return;
+        int j = i + 1;
         calculateScoring(scan(title.substring(0, i + 1), subjectAreas, i), j);
     }
 
@@ -69,4 +69,5 @@ public class ImportedProgram {
                 ", scoring=" + scoring +
                 '}';
     }
+
 }

@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.integration.helpers.PropertyLoaderHelper;
-import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
 import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
 import com.zuehlke.pgadmissions.integration.helpers.WorkflowConfigurationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
@@ -35,9 +34,6 @@ public class LifeCycleTest {
 
     @Autowired
     private SystemInitialisationHelper systemInitialisationHelper;
-
-    @Autowired
-    private SystemDataImportHelper systemDataImportHelper;
 
     @Autowired
     private PropertyLoaderHelper propertyLoaderHelper;
@@ -73,7 +69,6 @@ public class LifeCycleTest {
             mailSenderMock.getSentMessages().clear();
         }
 
-        systemDataImportHelper.verifyImport();
         propertyLoaderHelper.verifyPropertyLoader();
     }
 

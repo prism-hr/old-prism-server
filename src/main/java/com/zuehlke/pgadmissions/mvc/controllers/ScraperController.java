@@ -1,21 +1,16 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
+import com.zuehlke.pgadmissions.services.ScraperService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 
-import com.zuehlke.pgadmissions.services.ScraperService;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by felipe on 02/06/2015.
@@ -26,8 +21,7 @@ import com.zuehlke.pgadmissions.services.ScraperService;
 @RestController
 @RequestMapping("api/scrapper")
 public class ScraperController {
-    
-    @Inject
+    @Autowired
     private ScraperService scraperService;
 
     private static Logger log = LoggerFactory.getLogger(ScraperController.class);
@@ -47,9 +41,29 @@ public class ScraperController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/programs", method = RequestMethod.GET, produces = "application/xml")
-    public Object getPrograms(@RequestParam String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
+    @RequestMapping(value = "/programs", method = RequestMethod.POST)
+    public void getPrograms(@RequestParam String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
         log.debug("getPrograms() - start method");
-        return scraperService.getProgramsForImportedInstitutions(yearOfInterest);
+        scraperService.getProgramsForImportedInstitutions(yearOfInterest);
     }
+
+    //manual importer for programs
+    @ResponseBody
+    @RequestMapping(value= "/importPrograms", method = RequestMethod.POST)
+    public void importPrograms() throws IOException, SAXException, ParserConfigurationException {
+    }
+
+    @ResponseBody
+    @RequestMapping(value= "/createScoring", method = RequestMethod.GET)
+    public void generateScoringForProgramsAndSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
+        scraperService.generateScoringForProgramsAndSubjectAreas();
+    }
+
+// FIXME dependency on missing class in service
+//    @ResponseBody
+//    @RequestMapping(value= "/importSubjectAreas", method = RequestMethod.POST)
+//    public void importSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
+//        scraperService.importSubjectAreas();
+//    }
+
 }

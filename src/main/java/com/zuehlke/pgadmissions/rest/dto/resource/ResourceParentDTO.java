@@ -1,20 +1,64 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.resource;
 
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
-public class ResourceParentDTO extends ResourceDTO {
-
+public class ResourceParentDTO implements ResourceCreationDefinition, ResourceParentDefinition<User> {
+    
+    private User user;
+    
+    private ResourceDTO parentResource;
+    
+    @NotEmpty
+    @Size(max = 255)
+    private String title;
+    
     @Valid
     @NotNull
     private AdvertDTO advert;
 
     private List<ResourceConditionDTO> resourceConditions;
+    
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public ResourceDTO getParentResource() {
+        return parentResource;
+    }
+
+    @Override
+    public void setParentResource(ResourceDTO parentResource) {
+        this.parentResource = parentResource;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public AdvertDTO getAdvert() {
         return advert;

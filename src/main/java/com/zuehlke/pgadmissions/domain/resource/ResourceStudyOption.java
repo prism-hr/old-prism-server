@@ -15,6 +15,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -22,7 +24,8 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 @Entity
 @Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option_id" }),
         @UniqueConstraint(columnNames = { "project_id", "study_option_id" }) })
-public class ResourceStudyOption extends ResourceOpportunityAttribute {
+public class ResourceStudyOption extends ResourceOpportunityAttribute implements
+        ResourceInstanceGroupDefinition<ImportedEntitySimple, ResourceStudyOptionInstance> {
 
     @Id
     @GeneratedValue
@@ -49,7 +52,7 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute {
     private LocalDate applicationCloseDate;
 
     @OneToMany(mappedBy = "studyOption")
-    private Set<ResourceStudyOptionInstance> studyOptionInstances = Sets.newHashSet();
+    private Set<ResourceStudyOptionInstance> instances = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -79,10 +82,12 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute {
         this.project = project;
     }
 
+    @Override
     public ImportedEntitySimple getStudyOption() {
         return studyOption;
     }
 
+    @Override
     public void setStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
     }
@@ -103,8 +108,14 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute {
         this.applicationCloseDate = applicationCloseDate;
     }
 
-    public Set<ResourceStudyOptionInstance> getStudyOptionInstances() {
-        return studyOptionInstances;
+    @Override
+    public Set<ResourceStudyOptionInstance> getInstances() {
+        return instances;
+    }
+
+    @Override
+    public void setInstances(Set<ResourceStudyOptionInstance> instances) {
+        this.instances = instances;
     }
 
     public ResourceStudyOption withResource(ResourceParent resource) {

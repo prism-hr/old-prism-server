@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.resource;
 
 import java.math.BigDecimal;
 import java.util.Collection;

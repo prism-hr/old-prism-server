@@ -73,15 +73,15 @@ import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceDefinitionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDefinitionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -167,16 +167,16 @@ public class ResourceService {
         PrismScope resourceScope = action.getCreationScope().getId();
 
         Class<? extends ResourceCreator> resourceCreator = resourceScope.getResourceCreator();
-        if (resourceCreator == null) {
-            throw new UnsupportedOperationException();
+        if (resourceCreator != null) {
+            Resource resource = applicationContext.getBean(resourceCreator).create(user, resourceDTO);
+            resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
+
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
+                    .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
+            return actionService.executeUserAction(resource, action, comment);
         }
 
-        Resource resource = applicationContext.getBean(resourceCreator).create(user, resourceDTO);
-        resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
-
-        Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
-        return actionService.executeUserAction(resource, action, comment);
+        throw new UnsupportedOperationException();
     }
 
     public void persistResource(Resource resource, Comment comment) {
@@ -214,10 +214,11 @@ public class ResourceService {
         }
 
         Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
-        if (actionExecutor == null) {
-            throw new UnsupportedOperationException();
+        if (actionExecutor != null) {
+            return applicationContext.getBean(actionExecutor).execute(resourceId, commentDTO);
         }
-        return applicationContext.getBean(actionExecutor).execute(resourceId, commentDTO);
+
+        throw new UnsupportedOperationException();
     }
 
     public void preProcessResource(Resource resource, Comment comment) throws Exception {
@@ -570,7 +571,7 @@ public class ResourceService {
     }
 
     public void setStudyOptions(ResourceOpportunity resource, List<PrismStudyOption> prismStudyOptions, LocalDate baseline) {
-        resource.getStudyOptions().clear();
+        resource.getInstanceGroups().clear();
         entityService.flush();
 
         LocalDate close = getResourceEndDate(resource);

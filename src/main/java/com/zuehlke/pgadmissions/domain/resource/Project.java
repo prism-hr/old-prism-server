@@ -96,6 +96,9 @@ public class Project extends ResourceOpportunity {
     @Column(name = "duration_maximum")
     private Integer durationMaximum;
 
+    @Column(name = "require_position_definition", nullable = false)
+    private Boolean requirePositionDefinition;
+
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
@@ -153,7 +156,7 @@ public class Project extends ResourceOpportunity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
-    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
+    private Set<ResourceStudyOption> instanceGroups = Sets.newHashSet();
 
     @OrderBy(clause = "study_location")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -301,6 +304,16 @@ public class Project extends ResourceOpportunity {
     @Override
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
+    }
+
+    @Override
+    public Boolean getRequirePositionDefinition() {
+        return requirePositionDefinition;
+    }
+
+    @Override
+    public void setRequirePositionDefinition(Boolean requirePositionDefinition) {
+        this.requirePositionDefinition = requirePositionDefinition;
     }
 
     @Override
@@ -460,8 +473,13 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public Set<ResourceStudyOption> getStudyOptions() {
-        return studyOptions;
+    public Set<ResourceStudyOption> getInstanceGroups() {
+        return instanceGroups;
+    }
+
+    @Override
+    public void setInstanceGroups(Set<ResourceStudyOption> instanceGroups) {
+        this.instanceGroups = instanceGroups;
     }
 
     @Override

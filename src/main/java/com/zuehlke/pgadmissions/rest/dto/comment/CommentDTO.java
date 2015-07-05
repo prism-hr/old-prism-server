@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceDefinitionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDefinitionDTO;
 
 public class CommentDTO {
 

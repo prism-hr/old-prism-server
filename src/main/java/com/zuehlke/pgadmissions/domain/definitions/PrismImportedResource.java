@@ -4,22 +4,22 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import uk.co.alumeni.prism.api.model.resource.Resource;
+import uk.co.alumeni.prism.api.model.resource.request.ResourceRequest;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismImportedResource {
 
-    RESOURCE_INSTITUTION(INSTITUTION, uk.co.alumeni.prism.api.model.resource.Institution.class), //
-    RESOURCE_DEPARTMENT(DEPARTMENT, uk.co.alumeni.prism.api.model.resource.Department.class), //
-    RESOURCE_PROGRAM(PROGRAM, uk.co.alumeni.prism.api.model.resource.Program.class), //
-    RESOURCE_PROJECT(PROJECT, uk.co.alumeni.prism.api.model.resource.Project.class);
+    RESOURCE_INSTITUTION(INSTITUTION, uk.co.alumeni.prism.api.model.resource.request.InstitutionRequest.class), //
+    RESOURCE_DEPARTMENT(DEPARTMENT, uk.co.alumeni.prism.api.model.resource.request.ResourceParentDivisionRequest.class), //
+    RESOURCE_PROGRAM(PROGRAM, uk.co.alumeni.prism.api.model.resource.request.ProgramRequest.class), //
+    RESOURCE_PROJECT(PROJECT, uk.co.alumeni.prism.api.model.resource.request.ProjectRequest.class);
 
     private PrismScope resourceScope;
 
-    private Class<? extends Resource> importClass;
+    private Class<? extends ResourceRequest> importClass;
 
-    private PrismImportedResource(PrismScope resourceScope, Class<? extends Resource> importClass) {
+    private PrismImportedResource(PrismScope resourceScope, Class<? extends ResourceRequest> importClass) {
         this.resourceScope = resourceScope;
         this.importClass = importClass;
     }
@@ -28,7 +28,7 @@ public enum PrismImportedResource {
         return resourceScope;
     }
 
-    public Class<? extends Resource> getImportClass() {
+    public Class<? extends ResourceRequest> getImportClass() {
         return importClass;
     }
 

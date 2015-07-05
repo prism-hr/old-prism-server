@@ -43,10 +43,10 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestUtils;
-import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
@@ -217,9 +217,7 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ActionOutcomeRepresentation executeAction(
-            @PathVariable Integer resourceId,
-            @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody CommentDTO commentDTO) throws Exception {
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             ResourceDTO newResource = commentDTO.getNewResource().getResource();

@@ -86,8 +86,8 @@ public class Program extends ResourceOpportunity {
     @Column(name = "duration_maximum")
     private Integer durationMaximum;
 
-    @Column(name = "require_project_definition", nullable = false)
-    private Boolean requireProjectDefinition;
+    @Column(name = "require_position_definition", nullable = false)
+    private Boolean requirePositionDefinition;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -146,7 +146,7 @@ public class Program extends ResourceOpportunity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
-    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
+    private Set<ResourceStudyOption> instanceGroups = Sets.newHashSet();
 
     @OrderBy(clause = "study_location")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -312,12 +312,14 @@ public class Program extends ResourceOpportunity {
         this.durationMaximum = durationMaximum;
     }
 
-    public Boolean getRequireProjectDefinition() {
-        return requireProjectDefinition;
+    @Override
+    public Boolean getRequirePositionDefinition() {
+        return requirePositionDefinition;
     }
 
-    public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
-        this.requireProjectDefinition = requireProjectDefinition;
+    @Override
+    public void setRequirePositionDefinition(Boolean requirePositionDefinition) {
+        this.requirePositionDefinition = requirePositionDefinition;
     }
 
     @Override
@@ -459,8 +461,13 @@ public class Program extends ResourceOpportunity {
     }
 
     @Override
-    public Set<ResourceStudyOption> getStudyOptions() {
-        return studyOptions;
+    public Set<ResourceStudyOption> getInstanceGroups() {
+        return instanceGroups;
+    }
+
+    @Override
+    public void setInstanceGroups(Set<ResourceStudyOption> instanceGroups) {
+        this.instanceGroups = instanceGroups;
     }
 
     @Override
@@ -565,8 +572,8 @@ public class Program extends ResourceOpportunity {
         return this;
     }
 
-    public Program withRequireProjectDefinition(boolean requireProjectDefinition) {
-        this.requireProjectDefinition = requireProjectDefinition;
+    public Program withRequirePositionDefinition(boolean requireProjectDefinition) {
+        this.requirePositionDefinition = requireProjectDefinition;
         return this;
     }
 

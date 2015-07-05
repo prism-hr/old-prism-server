@@ -23,8 +23,8 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceListFilterConstraint;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 
 @Service
 @Transactional

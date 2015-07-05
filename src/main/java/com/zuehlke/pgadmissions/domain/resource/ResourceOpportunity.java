@@ -2,19 +2,29 @@ package com.zuehlke.pgadmissions.domain.resource;
 
 import java.util.Set;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
+
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.user.User;
 
-public abstract class ResourceOpportunity extends ResourceParent {
-
-    public abstract String getImportedCode();
-
-    public abstract void setImportedCode(String importedCode);
-
-    public abstract void setOpportunityType(ImportedEntitySimple opportunityType);
+public abstract class ResourceOpportunity extends ResourceParentDivision implements
+        ResourceOpportunityDefinition<User, ImportedEntitySimple, ResourceStudyOption> {
 
     public abstract Department getDepartment();
 
     public abstract void setDepartment(Department department);
+
+    @Override
+    public abstract Boolean getRequirePositionDefinition();
+
+    @Override
+    public abstract void setRequirePositionDefinition(Boolean requirePositionDefinition);
+
+    @Override
+    public abstract ImportedEntitySimple getOpportunityType();
+
+    @Override
+    public abstract void setOpportunityType(ImportedEntitySimple opportunityType);
 
     public abstract Integer getDurationMinimum();
 
@@ -24,12 +34,16 @@ public abstract class ResourceOpportunity extends ResourceParent {
 
     public abstract void setDurationMaximum(Integer maximum);
 
-    public abstract Set<ResourceStudyOption> getStudyOptions();
+    @Override
+    public abstract Set<ResourceStudyOption> getInstanceGroups();
+
+    @Override
+    public abstract void setInstanceGroups(Set<ResourceStudyOption> instanceGroups);
 
     public abstract Set<ResourceStudyLocation> getStudyLocations();
 
-    public void addStudyOption(ResourceStudyOption studyOption) {
-        getStudyOptions().add(studyOption);
+    public void addStudyOption(ResourceStudyOption instanceGroup) {
+        getInstanceGroups().add(instanceGroup);
     }
 
     public void addStudyLocation(ResourceStudyLocation studyLocation) {

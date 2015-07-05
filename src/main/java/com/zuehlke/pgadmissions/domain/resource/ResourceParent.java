@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
-public abstract class ResourceParent extends Resource {
+import com.zuehlke.pgadmissions.domain.user.User;
 
+public abstract class ResourceParent extends Resource implements ResourceParentDefinition<User> {
+
+    @Override
     public abstract void setTitle(String title);
 
     public abstract DateTime getUpdatedTimestampSitemap();
@@ -26,14 +29,10 @@ public abstract class ResourceParent extends Resource {
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
 
-    public ImportedEntitySimple getOpportunityType() {
-        return null;
-    }
-
     public void addResourceCondition(ResourceCondition resourceCondition) {
         getResourceConditions().add(resourceCondition);
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("title", getTitle());

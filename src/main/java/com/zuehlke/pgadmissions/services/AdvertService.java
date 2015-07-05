@@ -379,7 +379,7 @@ public class AdvertService {
     }
 
     public List<String> getAdvertAttributes(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
-        return advertDAO.getAdvertTags(institution, clazz);
+        return advertDAO.getAdvertAttributes(institution, clazz);
     }
 
     public void setSequenceIdentifier(Advert advert, String prefix) {

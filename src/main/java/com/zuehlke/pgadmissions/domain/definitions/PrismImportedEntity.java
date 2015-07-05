@@ -63,9 +63,9 @@ public enum PrismImportedEntity {
                     .withColumn("enabled"), //
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedAdvertDomicileMapping.class) //
-                    .withTable("imported_advert_domicile_mapping"), 
-                    ImportedAdvertDomicileResponse.class, // 
-                    null, true, false), //
+                    .withTable("imported_advert_domicile_mapping"),
+            ImportedAdvertDomicileResponse.class, //
+            null, true, false), //
     IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition() //
             .withImportClass(ImportedAgeRangeRequest.class) //
             .withEntityClass(ImportedAgeRange.class), //
@@ -127,7 +127,7 @@ public enum PrismImportedEntity {
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedInstitutionMapping.class) //
                     .withTable("imported_institution_mapping"),
-                    ImportedEntityResponse.class, //
+            ImportedEntityResponse.class, //
             new String[] { "application_qualification.institution_id" }, false, true),
     IMPORTED_LANGUAGE_QUALIFICATION_TYPE(new PrismImportedEntityImportDefinition() //
             .withImportClass(ImportedLanguageQualificationTypeRequest.class) //
@@ -211,7 +211,8 @@ public enum PrismImportedEntity {
             new PrismImportedEntityImportInsertDefinition() //
                     .withTable("imported_subject_area") //
                     .withPivotColumn("name") //
-                    .withColumn("code") //
+                    .withColumn("jacs_code") //
+                    .withColumn("parent_imported_subject_area_id") //
                     .withColumn("enabled") //
                     .withExtractor(ImportedProgramExtractor.class), //
             new PrismImportedEntityMappingInsertDefinition() //
@@ -339,8 +340,8 @@ public enum PrismImportedEntity {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
 
-    public String getEntityClassLowerCamelName() {
-        return UPPER_CAMEL.to(LOWER_CAMEL, getEntityClass().getSimpleName());
+    public String getUpperCamelName() {
+        return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
     }
 
     public static boolean isPrefetchImport(PrismImportedEntity entity) {

@@ -203,16 +203,10 @@ public class ImportedEntityService {
         entityService.flush();
     }
 
-    public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> void mergeImportedEntities(DateTime lastImportedTimestamp) throws Exception {
-        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.getEntityimports()) {
-            importedEntityDAO.disableImportedEntities(prismImportedEntity);
-            entityService.flush();
-            List<Object> definitions = readImportedData(prismImportedEntity.getEntityJaxbClass(), prismImportedEntity.getEntityJaxbProperty(),
-                    prismImportedEntity.getEntityXsdLocation(), prismImportedEntity.getEntityXmlLocation(), lastImportedTimestamp);
-            if (definitions != null) {
-                insertImportedEntities(prismImportedEntity, definitions, true);
-            }
-        }
+    public <T extends ImportedEntityRequest> void mergeImportedEntities(PrismImportedEntity prismImportedEntity, List<T> representations) throws Exception {
+        importedEntityDAO.disableImportedEntities(prismImportedEntity);
+        entityService.flush();
+        insertImportedEntities(prismImportedEntity, representations, true);
     }
 
     public void disableImportedPrograms(Integer institutionId, List<Integer> updates, LocalDate baseline) {
@@ -446,9 +440,8 @@ public class ImportedEntityService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest> void insertImportedEntities(
-            PrismImportedEntity prismImportedEntity,
-            List<T> definitions, boolean enable) throws Exception {
+    private <T extends ImportedEntityRequest> void insertImportedEntities(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable)
+            throws Exception {
         ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
         List<String> rows = extractor.extract(prismImportedEntity, definitions, enable);
         importedEntityDAO.mergeImportedEntities(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),

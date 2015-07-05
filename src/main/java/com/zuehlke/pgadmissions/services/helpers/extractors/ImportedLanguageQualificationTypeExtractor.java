@@ -9,17 +9,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.api.model.imported.request.ImportedLanguageQualificationTypeRequest;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 
 @Component
-public class ImportedLanguageQualificationTypeExtractor implements ImportedEntityExtractor<ImportedLanguageQualificationType> {
+public class ImportedLanguageQualificationTypeExtractor implements ImportedEntityExtractor<ImportedLanguageQualificationTypeRequest> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedLanguageQualificationType> definitions, boolean enable) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedLanguageQualificationTypeRequest> definitions, boolean enable)
+            throws Exception {
         List<String> rows = Lists.newLinkedList();
-        for (ImportedLanguageQualificationType definition : definitions) {
+        for (ImportedLanguageQualificationTypeRequest definition : definitions) {
             List<String> cells = Lists.newLinkedList();
             cells.add(prepareStringForSqlInsert(definition.getName()));
             cells.add(prepareDecimalForSqlInsert(definition.getMinimumOverallScore()));

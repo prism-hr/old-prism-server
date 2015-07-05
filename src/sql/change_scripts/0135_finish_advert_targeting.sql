@@ -374,3 +374,6 @@ alter table imported_subject_area
 	change column code jacs_code varchar(50) not null
 ;
 
+alter table system
+	drop column last_data_import_timestamp
+;

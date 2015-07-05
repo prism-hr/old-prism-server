@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 
-public class ResourceForWhichUserCanCreateChildDTO {
+public class ResourceChildCreationDTO {
 
     private ResourceParent resource;
 
@@ -24,12 +24,12 @@ public class ResourceForWhichUserCanCreateChildDTO {
         this.partnerMode = partnerMode;
     }
 
-    public ResourceForWhichUserCanCreateChildDTO withResource(ResourceParent resource) {
+    public ResourceChildCreationDTO withResource(ResourceParent resource) {
         this.resource = resource;
         return this;
     }
 
-    public ResourceForWhichUserCanCreateChildDTO withPartnerMode(Boolean partnerMode) {
+    public ResourceChildCreationDTO withPartnerMode(Boolean partnerMode) {
         this.partnerMode = partnerMode;
         return this;
     }

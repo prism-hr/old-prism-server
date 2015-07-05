@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -237,8 +237,8 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(List<PrismState> states, boolean userLoggedIn) {
-        return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProgram(List<PrismState> states, boolean userLoggedIn) {
+        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("institution"), "resource") //
                         .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
@@ -251,12 +251,12 @@ public class InstitutionDAO {
                 .add(getResourceConditionConstraint(ACCEPT_PROGRAM, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROGRAM)) //
                 .addOrder(Order.asc("institution.title")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject(List<PrismState> states, boolean userLoggedIn) {
-        return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProject(List<PrismState> states, boolean userLoggedIn) {
+        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("institution"), "resource") //
                         .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
@@ -269,13 +269,13 @@ public class InstitutionDAO {
                 .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROJECT)) //
                 .addOrder(Order.asc("institution.title")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(List<PrismState> states,
+    public List<ResourceChildCreationDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(List<PrismState> states,
             boolean userLoggedIn) {
-        return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("program.institution"), "resource") //
                         .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
@@ -289,7 +289,7 @@ public class InstitutionDAO {
                 .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROJECT)) //
                 .addOrder(Order.asc("institution.title")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }
 

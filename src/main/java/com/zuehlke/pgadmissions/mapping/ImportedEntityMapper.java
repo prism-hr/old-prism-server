@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import java.io.InputStream;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -17,6 +20,8 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualifica
 import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -39,6 +44,9 @@ public class ImportedEntityMapper {
 
     @Inject
     private ApplicationContext applicationContext;
+
+    @Inject
+    private ObjectMapper objectMapper;
 
     public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity) {
         return getImportedEntityRepresentation(entity, null);
@@ -78,7 +86,7 @@ public class ImportedEntityMapper {
         return representation;
     }
 
-    private ImportedAgeRangeResponse getImportedAgeRangeRepresentation(ImportedAgeRange ageRange, Institution institution) {
+    public ImportedAgeRangeResponse getImportedAgeRangeRepresentation(ImportedAgeRange ageRange, Institution institution) {
         ImportedAgeRangeResponse representation = getImportedEntitySimpleRepresentation(ageRange, institution, ImportedAgeRangeResponse.class);
 
         representation.setLowerBound(ageRange.getLowerBound());
@@ -161,6 +169,11 @@ public class ImportedEntityMapper {
         }
 
         return target;
+    }
+
+    public <T extends ImportedEntityRequest> List<T> getImportedEntityRepresentations(PrismImportedEntity type, InputStream data) throws Exception {
+        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, type.getEntityClass());
+        return objectMapper.readValue(data, collectionType);
     }
 
 }

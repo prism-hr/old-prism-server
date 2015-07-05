@@ -26,12 +26,10 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
@@ -118,7 +116,7 @@ public class InstitutionService {
         }
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
-        
+
         List<ResourceConditionDTO> resourceConditions = institutionDTO.getResourceConditions();
         // FIXME set the resource conditions
     }
@@ -165,36 +163,29 @@ public class InstitutionService {
         institutionDAO.disableInstitutionDomiciles(updates);
     }
 
-    public String mergeInstitutionDomicile(InstitutionDomiciles.InstitutionDomicile instituitionDomicileDefinition) throws DeduplicationException {
-        ImportedAdvertDomicile persistentInstitutionDomicile = entityService.getOrCreate(new ImportedAdvertDomicile()
-                .withId(instituitionDomicileDefinition.getId()).withName(instituitionDomicileDefinition.getName())
-                .withCurrency(instituitionDomicileDefinition.getCurrency()).withEnabled(true));
-        return persistentInstitutionDomicile.getId();
-    }
-
     public String getBusinessYear(Institution institution, Integer year, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
         return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + new Integer(businessYear + 1).toString());
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram() {
+    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProgram() {
         List<PrismState> states = stateService.getActiveInstitutionStates();
         boolean userLoggedIn = userService.getCurrentUser() != null;
         return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(states, userLoggedIn);
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject() {
-        Map<Integer, ResourceForWhichUserCanCreateChildDTO> index = Maps.newHashMap();
-        Map<String, ResourceForWhichUserCanCreateChildDTO> institutions = Maps.newTreeMap();
+    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProject() {
+        Map<Integer, ResourceChildCreationDTO> index = Maps.newHashMap();
+        Map<String, ResourceChildCreationDTO> institutions = Maps.newTreeMap();
 
         List<PrismState> institutionStates = stateService.getActiveInstitutionStates();
         boolean userLoggedIn = userService.getCurrentUser() != null;
 
-        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO
+        List<ResourceChildCreationDTO> institutionProjectParents = institutionDAO
                 .getInstitutionsForWhichUserCanCreateProject(institutionStates, userLoggedIn);
-        for (ResourceForWhichUserCanCreateChildDTO institutionProjectParent : institutionProjectParents) {
-            ResourceForWhichUserCanCreateChildDTO institution = new ResourceForWhichUserCanCreateChildDTO()
+        for (ResourceChildCreationDTO institutionProjectParent : institutionProjectParents) {
+            ResourceChildCreationDTO institution = new ResourceChildCreationDTO()
                     .withResource(institutionProjectParent.getResource()).withPartnerMode(institutionProjectParent.getPartnerMode());
             index.put(institutionProjectParent.getResource().getId(), institution);
             institutions.put(institutionProjectParent.getResource().getTitle(), institution);
@@ -202,13 +193,13 @@ public class InstitutionService {
 
         List<PrismState> programStates = stateService.getActiveProgramStates();
 
-        List<ResourceForWhichUserCanCreateChildDTO> institutionProgramProjectParents = institutionDAO
+        List<ResourceChildCreationDTO> institutionProgramProjectParents = institutionDAO
                 .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(programStates, userLoggedIn);
-        for (ResourceForWhichUserCanCreateChildDTO institutionProgramProjectParent : institutionProgramProjectParents) {
-            ResourceForWhichUserCanCreateChildDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
+        for (ResourceChildCreationDTO institutionProgramProjectParent : institutionProgramProjectParents) {
+            ResourceChildCreationDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
             if (institution == null) {
                 institutions.put(institutionProgramProjectParent.getResource().getTitle(),
-                        new ResourceForWhichUserCanCreateChildDTO().withResource(institutionProgramProjectParent.getResource()));
+                        new ResourceChildCreationDTO().withResource(institutionProgramProjectParent.getResource()));
             }
         }
 

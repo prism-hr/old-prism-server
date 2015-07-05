@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.utils.FileUtils;
+import com.zuehlke.pgadmissions.utils.PrismFileUtils;
 
 @Service
 @Transactional
@@ -232,9 +232,9 @@ public class SystemInitialisationHelper {
             assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
 
-            assertEquals(FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject()),
+            assertEquals(PrismFileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject()),
                     configuration.getSubject());
-            assertEquals(FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent()),
+            assertEquals(PrismFileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent()),
                     configuration.getContent());
         }
     }

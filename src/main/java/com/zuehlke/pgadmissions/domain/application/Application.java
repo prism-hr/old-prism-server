@@ -57,13 +57,13 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -929,8 +929,11 @@ public class Application extends Resource {
     }
 
     public PrismOpportunityType getOpportunityType() {
-        ImportedEntitySimple opportunityType = ((ResourceParent) getParentResource()).getOpportunityType();
-        return opportunityType == null ? null : PrismOpportunityType.valueOf(opportunityType.getName());
+        Resource resourceParent = getParentResource();
+        if (ResourceOpportunity.class.isAssignableFrom(resourceParent.getClass())) {
+            return PrismOpportunityType.valueOf(((ResourceOpportunity) resourceParent).getOpportunityType().getName());
+        }
+        return null;
     }
 
     public PrismProgramStartType getDefaultStartType() {

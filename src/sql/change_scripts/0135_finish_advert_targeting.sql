@@ -377,3 +377,48 @@ alter table imported_subject_area
 alter table system
 	drop column last_data_import_timestamp
 ;
+
+alter table program
+	change column require_project_definition require_position_definition int(1) unsigned not null
+;
+
+alter table project
+	add column require_position_definition int(1) unsigned after duration_maximum
+;
+
+update project inner join program
+	on project.program_id = program.id
+set project.require_position_definition = program.require_position_definition
+;
+
+update project
+set require_position_definition = 0
+where require_position_definition is null
+;
+
+alter table project
+	modify column require_position_definition int(1) unsigned not null
+;
+
+alter table department
+	add column code varchar(50) after id,
+	add column imported_code varchar(50) after code
+;
+
+alter table department
+	add column user_id int(10) unsigned after id
+;
+
+update department inner join institution
+	on department.institution_id = institution.id
+set department.user_id = institution.user_id
+;
+
+alter table department
+	modify column user_id int(10) unsigned not null
+;
+
+alter table department
+	add index (user_id),
+	add foreign key (user_id) references user (id)
+;

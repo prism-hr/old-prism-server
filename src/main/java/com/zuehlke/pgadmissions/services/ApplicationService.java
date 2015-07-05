@@ -69,8 +69,8 @@ import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
@@ -306,7 +306,7 @@ public class ApplicationService {
                 if (property == APPLICATION_ASSIGN_REFEREE) {
                     configuration.setMaximum(property.getMaximumPermitted());
                 } else if (property == APPLICATION_POSITION_DETAIL
-                        && BooleanUtils.isTrue(application.getProgram().getRequireProjectDefinition())) {
+                        && BooleanUtils.isTrue(application.getProgram().getRequirePositionDefinition())) {
                     configuration.setEnabled(true);
                     configuration.setRequired(true);
                 }

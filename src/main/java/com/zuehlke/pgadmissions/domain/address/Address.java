@@ -7,12 +7,10 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
 import com.google.common.base.Joiner;
 
 @MappedSuperclass
-public class Address implements AddressDefinition {
+public class Address {
 
     @Id
     @GeneratedValue

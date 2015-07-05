@@ -1,15 +1,19 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.resource;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 
-public class ResourceOpportunityDTO extends ResourceParentDTO {
+public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements ResourceOpportunityDefinition<User, PrismOpportunityType, ResourceStudyOptionDTO> {
 
     @Valid
     private DepartmentDTO department;
@@ -20,10 +24,14 @@ public class ResourceOpportunityDTO extends ResourceParentDTO {
     private Integer durationMinimum;
 
     private Integer durationMaximum;
+    
+    private Boolean requirePositionDefinition;
 
     private List<PrismStudyOption> studyOptions;
 
     private List<String> studyLocations;
+    
+    private Set<ResourceStudyOptionDTO> instanceGroups;
 
     public DepartmentDTO getDepartment() {
         return department;
@@ -33,10 +41,12 @@ public class ResourceOpportunityDTO extends ResourceParentDTO {
         this.department = department;
     }
 
+    @Override
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
 
+    @Override
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
@@ -57,6 +67,16 @@ public class ResourceOpportunityDTO extends ResourceParentDTO {
         this.durationMaximum = durationMaximum;
     }
 
+    @Override
+    public Boolean getRequirePositionDefinition() {
+        return requirePositionDefinition;
+    }
+
+    @Override
+    public void setRequirePositionDefinition(Boolean requirePositionDefinition) {
+        this.requirePositionDefinition = requirePositionDefinition;
+    }
+
     public List<PrismStudyOption> getStudyOptions() {
         return studyOptions;
     }
@@ -71,6 +91,16 @@ public class ResourceOpportunityDTO extends ResourceParentDTO {
 
     public void setStudyLocations(List<String> studyLocations) {
         this.studyLocations = studyLocations;
+    }
+
+    @Override
+    public Set<ResourceStudyOptionDTO> getInstanceGroups() {
+        return instanceGroups;
+    }
+
+    @Override
+    public void setInstanceGroups(Set<ResourceStudyOptionDTO> instanceGroups) {
+        this.instanceGroups = instanceGroups;
     }
 
 }

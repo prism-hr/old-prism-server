@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 

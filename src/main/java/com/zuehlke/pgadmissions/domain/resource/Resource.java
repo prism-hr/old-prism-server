@@ -6,6 +6,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceDefinition;
+
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -16,14 +18,16 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
-public abstract class Resource implements UniqueEntity {
+public abstract class Resource implements UniqueEntity, ResourceDefinition<User> {
 
     public abstract Integer getId();
 
     public abstract void setId(Integer id);
 
+    @Override
     public abstract User getUser();
 
+    @Override
     public abstract void setUser(User user);
 
     public abstract String getCode();
@@ -37,7 +41,7 @@ public abstract class Resource implements UniqueEntity {
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);
-    
+
     public abstract Department getDepartment();
 
     public abstract void setDepartment(Department department);
@@ -47,7 +51,7 @@ public abstract class Resource implements UniqueEntity {
     public abstract void setProgram(Program program);
 
     public abstract Project getProject();
-    
+
     public abstract void setProject(Project project);
 
     public abstract Advert getAdvert();
@@ -55,7 +59,7 @@ public abstract class Resource implements UniqueEntity {
     public abstract void setAdvert(Advert advert);
 
     public abstract Application getApplication();
-    
+
     public abstract String getTitle();
 
     public abstract State getState();

@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
@@ -149,9 +150,11 @@ public class InstitutionController {
     private static class AcceptingResourceToRepresentationFunction implements Function<ResourceChildCreationDTO, ResourceChildCreationRepresentation> {
         @Override
         public ResourceChildCreationRepresentation apply(ResourceChildCreationDTO input) {
+            PrismOpportunityType opportunityType = null;
             ResourceParent resource = input.getResource();
-            PrismOpportunityType opportunityType = resource.getOpportunityType() != null ? PrismOpportunityType
-                    .valueOf(resource.getOpportunityType().getName()) : null;
+            if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+                opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
+            }
             return new ResourceChildCreationRepresentation().withResourceId(resource.getId()).withTitle(resource.getTitle())
                     .withPartnerMode(input.getPartnerMode()).withOpportunityType(opportunityType);
         }

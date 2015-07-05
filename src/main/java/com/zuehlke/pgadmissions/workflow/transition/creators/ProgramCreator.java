@@ -11,9 +11,9 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
@@ -47,7 +47,7 @@ public class ProgramCreator implements ResourceCreator {
 
         Program program = new Program().withUser(user).withParentResource(institution).withDepartment(department).withAdvert(advert)
                 .withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum()).withDurationMaximum(newProgram.getDurationMaximum())
-                .withRequireProjectDefinition(false);
+                .withRequirePositionDefinition(false);
 
         resourceService.setResourceAttributes(program, newProgram);
         return program;

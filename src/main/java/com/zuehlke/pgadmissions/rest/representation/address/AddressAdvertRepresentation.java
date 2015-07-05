@@ -3,10 +3,11 @@ package com.zuehlke.pgadmissions.rest.representation.address;
 import java.math.BigDecimal;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
 import com.zuehlke.pgadmissions.domain.address.Address;
 
-public class AddressAdvertRepresentation extends Address {
+public class AddressAdvertRepresentation extends Address implements AddressDefinition<ImportedAdvertDomicileResponse> {
 
     private ImportedAdvertDomicileResponse domicile;
 
@@ -18,10 +19,12 @@ public class AddressAdvertRepresentation extends Address {
 
     private String locationString;
 
+    @Override
     public ImportedAdvertDomicileResponse getDomicile() {
         return domicile;
     }
 
+    @Override
     public void setDomicile(ImportedAdvertDomicileResponse domicile) {
         this.domicile = domicile;
     }

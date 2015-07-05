@@ -12,11 +12,13 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceInstanceDefinition;
+
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
-@Table(name = "resource_study_option_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "academic_year" }) )
-public class ResourceStudyOptionInstance implements UniqueEntity {
+@Table(name = "resource_study_option_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "academic_year" }))
+public class ResourceStudyOptionInstance implements UniqueEntity, ResourceInstanceDefinition {
 
     @Id
     @GeneratedValue
@@ -56,34 +58,42 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
         this.studyOption = studyOption;
     }
 
+    @Override
     public final LocalDate getApplicationStartDate() {
         return applicationStartDate;
     }
 
+    @Override
     public final void setApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
     }
 
+    @Override
     public final LocalDate getApplicationCloseDate() {
         return applicationCloseDate;
     }
 
+    @Override
     public final void setApplicationCloseDate(LocalDate applicationCloseDate) {
         this.applicationCloseDate = applicationCloseDate;
     }
 
+    @Override
     public final String getBusinessYear() {
         return businessYear;
     }
 
+    @Override
     public final void setBusinessYear(String businessYear) {
         this.businessYear = businessYear;
     }
 
+    @Override
     public final String getIdentifier() {
         return identifier;
     }
 
+    @Override
     public final void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
@@ -115,7 +125,7 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("studyOption", studyOption).addProperty("academicYear", businessYear);
+        return new ResourceSignature().addProperty("studyOption", studyOption).addProperty("businessYear", businessYear);
     }
 
 }

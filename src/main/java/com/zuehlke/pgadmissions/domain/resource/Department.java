@@ -3,6 +3,17 @@ package com.zuehlke.pgadmissions.domain.resource;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -14,15 +25,24 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
-import javax.persistence.*;
-
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "title" }) })
-public class Department extends ResourceParent implements TargetEntity {
+public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "code", unique = true)
+    private String code;
+
+    @Column(name = "imported_code")
+    private String importedCode;
 
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
@@ -32,20 +52,50 @@ public class Department extends ResourceParent implements TargetEntity {
     private String title;
 
     @Override
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
 
     @Override
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-    
-    public final String getTitle() {
+
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String getImportedCode() {
+        return importedCode;
+    }
+
+    @Override
+    public void setImportedCode(String importedCode) {
+        this.importedCode = importedCode;
+    }
+
+    public String getTitle() {
         return title;
     }
 
-    public final void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -60,30 +110,6 @@ public class Department extends ResourceParent implements TargetEntity {
     }
 
     @Override
-    public User getUser() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setUser(User user) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public String getCode() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setCode(String code) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public System getSystem() {
         // TODO Auto-generated method stub
         return null;
@@ -92,19 +118,19 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setSystem(System system) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     @Override
-    public final Institution getInstitution() {
+    public Institution getInstitution() {
         return institution;
     }
 
     @Override
-    public final void setInstitution(Institution institution) {
+    public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         // TODO Auto-generated method stub
@@ -114,7 +140,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setDepartment(Department department) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -126,7 +152,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setProgram(Program program) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -138,7 +164,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setProject(Project project) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -150,7 +176,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setAdvert(Advert advert) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -168,7 +194,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setState(State state) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -180,7 +206,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setPreviousState(State previousState) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -192,7 +218,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setDueDate(LocalDate dueDate) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -204,7 +230,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -216,7 +242,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -228,7 +254,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -240,7 +266,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -252,7 +278,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -264,7 +290,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -276,7 +302,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -318,7 +344,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -330,7 +356,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setApplicationRatingCount(Integer applicationRatingCount) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -342,7 +368,7 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setApplicationRatingFrequency(BigDecimal applicationRatingFrequency) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -354,9 +380,9 @@ public class Department extends ResourceParent implements TargetEntity {
     @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("institution", institution);

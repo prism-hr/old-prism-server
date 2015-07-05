@@ -1,15 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-public class ImportedEntitySimpleDTO {
+public class ImportedEntityDTO {
 
     private Integer id;
 
-    @NotEmpty
-    @Size(max = 255)
     private String name;
 
     public Integer getId() {

@@ -87,8 +87,8 @@ public class ImportedEntityMapper {
         return representation;
     }
 
-    public ImportedInstitutionResponse getImportedInstitutionRepresentation(ImportedInstitution importedInstitution) {
-        return getImportedInstitutionRepresentation(importedInstitution, null);
+    public ImportedEntityResponse getImportedInstitutionSimpleRepresentation(ImportedInstitution importedInstitution) {
+        return getImportedEntitySimpleRepresentation(importedInstitution, null, ImportedInstitutionResponse.class);
     }
 
     public ImportedInstitutionResponse getImportedInstitutionRepresentation(ImportedInstitution importedInstitution, Institution institution) {
@@ -120,8 +120,8 @@ public class ImportedEntityMapper {
         return representation;
     }
 
-    public ImportedProgramResponse getImportedProgramRepresentation(ImportedProgram program) {
-        return getImportedProgramRepresentation(program, null);
+    public ImportedEntityResponse getImportedProgramSimpleRepresentation(ImportedProgram program) {
+        return getImportedEntitySimpleRepresentation(program, null, ImportedEntityResponse.class);
     }
 
     public ImportedProgramResponse getImportedProgramRepresentation(ImportedProgram program, Institution institution) {

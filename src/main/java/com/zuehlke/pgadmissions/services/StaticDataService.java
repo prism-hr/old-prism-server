@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -261,6 +262,7 @@ public class StaticDataService {
         return staticData;
     }
 
+    @SuppressWarnings("unchecked")
     @Cacheable("importedInstitutionData")
     public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> Map<String, Object> getInstitutionData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
@@ -271,7 +273,7 @@ public class StaticDataService {
             List<T> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
             List<U> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
             for (T entity : entities) {
-                entityRepresentations.add(importedEntityMapper.getImportedEntityRepresentation(entity));
+                entityRepresentations.add((U) importedEntityMapper.getImportedEntityRepresentation(entity));
             }
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
@@ -282,27 +284,27 @@ public class StaticDataService {
         return staticData;
     }
 
-    public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer institutionId, Integer domicileId) {
+    public List<ImportedEntityResponse> getImportedInstitutions(Integer institutionId, Integer domicileId) {
         Institution institution = institutionService.getById(institutionId);
         ImportedEntitySimple domicile = entityService.getById(ImportedEntitySimple.class, domicileId);
         List<ImportedInstitution> importedInstitutions = importedEntityService.getEnabledImportedInstitutions(institution, domicile);
 
-        List<ImportedInstitutionRepresentation> representations = Lists.newArrayListWithCapacity(importedInstitutions.size());
+        List<ImportedEntityResponse> representations = Lists.newArrayListWithCapacity(importedInstitutions.size());
         for (ImportedInstitution importedInstitution : importedInstitutions) {
-            representations.add(importedEntityMapper.getImportedInstitutionRepresentation(importedInstitution));
+            representations.add(importedEntityMapper.getImportedInstitutionSimpleRepresentation(importedInstitution));
         }
 
         return representations;
     }
 
-    public List<ImportedProgramRepresentation> getImportedPrograms(Integer institutionId, Integer importedInstitutionId) {
+    public List<ImportedEntityResponse> getImportedPrograms(Integer institutionId, Integer importedInstitutionId) {
         Institution institution = institutionService.getById(institutionId);
         ImportedInstitution importedInstitution = entityService.getById(ImportedInstitution.class, importedInstitutionId);
         List<ImportedProgram> importedprograms = importedEntityService.getEnabledImportedPrograms(institution, importedInstitution);
 
-        List<ImportedProgramRepresentation> representations = Lists.newArrayListWithCapacity(importedprograms.size());
+        List<ImportedEntityResponse> representations = Lists.newArrayListWithCapacity(importedprograms.size());
         for (ImportedProgram importedProgram : importedprograms) {
-            representations.add(importedEntityMapper.getImportedProgramRepresentation(importedProgram));
+            representations.add(importedEntityMapper.getImportedProgramSimpleRepresentation(importedProgram));
         }
 
         return representations;

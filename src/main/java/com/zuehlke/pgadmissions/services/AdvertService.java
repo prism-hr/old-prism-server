@@ -41,7 +41,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttributes;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
@@ -52,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -454,7 +454,7 @@ public class AdvertService {
         return advertDAO.getAdvertTargets(advert, targetClass);
     }
 
-    public List<AdvertDomicile> getAdvertDomiciles() {
+    public List<ImportedAdvertDomicile> getAdvertDomiciles() {
         return advertDAO.getAdvertDomiciles();
     }
 
@@ -691,7 +691,7 @@ public class AdvertService {
     }
 
     private void updateAddress(AddressAdvertDTO addressDTO, AddressAdvert address) {
-        address.setDomicile(entityService.getById(AdvertDomicile.class, addressDTO.getDomicile()));
+        address.setDomicile(entityService.getById(ImportedAdvertDomicile.class, addressDTO.getDomicile()));
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
         address.setAddressTown(addressDTO.getAddressTown());

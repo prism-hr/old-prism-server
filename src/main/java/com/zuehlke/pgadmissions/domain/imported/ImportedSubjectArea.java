@@ -13,7 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import uk.co.alumeni.prism.api.model.ImportedSubjectAreaDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
@@ -22,14 +23,15 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMappi
 
 @Entity
 @Table(name = "IMPORTED_SUBJECT_AREA")
-public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMapping> implements TargetEntity, ImportedSubjectAreaDefinition {
+public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubjectAreaMapping> implements TargetEntity,
+        ImportedSubjectAreaDefinition<ImportedSubjectArea>, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code", nullable = false, unique = true)
-    private String code;
+    @Column(name = "jacs_code", nullable = false, unique = true)
+    private String jacsCode;
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
@@ -62,12 +64,14 @@ public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMappi
         return IMPORTED_SUBJECT_AREA;
     }
 
-    public String getCode() {
-        return code;
+    @Override
+    public String getJacsCode() {
+        return jacsCode;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    @Override
+    public void setJacsCode(String jacsCode) {
+        this.jacsCode = jacsCode;
     }
 
     @Override
@@ -80,18 +84,22 @@ public class ImportedSubjectArea extends ImportedEntity<ImportedSubjectAreaMappi
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public ImportedSubjectArea getParentSubjectArea() {
         return parentSubjectArea;
     }
 
+    @Override
     public void setParentSubjectArea(ImportedSubjectArea parentSubjectArea) {
         this.parentSubjectArea = parentSubjectArea;
     }

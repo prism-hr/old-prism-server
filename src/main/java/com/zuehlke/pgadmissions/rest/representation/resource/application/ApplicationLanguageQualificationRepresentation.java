@@ -2,12 +2,13 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
+
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
 
 public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
 
-    private ImportedEntitySimpleRepresentation languageQualificationType;
+    private ImportedLanguageQualificationTypeResponse languageQualificationType;
 
     private LocalDate examDate;
 
@@ -23,11 +24,11 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
 
     private DocumentRepresentation document;
 
-    public ImportedEntitySimpleRepresentation getLanguageQualificationType() {
+    public ImportedLanguageQualificationTypeResponse getLanguageQualificationType() {
         return languageQualificationType;
     }
 
-    public void setLanguageQualificationType(ImportedEntitySimpleRepresentation languageQualificationType) {
+    public void setLanguageQualificationType(ImportedLanguageQualificationTypeResponse languageQualificationType) {
         this.languageQualificationType = languageQualificationType;
     }
 
@@ -87,7 +88,7 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         this.document = document;
     }
 
-    public ApplicationLanguageQualificationRepresentation withLanguageQualificationType(ImportedEntitySimpleRepresentation languageQualificationType) {
+    public ApplicationLanguageQualificationRepresentation withLanguageQualificationType(ImportedLanguageQualificationTypeResponse languageQualificationType) {
         this.languageQualificationType = languageQualificationType;
         return this;
     }

@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
-@Table(name = "IMPORTED_SUBJECT_AREA_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_subject_area_id, code" }) })
+@Table(name = "imported_subject_area_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_subject_area_id, code" }) })
 public class ImportedSubjectAreaMapping extends ImportedEntityMapping<ImportedSubjectArea> {
 
     @Id

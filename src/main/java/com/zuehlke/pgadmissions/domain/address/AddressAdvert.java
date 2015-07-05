@@ -9,7 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 
@@ -23,7 +23,7 @@ public class AddressAdvert extends GeocodableLocation {
 
     @ManyToOne
     @JoinColumn(name = "advert_domicile_id", nullable = false)
-    private AdvertDomicile domicile;
+    private ImportedAdvertDomicile domicile;
 
     @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
@@ -54,11 +54,11 @@ public class AddressAdvert extends GeocodableLocation {
         this.id = id;
     }
 
-    public AdvertDomicile getDomicile() {
+    public ImportedAdvertDomicile getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(AdvertDomicile domicile) {
+    public void setDomicile(ImportedAdvertDomicile domicile) {
         this.domicile = domicile;
     }
 
@@ -120,7 +120,7 @@ public class AddressAdvert extends GeocodableLocation {
         this.location = location;
     }
 
-    public AddressAdvert withDomicile(AdvertDomicile domicile) {
+    public AddressAdvert withDomicile(ImportedAdvertDomicile domicile) {
         this.domicile = domicile;
         return this;
     }

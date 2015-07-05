@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
-@Table(name = "IMPORTED_AGE_RANGE_MAPPING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_age_range_id, code" }) })
+@Table(name = "imported_age_range_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_age_range_id, code" }) })
 public class ImportedAgeRangeMapping extends ImportedEntityMapping<ImportedAgeRange> {
 
     @Id

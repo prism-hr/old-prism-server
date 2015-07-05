@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
@@ -41,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
@@ -317,8 +317,8 @@ public class AdvertDAO {
                 .list();
     }
     
-    public List<AdvertDomicile> getAdvertDomiciles() {
-        return sessionFactory.getCurrentSession().createCriteria(AdvertDomicile.class) //
+    public List<ImportedAdvertDomicile> getAdvertDomiciles() {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("name")) //
                 .list();

@@ -9,8 +9,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSq
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForInsert;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
@@ -38,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
@@ -98,15 +98,15 @@ public class ImportedEntityService {
     @Inject
     private ApplicationContext applicationContext;
 
-    public <T extends ImportedEntity<?>> T getById(Class<T> clazz, Integer id) {
+    public <T extends ImportedEntity<?, ?>> T getById(Class<T> clazz, Integer id) {
         return (T) entityService.getById(clazz, id);
     }
 
-    public <T extends ImportedEntity<?>> T getByName(Class<T> entityClass, String name) {
-        return importedEntityDAO.getImportedEntityByName(entityClass, name);
+    public <T extends ImportedEntity<?, ?>> T getByName(Class<T> entityClass, String name) {
+        return importedEntityDAO.getByName(entityClass, name);
     }
 
-    public <T extends ImportedEntity<?>> List<T> getEnabledImportedEntities(Institution institution,
+    public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntities(Institution institution,
             PrismImportedEntity prismImportedEntity) {
         List<T> entities = importedEntityDAO.getEnabledImportedEntitiesWithMappings(institution, prismImportedEntity);
         if (entities.isEmpty()) {
@@ -131,17 +131,9 @@ public class ImportedEntityService {
         return programs;
     }
 
-    public List<ImportedSubjectArea> getEnabledImportedSubjectAreas(Institution institution) {
-        List<ImportedSubjectArea> subjectAreas = importedEntityDAO.getEnabledImportedSubjectAreasWithMappings(institution);
-        if (subjectAreas.isEmpty()) {
-            subjectAreas = importedEntityDAO.getEnabledImportedSubjectAreas(institution);
-        }
-        return subjectAreas;
-    }
-
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> V getEnabledImportedEntityMapping(Institution institution, T importedEntity) {
-        List<V> mappings = importedEntityDAO.getEnabledImportedEntityMapping(institution, importedEntity);
-        List<V> filteredMappings = getFilteredImportedEntityMappings(mappings);
+    public <T extends ImportedEntity<?, U>, U extends ImportedEntityMapping<T>> U getEnabledImportedEntityMapping(Institution institution, T importedEntity) {
+        List<U> mappings = importedEntityDAO.getEnabledImportedEntityMapping(institution, importedEntity);
+        List<U> filteredMappings = getFilteredImportedEntityMappings(mappings);
         return filteredMappings.isEmpty() ? null : filteredMappings.get(0);
     }
 
@@ -170,7 +162,7 @@ public class ImportedEntityService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ImportedEntity<U>, U extends ImportedEntityMapping<T>, V extends uk.co.alumeni.prism.api.model.imported.ImportedEntity> void mergeImportedEntities(
+    public <T extends ImportedEntity<?, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityRequest> void mergeImportedEntities(
             Institution institution, PrismImportedEntity prismImportedEntity, List<V> importDefinitions) throws Exception {
         insertImportedEntities(prismImportedEntity, importDefinitions, false);
 
@@ -179,7 +171,7 @@ public class ImportedEntityService {
 
         List<U> currentMappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
         List<U> currentMappingsFiltered = getFilteredImportedEntityMappings(currentMappings);
-        
+
         Map<Integer, T> currentMappingsLookup = Maps.newHashMap();
         for (U currentMappingFiltered : currentMappingsFiltered) {
             T entity = currentMappingFiltered.getImportedEntity();
@@ -192,8 +184,15 @@ public class ImportedEntityService {
             T entity = currentMappingsLookup.get(mappingDefinition.index());
             if (entity != null) {
                 cells.add(prepareIntegerForSqlInsert(institution.getId()));
-                cells.add(prepareIntegerForSqlInsert(entity.getId()));
-                cells.add(prepareStringForInsert((String) getProperty(mappingDefinition, "code")));
+
+                Object entityId = entity.getId();
+                if (entityId.getClass().equals(Integer.class)) {
+                    cells.add(prepareIntegerForSqlInsert((Integer) entity.getId()));
+                } else {
+                    cells.add(prepareStringForSqlInsert((String) entity.getId()));
+                }
+
+                cells.add(prepareStringForSqlInsert(mappingDefinition.getCode()));
                 cells.add(prepareBooleanForSqlInsert(true));
                 rows.add(prepareCellsForSqlInsert(cells));
             }
@@ -204,7 +203,7 @@ public class ImportedEntityService {
         entityService.flush();
     }
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> void mergeImportedEntities(DateTime lastImportedTimestamp) throws Exception {
+    public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> void mergeImportedEntities(DateTime lastImportedTimestamp) throws Exception {
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.getEntityimports()) {
             importedEntityDAO.disableImportedEntities(prismImportedEntity);
             entityService.flush();
@@ -436,9 +435,9 @@ public class ImportedEntityService {
     }
 
     private <V extends ImportedEntityMapping<?>> List<V> getFilteredImportedEntityMappings(List<V> mappings) {
-        Map<ImportedEntity<?>, V> filteredMappings = Maps.newHashMap();
+        Map<ImportedEntity<?, ?>, V> filteredMappings = Maps.newHashMap();
         for (V mapping : mappings) {
-            ImportedEntity<?> entity = mapping.getImportedEntity();
+            ImportedEntity<?, ?> entity = mapping.getImportedEntity();
             if (!filteredMappings.containsKey(entity)) {
                 filteredMappings.put(entity, mapping);
             }
@@ -446,9 +445,9 @@ public class ImportedEntityService {
         return Lists.newArrayList(filteredMappings.values());
     }
 
-    
     @SuppressWarnings("unchecked")
-    private <T extends uk.co.alumeni.prism.api.model.imported.ImportedEntity> void insertImportedEntities(PrismImportedEntity prismImportedEntity,
+    private <T extends uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest> void insertImportedEntities(
+            PrismImportedEntity prismImportedEntity,
             List<T> definitions, boolean enable) throws Exception {
         ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
         List<String> rows = extractor.extract(prismImportedEntity, definitions, enable);

@@ -2,29 +2,29 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedEntitySimpleRepresentation;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ApplicationPersonalDetailRepresentation extends ApplicationSectionRepresentation {
 
-    private ImportedEntitySimpleRepresentation title;
+    private ImportedEntityResponse title;
 
-    private ImportedEntitySimpleRepresentation gender;
+    private ImportedEntityResponse gender;
 
     private LocalDate dateOfBirth;
 
-    private ImportedEntitySimpleRepresentation ageRange;
+    private ImportedEntityResponse ageRange;
 
-    private ImportedEntitySimpleRepresentation firstNationality;
+    private ImportedEntityResponse firstNationality;
 
-    private ImportedEntitySimpleRepresentation secondNationality;
+    private ImportedEntityResponse secondNationality;
 
-    private ImportedEntitySimpleRepresentation country;
+    private ImportedEntityResponse country;
 
     private Boolean firstLanguageLocale;
 
     private ApplicationLanguageQualificationRepresentation languageQualification;
 
-    private ImportedEntitySimpleRepresentation domicile;
+    private ImportedEntityResponse domicile;
 
     private Boolean visaRequired;
 
@@ -34,23 +34,23 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     private String phone;
 
-    private ImportedEntitySimpleRepresentation ethnicity;
+    private ImportedEntityResponse ethnicity;
 
-    private ImportedEntitySimpleRepresentation disability;
+    private ImportedEntityResponse disability;
 
-    public ImportedEntitySimpleRepresentation getTitle() {
+    public ImportedEntityResponse getTitle() {
         return title;
     }
 
-    public void setTitle(ImportedEntitySimpleRepresentation title) {
+    public void setTitle(ImportedEntityResponse title) {
         this.title = title;
     }
 
-    public ImportedEntitySimpleRepresentation getGender() {
+    public ImportedEntityResponse getGender() {
         return gender;
     }
 
-    public void setGender(ImportedEntitySimpleRepresentation gender) {
+    public void setGender(ImportedEntityResponse gender) {
         this.gender = gender;
     }
 
@@ -62,35 +62,35 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedEntitySimpleRepresentation getAgeRange() {
+    public ImportedEntityResponse getAgeRange() {
         return ageRange;
     }
 
-    public void setAgeRange(ImportedEntitySimpleRepresentation ageRange) {
+    public void setAgeRange(ImportedEntityResponse ageRange) {
         this.ageRange = ageRange;
     }
 
-    public ImportedEntitySimpleRepresentation getFirstNationality() {
+    public ImportedEntityResponse getFirstNationality() {
         return firstNationality;
     }
 
-    public void setFirstNationality(ImportedEntitySimpleRepresentation firstNationality) {
+    public void setFirstNationality(ImportedEntityResponse firstNationality) {
         this.firstNationality = firstNationality;
     }
 
-    public ImportedEntitySimpleRepresentation getSecondNationality() {
+    public ImportedEntityResponse getSecondNationality() {
         return secondNationality;
     }
 
-    public void setSecondNationality(ImportedEntitySimpleRepresentation secondNationality) {
+    public void setSecondNationality(ImportedEntityResponse secondNationality) {
         this.secondNationality = secondNationality;
     }
 
-    public ImportedEntitySimpleRepresentation getCountry() {
+    public ImportedEntityResponse getCountry() {
         return country;
     }
 
-    public void setCountry(ImportedEntitySimpleRepresentation country) {
+    public void setCountry(ImportedEntityResponse country) {
         this.country = country;
     }
 
@@ -110,11 +110,11 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.languageQualification = languageQualification;
     }
 
-    public ImportedEntitySimpleRepresentation getDomicile() {
+    public ImportedEntityResponse getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedEntitySimpleRepresentation domicile) {
+    public void setDomicile(ImportedEntityResponse domicile) {
         this.domicile = domicile;
     }
 
@@ -150,28 +150,28 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.phone = phone;
     }
 
-    public ImportedEntitySimpleRepresentation getEthnicity() {
+    public ImportedEntityResponse getEthnicity() {
         return ethnicity;
     }
 
-    public void setEthnicity(ImportedEntitySimpleRepresentation ethnicity) {
+    public void setEthnicity(ImportedEntityResponse ethnicity) {
         this.ethnicity = ethnicity;
     }
 
-    public ImportedEntitySimpleRepresentation getDisability() {
+    public ImportedEntityResponse getDisability() {
         return disability;
     }
 
-    public void setDisability(ImportedEntitySimpleRepresentation disability) {
+    public void setDisability(ImportedEntityResponse disability) {
         this.disability = disability;
     }
 
-    public ApplicationPersonalDetailRepresentation withTitle(ImportedEntitySimpleRepresentation title) {
+    public ApplicationPersonalDetailRepresentation withTitle(ImportedEntityResponse title) {
         this.title = title;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withGender(ImportedEntitySimpleRepresentation gender) {
+    public ApplicationPersonalDetailRepresentation withGender(ImportedEntityResponse gender) {
         this.gender = gender;
         return this;
     }
@@ -181,22 +181,22 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withAgeRange(ImportedEntitySimpleRepresentation ageRange) {
+    public ApplicationPersonalDetailRepresentation withAgeRange(ImportedEntityResponse ageRange) {
         this.ageRange = ageRange;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withFirstNationality(ImportedEntitySimpleRepresentation firstNationality) {
+    public ApplicationPersonalDetailRepresentation withFirstNationality(ImportedEntityResponse firstNationality) {
         this.firstNationality = firstNationality;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withSecondNationality(ImportedEntitySimpleRepresentation secondNationality) {
+    public ApplicationPersonalDetailRepresentation withSecondNationality(ImportedEntityResponse secondNationality) {
         this.secondNationality = secondNationality;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withCountry(ImportedEntitySimpleRepresentation country) {
+    public ApplicationPersonalDetailRepresentation withCountry(ImportedEntityResponse country) {
         this.country = country;
         return this;
     }
@@ -211,7 +211,7 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withDomicile(ImportedEntitySimpleRepresentation domicile) {
+    public ApplicationPersonalDetailRepresentation withDomicile(ImportedEntityResponse domicile) {
         this.domicile = domicile;
         return this;
     }
@@ -236,12 +236,12 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withEthnicity(ImportedEntitySimpleRepresentation ethnicity) {
+    public ApplicationPersonalDetailRepresentation withEthnicity(ImportedEntityResponse ethnicity) {
         this.ethnicity = ethnicity;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withDisability(ImportedEntitySimpleRepresentation disability) {
+    public ApplicationPersonalDetailRepresentation withDisability(ImportedEntityResponse disability) {
         this.disability = disability;
         return this;
     }

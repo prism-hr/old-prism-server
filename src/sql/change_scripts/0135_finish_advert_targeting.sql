@@ -346,3 +346,31 @@ where action_id = "APPLICATION_EXPORT"
 drop table imported_entity_feed
 ;
 
+rename table advert_domicile to imported_advert_domicile
+;
+
+alter table advert_address
+	change column advert_domicile_id imported_advert_domicile_id varchar(10) not null
+;
+
+create table imported_advert_domicile_mapping (
+	id int(10) unsigned not null auto_increment,
+	institution_id int(10) unsigned not null,
+	imported_advert_domicile_id varchar(10) not null,
+	code varchar(50),
+	enabled int(1) unsigned not null,
+	imported_timestamp timestamp default current_timestamp on update current_timestamp,
+	primary key (id),
+	unique index (institution_id, imported_advert_domicile_id),
+	index (institution_id, enabled),
+	index (institution_id, imported_advert_domicile_id, imported_timestamp),
+	foreign key (institution_id) references institution (id),
+	foreign key (imported_advert_domicile_id) references imported_advert_domicile (id)) 
+collate = utf8_general_ci
+engine = innodb
+;
+
+alter table imported_subject_area
+	change column code jacs_code varchar(50) not null
+;
+

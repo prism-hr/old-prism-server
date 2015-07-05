@@ -474,7 +474,7 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private <T extends ImportedEntity<?>> T getEnabledImportedObject(Institution toInstitution, T fromEntity, ApplicationSection toSection) {
+    private <T extends ImportedEntity<?, ?>> T getEnabledImportedObject(Institution toInstitution, T fromEntity, ApplicationSection toSection) {
         T toEntity = null;
         if (fromEntity == null) {
             toEntity = null;

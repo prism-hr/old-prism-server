@@ -2,14 +2,15 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 
 public class ApplicationQualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private ImportedProgramRepresentation program;
+    private ImportedProgramResponse program;
 
     private LocalDate startDate;
 
@@ -31,11 +32,11 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.id = id;
     }
     
-    public ImportedProgramRepresentation getProgram() {
+    public ImportedProgramResponse getProgram() {
         return program;
     }
 
-    public void setProgram(ImportedProgramRepresentation program) {
+    public void setProgram(ImportedProgramResponse program) {
         this.program = program;
     }
 
@@ -92,7 +93,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         return this;
     }
     
-    public ApplicationQualificationRepresentation withProgram(ImportedProgramRepresentation program) {
+    public ApplicationQualificationRepresentation withProgram(ImportedProgramResponse program) {
         this.program = program;
         return this;
     }

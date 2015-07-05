@@ -12,7 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import uk.co.alumeni.prism.api.model.ImportedLanguageQualificationTypeDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedLanguageQualificationTypeDefinition;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -20,8 +21,8 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualific
 
 @Entity
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
-public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLanguageQualificationTypeMapping> implements
-        ImportedLanguageQualificationTypeDefinition {
+public class ImportedLanguageQualificationType extends ImportedEntity<Integer, ImportedLanguageQualificationTypeMapping> implements
+        ImportedLanguageQualificationTypeDefinition, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
@@ -91,82 +92,102 @@ public class ImportedLanguageQualificationType extends ImportedEntity<ImportedLa
         this.name = name;
     }
 
+    @Override
     public BigDecimal getMinimumOverallScore() {
         return minimumOverallScore;
     }
 
+    @Override
     public void setMinimumOverallScore(BigDecimal minimumOverallScore) {
         this.minimumOverallScore = minimumOverallScore;
     }
 
+    @Override
     public BigDecimal getMaximumOverallScore() {
         return maximumOverallScore;
     }
 
+    @Override
     public void setMaximumOverallScore(BigDecimal maximumOverallScore) {
         this.maximumOverallScore = maximumOverallScore;
     }
 
+    @Override
     public BigDecimal getMinimumReadingScore() {
         return minimumReadingScore;
     }
 
+    @Override
     public void setMinimumReadingScore(BigDecimal minimumReadingScore) {
         this.minimumReadingScore = minimumReadingScore;
     }
 
+    @Override
     public BigDecimal getMaximumReadingScore() {
         return maximumReadingScore;
     }
 
+    @Override
     public void setMaximumReadingScore(BigDecimal maximumReadingScore) {
         this.maximumReadingScore = maximumReadingScore;
     }
 
+    @Override
     public BigDecimal getMinimumWritingScore() {
         return minimumWritingScore;
     }
 
+    @Override
     public void setMinimumWritingScore(BigDecimal minimumWritingScore) {
         this.minimumWritingScore = minimumWritingScore;
     }
 
+    @Override
     public BigDecimal getMaximumWritingScore() {
         return maximumWritingScore;
     }
 
+    @Override
     public void setMaximumWritingScore(BigDecimal maximumWritingScore) {
         this.maximumWritingScore = maximumWritingScore;
     }
 
+    @Override
     public BigDecimal getMinimumSpeakingScore() {
         return minimumSpeakingScore;
     }
 
+    @Override
     public void setMinimumSpeakingScore(BigDecimal minimumSpeakingScore) {
         this.minimumSpeakingScore = minimumSpeakingScore;
     }
 
+    @Override
     public BigDecimal getMaximumSpeakingScore() {
         return maximumSpeakingScore;
     }
 
+    @Override
     public void setMaximumSpeakingScore(BigDecimal maximumSpeakingScore) {
         this.maximumSpeakingScore = maximumSpeakingScore;
     }
 
+    @Override
     public BigDecimal getMinimumListeningScore() {
         return minimumListeningScore;
     }
 
+    @Override
     public void setMinimumListeningScore(BigDecimal minimumListeningScore) {
         this.minimumListeningScore = minimumListeningScore;
     }
 
+    @Override
     public BigDecimal getMaximumListeningScore() {
         return maximumListeningScore;
     }
 
+    @Override
     public void setMaximumListeningScore(BigDecimal maximumListeningScore) {
         this.maximumListeningScore = maximumListeningScore;
     }

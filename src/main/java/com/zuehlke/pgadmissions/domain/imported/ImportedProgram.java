@@ -15,7 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import uk.co.alumeni.prism.api.model.ImportedProgramDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedProgramDefinition;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
@@ -25,7 +26,8 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 
 @Entity
 @Table(name = "IMPORTED_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "name" }) })
-public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> implements TargetEntity, ImportedProgramDefinition {
+public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapping> implements TargetEntity,
+        ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
@@ -73,34 +75,42 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> impl
         return IMPORTED_PROGRAM;
     }
 
+    @Override
     public ImportedInstitution getInstitution() {
         return institution;
     }
 
+    @Override
     public void setInstitution(ImportedInstitution institution) {
         this.institution = institution;
     }
 
+    @Override
     public ImportedEntitySimple getQualificationType() {
         return qualificationType;
     }
 
+    @Override
     public void setQualificationType(ImportedEntitySimple qualificationType) {
         this.qualificationType = qualificationType;
     }
 
+    @Override
     public String getLevel() {
         return level;
     }
 
+    @Override
     public void setLevel(String level) {
         this.level = level;
     }
 
+    @Override
     public String getQualification() {
         return qualification;
     }
 
+    @Override
     public void setQualification(String type) {
         this.qualification = type;
     }
@@ -115,10 +125,12 @@ public class ImportedProgram extends ImportedEntity<ImportedProgramMapping> impl
         this.name = name;
     }
 
+    @Override
     public String getHomepage() {
         return homepage;
     }
 
+    @Override
     public void setHomepage(String homepage) {
         this.homepage = homepage;
     }

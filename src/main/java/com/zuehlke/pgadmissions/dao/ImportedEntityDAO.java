@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -37,7 +35,7 @@ public class ImportedEntityDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public <T extends ImportedEntity<?>> T getImportedEntityByName(Class<T> entityClass, String name) {
+    public <T extends ImportedEntity<?, ?>> T getByName(Class<T> entityClass, String name) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("name", name)) //
                 .uniqueResult();
@@ -57,7 +55,7 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public <T extends ImportedEntity<?>> List<T> getEnabledImportedEntities(Institution institution,
+    public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntities(Institution institution,
             PrismImportedEntity prismImportedEntity) {
         String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
@@ -72,7 +70,7 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public <T extends ImportedEntity<?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution,
+    public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution,
             PrismImportedEntity prismImportedEntity) {
         String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference) //
@@ -135,34 +133,13 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedSubjectArea> getEnabledImportedSubjectAreas(Institution institution) {
-        PrismImportedEntity prismImportedEntity = IMPORTED_SUBJECT_AREA;
-        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
-        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
-                .createAlias(entityReference, entityReference, JoinType.RIGHT_OUTER_JOIN); //
-
-        return (List<ImportedSubjectArea>) appendUmappedEntityRestriction(institution, entityReference, criteria) //
-                .addOrder(Order.asc(entityReference + ".code")) //
-                .list();
-    }
-
-    public List<ImportedSubjectArea> getEnabledImportedSubjectAreasWithMappings(Institution institution) {
-        PrismImportedEntity prismImportedEntity = IMPORTED_SUBJECT_AREA;
-        String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
-        Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference)
-                .createAlias(entityReference, entityReference, JoinType.INNER_JOIN); //
-
-        return (List<ImportedSubjectArea>) appendMappedEntityRestriction(institution, entityReference, criteria) //
-                .addOrder(Order.asc(entityReference + ".code")) //
-                .list();
-    }
-
     public <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
             PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, null);
     }
 
-    public <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> List<V> getEnabledImportedEntityMapping(Institution institution, T importedEntity) {
+    public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getEnabledImportedEntityMapping(Institution institution,
+            T importedEntity) {
         return getImportedEntityMapping(institution, importedEntity, true);
     }
 
@@ -269,7 +246,7 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    private <T extends ImportedEntity<V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
+    private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
             Boolean enabled) {
         String entityReference = importedEntity.getType().getEntityClassLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //

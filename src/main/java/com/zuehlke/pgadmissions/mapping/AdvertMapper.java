@@ -9,6 +9,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -16,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertDepartment;
-import com.zuehlke.pgadmissions.domain.advert.AdvertDomicile;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertInstitution;
 import com.zuehlke.pgadmissions.domain.advert.AdvertProgram;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -34,7 +36,6 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertReprese
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertDomicileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
@@ -83,11 +84,11 @@ public class AdvertMapper {
         return addressDTO;
     }
 
-    public List<AdvertDomicileRepresentation> getAdvertDomicileRepresentations() {
-        List<AdvertDomicile> advertDomiciles = advertService.getAdvertDomiciles();
-        List<AdvertDomicileRepresentation> representations = Lists.newLinkedList();
-        for (AdvertDomicile advertDomicile : advertDomiciles) {
-            representations.add(getAdvertDomicileRepresentation(advertDomicile));
+    public List<ImportedAdvertDomicileResponse> getAdvertDomicileRepresentations() {
+        List<ImportedAdvertDomicile> importedAdvertDomiciles = advertService.getAdvertDomiciles();
+        List<ImportedAdvertDomicileResponse> representations = Lists.newLinkedList();
+        for (ImportedAdvertDomicile importedAdvertDomicile : importedAdvertDomiciles) {
+            representations.add(getAdvertDomicileRepresentation(importedAdvertDomicile));
         }
         return representations;
     }
@@ -199,8 +200,8 @@ public class AdvertMapper {
         return null;
     }
 
-    private AdvertDomicileRepresentation getAdvertDomicileRepresentation(AdvertDomicile domicile) {
-        return new AdvertDomicileRepresentation().withId(domicile.getId()).withName(domicile.getName()).withCurrency(domicile.getCurrency());
+    private ImportedAdvertDomicileResponse getAdvertDomicileRepresentation(ImportedAdvertDomicile domicile) {
+        return new ImportedAdvertDomicileResponse().withId(domicile.getId()).withName(domicile.getName()).withCurrency(domicile.getCurrency());
     }
 
 }

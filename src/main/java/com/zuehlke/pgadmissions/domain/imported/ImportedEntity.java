@@ -2,18 +2,20 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import java.util.Set;
 
-import uk.co.alumeni.prism.api.model.ImportedEntityDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 
-public abstract class ImportedEntity<T extends ImportedEntityMapping<?>> implements UniqueEntity, ImportedEntityDefinition {
+public abstract class ImportedEntity<T, U extends ImportedEntityMapping<?>> implements UniqueEntity, ImportedEntityDefinition,
+        ImportedEntityResponseDefinition<T> {
 
-    public abstract Integer getId();
+    public abstract T getId();
 
-    public abstract void setId(Integer id);
+    public abstract void setId(T id);
 
     public abstract String getName();
 
@@ -25,7 +27,7 @@ public abstract class ImportedEntity<T extends ImportedEntityMapping<?>> impleme
 
     public abstract PrismImportedEntity getType();
 
-    public abstract Set<T> getMappings();
+    public abstract Set<U> getMappings();
 
     @Override
     public int hashCode() {
@@ -37,7 +39,7 @@ public abstract class ImportedEntity<T extends ImportedEntityMapping<?>> impleme
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        ImportedEntity<?> other = (ImportedEntity<?>) object;
+        ImportedEntity<?, ?> other = (ImportedEntity<?, ?>) object;
         return Objects.equal(getName(), other.getName());
     }
 

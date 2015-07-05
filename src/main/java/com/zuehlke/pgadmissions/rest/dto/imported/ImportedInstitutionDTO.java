@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.dto.imported;
 
 import javax.validation.constraints.NotNull;
 
-public class ImportedInstitutionDTO extends ImportedEntitySimpleDTO {
+public class ImportedInstitutionDTO extends ImportedEntityDTO {
 
     @NotNull
     private Integer domicile;

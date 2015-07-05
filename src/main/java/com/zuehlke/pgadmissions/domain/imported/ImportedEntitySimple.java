@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapp
 @Table(name = "imported_entity", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_entity_type", "name" }) })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "imported_entity_type", discriminatorType = DiscriminatorType.STRING)
-public class ImportedEntitySimple extends ImportedEntity<ImportedEntitySimpleMapping> {
+public class ImportedEntitySimple extends ImportedEntity<Integer, ImportedEntitySimpleMapping> {
 
     @Id
     @GeneratedValue
@@ -40,16 +40,14 @@ public class ImportedEntitySimple extends ImportedEntity<ImportedEntitySimpleMap
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
     @OneToMany(mappedBy = "importedEntitySimple")
     private Set<ImportedEntitySimpleMapping> mappings = Sets.newHashSet();
 
-    @Override
     public Integer getId() {
         return id;
     }
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -82,7 +80,7 @@ public class ImportedEntitySimple extends ImportedEntity<ImportedEntitySimpleMap
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public Set<ImportedEntitySimpleMapping> getMappings() {
         return mappings;

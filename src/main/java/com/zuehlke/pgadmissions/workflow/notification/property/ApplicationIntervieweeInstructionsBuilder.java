@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstruction;
+import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
@@ -12,7 +12,7 @@ public class ApplicationIntervieweeInstructionsBuilder implements NotificationPr
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        CommentApplicationInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionModelDTO().getComment().getInterviewInstruction();
+        CommentInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionModelDTO().getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getIntervieweeInstructions();
         return instructions == null ? propertyLoader.getPropertyLoader().load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }

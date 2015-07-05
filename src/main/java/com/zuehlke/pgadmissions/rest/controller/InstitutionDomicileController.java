@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.dozer.Mapper;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,9 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 
@@ -26,19 +26,19 @@ public class InstitutionDomicileController {
     private EntityService entityService;
 
     @Inject
-    private InstitutionService institutionService;
+    private ResourceMapper resourceMapper;
 
     @Inject
-    private Mapper dozerBeanMapper;
+    private InstitutionService institutionService;
 
     @RequestMapping(value = "institutions", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public List<InstitutionRepresentation> getInstitutions(@PathVariable String domicileId) {
-        InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", domicileId);
-        List<Institution> institutions = institutionService.getApprovedInstitutionsByCountry(domicile);
-        List<InstitutionRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
+    public List<ResourceRepresentationSimple> getInstitutions(@PathVariable String domicileId) {
+        ImportedAdvertDomicile domicile = entityService.getByProperty(ImportedAdvertDomicile.class, "id", domicileId);
+        List<Institution> institutions = institutionService.getApprovedInstitutionsByDomicile(domicile);
+        List<ResourceRepresentationSimple> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
-            institutionRepresentations.add(dozerBeanMapper.map(institution, InstitutionRepresentation.class));
+            institutionRepresentations.add(resourceMapper.getResourceRepresentationSimple(institution));
         }
         return institutionRepresentations;
     }

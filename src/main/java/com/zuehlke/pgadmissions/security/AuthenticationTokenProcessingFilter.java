@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.security;
 
-import com.google.common.base.Charsets;
-import com.zuehlke.pgadmissions.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.filter.GenericFilterBean;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -15,17 +13,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collections;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.GenericFilterBean;
+
+import com.google.common.base.Charsets;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
-    @Autowired
+    @Inject
     private AuthenticationTokenHelper authenticationTokenHelper;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
     @Override
@@ -41,7 +44,8 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
             UserDetails userDetails = this.userService.getById(userId);
             TokenValidityStatus tokenValidityStatus = authenticationTokenHelper.validateToken(authToken, userDetails);
             if (tokenValidityStatus.isValid()) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, Collections.emptyList());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null,
+                        Collections.<GrantedAuthority> emptyList());
                 authentication.setDetails(userDetails);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 if (tokenValidityStatus.getRenewedToken() != null) {

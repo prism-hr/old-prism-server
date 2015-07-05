@@ -65,7 +65,7 @@ public class UserFeedbackService {
 		return userFeedbackDAO.getUserFeedback(ratingThreshold, lastSequenceIdentifier);
 	}
 
-	public PrismRoleCategory getRoleCategoryUserFeedbackRequiredFor(User user) {
+	public PrismRoleCategory getRequiredFeedbackRoleCategory(User user) {
 		DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user);
 		if (latestFeedbackTimestamp == null || latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
 			for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {

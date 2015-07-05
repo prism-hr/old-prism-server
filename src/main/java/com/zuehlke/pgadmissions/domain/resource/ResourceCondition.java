@@ -1,20 +1,27 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "resource_condition", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_condition" }),
-        @UniqueConstraint(columnNames = { "institution_id", "action_condition" }), @UniqueConstraint(columnNames = { "program_id", "action_condition" }),
-        @UniqueConstraint(columnNames = { "project_id", "action_condition" }), @UniqueConstraint(columnNames = { "application_id", "action_condition" }) })
+        @UniqueConstraint(columnNames = { "institution_id", "action_condition" }), @UniqueConstraint(columnNames = { "department_id", "action_condition" }),
+        @UniqueConstraint(columnNames = { "program_id", "action_condition" }), @UniqueConstraint(columnNames = { "project_id", "action_condition" }),
+        @UniqueConstraint(columnNames = { "application_id", "action_condition" }) })
 public class ResourceCondition extends WorkflowResourceExecution {
 
     @Id
@@ -28,6 +35,10 @@ public class ResourceCondition extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", insertable = false, updatable = false)
     private Institution institution;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", insertable = false, updatable = false)
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id", insertable = false, updatable = false)
@@ -78,6 +89,16 @@ public class ResourceCondition extends WorkflowResourceExecution {
         this.institution = institution;
     }
 
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+    
     @Override
     public Program getProgram() {
         return program;

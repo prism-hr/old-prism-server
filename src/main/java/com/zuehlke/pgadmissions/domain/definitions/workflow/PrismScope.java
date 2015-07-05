@@ -3,30 +3,23 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION_CATEGORY;
 
 import java.util.Map;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ApplicationRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.InstitutionRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ProgramRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ProjectRepresentationEnricher;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ResourceRepresentationEnricher;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.InstitutionSearchRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProgramSearchRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProjectSearchRepresentationBuilder;
@@ -46,41 +39,83 @@ import com.zuehlke.pgadmissions.workflow.transition.persisters.ProgramPersister;
 import com.zuehlke.pgadmissions.workflow.transition.persisters.ProjectPersister;
 import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.InstitutionProcessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.ProgramProcessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.ProjectProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ProgramPreprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ProjectPreprocessor;
 
 public enum PrismScope {
 
-    SYSTEM(null, System.class, "SM", null, null, null, null, null, null, null, null, SystemSearchRepresentationBuilder.class, //
-            SystemSocialRepresentationBuilder.class, null), //
-    INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", //
-            new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").getAll(), null, //
-            InstitutionExecutor.class, InstitutionCreator.class, InstitutionPersister.class, InstitutionProcessor.class, InstitutionPostprocessor.class, null, //
-            InstitutionSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, InstitutionRepresentationEnricher.class), //
-    PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", //
-            new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
-                    .add("program", "title").getAll(), null, //
-            ProgramExecutor.class, ProgramCreator.class, ProgramPersister.class, ProgramPreprocessor.class, ProgramProcessor.class, ProgramPostprocessor.class, //
-            ProgramSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProgramRepresentationEnricher.class), //
-    PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", //
-            new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
-                    .add("program", "title").add("project", "title").getAll(), null, //
-            ProjectExecutor.class, ProjectCreator.class, ProjectPersister.class, ProjectPreprocessor.class, ProjectProcessor.class, ProjectPostprocessor.class, //
-            ProjectSearchRepresentationBuilder.class, ResourceParentSocialRepresentationBuilder.class, ProjectRepresentationEnricher.class), //
-    APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", //
-            new ColumnDefinition().add("institution", "title").add("institution", "logoImage.id").add("partner", "title").add("partner", "logoImage.id")
-                    .add("program", "title").add("project", "title").getAll(), null, //
-            ApplicationExecutor.class, ApplicationCreator.class, ApplicationPersister.class, ApplicationPreprocessor.class, ApplicationProcessor.class, //
-            ApplicationPostprocessor.class, null, null, ApplicationRepresentationEnricher.class);
+    SYSTEM(new PrismScopeDefinition() //
+            .withResourceClass(System.class) //
+            .withResourceShortCode("SM") //
+            .withSearchRepresentationBuilder(SystemSearchRepresentationBuilder.class) //
+            .withSocialRepresentationBuilder(SystemSocialRepresentationBuilder.class)),
+    INSTITUTION(new PrismScopeDefinition() //
+            .withResourceClass(Institution.class) //
+            .withResourceShortCode("IN") //
+            .withResourceListCustomColumns(new PrismColumnsDefinition() //
+                    .withColumn("institution", "title") //
+                    .withColumn("institution", "logoImage.id")) //
+            .withActionExecutor(InstitutionExecutor.class) //
+            .withResourceCreator(InstitutionCreator.class) //
+            .withResourcePersister(InstitutionPersister.class) //
+            .withSearchRepresentationBuilder(InstitutionSearchRepresentationBuilder.class) //
+            .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
+    DEPARTMENT(new PrismScopeDefinition() //
+            .withResourceClass(Department.class) //
+            .withResourceShortCode("DT") //
+            .withResourceListCustomColumns(new PrismColumnsDefinition() //
+                    .withColumn("institution", "title") //
+                    .withColumn("institution", "logoImage.id") //
+                    .withColumn("department", "title"))), //
+    PROGRAM(new PrismScopeDefinition() //
+            .withResourceClass(Program.class) //
+            .withResourceShortCode("PM") //
+            .withResourceListCustomColumns(new PrismColumnsDefinition() //
+                    .withColumn("institution", "title") //
+                    .withColumn("institution", "logoImage.id") //
+                    .withColumn("department", "title") //
+                    .withColumn("program", "title")) //
+            .withActionExecutor(ProgramExecutor.class) //
+            .withResourceCreator(ProgramCreator.class) //
+            .withResourcePersister(ProgramPersister.class) //
+            .withResourcePostprocessor(ProgramPostprocessor.class) //
+            .withSearchRepresentationBuilder(ProgramSearchRepresentationBuilder.class) //
+            .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
+    PROJECT(new PrismScopeDefinition() //
+            .withResourceClass(Project.class) //
+            .withResourceShortCode("PT") //
+            .withResourceListCustomColumns(new PrismColumnsDefinition() //
+                    .withColumn("institution", "title") //
+                    .withColumn("institution", "logoImage.id") //
+                    .withColumn("department", "title") //
+                    .withColumn("program", "title") //
+                    .withColumn("project", "title")) //
+            .withActionExecutor(ProjectExecutor.class) //
+            .withResourceCreator(ProjectCreator.class) //
+            .withResourcePersister(ProjectPersister.class) //
+            .withResourcePostprocessor(ProjectPostprocessor.class) //
+            .withSearchRepresentationBuilder(ProjectSearchRepresentationBuilder.class) //
+            .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
+    APPLICATION(new PrismScopeDefinition() //
+            .withResourceClass(Application.class) //
+            .withResourceShortCode("AN") //
+            .withResourceListCustomColumns(new PrismColumnsDefinition() //
+                    .withColumn("institution", "title") //
+                    .withColumn("institution", "logoImage.id") //
+                    .withColumn("department", "title") //
+                    .withColumn("program", "title") //
+                    .withColumn("project", "title")) //
+            .withActionExecutor(ApplicationExecutor.class) //
+            .withResourceCreator(ApplicationCreator.class) //
+            .withResourcePersister(ApplicationPersister.class) //
+            .withResourcePreprocessor(ApplicationPreprocessor.class) //
+            .withResourceProcessor(ApplicationProcessor.class) //
+            .withResourcePostprocessor(ApplicationPostprocessor.class));
+
+    private PrismScopeDefinition definition;
 
     private static Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
@@ -90,111 +125,52 @@ public enum PrismScope {
         }
     }
 
-    private PrismScopeCategory prismScopeCategory;
-
-    private Class<? extends Resource> resourceClass;
-
-    private String shortCode;
-
-    private HashMultimap<String, String> consoleListCustomColumns;
-
-    private HashMultimap<String, String> reportListCustomColumns;
-
-    private Class<? extends ActionExecutor> actionExecutor;
-
-    private Class<? extends ResourceCreator> resourceCreator;
-
-    private Class<? extends ResourcePersister> resourcePersister;
-
-    private Class<? extends ResourceProcessor> resourcePreprocessor;
-
-    private Class<? extends ResourceProcessor> resourceProcessor;
-
-    private Class<? extends ResourceProcessor> resourcePostprocessor;
-
-    private Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder;
-
-    private Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder;
-
-    private Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher;
-
-    private PrismScope(PrismScopeCategory prismScopeCategory, Class<? extends Resource> resourceClass, String shortCode,
-            HashMultimap<String, String> consoleListCustomColumns, HashMultimap<String, String> reportListCustomColumns,
-            Class<? extends ActionExecutor> actionExecutor, Class<? extends ResourceCreator> resourceCreator,
-            Class<? extends ResourcePersister> resourcePersister, Class<? extends ResourceProcessor> resourcePreprocessor,
-            Class<? extends ResourceProcessor> resourceProcessor, Class<? extends ResourceProcessor> resourcePostprocessor,
-            Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder, Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder,
-            Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher) {
-        this.prismScopeCategory = prismScopeCategory;
-        this.resourceClass = resourceClass;
-        this.shortCode = shortCode;
-        this.consoleListCustomColumns = consoleListCustomColumns;
-        this.reportListCustomColumns = reportListCustomColumns;
-        this.actionExecutor = actionExecutor;
-        this.resourceCreator = resourceCreator;
-        this.resourcePersister = resourcePersister;
-        this.resourcePreprocessor = resourcePreprocessor;
-        this.resourceProcessor = resourceProcessor;
-        this.resourcePostprocessor = resourcePostprocessor;
-        this.searchRepresentationBuilder = searchRepresentationBuilder;
-        this.socialRepresentationBuilder = socialRepresentationBuilder;
-        this.resourceRepresentationEnricher = resourceRepresentationEnricher;
-    }
-
-    public PrismScopeCategory getPrismScopeCategory() {
-        return prismScopeCategory;
+    private PrismScope(PrismScopeDefinition definition) {
+        this.definition = definition;
     }
 
     public Class<? extends Resource> getResourceClass() {
-        return resourceClass;
+        return definition.getResourceClass();
     }
 
     public String getShortCode() {
-        return shortCode;
+        return definition.getResourceShortCode();
     }
 
-    public HashMultimap<String, String> getConsoleListCustomColumns() {
-        return consoleListCustomColumns;
-    }
-
-    public HashMultimap<String, String> getReportListCustomColumns() {
-        return reportListCustomColumns;
+    public HashMultimap<String, String> getResourceListCustomColumns() {
+        return definition.getResourceListCustomColumns();
     }
 
     public Class<? extends ActionExecutor> getActionExecutor() {
-        return actionExecutor;
+        return definition.getActionExecutor();
     }
 
     public Class<? extends ResourceCreator> getResourceCreator() {
-        return resourceCreator;
+        return definition.getResourceCreator();
     }
 
     public Class<? extends ResourcePersister> getResourcePersister() {
-        return resourcePersister;
+        return definition.getResourcePersister();
     }
 
     public Class<? extends ResourceProcessor> getResourcePreprocessor() {
-        return resourcePreprocessor;
+        return definition.getResourcePreprocessor();
     }
 
     public Class<? extends ResourceProcessor> getResourceProcessor() {
-        return resourceProcessor;
+        return definition.getResourceProcessor();
     }
 
     public Class<? extends ResourceProcessor> getResourcePostprocessor() {
-        return resourcePostprocessor;
+        return definition.getResourcePostprocessor();
     }
 
     public Class<? extends SearchRepresentationBuilder> getSearchRepresentationBuilder() {
-        return searchRepresentationBuilder;
+        return definition.getSearchRepresentationBuilder();
     }
 
     public Class<? extends SocialRepresentationBuilder> getSocialRepresentationBuilder() {
-        return socialRepresentationBuilder;
-    }
-
-    public Class<? extends ResourceRepresentationEnricher> getResourceRepresentationEnricher() {
-        return resourceRepresentationEnricher;
+        return definition.getSocialRepresentationBuilder();
     }
 
     public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {
@@ -209,16 +185,141 @@ public enum PrismScope {
         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
     }
 
-    private static class ColumnDefinition {
+    private static class PrismScopeDefinition {
+
+        private Class<? extends Resource> resourceClass;
+
+        private String resourceShortCode;
+
+        private PrismColumnsDefinition resourceListCustomColumns;
+
+        private Class<? extends ActionExecutor> actionExecutor;
+
+        private Class<? extends ResourceCreator> resourceCreator;
+
+        private Class<? extends ResourcePersister> resourcePersister;
+
+        private Class<? extends ResourceProcessor> resourcePreprocessor;
+
+        private Class<? extends ResourceProcessor> resourceProcessor;
+
+        private Class<? extends ResourceProcessor> resourcePostprocessor;
+
+        private Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder;
+
+        private Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder;
+
+        public Class<? extends Resource> getResourceClass() {
+            return resourceClass;
+        }
+
+        public String getResourceShortCode() {
+            return resourceShortCode;
+        }
+
+        public HashMultimap<String, String> getResourceListCustomColumns() {
+            return resourceListCustomColumns.getColumns();
+        }
+
+        public Class<? extends ActionExecutor> getActionExecutor() {
+            return actionExecutor;
+        }
+
+        public Class<? extends ResourceCreator> getResourceCreator() {
+            return resourceCreator;
+        }
+
+        public Class<? extends ResourcePersister> getResourcePersister() {
+            return resourcePersister;
+        }
+
+        public Class<? extends ResourceProcessor> getResourcePreprocessor() {
+            return resourcePreprocessor;
+        }
+
+        public Class<? extends ResourceProcessor> getResourceProcessor() {
+            return resourceProcessor;
+        }
+
+        public Class<? extends ResourceProcessor> getResourcePostprocessor() {
+            return resourcePostprocessor;
+        }
+
+        public Class<? extends SearchRepresentationBuilder> getSearchRepresentationBuilder() {
+            return searchRepresentationBuilder;
+        }
+
+        public Class<? extends SocialRepresentationBuilder> getSocialRepresentationBuilder() {
+            return socialRepresentationBuilder;
+        }
+
+        public PrismScopeDefinition withResourceClass(Class<? extends Resource> resourceClass) {
+            this.resourceClass = resourceClass;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourceShortCode(String resourceShortCode) {
+            this.resourceShortCode = resourceShortCode;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourceListCustomColumns(PrismColumnsDefinition resourceListCustomColumns) {
+            this.resourceListCustomColumns = resourceListCustomColumns;
+            return this;
+        }
+
+        public PrismScopeDefinition withActionExecutor(Class<? extends ActionExecutor> actionExecutor) {
+            this.actionExecutor = actionExecutor;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourceCreator(Class<? extends ResourceCreator> resourceCreator) {
+            this.resourceCreator = resourceCreator;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourcePersister(Class<? extends ResourcePersister> resourcePersister) {
+            this.resourcePersister = resourcePersister;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourcePreprocessor(Class<? extends ResourceProcessor> resourcePreprocessor) {
+            this.resourcePreprocessor = resourcePreprocessor;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourceProcessor(Class<? extends ResourceProcessor> resourceProcessor) {
+            this.resourceProcessor = resourceProcessor;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourcePostprocessor(Class<? extends ResourceProcessor> resourcePostprocessor) {
+            this.resourcePostprocessor = resourcePostprocessor;
+            return this;
+        }
+
+        public PrismScopeDefinition withSearchRepresentationBuilder(Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder) {
+            this.searchRepresentationBuilder = searchRepresentationBuilder;
+            return this;
+        }
+
+        public PrismScopeDefinition withSocialRepresentationBuilder(Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder) {
+            this.socialRepresentationBuilder = socialRepresentationBuilder;
+            return this;
+        }
+
+    }
+
+    private static class PrismColumnsDefinition {
 
         private HashMultimap<String, String> definitions = HashMultimap.create();
 
-        public ColumnDefinition add(String table, String column) {
+        public PrismColumnsDefinition withColumn(String table, String column) {
             definitions.put(table, column);
             return this;
         }
 
-        public HashMultimap<String, String> getAll() {
+        public HashMultimap<String, String> getColumns() {
             return definitions;
         }
 

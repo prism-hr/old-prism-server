@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
 public class ApplicationPrizeDTO {
 

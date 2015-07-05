@@ -58,7 +58,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropert
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
@@ -253,8 +253,8 @@ public class SystemService {
     }
 
     @Transactional
-    public void setLastDataImportDate(LocalDate baseline) {
-        getSystem().setLastDataImportDate(baseline);
+    public void setLastDataImportTimestamp(DateTime lastDataImportTimestamp) {
+        getSystem().setLastDataImportTimestamp(lastDataImportTimestamp);
     }
 
     @Transactional

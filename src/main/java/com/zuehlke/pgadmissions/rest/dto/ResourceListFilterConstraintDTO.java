@@ -10,13 +10,13 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ResourceListFilterConstraintDTO {
 
-    private PrismResourceListFilter filterProperty;
+    private PrismResourceListContraint filterProperty;
 
     private PrismResourceListFilterExpression filterExpression;
 
@@ -38,11 +38,11 @@ public class ResourceListFilterConstraintDTO {
 
     private BigDecimal valueDecimalClose;
 
-    public PrismResourceListFilter getFilterProperty() {
+    public PrismResourceListContraint getFilterProperty() {
         return filterProperty;
     }
 
-    public void setFilterProperty(PrismResourceListFilter filterProperty) {
+    public void setFilterProperty(PrismResourceListContraint filterProperty) {
         this.filterProperty = filterProperty;
     }
 
@@ -134,7 +134,7 @@ public class ResourceListFilterConstraintDTO {
         this.valueDecimalClose = valueDecimalClose;
     }
 
-    public ResourceListFilterConstraintDTO withFilterProperty(PrismResourceListFilter filterProperty) {
+    public ResourceListFilterConstraintDTO withFilterProperty(PrismResourceListContraint filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }

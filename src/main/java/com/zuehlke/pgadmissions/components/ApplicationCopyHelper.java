@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -45,11 +46,9 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.user.Address;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -104,8 +103,8 @@ public class ApplicationCopyHelper {
                     WORKFLOW_PROPERTY, APPLICATION_DEMOGRAPHIC, to.getWorkflowPropertyConfigurationVersion());
 
             if (BooleanUtils.isTrue(demographicConfiguration.getEnabled())) {
-                Ethnicity ethnicity = from.getPersonalDetail().getEthnicity();
-                Disability disability = from.getPersonalDetail().getDisability();
+                ImportedEntitySimple ethnicity = from.getPersonalDetail().getEthnicity();
+                ImportedEntitySimple disability = from.getPersonalDetail().getDisability();
 
                 personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, ethnicity, personalDetail));
                 personalDetail.setDisability(getEnabledImportedObject(toInstitution, disability, personalDetail));
@@ -383,10 +382,7 @@ public class ApplicationCopyHelper {
 
     public void copyQualification(ApplicationQualification to, ApplicationQualification from, WorkflowPropertyConfiguration configuration) {
         Institution toInstitution = to.getApplication().getInstitution();
-        to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution(), to));
-        to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
-        to.setTitle(from.getTitle());
-        to.setSubject(from.getSubject());
+        to.setProgram(getEnabledImportedObject(toInstitution, from.getProgram(), to));
         to.setLanguage(from.getLanguage());
         to.setStartDate(from.getStartDate());
         to.setCompleted(from.getCompleted());
@@ -405,11 +401,11 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    private Address copyAddress(Institution toInstitution, Address fromAddress, ApplicationSection toSection) {
+    private AddressApplication copyAddress(Institution toInstitution, AddressApplication fromAddress, ApplicationSection toSection) {
         if (fromAddress == null) {
             return null;
         }
-        Address toAddress = new Address();
+        AddressApplication toAddress = new AddressApplication();
         toAddress.setAddressLine1(fromAddress.getAddressLine1());
         toAddress.setAddressLine2(fromAddress.getAddressLine2());
         toAddress.setAddressTown(fromAddress.getAddressTown());
@@ -440,7 +436,7 @@ public class ApplicationCopyHelper {
             return null;
         }
         ApplicationLanguageQualification to = new ApplicationLanguageQualification();
-        to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
+        to.setLanguageQualificationType(getEnabledImportedObject(toInstitution, from.getLanguageQualificationType(), to));
         to.setExamDate(from.getExamDate());
         to.setOverallScore(from.getOverallScore());
         to.setReadingScore(from.getReadingScore());
@@ -478,7 +474,7 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity, ApplicationSection toSection) {
+    private <T extends ImportedEntity<?, ?>> T getEnabledImportedObject(Institution toInstitution, T fromEntity, ApplicationSection toSection) {
         T toEntity = null;
         if (fromEntity == null) {
             toEntity = null;

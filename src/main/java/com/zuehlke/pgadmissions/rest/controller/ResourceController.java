@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -7,17 +8,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,54 +25,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.mapping.ActionMapper;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
+import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
-import com.zuehlke.pgadmissions.rest.RestApiUtils;
+import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.BrandedResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import com.zuehlke.pgadmissions.workflow.resource.representation.ResourceRepresentationEnricher;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -89,87 +70,36 @@ public class ResourceController {
     private ResourceService resourceService;
 
     @Inject
-    private CommentService commentService;
-
-    @Inject
     private UserService userService;
-
-    @Inject
-    private ActionService actionService;
 
     @Inject
     private RoleService roleService;
 
     @Inject
-    private StateService stateService;
+    private ApplicationMapper applicationMapper;
 
     @Inject
     private ApplicationService applicationService;
 
     @Inject
-    private AdvertService advertService;
+    private ActionMapper actionMapper;
 
     @Inject
-    private Mapper mapper;
+    private ResourceMapper resourceMapper;
+
+    @Inject
+    private UserMapper userMapper;
 
     @Inject
     private ObjectMapper objectMapper;
 
-    @Inject
-    private ApplicationContext applicationContext;
-
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public AbstractResourceRepresentation getResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor)
-            throws Exception {
-        User currentUser = userService.getCurrentUser();
+    public <T extends ResourceRepresentationExtended> ResourceRepresentationExtended getResource(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-
-        AbstractResourceRepresentation representation = mapper.map(resource, resourceDescriptor.getRepresentationType());
-        representation.setTimeline(commentService.getComments(resource, currentUser));
-
-        Set<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
-        if (permittedActions.isEmpty()) {
-            Action action = actionService.getViewEditAction(resource);
-            throw new WorkflowPermissionException(resource, action);
-        }
-        representation.setActions(permittedActions);
-        representation.setRecommendedNextStates(stateService.getRecommendedNextStates(resource));
-        List<PrismState> secondaryStates = Lists.newArrayListWithCapacity(resource.getResourceStates().size());
-        for (ResourceState resourceState : resource.getResourceStates()) {
-            if (!resourceState.getPrimaryState()) {
-                secondaryStates.add(resourceState.getState().getId());
-            }
-        }
-
-        representation.setSecondaryStates(stateService.getSecondaryResourceStateGroups(resource));
-
-        List<User> users = userService.getResourceUsers(resource);
-        List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
-        for (User user : users) {
-            UserRepresentation userRepresentation = mapper.map(user, UserRepresentation.class);
-            Set<PrismRole> roles = Sets.newHashSet(roleService.getRolesForResource(resource, user));
-            userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
-        }
-
-        representation.setUsers(userRolesRepresentations);
-        representation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
-
-        Institution institution = resource.getInstitution();
-        Institution partner = resource.getPartner();
-        if (partner != null && !partner.sameAs(institution)) {
-            InstitutionRepresentation partnerRepresentation = mapper.map(partner, InstitutionRepresentation.class);
-            representation.setPartner(partnerRepresentation);
-        }
-
-        PrismScope resourceScope = resource.getResourceScope();
-        Class<? extends ResourceRepresentationEnricher> resourceRepresentationEnricher = resourceScope.getResourceRepresentationEnricher();
-        if (resourceRepresentationEnricher != null) {
-            applicationContext.getBean(resourceRepresentationEnricher).enrich(resourceScope, resourceId, representation);
-        }
-
-        return representation;
+        return resourceMapper.getResourceRepresentationClient(resource);
     }
 
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
@@ -186,47 +116,11 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
-        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
-        List<ResourceListRowRepresentation> representations = Lists.newArrayList();
-        DateTime baseline = new DateTime().minusDays(1);
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
+        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
 
-        for (ResourceListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
-            ResourceListRowRepresentation representation = mapper.map(rowDTO, ResourceListRowRepresentation.class);
-            representation.setResourceScope(resourceScope);
-            representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCamelName() + "Id"));
-
-            Set<ActionRepresentation> actionRepresentations = Sets.newLinkedHashSet();
-            for (ResourceListActionDTO actionDTO : rowDTO.getActions()) {
-                actionRepresentations.add(mapper.map(actionDTO, ActionRepresentation.class));
-            }
-            representation.setActions(actionRepresentations);
-
-            for (String scopeName : new String[] { "institution", "partner" }) {
-                Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
-                if (id != null && (scopeName.equals("institution") || scopeName.equals("partner") && !id.equals(representation.getInstitution().getId()))) {
-                    String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
-                    Integer logoImageId = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "LogoImageId");
-                    PropertyUtils.setSimpleProperty(representation, scopeName, new BrandedResourceRepresentation(id, title, logoImageId));
-                }
-            }
-
-            for (String scopeName : new String[] { "program", "project" }) {
-                Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
-                if (id != null) {
-                    String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
-                    PropertyUtils.setSimpleProperty(representation, scopeName, new SimpleResourceRepresentation(id, title));
-                }
-            }
-
-            representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
-            representation.setSecondaryStateGroups(stateService.getSecondaryResourceStateGroups(resourceScope,
-                    (Integer) PrismReflectionUtils.getProperty(rowDTO, resourceScope.getLowerCamelName() + "Id")));
-
-            representations.add(representation);
-        }
-
-        return representations;
+        return resourceMapper.getResourceListRowRepresentations(resourceScope,
+                resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
@@ -250,15 +144,18 @@ public class ResourceController {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         if (resourceScope == SYSTEM) {
             throw new UnsupportedOperationException("Summary cannot be created for system");
-        } else if (resourceScope == APPLICATION) {
-            return applicationService.getApplicationSummary(resourceId);
+        } else {
+            Resource resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+            if (resourceScope == APPLICATION) {
+                return applicationMapper.getApplicationSummary((Application) resource);
+            }
+            return resourceMapper.getResourceSummaryRepresentation((ResourceParent) resource);
         }
-        return resourceService.getResourceSummaryRepresentation(resourceScope, resourceId);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
     @PreAuthorize("isAuthenticated()")
-    public ResourceSummaryPlotsRepresentation getPlot(
+    public ResourceSummaryPlotRepresentation getPlot(
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @RequestParam(required = false) String filter) throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
@@ -266,7 +163,7 @@ public class ResourceController {
             throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
         }
         ResourceReportFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceReportFilterDTO.class) : null;
-        return resourceService.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
+        return resourceMapper.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
@@ -290,14 +187,14 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        UserRepresentation newUser = userRolesRepresentation.getUser();
+        UserRepresentationSimple newUser = userRolesRepresentation.getUser();
 
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
-        return mapper.map(user, UserRepresentation.class);
+        return userMapper.getUserRepresentationSimple(user);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
@@ -318,13 +215,13 @@ public class ResourceController {
         roleService.setResourceOwner(resource, user);
     }
 
-    @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
+    @RequestMapping(value = "/{resourceId}/", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ActionOutcomeRepresentation executeAction(
             @PathVariable Integer resourceId,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody CommentDTO commentDTO) throws Exception {
-        if (commentDTO.getAction().getActionCategory().equals(PrismActionCategory.CREATE_RESOURCE)) {
+        if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             ResourceDTO newResource = commentDTO.getNewResource().getResource();
             if (newResource == null) {
                 throw new Error("Cannot create new resource for " + resourceDescriptor.getResourceScope() + '#' + resourceId);
@@ -334,19 +231,12 @@ public class ResourceController {
         }
 
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
-        return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-    }
-
-    @RequestMapping(value = "/{resourceId}/comments/{commentId}/sponsorship", method = RequestMethod.DELETE)
-    @PreAuthorize("isAuthenticated()")
-    public void rejectSponsorship(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer commentId)
-            throws Exception {
-        advertService.rejectSponsorship(resourceDescriptor.getResourceScope(), resourceId, commentId);
+        return actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return RestApiUtils.getResourceDescriptor(resourceScope);
+        return RestUtils.getResourceDescriptor(resourceScope);
     }
 
     private Resource loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {

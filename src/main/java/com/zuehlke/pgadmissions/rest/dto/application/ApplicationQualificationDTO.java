@@ -6,9 +6,11 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
+
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ApplicationQualificationDTO {
@@ -19,9 +21,8 @@ public class ApplicationQualificationDTO {
     @Size(max = 200)
     private String subject;
 
-    @NotEmpty
-    @Size(max = 200)
-    private String title;
+    @NotNull
+    private ImportedProgramDTO program;
 
     @DateNotFuture
     @NotNull
@@ -34,17 +35,11 @@ public class ApplicationQualificationDTO {
     @Size(max = 70)
     private String language;
 
-    @NotNull
-    private Integer type;
-
     @NotEmpty
     @Size(max = 200)
     private String grade;
 
     private FileDTO document;
-
-    @NotNull
-    private ImportedInstitutionDTO institution;
 
     private Boolean completed;
 
@@ -56,20 +51,20 @@ public class ApplicationQualificationDTO {
         this.id = id;
     }
 
+    public ImportedProgramDTO getProgram() {
+        return program;
+    }
+
+    public void setProgram(ImportedProgramDTO program) {
+        this.program = program;
+    }
+
     public String getSubject() {
         return subject;
     }
 
     public void setSubject(String subject) {
         this.subject = subject;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public LocalDate getStartDate() {
@@ -96,14 +91,6 @@ public class ApplicationQualificationDTO {
         this.language = language;
     }
 
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
     public String getGrade() {
         return grade;
     }
@@ -118,14 +105,6 @@ public class ApplicationQualificationDTO {
 
     public void setDocument(FileDTO document) {
         this.document = document;
-    }
-
-    public ImportedInstitutionDTO getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(ImportedInstitutionDTO institution) {
-        this.institution = institution;
     }
 
     public Boolean getCompleted() {

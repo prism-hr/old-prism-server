@@ -14,7 +14,7 @@ public class ResourceParentDTO extends ResourceDTO {
     @NotNull
     private AdvertDTO advert;
 
-    private ResourceParentAttributesDTO attributes;
+    private List<ResourceConditionDTO> resourceConditions;
 
     public AdvertDTO getAdvert() {
         return advert;
@@ -23,37 +23,13 @@ public class ResourceParentDTO extends ResourceDTO {
     public void setAdvert(AdvertDTO advert) {
         this.advert = advert;
     }
-
-    public ResourceParentAttributesDTO getAttributes() {
-        return attributes;
+    
+    public List<ResourceConditionDTO> getResourceConditions() {
+        return resourceConditions;
     }
 
-    public void setAttributes(ResourceParentAttributesDTO attributes) {
-        this.attributes = attributes;
-    }
-
-    public static class ResourceParentAttributesDTO {
-
-        private List<ResourceConditionDTO> resourceConditions;
-
-        private List<String> studyLocations;
-
-        public List<ResourceConditionDTO> getResourceConditions() {
-            return resourceConditions;
-        }
-
-        public void setResourceConditions(List<ResourceConditionDTO> resourceConditions) {
-            this.resourceConditions = resourceConditions;
-        }
-
-        public List<String> getStudyLocations() {
-            return studyLocations;
-        }
-
-        public void setStudyLocations(List<String> studyLocations) {
-            this.studyLocations = studyLocations;
-        }
-
+    public void setResourceConditions(List<ResourceConditionDTO> resourceConditions) {
+        this.resourceConditions = resourceConditions;
     }
 
     public static class ResourceConditionDTO {

@@ -7,25 +7,25 @@ public class ApplicationAddressDTO {
 
     @NotNull
     @Valid
-    private AddressDTO currentAddress;
+    private AddressApplicationDTO currentAddress;
 
     @NotNull
     @Valid
-    private AddressDTO contactAddress;
+    private AddressApplicationDTO contactAddress;
 
-    public AddressDTO getCurrentAddress() {
+    public AddressApplicationDTO getCurrentAddress() {
         return currentAddress;
     }
 
-    public void setCurrentAddress(AddressDTO currentAddress) {
+    public void setCurrentAddress(AddressApplicationDTO currentAddress) {
         this.currentAddress = currentAddress;
     }
 
-    public AddressDTO getContactAddress() {
+    public AddressApplicationDTO getContactAddress() {
         return contactAddress;
     }
 
-    public void setContactAddress(AddressDTO contactAddress) {
+    public void setContactAddress(AddressApplicationDTO contactAddress) {
         this.contactAddress = contactAddress;
     }
 }

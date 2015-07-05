@@ -1,70 +1,55 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
+
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 
 @Entity
-@Table(name = "imported_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
-public class ImportedInstitution extends ImportedEntity {
+@Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
+public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitutionMapping> implements TargetEntity,
+        ImportedInstitutionDefinition<ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
+    @JoinColumn(name = "imported_domicile_id", nullable = false)
+    private ImportedEntitySimple domicile;
 
-    @ManyToOne
-    @JoinColumn(name = "domicile_id", nullable = false)
-    private Domicile domicile;
-
-    @Column(name = "code")
-    private String code;
-
-    @Lob
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "ucas_id", unique = true)
+    private String ucasId;
+
+    @Column(name = "facebook_id", unique = true)
+    private String facebookId;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @Column(name = "custom", nullable = false)
-    private Boolean custom;
-
-    @Column(name = "ucas_id")
-    private String ucasId;
-
-    @Column(name = "facebook_id")
-    private String facebookId;
-
-    public String getUcasId() {
-        return ucasId;
-    }
-
-    public void setUcasId(String ucasId) {
-        this.ucasId = ucasId;
-    }
-
-    public String getFacebookId() {
-        return facebookId;
-    }
-
-    public void setFacebookId(String facebookId) {
-        this.facebookId = facebookId;
-    }
+    @OneToMany(mappedBy = "importedInstitution")
+    private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -77,36 +62,18 @@ public class ImportedInstitution extends ImportedEntity {
     }
 
     @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    @Override
     public PrismImportedEntity getType() {
-        return INSTITUTION;
+        return IMPORTED_INSTITUTION;
     }
 
-    public Domicile getDomicile() {
+    @Override
+    public ImportedEntitySimple getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(Domicile domicile) {
+    @Override
+    public void setDomicile(ImportedEntitySimple domicile) {
         this.domicile = domicile;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
     }
 
     @Override
@@ -120,6 +87,26 @@ public class ImportedInstitution extends ImportedEntity {
     }
 
     @Override
+    public String getUcasId() {
+        return ucasId;
+    }
+
+    @Override
+    public void setUcasId(String ucasId) {
+        this.ucasId = ucasId;
+    }
+
+    @Override
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    @Override
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
+    }
+
+    @Override
     public Boolean getEnabled() {
         return enabled;
     }
@@ -129,36 +116,13 @@ public class ImportedInstitution extends ImportedEntity {
         this.enabled = enabled;
     }
 
-    public final Boolean getCustom() {
-        return custom;
+    @Override
+    public Set<ImportedInstitutionMapping> getMappings() {
+        return mappings;
     }
 
-    public final void setCustom(Boolean custom) {
-        this.custom = custom;
-    }
-
-    public ImportedInstitution withFacebookId(String facebookId) {
-        this.setFacebookId(facebookId);
-        return this;
-    }
-
-    public ImportedInstitution withUcasId(String ucasId){
-        this.setUcasId(ucasId);
-        return this;
-    }
-
-    public ImportedInstitution withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public ImportedInstitution withDomicile(Domicile domicile) {
+    public ImportedInstitution withDomicile(ImportedEntitySimple domicile) {
         this.domicile = domicile;
-        return this;
-    }
-
-    public ImportedInstitution withCode(String code) {
-        this.code = code;
         return this;
     }
 
@@ -167,13 +131,18 @@ public class ImportedInstitution extends ImportedEntity {
         return this;
     }
 
-    public ImportedInstitution withEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public ImportedInstitution withUcasId(String ucasId) {
+        this.ucasId = ucasId;
         return this;
     }
 
-    public ImportedInstitution withCustom(Boolean custom) {
-        this.custom = custom;
+    public ImportedInstitution withFacebookId(String facebookId) {
+        this.facebookId = facebookId;
+        return this;
+    }
+
+    public ImportedInstitution withEnabled(Boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
 
@@ -182,8 +151,27 @@ public class ImportedInstitution extends ImportedEntity {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(domicile.getId(), name);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        ImportedInstitution other = (ImportedInstitution) object;
+        return Objects.equal(domicile, other.getDomicile());
+    }
+
+    @Override
+    public int index() {
+        return Objects.hashCode(domicile.getId(), name);
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
+        return new ResourceSignature().addProperty("domicile", getDomicile());
     }
 
 }

@@ -13,7 +13,6 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.dozer.Mapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -39,12 +37,9 @@ public class ApplicationDownloadReferenceBuilder {
     private PropertyLoader propertyLoader;
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
-    
+
     @Inject
     private DocumentService documentService;
-    
-    @Inject
-    private Mapper mapper;
 
     public byte[] build(final Application application, final Comment referenceComment) {
         try {
@@ -81,12 +76,12 @@ public class ApplicationDownloadReferenceBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUserDisplay(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, referenceComment.getContent(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), referenceComment.getApplicationRatingDisplay(), body);
-            
+
             for (CommentCustomResponse customResponse : referenceComment.getCustomResponses()) {
-                CommentCustomResponseRepresentation customResponseRepresentation = mapper.map(customResponse, CommentCustomResponseRepresentation.class);
-                applicationDownloadBuilderHelper.addContentRowMedium(customResponseRepresentation.getLabel(), customResponseRepresentation.getPropertyValue(), body);
+                applicationDownloadBuilderHelper.addContentRowMedium(customResponse.getActionCustomQuestionConfiguration().getLabel(),
+                        customResponse.getPropertyValue(), body);
             }
-            
+
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
     }
@@ -114,5 +109,5 @@ public class ApplicationDownloadReferenceBuilder {
         this.applicationDownloadBuilderHelper = applicationDownloadBuilderHelper;
         return this;
     }
-    
+
 }

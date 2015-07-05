@@ -1,5 +1,68 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TimeZone;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -8,49 +71,23 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import com.zuehlke.pgadmissions.workflow.validation.PrismConstraintRequiredStateTransition;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TimeZone;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
 @Table(name = "comment")
-public class Comment {
+public class Comment extends WorkflowResourceExecution {
 
     @Id
     @GeneratedValue
@@ -63,6 +100,10 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -103,16 +144,6 @@ public class Comment {
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
-    @ManyToOne
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
-    @Column(name = "removed_partner")
-    private Boolean removedPartner;
-
-    @Embedded
-    private CommentSponsorship sponsorship;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
     private PrismYesNoUnsureResponse applicationEligible;
@@ -121,16 +152,16 @@ public class Comment {
     private Boolean applicationInterested;
 
     @Embedded
-    private CommentApplicationInterviewAppointment interviewAppointment;
+    private CommentInterviewAppointment interviewAppointment;
 
     @Embedded
-    private CommentApplicationInterviewInstruction interviewInstruction;
+    private CommentInterviewInstruction interviewInstruction;
 
     @Embedded
-    private CommentApplicationPositionDetail positionDetail;
+    private CommentPositionDetail positionDetail;
 
     @Embedded
-    private CommentApplicationOfferDetail offerDetail;
+    private CommentOfferDetail offerDetail;
 
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
@@ -140,8 +171,8 @@ public class Comment {
     private PrismApplicationReserveStatus applicationReserveStatus;
 
     @ManyToOne
-    @JoinColumn(name = "application_rejection_reason_id")
-    private RejectionReason rejectionReason;
+    @JoinColumn(name = "application_imported_rejection_reason_id")
+    private ImportedEntitySimple rejectionReason;
 
     @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
@@ -149,16 +180,8 @@ public class Comment {
     @Column(name = "application_rating")
     private BigDecimal applicationRating;
 
-    @Lob
-    @Column(name = "application_export_request")
-    private String exportRequest;
-
-    @Column(name = "application_export_reference")
-    private String exportReference;
-
-    @Lob
-    @Column(name = "application_export_exception")
-    private String exportException;
+    @Embedded
+    private CommentExport export;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -182,7 +205,6 @@ public class Comment {
     @OrderBy(clause = "timeslot_datetime")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    @PrismConstraintRequiredStateTransition(state = APPLICATION_INTERVIEW, action = APPLICATION_ASSIGN_INTERVIEWERS, transitionState = APPLICATION_INTERVIEW_PENDING_SCHEDULING, error = SYSTEM_VALIDATION_REQUIRED)
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OrderBy(clause = "preference_datetime")
@@ -225,6 +247,16 @@ public class Comment {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    @Override
+    public Department getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public Program getProgram() {
@@ -307,30 +339,6 @@ public class Comment {
         this.transitionState = transitionState;
     }
 
-    public Institution getPartner() {
-        return partner;
-    }
-
-    public void setPartner(Institution partner) {
-        this.partner = partner;
-    }
-
-    public Boolean getRemovedPartner() {
-        return removedPartner;
-    }
-
-    public void setRemovedPartner(Boolean removedPartner) {
-        this.removedPartner = removedPartner;
-    }
-
-    public CommentSponsorship getSponsorship() {
-        return sponsorship;
-    }
-
-    public void setSponsorship(CommentSponsorship sponsorship) {
-        this.sponsorship = sponsorship;
-    }
-
     public PrismYesNoUnsureResponse getApplicationEligible() {
         return applicationEligible;
     }
@@ -347,35 +355,35 @@ public class Comment {
         this.applicationEligible = applicationEligible;
     }
 
-    public CommentApplicationInterviewAppointment getInterviewAppointment() {
+    public CommentInterviewAppointment getInterviewAppointment() {
         return interviewAppointment;
     }
 
-    public void setInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+    public void setInterviewAppointment(CommentInterviewAppointment interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
     }
 
-    public CommentApplicationInterviewInstruction getInterviewInstruction() {
+    public CommentInterviewInstruction getInterviewInstruction() {
         return interviewInstruction;
     }
 
-    public void setInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+    public void setInterviewInstruction(CommentInterviewInstruction interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
     }
 
-    public CommentApplicationPositionDetail getPositionDetail() {
+    public CommentPositionDetail getPositionDetail() {
         return positionDetail;
     }
 
-    public void setPositionDetail(CommentApplicationPositionDetail positionDetail) {
+    public void setPositionDetail(CommentPositionDetail positionDetail) {
         this.positionDetail = positionDetail;
     }
 
-    public CommentApplicationOfferDetail getOfferDetail() {
+    public CommentOfferDetail getOfferDetail() {
         return offerDetail;
     }
 
-    public void setOfferDetail(CommentApplicationOfferDetail offerDetail) {
+    public void setOfferDetail(CommentOfferDetail offerDetail) {
         this.offerDetail = offerDetail;
     }
 
@@ -395,11 +403,11 @@ public class Comment {
         this.applicationReserveStatus = applicationReserveRating;
     }
 
-    public RejectionReason getRejectionReason() {
+    public ImportedEntitySimple getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(RejectionReason rejectionReason) {
+    public void setRejectionReason(ImportedEntitySimple rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
 
@@ -419,28 +427,12 @@ public class Comment {
         this.applicationRating = applicationRating;
     }
 
-    public final String getApplicationExportRequest() {
-        return exportRequest;
+    public CommentExport getExport() {
+        return export;
     }
 
-    public final void setApplicationExportRequest(String applicationExportRequest) {
-        this.exportRequest = applicationExportRequest;
-    }
-
-    public String getExportReference() {
-        return exportReference;
-    }
-
-    public void setExportReference(String exportReference) {
-        this.exportReference = exportReference;
-    }
-
-    public String getExportException() {
-        return exportException;
-    }
-
-    public void setExportException(String exportException) {
-        this.exportException = exportException;
+    public void setExport(CommentExport export) {
+        this.export = export;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
@@ -485,14 +477,6 @@ public class Comment {
 
     public void addSecondaryTransitionState(State state) {
         secondaryTransitionStates.add(state);
-    }
-
-    public Resource getResource() {
-        return ObjectUtils.firstNonNull(system, institution, program, project, application);
-    }
-
-    public void setResource(Resource resource) {
-        PrismReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
     }
 
     public Comment withId(Integer id) {
@@ -560,11 +544,6 @@ public class Comment {
         return this;
     }
 
-    public Comment withRemovedPartner(Boolean removedPartner) {
-        this.removedPartner = removedPartner;
-        return this;
-    }
-
     public Comment withTransitionState(State transitionState) {
         this.transitionState = transitionState;
         return this;
@@ -572,21 +551,6 @@ public class Comment {
 
     public Comment withApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
-        return this;
-    }
-
-    public Comment withExportRequest(String exportRequest) {
-        this.exportRequest = exportRequest;
-        return this;
-    }
-
-    public Comment withExportReference(String exportReference) {
-        this.exportReference = exportReference;
-        return this;
-    }
-
-    public Comment withExportException(String exportException) {
-        this.exportException = exportException;
         return this;
     }
 
@@ -605,12 +569,12 @@ public class Comment {
         return this;
     }
 
-    public Comment withInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+    public Comment withInterviewAppointment(CommentInterviewAppointment interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
         return this;
     }
 
-    public Comment withInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+    public Comment withInterviewInstruction(CommentInterviewInstruction interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
         return this;
     }
@@ -625,6 +589,11 @@ public class Comment {
         return this;
     }
 
+    public Comment withApplicationExport(CommentExport export) {
+        this.export = export;
+        return this;
+    }
+    
     public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
         assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
         return this;
@@ -811,14 +780,6 @@ public class Comment {
         return applicationReserveStatus != null;
     }
 
-    public boolean isPartnershipComment() {
-        return partner != null;
-    }
-
-    public boolean isSponsorshipComment() {
-        return sponsorship != null;
-    }
-
     public boolean isProjectPartnerApproveComment() {
         return action.getId().equals(PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE) && transitionState.getId().equals(PROJECT_APPROVAL);
     }
@@ -856,6 +817,11 @@ public class Comment {
     public String getInterviewTimeZoneDisplay() {
         TimeZone interviewTimezone = interviewAppointment == null ? null : interviewAppointment.getInterviewTimeZone();
         return interviewTimezone == null ? null : interviewTimezone.getDisplayName();
+    }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return null;
     }
 
 }

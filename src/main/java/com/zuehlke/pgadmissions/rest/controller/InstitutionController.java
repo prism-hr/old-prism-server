@@ -6,6 +6,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetency;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.helpers.DozerMapperHelper;
+
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +116,7 @@ public class InstitutionController {
         Institution institution = institutionService.getById(institutionId);
 
         String category = "competencies";
-        categoryTags.put(category, advertService.getAdvertTags(institution, AdvertCompetency.class));
+        categoryTags.put(category, advertService.getAdvertTags(institution, AdvertCompetence.class));
         category = "themes";
         categoryTags.put(category, advertService.getAdvertTags(institution, AdvertTheme.class));
 

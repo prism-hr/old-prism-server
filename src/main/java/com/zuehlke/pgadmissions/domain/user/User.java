@@ -1,18 +1,29 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.document.Document;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.OrderBy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.application.Application;
 
 @Entity
 @Table(name = "user")
@@ -45,10 +56,6 @@ public class User implements UserDetails, UniqueEntity {
     @Lob
     @Column(name = "email_bounced_message")
     private String emailBouncedMessage;
-
-    @OneToOne
-    @JoinColumn(name = "portrait_image_id")
-    private Document portraitImage;
 
     @Column(name = "activation_code", unique = true)
     private String activationCode;
@@ -145,14 +152,6 @@ public class User implements UserDetails, UniqueEntity {
 
     public void setEmailBouncedMessage(String emailBouncedMessage) {
         this.emailBouncedMessage = emailBouncedMessage;
-    }
-
-    public Document getPortraitImage() {
-        return portraitImage;
-    }
-
-    public void setPortraitImage(Document portraitDocument) {
-        this.portraitImage = portraitDocument;
     }
 
     public String getActivationCode() {

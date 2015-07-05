@@ -9,23 +9,23 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.referencedata.jaxb.data.Institutions.Institution;
 
 @Component
-public class ImportedInstitutionExtractor implements ImportedEntityExtractor {
+public class ImportedInstitutionExtractor implements ImportedEntityExtractor<ImportedInstitutionRequest> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<Object> definitions, boolean enable) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedInstitutionRequest> definitions, boolean enable) throws Exception {
         List<String> rows = Lists.newLinkedList();
-        for (Object definition : definitions) {
-            Institution data = (Institution) definition;
+        for (ImportedInstitutionRequest definition : definitions) {
             List<String> cells = Lists.newLinkedList();
-            cells.add(prepareIntegerForSqlInsert(data.getDomicile()));
-            cells.add(prepareStringForSqlInsert(data.getName()));
-            cells.add(prepareStringForSqlInsert(data.getUcasId()));
-            cells.add(prepareStringForSqlInsert(data.getFacebookId()));
+            cells.add(prepareIntegerForSqlInsert(definition.getDomicile()));
+            cells.add(prepareStringForSqlInsert(definition.getName()));
+            cells.add(prepareStringForSqlInsert(definition.getUcasId()));
+            cells.add(prepareStringForSqlInsert(definition.getFacebookId()));
             cells.add(prepareBooleanForSqlInsert(enable));
             rows.add(prepareCellsForSqlInsert(cells));
         }

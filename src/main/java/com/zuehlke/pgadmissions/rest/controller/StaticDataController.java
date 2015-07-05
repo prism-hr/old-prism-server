@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
+
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
@@ -48,7 +50,7 @@ public class StaticDataController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/domiciles/{domicileId}/importedInstitutions")
-    public List<ImportedInstitutionRepresentation> getImportedInstitutions(@PathVariable Integer domicileId, @RequestParam Integer institutionId) {
+    public List<ImportedInstitutionResponse> getImportedInstitutions(@PathVariable Integer domicileId, @RequestParam Integer institutionId) {
         return staticDataService.getImportedInstitutions(institutionId, domicileId);
     }
     

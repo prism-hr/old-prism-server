@@ -9,18 +9,18 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedProgram;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 @Component
-public class ImportedProgramExtractor implements ImportedEntityExtractor<ImportedProgram> {
+public class ImportedProgramExtractor implements ImportedEntityExtractor<ImportedProgramRequest> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedProgram> definitions, boolean enable) throws Exception {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedProgramRequest> definitions, boolean enable) throws Exception {
         List<String> rows = Lists.newLinkedList();
-        for (ImportedProgram definition : definitions) {
+        for (ImportedProgramRequest definition : definitions) {
             List<String> cells = Lists.newLinkedList();
             cells.add(prepareIntegerForSqlInsert(definition.getInstitution()));
             cells.add(prepareStringForSqlInsert(definition.getLevel()));

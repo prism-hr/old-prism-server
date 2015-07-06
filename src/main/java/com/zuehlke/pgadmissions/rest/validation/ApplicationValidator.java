@@ -72,7 +72,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 WORKFLOW_PROPERTY, application.getWorkflowPropertyConfigurationVersion());
 
         for (WorkflowPropertyConfiguration configuration : configurations) {
-            switch (configuration.getWorkflowPropertyDefinition().getId()) {
+            switch (configuration.getDefinition().getId()) {
             case APPLICATION_ASSIGN_REFEREE:
                 validateRangeConstraint(application, "referees", configuration, errors);
                 break;

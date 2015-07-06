@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.resource.System;
         @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "state_duration_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "state_duration_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "state_duration_definition_id" })})
-public class StateDurationConfiguration extends WorkflowConfiguration {
+public class StateDurationConfiguration extends WorkflowConfiguration<StateDurationDefinition> {
 
     @Id
     @GeneratedValue
@@ -59,7 +59,7 @@ public class StateDurationConfiguration extends WorkflowConfiguration {
 
     @ManyToOne
     @JoinColumn(name = "state_duration_definition_id", nullable = false)
-    private StateDurationDefinition stateDurationDefinition;
+    private StateDurationDefinition definition;
 
     @Column(name = "duration")
     private Integer duration;
@@ -135,12 +135,12 @@ public class StateDurationConfiguration extends WorkflowConfiguration {
         this.opportunityType = opportunityType;
     }
 
-    public final StateDurationDefinition getStateDurationDefinition() {
-        return stateDurationDefinition;
+    public final StateDurationDefinition getDefinition() {
+        return definition;
     }
 
-    public final void setStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
-        this.stateDurationDefinition = stateDurationDefinition;
+    public final void setDefinition(StateDurationDefinition definition) {
+        this.definition = definition;
     }
 
     public Integer getDuration() {
@@ -160,12 +160,7 @@ public class StateDurationConfiguration extends WorkflowConfiguration {
     public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
-
-    @Override
-    public WorkflowDefinition getDefinition() {
-        return getStateDurationDefinition();
-    }
-
+    
     public StateDurationConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -176,8 +171,8 @@ public class StateDurationConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public StateDurationConfiguration withStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
-        this.stateDurationDefinition = stateDurationDefinition;
+    public StateDurationConfiguration withDefinition(StateDurationDefinition definition) {
+        this.definition = definition;
         return this;
     }
 
@@ -193,7 +188,7 @@ public class StateDurationConfiguration extends WorkflowConfiguration {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("stateDurationDefinition", stateDurationDefinition);
+        return super.getResourceSignature().addProperty("stateDurationDefinition", definition);
     }
 
 }

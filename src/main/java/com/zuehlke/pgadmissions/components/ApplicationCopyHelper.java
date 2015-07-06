@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflow
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_PRIZE;
@@ -43,8 +44,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -203,8 +202,7 @@ public class ApplicationCopyHelper {
                 WORKFLOW_PROPERTY, APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(fundingConfiguration.getEnabled())) {
-            boolean fundingDocumentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                    PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD);
+            boolean fundingDocumentEnabled = customizationService.isWorkflowConfigurationEnabled(to, APPLICATION_FUNDING_PROOF_OF_AWARD);
 
             Integer counter = 0;
             for (ApplicationFunding fromFunding : from.getFundings()) {
@@ -323,7 +321,7 @@ public class ApplicationCopyHelper {
     }
 
     private void copyApplicationAdditionalInformation(Application to, Application from) {
-        if (customizationService.isConfigurationEnabled(WORKFLOW_PROPERTY, to, APPLICATION_CRIMINAL_CONVICTION) && from.getAdditionalInformation() != null) {
+        if (customizationService.isWorkflowConfigurationEnabled(to, APPLICATION_CRIMINAL_CONVICTION) && from.getAdditionalInformation() != null) {
             ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
             to.setAdditionalInformation(additionalInformation);
             additionalInformation.setApplication(to);

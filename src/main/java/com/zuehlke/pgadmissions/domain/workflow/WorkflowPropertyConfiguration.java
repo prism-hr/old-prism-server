@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.resource.System;
         @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "project_id", "workflow_property_definition_id", "version" })})
-public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned {
+public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned<WorkflowPropertyDefinition> {
 
     @Id
     @GeneratedValue
@@ -58,7 +58,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
 
     @ManyToOne
     @JoinColumn(name = "workflow_property_definition_id", nullable = false)
-    private WorkflowPropertyDefinition workflowPropertyDefinition;
+    private WorkflowPropertyDefinition definition;
 
     @Column(name = "version")
     private Integer version;
@@ -149,12 +149,12 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         this.opportunityType = opportunityType;
     }
 
-    public final WorkflowPropertyDefinition getWorkflowPropertyDefinition() {
-        return workflowPropertyDefinition;
+    public final WorkflowPropertyDefinition getDefinition() {
+        return definition;
     }
 
-    public final void setWorkflowPropertyDefinition(WorkflowPropertyDefinition workflowPropertyDefinition) {
-        this.workflowPropertyDefinition = workflowPropertyDefinition;
+    public final void setDefinition(WorkflowPropertyDefinition definition) {
+        this.definition = definition;
     }
 
     @Override
@@ -219,11 +219,6 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         this.systemDefault = systemDefault;
     }
 
-    @Override
-    public WorkflowDefinition getDefinition() {
-        return getWorkflowPropertyDefinition();
-    }
-
     public WorkflowPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -234,8 +229,8 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         return this;
     }
 
-    public WorkflowPropertyConfiguration withWorkflowPropertyDefinition(WorkflowPropertyDefinition workflowPropertyDefinition) {
-        this.workflowPropertyDefinition = workflowPropertyDefinition;
+    public WorkflowPropertyConfiguration withDefinition(WorkflowPropertyDefinition definition) {
+        this.definition = definition;
         return this;
     }
 
@@ -276,7 +271,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("workflowPropertyDefinition", workflowPropertyDefinition).addProperty("version", version);
+        return super.getResourceSignature().addProperty("workflowPropertyDefinition", definition).addProperty("version", version);
     }
 
 }

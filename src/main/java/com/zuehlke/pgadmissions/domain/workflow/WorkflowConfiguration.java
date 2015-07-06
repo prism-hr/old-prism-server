@@ -8,17 +8,19 @@ import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
-public abstract class WorkflowConfiguration extends WorkflowResource {
+public abstract class WorkflowConfiguration<T> extends WorkflowResource {
 
     public abstract PrismOpportunityType getOpportunityType();
 
     public abstract void setOpportunityType(PrismOpportunityType opportunityType);
 
+    public abstract T getDefinition();
+
+    public abstract void setDefinition(T definition);
+
     public abstract Boolean getSystemDefault();
 
     public abstract void setSystemDefault(Boolean systemDefault);
-
-    public abstract WorkflowDefinition getDefinition();
 
     @Override
     public ResourceSignature getResourceSignature() {
@@ -26,7 +28,7 @@ public abstract class WorkflowConfiguration extends WorkflowResource {
         if (Arrays.asList(SYSTEM, INSTITUTION, DEPARTMENT).contains(getResource().getResourceScope())) {
             resourceSignature.addProperty("opportunityType", getOpportunityType());
         }
-        return resourceSignature;
+        return resourceSignature.addProperty("definition", getDefinition());
     }
 
 }

@@ -31,7 +31,7 @@ public final class MailMessageDTO {
                 .add("to", modelDTO.getUser().getEmail())
                 .add("resourceScope", modelDTO.getResource().getResourceScope())
                 .add("resourceId", modelDTO.getResource().getId())
-                .add("template", configuration.getNotificationDefinition().getId())
+                .add("template", configuration.getDefinition().getId())
                 .toString();
     }
 

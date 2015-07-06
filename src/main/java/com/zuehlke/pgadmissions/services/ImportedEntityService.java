@@ -161,7 +161,6 @@ public class ImportedEntityService {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends ImportedEntity<?, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityRequest> void mergeImportedEntities(
             Institution institution, PrismImportedEntity prismImportedEntity, List<V> importDefinitions) throws Exception {
         insertImportedEntities(prismImportedEntity, importDefinitions, false);

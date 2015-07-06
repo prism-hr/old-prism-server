@@ -35,7 +35,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -280,22 +279,10 @@ public class ActionService {
     }
 
     public List<PrismAction> getPartnerActions(ResourceParent resource) {
-        List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
-        List<ResourceCondition> actionConditions = resourceService.getResourceAttributes(resource, ResourceCondition.class, "actionCondition");
+        List<PrismActionCondition> actionConditions = resourceService.getActionConditions(resource);
 
-        PrismScope lastResourceScope = null;
-        for (ResourceCondition actionCondition : actionConditions) {
-            PrismScope thisResourceScope = actionCondition.getResource().getResourceScope();
-            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
-                break;
-            }
-            filteredActionConditions.add(actionCondition.getActionCondition());
-            lastResourceScope = thisResourceScope;
-        }
-
-        if (lastResourceScope != null) {
-            List<PrismAction> partnerActions = actionDAO.getPartnerActions(resource, filteredActionConditions);
-            return partnerActions;
+        if (!actionConditions.isEmpty()) {
+            return actionDAO.getPartnerActions(resource, actionConditions);
         }
 
         return Lists.newArrayList();

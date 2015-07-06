@@ -38,8 +38,6 @@ public class ApplicationSummaryRepresentation {
 
     private String referralSource;
 
-    private String referrer;
-
     public String getCreatedDate() {
         return createdDate;
     }
@@ -164,14 +162,6 @@ public class ApplicationSummaryRepresentation {
         this.referralSource = referralSource;
     }
 
-    public String getReferrer() {
-        return referrer;
-    }
-
-    public void setReferrer(String referrer) {
-        this.referrer = referrer;
-    }
-
     public ApplicationSummaryRepresentation withCreatedDate(String createdDate) {
         this.createdDate = createdDate;
         return this;
@@ -214,11 +204,6 @@ public class ApplicationSummaryRepresentation {
 
     public ApplicationSummaryRepresentation withReferralSource(String referralSource) {
         this.referralSource = referralSource;
-        return this;
-    }
-
-    public ApplicationSummaryRepresentation withReferrer(String referrer) {
-        this.referrer = referrer;
         return this;
     }
 

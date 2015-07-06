@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import java.util.Arrays;
+import java.util.List;
 
 public enum PrismActionEnhancement {
 
@@ -16,15 +18,32 @@ public enum PrismActionEnhancement {
     INSTITUTION_VIEW_EDIT_AS_USER(PrismScope.INSTITUTION), //
     INSTITUTION_VIEW_AS_USER(PrismScope.INSTITUTION), //
     SYSTEM_VIEW_EDIT_AS_USER(PrismScope.SYSTEM);
-    
+
     private PrismScope scope;
-    
+
     private PrismActionEnhancement(PrismScope scope) {
         this.scope = scope;
     }
-    
+
     public PrismScope getScope() {
         return scope;
     }
-    
+
+    public enum PrismActionEnhancementGroup {
+
+        APPLICATION_EQUAL_OPPORTUNITIES_VIEWER(Arrays.asList(APPLICATION_VIEW_AS_CREATOR, APPLICATION_VIEW_AS_ADMITTER, APPLICATION_VIEW_EDIT_AS_CREATOR,
+                APPLICATION_VIEW_EDIT_AS_ADMITTER));
+
+        private List<PrismActionEnhancement> actionEnhancements;
+
+        private PrismActionEnhancementGroup(List<PrismActionEnhancement> actionEnhancements) {
+            this.actionEnhancements = actionEnhancements;
+        }
+
+        public List<PrismActionEnhancement> getActionEnhancements() {
+            return actionEnhancements;
+        }
+
+    }
+
 }

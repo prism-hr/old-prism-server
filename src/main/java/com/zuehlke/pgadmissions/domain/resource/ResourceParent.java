@@ -7,9 +7,8 @@ import org.joda.time.DateTime;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.user.User;
 
-public abstract class ResourceParent extends Resource implements ResourceParentDefinition<User, Advert> {
+public abstract class ResourceParent extends Resource implements ResourceParentDefinition<Advert> {
 
     public abstract void setTitle(String title);
 

@@ -55,6 +55,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.mapping.ActionMapper;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
+import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
@@ -107,6 +108,9 @@ public class StaticDataService {
 
     @Inject
     private ResourceMapper resourceMapper;
+
+    @Inject
+    private CustomizationMapper customizationMapper;
 
     public Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
@@ -219,7 +223,7 @@ public class StaticDataService {
                 List<? extends WorkflowDefinition> definitions = customizationService.getDefinitions(prismConfiguration, prismScope);
                 List<WorkflowDefinitionRepresentation> parameters = Lists.newArrayList();
                 for (WorkflowDefinition definition : definitions) {
-                    parameters.add(mapper.downcast(definition, prismConfiguration.getDefinitionRepresentationClass()));
+                    parameters.add(customizationMapper.getWorkflowDefinitionRepresentation(definition));
                 }
                 if (!parameters.isEmpty()) {
                     scopeConfigurations.put(prismScope, parameters);

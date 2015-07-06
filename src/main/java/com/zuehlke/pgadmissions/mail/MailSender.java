@@ -91,12 +91,12 @@ public class MailSender {
         NotificationDefinitionModelDTO modelDTO = messageDTO.getModelDTO();
         final NotificationConfiguration configuration = messageDTO.getConfiguration();
         try {
-            Map<String, Object> model = createNotificationModel(messageDTO.getConfiguration().getNotificationDefinition(), modelDTO);
-            final String subject = processHeader(configuration.getNotificationDefinition().getId(), configuration.getSubject(), model);
+            Map<String, Object> model = createNotificationModel(messageDTO.getConfiguration().getDefinition(), modelDTO);
+            final String subject = processHeader(configuration.getDefinition().getId(), configuration.getSubject(), model);
 
             Institution institution = modelDTO.getResource().getInstitution();
             Document logoImage = institution != null ? institution.getLogoImage() : null;
-            final String html = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject,
+            final String html = processContent(configuration.getDefinition().getId(), configuration.getContent(), model, subject,
                     logoImage);
             final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 

@@ -29,8 +29,8 @@ import com.zuehlke.pgadmissions.domain.resource.System;
         @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "version", "display_index" }),
-        @UniqueConstraint(columnNames = { "project_id", "action_custom_question_definition_id", "version", "display_index" })})
-public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVersioned {
+        @UniqueConstraint(columnNames = { "project_id", "action_custom_question_definition_id", "version", "display_index" }) })
+public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVersioned<ActionCustomQuestionDefinition> {
 
     @Id
     @GeneratedValue
@@ -43,7 +43,7 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
@@ -62,7 +62,7 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
 
     @ManyToOne
     @JoinColumn(name = "action_custom_question_definition_id", nullable = false)
-    private ActionCustomQuestionDefinition actionCustomQuestionDefinition;
+    private ActionCustomQuestionDefinition definition;
 
     @Column(name = "version")
     private Integer version;
@@ -142,12 +142,12 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
@@ -183,12 +183,14 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
         this.opportunityType = opportunityType;
     }
 
-    public ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
-        return actionCustomQuestionDefinition;
+    @Override
+    public ActionCustomQuestionDefinition getDefinition() {
+        return definition;
     }
 
-    public void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
-        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
+    @Override
+    public void setDefinition(ActionCustomQuestionDefinition Definition) {
+        this.definition = Definition;
     }
 
     @Override
@@ -309,11 +311,6 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
         this.systemDefault = systemDefault;
     }
 
-    @Override
-    public WorkflowDefinition getDefinition() {
-        return getActionCustomQuestionDefinition();
-    }
-
     public ActionCustomQuestionConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -334,8 +331,8 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
         return this;
     }
 
-    public ActionCustomQuestionConfiguration withActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
-        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
+    public ActionCustomQuestionConfiguration withDefinition(ActionCustomQuestionDefinition definition) {
+        this.definition = definition;
         return this;
     }
 
@@ -411,7 +408,7 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("actionCustomQuestionDefinition", actionCustomQuestionDefinition).addProperty("version", version)
+        return super.getResourceSignature().addProperty("actionCustomQuestionDefinition", definition).addProperty("version", version)
                 .addProperty("index", index);
     }
 

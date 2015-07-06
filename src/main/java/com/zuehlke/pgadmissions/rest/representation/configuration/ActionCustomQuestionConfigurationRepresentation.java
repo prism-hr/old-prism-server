@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
+
 public class ActionCustomQuestionConfigurationRepresentation extends WorkflowConfigurationVersionedRepresentation {
 
     private Integer id;
@@ -114,4 +116,70 @@ public class ActionCustomQuestionConfigurationRepresentation extends WorkflowCon
     public void setWeighting(BigDecimal weighting) {
         this.weighting = weighting;
     }
+
+    public ActionCustomQuestionConfigurationRepresentation withProperty(PrismActionCustomQuestionDefinition property) {
+        setProperty(property);
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withComponent(String component) {
+        this.component = component;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withEditable(Boolean editable) {
+        this.editable = editable;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withIndex(Integer index) {
+        this.index = index;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withLabel(String label) {
+        this.label = label;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withOptions(List<String> options) {
+        this.options = options;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withRequired(Boolean required) {
+        this.required = required;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withValidation(String validation) {
+        this.validation = validation;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withWeighting(BigDecimal weighting) {
+        this.weighting = weighting;
+        return this;
+    }
+    
+    public ActionCustomQuestionConfigurationRepresentation withVersion(Integer version) {
+        setVersion(version);
+        return this;
+    }
+    
 }

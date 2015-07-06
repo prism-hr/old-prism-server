@@ -14,8 +14,8 @@ public class DisplayPropertyConfigurationRepresentation extends WorkflowConfigur
 		this.value = value;
 	}
 	
-	public DisplayPropertyConfigurationRepresentation withDefinitionId(PrismDisplayPropertyDefinition definitionId) {
-		super.setProperty(definitionId);
+	public DisplayPropertyConfigurationRepresentation withProperty(PrismDisplayPropertyDefinition property) {
+		super.setProperty(property);
 		return this;
 	}
 	

@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 
@@ -48,6 +49,9 @@ public class CustomizationService {
 
     @Inject
     private ResourceService resourceService;
+
+    @Inject
+    private CustomizationMapper customizationMapper;
 
     public WorkflowDefinition getDefinitionById(PrismConfiguration configurationType, Enum<?> id) {
         return entityService.getById(configurationType.getDefinitionClass(), id);
@@ -83,7 +87,7 @@ public class CustomizationService {
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
 
         WorkflowConfiguration<?> configuration = getConfiguration(configurationType, configuredResource, configuredOpportunityType, definition);
-        WorkflowConfigurationRepresentation representation = mapper.downcast(configuration, configurationType.getConfigurationRepresentationClass());
+        WorkflowConfigurationRepresentation representation = customizationMapper.getWorkflowConfigurationRepresentation(configuration);
 
         return representation;
     }
@@ -184,8 +188,7 @@ public class CustomizationService {
     }
 
     public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope,
-            PrismOpportunityType opportunityType,
-            List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws Exception {
+            PrismOpportunityType opportunityType, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws Exception {
         List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
 
         if (configurationType.isValidateResponseSize()
@@ -276,7 +279,7 @@ public class CustomizationService {
     private <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
         T definition = (T) entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
-        WorkflowConfiguration<T> configuration = mapper.downcast(workflowConfigurationDTO, configurationType.getConfigurationClass());
+        WorkflowConfiguration<T> configuration = customizationMapper.getWorkflowConfiguration(workflowConfigurationDTO);
         configuration.setResource(resource);
         configuration.setOpportunityType(opportunityType);
         configuration.setDefinition(definition);
@@ -302,9 +305,7 @@ public class CustomizationService {
             for (WorkflowConfiguration<?> configuration : configurations) {
                 if (Objects.equal(configuration.getResource(), stereotypeResource)
                         && Objects.equal(configuration.getOpportunityType(), stereotypeOpportunityType)) {
-                    WorkflowConfigurationRepresentation representation = mapper
-                            .downcast(configuration, configurationType.getConfigurationRepresentationClass());
-                    representations.add(representation);
+                    representations.add(customizationMapper.getWorkflowConfigurationRepresentation(configuration));
                 }
             }
 

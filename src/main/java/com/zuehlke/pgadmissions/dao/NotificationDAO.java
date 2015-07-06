@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-
-import java.util.List;
-import java.util.Set;
-
+import com.zuehlke.pgadmissions.domain.comment.CommentState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserNotification;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -19,19 +19,14 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.comment.CommentState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserNotification;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -88,31 +83,29 @@ public class NotificationDAO {
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, Set<User> exclusions, LocalDate baseline) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user.id"), "userId") //
-                        .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
-                .add(Restrictions.eq(resourceReference, resource)); //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class)
+                .setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("user.id"), "userId")
+                        .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId"))
+                .createAlias("state", "state", JoinType.INNER_JOIN)
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN)
+                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN)
+                .createAlias("stateActionNotification.role", "role", JoinType.INNER_JOIN)
+                .createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN)
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN)
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("stateAction.action", action))
+                .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL))
+                .add(Restrictions.eq(resourceReference, resource));
 
         if (!exclusions.isEmpty()) {
-            criteria.add(Restrictions.not( //
-                    Restrictions.in("userRole.user", exclusions))); //
+            criteria.add(Restrictions.not(
+                    Restrictions.in("userRole.user", exclusions)));
         }
 
-        return (List<UserNotificationDefinitionDTO>) criteria //
-                .add(getUserRoleConstraint(resource, "stateActionNotification")) //
-                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
+        return (List<UserNotificationDefinitionDTO>) criteria
+                .add(getUserRoleConstraint(resource, "stateActionNotification"))
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class))
                 .list();
     }
 

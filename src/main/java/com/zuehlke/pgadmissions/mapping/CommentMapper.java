@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mapping;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
@@ -25,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -290,14 +293,22 @@ public class CommentMapper {
     private List<CommentCustomResponseRepresentation> getCommentCustomResponseRepresentations(Comment comment) {
         List<CommentCustomResponseRepresentation> representations = Lists.newLinkedList();
         for (CommentCustomResponse response : comment.getCustomResponses()) {
-            getCommentCustomResponseRepresentation(representations, response);
+            representations.add(getCommentCustomResponseRepresentation(response));
         }
         return representations;
     }
 
-    private void getCommentCustomResponseRepresentation(List<CommentCustomResponseRepresentation> representations, CommentCustomResponse response) {
-        representations.add(new CommentCustomResponseRepresentation().withLabel(response.getActionCustomQuestionConfiguration().getLabel())
-                .withPropertyValue(response.getPropertyValue()));
+    private CommentCustomResponseRepresentation getCommentCustomResponseRepresentation(CommentCustomResponse response) {
+        CommentCustomResponseRepresentation representation = new CommentCustomResponseRepresentation().withLabel(response
+                .getActionCustomQuestionConfiguration().getLabel());
+        if (response.getActionCustomQuestionConfiguration().getCustomQuestionType() == PrismCustomQuestionType.RATING_WEIGHTED) {
+            String[] options = response.getActionCustomQuestionConfiguration().getOptions().split("\\|");
+            Map<Integer, Integer> index = ImmutableMap.of(1, 0, 2, 1, 3, 2, 5, 3, 8, 4);
+            representation.setPropertyValue(options[index.get(Integer.parseInt(response.getPropertyValue()))]);
+        } else {
+            representation.setPropertyValue(response.getPropertyValue());
+        }
+        return representation;
     }
 
 }

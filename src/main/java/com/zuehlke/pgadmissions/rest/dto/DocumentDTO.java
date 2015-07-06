@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class FileDTO {
+public class DocumentDTO {
 
     @NotNull
     private Integer id;

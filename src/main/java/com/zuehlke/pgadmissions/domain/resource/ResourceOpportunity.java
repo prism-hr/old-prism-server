@@ -4,11 +4,12 @@ import java.util.Set;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 public abstract class ResourceOpportunity extends ResourceParentDivision implements
-        ResourceOpportunityDefinition<User, ImportedEntitySimple, ResourceStudyOption> {
+        ResourceOpportunityDefinition<User, Advert, ImportedEntitySimple, ResourceStudyOption> {
 
     public abstract Department getDepartment();
 

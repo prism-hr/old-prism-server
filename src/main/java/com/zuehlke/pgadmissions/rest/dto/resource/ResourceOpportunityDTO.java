@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.rest.dto.resource;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
@@ -11,12 +10,10 @@ import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.DepartmentDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
-public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements ResourceOpportunityDefinition<User, PrismOpportunityType, ResourceStudyOptionDTO> {
-
-    @Valid
-    private DepartmentDTO department;
+public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
+        ResourceOpportunityDefinition<User, AdvertDTO, PrismOpportunityType, ResourceStudyOptionDTO> {
 
     @NotNull
     private PrismOpportunityType opportunityType;
@@ -24,22 +21,14 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
     private Integer durationMinimum;
 
     private Integer durationMaximum;
-    
+
     private Boolean requirePositionDefinition;
 
     private List<PrismStudyOption> studyOptions;
 
     private List<String> studyLocations;
-    
+
     private Set<ResourceStudyOptionDTO> instanceGroups;
-
-    public DepartmentDTO getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentDTO department) {
-        this.department = department;
-    }
 
     @Override
     public PrismOpportunityType getOpportunityType() {

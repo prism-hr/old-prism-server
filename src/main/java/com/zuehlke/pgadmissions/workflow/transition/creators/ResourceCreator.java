@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.workflow.transition.creators;
 
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 
-public interface ResourceCreator {
+public interface ResourceCreator<T extends ResourceCreationDTO> {
 
-    Resource create(User user, ResourceDTO newResource) throws Exception;
+    Resource create(User user, T newResource) throws Exception;
 
 }

@@ -68,7 +68,6 @@ import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
-import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
@@ -139,10 +138,11 @@ public class ApplicationService {
         Application application = getById(applicationId);
 
         ImportedEntitySimple studyOption = importedEntityService.getByName(ImportedEntitySimple.class, studyOptionId.name());
-        ResourceStudyOption resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
 
-        if (resourceStudyOption == null && !application.getParentResource().sameAs(application.getInstitution())) {
-            throw new PrismCannotApplyException();
+        ResourceStudyOption resourceStudyOption = null;
+        Resource parentResource = application.getParentResource();
+        if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
+            resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
         }
 
         LocalDate earliestStartDate = getEarliestStartDate(resourceStudyOption, baseline);
@@ -176,7 +176,8 @@ public class ApplicationService {
 
             if (!(applicationStartDate == null || applicationCloseDate == null)) {
                 LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
-                        PrismOpportunityType.valueOf(resourceStudyOption.getResource().getOpportunityType().getName()).getDefaultStartBuffer());
+                        PrismOpportunityType.valueOf(((ResourceOpportunity) resourceStudyOption.getResource()).getOpportunityType().getName())
+                                .getDefaultStartBuffer());
                 LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
                 return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
             }

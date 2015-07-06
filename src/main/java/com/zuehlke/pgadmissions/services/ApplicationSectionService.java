@@ -68,7 +68,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
@@ -303,7 +303,7 @@ public class ApplicationSectionService {
         qualification.setGrade(qualificationDTO.getGrade());
         qualification.setAwardDate(qualificationDTO.getAwardDate());
 
-        FileDTO upload = qualificationDTO.getDocument();
+        DocumentDTO upload = qualificationDTO.getDocument();
         if (upload != null) {
             Document qualificationDocument = documentService.getById(upload.getId(), PrismFileCategory.DOCUMENT);
             qualification.setDocument(qualificationDocument);
@@ -386,9 +386,9 @@ public class ApplicationSectionService {
         funding.setAwardDate(fundingDTO.getAwardDate());
         funding.setTerms(fundingDTO.getTerms());
 
-        FileDTO fileDTO = fundingDTO.getDocument();
-        if (fileDTO != null) {
-            Document qualificationDocument = documentService.getById(fileDTO.getId(), PrismFileCategory.DOCUMENT);
+        DocumentDTO documentDTO = fundingDTO.getDocument();
+        if (documentDTO != null) {
+            Document qualificationDocument = documentService.getById(documentDTO.getId(), PrismFileCategory.DOCUMENT);
             funding.setDocument(qualificationDocument);
         }
         funding.setLastUpdatedTimestamp(DateTime.now());
@@ -587,7 +587,7 @@ public class ApplicationSectionService {
             languageQualification.setSpeakingScore(languageQualificationDTO.getSpeakingScore());
             languageQualification.setListeningScore(languageQualificationDTO.getListeningScore());
 
-            FileDTO upload = languageQualificationDTO.getDocument();
+            DocumentDTO upload = languageQualificationDTO.getDocument();
             if (upload != null) {
                 Document languageQualificationDocument = documentService.getById(upload.getId(), PrismFileCategory.DOCUMENT);
                 languageQualification.setDocument(languageQualificationDocument);

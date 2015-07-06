@@ -23,5 +23,15 @@ public class ResourceDTO {
     public void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
     }
+    
+    public ResourceDTO withResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
+        return this;
+    }
+    
+    public ResourceDTO withResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+        return this;
+    }
 
 }

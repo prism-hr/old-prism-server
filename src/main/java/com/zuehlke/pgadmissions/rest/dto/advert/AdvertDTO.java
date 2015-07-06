@@ -11,6 +11,10 @@ import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 
 public class AdvertDTO {
+    
+    @NotEmpty
+    @Size(max = 255)
+    private String title;
 
     @NotEmpty
     @Size(max = 1000)
@@ -26,6 +30,14 @@ public class AdvertDTO {
 
     @Valid
     private AddressAdvertDTO address;
+    
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getSummary() {
         return summary;

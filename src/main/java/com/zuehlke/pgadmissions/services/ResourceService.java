@@ -48,7 +48,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -68,13 +67,13 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDefinitionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
@@ -119,9 +118,6 @@ public class ResourceService {
     private ApplicationService applicationService;
 
     @Inject
-    private DepartmentService departmentService;
-
-    @Inject
     private ImportedEntityService importedEntityService;
 
     @Inject
@@ -162,13 +158,16 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-    public ActionOutcomeDTO create(User user, Action action, ResourceDTO resourceDTO, Integer workflowPropertyConfigurationVersion)
+    @SuppressWarnings("unchecked")
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO create(User user, Action action, T resourceDTO, Integer workflowPropertyConfigurationVersion)
             throws Exception {
         PrismScope resourceScope = action.getCreationScope().getId();
 
-        Class<? extends ResourceCreator> resourceCreator = resourceScope.getResourceCreator();
+        Class<? extends ResourceCreator<?>> resourceCreator = resourceScope.getResourceCreator();
         if (resourceCreator != null) {
-            Resource resource = applicationContext.getBean(resourceCreator).create(user, resourceDTO);
+            ResourceCreator<T> creator = (ResourceCreator<T>) applicationContext.getBean(resourceCreator);
+            Resource resource = creator.create(user, resourceDTO);
+            
             resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
 
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
@@ -203,13 +202,13 @@ public class ResourceService {
         }
     }
 
-    public ActionOutcomeDTO executeAction(User user, Integer resourceId, CommentDTO commentDTO) throws Exception {
+    @SuppressWarnings("unchecked")
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, Integer resourceId, CommentDTO commentDTO) throws Exception {
         if (commentDTO.getAction().getActionCategory() == CREATE_RESOURCE) {
             Action action = actionService.getById(commentDTO.getAction());
             ResourceDefinitionDTO newResource = commentDTO.getNewResource();
-            ResourceDTO resource = newResource.getResource();
-            resource.setResourceId(resourceId);
-            resource.setResourceScope(action.getScope().getId());
+            T resource = (T) newResource.getResource();
+            resource.setParentResource(new ResourceDTO().withResourceScope(action.getScope().getId()).withResourceId(resourceId));
             return create(user, action, resource, newResource.getWorkflowPropertyConfigurationVersion());
         }
 
@@ -604,10 +603,6 @@ public class ResourceService {
 
     public void update(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO, Comment comment) throws Exception {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
-
-        DepartmentDTO departmentDTO = resourceDTO.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(resource.getInstitution(), departmentDTO);
-        resource.setDepartment(department);
 
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();

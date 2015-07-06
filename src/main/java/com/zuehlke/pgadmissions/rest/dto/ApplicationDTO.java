@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDefinition;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
-public class ApplicationDTO implements ResourceCreationDefinition {
+public class ApplicationDTO implements ResourceCreationDTO {
 
     private ResourceDTO parentResource;
 

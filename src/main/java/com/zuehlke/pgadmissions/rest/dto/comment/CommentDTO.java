@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDefinitionDTO;
 
 public class CommentDTO {
@@ -80,7 +80,7 @@ public class CommentDTO {
     private List<CommentCustomResponseDTO> customResponses;
 
     @Valid
-    private List<FileDTO> documents;
+    private List<DocumentDTO> documents;
 
     public Integer getUser() {
         return user;
@@ -282,11 +282,11 @@ public class CommentDTO {
         this.customResponses = customResponses;
     }
 
-    public List<FileDTO> getDocuments() {
+    public List<DocumentDTO> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<FileDTO> documents) {
+    public void setDocuments(List<DocumentDTO> documents) {
         this.documents = documents;
     }
 

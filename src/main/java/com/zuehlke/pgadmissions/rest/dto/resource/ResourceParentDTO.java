@@ -4,9 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
@@ -14,22 +11,18 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
-public class ResourceParentDTO implements ResourceCreationDefinition, ResourceParentDefinition<User> {
-    
+public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDefinition<User, AdvertDTO> {
+
     private User user;
-    
+
     private ResourceDTO parentResource;
-    
-    @NotEmpty
-    @Size(max = 255)
-    private String title;
-    
+
     @Valid
     @NotNull
     private AdvertDTO advert;
 
     private List<ResourceConditionDTO> resourceConditions;
-    
+
     @Override
     public User getUser() {
         return user;
@@ -51,23 +44,15 @@ public class ResourceParentDTO implements ResourceCreationDefinition, ResourcePa
     }
 
     @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public AdvertDTO getAdvert() {
         return advert;
     }
 
+    @Override
     public void setAdvert(AdvertDTO advert) {
         this.advert = advert;
     }
-    
+
     public List<ResourceConditionDTO> getResourceConditions() {
         return resourceConditions;
     }

@@ -1,17 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,13 +13,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -48,19 +38,10 @@ public class InstitutionService {
     private EntityService entityService;
 
     @Inject
-    private ActionService actionService;
-
-    @Inject
-    private RoleService roleService;
-
-    @Inject
     private StateService stateService;
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
@@ -76,23 +57,6 @@ public class InstitutionService {
 
     public Institution getUclInstitution() {
         return institutionDAO.getUclInstitution();
-    }
-
-    public Institution createPartner(User user, InstitutionDTO institutionDTO) throws Exception {
-        Institution institution = (Institution) applicationContext.getBean(INSTITUTION.getResourceCreator()).create(user, institutionDTO);
-        Institution persistentInstitution = entityService.getDuplicateEntity(institution);
-
-        if (persistentInstitution == null) {
-            Action action = actionService.getById(SYSTEM_CREATE_INSTITUTION);
-            Role creatorRole = roleService.getById(INSTITUTION_ADMINISTRATOR);
-            Comment comment = new Comment().withResource(institution).withUser(user).withAction(action).withDeclinedResponse(false)
-                    .withCreatedTimestamp(new DateTime()).addAssignedUser(user, creatorRole, CREATE);
-            actionService.executeUserAction(institution, action, comment);
-        } else {
-            institution = persistentInstitution;
-        }
-
-        return institution;
     }
 
     public void update(Institution institution, InstitutionDTO institutionDTO) throws Exception {

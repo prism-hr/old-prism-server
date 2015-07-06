@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-public interface ResourceCreationDefinition {
+public interface ResourceCreationDTO {
 
     public ResourceDTO getParentResource();
 

@@ -145,7 +145,7 @@ public enum PrismScope {
         return definition.getActionExecutor();
     }
 
-    public Class<? extends ResourceCreator> getResourceCreator() {
+    public Class<? extends ResourceCreator<?>> getResourceCreator() {
         return definition.getResourceCreator();
     }
 
@@ -195,7 +195,7 @@ public enum PrismScope {
 
         private Class<? extends ActionExecutor> actionExecutor;
 
-        private Class<? extends ResourceCreator> resourceCreator;
+        private Class<? extends ResourceCreator<?>> resourceCreator;
 
         private Class<? extends ResourcePersister> resourcePersister;
 
@@ -225,7 +225,7 @@ public enum PrismScope {
             return actionExecutor;
         }
 
-        public Class<? extends ResourceCreator> getResourceCreator() {
+        public Class<? extends ResourceCreator<?>> getResourceCreator() {
             return resourceCreator;
         }
 
@@ -273,7 +273,7 @@ public enum PrismScope {
             return this;
         }
 
-        public PrismScopeDefinition withResourceCreator(Class<? extends ResourceCreator> resourceCreator) {
+        public PrismScopeDefinition withResourceCreator(Class<? extends ResourceCreator<?>> resourceCreator) {
             this.resourceCreator = resourceCreator;
             return this;
         }

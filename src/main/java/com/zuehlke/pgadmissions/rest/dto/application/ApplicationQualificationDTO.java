@@ -9,7 +9,7 @@ import org.joda.time.LocalDate;
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
@@ -39,7 +39,7 @@ public class ApplicationQualificationDTO {
     @Size(max = 200)
     private String grade;
 
-    private FileDTO document;
+    private DocumentDTO document;
 
     private Boolean completed;
 
@@ -99,11 +99,11 @@ public class ApplicationQualificationDTO {
         this.grade = grade;
     }
 
-    public FileDTO getDocument() {
+    public DocumentDTO getDocument() {
         return document;
     }
 
-    public void setDocument(FileDTO document) {
+    public void setDocument(DocumentDTO document) {
         this.document = document;
     }
 

@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -27,64 +29,63 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartTyp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 
-public enum PrismOpportunityType {
+public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType> {
 
     STUDY_UNDERGRADUATE(STUDY, 36, 48, SCHEDULED, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROGRAM, false), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(PrismStudyOption.values()), //
-            SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+            SEPTEMBER, 4, MONDAY, 4, 3), //
     STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, SCHEDULED, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROGRAM, false), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(PrismStudyOption.values()), //
-            SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+            SEPTEMBER, 4, MONDAY, 4, 3), //
     STUDY_POSTGRADUATE_RESEARCH(STUDY, 12, 48, SCHEDULED, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROGRAM, false), //
                     new PrismResourceCondition(ACCEPT_PROJECT, false), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(PrismStudyOption.values()), //
-            SEPTEMBER, 4, MONDAY, 4, 3, new String[] {
-                    "mres", "md(res)", "research degree", "engineering doctorate", "dpa" }), //
+            SEPTEMBER, 4, MONDAY, 4, 3), //
     SCHOLARSHIP_UNDERGRADUATE(FUNDING, 36, 48, SCHEDULED,
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(PrismStudyOption.values()), //
-            SEPTEMBER, 4, MONDAY, 4, 1, new String[] {}), //
+            SEPTEMBER, 4, MONDAY, 4, 1), //
     SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING, 12, 24, SCHEDULED, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(PrismStudyOption.values()), //
-            SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+            SEPTEMBER, 4, MONDAY, 4, 3), //
     SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING, 12, 48, SCHEDULED, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(PrismStudyOption.values()), //
-            SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+            SEPTEMBER, 4, MONDAY, 4, 3), //
     WORK_EXPERIENCE(EXPERIENCE, null, null, IMMEDIATE, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROJECT, true), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(FULL_TIME), //
-            null, null, MONDAY, 4, 1, new String[] {}), //
+            null, null, MONDAY, 4, 1), //
     VOLUNTEERING(EXPERIENCE, null, null, IMMEDIATE, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROJECT, true), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(FULL_TIME), //
-            null, null, MONDAY, 4, 1, new String[] {}), //
+            null, null, MONDAY, 4, 1), //
     EMPLOYMENT(WORK, null, null, IMMEDIATE, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROJECT, false), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(FULL_TIME), //
-            null, null, MONDAY, 4, 1, new String[] {}), //
+            null, null, MONDAY, 4, 1), //
     EMPLOYMENT_SECONDMENT(WORK, null, null, IMMEDIATE,
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROJECT, true), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(FULL_TIME, PART_TIME), //
-            null, null, MONDAY, 4, 1, new String[] { "visiting research" }), //
+            null, null, MONDAY, 4, 1), //
     TRAINING(LEARNING, null, null, IMMEDIATE,
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROGRAM, false), //
                     new PrismResourceCondition(ACCEPT_APPLICATION, false)), //
             Lists.newArrayList(PrismStudyOption.values()), //
-            null, null, MONDAY, 4, 1, new String[] {}); //
+            null, null, MONDAY, 4, 1); //
 
-    private PrismOpportunityCategory programCategory;
+    private PrismOpportunityCategory category;
 
     private Integer defaultMinimumDurationMonth;
 
@@ -106,24 +107,18 @@ public enum PrismOpportunityType {
 
     private Integer defaultStartBuffer;
 
-    private String[] prefixes;
-
     private static final LinkedListMultimap<PrismOpportunityCategory, PrismOpportunityType> byCategory = LinkedListMultimap.create();
-
-    private static final List<String> stringValues = Lists.newArrayList();
 
     static {
         for (PrismOpportunityType opportunityType : PrismOpportunityType.values()) {
-            stringValues.add(opportunityType.name());
-            byCategory.put(opportunityType.getProgramCategory(), opportunityType);
+            byCategory.put(opportunityType.getCategory(), opportunityType);
         }
     }
 
-    private PrismOpportunityType(PrismOpportunityCategory programCategory, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
+    private PrismOpportunityType(PrismOpportunityCategory category, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
             PrismProgramStartType defaultStartType, List<PrismResourceCondition> defaultResourceConditions, List<PrismStudyOption> defaultStudyOptions,
-            Integer defaultStartMonth, Integer defaultStartWeek, Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer,
-            String[] prefixes) {
-        this.programCategory = programCategory;
+            Integer defaultStartMonth, Integer defaultStartWeek, Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer) {
+        this.category = category;
         this.defaultMinimumDurationMonth = defaultMinimumDurationMonth;
         this.defaultMaximumDurationMonth = defaultMaximumDurationMonth;
         this.defaultStartType = defaultStartType;
@@ -134,11 +129,15 @@ public enum PrismOpportunityType {
         this.defaultStartDay = defaultStartDay;
         this.defaultStartDelay = defaultStartDelay;
         this.defaultStartBuffer = defaultStartBuffer;
-        this.prefixes = prefixes;
     }
 
-    public PrismOpportunityCategory getProgramCategory() {
-        return programCategory;
+    @Override
+    public uk.co.alumeni.prism.enums.PrismOpportunityType getDefinition() {
+        return uk.co.alumeni.prism.enums.PrismOpportunityType.valueOf(name());
+    }
+
+    public PrismOpportunityCategory getCategory() {
+        return category;
     }
 
     public Integer getDefaultMinimumDurationMonth() {
@@ -197,23 +196,6 @@ public enum PrismOpportunityType {
         return new DefaultStartDateDTO().withImmediate(immediate).withScheduled(scheduled);
     }
 
-    public static PrismOpportunityType findValueFromString(String toSearchIn) {
-        if (stringValues.contains(toSearchIn)) {
-            return PrismOpportunityType.valueOf(toSearchIn);
-        }
-        for (PrismOpportunityType value : PrismOpportunityType.values()) {
-            if (value.prefixes.length > 0) {
-                toSearchIn = toSearchIn.trim().replaceAll("\\s+", " ").toLowerCase();
-                for (String prefix : value.prefixes) {
-                    if (toSearchIn.startsWith(prefix)) {
-                        return value;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
     public static List<PrismOpportunityType> getOpportunityTypes(PrismOpportunityCategory programCategory) {
         return byCategory.get(programCategory);
     }
@@ -221,7 +203,7 @@ public enum PrismOpportunityType {
     public static PrismOpportunityType getSystemOpportunityType() {
         return STUDY_POSTGRADUATE_RESEARCH;
     }
-    
+
     public static List<PrismResourceCondition> getResourceConditions(PrismScope scope) {
         Set<PrismResourceCondition> mergedResourceConditions = Sets.newHashSet();
         for (PrismOpportunityType opportunityType : values()) {
@@ -234,7 +216,7 @@ public enum PrismOpportunityType {
         }
         return Lists.newArrayList(mergedResourceConditions);
     }
-    
+
     public static List<PrismResourceCondition> getResourceConditions(PrismScope scope, PrismOpportunityType opportunityType) {
         Set<PrismResourceCondition> mergedResourceConditions = Sets.newHashSet();
         List<PrismResourceCondition> resourceConditions = opportunityType.getDefaultResourceConditions();

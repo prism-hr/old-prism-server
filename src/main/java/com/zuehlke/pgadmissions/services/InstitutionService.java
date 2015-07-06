@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceConditionDTO;
 
 @Service
 @Transactional
@@ -36,6 +35,9 @@ public class InstitutionService {
 
     @Inject
     private EntityService entityService;
+    
+    @Inject
+    private ResourceService resourceService;
 
     @Inject
     private StateService stateService;
@@ -81,8 +83,7 @@ public class InstitutionService {
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
 
-        List<ResourceConditionDTO> resourceConditions = institutionDTO.getResourceConditions();
-        // FIXME set the resource conditions
+        resourceService.setResourceConditions(institution, institutionDTO.getResourceConditions());
     }
 
     public List<String> listAvailableCurrencies() {

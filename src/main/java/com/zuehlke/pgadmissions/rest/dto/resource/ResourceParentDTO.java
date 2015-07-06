@@ -8,12 +8,9 @@ import javax.validation.constraints.NotNull;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
-public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDefinition<User, AdvertDTO> {
-
-    private User user;
+public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDefinition<AdvertDTO> {
 
     private ResourceDTO parentResource;
 
@@ -22,16 +19,6 @@ public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDef
     private AdvertDTO advert;
 
     private List<ResourceConditionDTO> resourceConditions;
-
-    @Override
-    public User getUser() {
-        return user;
-    }
-
-    @Override
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     @Override
     public ResourceDTO getParentResource() {

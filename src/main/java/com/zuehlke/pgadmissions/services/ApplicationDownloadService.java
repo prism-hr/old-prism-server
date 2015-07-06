@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.io.OutputStream;
@@ -98,11 +99,9 @@ public class ApplicationDownloadService {
                 try {
                     List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(application, user);
                     if (actionEnhancements.size() > 0) {
-                        boolean includeEqualOpportunities = actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR)
-                                || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_ADMITTER)
-                                || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR)
-                                || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER);
+                        actionEnhancements.retainAll(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements());
 
+                        boolean includeEqualOpportunities = actionEnhancements.size() > 0;
                         boolean includeReferences = !actionService.hasRedactions(PrismScope.APPLICATION, Sets.newHashSet(applicationIds), user);
 
                         ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)

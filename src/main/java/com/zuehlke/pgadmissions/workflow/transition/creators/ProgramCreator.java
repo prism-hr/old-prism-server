@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.workflow.transition.creators;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -34,7 +35,7 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
 
         Program program = new Program().withUser(user).withParentResource(parentResource).withAdvert(advert).withTitle(advert.getTitle())
                 .withDurationMinimum(newResource.getDurationMinimum()).withDurationMaximum(newResource.getDurationMaximum())
-                .withRequirePositionDefinition(false);
+                .withRequirePositionDefinition(BooleanUtils.toBoolean(newResource.getRequirePositionDefinition()));
 
         resourceService.setResourceAttributes(program, newResource);
         return program;

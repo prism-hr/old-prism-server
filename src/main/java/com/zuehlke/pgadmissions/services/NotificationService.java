@@ -115,7 +115,7 @@ public class NotificationService {
         User author = systemService.getSystem().getUser();
         LocalDate baseline = new LocalDate();
         Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, author, baseline);
-        sendIndividualUpdateNotifications(resource, comment, author, exclusions, baseline);
+        sendIndividualUpdateNotifications(resource, comment, author, exclusions);
     }
 
     public void sendIndividualRequestReminders(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {
@@ -338,8 +338,8 @@ public class NotificationService {
         return recipients;
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> exclusions, LocalDate baseline) {
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), exclusions, baseline);
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> exclusions) {
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), exclusions);
 
         if (updates.size() > 0) {
             PrismAction transitionActionId = actionService.getViewEditAction(resource).getId();

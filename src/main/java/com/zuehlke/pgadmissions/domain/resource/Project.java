@@ -566,6 +566,11 @@ public class Project extends ResourceOpportunity {
         this.durationMaximum = durationMaximum;
         return this;
     }
+    
+    public Project withRequirePositionDefinition(Boolean requirePositionDefinition) {
+        this.requirePositionDefinition = requirePositionDefinition;
+        return this;
+    }
 
     public Project withCode(String code) {
         this.code = code;

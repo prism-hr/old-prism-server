@@ -203,7 +203,7 @@ public class SystemInitialisationHelper {
         for (DisplayPropertyConfiguration value : localizationService.getAllLocalizedProperties()) {
             assertEquals(value.getResource(), system);
 
-            DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
+            DisplayPropertyDefinition displayProperty = value.getDefinition();
             PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
             assertEquals(value.getOpportunityType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
@@ -228,7 +228,7 @@ public class SystemInitialisationHelper {
                     system, definition);
 
             assertEquals(configuration.getOpportunityType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
-            assertEquals(configuration.getNotificationDefinition(), definition);
+            assertEquals(configuration.getDefinition(), definition);
             assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
 

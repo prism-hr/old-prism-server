@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -310,6 +311,21 @@ public class ResourceDAO {
                 .addOrder(Order.desc("project")) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.asc(Joiner.on(".").skipNulls().join(attributeName, orderAttributeName))) //
+                .list();
+    }
+
+    public List<ResourceCondition> getResourceConditions(ResourceParent resource) {
+        return (List<ResourceCondition>) sessionFactory.getCurrentSession().createCriteria(ResourceCondition.class) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("program", resource.getProgram()))
+                        .add(Restrictions.eq("department", resource.getDepartment())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
+                .addOrder(Order.desc("project")) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("department")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.asc("actionCondition")) //
                 .list();
     }
 

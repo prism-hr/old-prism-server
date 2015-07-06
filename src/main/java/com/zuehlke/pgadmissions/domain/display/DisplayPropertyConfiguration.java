@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
 @Entity
 @Table(name = "display_property_configuration", uniqueConstraints = {
@@ -29,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
         @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "display_property_definition_id" }) })
-public class DisplayPropertyConfiguration extends WorkflowConfiguration {
+public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayPropertyDefinition> {
 
     @Id
     @GeneratedValue
@@ -46,7 +45,7 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
-    
+
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
@@ -61,7 +60,7 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
     @ManyToOne
     @JoinColumn(name = "display_property_definition_id", nullable = false)
-    private DisplayPropertyDefinition displayPropertyDefinition;
+    private DisplayPropertyDefinition definition;
 
     @Lob
     @Column(name = "value", nullable = false)
@@ -70,51 +69,51 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
 
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Override
-    public final System getSystem() {
+    public System getSystem() {
         return system;
     }
 
     @Override
-    public final void setSystem(System system) {
+    public void setSystem(System system) {
         this.system = system;
     }
 
     @Override
-    public final Institution getInstitution() {
+    public Institution getInstitution() {
         return institution;
     }
 
     @Override
-    public final void setInstitution(Institution institution) {
+    public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
     }
 
     @Override
-    public final Program getProgram() {
+    public Program getProgram() {
         return program;
     }
 
     @Override
-    public final void setProgram(Program program) {
+    public void setProgram(Program program) {
         this.program = program;
     }
 
@@ -129,44 +128,41 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     }
 
     @Override
-    public final PrismOpportunityType getOpportunityType() {
+    public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
-    public final DisplayPropertyDefinition getDisplayPropertyDefinition() {
-        return displayPropertyDefinition;
+    @Override
+    public DisplayPropertyDefinition getDefinition() {
+        return definition;
     }
 
-    public final void setDisplayPropertyDefinition(DisplayPropertyDefinition displayPropertyDefinition) {
-        this.displayPropertyDefinition = displayPropertyDefinition;
+    @Override
+    public void setDefinition(DisplayPropertyDefinition definition) {
+        this.definition = definition;
     }
 
-    public final String getValue() {
+    public String getValue() {
         return value;
     }
 
-    public final void setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
     @Override
-    public final Boolean getSystemDefault() {
+    public Boolean getSystemDefault() {
         return systemDefault;
     }
 
     @Override
-    public final void setSystemDefault(Boolean systemDefault) {
+    public void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
-    }
-
-    @Override
-    public WorkflowDefinition getDefinition() {
-        return getDisplayPropertyDefinition();
     }
 
     public DisplayPropertyConfiguration withResource(Resource resource) {
@@ -179,8 +175,8 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public DisplayPropertyConfiguration withDisplayPropertyDefinition(DisplayPropertyDefinition displayPropertyDefinition) {
-        this.displayPropertyDefinition = displayPropertyDefinition;
+    public DisplayPropertyConfiguration withDefinition(DisplayPropertyDefinition definition) {
+        this.definition = definition;
         return this;
     }
 
@@ -196,7 +192,7 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("displayPropertyDefinition", displayPropertyDefinition);
+        return super.getResourceSignature().addProperty("displayPropertyDefinition", definition);
     }
 
 }

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.resource.System;
         @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "notification_definition_id" }) })
-public class NotificationConfiguration extends WorkflowConfiguration {
+public class NotificationConfiguration extends WorkflowConfiguration<NotificationDefinition> {
 
     @Id
     @GeneratedValue
@@ -59,7 +59,7 @@ public class NotificationConfiguration extends WorkflowConfiguration {
 
     @ManyToOne
     @JoinColumn(name = "notification_definition_id", nullable = false)
-    private NotificationDefinition notificationDefinition;
+    private NotificationDefinition definition;
 
     @Column(name = "subject", nullable = false)
     private String subject;
@@ -144,12 +144,12 @@ public class NotificationConfiguration extends WorkflowConfiguration {
         this.project = project;
     }
 
-    public NotificationDefinition getNotificationDefinition() {
-        return notificationDefinition;
+    public NotificationDefinition getDefinition() {
+        return definition;
     }
 
-    public void setNotificationDefinition(NotificationDefinition notificationDefinition) {
-        this.notificationDefinition = notificationDefinition;
+    public void setDefinition(NotificationDefinition definition) {
+        this.definition = definition;
     }
 
     public final String getSubject() {
@@ -186,11 +186,6 @@ public class NotificationConfiguration extends WorkflowConfiguration {
         this.systemDefault = systemDefault;
     }
 
-    @Override
-    public WorkflowDefinition getDefinition() {
-        return getNotificationDefinition();
-    }
-
     public NotificationConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -201,8 +196,8 @@ public class NotificationConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public NotificationConfiguration withNotificationDefinition(NotificationDefinition notificationDefinition) {
-        this.notificationDefinition = notificationDefinition;
+    public NotificationConfiguration withDefinition(NotificationDefinition definition) {
+        this.definition = definition;
         return this;
     }
 
@@ -228,7 +223,7 @@ public class NotificationConfiguration extends WorkflowConfiguration {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("notificationDefinition", notificationDefinition);
+        return super.getResourceSignature().addProperty("notificationDefinition", definition);
     }
 
 }

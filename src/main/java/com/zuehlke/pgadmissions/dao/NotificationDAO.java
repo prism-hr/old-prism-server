@@ -86,14 +86,12 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, Set<User> exclusions, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, Set<User> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //

@@ -9,11 +9,10 @@ import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
 public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
-        ResourceOpportunityDefinition<User, AdvertDTO, PrismOpportunityType, ResourceStudyOptionDTO> {
+        ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType, ResourceStudyOptionDTO> {
 
     @NotNull
     private PrismOpportunityType opportunityType;

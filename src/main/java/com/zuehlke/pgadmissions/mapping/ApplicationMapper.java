@@ -260,7 +260,7 @@ public class ApplicationMapper {
         ApplicationPersonalDetail applicationPersonalDetail = application.getPersonalDetail();
 
         if (applicationPersonalDetail != null) {
-            return new ApplicationPersonalDetailRepresentation()
+            ApplicationPersonalDetailRepresentation representation = new ApplicationPersonalDetailRepresentation()
                     .withTitle((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getTitle(), institution))
                     .withGender((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getGender(), institution))
                     .withDateOfBirth(applicationPersonalDetail.getDateOfBirth())
@@ -275,9 +275,14 @@ public class ApplicationMapper {
                     .withDomicile((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getDomicile(), institution))
                     .withVisaRequired(applicationPersonalDetail.getVisaRequired())
                     .withPassport(getApplicationPassportRepresentation(applicationPersonalDetail, institution)).withPhone(applicationPersonalDetail.getPhone())
-                    .withSkype(applicationPersonalDetail.getSkype())
-                    .withEthnicity((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getEthnicity(), institution))
-                    .withDisability((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getDisability(), institution));
+                    .withSkype(applicationPersonalDetail.getSkype());
+
+            if (applicationService.isCanViewEqualOpportunitiesData(application, userService.getCurrentUser())) {
+                representation.setEthnicity((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getEthnicity(), institution));
+                representation.setDisability((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getDisability(), institution));
+            }
+
+            return representation;
         }
 
         return null;
@@ -436,7 +441,7 @@ public class ApplicationMapper {
     private ApplicationAdditionalInformationRepresentation getApplicationAdditionalInformationRepresentation(Application application) {
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
 
-        if (additionalInformation != null) {
+        if (additionalInformation != null && applicationService.isCanViewEqualOpportunitiesData(application, userService.getCurrentUser())) {
             return new ApplicationAdditionalInformationRepresentation().withConvictionsText(additionalInformation.getConvictionsText());
         }
 
@@ -572,7 +577,7 @@ public class ApplicationMapper {
         boolean personalDetailNull = personalDetail == null;
 
         PrismStudyOption studyOption = programDetailNull ? null : programDetail.getStudyOptionDisplay();
-        ApplicationSummaryRepresentation summary = new ApplicationSummaryRepresentation().withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
+        ApplicationSummaryRepresentation representation = new ApplicationSummaryRepresentation().withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
                 .withSubmittedDate(application.getSubmittedTimestampDisplay(dateFormat)).withClosingDate(application.getClosingDateDisplay(dateFormat))
                 .withPrimaryThemes(application.getPrimaryThemeDisplay()).withSecondaryThemes(application.getSecondaryThemeDisplay())
                 .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personalDetailNull ? null : personalDetail.getSkype())
@@ -582,7 +587,7 @@ public class ApplicationMapper {
         ApplicationQualification latestQualification = applicationService.getLatestApplicationQualification(application);
         if (latestQualification != null) {
             ImportedProgram importedProgram = latestQualification.getProgram();
-            summary.setLatestQualification(new QualificationSummaryRepresentation().withTitle(importedProgram.getQualification())
+            representation.setLatestQualification(new QualificationSummaryRepresentation().withTitle(importedProgram.getQualification())
                     .withSubject(importedProgram.getName()).withGrade(latestQualification.getGrade())
                     .withInstitution(importedProgram.getInstitution().getName()).withStartDate(latestQualification.getStartDateDisplay(dateFormat))
                     .withEndDate(latestQualification.getAwardDateDisplay(dateFormat)));
@@ -590,7 +595,7 @@ public class ApplicationMapper {
 
         ApplicationEmploymentPosition latestEmploymentPosition = applicationService.getLatestApplicationEmploymentPosition(application);
         if (latestEmploymentPosition != null) {
-            summary.setLatestEmploymentPosition(new EmploymentPositionSummaryRepresentation().withPosition(latestEmploymentPosition.getPosition())
+            representation.setLatestEmploymentPosition(new EmploymentPositionSummaryRepresentation().withPosition(latestEmploymentPosition.getPosition())
                     .withEmployer(latestEmploymentPosition.getEmployerName()).withStartDate(latestEmploymentPosition.getStartDateDisplay(dateFormat))
                     .withEndDate(latestEmploymentPosition.getEndDateDisplay(dateFormat)));
         }
@@ -606,19 +611,19 @@ public class ApplicationMapper {
             for (Entry<String, PrismDisplayPropertyDefinition> documentProperty : documentProperties.entrySet()) {
                 Document document = (Document) PrismReflectionUtils.getProperty(applicationDocument, documentProperty.getKey());
                 if (document != null) {
-                    summary.addDocument(new DocumentSummaryRepresentation().withId(document.getId()).withLabel(loader.load(documentProperty.getValue())));
+                    representation.addDocument(new DocumentSummaryRepresentation().withId(document.getId()).withLabel(loader.load(documentProperty.getValue())));
                 }
             }
         }
 
         Long providedReferenceCount = applicationService.getProvidedReferenceCount(application);
-        summary.setReferenceProvidedCount(providedReferenceCount == null ? null : providedReferenceCount.intValue());
+        representation.setReferenceProvidedCount(providedReferenceCount == null ? null : providedReferenceCount.intValue());
 
         Long declinedReferenceCount = applicationService.getDeclinedReferenceCount(application);
-        summary.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
+        representation.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
 
-        summary.setOtherLiveApplications(applicationService.getOtherLiveApplications(application));
-        return summary;
+        representation.setOtherLiveApplications(applicationService.getOtherLiveApplications(application));
+        return representation;
     }
 
     private AddressApplicationRepresentation getAddressApplicationRepresentation(AddressApplication address, Institution institution) {

@@ -1,6 +1,24 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_PRIZE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_STUDY_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_PRIMARY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_SECONDARY;
 import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
 
@@ -52,10 +70,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -177,8 +193,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addStudyDetailSection(Application application, PdfPTable body) throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_STUDY_DETAIL)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_STUDY_DETAIL)) {
             ApplicationStudyDetail studyDetail = application.getStudyDetail();
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_DETAIL_LOCATION_LABEL),
                     studyDetail == null ? null : studyDetail.getStudyLocation(), body);
@@ -194,13 +209,12 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addThemeSection(Application application, PdfPTable body) throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_THEME_PRIMARY)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_THEME_PRIMARY)) {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_LABEL),
                     application.getPrimaryThemeDisplay(), body);
         }
 
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, APPLICATION_THEME_SECONDARY)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_THEME_SECONDARY)) {
             applicationDownloadBuilderHelper.addContentRowMedium(
                     propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL),
                     application.getSecondaryThemeDisplay(), body);
@@ -208,8 +222,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addSupervisorSection(Application application, Document pdfDocument) throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR)) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_SUPERVISOR_HEADER));
             Set<ApplicationSupervisor> supervisors = application.getSupervisors();
 
@@ -295,8 +308,7 @@ public class ApplicationDownloadBuilder {
     private void appendEqualOpportunitiesSection(ApplicationDownloadDTO applicationDownloadDTO, PdfPTable body, Application application,
             ApplicationPersonalDetail personalDetail, boolean personalDetailNull) throws Exception {
         if (applicationDownloadDTO.isIncludeEqualOpportunities()) {
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                    PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
+            if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_DEMOGRAPHIC)) {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL),
                         personalDetailNull ? null
                                 : personalDetail.getEthnicityDisplay(), body);
@@ -310,8 +322,7 @@ public class ApplicationDownloadBuilder {
     private boolean addPassportHeader(Application application, ApplicationPersonalDetail personalDetail, boolean personalDetailNull, PdfPTable body)
             throws Exception {
         boolean passportAvailable = false;
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_RESIDENCE)) {
 
             boolean visaRequired = personalDetailNull ? false : personalDetail.getVisaRequired();
 
@@ -329,8 +340,7 @@ public class ApplicationDownloadBuilder {
     private boolean addLanguageQualificationHeader(Application application, ApplicationPersonalDetail personalDetail, boolean personalDetailNull, PdfPTable body)
             throws Exception {
         boolean languageQualificationAvailable = false;
-        if (customizationService
-                .isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_LANGUAGE)) {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_LABEL),
                     personalDetailNull ? null : propertyLoader.load(SYSTEM_YES, SYSTEM_NO, personalDetail.getFirstLanguageLocale()), body);
 
@@ -378,8 +388,7 @@ public class ApplicationDownloadBuilder {
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_LISTENING_SCORE_LABEL),
                 languageQualification.getListeningScore(), body);
 
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_LANGUAGE_PROOF_OF_AWARD)) {
             addBookmark(body, propertyLoader.load(APPLICATION_PROOF_OF_AWARD), languageQualification.getDocument(), applicationDownloadDTO);
         }
 
@@ -400,8 +409,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addQualificationSection(Application application, ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_QUALIFICATION)) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_QUALIFICATION_HEADER));
             Set<ApplicationQualification> qualifications = application.getQualifications();
 
@@ -409,8 +417,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER), null, body);
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
             } else {
-                boolean documentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                        PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD);
+                boolean documentEnabled = customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_QUALIFICATION_PROOF_OF_AWARD);
 
                 int counter = 1;
                 for (ApplicationQualification qualification : qualifications) {
@@ -461,8 +468,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addEmploymentSection(Application application, Document pdfDocument) throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_EMPLOYMENT_POSITION)) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_HEADER));
             Set<ApplicationEmploymentPosition> positions = application.getEmploymentPositions();
 
@@ -501,7 +507,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addFundingSection(Application application, ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, PrismWorkflowPropertyDefinition.APPLICATION_FUNDING)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_FUNDING)) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_FUNDING_HEADER));
             Set<ApplicationFunding> fundings = application.getFundings();
 
@@ -509,8 +515,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_SUBHEADER), null, body);
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
             } else {
-                boolean documentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                        PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD);
+                boolean documentEnabled = customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_FUNDING_PROOF_OF_AWARD);
 
                 int counter = 1;
                 for (ApplicationFunding funding : fundings) {
@@ -538,7 +543,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addPrizesSection(Application application, Document pdfDocument) throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, PrismWorkflowPropertyDefinition.APPLICATION_PRIZE)) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_PRIZE)) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_PRIZE_HEADER));
             Set<ApplicationPrize> prizes = application.getPrizes();
 
@@ -609,14 +614,10 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addDocumentSection(Application application, ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws Exception {
-        boolean personalStatementEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT);
-        boolean cvEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV);
-        boolean researchStatementEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT);
-        boolean coveringLetterEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER);
+        boolean personalStatementEnabled = customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_DOCUMENT_PERSONAL_STATEMENT);
+        boolean cvEnabled = customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_DOCUMENT_CV);
+        boolean researchStatementEnabled = customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_DOCUMENT_RESEARCH_STATEMENT);
+        boolean coveringLetterEnabled = customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_DOCUMENT_COVERING_LETTER);
         if (personalStatementEnabled || cvEnabled || researchStatementEnabled || coveringLetterEnabled) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_DOCUMENT_HEADER));
             ApplicationDocument documentSection = applicationDownloadDTO.getApplication().getDocument();
@@ -647,8 +648,8 @@ public class ApplicationDownloadBuilder {
 
     private void addAdditionalInformationSection(Application application, ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument)
             throws Exception {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION) && applicationDownloadDTO.isIncludeEqualOpportunities()) {
+        if (customizationService.isWorkflowConfigurationEnabled(application, APPLICATION_CRIMINAL_CONVICTION)
+                && applicationDownloadDTO.isIncludeEqualOpportunities()) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_ADDITIONAL_INFORMATION_HEADER));
             ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
 

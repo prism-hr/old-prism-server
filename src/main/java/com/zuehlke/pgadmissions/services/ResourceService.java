@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
@@ -167,7 +168,7 @@ public class ResourceService {
         if (resourceCreator != null) {
             ResourceCreator<T> creator = (ResourceCreator<T>) applicationContext.getBean(resourceCreator);
             Resource resource = creator.create(user, resourceDTO);
-            
+
             resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
 
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
@@ -512,47 +513,55 @@ public class ResourceService {
 
         return filteredStudylocations;
     }
-
-    public <T> List<T> getResourceAttributes(ResourceOpportunity resource, Class<T> attributeClass, String attributeName) {
-        return resourceDAO.getResourceAttributes(resource, attributeClass, attributeName, null);
+    
+    public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
+        List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
+        List<ResourceCondition> actionConditions = resourceDAO.getResourceConditions(resource);
+        
+        PrismScope lastResourceScope = null;
+        for (ResourceCondition resourceCondition : actionConditions) {
+            PrismScope thisResourceScope = resourceCondition.getResource().getResourceScope();
+            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
+                break;
+            }
+            filteredActionConditions.add(resourceCondition.getActionCondition());
+            lastResourceScope = thisResourceScope;
+        }
+        
+        return filteredActionConditions;
     }
 
-    public <T> List<T> getResourceAttributes(ResourceOpportunity resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
-        return resourceDAO.getResourceAttributes(resource, attributeClass, attributeName, orderAttributeName);
-    }
+    public <T extends ResourceParent, U extends ResourceParentDTO> void setResourceAttributes(T resource, U resourceDTO) {
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
+            ResourceOpportunityDTO resourceOpportunityDTO = (ResourceOpportunityDTO) resourceDTO;
 
-    public void setResourceAttributes(ResourceOpportunity resource, ResourceOpportunityDTO resourceDTO) {
-        Program program = resource.getProgram();
-        if (!program.sameAs(resource) && program.getAdvert().isImported()) {
-            resource.setOpportunityType(program.getOpportunityType());
-        } else {
-            resource.setOpportunityType(importedEntityService.getByName(ImportedEntitySimple.class, resourceDTO.getOpportunityType().name()));
-            setStudyOptions(resource, resourceDTO.getStudyOptions(), new LocalDate());
+            Program program = resource.getProgram();
+            if (!program.sameAs(resource) && BooleanUtils.isTrue(program.getAdvert().isImported())) {
+                resourceOpportunity.setOpportunityType(program.getOpportunityType());
+            } else {
+                resourceOpportunity.setOpportunityType(importedEntityService.getByName(ImportedEntitySimple.class, resourceOpportunityDTO.getOpportunityType()
+                        .name()));
+                setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions(), new LocalDate());
+            }
+
+            setStudyLocations(resourceOpportunity, resourceOpportunityDTO.getStudyLocations());
         }
 
-        ResourceParentAttributesDTO attributes = resourceDTO.getAttributes();
-        if (attributes != null) {
-            setResourceAttributes(resource, attributes);
-        }
+        setResourceConditions(resource, resourceDTO.getResourceConditions());
     }
 
-    public void setResourceAttributes(ResourceOpportunity resource, ResourceParentAttributesDTO attributes) {
-        setResourceConditions(resource, attributes.getResourceConditions());
-        setStudyLocations(resource, attributes.getStudyLocations());
-    }
-
-    public void setResourceConditions(ResourceParent resource, List<ResourceParentDTO.ResourceConditionDTO> resourceConditions) {
+    public void setResourceConditions(ResourceParent resource, List<ResourceConditionDTO> resourceConditions) {
         resource.getResourceConditions().clear();
         entityService.flush();
 
         if (resourceConditions == null) {
             List<PrismResourceCondition> defaultResourceConditions;
-            PrismScope resourceScope = resource.getResourceScope();
-            if (resourceScope.equals(INSTITUTION)) {
-                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resourceScope);
+            if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+                PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
+                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope(), opportunityType);
             } else {
-                PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(resource.getOpportunityType().getName());
-                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resourceScope, opportunityType);
+                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope());
             }
 
             for (PrismResourceCondition defaultResourceCondition : defaultResourceConditions) {
@@ -612,10 +621,9 @@ public class ResourceService {
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
 
-        ResourceParentAttributesDTO attributes = resourceDTO.getAttributes();
-        List<ResourceConditionDTO> resourceConditions = attributes.getResourceConditions();
+        List<ResourceConditionDTO> resourceConditions = resourceDTO.getResourceConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO> newArrayList() : resourceConditions);
-        setStudyLocations(resource, attributes.getStudyLocations());
+        setStudyLocations(resource, resourceDTO.getStudyLocations());
 
         if (!resource.getAdvert().isImported()) {
             ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class, resourceDTO.getOpportunityType().name());

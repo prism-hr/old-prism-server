@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-public abstract class WorkflowConfigurationVersioned extends WorkflowConfiguration {
+public abstract class WorkflowConfigurationVersioned<T> extends WorkflowConfiguration<T> {
 
     public abstract Boolean getActive();
-    
+
     public abstract void setActive(Boolean active);
-    
+
     public abstract Integer getVersion();
 
     public abstract void setVersion(Integer version);

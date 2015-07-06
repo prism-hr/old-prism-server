@@ -65,7 +65,7 @@ public class LifeCycleTest {
             List<MailMessageDTO> messages = mailSenderMock.getSentMessages();
             assertEquals(1, messages.size());
             NotificationConfiguration configuration = messages.get(0).getConfiguration();
-            assertEquals(SYSTEM_COMPLETE_REGISTRATION_REQUEST, configuration.getNotificationDefinition().getId());
+            assertEquals(SYSTEM_COMPLETE_REGISTRATION_REQUEST, configuration.getDefinition().getId());
             mailSenderMock.getSentMessages().clear();
         }
 

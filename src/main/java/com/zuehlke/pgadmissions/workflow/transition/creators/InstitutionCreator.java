@@ -40,7 +40,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
 
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(system, advertDTO);
-        
+
         DocumentDTO logoImageDTO = newResource.getLogoImage();
         Document logoImage = logoImageDTO == null ? null : documentService.getById(logoImageDTO.getId());
 
@@ -50,7 +50,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
                 .withCreatedTimestamp(new DateTime()).withLogoImage(logoImage);
         advert.setInstitution(institution);
 
-        resourceService.setResourceAttributes(institution, newResource.getAttributes());
+        resourceService.setResourceAttributes(institution, newResource);
         return institution;
     }
 

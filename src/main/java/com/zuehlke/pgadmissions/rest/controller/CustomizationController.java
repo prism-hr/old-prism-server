@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.utils.PrismWordUtils;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|institutions|systems}/{resourceId}/configuration")
-public class ResourceConfigurationController {
+public class CustomizationController {
 
     @Inject
     private EntityService entityService;
@@ -245,7 +245,7 @@ public class ResourceConfigurationController {
         }
         List<DisplayPropertyConfigurationRepresentation> representations = Lists.newLinkedList();
         for (PrismDisplayPropertyDefinition definition : PrismDisplayPropertyDefinition.getProperties(category)) {
-            representations.add(new DisplayPropertyConfigurationRepresentation().withDefinitionId(definition).withValue(index.get(definition)));
+            representations.add(new DisplayPropertyConfigurationRepresentation().withProperty(definition).withValue(index.get(definition)));
         }
         return representations;
     }

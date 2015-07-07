@@ -422,3 +422,202 @@ alter table department
 	add index (user_id),
 	add foreign key (user_id) references user (id)
 ;
+
+update comment_state
+set state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
+;
+
+update comment_transition_state
+set state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
+;
+
+update resource_previous_state
+set state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
+;
+
+update resource_state
+set state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
+;
+
+update project
+set previous_state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED"),
+	state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
+;
+
+update program
+set previous_state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED"),
+	state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
+;
+
+update comment
+set state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED"),
+	transition_state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
+;
+
+delete 
+from role_transition
+where state_transition_id in (
+	select id
+	from state_transition
+	where transition_state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER"))
+	or state_transition_id in (
+		select id 
+		from state_transition
+		where state_action_id in (
+			select id
+			from state_action
+			where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")))
+;
+
+delete 
+from state_transition
+where transition_state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")
+;
+
+
+delete 
+from state_transition
+where state_action_id in (
+	select id
+	from state_action
+	where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER"))
+;
+
+delete 
+from state_action_notification
+where state_action_id in (
+	select id
+	from state_action
+	where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER"))
+;
+
+
+delete 
+from state_action_assignment
+where state_action_id in (
+	select id
+	from state_action
+	where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER"))
+;
+
+delete
+from state_action
+where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")
+;
+
+delete 
+from state
+where id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")
+;
+
+update comment_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
+;
+
+update comment_transition_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
+;
+
+update resource_previous_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
+;
+
+update resource_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
+;
+
+update project
+set previous_state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED"),
+	state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
+;
+
+update program
+set previous_state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED"),
+	state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
+;
+
+update comment
+set state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED"),
+	transition_state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
+;
+
+delete 
+from role_transition
+where state_transition_id in (
+	select id
+	from state_transition
+	where transition_state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION"))
+	or state_transition_id in (
+		select id 
+		from state_transition
+		where state_action_id in (
+			select id
+			from state_action
+			where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")))
+;
+
+delete 
+from state_transition
+where transition_state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")
+;
+
+
+delete 
+from state_transition
+where state_action_id in (
+	select id
+	from state_action
+	where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION"))
+;
+
+delete 
+from state_action_notification
+where state_action_id in (
+	select id
+	from state_action
+	where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION"))
+;
+
+
+delete 
+from state_action_assignment
+where state_action_id in (
+	select id
+	from state_action
+	where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION"))
+;
+
+delete
+from state_action
+where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")
+;
+
+delete 
+from state
+where id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")
+;
+
+delete
+from state_transition_evaluation
+where id like "%_PARTNER_OUTCOME"
+;
+
+delete
+from action
+where id like "%_PARTNER_STAGE"
+;
+
+delete
+from notification_configuration
+where notification_definition_id like "%_PARTNER_STAGE_NOTIFICATION"
+;
+
+delete
+from notification_definition
+where id like "%_PARTNER_STAGE_NOTIFICATION"
+;
+
+delete
+from state_group
+where id like "%_PARTNER"
+;

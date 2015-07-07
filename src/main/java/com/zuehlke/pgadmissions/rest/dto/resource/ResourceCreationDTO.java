@@ -6,4 +6,8 @@ public interface ResourceCreationDTO {
 
     public void setParentResource(ResourceDTO parentResource);
 
+    public Integer getWorkflowPropertyConfigurationVersion();
+
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion);
+
 }

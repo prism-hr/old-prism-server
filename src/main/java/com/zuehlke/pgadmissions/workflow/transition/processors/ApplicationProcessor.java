@@ -53,7 +53,7 @@ public class ApplicationProcessor implements ResourceProcessor {
 
     private void appendApplicationReferees(Application application, Comment comment) {
         Role refereeRole = roleService.getById(APPLICATION_REFEREE);
-        for (User referee : applicationService.getUnassignedApplicationReferees(application)) {
+        for (User referee : applicationService.getApplicationRefereesNotResponded(application)) {
             comment.addAssignedUser(referee, refereeRole, CREATE);
         }
     }

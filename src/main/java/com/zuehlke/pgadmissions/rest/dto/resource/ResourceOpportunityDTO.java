@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -14,6 +16,8 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
         ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType, ResourceStudyOptionDTO> {
 
+    private ResourceParentDivisionDTO newDepartment;
+    
     @NotNull
     private PrismOpportunityType opportunityType;
 
@@ -28,6 +32,14 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
     private List<String> studyLocations;
 
     private Set<ResourceStudyOptionDTO> instanceGroups;
+    
+    public ResourceParentDivisionDTO getNewDepartment() {
+        return newDepartment;
+    }
+
+    public void setNewDepartment(ResourceParentDivisionDTO newParentResource) {
+        this.newDepartment = newParentResource;
+    }
 
     @Override
     public PrismOpportunityType getOpportunityType() {
@@ -89,6 +101,11 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
     @Override
     public void setInstanceGroups(Set<ResourceStudyOptionDTO> instanceGroups) {
         this.instanceGroups = instanceGroups;
+    }
+    
+    @Override
+    public ResourceParentDTO getNewParentResource() {
+        return ObjectUtils.firstNonNull(newDepartment, super.getNewParentResource());
     }
 
 }

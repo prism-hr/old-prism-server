@@ -90,7 +90,7 @@ public class ProjectService {
     }
 
     public void update(Integer projectId, ResourceOpportunityDTO projectDTO, Comment comment) throws Exception {
-        resourceService.update(PROJECT, projectId, projectDTO, comment);
+        resourceService.updateResource(PROJECT, projectId, projectDTO, comment);
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer projectId, List<PrismState> activeProjectStates) {

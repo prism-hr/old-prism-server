@@ -27,7 +27,7 @@ public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
 
     @Column(name = "function", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismAdvertFunction function;
+    private PrismAdvertFunction value;
 
     @Override
     public Integer getId() {
@@ -49,27 +49,14 @@ public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
         this.advert = advert;
     }
 
-    public final PrismAdvertFunction getFunction() {
-        return function;
-    }
-
-    public final void setFunction(PrismAdvertFunction function) {
-        this.function = function;
+    @Override
+    public final PrismAdvertFunction getValue() {
+        return value;
     }
 
     @Override
-    public PrismAdvertFunction getValue() {
-        return function;
-    }
-
-    @Override
-    public void setValue(PrismAdvertFunction value) {
-        setFunction(value);
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("function", function);
+    public final void setValue(PrismAdvertFunction function) {
+        this.value = function;
     }
 
 }

@@ -49,9 +49,9 @@ public class ProjectExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        ResourceOpportunityDTO programDTO = commentDTO.getResource().getProject();
-        Comment comment = prepareProcessResourceComment(project, user, action, programDTO, commentDTO);
-        projectService.update(resourceId, programDTO, comment);
+        ResourceOpportunityDTO resourceOpportunityDTO = commentDTO.getResource().getProject();
+        Comment comment = prepareProcessResourceComment(project, user, action, resourceOpportunityDTO, commentDTO);
+        projectService.update(resourceId, resourceOpportunityDTO, comment);
         return actionService.executeUserAction(project, action, comment);
     }
 

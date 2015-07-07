@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mapping;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -14,14 +15,11 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileRes
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertDepartment;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertInstitution;
-import com.zuehlke.pgadmissions.domain.advert.AdvertProgram;
-import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -148,33 +146,40 @@ public class AdvertMapper {
 
     private AdvertCategoriesRepresentation getAdvertCategoriesRepresentation(Advert advert) {
         AdvertCategories categories = advertService.getAdvertCategories(advert);
-        return categories == null ? null : new AdvertCategoriesRepresentation().withIndustries(advertService.getAdvertIndustries(advert))
-                .withFunctions(advertService.getAdvertFunctions(advert)).withThemes(advertService.getAdvertThemes(advert));
+        return categories == null ? null : new AdvertCategoriesRepresentation().withIndustries(getAdvertCategoryRepresentations(categories.getIndustries()))
+                .withFunctions(getAdvertCategoryRepresentations(categories.getFunctions()))
+                .withThemes(getAdvertCategoryRepresentations(categories.getThemes()));
     }
 
-    private AdvertTargetsRepresentation getAdvertTargetsRepresentation(Advert advert) {
-        AdvertTargets targets = advertService.getAdvertTargets(advert);
-        return targets == null ? null : new AdvertTargetsRepresentation().withCompetences(getAdvertCompetencesRepresentation(advert)).withInstitutions(
-                getAdvertTargetsRepresentation(advert, AdvertInstitution.class))
-                .withDepartments(getAdvertTargetsRepresentation(advert, AdvertDepartment.class))
-                .withPrograms(getAdvertTargetsRepresentation(advert, AdvertProgram.class))
-                .withSubjectAreas(getAdvertTargetsRepresentation(advert, AdvertSubjectArea.class));
-    }
-
-    private List<AdvertTargetRepresentation> getAdvertTargetsRepresentation(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
-        List<AdvertTargetRepresentation> representations = Lists.newLinkedList();
-        for (AdvertTarget<?> target : advertService.getAdvertTargets(advert, targetClass)) {
-            representations.add(new AdvertTargetRepresentation().withId(target.getId()).withTitle(target.getTitle()).withImportance(target.getImportance()));
+    private <T extends AdvertAttribute<U>, U> List<U> getAdvertCategoryRepresentations(Set<T> categories) {
+        List<U> representations = Lists.newLinkedList();
+        for (T category : categories) {
+            representations.add(category.getValue());
         }
         return representations;
     }
 
-    private List<AdvertCompetenceRepresentation> getAdvertCompetencesRepresentation(Advert advert) {
+    private AdvertTargetsRepresentation getAdvertTargetsRepresentation(Advert advert) {
+        AdvertTargets targets = advertService.getAdvertTargets(advert);
+        return targets == null ? null : new AdvertTargetsRepresentation().withCompetences(getAdvertCompetenceRepresentations(targets.getCompetences()))
+                .withInstitutions(getAdvertTargetRepresentations(targets.getInstitutions()))
+                .withDepartments(getAdvertTargetRepresentations(targets.getDepartments())).withPrograms(getAdvertTargetRepresentations(targets.getPrograms()))
+                .withSubjectAreas(getAdvertTargetRepresentations(targets.getSubjectAreas()));
+    }
+    
+    private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Set<AdvertCompetence> competences) {
         List<AdvertCompetenceRepresentation> representations = Lists.newLinkedList();
-        for (AdvertTarget<?> target : advertService.getAdvertTargets(advert, AdvertCompetence.class)) {
-            AdvertCompetence competence = (AdvertCompetence) target;
+        for (AdvertCompetence competence : competences) {
             representations.add(new AdvertCompetenceRepresentation().withId(competence.getId()).withTitle(competence.getTitle())
-                    .withDescription(competence.getCompetence().getDescription()).withImportance(competence.getImportance()));
+                    .withDescription(competence.getValue().getDescription()).withImportance(competence.getImportance()));
+        }
+        return representations;
+    }
+
+    private <T extends AdvertTarget<?>> List<AdvertTargetRepresentation> getAdvertTargetRepresentations(Set<T> targets) {
+        List<AdvertTargetRepresentation> representations = Lists.newLinkedList();
+        for (AdvertTarget<?> target : targets) {
+            representations.add(new AdvertTargetRepresentation().withId(target.getId()).withTitle(target.getTitle()).withImportance(target.getImportance()));
         }
         return representations;
     }

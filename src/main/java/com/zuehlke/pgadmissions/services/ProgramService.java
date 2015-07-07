@@ -107,8 +107,8 @@ public class ProgramService {
         return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);
     }
 
-    public void update(Integer programId, ResourceOpportunityDTO programDTO, Comment comment) throws Exception {
-        resourceService.update(PROGRAM, programId, programDTO, comment);
+    public void update(Integer programId, ResourceOpportunityDTO resourceOpportunityDTO, Comment comment) throws Exception {
+        resourceService.updateResource(PROGRAM, programId, resourceOpportunityDTO, comment);
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId, List<PrismState> activeProgramStates) {

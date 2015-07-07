@@ -26,10 +26,10 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
     private AdvertService advertService;
 
     @Inject
-    private ResourceService resourceService;
+    private DocumentService documentService;
 
     @Inject
-    private DocumentService documentService;
+    private ResourceService resourceService;
 
     @Inject
     private SystemService systemService;

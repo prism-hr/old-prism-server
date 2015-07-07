@@ -27,7 +27,7 @@ public class AdvertDepartment extends AdvertTarget<Department> {
 
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
-    private Department department;
+    private Department value;
 
     @Column(name = "importance", nullable = false)
     private BigDecimal importance;
@@ -52,12 +52,14 @@ public class AdvertDepartment extends AdvertTarget<Department> {
         this.advert = advert;
     }
 
-    public Department getDepartment() {
-        return department;
+    @Override
+    public Department getValue() {
+        return value;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    @Override
+    public void setValue(Department department) {
+        this.value = department;
     }
 
     @Override
@@ -71,23 +73,8 @@ public class AdvertDepartment extends AdvertTarget<Department> {
     }
 
     @Override
-    public Department getValue() {
-        return department;
-    }
-
-    @Override
-    public void setValue(Department value) {
-        setDepartment(value);
-    }
-    
-    @Override
     public String getTitle() {
-        return department.getTitle();
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("department", department);
+        return value.getTitle();
     }
 
 }

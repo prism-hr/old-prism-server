@@ -23,7 +23,7 @@ public abstract class AdvertAttribute <T> implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("advert", getAdvert());
+        return new ResourceSignature().addProperty("advert", getAdvert()).addProperty("value", getValue());
     }
 
 }

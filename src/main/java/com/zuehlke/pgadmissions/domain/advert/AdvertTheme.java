@@ -22,7 +22,7 @@ public class AdvertTheme extends AdvertAttribute<String> {
     private Advert advert;
 
     @Column(name = "theme", nullable = false)
-    private String theme;
+    private String value;
 
     @Override
     public Integer getId() {
@@ -44,27 +44,14 @@ public class AdvertTheme extends AdvertAttribute<String> {
         this.advert = advert;
     }
 
-    public String getTheme() {
-        return theme;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
-
     @Override
     public String getValue() {
-        return theme;
+        return value;
     }
 
     @Override
-    public void setValue(String value) {
-        setTheme(value);
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("theme", theme);
+    public void setValue(String theme) {
+        this.value = theme;
     }
 
 }

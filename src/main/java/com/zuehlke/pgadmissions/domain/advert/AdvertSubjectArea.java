@@ -26,8 +26,8 @@ public class AdvertSubjectArea extends AdvertTarget<ImportedSubjectArea> {
     private Advert advert;
 
     @ManyToOne
-    @JoinColumn(name = "imported_institution_id", nullable = false)
-    private ImportedSubjectArea subjectArea;
+    @JoinColumn(name = "imported_subject_area_id", nullable = false)
+    private ImportedSubjectArea value;
 
     @Column(name = "importance", nullable = false)
     private BigDecimal importance;
@@ -52,12 +52,14 @@ public class AdvertSubjectArea extends AdvertTarget<ImportedSubjectArea> {
         this.advert = advert;
     }
 
-    public ImportedSubjectArea getSubjectArea() {
-        return subjectArea;
+    @Override
+    public ImportedSubjectArea getValue() {
+        return value;
     }
 
-    public void setSubjectArea(ImportedSubjectArea subjectArea) {
-        this.subjectArea = subjectArea;
+    @Override
+    public void setValue(ImportedSubjectArea subjectArea) {
+        this.value = subjectArea;
     }
 
     @Override
@@ -71,23 +73,8 @@ public class AdvertSubjectArea extends AdvertTarget<ImportedSubjectArea> {
     }
 
     @Override
-    public ImportedSubjectArea getValue() {
-        return subjectArea;
-    }
-
-    @Override
-    public void setValue(ImportedSubjectArea value) {
-        setSubjectArea(value);
-    }
-    
-    @Override
     public String getTitle() {
-        return subjectArea.getName();
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("subjectArea", subjectArea);
+        return value.getName();
     }
 
 }

@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 import java.util.Arrays;
@@ -63,6 +65,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
@@ -76,12 +79,12 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDefinitionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceConditionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -160,20 +163,39 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO create(User user, Action action, T resourceDTO, Integer workflowPropertyConfigurationVersion)
-            throws Exception {
-        PrismScope resourceScope = action.getCreationScope().getId();
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T DTO) throws Exception {
+        PrismScope creationScope = action.getCreationScope().getId();
 
-        Class<? extends ResourceCreator<?>> resourceCreator = resourceScope.getResourceCreator();
-        if (resourceCreator != null) {
-            ResourceCreator<T> creator = (ResourceCreator<T>) applicationContext.getBean(resourceCreator);
-            Resource resource = creator.create(user, resourceDTO);
+        ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
+        Resource resource = resourceCreator.create(user, DTO);
 
-            resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
+        Integer workflowPropertyConfigurationVersion = DTO.getWorkflowPropertyConfigurationVersion();
+        if (workflowPropertyConfigurationVersion == null) {
+            customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource, creationScope);
+        }
+        resource.setWorkflowPropertyConfigurationVersion(DTO.getWorkflowPropertyConfigurationVersion());
 
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                    .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
-            return actionService.executeUserAction(resource, action, comment);
+        Role role = roleService.getById(PrismRole.valueOf(creationScope.name() + "_ADMINISTRATOR"));
+        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
+                .withCreatedTimestamp(new DateTime()).addAssignedUser(user, role, CREATE);
+
+        return actionService.executeUserAction(resource, action, comment);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ResourceParentDTO, U extends ResourceParent> U createParentResource(User user, T parentDTO) throws Exception {
+        Class<?> parentDTOClass = parentDTO.getClass();
+        PrismScope creationScope = PrismScope.getByResourceDTOClass(parentDTOClass);
+
+        if (creationScope != null) {
+            boolean isInstitution = creationScope.equals(INSTITUTION);
+
+            if (isInstitution || ((ResourceParentDivisionDTO) parentDTO).getParentResource() != null) {
+                PrismScope scope = isInstitution ? SYSTEM : ((ResourceParentDivisionDTO) parentDTO).getParentResource().getResourceScope();
+
+                Action action = actionService.getById(PrismAction.valueOf(scope.name() + "_CREATE_" + creationScope.name()));
+                return (U) createResource(user, action, parentDTO).getResource();
+            }
         }
 
         throw new UnsupportedOperationException();
@@ -205,12 +227,11 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, Integer resourceId, CommentDTO commentDTO) throws Exception {
-        if (commentDTO.getAction().getActionCategory() == CREATE_RESOURCE) {
+        if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
+            T resourceDTO = (T) commentDTO.getNewResource().getResource();
             Action action = actionService.getById(commentDTO.getAction());
-            ResourceDefinitionDTO newResource = commentDTO.getNewResource();
-            T resource = (T) newResource.getResource();
-            resource.setParentResource(new ResourceDTO().withResourceScope(action.getScope().getId()).withResourceId(resourceId));
-            return create(user, action, resource, newResource.getWorkflowPropertyConfigurationVersion());
+            resourceDTO.setParentResource(new ResourceDTO().withResourceScope(action.getCreationScope().getId()).withResourceId(resourceId));
+            return createResource(user, action, resourceDTO);
         }
 
         Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
@@ -513,11 +534,11 @@ public class ResourceService {
 
         return filteredStudylocations;
     }
-    
+
     public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
         List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
         List<ResourceCondition> actionConditions = resourceDAO.getResourceConditions(resource);
-        
+
         PrismScope lastResourceScope = null;
         for (ResourceCondition resourceCondition : actionConditions) {
             PrismScope thisResourceScope = resourceCondition.getResource().getResourceScope();
@@ -527,7 +548,7 @@ public class ResourceService {
             filteredActionConditions.add(resourceCondition.getActionCondition());
             lastResourceScope = thisResourceScope;
         }
-        
+
         return filteredActionConditions;
     }
 
@@ -540,7 +561,8 @@ public class ResourceService {
             if (!program.sameAs(resource) && BooleanUtils.isTrue(program.getAdvert().isImported())) {
                 resourceOpportunity.setOpportunityType(program.getOpportunityType());
             } else {
-                resourceOpportunity.setOpportunityType(importedEntityService.getByName(ImportedEntitySimple.class, resourceOpportunityDTO.getOpportunityType()
+                resourceOpportunity.setOpportunityType(importedEntityService.getByName(ImportedEntitySimple.class, resourceOpportunityDTO
+                        .getOpportunityType()
                         .name()));
                 setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions(), new LocalDate());
             }
@@ -610,7 +632,7 @@ public class ResourceService {
         }
     }
 
-    public void update(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO, Comment comment) throws Exception {
+    public void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO, Comment comment) throws Exception {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
 
         AdvertDTO advertDTO = resourceDTO.getAdvert();

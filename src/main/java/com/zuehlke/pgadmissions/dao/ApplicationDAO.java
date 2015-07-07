@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EXPORT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
@@ -162,17 +161,11 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public List<User> getUnassignedApplicationReferees(Application application) {
+    public List<User> getApplicationRefereesNotResponded(Application application) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .setProjection(Projections.property("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("userRole.application", application)) //
-                                .add(Restrictions.eq("userRole.role.id", APPLICATION_REFEREE))) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNull("comment")) //
-                .add(Restrictions.isNull("userRole.id")) //
                 .list();
     }
 

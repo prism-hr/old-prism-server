@@ -14,6 +14,8 @@ public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDef
 
     private ResourceDTO parentResource;
 
+    private Integer workflowPropertyConfigurationVersion;
+
     @Valid
     @NotNull
     private AdvertDTO advert;
@@ -28,6 +30,16 @@ public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDef
     @Override
     public void setParentResource(ResourceDTO parentResource) {
         this.parentResource = parentResource;
+    }
+
+    @Override
+    public Integer getWorkflowPropertyConfigurationVersion() {
+        return workflowPropertyConfigurationVersion;
+    }
+
+    @Override
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     @Override

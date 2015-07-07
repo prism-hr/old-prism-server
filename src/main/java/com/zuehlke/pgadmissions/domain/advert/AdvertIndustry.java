@@ -27,7 +27,7 @@ public class AdvertIndustry extends AdvertAttribute<PrismAdvertIndustry> {
 
     @Column(name = "industry", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismAdvertIndustry industry;
+    private PrismAdvertIndustry value;
 
     @Override
     public Integer getId() {
@@ -49,27 +49,14 @@ public class AdvertIndustry extends AdvertAttribute<PrismAdvertIndustry> {
         this.advert = advert;
     }
 
-    public final PrismAdvertIndustry getIndustry() {
-        return industry;
-    }
-
-    public final void setIndustry(PrismAdvertIndustry industry) {
-        this.industry = industry;
+    @Override
+    public final PrismAdvertIndustry getValue() {
+        return value;
     }
 
     @Override
-    public PrismAdvertIndustry getValue() {
-        return industry;
-    }
-    
-    @Override
-    public void setValue(PrismAdvertIndustry value) {
-        setIndustry(value);
-    }
-    
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("industry", industry);
+    public final void setValue(PrismAdvertIndustry industry) {
+        this.value = industry;
     }
 
 }

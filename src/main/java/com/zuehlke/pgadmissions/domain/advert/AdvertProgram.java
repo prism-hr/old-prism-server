@@ -27,7 +27,7 @@ public class AdvertProgram extends AdvertTarget<ImportedProgram> {
 
     @ManyToOne
     @JoinColumn(name = "imported_program_id", nullable = false)
-    private ImportedProgram program;
+    private ImportedProgram value;
 
     @Column(name = "importance", nullable = false)
     private BigDecimal importance;
@@ -52,12 +52,14 @@ public class AdvertProgram extends AdvertTarget<ImportedProgram> {
         this.advert = advert;
     }
 
-    public ImportedProgram getProgram() {
-        return program;
+    @Override
+    public ImportedProgram getValue() {
+        return value;
     }
 
-    public void setProgram(ImportedProgram program) {
-        this.program = program;
+    @Override
+    public void setValue(ImportedProgram program) {
+        this.value = program;
     }
 
     @Override
@@ -69,25 +71,10 @@ public class AdvertProgram extends AdvertTarget<ImportedProgram> {
     public void setImportance(BigDecimal importance) {
         this.importance = importance;
     }
-
-    @Override
-    public ImportedProgram getValue() {
-        return program;
-    }
-    
-    @Override
-    public void setValue(ImportedProgram value) {
-        setProgram(value);
-    }
     
     @Override
     public String getTitle() {
-        return program.getName();
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("program", program);
+        return value.getName();
     }
 
 }

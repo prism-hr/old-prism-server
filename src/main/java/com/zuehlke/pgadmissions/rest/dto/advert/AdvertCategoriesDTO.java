@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 
-public class AdvertCategoriesDTO extends AdvertAttributesDTO<Object> {
+public class AdvertCategoriesDTO {
 
     private List<PrismAdvertIndustry> industries;
 
@@ -38,8 +38,7 @@ public class AdvertCategoriesDTO extends AdvertAttributesDTO<Object> {
         this.themes = themes;
     }
     
-    @Override
-    public List<Object> getAttributes() {
+    public List<Object> getCategories() {
         List<Object> attributes = Lists.newLinkedList();
         attributes.addAll(industries);
         attributes.addAll(functions);

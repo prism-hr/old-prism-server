@@ -27,7 +27,7 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
 
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
+    private Institution value;
 
     @Column(name = "importance", nullable = false)
     private BigDecimal importance;
@@ -52,12 +52,14 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
         this.advert = advert;
     }
 
-    public Institution getInstitution() {
-        return institution;
+    @Override
+    public Institution getValue() {
+        return value;
     }
 
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
+    @Override
+    public void setValue(Institution institution) {
+        this.value = institution;
     }
 
     @Override
@@ -71,23 +73,8 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
     }
 
     @Override
-    public Institution getValue() {
-        return institution;
-    }
-
-    @Override
-    public void setValue(Institution value) {
-        setInstitution(value);
-    }
-
-    @Override
     public String getTitle() {
-        return institution.getTitle();
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("institution", institution);
+        return value.getTitle();
     }
 
 }

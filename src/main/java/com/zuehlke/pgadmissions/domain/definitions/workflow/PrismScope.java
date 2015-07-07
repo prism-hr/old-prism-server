@@ -17,6 +17,11 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
@@ -56,6 +61,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withSocialRepresentationBuilder(SystemSocialRepresentationBuilder.class)),
     INSTITUTION(new PrismScopeDefinition() //
             .withResourceClass(Institution.class) //
+            .withResourceDTOClass(InstitutionDTO.class) //
             .withResourceShortCode("IN") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
@@ -67,13 +73,15 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
     DEPARTMENT(new PrismScopeDefinition() //
             .withResourceClass(Department.class) //
+            .withResourceDTOClass(ResourceParentDivisionDTO.class)
             .withResourceShortCode("DT") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("department", "title"))), //
+                    .withColumn("department", "title"))), // T
     PROGRAM(new PrismScopeDefinition() //
             .withResourceClass(Program.class) //
+            .withResourceDTOClass(ResourceOpportunityDTO.class) //
             .withResourceShortCode("PM") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
@@ -88,6 +96,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
     PROJECT(new PrismScopeDefinition() //
             .withResourceClass(Project.class) //
+            .withResourceDTOClass(ProjectDTO.class) //
             .withResourceShortCode("PT") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
@@ -103,6 +112,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
     APPLICATION(new PrismScopeDefinition() //
             .withResourceClass(Application.class) //
+            .withResourceDTOClass(ApplicationDTO.class) //
             .withResourceShortCode("AN") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "title") //
@@ -121,16 +131,28 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private static Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
+    private static Map<Class<?>, PrismScope> byResourceDTOClass = Maps.newHashMap();
+
     static {
         for (PrismScope scope : values()) {
+            Class<?> resourceClass = scope.getResourceClass();
+            if (byResourceClass.containsKey(resourceClass)) {
+                throw new Error();
+            }
             byResourceClass.put(scope.getResourceClass(), scope);
+
+            Class<?> resourceDTOClass = scope.getResourceDTOClass();
+            if (byResourceDTOClass.containsKey(resourceDTOClass)) {
+                throw new Error();
+            }
+            byResourceDTOClass.put(resourceDTOClass, scope);
         }
     }
 
     private PrismScope(PrismScopeDefinition definition) {
         this.definition = definition;
     }
-    
+
     @Override
     public uk.co.alumeni.prism.enums.PrismScope getDefinition() {
         return uk.co.alumeni.prism.enums.PrismScope.valueOf(name());
@@ -138,6 +160,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     public Class<? extends Resource> getResourceClass() {
         return definition.getResourceClass();
+    }
+
+    public Class<?> getResourceDTOClass() {
+        return definition.getResourceDTOClass();
     }
 
     public String getShortCode() {
@@ -184,6 +210,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return byResourceClass.get(resourceClass);
     }
 
+    public static PrismScope getByResourceDTOClass(Class<?> resourceDTOClass) {
+        return byResourceDTOClass.get(resourceDTOClass);
+    }
+
     public String getLowerCamelName() {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
@@ -195,6 +225,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     private static class PrismScopeDefinition {
 
         private Class<? extends Resource> resourceClass;
+
+        private Class<?> resourceDTOClass;
 
         private String resourceShortCode;
 
@@ -222,6 +254,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public String getResourceShortCode() {
             return resourceShortCode;
+        }
+
+        public Class<?> getResourceDTOClass() {
+            return resourceDTOClass;
         }
 
         public HashMultimap<String, String> getResourceListCustomColumns() {
@@ -262,6 +298,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public PrismScopeDefinition withResourceClass(Class<? extends Resource> resourceClass) {
             this.resourceClass = resourceClass;
+            return this;
+        }
+
+        public PrismScopeDefinition withResourceDTOClass(Class<?> resourceDTOClass) {
+            this.resourceDTOClass = resourceDTOClass;
             return this;
         }
 

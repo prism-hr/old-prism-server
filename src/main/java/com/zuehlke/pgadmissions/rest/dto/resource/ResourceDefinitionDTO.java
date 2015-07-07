@@ -4,12 +4,10 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 
 public class ResourceDefinitionDTO {
-
-    private Integer workflowPropertyConfigurationVersion;
 
     @Valid
     private InstitutionDTO institution;
@@ -21,18 +19,10 @@ public class ResourceDefinitionDTO {
     private ResourceOpportunityDTO program;
 
     @Valid
-    private ResourceOpportunityDTO project;
+    private ProjectDTO project;
 
     @Valid
     private ApplicationDTO application;
-
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        return workflowPropertyConfigurationVersion;
-    }
-
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
-        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
-    }
 
     public InstitutionDTO getInstitution() {
         return institution;
@@ -58,11 +48,11 @@ public class ResourceDefinitionDTO {
         this.program = program;
     }
 
-    public ResourceOpportunityDTO getProject() {
+    public ProjectDTO getProject() {
         return project;
     }
 
-    public void setProject(ResourceOpportunityDTO project) {
+    public void setProject(ProjectDTO project) {
         this.project = project;
     }
 
@@ -73,8 +63,12 @@ public class ResourceDefinitionDTO {
     public void setApplication(ApplicationDTO application) {
         this.application = application;
     }
+    
+    public ResourceCreationDTO getResource() {
+        return ObjectUtils.firstNonNull(application, project, program, department, institution);
+    }
 
-    public ResourceDTO getResource() {
+    public ResourceDTO getParentResource() {
         return ObjectUtils.firstNonNull(application, project, program, department, institution).getParentResource();
     }
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public class AdvertTargetsDTO extends AdvertAttributesDTO<AdvertTargetDTO> {
+public class AdvertTargetsDTO {
 
     private List<AdvertCompetenceDTO> competences;
 
@@ -56,8 +56,7 @@ public class AdvertTargetsDTO extends AdvertAttributesDTO<AdvertTargetDTO> {
         this.subjectAreas = subjectAreas;
     }
 
-    @Override
-    public List<AdvertTargetDTO> getAttributes() {
+    public List<AdvertTargetDTO> getTargets() {
         List<AdvertTargetDTO> attributes = Lists.newLinkedList();
         attributes.addAll(competences);
         attributes.addAll(institutions);

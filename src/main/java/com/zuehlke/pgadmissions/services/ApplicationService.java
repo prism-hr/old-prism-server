@@ -232,8 +232,8 @@ public class ApplicationService {
         return references;
     }
 
-    public List<User> getUnassignedApplicationReferees(Application application) {
-        return applicationDAO.getUnassignedApplicationReferees(application);
+    public List<User> getApplicationRefereesNotResponded(Application application) {
+        return applicationDAO.getApplicationRefereesNotResponded(application);
     }
 
     public List<Integer> getApplicationsForExport() {

@@ -11,7 +11,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -25,10 +24,12 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
     @Inject
     private ResourceService resourceService;
 
+    @Inject
+    private ResourceCreatorUtils resourceCreatorUtils;
+
     @Override
     public Resource create(User user, ResourceOpportunityDTO newResource) throws Exception {
-        ResourceDTO parentResourceDTO = newResource.getParentResource();
-        ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getResourceScope(), parentResourceDTO.getResourceId());
+        ResourceParent parentResource = resourceCreatorUtils.getParentResource(user, newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(parentResource, advertDTO);

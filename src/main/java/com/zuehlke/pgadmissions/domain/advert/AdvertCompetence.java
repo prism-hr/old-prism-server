@@ -27,7 +27,7 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
 
     @ManyToOne
     @JoinColumn(name = "competence_id", nullable = false)
-    private Competence competence;
+    private Competence value;
 
     @Column(name = "importance", nullable = false)
     private BigDecimal importance;
@@ -48,12 +48,14 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
         this.advert = advert;
     }
 
-    public Competence getCompetence() {
-        return competence;
+    @Override
+    public Competence getValue() {
+        return value;
     }
 
-    public void setCompetence(Competence competence) {
-        this.competence = competence;
+    @Override
+    public void setValue(Competence competence) {
+        this.value = competence;
     }
 
     public BigDecimal getImportance() {
@@ -65,23 +67,8 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
     }
 
     @Override
-    public Competence getValue() {
-        return competence;
-    }
-
-    @Override
-    public void setValue(Competence value) {
-        setCompetence(value);
-    }
-    
-    @Override
     public String getTitle() {
-        return competence.getTitle();
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("competence", competence);
+        return value.getTitle();
     }
 
 }

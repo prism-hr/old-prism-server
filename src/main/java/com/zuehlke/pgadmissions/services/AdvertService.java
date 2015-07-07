@@ -44,9 +44,8 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -154,14 +153,14 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
-    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) {
+    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) throws Exception {
         Advert advert = new Advert();
         updateAdvert(parentResource, advert, advertDTO);
         entityService.save(advert);
         return advert;
     }
 
-    public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO) {
+    public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO) throws Exception {
         if (BooleanUtils.isFalse(advert.isImported())) {
             advert.setTitle(advertDTO.getTitle());
         }
@@ -175,10 +174,25 @@ public class AdvertService {
         if (addressDTO != null) {
             updateAddress(advert, addressDTO);
         } else if (address == null) {
-            address = getResourceAddress(parentResource);
-            addressDTO = advertMapper.getAddressDTO(address);
-            updateAddress(advert, addressDTO);
+            if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
+                address = getResourceAddress((ResourceParent) parentResource);
+                addressDTO = advertMapper.getAddressDTO(address);
+                updateAddress(advert, addressDTO);
+            } else {
+                throw new Error();
+            }
         }
+
+        AdvertCategoriesDTO categoriesDTO = advertDTO.getCategories();
+        if (categoriesDTO != null) {
+            updateCategories(advert, categoriesDTO);
+        }
+
+        AdvertTargetsDTO targetsDTO = advertDTO.getTargets();
+        if (targetsDTO != null) {
+            updateTargets(advert, targetsDTO);
+        }
+
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
@@ -217,7 +231,11 @@ public class AdvertService {
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
+        updateCategories(advert, categoriesDTO);
+        executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
+    }
 
+    private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) throws Exception {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {
             categories = new AdvertCategories();
@@ -225,27 +243,29 @@ public class AdvertService {
         }
 
         Class<?> valueClass = null;
-        Class<? extends AdvertAttribute<?>> attributeClass = null;
-        for (Object attribute : categoriesDTO.getAttributes()) {
-            Class<?> newValueClass = attribute.getClass();
+        Class<? extends AdvertAttribute<?>> categoryClass = null;
+        for (Object category : categoriesDTO.getCategories()) {
+            Class<?> newValueClass = category.getClass();
             if (valueClass == null || !newValueClass.equals(valueClass)) {
                 valueClass = newValueClass;
                 clearAdvertAttributes(categories, valueClass);
-                attributeClass = getByValueClass(valueClass).getAttributeClass();
+                categoryClass = getByValueClass(valueClass).getAttributeClass();
             }
 
-            AdvertAttribute<?> entityAttribute = createAdvertAttribute(advert, attributeClass, attribute);
-            entityService.getOrCreate(entityAttribute);
-            categories.storeAttribute(entityAttribute);
+            AdvertAttribute<?> entityCategory = createAdvertAttribute(advert, categoryClass, category);
+            entityService.getOrCreate(entityCategory);
+            categories.storeAttribute(entityCategory);
         }
-
-        executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public void updateTargeting(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
+    public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
+        updateTargets(advert, targetsDTO);
+        executeUpdate(resource, "COMMENT_UPDATED_TARGET");
+    }
 
+    private void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) throws Error, Exception {
         AdvertTargets targets = advert.getTargets();
         if (targets == null) {
             targets = new AdvertTargets();
@@ -253,31 +273,29 @@ public class AdvertService {
         }
 
         Class<?> valueClass = null;
-        Class<? extends AdvertAttribute<?>> attributeClass = null;
-        for (AdvertTargetDTO target : targetsDTO.getAttributes()) {
+        Class<? extends AdvertAttribute<?>> targetClass = null;
+        for (AdvertTargetDTO target : targetsDTO.getTargets()) {
             Class<?> newValueClass = target.getClass();
             if (valueClass == null || !newValueClass.equals(valueClass)) {
                 valueClass = newValueClass;
                 clearAdvertAttributes(targets, valueClass);
-                attributeClass = getByValueClass(valueClass).getAttributeClass();
+                targetClass = getByValueClass(valueClass).getAttributeClass();
             }
 
             TargetEntity value = null;
             Integer valueId = target.getValue();
             if (valueId == null && target.getClass().equals(AdvertCompetenceDTO.class)) {
                 AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) target;
-                getOrCreateCompetence(competenceDTO);
+                value = getOrCreateCompetence(competenceDTO);
             } else if (valueId != null) {
                 value = (TargetEntity) entityService.getById(valueClass, target.getValue());
             } else {
                 throw new Error();
             }
 
-            AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertTarget(advert, attributeClass, value, target.getImportance());
+            AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertTarget(advert, targetClass, value, target.getImportance());
             targets.storeAttribute(entityTarget);
         }
-
-        executeUpdate(resource, "COMMENT_UPDATED_TARGET");
     }
 
     public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
@@ -413,45 +431,14 @@ public class AdvertService {
         }
         return targets;
     }
-
-    public List<PrismAdvertIndustry> getAdvertIndustries(Advert advert) {
-        List<PrismAdvertIndustry> industries = advertDAO.getAdvertIndustries(advert);
-        if (industries.isEmpty()) {
-            Resource parent = advert.getResource().getParentResource();
-            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
-                return getAdvertIndustries(parent.getAdvert());
-            }
-            return null;
-        }
-        return industries;
-    }
-
-    public List<PrismAdvertFunction> getAdvertFunctions(Advert advert) {
-        List<PrismAdvertFunction> functions = advertDAO.getAdvertFunctions(advert);
-        if (functions.isEmpty()) {
-            Resource parent = advert.getResource().getParentResource();
-            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
-                return getAdvertFunctions(parent.getAdvert());
-            }
-            return null;
-        }
-        return functions;
-    }
-
+    
     public List<String> getAdvertThemes(Advert advert) {
-        List<String> themes = advertDAO.getAdvertThemes(advert);
-        if (themes.isEmpty()) {
-            Resource parent = advert.getResource().getParentResource();
-            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
-                return getAdvertThemes(parent.getAdvert());
-            }
-            return null;
+        List<String> themes = Lists.newLinkedList();
+        AdvertCategories categories = getAdvertCategories(advert);
+        for (AdvertTheme theme : categories.getThemes()) {
+            themes.add(theme.getValue());
         }
         return themes;
-    }
-
-    public List<AdvertTarget<?>> getAdvertTargets(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
-        return advertDAO.getAdvertTargets(advert, targetClass);
     }
 
     public List<ImportedAdvertDomicile> getAdvertDomiciles() {
@@ -718,17 +705,17 @@ public class AdvertService {
         return address;
     }
 
-    private AdvertAttribute<?> createAdvertAttribute(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object attribute) {
-        AdvertAttribute<?> entityAttribute = BeanUtils.instantiate(attributeClass);
-        entityAttribute.setAdvert(advert);
-        entityAttribute.forceSetValue(attribute);
-        return entityAttribute;
-    }
-
-    private AdvertAttribute<?> createAdvertTarget(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object attribute, BigDecimal importance) {
-        AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertAttribute(advert, attributeClass, attribute);
+    private AdvertTarget<?> createAdvertTarget(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object value, BigDecimal importance) {
+        AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertAttribute(advert, attributeClass, value);
         entityTarget.setImportance(importance);
         return entityTarget;
+    }
+
+    private AdvertAttribute<?> createAdvertAttribute(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object value) {
+        AdvertAttribute<?> entityAttribute = BeanUtils.instantiate(attributeClass);
+        entityAttribute.setAdvert(advert);
+        setProperty(entityAttribute, "value", value);
+        return entityAttribute;
     }
 
     private AdvertClosingDate createAdvertClosingDate(Advert advert, AdvertClosingDateDTO advertClosingDateDTO) {

@@ -140,10 +140,10 @@ public class ActionService {
     }
 
     public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws Exception {
-        CommentDTO comment = registrationDTO.getComment();
-        if (comment != null) {
-            comment.setUser(user.getId());
-            return resourceService.executeAction(user, registrationDTO.getResourceId(), comment);
+        CommentDTO commentDTO = registrationDTO.getComment();
+        if (commentDTO != null) {
+            commentDTO.setUser(user.getId());
+            return resourceService.executeAction(user, registrationDTO.getResourceId(), commentDTO);
         }
         return null;
     }

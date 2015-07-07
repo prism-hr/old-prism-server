@@ -49,13 +49,13 @@ public class ProgramExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        ResourceOpportunityDTO programDTO = commentDTO.getResource().getProgram();
-        Comment comment = prepareProcessResourceComment(program, user, action, programDTO, commentDTO);
-        programService.update(resourceId, programDTO, comment);
+        ResourceOpportunityDTO resourceOpportunityDTO = commentDTO.getResource().getProgram();
+        Comment comment = prepareProcessResourceComment(program, user, action, resourceOpportunityDTO, commentDTO);
+        programService.update(resourceId, resourceOpportunityDTO, comment);
         return actionService.executeUserAction(program, action, comment);
     }
 
-    public Comment prepareProcessResourceComment(Program program, User user, Action action, ResourceOpportunityDTO programDTO, CommentDTO commentDTO)
+    public Comment prepareProcessResourceComment(Program program, User user, Action action, ResourceOpportunityDTO resourceOpportunityDTO, CommentDTO commentDTO)
             throws Exception {
         String commentContent = action.getId().equals(PROGRAM_VIEW_EDIT) ? applicationContext.getBean(PropertyLoader.class).localize(program)
                 .load(PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();

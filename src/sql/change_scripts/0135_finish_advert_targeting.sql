@@ -621,3 +621,53 @@ delete
 from state_group
 where id like "%_PARTNER"
 ;
+
+set foreign_key_checks = 0
+;
+
+update comment_state
+set state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update comment_transition_state
+set state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update resource_previous_state
+set state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update resource_state
+set state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update project
+set previous_state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION"),
+	state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update program
+set previous_state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION"),
+	state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update comment
+set state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION"),
+	transition_state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update state_transition
+set transition_state_id = replace(transition_state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+
+update state_action
+set state_id = replace(state_id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+update state
+set id = replace(id, "PARTNER_INSTITUTION", "INSTITUTION")
+;
+
+set foreign_key_checks = 1
+;

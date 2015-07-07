@@ -13,18 +13,12 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransit
 @Component
 public class ProgramUpdatedResolver implements StateTransitionResolver {
 
-	@Inject
-	private StateService stateService;
-	
-	@Inject
-	private ProgramCreatedResolver programCreatedResolver;
+    @Inject
+    private StateService stateService;
 
-	@Override
-	public StateTransition resolve(Resource resource, Comment comment) {
-	    if (comment.isPartnershipComment()) {
-	        return programCreatedResolver.resolve(resource, comment);
-	    }
-		return stateService.getPredefinedOrCurrentStateTransition(resource, comment);
-	}
+    @Override
+    public StateTransition resolve(Resource resource, Comment comment) {
+        return stateService.getPredefinedOrCurrentStateTransition(resource, comment);
+    }
 
 }

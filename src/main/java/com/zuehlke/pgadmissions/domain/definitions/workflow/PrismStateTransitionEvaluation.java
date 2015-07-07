@@ -29,14 +29,12 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationWithdrawnResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionCreatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramApprovedPartnerResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramEscalatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramImportedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramStartedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramUpdatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedPartnerResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectStartedResolver;
@@ -67,14 +65,12 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PURGED_OUTCOME(false, APPLICATION, ApplicationPurgedResolver.class), //
     INSTITUTION_APPROVED_OUTCOME(true, INSTITUTION, InstitutionApprovedResolver.class), //
     INSTITUTION_CREATED_OUTCOME(false, INSTITUTION, InstitutionCreatedResolver.class), //
-    PROGRAM_APPROVED_PARTNER_OUTCOME(true, PROGRAM, ProgramApprovedPartnerResolver.class), //
     PROGRAM_APPROVED_OUTCOME(true, PROGRAM, ProgramApprovedResolver.class), //
     PROGRAM_IMPORTED_OUTCOME(true, PROGRAM, ProgramImportedResolver.class), //
     PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
     PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //
     PROGRAM_STARTED_OUTCOME(false, PROGRAM, ProgramStartedResolver.class), //
     PROGRAM_ESCALATED_OUTCOME(false, PROGRAM, ProgramEscalatedResolver.class), //
-    PROJECT_APPROVED_PARTNER_OUTCOME(true, PROJECT, ProjectApprovedPartnerResolver.class), //
     PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
     PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
     PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class), //

@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTIUTTION_ADVERTISER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADVERTISER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PARTNER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PARTNER_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 
 import java.util.List;
@@ -35,22 +33,11 @@ public class ProjectCreatedResolver implements StateTransitionResolver {
     @Override
     public StateTransition resolve(Resource resource, Comment comment) {
         User user = comment.getUser();
-        if (comment.isPartnershipComment()) {
-            Institution partner = resource.getPartner();
-            List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
-            if (!activeInstitutionStates.contains(partner.getState().getId())) {
-                return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROJECT_APPROVAL_PARTNER_INSTITUTION);
-            } else if (roleService.hasUserRole(resource.getPartner(), user, INSTIUTTION_ADVERTISER_GROUP)) {
-                return resolveProjectTransition(resource, comment, user);
-            }
-            return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROJECT_APPROVAL_PARTNER);
-        } else {
-            return resolveProjectTransition(resource, comment, user);
-        }
-    }
-
-    public StateTransition resolveProjectTransition(Resource resource, Comment comment, User user) {
-        if (roleService.hasUserRole(resource, user, PROGRAM_ADMINISTRATOR_GROUP)) {
+        Institution institution = resource.getInstitution();
+        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
+        if (!activeInstitutionStates.contains(institution.getState().getId())) {
+            return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROJECT_APPROVAL_INSTITUTION);
+        } else if (roleService.hasUserRole(resource, user, PROGRAM_ADVERTISER_GROUP)) {
             return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROJECT_APPROVED);
         }
         return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROJECT_APPROVAL);

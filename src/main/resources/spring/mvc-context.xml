@@ -70,12 +70,4 @@
         </property>
     </bean>
 
-    <bean class="org.dozer.spring.DozerBeanMapperFactoryBean">
-        <property name="mappingFiles">
-            <list>
-                <value>classpath:dozerMappings.xml</value>
-            </list>
-        </property>
-    </bean>
-
 </beans>

@@ -482,7 +482,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     private static PrismImportedEntityMappingInsertDefinition getImportedEntitySimpleMappingInsertDefinition() {
         return new PrismImportedEntityMappingInsertDefinition() //
                 .withMappingClass(ImportedEntitySimpleMapping.class) //
-                .withTable("imported_entity_simple_mapping");
+                .withTable("imported_entity_mapping");
     }
 
 }

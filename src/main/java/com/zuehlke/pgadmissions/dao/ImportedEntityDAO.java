@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.*;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
+
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -19,10 +17,17 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -76,7 +81,7 @@ public class ImportedEntityDAO {
     }
 
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution,
-                                                                                           PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         String entityReference = prismImportedEntity.getEntityClassLowerCamelName();
         Criteria criteria = getEntityMappingSelectStatement(prismImportedEntity, entityReference) //
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN); //
@@ -131,17 +136,17 @@ public class ImportedEntityDAO {
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-                                                                                  PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, null);
     }
 
     public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getEnabledImportedEntityMapping(Institution institution,
-                                                                                                                        T importedEntity) {
+            T importedEntity) {
         return getImportedEntityMapping(institution, importedEntity, true);
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getEnabledImportedEntityMappings(Institution institution,
-                                                                                         PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, true);
     }
 
@@ -228,11 +233,12 @@ public class ImportedEntityDAO {
     public DomicileUseDTO getMostUsedDomicile(Institution institution) {
         return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(AddressApplication.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("domicile.id"), "id") //
+                        .add(Projections.groupProperty("domicileMapping.code"), "code") //
                         .add(Projections.count("id").as("useCount"), "useCount")) //
                 .createAlias("domicile", "domicile", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("domicile.institution", institution)) //
-                .add(Restrictions.eq("domicile.enabled", true)) //
+                .createAlias("domicile.mappings", "domicileMapping", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("domicileMapping.institution", institution)) //
+                .add(Restrictions.eq("domicileMapping.enabled", true))
                 .addOrder(Order.desc("useCount")) //
                 .setMaxResults(1) //
                 .setResultTransformer(Transformers.aliasToBean(DomicileUseDTO.class)) //
@@ -257,11 +263,10 @@ public class ImportedEntityDAO {
     }
 
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
-                                                                                                                  Boolean enabled) {
+            Boolean enabled) {
         String entityReference = importedEntity.getType().getEntityClassLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(entityReference + ".type", importedEntity)) //
                 .add(Restrictions.eq(entityReference, importedEntity)) //
                 .add(Restrictions.eq("institution", institution));
 
@@ -275,7 +280,7 @@ public class ImportedEntityDAO {
     }
 
     private <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-                                                                                   PrismImportedEntity importedEntity, Boolean enabled) {
+            PrismImportedEntity importedEntity, Boolean enabled) {
         String entityReference = importedEntity.getEntityClassLowerCamelName();
         Class<T> mappingClass = (Class<T>) importedEntity.getMappingClass();
 

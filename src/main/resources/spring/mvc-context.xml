@@ -36,7 +36,6 @@
         <property name="modules">
             <array>
                 <bean class="com.fasterxml.jackson.datatype.joda.JodaModule"/>
-                <bean class="com.zuehlke.pgadmissions.rest.PrismJacksonModule"/>
             </array>
         </property>
         <property name="dateFormat">

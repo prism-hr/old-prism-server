@@ -269,9 +269,4 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         return this;
     }
 
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("workflowPropertyDefinition", definition).addProperty("version", version);
-    }
-
 }

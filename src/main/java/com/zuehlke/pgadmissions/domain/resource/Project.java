@@ -29,7 +29,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -85,10 +84,6 @@ public class Project extends ResourceOpportunity {
 
     @Column(name = "title", nullable = false)
     private String title;
-
-    @OneToOne
-    @JoinColumn(name = "background_image_id")
-    private Document backgroundImage;
 
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
@@ -566,7 +561,7 @@ public class Project extends ResourceOpportunity {
         this.durationMaximum = durationMaximum;
         return this;
     }
-    
+
     public Project withRequirePositionDefinition(Boolean requirePositionDefinition) {
         this.requirePositionDefinition = requirePositionDefinition;
         return this;

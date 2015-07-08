@@ -185,10 +185,5 @@ public class StateDurationConfiguration extends WorkflowConfiguration<StateDurat
         this.systemDefault = systemDefault;
         return this;
     }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("stateDurationDefinition", definition);
-    }
-
+    
 }

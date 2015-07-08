@@ -406,10 +406,4 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
         return this;
     }
 
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("actionCustomQuestionDefinition", definition).addProperty("version", version)
-                .addProperty("index", index);
-    }
-
 }

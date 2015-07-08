@@ -221,9 +221,4 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
         return this;
     }
 
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("notificationDefinition", definition);
-    }
-
 }

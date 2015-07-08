@@ -61,7 +61,7 @@ public class AdvertCategories extends AdvertAttributes {
             themes.clear();
         }
     }
-    
+
     @Override
     public void storeAttribute(AdvertAttribute<?> attribute) {
         Class<?> valueClass = attribute.getValue().getClass();
@@ -71,7 +71,7 @@ public class AdvertCategories extends AdvertAttributes {
             functions.add((AdvertFunction) attribute);
         } else {
             themes.add((AdvertTheme) attribute);
-        }  
+        }
     }
 
 }

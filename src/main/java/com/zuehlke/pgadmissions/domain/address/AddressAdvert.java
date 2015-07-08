@@ -66,7 +66,7 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
 
     @Override
     public String getLocationString() {
-        return getLocationString() + ", " + domicile.getName();
+        return super.getLocationString() + ", " + domicile.getName();
     }
 
 }

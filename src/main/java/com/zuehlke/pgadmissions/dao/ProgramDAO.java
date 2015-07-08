@@ -1,42 +1,29 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.resource.*;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.*;
 
 @Repository
 @SuppressWarnings("unchecked")

@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationTyp
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
-@Table(name = "imported_language_qualification_type_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_language_qualification_type_id, code" }) })
+@Table(name = "imported_language_qualification_type_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_language_qualification_type_id", "code" }) })
 public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapping<ImportedLanguageQualificationType> {
 
     @Id
@@ -28,7 +28,7 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
     private Institution institution;
 
     @ManyToOne
-    @JoinColumn(name = "imported_age_range_id", nullable = false)
+    @JoinColumn(name = "imported_language_qualification_type_id", nullable = false)
     private ImportedLanguageQualificationType importedLanguageQualificationType;
 
     @Column(name = "code")

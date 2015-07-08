@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
-@Table(name = "imported_advert_domicile_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_advert_domicile_id, code" }) })
+@Table(name = "imported_advert_domicile_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_advert_domicile_id", "code" }) })
 public class ImportedAdvertDomicileMapping extends ImportedEntityMapping<ImportedAdvertDomicile> {
 
     @Id

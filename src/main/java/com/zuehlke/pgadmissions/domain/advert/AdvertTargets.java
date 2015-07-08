@@ -16,23 +16,23 @@ import com.zuehlke.pgadmissions.domain.resource.Department;
 @Embeddable
 public class AdvertTargets extends AdvertAttributes {
 
-    @OrderBy(clause = "competence")
+    @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertCompetence> competences = Sets.newHashSet();
 
-    @OrderBy(clause = "institution")
+    @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertInstitution> institutions = Sets.newHashSet();
 
-    @OrderBy(clause = "department")
+    @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertDepartment> departments = Sets.newHashSet();
 
-    @OrderBy(clause = "program")
+    @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertProgram> programs = Sets.newHashSet();
 
-    @OrderBy(clause = "subjectArea")
+    @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertSubjectArea> subjectAreas = Sets.newHashSet();
 

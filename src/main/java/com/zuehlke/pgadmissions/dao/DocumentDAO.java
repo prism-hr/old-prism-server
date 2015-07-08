@@ -87,7 +87,7 @@ public class DocumentDAO {
                 .createAlias("applicationCoveringLetter", "applicationCoveringLetter", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("portraitImage", "portraitImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institutionBackgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN);
+                .createAlias("advertBackgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN);
     }
 
 }

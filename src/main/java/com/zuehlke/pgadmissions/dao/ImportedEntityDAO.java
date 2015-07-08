@@ -163,14 +163,14 @@ public class ImportedEntityDAO {
 
         boolean simpleEntity = prismImportedEntity.getEntityClass().equals(ImportedEntitySimple.class);
         if (simpleEntity) {
-            queryString = queryString + " and type = :type";
+            queryString = queryString + " and " + prismImportedEntity.getEntityClassLowerCamelName() + ".id = :type";
         }
 
         Query query = sessionFactory.getCurrentSession().createQuery(queryString)
                 .setParameter("institution", institution);
 
         if (simpleEntity) {
-            query.setParameter(prismImportedEntity.getEntityClassLowerCamelName() + ".id", prismImportedEntity);
+            query.setParameter("type", prismImportedEntity);
         }
 
         query.executeUpdate();

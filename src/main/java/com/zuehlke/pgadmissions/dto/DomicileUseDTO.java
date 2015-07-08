@@ -3,14 +3,14 @@ package com.zuehlke.pgadmissions.dto;
 public class DomicileUseDTO {
 
     private String code;
-    
+
     private Long useCount;
 
-    public final String getCode() {
+    public String getCode() {
         return code;
     }
 
-    public final void setCode(String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -21,5 +21,5 @@ public class DomicileUseDTO {
     public final void setUseCount(Long useCount) {
         this.useCount = useCount;
     }
-    
+
 }

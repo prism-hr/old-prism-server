@@ -22,7 +22,7 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
     @Override
     public Resource create(User user, ApplicationDTO newResource) throws Exception {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
-        ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getResourceScope(), parentResourceDTO.getResourceId());
+        ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
         return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert()).withRetain(false)
                 .withCreatedTimestamp(new DateTime());
     }

@@ -1,20 +1,20 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+
 public class ResourceRepresentationExtended extends ResourceRepresentationStandard {
 
     private Set<ActionRepresentationExtended> actions = Sets.newLinkedHashSet();
-    
+
     private TimelineRepresentation timeline;
 
     private List<ResourceUserRolesRepresentation> userRoles;
@@ -26,11 +26,11 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
     public Set<ActionRepresentationExtended> getActions() {
         return actions;
     }
-    
+
     public void setActions(Collection<ActionRepresentationExtended> actions) {
         actions.addAll(actions);
     }
-    
+
     public TimelineRepresentation getTimeline() {
         return timeline;
     }
@@ -62,9 +62,9 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
     public void setConditions(List<ResourceConditionRepresentation> conditions) {
         this.conditions = conditions;
     }
-    
+
     public void setParentResource(ResourceRepresentationSimple parentResource) {
-        setProperty(this, parentResource.getResourceScope().getLowerCamelName(), parentResource);
+        setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
 
 }

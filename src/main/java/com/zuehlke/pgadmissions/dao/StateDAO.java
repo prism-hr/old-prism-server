@@ -131,7 +131,7 @@ public class StateDAO {
     public void deleteObsoleteStateDurations() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete StateDurationConfiguration " //
-                        + "where stateDurationDefinition not in ( " //
+                        + "where definition not in ( " //
                         + "select stateDurationDefinition " //
                         + "from State " //
                         + "group by stateDurationDefinition)") //

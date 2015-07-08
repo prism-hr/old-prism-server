@@ -43,9 +43,11 @@ import com.zuehlke.pgadmissions.mapping.helpers.ImportedInstitutionTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedLanguageQualificationTypeTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedProgramTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedSubjectAreaTransformer;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAdvertDomicileExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimpleExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedInstitutionExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtractor;
 
@@ -56,9 +58,11 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             .withTransformerClass(ImportedAdvertDomicileTransformer.class), //
             new PrismImportedEntityImportInsertDefinition() //
                     .withTable("imported_advert_domicile") //
-                    .withPivotColumn("name") //
+                    .withPivotColumn("id") //
+                    .withColumn("name") //
                     .withColumn("currency") //
-                    .withColumn("enabled"), //
+                    .withColumn("enabled")
+                    .withExtractor(ImportedAdvertDomicileExtractor.class), //
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedAdvertDomicileMapping.class) //
                     .withTable("imported_advert_domicile_mapping"),
@@ -120,7 +124,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumn("ucas_id") //
                     .withColumn("facebook_id") //
                     .withColumn("enabled")
-                    .withExtractor(ImportedEntitySimpleExtractor.class), //
+                    .withExtractor(ImportedInstitutionExtractor.class), //
             new PrismImportedEntityMappingInsertDefinition() //
                     .withMappingClass(ImportedInstitutionMapping.class) //
                     .withTable("imported_institution_mapping"),

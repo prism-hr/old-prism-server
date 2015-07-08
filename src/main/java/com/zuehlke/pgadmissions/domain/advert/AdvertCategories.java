@@ -15,14 +15,14 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 public class AdvertCategories extends AdvertAttributes {
 
     @OneToMany(mappedBy = "advert")
-    @OrderBy(clause = "industry")
+    @OrderBy(clause = "value")
     private Set<AdvertIndustry> industries = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advert")
-    @OrderBy(clause = "function")
+    @OrderBy(clause = "value")
     private Set<AdvertFunction> functions = Sets.newHashSet();
 
-    @OrderBy(clause = "theme")
+    @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertTheme> themes = Sets.newHashSet();
 

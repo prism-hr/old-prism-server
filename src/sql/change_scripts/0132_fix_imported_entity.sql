@@ -10,7 +10,7 @@ rename table imported_entity to imported_entity_mapping
 ;
 
 update imported_entity_mapping
-set name = "Your application was not considered eligible. This will be because: (a) your application for study at your chosen institution was unsuccessful; (b) your fee status has been determined as Overseas, and/or; (c) Your research falls outside or our remit." 
+set name = "Your application was not considered eligible. This will be because: (a) your application for study at your chosen institution was unsuccessful; (b) your fee status has been determined as Overseas, and/or; (c) Your research falls outside or our remit."
 where name = "Your application was not considered eligible. This will be because: (a) your application for PhD study at your chosen institution was not successful; (b) your fee status has been determined as Overseas, and/or; (c) Your research falls outside of our funding remit."
 ;
 
@@ -138,12 +138,12 @@ engine = innodb
 ;
 
 insert into imported_language_qualification_type (name, minimum_overall_score,
-	maximum_overall_score, minimum_reading_score, maximum_reading_score, 
+	maximum_overall_score, minimum_reading_score, maximum_reading_score,
 	minimum_writing_score, maximum_writing_score, minimum_speaking_score,
 	maximum_speaking_score, minimum_listening_score, maximum_listening_score)
-	select name, minimum_overall_score, maximum_overall_score, minimum_reading_score, 
-		maximum_reading_score, minimum_writing_score, maximum_writing_score, 
-		minimum_speaking_score, maximum_speaking_score, minimum_listening_score, 
+	select name, minimum_overall_score, maximum_overall_score, minimum_reading_score,
+		maximum_reading_score, minimum_writing_score, maximum_writing_score,
+		minimum_speaking_score, maximum_speaking_score, minimum_listening_score,
 		maximum_listening_score
 	from imported_language_qualification_type_mapping
 	group by name
@@ -157,15 +157,15 @@ alter table imported_language_qualification_type_mapping
 	drop primary key,
 	drop index institution_id,
 	drop index institution_id_3,
-	drop column minimum_overall_score, 
-	drop column maximum_overall_score, 
-	drop column minimum_reading_score, 
-	drop column maximum_reading_score, 
-	drop column minimum_writing_score, 
-	drop column maximum_writing_score, 
-	drop column minimum_speaking_score, 
-	drop column maximum_speaking_score, 
-	drop column minimum_listening_score, 
+	drop column minimum_overall_score,
+	drop column maximum_overall_score,
+	drop column minimum_reading_score,
+	drop column maximum_reading_score,
+	drop column minimum_writing_score,
+	drop column maximum_writing_score,
+	drop column minimum_speaking_score,
+	drop column maximum_speaking_score,
+	drop column minimum_listening_score,
 	drop column maximum_listening_score,
 	add index (id),
 	add column imported_language_qualification_type_id int(10) unsigned after institution_id
@@ -207,7 +207,7 @@ engine = innodb
 ;
 
 insert into imported_institution (domicile_id, name, custom)
-	select domicile.imported_entity_id, imported_institution_mapping.name, 
+	select domicile.imported_entity_id, imported_institution_mapping.name,
 		imported_institution_mapping.custom
 	from imported_institution_mapping inner join imported_entity_mapping as domicile
 		on imported_institution_mapping.domicile_id = domicile.id
@@ -235,13 +235,13 @@ begin
 		primary key (id))
 	collate = utf8_general_ci
 	engine = memory;
-	
+
 	insert into duplicates (id)
 		select id
 		from imported_institution_mapping inner join (
 			select institution_id as institution_id,
-				domicile_id as domicile_id, 
-				name as name, 
+				domicile_id as domicile_id,
+				name as name,
 				count(id) as duplicate_count
 			from imported_institution_mapping
 			group by institution_id, domicile_id, name
@@ -249,19 +249,19 @@ begin
 			on imported_institution_mapping.institution_id = duplicate_institution.institution_id
 				and imported_institution_mapping.domicile_id = duplicate_institution.domicile_id
 				and imported_institution_mapping.name = duplicate_institution.name;
-		
-	delete 
+
+	delete
 	from application_qualification
 	where institution_id in (
 		select id
 		from duplicates);
-		
+
 	delete
 	from imported_institution_mapping
 	where id in (
 		select id
 		from duplicates);
-	
+
 	drop table duplicates;
 
 end
@@ -478,7 +478,7 @@ alter table imported_program
 ;
 
 insert into imported_program(imported_institution_id, qualification, name, custom)
-	select imported_institution_mapping.imported_institution_id, application_qualification.title, 
+	select imported_institution_mapping.imported_institution_id, application_qualification.title,
 		application_qualification.subject, 1
 	from application_qualification inner join imported_institution_mapping
 		on application_qualification.institution_id = imported_institution_mapping.id

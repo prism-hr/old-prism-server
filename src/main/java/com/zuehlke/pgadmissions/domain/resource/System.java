@@ -32,11 +32,6 @@ public class System extends Resource {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 

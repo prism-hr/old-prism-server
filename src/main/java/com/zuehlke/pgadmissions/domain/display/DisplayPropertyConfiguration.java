@@ -190,9 +190,4 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayP
         return this;
     }
 
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("displayPropertyDefinition", definition);
-    }
-
 }

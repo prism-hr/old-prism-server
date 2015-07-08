@@ -44,11 +44,6 @@ public class Institution extends ResourceParent {
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
     @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)

@@ -104,11 +104,6 @@ public class Application extends Resource {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "institution_partner_id")
-    private Institution partner;
-
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id")
     private Program program;
 

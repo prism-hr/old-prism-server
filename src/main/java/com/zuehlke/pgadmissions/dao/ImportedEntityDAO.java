@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IM
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -160,13 +161,27 @@ public class ImportedEntityDAO {
         executeBulkMerge(table, columns, inserts, updates);
     }
 
-    public <T extends ImportedEntityMapping<?>> void disableImportedEntityMappings(Institution institution, PrismImportedEntity importedEntity) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + importedEntity.getMappingClass().getSimpleName() + " " //
+    public <T extends ImportedEntityMapping<?>> void disableImportedEntityMappings(Institution institution, PrismImportedEntity prismImportedEntity) {
+        String queryString = "update " + prismImportedEntity.getMappingClass().getSimpleName() + " " //
+                + "set enabled = false " //
+                + "where institution = :institution";
+        
+        boolean simpleEntity = prismImportedEntity.getEntityClass().equals(ImportedEntitySimple.class);
+        if (simpleEntity) {
+            queryString = queryString + " and type = :type";
+        }
+        
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update " + prismImportedEntity.getMappingClass().getSimpleName() + " " //
                         + "set enabled = false " //
                         + "where institution = :institution") //
-                .setParameter("institution", institution) //
-                .executeUpdate();
+                .setParameter("institution", institution);
+        
+        if (simpleEntity) {
+            query.setParameter("type", prismImportedEntity);
+        }
+        
+        query.executeUpdate();
     }
 
     public void mergeImportedEntityMappings(String table, String columns, String inserts, String updates) {

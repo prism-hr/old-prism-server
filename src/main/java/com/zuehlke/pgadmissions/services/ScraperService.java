@@ -18,8 +18,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,6 +38,8 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.services.scoring.ImportedProgram;
 import com.zuehlke.pgadmissions.services.scoring.ScoringManager;
+import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectAreaScraping;
+import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
 
 /**
  * Created by felipe on 02/06/2015. This class will query
@@ -366,11 +366,11 @@ public class ScraperService {
         Elements container = html.getElementsByAttributeValue("itemprop", "articlebody");
         Iterator<Element> iterator = container.get(0).children().iterator();
         int count = 0;
-        ImportedSubjectArea currentRootSubject = null;
+        ImportedSubjectAreaScraping currentRootSubject = null;
         while (iterator.hasNext()) {
             Element next = (Element) iterator.next();
             if (next.tag().getName().equals("h3") && count > 0) {
-                currentRootSubject = scrappingManager.addSubjectArea(ImportedSubjectArea.readH3(next), null);
+                currentRootSubject = scrappingManager.addSubjectArea(ImportedSubjectAreaScraping.readH3(next), null);
                 // we know it's a root node
             } else if (count > 0) {
                 // it's a table
@@ -379,9 +379,9 @@ public class ScraperService {
                 while (it.hasNext()) {
                     Element e = (Element) it.next();
                     if (nestedCount == 0)
-                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrHead(e), currentRootSubject);
+                        scrappingManager.addSubjectArea(ImportedSubjectAreaScraping.readTrHead(e), currentRootSubject);
                     else
-                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrTail(e), currentRootSubject);
+                        scrappingManager.addSubjectArea(ImportedSubjectAreaScraping.readTrTail(e), currentRootSubject);
                     nestedCount++;
                 }
                 // =

@@ -172,8 +172,8 @@ public class ImportedEntityService {
         Map<Integer, T> currentMappingsLookup = Maps.newHashMap();
         List<U> currentMappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
         if (currentMappings.isEmpty()) {
-            for (T entity : (List<T>) importedEntityDAO.getImportedEntities(prismImportedEntity)) {
-                currentMappingsLookup.put(entity.index(), entity);
+            for (ImportedEntity<?, ?> entity : importedEntityDAO.getImportedEntities(prismImportedEntity)) {
+                currentMappingsLookup.put(entity.index(), (T) entity);
             }
         } else {
             for (U currentMapping : currentMappings) {

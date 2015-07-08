@@ -72,7 +72,7 @@ public class ImportedEntityDAO {
 
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution,
             PrismImportedEntity prismImportedEntity) {
-        String entityReference = prismImportedEntity.getLowerCamelName();
+        String entityReference = "importedEntitySimple";
         Criteria criteria = getEntitySelectStatement(prismImportedEntity, entityReference) //
                 .createAlias(entityReference, entityReference, JoinType.INNER_JOIN); //
 

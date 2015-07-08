@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import com.zuehlke.pgadmissions.domain.imported.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -13,23 +14,11 @@ import org.springframework.stereotype.Service;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityMappingDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaResponse;
+import uk.co.alumeni.prism.api.model.imported.response.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
@@ -57,7 +46,9 @@ public class ImportedEntityMapper {
         Class<?> entityClass = entity.getClass();
         if (ImportedAgeRange.class.equals(entityClass)) {
             return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity, institution);
-        } else if (ImportedInstitution.class.equals(entityClass)) {
+        } else if (ImportedAdvertDomicile.class.equals(entityClass)) {
+            return (U) getImportedAdvertDomicileRepresentation((ImportedAdvertDomicile) entity, institution);
+        }  else if (ImportedInstitution.class.equals(entityClass)) {
             return (U) getImportedInstitutionRepresentation((ImportedInstitution) entity, institution);
         } else if (ImportedLanguageQualificationType.class.equals(entityClass)) {
             return (U) getImportedLanguageQualificationTypeRepresentation((ImportedLanguageQualificationType) entity, institution);
@@ -93,6 +84,11 @@ public class ImportedEntityMapper {
 
         return representation;
     }
+
+    public ImportedAdvertDomicileResponse getImportedAdvertDomicileRepresentation(ImportedAdvertDomicile advertDomicile, Institution institution) {
+        return getImportedEntitySimpleRepresentation(advertDomicile, institution, ImportedAdvertDomicileResponse.class).withCurrency(advertDomicile.getCurrency());
+    }
+
 
     public ImportedEntityResponse getImportedInstitutionSimpleRepresentation(ImportedInstitution importedInstitution) {
         return getImportedEntitySimpleRepresentation(importedInstitution, null, ImportedInstitutionResponse.class);

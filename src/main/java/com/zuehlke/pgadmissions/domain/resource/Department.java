@@ -1,22 +1,6 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -24,6 +8,14 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "title" }) })
@@ -50,6 +42,13 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Column(name = "title", nullable = false)
     private String title;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "department_id")
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "department")
+    private Set<ResourceState> resourceStates = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -157,7 +156,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Project getProject() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -307,8 +305,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Set<ResourceState> getResourceStates() {
-        // TODO Auto-generated method stub
-        return null;
+        return resourceStates;
     }
 
     @Override
@@ -319,8 +316,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-        // TODO Auto-generated method stub
-        return null;
+        return resourceConditions;
     }
 
     @Override

@@ -7,6 +7,8 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.WordUtils;
+
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
@@ -341,6 +343,10 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
     public String getLowerCamelName() {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+    }
+    
+    public String getEntityClassLowerCamelName() {
+        return WordUtils.uncapitalize(getEntityClass().getSimpleName());
     }
 
     public String getUpperCamelName() {

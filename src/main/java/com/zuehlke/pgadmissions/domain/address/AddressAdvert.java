@@ -1,19 +1,11 @@
 package com.zuehlke.pgadmissions.domain.address;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
+import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "advert_address")
@@ -24,7 +16,7 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "advert_domicile_id", nullable = false)
+    @JoinColumn(name = "imported_advert_domicile_id", nullable = false)
     private ImportedAdvertDomicile domicile;
 
     @Column(name = "address_line_1", nullable = false)

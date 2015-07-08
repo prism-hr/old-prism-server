@@ -55,7 +55,7 @@ public class NotificationDAO {
     public void deleteObsoleteNotificationConfigurations(List<NotificationDefinition> definitions) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete NotificationConfiguration " //
-                        + "where notificationDefinition not in (:definitions)") //
+                        + "where definition not in (:definitions)") //
                 .setParameterList("definitions", definitions) //
                 .executeUpdate();
     }

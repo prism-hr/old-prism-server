@@ -83,7 +83,6 @@ insert into imported_age_range (name, lower_bound, upper_bound)
 
 alter table imported_age_range_mapping
 	drop primary key,
-	drop index institution_id,
 	drop index institution_id_2,
 	drop column lower_bound,
 	drop column upper_bound,

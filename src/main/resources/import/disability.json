@@ -1,36 +1,32 @@
-{
-    "disabilities": {
-        "disability": [
-            {
-                "name": "2 or more Impairments/med conditions"
-            },
-            {
-                "name": "Autistic Spectrum Disorder"
-            },
-            {
-                "name": "Disability Not Listed"
-            },
-            {
-                "name": "Hearing Impairment"
-            },
-            {
-                "name": "Learning Difficulty"
-            },
-            {
-                "name": "Mental Health Disability"
-            },
-            {
-                "name": "Mobility Difficulties"
-            },
-            {
-                "name": "No Disability"
-            },
-            {
-                "name": "Unseen Disability"
-            },
-            {
-                "name": "Visual Impairment"
-            }
-        ]
+[
+    {
+        "name": "2 or more Impairments/med conditions"
+    },
+    {
+        "name": "Autistic Spectrum Disorder"
+    },
+    {
+        "name": "Disability Not Listed"
+    },
+    {
+        "name": "Hearing Impairment"
+    },
+    {
+        "name": "Learning Difficulty"
+    },
+    {
+        "name": "Mental Health Disability"
+    },
+    {
+        "name": "Mobility Difficulties"
+    },
+    {
+        "name": "No Disability"
+    },
+    {
+        "name": "Unseen Disability"
+    },
+    {
+        "name": "Visual Impairment"
     }
-}
+]

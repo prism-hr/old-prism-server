@@ -269,9 +269,14 @@ public class SystemService {
     @Transactional
     public <T extends ImportedEntityRequest> void initializeSystemData() throws Exception {
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-            List<T> representations = importedEntityMapper.getImportedEntityRepresentations(prismImportedEntity, getContentStream(defaultImportDirectory + "/"
-                    + prismImportedEntity.getUpperCamelName() + ".json"));
-            importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
+            try {
+                logger.info("Initializing system data for: " + prismImportedEntity.name());
+                List<T> representations = importedEntityMapper.getImportedEntityRepresentations(prismImportedEntity, getContentStream(defaultImportDirectory
+                        + "/" + prismImportedEntity.getUpperCamelName().replace("Imported", "") + ".json"));
+                importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
+            } catch (IllegalArgumentException e) {
+                logger.error("Unable to open content stream", e);
+            }
         }
     }
 

@@ -55,6 +55,17 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
+    public <T extends ImportedEntity<?, ?>> List<T> getImportedEntities(PrismImportedEntity prismImportedEntity) {
+        Class<?> entityClass = prismImportedEntity.getEntityClass();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass);
+
+        if (entityClass.equals(ImportedEntitySimple.class)) {
+            criteria.add(Restrictions.eq("type", prismImportedEntity));
+        }
+
+        return (List<T>) criteria.list();
+    }
+
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntities(PrismImportedEntity prismImportedEntity) {
         Class<?> entityClass = prismImportedEntity.getEntityClass();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass);

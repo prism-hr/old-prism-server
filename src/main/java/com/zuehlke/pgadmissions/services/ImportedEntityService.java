@@ -161,6 +161,7 @@ public class ImportedEntityService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends ImportedEntity<?, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityRequest> void mergeImportedEntities(
             Institution institution, PrismImportedEntity prismImportedEntity, List<V> importDefinitions) throws Exception {
         insertImportedEntities(prismImportedEntity, importDefinitions, false);
@@ -168,13 +169,17 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedEntityMappings(institution, prismImportedEntity);
         entityService.flush();
 
-        List<U> currentMappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
-        List<U> currentMappingsFiltered = getFilteredImportedEntityMappings(currentMappings);
-
         Map<Integer, T> currentMappingsLookup = Maps.newHashMap();
-        for (U currentMappingFiltered : currentMappingsFiltered) {
-            T entity = currentMappingFiltered.getImportedEntity();
-            currentMappingsLookup.put(new Integer(entity.index()), entity);
+        List<U> currentMappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
+        if (currentMappings.isEmpty()) {
+            for (T entity : (List<T>) importedEntityDAO.getImportedEntities(prismImportedEntity)) {
+                currentMappingsLookup.put(entity.index(), entity);
+            }
+        } else {
+            for (U currentMapping : currentMappings) {
+                T entity = currentMapping.getImportedEntity();
+                currentMappingsLookup.put(new Integer(entity.index()), entity);
+            }
         }
 
         List<String> rows = Lists.newLinkedList();

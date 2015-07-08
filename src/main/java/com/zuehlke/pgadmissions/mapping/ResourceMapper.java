@@ -1,31 +1,11 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.*;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
@@ -33,29 +13,23 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.*;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepresentation.ResourceCountRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.ScopeService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
@@ -106,8 +80,8 @@ public class ResourceMapper {
 
         for (ResourceListRowDTO row : rows) {
             ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
-            representation.setResourceScope(resourceScope);
-            representation.setResourceId(row.getResourceId());
+            representation.setScope(resourceScope);
+            representation.setId(row.getResourceId());
 
             Integer institutionId = row.getInstitutionId();
             Integer departmentId = row.getDepartmentId();
@@ -118,26 +92,26 @@ public class ResourceMapper {
                 representation.setTitle(row.getInstitutionTitle());
                 representation.setLogoImage(row.getInstitutionLogoImageId());
             } else {
-                representation.setInstitution(new ResourceRepresentationSimple().withResourceId(institutionId).withTitle(row.getInstitutionTitle())
+                representation.setInstitution(new ResourceRepresentationSimple().withId(institutionId).withTitle(row.getInstitutionTitle())
                         .withLogoImage(row.getInstitutionLogoImageId()));
             }
 
             if (resourceScope.equals(DEPARTMENT)) {
                 representation.setTitle(row.getDepartmentTitle());
             } else if (departmentId != null) {
-                representation.setDepartment(new ResourceRepresentationSimple().withResourceId(departmentId).withTitle(row.getDepartmentTitle()));
+                representation.setDepartment(new ResourceRepresentationSimple().withId(departmentId).withTitle(row.getDepartmentTitle()));
             }
 
             if (resourceScope.equals(PROGRAM)) {
                 representation.setTitle(row.getProgramTitle());
             } else if (programId != null) {
-                representation.setProgram(new ResourceRepresentationSimple().withResourceId(programId).withTitle(row.getProgramTitle()));
+                representation.setProgram(new ResourceRepresentationSimple().withId(programId).withTitle(row.getProgramTitle()));
             }
 
             if (resourceScope.equals(PROJECT)) {
                 representation.setTitle(row.getProjectTitle());
             } else if (projectId != null) {
-                representation.setProject(new ResourceRepresentationSimple().withResourceId(projectId).withTitle(row.getProjectTitle()));
+                representation.setProject(new ResourceRepresentationSimple().withId(projectId).withTitle(row.getProjectTitle()));
             }
 
             representation.setCode(row.getCode());
@@ -182,8 +156,8 @@ public class ResourceMapper {
     public <T extends Resource, V extends ResourceRepresentationSimple> V getResourceRepresentation(T resource, Class<V> returnType) {
         V representation = BeanUtils.instantiate(returnType);
 
-        representation.setResourceScope(resource.getResourceScope());
-        representation.setResourceId(resource.getId());
+        representation.setScope(resource.getResourceScope());
+        representation.setId(resource.getId());
         representation.setCode(resource.getCode());
         representation.setTitle(resource.getTitle());
 
@@ -385,7 +359,7 @@ public class ResourceMapper {
         summary.setProcessingSummaries(yearRepresentations);
         return summary;
     }
-    
+
     private List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
         List<ResourceConditionRepresentation> representations = Lists.newLinkedList();
         for (ResourceCondition condition : resource.getResourceConditions()) {

@@ -1,19 +1,21 @@
 package com.zuehlke.pgadmissions.services.scrapping;
 
+import java.util.ArrayList;
+
 import org.jsoup.nodes.Element;
 
-import java.util.ArrayList;
+import com.google.common.collect.Lists;
 
 /**
  * Created by felipe on 02/07/2015.
  */
-public class ImportedSubjectArea {
+public class ImportedSubjectAreaScraping {
     private String code;
     private String name;
     private String description;
-    private ArrayList<ImportedSubjectArea> siblings;
-    private ImportedSubjectArea parent;
-    private ImportedSubjectArea child;
+    private ArrayList<ImportedSubjectAreaScraping> siblings;
+    private ImportedSubjectAreaScraping parent;
+    private ImportedSubjectAreaScraping child;
     private int level = 0;
 
     public int getLevel() {
@@ -24,24 +26,24 @@ public class ImportedSubjectArea {
         this.level = level;
     }
 
-    public ImportedSubjectArea(String code, String name, String description) {
+    public ImportedSubjectAreaScraping(String code, String name, String description) {
         this.code = code;
         this.name = name;
         this.description = description;
-        this.siblings = new ArrayList<>();
+        this.siblings = Lists.newArrayList();
         this.parent = null;
         this.child = null;
 
     }
 
-    public ImportedSubjectArea addSi(ImportedSubjectArea c) {
+    public ImportedSubjectAreaScraping addSi(ImportedSubjectAreaScraping c) {
         this.setFather(this);
         siblings.add(c);
         return c;
     }
 
-    public ImportedSubjectArea route(ImportedSubjectArea node, int level) {
-    int i = level > 0 ? level : 1;
+    public ImportedSubjectAreaScraping route(ImportedSubjectAreaScraping node, int level) {
+        int i = level > 0 ? level : 1;
         if (this.code.startsWith(node.getCode().substring(0, i))) {
             return this.addSibling(node, level);
         } else if (level == 3 && node.getCode().charAt(level) > this.getCode().charAt(level)) {
@@ -52,71 +54,71 @@ public class ImportedSubjectArea {
         }
     }
 
-    public ImportedSubjectArea addSibling(ImportedSubjectArea node, int level) {
+    public ImportedSubjectAreaScraping addSibling(ImportedSubjectAreaScraping node, int level) {
         node.setLevel(level);
         node.setFather(this.getParent());
         this.siblings.add(node);
         return node;
     }
 
-    public ImportedSubjectArea addChild(ImportedSubjectArea node, int level) {
+    public ImportedSubjectAreaScraping addChild(ImportedSubjectAreaScraping node, int level) {
         node.setLevel(level++);
         node.setFather(this);
         this.child = node;
         return node;
     }
 
-    public ArrayList<ImportedSubjectArea> getSiblings() {
+    public ArrayList<ImportedSubjectAreaScraping> getSiblings() {
         return siblings;
     }
 
-    public void setSiblings(ArrayList<ImportedSubjectArea> siblings) {
+    public void setSiblings(ArrayList<ImportedSubjectAreaScraping> siblings) {
         this.siblings = siblings;
     }
 
-    public void setParent(ImportedSubjectArea parent) {
+    public void setParent(ImportedSubjectAreaScraping parent) {
         this.parent = parent;
     }
 
-    public ImportedSubjectArea getChild() {
+    public ImportedSubjectAreaScraping getChild() {
         return child;
     }
 
-    public void setChild(ImportedSubjectArea child) {
+    public void setChild(ImportedSubjectAreaScraping child) {
         this.child = child;
     }
 
-    public ImportedSubjectArea bubbleUp(ImportedSubjectArea node, int level) {
+    public ImportedSubjectAreaScraping bubbleUp(ImportedSubjectAreaScraping node, int level) {
         return this.getParent().route(node, level--);
     }
 
-    public void setFather(ImportedSubjectArea f) {
+    public void setFather(ImportedSubjectAreaScraping f) {
         this.parent = f;
     }
 
-    public ImportedSubjectArea getParent() {
+    public ImportedSubjectAreaScraping getParent() {
         return parent;
     }
 
-    public static ImportedSubjectArea readH3(Element h3) {
+    public static ImportedSubjectAreaScraping readH3(Element h3) {
         String code = h3.text().substring(0, 1);
         String name = h3.text().substring(4, h3.text().length());
-        return new ImportedSubjectArea(code, name, name);
+        return new ImportedSubjectAreaScraping(code, name, name);
 
     }
 
-    public static ImportedSubjectArea readTrHead(Element tr) {
+    public static ImportedSubjectAreaScraping readTrHead(Element tr) {
         String code = tr.getElementsByAttributeValue("width", "5%").text();
         String name = tr.getElementsByAttributeValue("width", "24%").text();
         String description = tr.getElementsByAttributeValue("width", "68%").text();
-        return new ImportedSubjectArea(code, name, description);
+        return new ImportedSubjectAreaScraping(code, name, description);
     }
 
-    public static ImportedSubjectArea readTrTail(Element tr) {
+    public static ImportedSubjectAreaScraping readTrTail(Element tr) {
         String code = tr.children().get(2).text();
         String name = tr.children().get(3).text();
         String description = tr.children().get(4).text();
-        return new ImportedSubjectArea(code, name, description);
+        return new ImportedSubjectAreaScraping(code, name, description);
     }
 
     public String getCode() {

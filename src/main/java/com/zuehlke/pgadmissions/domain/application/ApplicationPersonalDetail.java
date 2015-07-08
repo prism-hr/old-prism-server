@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
-@Table(name = "APPLICATION_PERSONAL_DETAIL")
+@Table(name = "application_personal_detail")
 public class ApplicationPersonalDetail extends ApplicationSection {
 
     @Id

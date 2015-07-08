@@ -170,7 +170,7 @@ public class ImportedEntityDAO {
                 .setParameter("institution", institution);
 
         if (simpleEntity) {
-            query.setParameter("type", prismImportedEntity);
+            query.setParameter(prismImportedEntity.getEntityClassLowerCamelName() + ".id", prismImportedEntity);
         }
 
         query.executeUpdate();

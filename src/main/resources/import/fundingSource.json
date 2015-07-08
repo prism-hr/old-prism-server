@@ -1,24 +1,20 @@
-{
-    "fundingSources": {
-        "fundingSource": [
-            {
-                "name": "Employer"
-            },
-            {
-                "name": "Postgraduate (Research) Study Scholarship"
-            },
-            {
-                "name": "Postgraduate (Taught) Study Scholarship"
-            },
-            {
-                "name": "Scholarship"
-            },
-            {
-                "name": "Sponsor"
-            },
-            {
-                "name": "Undergraduate Study Scholarship"
-            }
-        ]
+[
+    {
+        "name": "Employer"
+    },
+    {
+        "name": "Postgraduate (Research) Study Scholarship"
+    },
+    {
+        "name": "Postgraduate (Taught) Study Scholarship"
+    },
+    {
+        "name": "Scholarship"
+    },
+    {
+        "name": "Sponsor"
+    },
+    {
+        "name": "Undergraduate Study Scholarship"
     }
-}
+]

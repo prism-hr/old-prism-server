@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
 
 @Entity
-@Table(name = "IMPORTED_SUBJECT_AREA")
+@Table(name = "imported_subject_area")
 public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubjectAreaMapping> implements TargetEntity,
         ImportedSubjectAreaDefinition<ImportedSubjectArea>, ImportedEntityResponseDefinition<Integer> {
 

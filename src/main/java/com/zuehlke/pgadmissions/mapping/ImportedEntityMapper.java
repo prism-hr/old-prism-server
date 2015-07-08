@@ -52,9 +52,9 @@ public class ImportedEntityMapper {
         return getImportedEntityRepresentation(entity, null);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity, Institution institution) {
-        Class<? extends ImportedEntity> entityClass = entity.getClass();
+        Class<?> entityClass = entity.getClass();
         if (ImportedAgeRange.class.equals(entityClass)) {
             return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity, institution);
         } else if (ImportedInstitution.class.equals(entityClass)) {
@@ -171,7 +171,7 @@ public class ImportedEntityMapper {
     }
 
     public <T extends ImportedEntityRequest> List<T> getImportedEntityRepresentations(PrismImportedEntity type, InputStream data) throws Exception {
-        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, type.getEntityClass());
+        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, type.getRequestClass());
         return objectMapper.readValue(data, collectionType);
     }
 

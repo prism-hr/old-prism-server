@@ -1,51 +1,47 @@
-{
-    "titles": {
-        "title": [
-            {
-                "name": "Captain"
-            },
-            {
-                "name": "Colonel"
-            },
-            {
-                "name": "Dr"
-            },
-            {
-                "name": "European Engineer"
-            },
-            {
-                "name": "Lady"
-            },
-            {
-                "name": "Miss"
-            },
-            {
-                "name": "Mr"
-            },
-            {
-                "name": "Mrs"
-            },
-            {
-                "name": "Ms"
-            },
-            {
-                "name": "Mx"
-            },
-            {
-                "name": "Professor"
-            },
-            {
-                "name": "Professor / Dr"
-            },
-            {
-                "name": "Reverend"
-            },
-            {
-                "name": "Sir"
-            },
-            {
-                "name": "Sister"
-            }
-        ]
+[
+    {
+        "name": "Captain"
+    },
+    {
+        "name": "Colonel"
+    },
+    {
+        "name": "Dr"
+    },
+    {
+        "name": "European Engineer"
+    },
+    {
+        "name": "Lady"
+    },
+    {
+        "name": "Miss"
+    },
+    {
+        "name": "Mr"
+    },
+    {
+        "name": "Mrs"
+    },
+    {
+        "name": "Ms"
+    },
+    {
+        "name": "Mx"
+    },
+    {
+        "name": "Professor"
+    },
+    {
+        "name": "Professor / Dr"
+    },
+    {
+        "name": "Reverend"
+    },
+    {
+        "name": "Sir"
+    },
+    {
+        "name": "Sister"
     }
-}
+]

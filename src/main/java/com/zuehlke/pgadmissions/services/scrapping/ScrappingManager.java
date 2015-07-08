@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.services.scrapping;
 
-import org.jsoup.nodes.Element;
-
 import java.util.ArrayList;
 
 /**
  * Created by felipe on 02/07/2015.
  */
 public class ScrappingManager {
-    ArrayList<ImportedSubjectArea> isa;
+    ArrayList<ImportedSubjectAreaScraping> isa;
+
     public ScrappingManager() {
-        isa = new ArrayList<ImportedSubjectArea>();
+        isa = new ArrayList<ImportedSubjectAreaScraping>();
     }
 
     @Override
@@ -20,15 +19,15 @@ public class ScrappingManager {
                 '}';
     }
 
-    public ArrayList<ImportedSubjectArea> getIsa() {
+    public ArrayList<ImportedSubjectAreaScraping> getIsa() {
         return isa;
     }
 
-    public void setIsa(ArrayList<ImportedSubjectArea> isa) {
+    public void setIsa(ArrayList<ImportedSubjectAreaScraping> isa) {
         this.isa = isa;
     }
 
-    public ImportedSubjectArea addSubjectArea(ImportedSubjectArea currentSubjectArea, ImportedSubjectArea father) {
+    public ImportedSubjectAreaScraping addSubjectArea(ImportedSubjectAreaScraping currentSubjectArea, ImportedSubjectAreaScraping father) {
         if (father == null) {
             currentSubjectArea.setLevel(0);
         }
@@ -36,8 +35,9 @@ public class ScrappingManager {
         isa.add(currentSubjectArea);
         return currentSubjectArea;
     }
-    public ImportedSubjectArea add(ImportedSubjectArea currentSubjectArea, ImportedSubjectArea father) {
-       return father.route(currentSubjectArea, currentSubjectArea.getLevel());
+
+    public ImportedSubjectAreaScraping add(ImportedSubjectAreaScraping currentSubjectArea, ImportedSubjectAreaScraping father) {
+        return father.route(currentSubjectArea, currentSubjectArea.getLevel());
     }
 
 }

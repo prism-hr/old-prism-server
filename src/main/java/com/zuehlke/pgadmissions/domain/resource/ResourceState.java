@@ -36,7 +36,7 @@ public class ResourceState extends ResourceStateDefinition {
     private Institution institution;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deparatment_id")
+    @JoinColumn(name = "department_id")
     private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)

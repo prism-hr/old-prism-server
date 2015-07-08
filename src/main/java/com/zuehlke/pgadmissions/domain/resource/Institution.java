@@ -153,14 +153,8 @@ public class Institution extends ResourceParent {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Program> programs = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "partner")
-    private Set<Program> partnerPrograms = Sets.newHashSet();
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Project> projects = Sets.newHashSet();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "partner")
-    private Set<Project> partnerProjects = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Application> applications = Sets.newHashSet();

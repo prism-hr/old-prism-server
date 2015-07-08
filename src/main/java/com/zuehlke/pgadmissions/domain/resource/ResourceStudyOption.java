@@ -22,8 +22,8 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
-@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "study_option_id" }) })
+@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "imported_study_option_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "imported_study_option_id" }) })
 public class ResourceStudyOption extends ResourceOpportunityAttribute implements
         ResourceInstanceGroupDefinition<ImportedEntitySimple, ResourceStudyOptionInstance> {
 

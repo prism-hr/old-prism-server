@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
-@Table(name = "imported_entity_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id, imported_entity_id, code" }) })
+@Table(name = "imported_entity_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_id", "code" }) })
 public class ImportedEntitySimpleMapping extends ImportedEntityMapping<ImportedEntitySimple> {
 
     @Id

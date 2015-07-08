@@ -54,8 +54,7 @@ public class ImportedEntityMapper {
 
     @SuppressWarnings("unchecked")
     public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity, Institution institution) {
-
-        Class<T> entityClass = (Class<T>) entity.getClass();
+        Class<? extends ImportedEntity> entityClass = entity.getClass();
         if (ImportedAgeRange.class.equals(entityClass)) {
             return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity, institution);
         } else if (ImportedInstitution.class.equals(entityClass)) {

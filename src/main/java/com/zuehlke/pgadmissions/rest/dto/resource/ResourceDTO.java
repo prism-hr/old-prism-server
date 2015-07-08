@@ -4,33 +4,33 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceDTO {
 
-    private PrismScope resourceScope;
+    private PrismScope scope;
 
-    private Integer resourceId;
+    private Integer id;
 
-    public PrismScope getResourceScope() {
-        return resourceScope;
+    public PrismScope getScope() {
+        return scope;
     }
 
-    public void setResourceScope(PrismScope resourceScope) {
-        this.resourceScope = resourceScope;
+    public void setScope(PrismScope scope) {
+        this.scope = scope;
     }
 
-    public Integer getResourceId() {
-        return resourceId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public ResourceDTO withResourceScope(PrismScope resourceScope) {
-        this.resourceScope = resourceScope;
+    public ResourceDTO withScope(PrismScope resourceScope) {
+        this.scope = resourceScope;
         return this;
     }
 
-    public ResourceDTO withResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
+    public ResourceDTO withId(Integer resourceId) {
+        this.id = resourceId;
         return this;
     }
 

@@ -23,7 +23,7 @@ public class ResourceCreatorUtils {
         if (parentResourceDTO == null) {
             parentResource = resourceService.createParentResource(user, newResource.getNewParentResource());
         } else {
-            parentResource = (U) resourceService.getById(parentResourceDTO.getResourceScope(), parentResourceDTO.getResourceId());
+            parentResource = (U) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
         }
         return parentResource;
     }

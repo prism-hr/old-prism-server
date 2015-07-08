@@ -7,9 +7,13 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import java.util.List;
 import java.util.Set;
 
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedAdvertDomicileRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedAgeRangeRequest;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedLanguageQualificationTypeRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
@@ -36,8 +40,6 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMappi
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedAdvertDomicileTransformer;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedAgeRangeTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedInstitutionTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedLanguageQualificationTypeTransformer;
@@ -49,11 +51,11 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimple
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtractor;
 
-public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.enums.PrismImportedEntity> {
+public enum PrismImportedEntity {
 
     IMPORTED_ADVERT_DOMICILE(new PrismImportedEntityImportDefinition() //
-            .withEntityClass(ImportedAdvertDomicile.class) //
-            .withTransformerClass(ImportedAdvertDomicileTransformer.class), //
+            .withImportClass(ImportedAdvertDomicileRequest.class) //
+            .withEntityClass(ImportedAdvertDomicile.class), //
             new PrismImportedEntityImportInsertDefinition() //
                     .withTable("imported_advert_domicile") //
                     .withPivotColumn("name") //
@@ -65,8 +67,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             ImportedAdvertDomicileResponse.class, //
             null, true, false), //
     IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition() //
-            .withEntityClass(ImportedAgeRange.class) //
-            .withTransformerClass(ImportedAgeRangeTransformer.class), //
+            .withImportClass(ImportedAgeRangeRequest.class) //
+            .withEntityClass(ImportedAgeRange.class), //
             new PrismImportedEntityImportInsertDefinition() //
                     .withTable("imported_age_range")
                     .withPivotColumn("name") //
@@ -111,6 +113,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             new String[] { "application_personal_detail.gender_id" }, true, false), //
     // TODO: add as chart filter
     IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition() //
+            .withImportClass(uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest.class)
             .withEntityClass(ImportedInstitution.class) //
             .withTransformerClass(ImportedInstitutionTransformer.class), //
             new PrismImportedEntityImportInsertDefinition() //
@@ -127,6 +130,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             ImportedEntityResponse.class, //
             new String[] { "application_qualification.institution_id" }, false, true),
     IMPORTED_LANGUAGE_QUALIFICATION_TYPE(new PrismImportedEntityImportDefinition() //
+            .withImportClass(ImportedLanguageQualificationTypeRequest.class) //
             .withEntityClass(ImportedLanguageQualificationType.class) //
             .withTransformerClass(ImportedLanguageQualificationTypeTransformer.class),
             new PrismImportedEntityImportInsertDefinition() //
@@ -161,6 +165,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             new String[] { "application_program_detail.opportunity_type_id" }, true, false), //
     // TODO: add as chart filter
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition() //
+            .withImportClass(ImportedProgramRequest.class) //
             .withEntityClass(ImportedProgram.class) //
             .withTransformerClass(ImportedProgramTransformer.class), //
             new PrismImportedEntityImportInsertDefinition() //
@@ -200,6 +205,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             new String[] { "application_program_detail.study_option_id" }, true, false), //
     // TODO: add as chart filter
     IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition() //
+            .withImportClass(ImportedSubjectAreaRequest.class) //
             .withEntityClass(ImportedSubjectArea.class) //
             .withTransformerClass(ImportedSubjectAreaTransformer.class), //
             new PrismImportedEntityImportInsertDefinition() //
@@ -262,13 +268,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
         this.extensibleImport = extensibleImport;
     }
 
-    @Override
-    public uk.co.alumeni.prism.enums.PrismImportedEntity getDefinition() {
-        return uk.co.alumeni.prism.enums.PrismImportedEntity.valueOf(name());
-    }
-
-    public Class<? extends ImportedEntityRequest> getRequestClass() {
-        return getDefinition().getRequestClass();
+    public Class<? extends ImportedEntityRequest> getImportClass() {
+        return importDefinition.getImportClass();
     }
 
     public Class<? extends ImportedEntity<?, ?>> getEntityClass() {
@@ -349,9 +350,15 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
     private static class PrismImportedEntityImportDefinition {
 
+        private Class<? extends ImportedEntityRequest> importClass;
+
         private Class<? extends ImportedEntity<?, ?>> entityClass;
 
         private Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> transformerClass;
+
+        public Class<? extends ImportedEntityRequest> getImportClass() {
+            return importClass;
+        }
 
         public Class<? extends ImportedEntity<?, ?>> getEntityClass() {
             return entityClass;
@@ -359,6 +366,12 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
         public Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> getTransformerClass() {
             return transformerClass;
+        }
+
+        public PrismImportedEntityImportDefinition withImportClass(
+                Class<? extends ImportedEntityRequest> importClass) {
+            this.importClass = importClass;
+            return this;
         }
 
         public PrismImportedEntityImportDefinition withEntityClass(Class<? extends ImportedEntity<?, ?>> entityClass) {
@@ -457,6 +470,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
     private static PrismImportedEntityImportDefinition getImportedEntitySimpleImportDefinition() {
         return new PrismImportedEntityImportDefinition() //
+                .withImportClass(ImportedEntityRequest.class) //
                 .withEntityClass(ImportedEntitySimple.class);
     }
 

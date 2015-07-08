@@ -18,6 +18,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,7 +38,6 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.services.scoring.ImportedProgram;
 import com.zuehlke.pgadmissions.services.scoring.ScoringManager;
 
@@ -141,8 +142,9 @@ public class ScraperService {
                                                      // leading to infinite loop
             return;
         }
+        int programCounter = 0;
         while (it.hasNext()) {
-
+            programCounter++;
             Element element = it.next();
             if (element.id().startsWith("result-")) {
                 // we are now standing on a program for a given institution
@@ -195,6 +197,7 @@ public class ScraperService {
             }
         }
         page++;
+        log.info("***["+currentInstitution+"] => ["+ programCounter+"]***");
         iterateProgramResultSet(rootElement, doc, page, filterUrl, currentInstitution);
     }
 
@@ -274,7 +277,7 @@ public class ScraperService {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(new File("/tmp/programsUK-" + yearOfInterest + ".xml"));
+        StreamResult result = new StreamResult(new File("programsUK-" + yearOfInterest + ".xml"));
         // actual write to disk
         transformer.transform(source, result);
     }
@@ -356,38 +359,38 @@ public class ScraperService {
 
     }
 
-// FIXME Scrapping Manager class is not there
-//    public void importSubjectAreas() throws IOException {
-//        ScrappingManager scrappingManager = new ScrappingManager();
-//        Document html = getHtml(URL_SUBJECT_AREAS);
-//        Elements container = html.getElementsByAttributeValue("itemprop", "articlebody");
-//        Iterator<Element> iterator = container.get(0).children().iterator();
-//        int count = 0;
-//        ImportedSubjectArea currentRootSubject = null;
-//        while (iterator.hasNext()) {
-//            Element next = (Element) iterator.next();
-//            if (next.tag().getName().equals("h3") && count > 0) {
-//                currentRootSubject = scrappingManager.addSubjectArea(ImportedSubjectArea.readH3(next), null);
-//                // we know it's a root node
-//            } else if (count > 0) {
-//                // it's a table
-//                int nestedCount = 0;
-//                Iterator<Element> it = next.children().get(0).children().iterator();
-//                while (it.hasNext()) {
-//                    Element e = (Element) it.next();
-//                    if (nestedCount == 0)
-//                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrHead(e), currentRootSubject);
-//                    else
-//                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrTail(e), currentRootSubject);
-//                    nestedCount++;
-//                }
-//                // =
-//                // next.children().get(0).children().get(0).getElementsByTag("tr");
-//            }
-//            // Elements e = next.getElementsByClass("he");
-//            count++;
-//        }
-//        return;
-//    }
+//FIXME Scrapping Manager class is not there
+    public void importSubjectAreas() throws IOException {
+        ScrappingManager scrappingManager = new ScrappingManager();
+        Document html = getHtml(URL_SUBJECT_AREAS);
+        Elements container = html.getElementsByAttributeValue("itemprop", "articlebody");
+        Iterator<Element> iterator = container.get(0).children().iterator();
+        int count = 0;
+        ImportedSubjectArea currentRootSubject = null;
+        while (iterator.hasNext()) {
+            Element next = (Element) iterator.next();
+            if (next.tag().getName().equals("h3") && count > 0) {
+                currentRootSubject = scrappingManager.addSubjectArea(ImportedSubjectArea.readH3(next), null);
+                // we know it's a root node
+            } else if (count > 0) {
+                // it's a table
+                int nestedCount = 0;
+                Iterator<Element> it = next.children().get(0).children().iterator();
+                while (it.hasNext()) {
+                    Element e = (Element) it.next();
+                    if (nestedCount == 0)
+                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrHead(e), currentRootSubject);
+                    else
+                        scrappingManager.addSubjectArea(ImportedSubjectArea.readTrTail(e), currentRootSubject);
+                    nestedCount++;
+                }
+                // =
+                // next.children().get(0).children().get(0).getElementsByTag("tr");
+            }
+            // Elements e = next.getElementsByClass("he");
+            count++;
+        }
+        return;
+    }
 
 }

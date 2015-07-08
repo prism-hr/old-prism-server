@@ -59,11 +59,10 @@ public class ScraperController {
         scraperService.generateScoringForProgramsAndSubjectAreas();
     }
 
-// FIXME dependency on missing class in service
-//    @ResponseBody
-//    @RequestMapping(value= "/importSubjectAreas", method = RequestMethod.POST)
-//    public void importSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
-//        scraperService.importSubjectAreas();
-//    }
+    @ResponseBody
+    @RequestMapping(value= "/importSubjectAreas", method = RequestMethod.POST)
+    public void importSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
+        scraperService.importSubjectAreas();
+    }
 
 }

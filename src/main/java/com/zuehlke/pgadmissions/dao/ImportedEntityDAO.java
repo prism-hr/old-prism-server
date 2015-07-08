@@ -163,7 +163,9 @@ public class ImportedEntityDAO {
 
         boolean simpleEntity = prismImportedEntity.getEntityClass().equals(ImportedEntitySimple.class);
         if (simpleEntity) {
-            queryString = queryString + " and " + prismImportedEntity.getEntityClassLowerCamelName() + ".id = :type";
+            queryString = queryString + " and " + prismImportedEntity.getEntityClassLowerCamelName() + " in (" //
+                    + "from " + prismImportedEntity.getEntityClassUpperCamelName() + " " //
+                    + "where type = :type)";
         }
 
         Query query = sessionFactory.getCurrentSession().createQuery(queryString)

@@ -98,9 +98,8 @@ public class ApplicationDAO {
 
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("applicationExport.exportReference")) //
+                .setProjection(Projections.property("export.exportReference")) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNotNull("applicationExport.exportReference")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
@@ -133,15 +132,17 @@ public class ApplicationDAO {
                         .add(Projections.property("address.addressTown"), "addressTown") //
                         .add(Projections.property("address.addressRegion"), "addressRegion") //
                         .add(Projections.property("address.addressCode"), "addressCode") //
-                        .add(Projections.property("domicile.code"), "addressDomicile") //
+                        .add(Projections.groupProperty("domicileMapping.code"), "addressDomicile") //
                         .add(Projections.property("comment"), "comment")) //
                 .createAlias("address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
+                .createAlias("domicile.mappings", "domicileMapping", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
                 .addOrder(Order.desc("comment.applicationRating")) //
                 .addOrder(Order.asc("comment.createdTimestamp")) //
                 .addOrder(Order.asc("comment.id")) //
+                .addOrder(Order.desc("domicileMapping.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReferenceDTO.class)) //
                 .list();
     }

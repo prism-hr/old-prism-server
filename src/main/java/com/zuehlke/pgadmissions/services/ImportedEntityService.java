@@ -110,7 +110,7 @@ public class ImportedEntityService {
             PrismImportedEntity prismImportedEntity) {
         List<T> entities = importedEntityDAO.getEnabledImportedEntitiesWithMappings(institution, prismImportedEntity);
         if (entities.isEmpty()) {
-            entities = importedEntityDAO.getEnabledImportedEntities(institution, prismImportedEntity);
+            entities = importedEntityDAO.getEnabledImportedEntities(prismImportedEntity);
         }
         return entities;
     }
@@ -118,7 +118,7 @@ public class ImportedEntityService {
     public List<ImportedInstitution> getEnabledImportedInstitutions(Institution institution, ImportedEntitySimple domicile) {
         List<ImportedInstitution> institutions = importedEntityDAO.getEnabledImportedInstitutionsWithMappings(institution, domicile);
         if (institutions.isEmpty()) {
-            institutions = importedEntityDAO.getEnabledImportedInstitutions(institution, domicile);
+            institutions = importedEntityDAO.getEnabledImportedInstitutions(domicile);
         }
         return institutions;
     }
@@ -126,7 +126,7 @@ public class ImportedEntityService {
     public List<ImportedProgram> getEnabledImportedPrograms(Institution institution, ImportedInstitution importedInstitution) {
         List<ImportedProgram> programs = importedEntityDAO.getEnabledImportedProgramsWithMappings(institution, importedInstitution);
         if (programs.isEmpty()) {
-            programs = importedEntityDAO.getEnabledImportedPrograms(institution, importedInstitution);
+            programs = importedEntityDAO.getEnabledImportedPrograms(importedInstitution);
         }
         return programs;
     }

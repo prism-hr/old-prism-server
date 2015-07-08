@@ -1,19 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 public class ResourceRepresentationExtended extends ResourceRepresentationStandard {
 
-    private Set<ActionRepresentationExtended> actions = Sets.newLinkedHashSet();
+    private List<ActionRepresentationExtended> actions;
 
     private TimelineRepresentation timeline;
 
@@ -23,12 +20,12 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     private List<ResourceConditionRepresentation> conditions;
 
-    public Set<ActionRepresentationExtended> getActions() {
+    public List<ActionRepresentationExtended> getActions() {
         return actions;
     }
 
-    public void setActions(Collection<ActionRepresentationExtended> actions) {
-        actions.addAll(actions);
+    public void setActions(List<ActionRepresentationExtended> actions) {
+        this.actions = actions;
     }
 
     public TimelineRepresentation getTimeline() {

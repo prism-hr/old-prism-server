@@ -1,263 +1,367 @@
-alter table imported_entity_feed
-	drop foreign key program_feed_institution_fk,
-	add foreign key (institution_id) references institution (id)
+delete
+from imported_entity_feed
+where location like "xml/defaultEntities%"
+	and !(institution_id = 5243 
+		and imported_entity_type in("INSTITUTION", "STUDY_OPTION"))
 ;
 
-alter table address
-	change column domicile_id imported_domicile_id int(10) unsigned
-;
-
-alter table application_funding
-	change column funding_source_id imported_funding_source_id int(10) unsigned
-;
-
-alter table application_personal_detail
-	change column title_id imported_title_id int(10) unsigned
+update application_personal_detail inner join application
+	on application_personal_detail.id = application.application_personal_detail_id
+inner join imported_age_range_mapping
+	on application_personal_detail.age_range_id = imported_age_range_mapping.id
+set application_personal_detail.age_range_id = imported_age_range_mapping.imported_age_range_id
 ;
 
 alter table application_personal_detail
-	change column gender_id imported_gender_id int(10) unsigned
+	add foreign key (age_range_id) references imported_age_range (id)
 ;
 
-alter table application_personal_detail
-	change column country_id imported_country_id int(10) unsigned
-;
-
-alter table application_personal_detail
-	change column ethnicity_id imported_ethnicity_id int(10) unsigned
-;
-
-alter table application_personal_detail
-	change column disability_id imported_disability_id int(10) unsigned
-;
-
-alter table application_personal_detail
-	change column domicile_id imported_domicile_id int(10) unsigned
-;
-
-alter table application_personal_detail
-	change column nationality_id1 imported_nationality_id1 int(10) unsigned
-;
-
-alter table application_personal_detail
-	change column nationality_id2 imported_nationality_id2 int(10) unsigned
-;
-
-alter table application_program_detail
-	change column opportunity_type_id imported_opportunity_type_id int(10) unsigned not null
-;
-
-alter table application_program_detail
-	change column study_option_id imported_study_option_id int(10) unsigned
-;
-
-alter table application_program_detail
-	change column referral_source_id imported_referral_source_id int(10) unsigned not null
-;
-
-alter table comment
-	change column application_rejection_reason_id imported_rejection_reason_id int(10) unsigned
-;
-
-alter table imported_entity_mapping
-	change column imported_entity_id imported_entity_id int(10) unsigned not null
-;
-
-alter table imported_program
-	change column imported_qualification_type_id imported_qualification_type_id int(10) unsigned
-;
-
-alter table program
-	change column opportunity_type_id imported_opportunity_type_id int(10) unsigned not null
-;
-
-alter table project
-	change column opportunity_type_id imported_opportunity_type_id int(10) unsigned not null
-;
-
-alter table resource_study_option
-	change column study_option_id imported_study_option_id int(10) unsigned not null
-;
-
-alter table imported_entity_mapping
-	drop index institution_id_2
-;
-
-alter table imported_institution
-	drop index domicile_id_2
+delete 
+from imported_age_range_mapping
 ;
 
 alter table imported_age_range_mapping
-	modify code varchar(50)
-;
-
-alter table imported_entity_mapping
-	modify code varchar(50)
-;
-
-alter table imported_age_range
-	add column enabled int(1) unsigned not null default 1,
-	add index (enabled)
-;
-
-alter table imported_age_range
-	modify column enabled int(1) unsigned not null
-;
-
-alter table imported_entity
-	add column enabled int(1) unsigned not null default 1,
-	add index (enabled)
-;
-
-alter table imported_entity
-	modify column enabled int(1) unsigned not null
-;
-
-alter table imported_institution
-	add column enabled int(1) unsigned not null default 1,
-	add index (enabled)
-;
-
-alter table imported_institution
-	modify column enabled int(1) unsigned not null
-;
-
-alter table imported_language_qualification_type
-	add column enabled int(1) unsigned not null default 1,
-	add index (enabled)
-;
-
-alter table imported_language_qualification_type
-	modify column enabled int(1) unsigned not null
-;
-
-alter table imported_language_qualification_type_mapping
-	modify column code varchar(50)
-;
-
-alter table imported_program
-	add column enabled int(1) unsigned not null default 1,
-	add index (enabled)
-;
-
-alter table imported_program
-	modify column enabled int(1) unsigned not null
-;
-
-alter table imported_subject_area
-	add column enabled int(1) unsigned not null default 1,
-	add index (enabled)
-;
-
-alter table imported_subject_area
-	modify column enabled int(1) unsigned not null
-;
-
-alter table imported_subject_area_mapping
+	drop index id,
 	drop index institution_id,
+	drop index institution_id_2,
 	add index (institution_id, enabled)
 ;
 
-alter table imported_institution
-	change column domicile_id imported_domicile_id int(10) unsigned not null,
-	add foreign key (imported_domicile_id) references imported_entity (id)
+alter table address
+	drop foreign key address_ibfk_1
 ;
 
-alter table imported_language_qualification_type_mapping
-	drop foreign key imported_language_qualification_type_mapping_ibfk_2
+update address inner join imported_entity_mapping
+	on address.domicile_id = imported_entity_mapping.id
+set domicile_id = imported_entity_mapping.imported_entity_id
 ;
 
-alter table application_language_qualification
-	change column language_qualification_type_id imported_language_qualification_type_id int(10) unsigned not null,
-	add foreign key (imported_language_qualification_type_id) references imported_language_qualification_type (id)
+alter table address
+	add foreign key (domicile_id) references imported_entity (id)
 ;
 
-delete
-from imported_program_mapping
+alter table application_funding
+	drop foreign key application_funding_ibfk_2
 ;
 
-alter table imported_program
-	add column code varchar(50) after imported_qualification_type_id,
-	add unique index (code)
+update application_funding inner join imported_entity_mapping
+	on application_funding.funding_source_id = imported_entity_mapping.id
+set funding_source_id = imported_entity_mapping.imported_entity_id
 ;
 
-alter table imported_subject_area
-	change column description name varchar(255) not null
+alter table application_funding
+	add foreign key (funding_source_id) references imported_entity (id)
 ;
 
-alter table imported_program
-	add column level varchar(255) after code,
-	change column qualification type varchar(255),
-	add index (imported_institution_id, level, type, name)
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_10
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.gender_id = imported_entity_mapping.id
+set gender_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (gender_id) references imported_entity (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_3
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.country_id = imported_entity_mapping.id
+set country_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (country_id) references imported_entity (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_4
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.disability_id = imported_entity_mapping.id
+set disability_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (disability_id) references imported_entity (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_5
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.ethnicity_id = imported_entity_mapping.id
+set ethnicity_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (ethnicity_id) references imported_entity (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_6
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.domicile_id = imported_entity_mapping.id
+set domicile_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (domicile_id) references imported_entity (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_7
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.nationality_id1 = imported_entity_mapping.id
+set nationality_id1 = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (nationality_id1) references imported_entity (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_8
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.nationality_id2 = imported_entity_mapping.id
+set nationality_id2 = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (nationality_id2) references imported_entity (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_9
+;
+
+update application_personal_detail inner join imported_entity_mapping
+	on application_personal_detail.title_id = imported_entity_mapping.id
+set title_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_personal_detail
+	add foreign key (title_id) references imported_entity (id)
+;
+
+alter table application_program_detail
+	drop foreign key application_program_detail_ibfk_2
+;
+
+update application_program_detail inner join imported_entity_mapping
+	on application_program_detail.referral_source_id = imported_entity_mapping.id
+set referral_source_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_program_detail
+	add foreign key (referral_source_id) references imported_entity (id)
+;
+
+alter table application_program_detail
+	drop foreign key application_program_detail_ibfk_3
+;
+
+update application_program_detail inner join imported_entity_mapping
+	on application_program_detail.study_option_id = imported_entity_mapping.id
+set study_option_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_program_detail
+	add foreign key (study_option_id) references imported_entity (id)
+;
+
+alter table application_program_detail
+	drop foreign key application_program_detail_ibfk_4
+;
+
+update application_program_detail inner join imported_entity_mapping
+	on application_program_detail.opportunity_type_id = imported_entity_mapping.id
+set opportunity_type_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table application_program_detail
+	add foreign key (opportunity_type_id) references imported_entity (id)
 ;
 
 alter table comment
-	change column imported_rejection_reason_id application_imported_rejection_reason_id int(10) unsigned
+	drop foreign key comment_ibfk_14
 ;
 
-alter table imported_program
-	change column type qualification varchar(255)
+update comment inner join imported_entity_mapping
+	on comment.application_rejection_reason_id = imported_entity_mapping.id
+set application_rejection_reason_id = imported_entity_mapping.imported_entity_id
 ;
 
-update imported_entity inner join imported_entity_mapping
-	on imported_entity.id = imported_entity_mapping.imported_entity_id
-set imported_entity.name = imported_entity_mapping.code, 
-	imported_entity_mapping.code = imported_entity.name
-where imported_entity_type in ("STUDY_OPTION", "OPPORTUNITY_TYPE")
+alter table comment
+	add foreign key (application_rejection_reason_id) references imported_entity (id)
+;
+
+alter table program
+	drop foreign key program_ibfk_10
+;
+
+update program inner join imported_entity_mapping
+	on program.opportunity_type_id = imported_entity_mapping.id
+set opportunity_type_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table program
+	add foreign key (opportunity_type_id) references imported_entity (id)
+;
+
+alter table project
+	drop foreign key project_ibfk_9
+;
+
+update project inner join imported_entity_mapping
+	on project.opportunity_type_id = imported_entity_mapping.id
+set opportunity_type_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table project
+	add foreign key (opportunity_type_id) references imported_entity (id)
+;
+
+alter table resource_study_option
+	drop foreign key resource_study_option_ibfk_2
+;
+
+update resource_study_option inner join imported_entity_mapping
+	on resource_study_option.study_option_id = imported_entity_mapping.id
+set study_option_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table resource_study_option
+	add foreign key (study_option_id) references imported_entity (id)
+;
+
+alter table imported_entity_feed
+	add column map_for_export int(1) unsigned not null default 0 after location
+;
+
+alter table imported_entity_feed
+	modify column map_for_export int(1) unsigned not null
+;
+
+update imported_entity_feed
+set map_for_export = 1
+where institution_id = 5243
 ;
 
 delete imported_entity_mapping.*
 from imported_entity_mapping inner join imported_entity
 	on imported_entity_mapping.imported_entity_id = imported_entity.id
-left join imported_entity_feed
-	on imported_entity_mapping.institution_id = imported_entity_feed.institution_id
-		and imported_entity.imported_entity_type = imported_entity_feed.imported_entity_type
-where imported_entity_feed.id is null
-;
-
-alter table imported_age_range_mapping
-	drop index institution_id,
-	add unique index (institution_id, imported_age_range_id, code),
-	add index (institution_id, enabled)
+where imported_entity_mapping.institution_id != 5243
+	and !(imported_entity_mapping.institution_id = 6856 
+		and imported_entity.imported_entity_type in ("REFERRAL_SOURCE", "FUNDING_SOURCE",
+			"REJECTION_REASON", "TITLE"))
 ;
 
 alter table imported_entity_mapping
 	drop index institution_id,
-	add unique index (institution_id, imported_entity_id, code),
+	drop index id,
+	drop column imported_entity_type,
 	add index (institution_id, enabled)
+;
+
+alter table imported_institution_subject_area
+	drop foreign key imported_institution_subject_area_ibfk_1
+;
+
+update imported_institution_subject_area inner join imported_entity_mapping
+	on imported_institution_subject_area.imported_institution_id = imported_entity_mapping.id
+set imported_institution_id = imported_entity_mapping.imported_entity_id
+;
+
+alter table imported_institution_subject_area
+	add foreign key (imported_institution_id) references imported_institution (id)
+;
+
+delete
+from imported_institution_mapping
+where institution_id != 5243
+;
+
+delete
+from imported_institution_mapping
+where code is null
+	or code like "PRISM%"
+	or code like "CUST%"
+;
+
+alter table imported_institution
+	drop index imported_domicile_id,
+	change column imported_domicile_id domicile_id int(10) unsigned not null,
+	add index (domicile_id),
+	add column ucas_id varchar(10),
+	add column facebook_id varchar(20),
+	add unique index (ucas_id),
+	add unique index (facebook_id),
+	drop column custom
 ;
 
 alter table imported_institution_mapping
 	drop index institution_id,
-	add unique index (institution_id, imported_institution_id, code),
-	add index (institution_id, enabled)
+	drop index institution_id_2,
+	add index (institution_id, enabled),
+	drop index id
 ;
 
 alter table imported_language_qualification_type_mapping
 	drop index institution_id,
-	add unique index (institution_id, imported_language_qualification_type_id, code),
-	add index (institution_id, enabled)
+	drop index institution_id_2,
+	add index (institution_id, enabled),
+	drop index id
+;
+
+update application_language_qualification inner join imported_language_qualification_type_mapping
+	on application_language_qualification.language_qualification_type_id = imported_language_qualification_type_mapping.id
+set application_language_qualification.language_qualification_type_id = imported_language_qualification_type_mapping.imported_language_qualification_type_id
+;
+
+alter table imported_language_qualification_type_mapping
+	add foreign key (imported_language_qualification_type_id) references imported_language_qualification_type (id)
+;
+
+delete
+from imported_language_qualification_type_mapping
+where institution_id != 5243
+;
+
+delete
+from application_qualification
+where program_id is null
+;
+
+update application_qualification inner join imported_program_mapping
+	on application_qualification.program_id = imported_program_mapping.id
+set application_qualification.program_id = imported_program_mapping.imported_program_id
+;
+
+alter table application_qualification
+	add foreign key (program_id)  references imported_program (id)
+;
+
+alter table imported_program
+	drop index imported_institution_id_2,
+	drop column custom
 ;
 
 alter table imported_program_mapping
 	drop index institution_id,
-	add unique index (institution_id, imported_program_id, code),
+	drop index institution_id_2,
 	add index (institution_id, enabled)
-;
-
-alter table imported_subject_area_mapping
-	drop index institution_id,
-	add unique index (institution_id, imported_subject_area_id, code),
-	add index (institution_id, enabled)
-;
-
-drop table advert_competency
-;
-
-alter table advert_competence
-	drop primary key,
-	add column id int(10) unsigned not null auto_increment first,
-	add primary key (id),
-	add unique index (advert_id, competence_id),
-	add column importance decimal(3,2) unsigned not null
 ;

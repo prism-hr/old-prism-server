@@ -1,27 +1,8 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
+import com.zuehlke.pgadmissions.domain.advert.*;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
@@ -31,15 +12,18 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.*;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 
 @Service
 @Transactional
@@ -92,12 +76,10 @@ public class AdvertMapper {
     }
 
     public List<AdvertRepresentation> getRecommendedAdvertRepresentations(Application application) {
-        List<AdvertRepresentation> representations = Lists.newLinkedList();
         List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(application.getUser());
-        for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
-            representations.add(getAdvertRepresentation(advertRecommendation.getAdvert()));
-        }
-        return representations;
+        return advertRecommendations.stream()
+                .map(advertRecommendation -> getAdvertRepresentation(advertRecommendation.getAdvert()))
+                .collect(Collectors.toList());
     }
 
     private AdvertFinancialDetailsRepresentation getAdvertFinancialDetailsRepresentation(Advert advert) {
@@ -166,7 +148,7 @@ public class AdvertMapper {
                 .withDepartments(getAdvertTargetRepresentations(targets.getDepartments())).withPrograms(getAdvertTargetRepresentations(targets.getPrograms()))
                 .withSubjectAreas(getAdvertTargetRepresentations(targets.getSubjectAreas()));
     }
-    
+
     private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Set<AdvertCompetence> competences) {
         List<AdvertCompetenceRepresentation> representations = Lists.newLinkedList();
         for (AdvertCompetence competence : competences) {

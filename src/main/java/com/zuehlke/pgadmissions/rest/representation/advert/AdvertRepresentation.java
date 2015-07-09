@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class AdvertRepresentation {
 
@@ -28,7 +28,7 @@ public class AdvertRepresentation {
     private String summary;
 
     private String description;
-    
+
     private Integer backgroundImage;
 
     private String homepage;
@@ -235,7 +235,7 @@ public class AdvertRepresentation {
     }
 
     public AdvertRepresentation withInstitution(ResourceRepresentationSimple institution) {
-        this.resource = institution;
+        this.institution = institution;
         return this;
     }
 
@@ -268,7 +268,7 @@ public class AdvertRepresentation {
         this.description = description;
         return this;
     }
-    
+
     public AdvertRepresentation withBackgroundImage(Integer backgroundImage) {
         this.backgroundImage = backgroundImage;
         return this;

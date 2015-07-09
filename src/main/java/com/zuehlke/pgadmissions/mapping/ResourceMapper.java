@@ -187,14 +187,14 @@ public class ResourceMapper {
 
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
 
-        for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
-            if (!parentScope.equals(SYSTEM)) {
-                Resource parentResource = resource.getEnclosingResource(parentScope);
-                if (parentResource != null) {
-                    representation.setParentResource(getResourceRepresentationSimple(parentResource));
-                }
-            }
-        }
+        scopeService.getParentScopesDescending(resource.getResourceScope()).stream()
+                .filter(parentScope -> !parentScope.equals(SYSTEM))
+                .forEach(parentScope -> {
+                    Resource parentResource = resource.getEnclosingResource(parentScope);
+                    if (parentResource != null) {
+                        representation.setParentResource(getResourceRepresentationSimple(parentResource));
+                    }
+                });
 
         representation.setState(stateMapper.getStateRepresentationSimple(resource.getState()));
         representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));
@@ -206,8 +206,8 @@ public class ResourceMapper {
         representation.setCreatedTimestamp(resource.getCreatedTimestamp());
         representation.setUpdatedTimestamp(updatedTimestamp);
 
-        setRaisesUrgentFlag((ResourceRepresentationStandard) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
-        setRaisesUpdateFlag((ResourceRepresentationStandard) representation, baseline, updatedTimestamp);
+        setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
+        setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
         representation.setActions(actions);
         representation.setTimeline(commentMapper.getTimelineRepresentation(resource, currentUser));
@@ -219,8 +219,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource,
-            Class<V> returnType) throws Exception {
+    public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(
+            T resource, Class<V> returnType) throws Exception {
         V representation = getResourceRepresentationExtended(resource, returnType);
 
         representation.setAdvert(advertMapper.getAdvertRepresentation(resource.getAdvert()));
@@ -230,8 +230,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource,
-            Class<V> returnType) throws Exception {
+    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(
+            T resource, Class<V> returnType) throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
 
         representation.setStudyOptions(resourceService.getStudyOptions(resource));
@@ -241,15 +241,16 @@ public class ResourceMapper {
 
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentationClient> V getResourceParentRepresentationClient(T resource, Class<V> returnType)
+    public <T extends ResourceParent, V extends ResourceParentRepresentationClient> V getResourceParentRepresentationClient(
+            T resource, Class<V> returnType)
             throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
         representation.setResourceSummary(getResourceSummaryRepresentation(resource));
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource,
-            Class<V> returnType) throws Exception {
+    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(
+            T resource, Class<V> returnType) throws Exception {
         V representation = getResourceOpportunityRepresentation(resource, returnType);
         representation.setResourceSummary(getResourceSummaryRepresentation(resource));
         return representation;
@@ -317,7 +318,7 @@ public class ResourceMapper {
     }
 
     public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                          List<ResourceReportFilterPropertyDTO> constraints) {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
@@ -391,12 +392,12 @@ public class ResourceMapper {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                         List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
     public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                                                List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -406,7 +407,7 @@ public class ResourceMapper {
     }
 
     public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                                                                List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {

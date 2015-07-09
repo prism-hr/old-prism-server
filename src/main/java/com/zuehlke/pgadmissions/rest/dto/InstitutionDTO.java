@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 
 public class InstitutionDTO extends ResourceParentDTO {
-    
-    private DocumentDTO logoImage;
+
+    private FileDTO logoImage;
 
     @NotNull
     private String currency;
@@ -18,12 +18,12 @@ public class InstitutionDTO extends ResourceParentDTO {
 
     @NotNull
     private BigDecimal minimumWage;
-    
-    public DocumentDTO getLogoImage() {
+
+    public FileDTO getLogoImage() {
         return logoImage;
     }
 
-    public void setLogoImage(DocumentDTO logoImage) {
+    public void setLogoImage(FileDTO logoImage) {
         this.logoImage = logoImage;
     }
 

@@ -1,62 +1,62 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 
 public class ApplicationDocumentRepresentation extends ApplicationSectionRepresentation {
 
-    private DocumentRepresentation personalStatement;
+    private FileRepresentation personalStatement;
 
-    private DocumentRepresentation cv;
+    private FileRepresentation cv;
 
-    private DocumentRepresentation coveringLetter;
-    
-    private DocumentRepresentation researchStatement;
+    private FileRepresentation coveringLetter;
 
-    public DocumentRepresentation getPersonalStatement() {
+    private FileRepresentation researchStatement;
+
+    public FileRepresentation getPersonalStatement() {
         return personalStatement;
     }
 
-    public void setPersonalStatement(DocumentRepresentation personalStatement) {
+    public void setPersonalStatement(FileRepresentation personalStatement) {
         this.personalStatement = personalStatement;
     }
 
-    public DocumentRepresentation getCv() {
+    public FileRepresentation getCv() {
         return cv;
     }
 
-    public void setCv(DocumentRepresentation cv) {
+    public void setCv(FileRepresentation cv) {
         this.cv = cv;
     }
 
-    public DocumentRepresentation getCoveringLetter() {
+    public FileRepresentation getCoveringLetter() {
         return coveringLetter;
     }
 
-    public void setCoveringLetter(DocumentRepresentation coveringLetter) {
+    public void setCoveringLetter(FileRepresentation coveringLetter) {
         this.coveringLetter = coveringLetter;
     }
 
-    public final DocumentRepresentation getResearchStatement() {
+    public final FileRepresentation getResearchStatement() {
         return researchStatement;
     }
 
-    public final void setResearchStatement(DocumentRepresentation researchStatement) {
+    public final void setResearchStatement(FileRepresentation researchStatement) {
         this.researchStatement = researchStatement;
     }
-    
-    public ApplicationDocumentRepresentation withPersonalStatement(DocumentRepresentation personalStatement) {
+
+    public ApplicationDocumentRepresentation withPersonalStatement(FileRepresentation personalStatement) {
         this.personalStatement = personalStatement;
         return this;
     }
-    
-    public ApplicationDocumentRepresentation withCv(DocumentRepresentation cv) {
+
+    public ApplicationDocumentRepresentation withCv(FileRepresentation cv) {
         this.cv = cv;
         return this;
     }
-    
-    public ApplicationDocumentRepresentation withCoveringLetter(DocumentRepresentation coveringLetter) {
+
+    public ApplicationDocumentRepresentation withCoveringLetter(FileRepresentation coveringLetter) {
         this.coveringLetter = coveringLetter;
         return this;
     }
-    
+
 }

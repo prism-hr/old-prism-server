@@ -2,52 +2,52 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 
 import javax.validation.Valid;
 
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 
 public class ApplicationDocumentDTO {
 
     @Valid
-    private DocumentDTO personalStatement;
+    private FileDTO personalStatement;
 
     @Valid
-    private DocumentDTO cv;
+    private FileDTO cv;
 
     @Valid
-    private DocumentDTO researchStatement;
-    
-    @Valid
-    private DocumentDTO coveringLetter;
+    private FileDTO researchStatement;
 
-    public DocumentDTO getPersonalStatement() {
+    @Valid
+    private FileDTO coveringLetter;
+
+    public FileDTO getPersonalStatement() {
         return personalStatement;
     }
 
-    public void setPersonalStatement(DocumentDTO personalStatement) {
+    public void setPersonalStatement(FileDTO personalStatement) {
         this.personalStatement = personalStatement;
     }
 
-    public DocumentDTO getCv() {
+    public FileDTO getCv() {
         return cv;
     }
 
-    public void setCv(DocumentDTO cv) {
+    public void setCv(FileDTO cv) {
         this.cv = cv;
     }
-    
-    public final DocumentDTO getResearchStatement() {
+
+    public final FileDTO getResearchStatement() {
         return researchStatement;
     }
 
-    public final void setResearchStatement(DocumentDTO researchStatement) {
+    public final void setResearchStatement(FileDTO researchStatement) {
         this.researchStatement = researchStatement;
     }
 
-    public DocumentDTO getCoveringLetter() {
+    public FileDTO getCoveringLetter() {
         return coveringLetter;
     }
 
-    public void setCoveringLetter(DocumentDTO coveringLetter) {
+    public void setCoveringLetter(FileDTO coveringLetter) {
         this.coveringLetter = coveringLetter;
     }
-    
+
 }

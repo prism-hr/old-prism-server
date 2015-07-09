@@ -7,7 +7,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.utils.validation.DatePast;
 
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 
 public class ApplicationLanguageQualificationDTO {
 
@@ -33,7 +33,7 @@ public class ApplicationLanguageQualificationDTO {
     @NotEmpty
     private String listeningScore;
 
-    private DocumentDTO document;
+    private FileDTO document;
 
     public Integer getType() {
         return type;
@@ -91,11 +91,11 @@ public class ApplicationLanguageQualificationDTO {
         this.listeningScore = listeningScore;
     }
 
-    public DocumentDTO getDocument() {
+    public FileDTO getDocument() {
         return document;
     }
 
-    public void setDocument(DocumentDTO document) {
+    public void setDocument(FileDTO document) {
         this.document = document;
     }
 }

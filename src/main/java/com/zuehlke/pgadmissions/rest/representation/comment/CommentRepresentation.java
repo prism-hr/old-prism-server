@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class CommentRepresentation {
@@ -34,7 +34,7 @@ public class CommentRepresentation {
     private PrismYesNoUnsureResponse applicationEligible;
 
     private Boolean applicationInterested;
-    
+
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
     private CommentInterviewInstructionRepresentation interviewInstruction;
@@ -63,7 +63,7 @@ public class CommentRepresentation {
 
     private List<LocalDateTime> appointmentPreferences;
 
-    private List<DocumentRepresentation> documents;
+    private List<FileRepresentation> documents;
 
     private List<CommentCustomResponseRepresentation> customResponses;
 
@@ -146,7 +146,7 @@ public class CommentRepresentation {
     public void setApplicationInterested(Boolean applicationInterested) {
         this.applicationInterested = applicationInterested;
     }
-    
+
     public final CommentInterviewAppointmentRepresentation getInterviewAppointment() {
         return interviewAppointment;
     }
@@ -259,11 +259,11 @@ public class CommentRepresentation {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public List<DocumentRepresentation> getDocuments() {
+    public List<FileRepresentation> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<DocumentRepresentation> documents) {
+    public void setDocuments(List<FileRepresentation> documents) {
         this.documents = documents;
     }
 
@@ -390,7 +390,7 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withDocuments(List<DocumentRepresentation> documents) {
+    public CommentRepresentation withDocuments(List<FileRepresentation> documents) {
         this.documents = documents;
         return this;
     }

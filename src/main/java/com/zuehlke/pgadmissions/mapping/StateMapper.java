@@ -1,14 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -17,6 +8,14 @@ import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.services.StateService;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,28 +43,22 @@ public class StateMapper {
     }
 
     public List<StateRepresentationSimple> getStateRepresentations(List<PrismState> states) {
-        List<StateRepresentationSimple> representations = Lists.newLinkedList();
-        for (PrismState state : states) {
-            representations.add(getStateRepresentationSimple(state));
-        }
-        return representations;
+        return states.stream()
+                .map(this::getStateRepresentationSimple)
+                .collect(Collectors.toList());
     }
 
     public List<StateRepresentationExtended> getStateRepresentations(Resource resource, PrismAction action) {
-        List<StateRepresentationExtended> representations = Lists.newLinkedList();
         List<StateSelectableDTO> states = stateService.getSelectableTransitionStates(resource.getState(), action, resource.getAdvert().isImported());
-        for (StateSelectableDTO state : states) {
-            representations.add(getStateRepresentationExtended(state.getState(), state.getParallelizable()));
-        }
-        return representations;
+        return states.stream()
+                .map(state -> getStateRepresentationExtended(state.getState(), BooleanUtils.toBoolean(state.getParallelizable())))
+                .collect(Collectors.toList());
     }
 
     public List<StateRepresentationSimple> getRecommendedNextStateRepresentations(Resource resource) {
-        List<StateRepresentationSimple> representations = Lists.newLinkedList();
-        for (PrismState state : stateService.getRecommendedNextStates(resource)) {
-            representations.add(getStateRepresentationSimple(state));
-        }
-        return representations;
+        return stateService.getRecommendedNextStates(resource).stream()
+                .map(this::getStateRepresentationSimple)
+                .collect(Collectors.toList());
     }
 
     private <T extends StateRepresentationSimple> T getStateRepresentation(PrismState state, Class<T> returnType) {

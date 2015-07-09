@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 
 public class ResourceRepresentationSimple {
 
@@ -14,7 +15,7 @@ public class ResourceRepresentationSimple {
 
     private String title;
 
-    private Integer logoImage;
+    private FileRepresentation logoImage;
 
     public PrismScope getScope() {
         return scope;
@@ -56,11 +57,11 @@ public class ResourceRepresentationSimple {
         this.title = title;
     }
 
-    public Integer getLogoImage() {
+    public FileRepresentation getLogoImage() {
         return logoImage;
     }
 
-    public void setLogoImage(Integer logoImage) {
+    public void setLogoImage(FileRepresentation logoImage) {
         this.logoImage = logoImage;
     }
 
@@ -79,7 +80,7 @@ public class ResourceRepresentationSimple {
         return this;
     }
 
-    public ResourceRepresentationSimple withLogoImage(Integer logoImage) {
+    public ResourceRepresentationSimple withLogoImage(FileRepresentation logoImage) {
         this.logoImage = logoImage;
         return this;
     }

@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 
 public class ApplicationQualificationRepresentation extends ApplicationSectionRepresentation {
 
@@ -20,7 +20,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     private String grade;
 
-    private DocumentRepresentation document;
+    private FileRepresentation document;
 
     private Boolean completed;
 
@@ -31,7 +31,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public ImportedProgramResponse getProgram() {
         return program;
     }
@@ -72,11 +72,11 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.grade = grade;
     }
 
-    public DocumentRepresentation getDocument() {
+    public FileRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(DocumentRepresentation document) {
+    public void setDocument(FileRepresentation document) {
         this.document = document;
     }
 
@@ -87,17 +87,17 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
     public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
-    
+
     public ApplicationQualificationRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
-    
+
     public ApplicationQualificationRepresentation withProgram(ImportedProgramResponse program) {
         this.program = program;
         return this;
     }
-    
+
     public ApplicationQualificationRepresentation withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
@@ -107,25 +107,25 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.awardDate = awardDate;
         return this;
     }
-    
+
     public ApplicationQualificationRepresentation withLanguage(String language) {
         this.language = language;
         return this;
     }
-    
+
     public ApplicationQualificationRepresentation withGrade(String grade) {
         this.grade = grade;
         return this;
     }
-    
-    public ApplicationQualificationRepresentation withDocumentRepresentation(DocumentRepresentation document) {
+
+    public ApplicationQualificationRepresentation withDocumentRepresentation(FileRepresentation document) {
         this.document = document;
         return this;
     }
-    
+
     public ApplicationQualificationRepresentation withCompleted(Boolean completed) {
         this.completed = completed;
         return this;
     }
-    
+
 }

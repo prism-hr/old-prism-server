@@ -222,9 +222,8 @@ public class AdvertDAO {
     }
 
     public List<String> getAdvertAttributes(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
-        String propertyName = clazz.getSimpleName().replace("Advert", "").toLowerCase();
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
-                .setProjection(Projections.groupProperty(propertyName)) //
+                .setProjection(Projections.groupProperty("value")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //

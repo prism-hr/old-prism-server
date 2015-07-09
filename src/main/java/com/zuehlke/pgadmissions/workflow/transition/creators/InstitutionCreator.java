@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -41,7 +41,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(system, advertDTO);
 
-        DocumentDTO logoImageDTO = newResource.getLogoImage();
+        FileDTO logoImageDTO = newResource.getLogoImage();
         Document logoImage = logoImageDTO == null ? null : documentService.getById(logoImageDTO.getId());
 
         Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withTitle(advert.getTitle())

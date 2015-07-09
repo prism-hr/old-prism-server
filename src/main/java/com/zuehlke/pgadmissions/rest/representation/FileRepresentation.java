@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-public class DocumentRepresentation {
+public class FileRepresentation {
 
     private Integer id;
 
@@ -22,12 +22,12 @@ public class DocumentRepresentation {
         this.fileName = fileName;
     }
 
-    public DocumentRepresentation withId(Integer id) {
+    public FileRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public DocumentRepresentation withFileName(String fileName) {
+    public FileRepresentation withFileName(String fileName) {
         this.fileName = fileName;
         return this;
     }

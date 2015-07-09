@@ -6,18 +6,18 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ApplicationProgramDetailRepresentation extends ApplicationSectionRepresentation {
 
-    private ImportedEntityResponse referrralSource;
+    private ImportedEntityResponse studyOption;
 
     private LocalDate startDate;
 
     private ImportedEntityResponse referralSource;
 
-    public ImportedEntityResponse getReferrralSource() {
-        return referrralSource;
+    public ImportedEntityResponse getStudyOption() {
+        return studyOption;
     }
 
-    public void setReferrralSource(ImportedEntityResponse studyOption) {
-        this.referrralSource = studyOption;
+    public void setStudyOption(ImportedEntityResponse studyOption) {
+        this.studyOption = studyOption;
     }
 
     public LocalDate getStartDate() {
@@ -35,19 +35,19 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
     public void setReferralSource(ImportedEntityResponse referralSource) {
         this.referralSource = referralSource;
     }
-    
+
     public ApplicationProgramDetailRepresentation withStudyOption(ImportedEntityResponse studyOption) {
-        this.referrralSource = studyOption;
+        this.studyOption = studyOption;
         return this;
     }
-    
+
     public ApplicationProgramDetailRepresentation withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
-    
+
     public ApplicationProgramDetailRepresentation withReferralSource(ImportedEntityResponse referralSource) {
-        this.referrralSource = referralSource;
+        this.referralSource = referralSource;
         return this;
     }
 

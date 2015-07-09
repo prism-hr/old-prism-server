@@ -5,14 +5,14 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 
 @Service
 @Transactional
 public class DocumentMapper {
 
-    public DocumentRepresentation getDocumentRepresentation(Document document) {
-        return new DocumentRepresentation().withId(document.getId()).withFileName(document.getFileName());
+    public FileRepresentation getDocumentRepresentation(Document document) {
+        return new FileRepresentation().withId(document.getId()).withFileName(document.getFileName());
     }
 
 }

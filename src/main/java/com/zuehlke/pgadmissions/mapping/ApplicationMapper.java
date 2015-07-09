@@ -1,64 +1,12 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
+import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -72,37 +20,31 @@ import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationEmploymentPositionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationFundingRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationLanguageQualificationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPassportRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPersonalDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPrizeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationQualificationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStudyDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.*;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSupervisorRepresentation;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 
 @Service
 @Transactional
@@ -222,12 +164,12 @@ public class ApplicationMapper {
     }
 
     private ApplicationProgramDetailRepresentation getApplicationProgramDetailRepresentation(Application application,
-            Institution institution) {
+                                                                                             Institution institution) {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
         return new ApplicationProgramDetailRepresentation()
-                .withStudyOption((ImportedEntityResponse) getImportedEntityRepresentation(applicationProgramDetail.getStudyOption(), institution))
+                .withStudyOption(getImportedEntityRepresentation(applicationProgramDetail.getStudyOption(), institution))
                 .withStartDate(applicationProgramDetail.getStartDate())
-                .withReferralSource((ImportedEntityResponse) getImportedEntityRepresentation(applicationProgramDetail.getReferralSource(), institution));
+                .withReferralSource(getImportedEntityRepresentation(applicationProgramDetail.getReferralSource(), institution));
     }
 
     private ApplicationStudyDetailRepresentation getApplicationStudyDetailRepresentation(Application application) {
@@ -243,11 +185,9 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationSupervisorRepresentation> getApplicationSupervisorsRepresentation(Application application) {
-        List<ApplicationSupervisorRepresentation> representations = Lists.newLinkedList();
-        for (ApplicationSupervisor applicationSupervisor : application.getSupervisors()) {
-            representations.add(getApplicationSupervisorRepresentation(applicationSupervisor));
-        }
-        return representations;
+        return application.getSupervisors().stream()
+                .map(this::getApplicationSupervisorRepresentation)
+                .collect(Collectors.toList());
     }
 
     private ApplicationSupervisorRepresentation getApplicationSupervisorRepresentation(ApplicationSupervisor applicationSupervisor) {
@@ -261,25 +201,25 @@ public class ApplicationMapper {
 
         if (applicationPersonalDetail != null) {
             ApplicationPersonalDetailRepresentation representation = new ApplicationPersonalDetailRepresentation()
-                    .withTitle((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getTitle(), institution))
-                    .withGender((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getGender(), institution))
+                    .withTitle(getImportedEntityRepresentation(applicationPersonalDetail.getTitle(), institution))
+                    .withGender(getImportedEntityRepresentation(applicationPersonalDetail.getGender(), institution))
                     .withDateOfBirth(applicationPersonalDetail.getDateOfBirth())
-                    .withAgeRange((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getAgeRange(), institution))
+                    .withAgeRange(getImportedEntityRepresentation(applicationPersonalDetail.getAgeRange(), institution))
                     .withFirstNationality(
-                            (ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getFirstNationality(), institution))
+                            getImportedEntityRepresentation(applicationPersonalDetail.getFirstNationality(), institution))
                     .withSecondNationality(
-                            (ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getSecondNationality(), institution))
-                    .withCountry((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getCountry(), institution))
+                            getImportedEntityRepresentation(applicationPersonalDetail.getSecondNationality(), institution))
+                    .withCountry(getImportedEntityRepresentation(applicationPersonalDetail.getCountry(), institution))
                     .withFirstLanguageLocale(applicationPersonalDetail.getFirstLanguageLocale())
                     .withLanguageQualification(getApplicationLanguageQualificationRepresentation(applicationPersonalDetail, institution))
-                    .withDomicile((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getDomicile(), institution))
+                    .withDomicile(getImportedEntityRepresentation(applicationPersonalDetail.getDomicile(), institution))
                     .withVisaRequired(applicationPersonalDetail.getVisaRequired())
                     .withPassport(getApplicationPassportRepresentation(applicationPersonalDetail, institution)).withPhone(applicationPersonalDetail.getPhone())
                     .withSkype(applicationPersonalDetail.getSkype());
 
             if (applicationService.isCanViewEqualOpportunitiesData(application, userService.getCurrentUser())) {
-                representation.setEthnicity((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getEthnicity(), institution));
-                representation.setDisability((ImportedEntityResponse) getImportedEntityRepresentation(applicationPersonalDetail.getDisability(), institution));
+                representation.setEthnicity(getImportedEntityRepresentation(applicationPersonalDetail.getEthnicity(), institution));
+                representation.setDisability(getImportedEntityRepresentation(applicationPersonalDetail.getDisability(), institution));
             }
 
             return representation;
@@ -289,7 +229,7 @@ public class ApplicationMapper {
     }
 
     private List<String> getApplicationThemeRepresentation(String themes) {
-        return StringUtils.isEmpty(themes) ? Collections.<String> emptyList() : Arrays.asList(themes.split("|"));
+        return StringUtils.isEmpty(themes) ? Collections.<String>emptyList() : Arrays.asList(themes.split("\\|"));
     }
 
     private ApplicationLanguageQualificationRepresentation getApplicationLanguageQualificationRepresentation(
@@ -298,9 +238,9 @@ public class ApplicationMapper {
 
         if (applicationLanguageQualification != null) {
             Document document = applicationLanguageQualification.getDocument();
-            return new ApplicationLanguageQualificationRepresentation().withLanguageQualificationType((ImportedLanguageQualificationTypeResponse)
-                    getImportedEntityRepresentation(applicationLanguageQualification.getLanguageQualificationType(), institution)).withExamDate(
-                    applicationLanguageQualification.getExamDate()).withOverallScore(applicationLanguageQualification.getOverallScore())
+            return new ApplicationLanguageQualificationRepresentation()
+                    .withLanguageQualificationType(getImportedEntityRepresentation(applicationLanguageQualification.getLanguageQualificationType(), institution))
+                    .withExamDate(applicationLanguageQualification.getExamDate()).withOverallScore(applicationLanguageQualification.getOverallScore())
                     .withReadingScore(applicationLanguageQualification.getReadingScore()).withWritingScore(applicationLanguageQualification.getWritingScore())
                     .withSpeakingScore(applicationLanguageQualification.getSpeakingScore())
                     .withListeningScore(applicationLanguageQualification.getListeningScore())
@@ -334,19 +274,14 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationQualificationRepresentation> getApplicationQualificationRepresentations(Application application, Institution institution) {
-        List<ApplicationQualificationRepresentation> representations = Lists.newLinkedList();
-
-        for (ApplicationQualification qualification : application.getQualifications()) {
-            representations.add(getApplicationQualificationRepresentation(qualification, institution));
-        }
-        return representations;
+        return application.getQualifications().stream().map(qualification -> getApplicationQualificationRepresentation(qualification, institution)).collect(Collectors.toList());
     }
 
-    private ApplicationQualificationRepresentation getApplicationQualificationRepresentation(ApplicationQualification applicationQualification,
-            Institution institution) {
+    private ApplicationQualificationRepresentation getApplicationQualificationRepresentation(
+            ApplicationQualification applicationQualification, Institution institution) {
         Document document = applicationQualification.getDocument();
         return new ApplicationQualificationRepresentation().withId(applicationQualification.getId()).withProgram(
-                (ImportedProgramResponse) getImportedEntityRepresentation(applicationQualification.getProgram(), institution))
+                getImportedEntityRepresentation(applicationQualification.getProgram(), institution))
                 .withStartDate(applicationQualification.getStartDate()).withAwardDate(applicationQualification.getAwardDate())
                 .withLanguage(applicationQualification.getLanguage()).withGrade(applicationQualification.getGrade())
                 .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document))
@@ -354,11 +289,9 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationEmploymentPositionRepresentation> getApplicationEmploymentPositionRepresentations(Application application, Institution institution) {
-        List<ApplicationEmploymentPositionRepresentation> representations = Lists.newLinkedList();
-        for (ApplicationEmploymentPosition employmentPosition : application.getEmploymentPositions()) {
-            representations.add(getApplicationEmploymentPositionRepresentation(employmentPosition, institution));
-        }
-        return representations;
+        return application.getEmploymentPositions().stream()
+                .map(employmentPosition -> getApplicationEmploymentPositionRepresentation(employmentPosition, institution))
+                .collect(Collectors.toList());
     }
 
     private ApplicationEmploymentPositionRepresentation getApplicationEmploymentPositionRepresentation(
@@ -371,27 +304,21 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationFundingRepresentation> getApplicationFundingRepresentations(Application application, Institution institution) {
-        List<ApplicationFundingRepresentation> representations = Lists.newLinkedList();
-        for (ApplicationFunding funding : application.getFundings()) {
-            representations.add(getApplicationFundingRepresentation(funding, institution));
-        }
-        return representations;
+        return application.getFundings().stream()
+                .map(funding -> getApplicationFundingRepresentation(funding, institution))
+                .collect(Collectors.toList());
     }
 
     private ApplicationFundingRepresentation getApplicationFundingRepresentation(ApplicationFunding applicationFunding, Institution institution) {
         Document document = applicationFunding.getDocument();
-        return new ApplicationFundingRepresentation().withId(applicationFunding.getId()).withFundingSource((ImportedEntityResponse)
+        return new ApplicationFundingRepresentation().withId(applicationFunding.getId()).withFundingSource(
                 getImportedEntityRepresentation(applicationFunding.getFundingSource(), institution)).withSponsor(applicationFunding.getSponsor())
                 .withDescription(applicationFunding.getDescription()).withValue(applicationFunding.getValue()).withAwardDate(applicationFunding.getAwardDate())
                 .withTerms(applicationFunding.getTerms()).withDocument(document == null ? null : documentMapper.getDocumentRepresentation(document));
     }
 
     private List<ApplicationPrizeRepresentation> getApplicationPrizeRepresentations(Application application, Institution institution) {
-        List<ApplicationPrizeRepresentation> representations = Lists.newLinkedList();
-        for (ApplicationPrize prize : application.getPrizes()) {
-            representations.add(getApplicationPrizeRepresentation(prize, institution));
-        }
-        return representations;
+        return application.getPrizes().stream().map(prize -> getApplicationPrizeRepresentation(prize, institution)).collect(Collectors.toList());
     }
 
     private ApplicationPrizeRepresentation getApplicationPrizeRepresentation(ApplicationPrize applicationPrize, Institution institution) {
@@ -400,11 +327,7 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationRefereeRepresentation> getApplicationRefereeRepresentations(Application application, Institution institution) {
-        List<ApplicationRefereeRepresentation> representations = Lists.newLinkedList();
-        for (ApplicationReferee referee : application.getReferees()) {
-            representations.add(getApplicationRefereeRepresentation(referee, institution));
-        }
-        return representations;
+        return application.getReferees().stream().map(referee -> getApplicationRefereeRepresentation(referee, institution)).collect(Collectors.toList());
     }
 
     private ApplicationRefereeRepresentation getApplicationRefereeRepresentation(ApplicationReferee applicationReferee, Institution institution) {
@@ -628,7 +551,7 @@ public class ApplicationMapper {
 
     private AddressApplicationRepresentation getAddressApplicationRepresentation(AddressApplication address, Institution institution) {
         AddressApplicationRepresentation representation = addressMapper.transform(address, AddressApplicationRepresentation.class);
-        representation.setDomicile((ImportedEntityResponse) getImportedEntityRepresentation(address.getDomicile(), institution));
+        representation.setDomicile(getImportedEntityRepresentation(address.getDomicile(), institution));
         return representation;
     }
 

@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
 
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 
 public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
 
@@ -22,7 +22,7 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
 
     private String listeningScore;
 
-    private DocumentRepresentation document;
+    private FileRepresentation document;
 
     public ImportedLanguageQualificationTypeResponse getLanguageQualificationType() {
         return languageQualificationType;
@@ -80,11 +80,11 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         this.listeningScore = listeningScore;
     }
 
-    public DocumentRepresentation getDocument() {
+    public FileRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(DocumentRepresentation document) {
+    public void setDocument(FileRepresentation document) {
         this.document = document;
     }
 
@@ -97,7 +97,7 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         this.examDate = examDate;
         return this;
     }
-    
+
     public ApplicationLanguageQualificationRepresentation withOverallScore(String overallScore) {
         this.overallScore = overallScore;
         return this;
@@ -107,25 +107,25 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         this.readingScore = readingScore;
         return this;
     }
-    
+
     public ApplicationLanguageQualificationRepresentation withWritingScore(String writingScore) {
         this.writingScore = writingScore;
         return this;
     }
-    
+
     public ApplicationLanguageQualificationRepresentation withSpeakingScore(String speakingScore) {
         this.speakingScore = speakingScore;
         return this;
     }
-    
+
     public ApplicationLanguageQualificationRepresentation withListeningScore(String listeningScore) {
         this.listeningScore = listeningScore;
         return this;
     }
-    
-    public ApplicationLanguageQualificationRepresentation withDocument(DocumentRepresentation document) {
+
+    public ApplicationLanguageQualificationRepresentation withDocument(FileRepresentation document) {
         this.document = document;
         return this;
     }
-    
+
 }

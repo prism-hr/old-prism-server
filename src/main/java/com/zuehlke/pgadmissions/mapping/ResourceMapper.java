@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.*;
@@ -90,10 +91,10 @@ public class ResourceMapper {
 
             if (resourceScope.equals(INSTITUTION)) {
                 representation.setTitle(row.getInstitutionTitle());
-                representation.setLogoImage(row.getInstitutionLogoImageId());
+                representation.setLogoImage(new FileRepresentation().withId(row.getInstitutionLogoImageId()));
             } else {
                 representation.setInstitution(new ResourceRepresentationSimple().withId(institutionId).withTitle(row.getInstitutionTitle())
-                        .withLogoImage(row.getInstitutionLogoImageId()));
+                        .withLogoImage(new FileRepresentation().withId(row.getInstitutionLogoImageId())));
             }
 
             if (resourceScope.equals(DEPARTMENT)) {
@@ -163,7 +164,7 @@ public class ResourceMapper {
 
         Class<T> resourceClass = (Class<T>) resource.getClass();
         if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            representation.setLogoImage(resource.getInstitution().getLogoImage().getId());
+            representation.setLogoImage(new FileRepresentation().withId(resource.getInstitution().getLogoImage().getId()));
 
             if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
                 ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
@@ -224,7 +225,7 @@ public class ResourceMapper {
         V representation = getResourceRepresentationExtended(resource, returnType);
 
         representation.setAdvert(advertMapper.getAdvertRepresentation(resource.getAdvert()));
-        representation.setBackgroundImage(resourceService.getBackgroundImage(resource));
+        representation.setBackgroundImage(new FileRepresentation().withId(resourceService.getBackgroundImage(resource)));
         representation.setPartnerActions(actionService.getPartnerActions(resource));
 
         return representation;

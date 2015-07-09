@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class DocumentDTO {
+import javax.validation.constraints.NotNull;
+
+public class FileDTO {
 
     @NotNull
     private Integer id;

@@ -48,7 +48,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -362,8 +362,8 @@ public class CommentService {
     }
 
     private void appendDocuments(Comment comment, CommentDTO commentDTO) {
-        for (DocumentDTO documentDTO : commentDTO.getDocuments()) {
-            Document document = documentService.getById(documentDTO.getId(), DOCUMENT);
+        for (FileDTO fileDTO : commentDTO.getDocuments()) {
+            Document document = documentService.getById(fileDTO.getId(), DOCUMENT);
             comment.getDocuments().add(document);
         }
     }

@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
@@ -282,8 +282,8 @@ public class CommentMapper {
         return representations;
     }
 
-    private List<DocumentRepresentation> getCommentDocumentRepresentations(Comment comment) {
-        List<DocumentRepresentation> representations = Lists.newLinkedList();
+    private List<FileRepresentation> getCommentDocumentRepresentations(Comment comment) {
+        List<FileRepresentation> representations = Lists.newLinkedList();
         for (Document document : comment.getDocuments()) {
             representations.add(documentMapper.getDocumentRepresentation(document));
         }

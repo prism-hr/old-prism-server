@@ -8,7 +8,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 
 public class ApplicationFundingDTO {
 
@@ -20,7 +20,7 @@ public class ApplicationFundingDTO {
     @NotEmpty
     @Size(max = 255)
     private String sponsor;
-    
+
     @NotEmpty
     @Size(max = 2000)
     private String description;
@@ -28,15 +28,15 @@ public class ApplicationFundingDTO {
     @NotEmpty
     @Size(max = 100)
     private String value;
-    
+
     @NotNull
     @DateNotFuture
     private LocalDate awardDate;
-    
+
     @Size(max = 2000)
     private String terms;
-    
-    private DocumentDTO document;
+
+    private FileDTO document;
 
     public Integer getId() {
         return id;
@@ -45,7 +45,7 @@ public class ApplicationFundingDTO {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public final String getSponsor() {
         return sponsor;
     }
@@ -93,13 +93,13 @@ public class ApplicationFundingDTO {
     public final void setTerms(String terms) {
         this.terms = terms;
     }
-    
-    public DocumentDTO getDocument() {
+
+    public FileDTO getDocument() {
         return document;
     }
 
-    public void setDocument(DocumentDTO document) {
+    public void setDocument(FileDTO document) {
         this.document = document;
     }
-    
+
 }

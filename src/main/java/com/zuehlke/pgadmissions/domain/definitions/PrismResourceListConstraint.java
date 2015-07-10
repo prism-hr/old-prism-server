@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.workflow.selectors.filter.ResourceByParentResour
 import com.zuehlke.pgadmissions.workflow.selectors.filter.ResourceByUserAndRoleSelector;
 import com.zuehlke.pgadmissions.workflow.selectors.filter.StateByStateGroupSelector;
 
-public enum PrismResourceListContraint {
+public enum PrismResourceListConstraint {
 
     USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
@@ -96,28 +96,28 @@ public enum PrismResourceListContraint {
 
     private List<PrismScope> permittedScopes;
 
-    private static LinkedHashMultimap<PrismScope, PrismResourceListContraint> permittedFilters = LinkedHashMultimap.create();
+    private static LinkedHashMultimap<PrismScope, PrismResourceListConstraint> permittedFilters = LinkedHashMultimap.create();
 
     static {
-        for (PrismResourceListContraint filter : values()) {
+        for (PrismResourceListConstraint filter : values()) {
             for (PrismScope scope : filter.getPermittedScopes()) {
                 permittedFilters.put(scope, filter);
             }
         }
     }
 
-    private PrismResourceListContraint(String propertyName, PrismResourceListFilterPropertyType propertyType,
-            List<PrismResourceListFilterExpression> permittedExpressions,
-            List<PrismScope> permittedScopes) {
+    private PrismResourceListConstraint(String propertyName, PrismResourceListFilterPropertyType propertyType,
+                                        List<PrismResourceListFilterExpression> permittedExpressions,
+                                        List<PrismScope> permittedScopes) {
         this.propertyName = propertyName;
         this.propertyType = propertyType;
         this.permittedExpressions = permittedExpressions;
         this.permittedScopes = permittedScopes;
     }
 
-    private PrismResourceListContraint(String propertyName, PrismResourceListFilterPropertyType propertyType,
-            Class<? extends PrismResourceListFilterSelector<?>> propertyValueSelector,
-            List<PrismResourceListFilterExpression> permittedExpressions, List<PrismScope> permittedScopes) {
+    private PrismResourceListConstraint(String propertyName, PrismResourceListFilterPropertyType propertyType,
+                                        Class<? extends PrismResourceListFilterSelector<?>> propertyValueSelector,
+                                        List<PrismResourceListFilterExpression> permittedExpressions, List<PrismScope> permittedScopes) {
         this(propertyName, propertyType, permittedExpressions, permittedScopes);
         this.propertyValueSelector = propertyValueSelector;
     }
@@ -134,7 +134,7 @@ public enum PrismResourceListContraint {
         return propertyValueSelector;
     }
 
-    public static Set<PrismResourceListContraint> getPermittedFilters(PrismScope scope) {
+    public static Set<PrismResourceListConstraint> getPermittedFilters(PrismScope scope) {
         return permittedFilters.get(scope);
     }
 

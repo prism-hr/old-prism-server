@@ -1,46 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.WordUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
+import com.google.common.collect.*;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -48,24 +11,31 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.mapping.ActionMapper;
-import com.zuehlke.pgadmissions.mapping.AdvertMapper;
-import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
-import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
-import com.zuehlke.pgadmissions.mapping.ResourceMapper;
-import com.zuehlke.pgadmissions.mapping.StateMapper;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.mapping.*;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
+import org.apache.commons.lang.WordUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 
 @Service
 @Transactional
@@ -116,10 +86,7 @@ public class StaticDataService {
         Map<String, Object> staticData = Maps.newHashMap();
 
         List<Action> actions = entityService.list(Action.class);
-        List<ActionRepresentation> actionRepresentations = Lists.newArrayListWithExpectedSize(actions.size());
-        for (Action action : actions) {
-            actionRepresentations.add(actionMapper.getActionRepresentation(action.getId()));
-        }
+        List<ActionRepresentation> actionRepresentations = actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId())).collect(Collectors.toList());
 
         staticData.put("actions", actionRepresentations);
         return staticData;
@@ -129,12 +96,8 @@ public class StaticDataService {
         Map<String, Object> staticData = Maps.newHashMap();
 
         List<State> states = entityService.list(State.class);
-        List<StateRepresentationSimple> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
-        for (State state : states) {
-            stateRepresentations.add(stateMapper.getStateRepresentationSimple(state));
-        }
 
-        staticData.put("states", stateRepresentations);
+        staticData.put("states", states.stream().map(stateMapper::getStateRepresentationSimple).collect(Collectors.toList()));
         return staticData;
     }
 
@@ -180,9 +143,9 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
+        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class, PrismApplicationReserveStatus.class,
-                PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
+                PrismDisplayPropertyCategory.class, PrismImportedEntity.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -198,12 +161,11 @@ public class StaticDataService {
     public Map<String, Object> getFilterProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListContraint.values().length);
-        for (PrismResourceListContraint filterProperty : PrismResourceListContraint.values()) {
-            List<FilterExpressionRepresentation> filterExpressions = Lists.newArrayList();
-            for (PrismResourceListFilterExpression filterExpression : filterProperty.getPermittedExpressions()) {
-                filterExpressions.add(new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()));
-            }
+        List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListConstraint.values().length);
+        for (PrismResourceListConstraint filterProperty : PrismResourceListConstraint.values()) {
+            List<FilterExpressionRepresentation> filterExpressions = filterProperty.getPermittedExpressions().stream()
+                    .map(filterExpression -> new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()))
+                    .collect(Collectors.toList());
             filters.add(new ResourceListFilterRepresentation(filterProperty, filterExpressions, filterProperty.getPropertyType(), filterProperty
                     .getPermittedScopes()));
         }
@@ -275,10 +237,7 @@ public class StaticDataService {
 
         for (PrismImportedEntity prismImportedEntity : getPrefetchEntities()) {
             List<T> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
-            List<U> entityRepresentations = Lists.newArrayListWithExpectedSize(entities.size());
-            for (T entity : entities) {
-                entityRepresentations.add((U) importedEntityMapper.getImportedEntityRepresentation(entity));
-            }
+            List<U> entityRepresentations = entities.stream().map(entity -> (U) importedEntityMapper.getImportedEntityRepresentation(entity)).collect(Collectors.toList());
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
 
@@ -293,25 +252,15 @@ public class StaticDataService {
         ImportedEntitySimple domicile = entityService.getById(ImportedEntitySimple.class, domicileId);
         List<ImportedInstitution> importedInstitutions = importedEntityService.getEnabledImportedInstitutions(institution, domicile);
 
-        List<ImportedEntityResponse> representations = Lists.newArrayListWithCapacity(importedInstitutions.size());
-        for (ImportedInstitution importedInstitution : importedInstitutions) {
-            representations.add(importedEntityMapper.getImportedInstitutionSimpleRepresentation(importedInstitution));
-        }
-
-        return representations;
+        return importedInstitutions.stream().map(importedEntityMapper::getImportedInstitutionSimpleRepresentation).collect(Collectors.toList());
     }
 
     public List<ImportedEntityResponse> getImportedPrograms(Integer institutionId, Integer importedInstitutionId) {
         Institution institution = institutionService.getById(institutionId);
         ImportedInstitution importedInstitution = entityService.getById(ImportedInstitution.class, importedInstitutionId);
-        List<ImportedProgram> importedprograms = importedEntityService.getEnabledImportedPrograms(institution, importedInstitution);
+        List<ImportedProgram> importedPrograms = importedEntityService.getEnabledImportedPrograms(institution, importedInstitution);
 
-        List<ImportedEntityResponse> representations = Lists.newArrayListWithCapacity(importedprograms.size());
-        for (ImportedProgram importedProgram : importedprograms) {
-            representations.add(importedEntityMapper.getImportedProgramSimpleRepresentation(importedProgram));
-        }
-
-        return representations;
+        return importedPrograms.stream().map(importedEntityMapper::getImportedProgramSimpleRepresentation).collect(Collectors.toList());
     }
 
     private static class ToIdFunction implements Function<WorkflowDefinition, Object> {

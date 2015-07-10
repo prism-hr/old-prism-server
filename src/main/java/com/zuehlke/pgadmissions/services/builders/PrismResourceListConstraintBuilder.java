@@ -18,7 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
@@ -31,7 +31,7 @@ public class PrismResourceListConstraintBuilder {
     private ApplicationContext applicationContext;
 
     public void appendFilter(Junction conditions, PrismScope resourceScope, ResourceListFilterConstraintDTO constraint) {
-        PrismResourceListContraint filterProperty = constraint.getFilterProperty();
+        PrismResourceListConstraint filterProperty = constraint.getFilterProperty();
         PrismResourceListFilterExpression filterExpression = constraint.getFilterExpression();
 
         String resourceQualifier = resourceScope.getLowerCamelName() + ".";

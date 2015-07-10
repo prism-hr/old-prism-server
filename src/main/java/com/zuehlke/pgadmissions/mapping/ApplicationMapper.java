@@ -1,12 +1,62 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.application.*;
-import com.zuehlke.pgadmissions.domain.comment.*;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -20,31 +70,37 @@ import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationFundingRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationLanguageQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPassportRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPrizeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStudyDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
-import com.zuehlke.pgadmissions.services.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSupervisorRepresentation;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 
 @Service
 @Transactional
@@ -164,7 +220,7 @@ public class ApplicationMapper {
     }
 
     private ApplicationProgramDetailRepresentation getApplicationProgramDetailRepresentation(Application application,
-                                                                                             Institution institution) {
+            Institution institution) {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
         return new ApplicationProgramDetailRepresentation()
                 .withStudyOption(getImportedEntityRepresentation(applicationProgramDetail.getStudyOption(), institution))
@@ -229,7 +285,7 @@ public class ApplicationMapper {
     }
 
     private List<String> getApplicationThemeRepresentation(String themes) {
-        return StringUtils.isEmpty(themes) ? Collections.<String>emptyList() : Arrays.asList(themes.split("\\|"));
+        return StringUtils.isEmpty(themes) ? Collections.<String> emptyList() : Arrays.asList(themes.split("\\|"));
     }
 
     private ApplicationLanguageQualificationRepresentation getApplicationLanguageQualificationRepresentation(
@@ -239,7 +295,8 @@ public class ApplicationMapper {
         if (applicationLanguageQualification != null) {
             Document document = applicationLanguageQualification.getDocument();
             return new ApplicationLanguageQualificationRepresentation()
-                    .withLanguageQualificationType(getImportedEntityRepresentation(applicationLanguageQualification.getLanguageQualificationType(), institution))
+                    .withLanguageQualificationType(
+                            getImportedEntityRepresentation(applicationLanguageQualification.getLanguageQualificationType(), institution))
                     .withExamDate(applicationLanguageQualification.getExamDate()).withOverallScore(applicationLanguageQualification.getOverallScore())
                     .withReadingScore(applicationLanguageQualification.getReadingScore()).withWritingScore(applicationLanguageQualification.getWritingScore())
                     .withSpeakingScore(applicationLanguageQualification.getSpeakingScore())
@@ -274,7 +331,8 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationQualificationRepresentation> getApplicationQualificationRepresentations(Application application, Institution institution) {
-        return application.getQualifications().stream().map(qualification -> getApplicationQualificationRepresentation(qualification, institution)).collect(Collectors.toList());
+        return application.getQualifications().stream().map(qualification -> getApplicationQualificationRepresentation(qualification, institution))
+                .collect(Collectors.toList());
     }
 
     private ApplicationQualificationRepresentation getApplicationQualificationRepresentation(
@@ -500,7 +558,8 @@ public class ApplicationMapper {
         boolean personalDetailNull = personalDetail == null;
 
         PrismStudyOption studyOption = programDetailNull ? null : programDetail.getStudyOptionDisplay();
-        ApplicationSummaryRepresentation representation = new ApplicationSummaryRepresentation().withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
+        ApplicationSummaryRepresentation representation = new ApplicationSummaryRepresentation()
+                .withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
                 .withSubmittedDate(application.getSubmittedTimestampDisplay(dateFormat)).withClosingDate(application.getClosingDateDisplay(dateFormat))
                 .withPrimaryThemes(application.getPrimaryThemeDisplay()).withSecondaryThemes(application.getSecondaryThemeDisplay())
                 .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personalDetailNull ? null : personalDetail.getSkype())
@@ -534,7 +593,8 @@ public class ApplicationMapper {
             for (Entry<String, PrismDisplayPropertyDefinition> documentProperty : documentProperties.entrySet()) {
                 Document document = (Document) PrismReflectionUtils.getProperty(applicationDocument, documentProperty.getKey());
                 if (document != null) {
-                    representation.addDocument(new DocumentSummaryRepresentation().withId(document.getId()).withLabel(loader.load(documentProperty.getValue())));
+                    representation
+                            .addDocument(new DocumentSummaryRepresentation().withId(document.getId()).withLabel(loader.load(documentProperty.getValue())));
                 }
             }
         }

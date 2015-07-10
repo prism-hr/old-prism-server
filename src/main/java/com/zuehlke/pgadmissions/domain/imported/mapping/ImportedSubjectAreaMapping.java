@@ -29,7 +29,7 @@ public class ImportedSubjectAreaMapping extends ImportedEntityMapping<ImportedSu
 
     @ManyToOne
     @JoinColumn(name = "imported_subject_area_id", nullable = false)
-    private ImportedSubjectArea importedSubjectArea;
+    private ImportedSubjectArea importedEntity;
 
     @Column(name = "code")
     private String code;
@@ -63,15 +63,12 @@ public class ImportedSubjectAreaMapping extends ImportedEntityMapping<ImportedSu
     
     @Override
     public ImportedSubjectArea getImportedEntity() {
-        return importedSubjectArea;
+        return importedEntity;
     }
 
-    public ImportedSubjectArea getImportedSubjectArea() {
-        return importedSubjectArea;
-    }
-
-    public void setImportedSubjectArea(ImportedSubjectArea importedSubjectArea) {
-        this.importedSubjectArea = importedSubjectArea;
+    @Override
+    public void setImportedEntity(ImportedSubjectArea importedSubjectArea) {
+        this.importedEntity = importedSubjectArea;
     }
 
     @Override
@@ -101,7 +98,7 @@ public class ImportedSubjectAreaMapping extends ImportedEntityMapping<ImportedSu
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedSubjectArea", importedSubjectArea);
+        return super.getResourceSignature().addProperty("importedSubjectArea", importedEntity);
     }
 
 }

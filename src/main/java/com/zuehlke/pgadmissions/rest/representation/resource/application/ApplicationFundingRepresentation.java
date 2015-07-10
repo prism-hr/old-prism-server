@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
-import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ApplicationFundingRepresentation extends ApplicationSectionRepresentation {
 
@@ -22,7 +22,7 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
 
     private String terms;
 
-    private FileRepresentation document;
+    private DocumentRepresentation document;
 
     public Integer getId() {
         return id;
@@ -80,11 +80,11 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
         this.terms = terms;
     }
 
-    public FileRepresentation getDocument() {
+    public DocumentRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(DocumentRepresentation document) {
         this.document = document;
     }
 
@@ -123,7 +123,7 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
         return this;
     }
 
-    public ApplicationFundingRepresentation withDocument(FileRepresentation document) {
+    public ApplicationFundingRepresentation withDocument(DocumentRepresentation document) {
         this.document = document;
         return this;
     }

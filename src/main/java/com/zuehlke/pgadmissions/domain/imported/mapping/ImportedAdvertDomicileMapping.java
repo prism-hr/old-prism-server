@@ -16,7 +16,8 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
-@Table(name = "imported_advert_domicile_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_advert_domicile_id", "code" }) })
+@Table(name = "imported_advert_domicile_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_advert_domicile_id",
+        "code" }) })
 public class ImportedAdvertDomicileMapping extends ImportedEntityMapping<ImportedAdvertDomicile> {
 
     @Id
@@ -29,14 +30,14 @@ public class ImportedAdvertDomicileMapping extends ImportedEntityMapping<Importe
 
     @ManyToOne
     @JoinColumn(name = "imported_advert_domicile_id", nullable = false)
-    private ImportedAdvertDomicile importedAdvertDomicile;
+    private ImportedAdvertDomicile importedEntity;
 
     @Column(name = "code")
     private String code;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
     @Column(name = "imported_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime importedTimestamp;
@@ -60,18 +61,15 @@ public class ImportedAdvertDomicileMapping extends ImportedEntityMapping<Importe
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public ImportedAdvertDomicile getImportedEntity() {
-        return importedAdvertDomicile;
-    }
-    
-    public ImportedAdvertDomicile getImportedAdvertDomicile() {
-        return importedAdvertDomicile;
+        return importedEntity;
     }
 
-    public void setImportedEntitySimple(ImportedAdvertDomicile importedAdvertDomicile) {
-        this.importedAdvertDomicile = importedAdvertDomicile;
+    @Override
+    public void setImportedEntity(ImportedAdvertDomicile importedAdvertDomicile) {
+        this.importedEntity = importedAdvertDomicile;
     }
 
     @Override
@@ -93,7 +91,7 @@ public class ImportedAdvertDomicileMapping extends ImportedEntityMapping<Importe
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public DateTime getImportedTimestamp() {
         return importedTimestamp;
@@ -101,7 +99,7 @@ public class ImportedAdvertDomicileMapping extends ImportedEntityMapping<Importe
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedEntitySimple", importedAdvertDomicile);
+        return super.getResourceSignature().addProperty("importedEntitySimple", importedEntity);
     }
 
 }

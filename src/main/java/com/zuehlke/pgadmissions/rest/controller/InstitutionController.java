@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
-import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -67,7 +67,7 @@ public class InstitutionController {
 
             Document logoImage = institution.getLogoImage();
             if (logoImage != null) {
-                representation.setLogoImage(new FileRepresentation().withId(logoImage.getId()));
+                representation.setLogoImage(new DocumentRepresentation().withId(logoImage.getId()));
             }
 
             representations.add(representation);

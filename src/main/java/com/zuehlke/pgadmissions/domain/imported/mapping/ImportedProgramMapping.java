@@ -29,7 +29,7 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
 
     @ManyToOne
     @JoinColumn(name = "imported_program_id", nullable = false)
-    private ImportedProgram importedProgram;
+    private ImportedProgram importedEntity;
 
     @Column(name = "code")
     private String code;
@@ -63,15 +63,12 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
 
     @Override
     public ImportedProgram getImportedEntity() {
-        return importedProgram;
+        return importedEntity;
     }
 
-    public ImportedProgram getImportedProgram() {
-        return importedProgram;
-    }
-
-    public void setImportedProgram(ImportedProgram importedProgram) {
-        this.importedProgram = importedProgram;
+    @Override
+    public void setImportedEntity(ImportedProgram importedProgram) {
+        this.importedEntity = importedProgram;
     }
 
     @Override
@@ -105,7 +102,7 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
     }
 
     public ImportedProgramMapping withImportedProgram(ImportedProgram importedProgram) {
-        this.importedProgram = importedProgram;
+        this.importedEntity = importedProgram;
         return this;
     }
 
@@ -116,7 +113,7 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedProgram", importedProgram);
+        return super.getResourceSignature().addProperty("importedProgram", importedEntity);
     }
 
 }

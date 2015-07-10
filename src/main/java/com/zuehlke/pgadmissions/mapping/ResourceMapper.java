@@ -80,6 +80,9 @@ public class ResourceMapper {
     private CommentMapper commentMapper;
 
     @Inject
+    private DocumentMapper documentMapper;
+
+    @Inject
     private InstitutionMapper institutionMapper;
 
     @Inject
@@ -116,10 +119,10 @@ public class ResourceMapper {
 
             if (resourceScope.equals(INSTITUTION)) {
                 representation.setTitle(row.getInstitutionTitle());
-                representation.setLogoImage(row.getInstitutionLogoImageId());
+                representation.setLogoImage(documentMapper.getDocumentRepresentation(row.getInstitutionLogoImageId()));
             } else {
                 representation.setInstitution(new ResourceRepresentationSimple().withId(institutionId).withTitle(row.getInstitutionTitle())
-                        .withLogoImage(row.getInstitutionLogoImageId()));
+                        .withLogoImage(documentMapper.getDocumentRepresentation(row.getInstitutionLogoImageId())));
             }
 
             if (resourceScope.equals(DEPARTMENT)) {
@@ -188,8 +191,8 @@ public class ResourceMapper {
         representation.setTitle(resource.getTitle());
 
         Class<T> resourceClass = (Class<T>) resource.getClass();
-        if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            representation.setLogoImage(resource.getInstitution().getLogoImage().getId());
+        if (Institution.class.equals(resourceClass)) {
+            representation.setLogoImage(documentMapper.getDocumentRepresentation(((Institution) resource).getLogoImage()));
 
             if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
                 ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;

@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class CommentRepresentation {
@@ -63,7 +63,7 @@ public class CommentRepresentation {
 
     private List<LocalDateTime> appointmentPreferences;
 
-    private List<FileRepresentation> documents;
+    private List<DocumentRepresentation> documents;
 
     private List<CommentCustomResponseRepresentation> customResponses;
 
@@ -259,11 +259,11 @@ public class CommentRepresentation {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public List<FileRepresentation> getDocuments() {
+    public List<DocumentRepresentation> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<FileRepresentation> documents) {
+    public void setDocuments(List<DocumentRepresentation> documents) {
         this.documents = documents;
     }
 
@@ -390,7 +390,7 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withDocuments(List<FileRepresentation> documents) {
+    public CommentRepresentation withDocuments(List<DocumentRepresentation> documents) {
         this.documents = documents;
         return this;
     }

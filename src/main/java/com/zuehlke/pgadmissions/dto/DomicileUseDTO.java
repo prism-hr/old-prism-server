@@ -1,17 +1,19 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+
 public class DomicileUseDTO {
 
-    private String code;
+    private ImportedEntitySimple domicile;
 
     private Long useCount;
 
-    public String getCode() {
-        return code;
+    public ImportedEntitySimple getDomicile() {
+        return domicile;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setDomicile(ImportedEntitySimple domicile) {
+        this.domicile = domicile;
     }
 
     public final Long getUseCount() {

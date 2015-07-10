@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -443,6 +444,18 @@ public class AdvertService {
 
     public List<ImportedAdvertDomicile> getAdvertDomiciles() {
         return advertDAO.getAdvertDomiciles();
+    }
+    
+    public Integer getBackgroundImage(Advert advert) {
+        Document backgroundImage = advert.getBackgroundImage();
+        if (backgroundImage == null) {
+            Resource parentResource = advert.getResource().getParentResource();
+            if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
+                return getBackgroundImage(parentResource.getAdvert());
+            }
+            return null;
+        }
+        return backgroundImage.getId();
     }
 
     private String getCurrencyAtLocale(Advert advert) {

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -31,10 +31,10 @@ public class OpportunityController {
 
     @Inject
     private AdvertService advertService;
-    
+
     @Inject
     private AdvertMapper advertMapper;
-    
+
     @Inject
     private ApplicationService applicationService;
 
@@ -42,29 +42,29 @@ public class OpportunityController {
     private StateService stateService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
+    public List<AdvertRepresentationExtended> getAdverts(OpportunitiesQueryDTO query) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
-        
-        List<AdvertRepresentation> representations = Lists.newLinkedList();
+
+        List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
         for (Advert advert : adverts) {
-            representations.add(advertMapper.getAdvertRepresentation(advert));
+            representations.add(advertMapper.getAdvertRepresentationExtended(advert));
         }
         return representations;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}")
-    public AdvertRepresentation getAdvert(@PathVariable String resourceScope, @PathVariable Integer resourceId) {
+    public AdvertRepresentationExtended getAdvert(@PathVariable String resourceScope, @PathVariable Integer resourceId) {
         Advert advert = advertService.getAdvert(PrismScope.valueOf(StringUtils.removeEnd(resourceScope, "s").toUpperCase()), resourceId);
         if (advert == null) {
             throw new ResourceNotFoundException("Advert not found");
         }
-        return advertMapper.getAdvertRepresentation(advert);
+        return advertMapper.getAdvertRepresentationExtended(advert);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
-    public List<AdvertRepresentation> getRecommendedAdverts(@PathVariable Integer applicationId) {
+    public List<AdvertRepresentationExtended> getRecommendedAdverts(@PathVariable Integer applicationId) {
         Application application = applicationService.getById(applicationId);
         return advertMapper.getRecommendedAdvertRepresentations(application);
     }

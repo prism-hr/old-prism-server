@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentation {
@@ -26,7 +26,7 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
 
     private ApplicationSummaryRepresentation resourceSummary;
 
-    private List<AdvertRepresentation> recommendedAdverts;
+    private List<AdvertRepresentationSimple> recommendedAdverts;
 
     public List<String> getPossibleThemes() {
         return possibleThemes;
@@ -100,11 +100,11 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
         this.resourceSummary = resourceSummary;
     }
 
-    public List<AdvertRepresentation> getRecommendedAdverts() {
+    public List<AdvertRepresentationSimple> getRecommendedAdverts() {
         return recommendedAdverts;
     }
 
-    public void setRecommendedAdverts(List<AdvertRepresentation> recommendedAdverts) {
+    public void setRecommendedAdverts(List<AdvertRepresentationSimple> recommendedAdverts) {
         this.recommendedAdverts = recommendedAdverts;
     }
 

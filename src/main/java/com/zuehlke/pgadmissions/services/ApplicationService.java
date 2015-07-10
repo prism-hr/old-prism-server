@@ -400,8 +400,9 @@ public class ApplicationService {
     }
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
-        if (!application.getParentResource().sameAs(application.getInstitution())) {
-            PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(application.getAdvert().getOpportunityType().name());
+        ResourceParent parentResource = (ResourceParent) application.getParentResource();
+        if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
+            PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) parentResource).getOpportunityType().getName());
             DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
 
             LocalDate immediate = defaults.getImmediate();

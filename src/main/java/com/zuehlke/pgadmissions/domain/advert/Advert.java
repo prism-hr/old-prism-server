@@ -23,7 +23,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -293,15 +292,6 @@ public class Advert extends ResourceParentAttribute {
 
     public Set<AdvertClosingDate> getClosingDates() {
         return closingDates;
-    }
-
-    public PrismOpportunityType getOpportunityType() {
-        ResourceParent resource = getResource();
-        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ResourceOpportunity opportunity = (ResourceOpportunity) resource;
-            return PrismOpportunityType.valueOf(opportunity.getOpportunityType().getName());
-        }
-        return null;
     }
 
     public boolean isImported() {

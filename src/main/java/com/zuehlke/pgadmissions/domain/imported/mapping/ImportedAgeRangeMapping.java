@@ -29,14 +29,14 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping<ImportedAgeRa
 
     @ManyToOne
     @JoinColumn(name = "imported_age_range_id", nullable = false)
-    private ImportedAgeRange importedAgeRange;
+    private ImportedAgeRange importedEntity;
 
     @Column(name = "code")
     private String code;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
     @Column(name = "imported_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime importedTimestamp;
@@ -60,20 +60,17 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping<ImportedAgeRa
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public ImportedAgeRange getImportedEntity() {
-        return importedAgeRange;
-    }
-    
-    public ImportedAgeRange getImportedAgeRange() {
-        return importedAgeRange;
+        return importedEntity;
     }
 
-    public void setImportedAgeRange(ImportedAgeRange importedAgeRange) {
-        this.importedAgeRange = importedAgeRange;
+    @Override
+    public void setImportedEntity(ImportedAgeRange importedAgeRange) {
+        this.importedEntity = importedAgeRange;
     }
-    
+
     @Override
     public String getCode() {
         return code;
@@ -93,15 +90,15 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping<ImportedAgeRa
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public DateTime getImportedTimestamp() {
         return importedTimestamp;
     }
-   
+
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedAgeRange", importedAgeRange);
+        return super.getResourceSignature().addProperty("importedAgeRange", importedEntity);
     }
 
 }

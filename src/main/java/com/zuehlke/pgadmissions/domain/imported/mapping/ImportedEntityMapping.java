@@ -19,6 +19,8 @@ public abstract class ImportedEntityMapping<T extends ImportedEntity<?, ?>> impl
     public abstract void setInstitution(Institution institution);
 
     public abstract T getImportedEntity();
+    
+    public abstract void setImportedEntity(T importedEntity);
 
     @Override
     public abstract String getCode();

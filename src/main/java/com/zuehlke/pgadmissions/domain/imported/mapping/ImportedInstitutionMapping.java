@@ -29,7 +29,7 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
 
     @ManyToOne
     @JoinColumn(name = "imported_institution_id", nullable = false)
-    private ImportedInstitution importedInstitution;
+    private ImportedInstitution importedEntity;
 
     @Column(name = "code")
     private String code;
@@ -63,15 +63,12 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
     
     @Override
     public ImportedInstitution getImportedEntity() {
-        return importedInstitution;
+        return importedEntity;
     }
 
-    public ImportedInstitution getImportedInstitution() {
-        return importedInstitution;
-    }
-
-    public void setImportedInstitution(ImportedInstitution institution) {
-        this.importedInstitution = institution;
+    @Override
+    public void setImportedEntity(ImportedInstitution institution) {
+        this.importedEntity = institution;
     }
 
     @Override
@@ -105,7 +102,7 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
     }
     
     public ImportedInstitutionMapping withImportedInstitution(ImportedInstitution importedInstitution) {
-        this.importedInstitution = importedInstitution;
+        this.importedEntity = importedInstitution;
         return this;
     }
 
@@ -116,7 +113,7 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedInstitution", importedInstitution);
+        return super.getResourceSignature().addProperty("importedInstitution", importedEntity);
     }
 
 }

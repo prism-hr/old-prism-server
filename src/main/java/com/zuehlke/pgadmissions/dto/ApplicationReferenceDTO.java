@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 public class ApplicationReferenceDTO {
@@ -19,7 +20,7 @@ public class ApplicationReferenceDTO {
 
     private String addressCode;
 
-    private String addressDomicile;
+    private ImportedEntitySimple addressDomicile;
 
     private String phone;
 
@@ -81,11 +82,11 @@ public class ApplicationReferenceDTO {
         this.addressCode = addressCode;
     }
 
-    public final String getAddressDomicile() {
+    public ImportedEntitySimple getAddressDomicile() {
         return addressDomicile;
     }
 
-    public final void setAddressDomicile(String addressDomicile) {
+    public void setAddressDomicile(ImportedEntitySimple addressDomicile) {
         this.addressDomicile = addressDomicile;
     }
 
@@ -140,7 +141,7 @@ public class ApplicationReferenceDTO {
         return this;
     }
 
-    public ApplicationReferenceDTO withAddressDomicile(String addressDomicile) {
+    public ApplicationReferenceDTO withAddressDomicile(ImportedEntitySimple addressDomicile) {
         this.addressDomicile = addressDomicile;
         return this;
     }

@@ -29,7 +29,7 @@ public class ImportedEntitySimpleMapping extends ImportedEntityMapping<ImportedE
 
     @ManyToOne
     @JoinColumn(name = "imported_entity_id", nullable = false)
-    private ImportedEntitySimple importedEntitySimple;
+    private ImportedEntitySimple importedEntity;
 
     @Column(name = "code")
     private String code;
@@ -63,15 +63,12 @@ public class ImportedEntitySimpleMapping extends ImportedEntityMapping<ImportedE
     
     @Override
     public ImportedEntitySimple getImportedEntity() {
-        return importedEntitySimple;
-    }
-    
-    public ImportedEntitySimple getImportedEntitySimple() {
-        return importedEntitySimple;
+        return importedEntity;
     }
 
-    public void setImportedEntitySimple(ImportedEntitySimple importedEntitySimple) {
-        this.importedEntitySimple = importedEntitySimple;
+    @Override
+    public void setImportedEntity(ImportedEntitySimple importedEntitySimple) {
+        this.importedEntity = importedEntitySimple;
     }
 
     @Override
@@ -101,7 +98,7 @@ public class ImportedEntitySimpleMapping extends ImportedEntityMapping<ImportedE
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedEntitySimple", importedEntitySimple);
+        return super.getResourceSignature().addProperty("importedEntitySimple", importedEntity);
     }
 
 }

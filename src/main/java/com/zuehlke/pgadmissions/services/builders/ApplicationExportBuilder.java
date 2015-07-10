@@ -301,7 +301,7 @@ public class ApplicationExportBuilder {
         String creatorIpAddress = applicationExportDTO.getCreatorIpAddress();
         applicationTp.setIpAddress(creatorIpAddress == null ? propertyLoader.load(SYSTEM_IP_PLACEHOLDER) : creatorIpAddress);
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
-        applicationTp.setRefereeList(buildReferee(applicationExportDTO.getApplicationReferences()));
+        applicationTp.setRefereeList(buildReferee(application.getInstitution(), applicationExportDTO.getApplicationReferences()));
 
         switch (application.getState().getStateGroup().getId()) {
         case APPLICATION_WITHDRAWN:
@@ -480,7 +480,7 @@ public class ApplicationExportBuilder {
         return resultList;
     }
 
-    private RefereeListTp buildReferee(List<ApplicationReferenceDTO> exportReferees) throws Exception {
+    private RefereeListTp buildReferee(Institution institution, List<ApplicationReferenceDTO> exportReferees) throws Exception {
         int referenceCount = exportReferees.size();
         RefereeListTp resultList = objectFactory.createRefereeListTp();
 
@@ -503,7 +503,7 @@ public class ApplicationExportBuilder {
             addressTp.setAddressLine3(reference.getAddressTown());
             addressTp.setAddressLine4(reference.getAddressRegion());
             addressTp.setPostCode(reference.getAddressCode());
-            addressTp.setCountry(reference.getAddressDomicile());
+            addressTp.setCountry(getImportedEntityCode(institution, reference.getAddressDomicile()));
             contactDtlsTp.setAddressDtls(addressTp);
             refereeTp.setContactDetails(contactDtlsTp);
             resultList.getReferee().add(refereeTp);

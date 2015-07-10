@@ -3,13 +3,13 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentation {
 
     private List<String> possibleThemes;
-    
+
     private List<PrismStudyOption> possibleStudyOptions;
 
     private List<String> possibleLocations;
@@ -26,7 +26,7 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
 
     private ApplicationSummaryRepresentation resourceSummary;
 
-    private List<AdvertRepresentationSimple> recommendedAdverts;
+    private List<AdvertRepresentationExtended> recommendedAdverts;
 
     public List<String> getPossibleThemes() {
         return possibleThemes;
@@ -35,7 +35,7 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
     public void setPossibleThemes(List<String> possibleThemes) {
         this.possibleThemes = possibleThemes;
     }
-    
+
     public List<PrismStudyOption> getPossibleStudyOptions() {
         return possibleStudyOptions;
     }
@@ -43,7 +43,7 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
     public void setPossibleStudyOptions(List<PrismStudyOption> possibleStudyOptions) {
         this.possibleStudyOptions = possibleStudyOptions;
     }
-    
+
     public List<String> getPossibleLocations() {
         return possibleLocations;
     }
@@ -100,11 +100,11 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
         this.resourceSummary = resourceSummary;
     }
 
-    public List<AdvertRepresentationSimple> getRecommendedAdverts() {
+    public List<AdvertRepresentationExtended> getRecommendedAdverts() {
         return recommendedAdverts;
     }
 
-    public void setRecommendedAdverts(List<AdvertRepresentationSimple> recommendedAdverts) {
+    public void setRecommendedAdverts(List<AdvertRepresentationExtended> recommendedAdverts) {
         this.recommendedAdverts = recommendedAdverts;
     }
 

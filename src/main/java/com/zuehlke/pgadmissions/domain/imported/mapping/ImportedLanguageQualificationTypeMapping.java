@@ -29,7 +29,7 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
 
     @ManyToOne
     @JoinColumn(name = "imported_language_qualification_type_id", nullable = false)
-    private ImportedLanguageQualificationType importedLanguageQualificationType;
+    private ImportedLanguageQualificationType importedEntity;
 
     @Column(name = "code")
     private String code;
@@ -63,15 +63,12 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
     
     @Override
     public ImportedLanguageQualificationType getImportedEntity() {
-        return importedLanguageQualificationType;
+        return importedEntity;
     }
 
-    public ImportedLanguageQualificationType getImportedLanguageQualificationType() {
-        return importedLanguageQualificationType;
-    }
-
-    public void setImportedLanguageQualificationType(ImportedLanguageQualificationType importedLanguageQualificationType) {
-        this.importedLanguageQualificationType = importedLanguageQualificationType;
+    @Override
+    public void setImportedEntity(ImportedLanguageQualificationType importedLanguageQualificationType) {
+        this.importedEntity = importedLanguageQualificationType;
     }
 
     @Override
@@ -101,7 +98,7 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedLanguageQualificationType", importedLanguageQualificationType);
+        return super.getResourceSignature().addProperty("importedLanguageQualificationType", importedEntity);
     }
 
 }

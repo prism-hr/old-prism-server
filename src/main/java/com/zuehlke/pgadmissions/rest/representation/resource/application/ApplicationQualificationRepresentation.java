@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
-import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ApplicationQualificationRepresentation extends ApplicationSectionRepresentation {
 
@@ -20,7 +20,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     private String grade;
 
-    private FileRepresentation document;
+    private DocumentRepresentation document;
 
     private Boolean completed;
 
@@ -72,11 +72,11 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.grade = grade;
     }
 
-    public FileRepresentation getDocument() {
+    public DocumentRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(DocumentRepresentation document) {
         this.document = document;
     }
 
@@ -118,7 +118,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         return this;
     }
 
-    public ApplicationQualificationRepresentation withDocumentRepresentation(FileRepresentation document) {
+    public ApplicationQualificationRepresentation withDocumentRepresentation(DocumentRepresentation document) {
         this.document = document;
         return this;
     }

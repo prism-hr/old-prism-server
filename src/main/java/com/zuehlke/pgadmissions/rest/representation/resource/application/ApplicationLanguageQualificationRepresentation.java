@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
 
-import com.zuehlke.pgadmissions.rest.representation.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
 
@@ -22,7 +22,7 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
 
     private String listeningScore;
 
-    private FileRepresentation document;
+    private DocumentRepresentation document;
 
     public ImportedLanguageQualificationTypeResponse getLanguageQualificationType() {
         return languageQualificationType;
@@ -80,11 +80,11 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         this.listeningScore = listeningScore;
     }
 
-    public FileRepresentation getDocument() {
+    public DocumentRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(DocumentRepresentation document) {
         this.document = document;
     }
 
@@ -123,7 +123,7 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         return this;
     }
 
-    public ApplicationLanguageQualificationRepresentation withDocument(FileRepresentation document) {
+    public ApplicationLanguageQualificationRepresentation withDocument(DocumentRepresentation document) {
         this.document = document;
         return this;
     }

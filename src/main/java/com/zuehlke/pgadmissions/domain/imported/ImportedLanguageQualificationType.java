@@ -1,23 +1,16 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
-
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedLanguageQualificationTypeDefinition;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedLanguageQualificationTypeDefinition;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_LANGUAGE_QUALIFICATION_TYPE;
 
 @Entity
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
@@ -64,7 +57,7 @@ public class ImportedLanguageQualificationType extends ImportedEntity<Integer, I
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "importedLanguageQualificationType")
+    @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedLanguageQualificationTypeMapping> mappings = Sets.newHashSet();
 
     @Override

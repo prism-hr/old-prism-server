@@ -41,7 +41,7 @@ public class ImportedEntitySimple extends ImportedEntity<Integer, ImportedEntity
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "importedEntitySimple")
+    @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedEntitySimpleMapping> mappings = Sets.newHashSet();
 
     public Integer getId() {

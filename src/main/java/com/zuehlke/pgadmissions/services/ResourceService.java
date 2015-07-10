@@ -662,18 +662,6 @@ public class ResourceService {
         resourceDAO.deleteElapsedStudyOptions(baseline);
     }
 
-    public Integer getBackgroundImage(ResourceParent resource) {
-        Document backgroundImage = resource.getAdvert().getBackgroundImage();
-        if (backgroundImage == null) {
-            Resource parentResource = resource.getParentResource();
-            if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
-                return getBackgroundImage((ResourceParent) resource.getParentResource());
-            }
-            return null;
-        }
-        return backgroundImage.getId();
-    }
-
     public Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {

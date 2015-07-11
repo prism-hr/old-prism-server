@@ -4,6 +4,8 @@ public class ValidationErrorRepresentation {
 
     private String[] fieldNames;
 
+    private String errorCode;
+
     private String errorMessage;
 
     public String[] getFieldNames() {
@@ -12,6 +14,14 @@ public class ValidationErrorRepresentation {
 
     public void setFieldNames(String[] fieldNames) {
         this.fieldNames = fieldNames;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 
     public String getErrorMessage() {

@@ -283,16 +283,14 @@ public class ResourceDAO {
     }
 
     public <T> T getResourceAttribute(ResourceOpportunity resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("project", resource.getProject())) //
-                        .add(Restrictions.eq("program", resource.getProgram())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
-                .addOrder(Order.desc("project")) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
-                .add(Restrictions.eq(attributeName, attributeValue)) //
-                .setMaxResults(1) //
+        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass)
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eq("project", resource.getProject()))
+                        .add(Restrictions.eq("program", resource.getProgram())))
+                .addOrder(Order.desc("project"))
+                .addOrder(Order.desc("program"))
+                .add(Restrictions.eq(attributeName, attributeValue))
+                .setMaxResults(1)
                 .uniqueResult();
     }
 

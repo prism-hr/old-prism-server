@@ -134,7 +134,7 @@ public class ResourceService {
         }
         resource.setWorkflowPropertyConfigurationVersion(dto.getWorkflowPropertyConfigurationVersion());
 
-        Role role = roleService.getById(PrismRole.valueOf(creationScope.name() + "_ADMINISTRATOR"));
+        Role role = roleService.getCreatorRole(resource);
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime()).addAssignedUser(user, role, CREATE);
 

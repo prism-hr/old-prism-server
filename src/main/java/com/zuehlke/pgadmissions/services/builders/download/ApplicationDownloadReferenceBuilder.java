@@ -10,6 +10,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import javax.inject.Inject;
 
@@ -22,14 +23,17 @@ import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
+// TODO move this shit into the adapter
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class ApplicationDownloadReferenceBuilder {
@@ -39,9 +43,12 @@ public class ApplicationDownloadReferenceBuilder {
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
     @Inject
+    private ApplicationService applicationService;
+
+    @Inject
     private DocumentService documentService;
 
-    public byte[] build(final Application application, final Comment referenceComment) {
+    public byte[] build(ApplicationRepresentationExport application, CommentRepresentation commentRepresentation) {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -49,8 +56,8 @@ public class ApplicationDownloadReferenceBuilder {
 
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX));
 
-            addReferenceComment(pdfDocument, body, pdfWriter, application, referenceComment);
-            addReferenceDocument(pdfDocument, pdfWriter, referenceComment);
+            addReferenceComment(pdfDocument, body, pdfWriter, application, commentRepresentation);
+            addReferenceDocument(pdfDocument, pdfWriter, commentRepresentation);
 
             pdfDocument.newPage();
             pdfDocument.close();
@@ -61,37 +68,39 @@ public class ApplicationDownloadReferenceBuilder {
         }
     }
 
-    public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, Application application, Comment referenceComment)
-            throws Exception {
+    public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, ApplicationRepresentationExport application,
+            CommentRepresentation referenceComment) throws Exception {
         String rowTitle = propertyLoader.load(SYSTEM_COMMENT_HEADER);
 
         if (referenceComment == null) {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle,
-                    application.isApproved() ? propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
+                    applicationService.isApproved(application.getId()) ? propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else if (referenceComment.getDeclinedResponse()) {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, propertyLoader.load(APPLICATION_COMMENT_DECLINED_REFEREE), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUserDisplay(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUser().getFullName(),
+                    body);
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, referenceComment.getContent(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), referenceComment.getApplicationRatingDisplay(), body);
 
-            for (CommentCustomResponse customResponse : referenceComment.getCustomResponses()) {
-                applicationDownloadBuilderHelper.addContentRowMedium(customResponse.getActionCustomQuestionConfiguration().getLabel(),
-                        customResponse.getPropertyValue(), body);
+            BigDecimal rating = referenceComment.getApplicationRating();
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), rating == null ? null : rating.toPlainString(), body);
+
+            for (CommentCustomResponseRepresentation customResponse : referenceComment.getCustomResponses()) {
+                applicationDownloadBuilderHelper.addContentRowMedium(customResponse.getLabel(), customResponse.getPropertyValue(), body);
             }
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
     }
 
-    private void addReferenceDocument(Document pdfDocument, PdfWriter pdfWriter, Comment referenceComment) throws IntegrationException {
+    private void addReferenceDocument(Document pdfDocument, PdfWriter pdfWriter, CommentRepresentation referenceComment) throws IntegrationException {
         if (referenceComment != null) {
             PdfContentByte content = pdfWriter.getDirectContent();
-            for (com.zuehlke.pgadmissions.domain.document.Document document : referenceComment.getDocuments()) {
+            for (DocumentRepresentation document : referenceComment.getDocuments()) {
                 try {
-                    PdfReader reader = new PdfReader(documentService.getDocumentContent(document));
+                    PdfReader reader = new PdfReader(documentService.getDocumentContent(document.getId()));
                     for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                         pdfDocument.newPage();
                         PdfImportedPage page = pdfWriter.getImportedPage(reader, i);

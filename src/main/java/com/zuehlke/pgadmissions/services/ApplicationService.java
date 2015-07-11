@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
@@ -33,6 +34,8 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -46,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
@@ -54,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -69,9 +72,14 @@ import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
+import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
+import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.ApplicationValidator;
@@ -115,6 +123,15 @@ public class ApplicationService {
 
     @Inject
     private SystemService systemService;
+
+    @Inject
+    private ApplicationMapper applicationMapper;
+
+    @Inject
+    private UserMapper userMapper;
+
+    @Inject
+    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private ApplicationValidator applicationValidator;
@@ -195,36 +212,49 @@ public class ApplicationService {
         return applicationDAO.getApplicationCreatorIpAddress(application);
     }
 
-    public User getPrimarySupervisor(Comment offerRecommendationComment) {
-        return applicationDAO.getPrimarySupervisor(offerRecommendationComment);
-    }
-
     public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return applicationDAO.getApplicationExportQualifications(application);
     }
 
-    public List<ApplicationReferenceDTO> getApplicationExportReferees(Application application) throws Exception {
+    public List<ApplicationRefereeRepresentation> getApplicationExportReferees(Application application) throws Exception {
         List<ApplicationReferenceDTO> references = applicationDAO.getApplicationRefereesResponded(application);
 
         Institution institution = application.getInstitution();
-        DomicileUseDTO domicileMock = importedEntityService.getMostUsedDomicile(institution);
+        List<ApplicationRefereeRepresentation> representations = Lists.newArrayListWithCapacity(references.size());
+        for (ApplicationReferenceDTO reference : references) {
+            representations.add(applicationMapper.getApplicationRefereeRepresentation(reference, institution));
+        }
 
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
-        String addressLineMock = loader.load(SYSTEM_ADDRESS_LINE_MOCK);
-
+        // TODO move this shit into the adapter
         WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(
                 WORKFLOW_PROPERTY, application, application.getInstitution().getUser(), APPLICATION_ASSIGN_REFEREE,
                 application.getWorkflowPropertyConfigurationVersion());
 
         int referencesPending = configuration.getMinimum() - references.size();
-        for (int i = 0; i < referencesPending; i++) {
-            references.add(new ApplicationReferenceDTO().withUser(institution.getUser()).withJobTitle(loader.load(SYSTEM_ROLE_APPLICATION_ADMINISTRATOR))
-                    .withAddressLine1(addressLineMock).withAddressLine2(addressLineMock).withAddressTown(addressLineMock).withAddressRegion(addressLineMock)
-                    .withAddressCode(loader.load(SYSTEM_ADDRESS_CODE_MOCK)).withAddressDomicile(domicileMock == null ? null : domicileMock.getDomicile())
-                    .withPhone(loader.load(SYSTEM_PHONE_MOCK)));
+        if (referencesPending > 0) {
+            DomicileUseDTO domicileUseDTO = importedEntityService.getMostUsedDomicile(institution);
+
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
+            String jobTitle = loader.load(SYSTEM_ROLE_APPLICATION_ADMINISTRATOR);
+            String addressLineMock = loader.load(SYSTEM_ADDRESS_LINE_MOCK);
+            String addressCodeMock = loader.load(SYSTEM_ADDRESS_CODE_MOCK);
+            String phoneMock = loader.load(SYSTEM_PHONE_MOCK);
+
+            if (domicileUseDTO != null) {
+                ImportedEntityResponse domicileMock = importedEntityMapper.getImportedEntityRepresentation(domicileUseDTO.getDomicile(), institution);
+
+                for (int i = 0; i < referencesPending; i++) {
+                    representations.add(new ApplicationRefereeRepresentation()
+                            .withUser(userMapper.getUserRepresentationSimple(institution.getUser()))
+                            .withJobTitle(jobTitle)
+                            .withAddress(
+                                    new AddressApplicationRepresentation().withDomicile(domicileMock).withAddressLine1(addressLineMock)
+                                            .withAddressCode(addressLineMock).withAddressCode(addressCodeMock)).withPhone(phoneMock));
+                }
+            }
         }
 
-        return references;
+        return representations;
     }
 
     public List<User> getApplicationRefereesNotResponded(Application application) {
@@ -397,6 +427,12 @@ public class ApplicationService {
             return actionEnhancements.size() > 0;
         }
         return false;
+    }
+
+    public boolean isApproved(Integer applicationId) {
+        Application application = getById(applicationId);
+        return resourceService.getResourceStateGroups(application).contains(PrismStateGroup.APPLICATION_APPROVED)
+                && !application.getState().equals(APPLICATION_APPROVED);
     }
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {

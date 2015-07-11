@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -65,7 +66,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
@@ -175,9 +175,8 @@ public class ResourceService {
         }
         resource.setWorkflowPropertyConfigurationVersion(DTO.getWorkflowPropertyConfigurationVersion());
 
-        Role role = roleService.getById(PrismRole.valueOf(creationScope.name() + "_ADMINISTRATOR"));
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
-                .withCreatedTimestamp(new DateTime()).addAssignedUser(user, role, CREATE);
+                .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
         return actionService.executeUserAction(resource, action, comment);
     }
@@ -680,6 +679,10 @@ public class ResourceService {
     public <T extends ResourceParent> Integer getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
         Long count = resourceDAO.getActiveChildResourceCount(resource, childResourceScope);
         return count == null ? 0 : count.intValue();
+    }
+
+    public List<PrismStateGroup> getResourceStateGroups(Resource resource) {
+        return resourceDAO.getResourceStateGroups(resource);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -213,7 +213,7 @@ public class UserService {
         return userDAO.getUsersForResourceAndRoles(resource, roleIds);
     }
 
-    public String getUserInstitutionId(User user, Institution institution, PrismUserIdentity identityType) {
+    public String getUserInstitutionIdentity(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
         return userDAO.getUserInstitutionId(user, institution, identityType);
     }
 
@@ -284,7 +284,7 @@ public class UserService {
 
     public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
         UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
-                .withInstitution(application.getInstitution()).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
+                .withInstitution(application.getInstitution()).withIdentityType(PrismUserInstitutionIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
         entityService.createOrUpdate(transientUserInstitutionIdentity);
     }
 

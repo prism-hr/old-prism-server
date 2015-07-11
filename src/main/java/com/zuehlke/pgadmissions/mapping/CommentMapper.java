@@ -188,6 +188,14 @@ public class CommentMapper {
         return null;
     }
 
+    public CommentRepresentation getCommentRepresentationSecured(User user, Comment comment) {
+        Resource resource = comment.getResource();
+        List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
+        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
+        Set<PrismActionRedactionType> redactions = actionService.getRedactions(resource, user).get(comment.getAction().getId());
+        return getCommentRepresentationSecured(user, comment, rolesOverridingRedactions, redactions, creatableRoles);
+    }
+
     private CommentRepresentation getCommentRepresentationSecured(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,
             Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
         if (!rolesOverridingRedactions.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user)) {

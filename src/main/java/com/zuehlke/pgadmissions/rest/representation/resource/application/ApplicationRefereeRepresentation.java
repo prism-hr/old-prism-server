@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationRefereeRepresentation extends ApplicationSectionRepresentation {
@@ -22,7 +23,7 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
 
     private String skype;
 
-    private Integer comment;
+    private CommentRepresentation comment;
 
     public Integer getId() {
         return id;
@@ -40,11 +41,11 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.user = user;
     }
 
-    public final PrismRefereeType getRefereeType() {
+    public PrismRefereeType getRefereeType() {
         return refereeType;
     }
 
-    public final void setRefereeType(PrismRefereeType refereeType) {
+    public void setRefereeType(PrismRefereeType refereeType) {
         this.refereeType = refereeType;
     }
 
@@ -88,11 +89,11 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.skype = skype;
     }
 
-    public final Integer getComment() {
+    public CommentRepresentation getComment() {
         return comment;
     }
 
-    public final void setComment(Integer comment) {
+    public void setComment(CommentRepresentation comment) {
         this.comment = comment;
     }
 
@@ -136,7 +137,7 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         return this;
     }
 
-    public ApplicationRefereeRepresentation withComment(Integer comment) {
+    public ApplicationRefereeRepresentation withComment(CommentRepresentation comment) {
         this.comment = comment;
         return this;
     }

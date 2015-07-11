@@ -34,7 +34,7 @@ public class ImportedAdvertDomicile extends ImportedEntity<String, ImportedAdver
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "importedAdvertDomicile")
+    @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedAdvertDomicileMapping> mappings = Sets.newHashSet();
 
     @Override

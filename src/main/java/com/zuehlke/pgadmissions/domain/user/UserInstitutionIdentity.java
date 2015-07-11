@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
@@ -33,7 +33,7 @@ public class UserInstitutionIdentity implements UniqueEntity {
 
     @Column(name = "user_identity_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismUserIdentity identityType;
+    private PrismUserInstitutionIdentity identityType;
 
     @Column(name = "identifier", nullable = false)
     private String identifier;
@@ -62,11 +62,11 @@ public class UserInstitutionIdentity implements UniqueEntity {
         this.institution = institution;
     }
 
-    public PrismUserIdentity getIdentityType() {
+    public PrismUserInstitutionIdentity getIdentityType() {
         return identityType;
     }
 
-    public void setIdentityType(PrismUserIdentity identityType) {
+    public void setIdentityType(PrismUserInstitutionIdentity identityType) {
         this.identityType = identityType;
     }
 
@@ -88,7 +88,7 @@ public class UserInstitutionIdentity implements UniqueEntity {
         return this;
     }
 
-    public UserInstitutionIdentity withIdentityType(PrismUserIdentity identityType) {
+    public UserInstitutionIdentity withIdentityType(PrismUserInstitutionIdentity identityType) {
         this.identityType = identityType;
         return this;
     }

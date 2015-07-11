@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
-public class ApplicationRepresentationClient extends ApplicationRepresentation {
+public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
 
     private List<String> possibleThemes;
 
@@ -19,10 +19,6 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
     private List<UserRepresentationSimple> usersPotentiallyInterestedInApplication;
 
     private ApplicationInterviewRepresentation interview;
-
-    private ApplicationOfferRepresentation offerRecommendation;
-
-    private List<ApplicationAssignedSupervisorRepresentation> assignedSupervisors;
 
     private ApplicationSummaryRepresentation resourceSummary;
 
@@ -74,22 +70,6 @@ public class ApplicationRepresentationClient extends ApplicationRepresentation {
 
     public void setInterview(ApplicationInterviewRepresentation interview) {
         this.interview = interview;
-    }
-
-    public ApplicationOfferRepresentation getOfferRecommendation() {
-        return offerRecommendation;
-    }
-
-    public void setOfferRecommendation(ApplicationOfferRepresentation offerRecommendation) {
-        this.offerRecommendation = offerRecommendation;
-    }
-
-    public List<ApplicationAssignedSupervisorRepresentation> getAssignedSupervisors() {
-        return assignedSupervisors;
-    }
-
-    public void setAssignedSupervisors(List<ApplicationAssignedSupervisorRepresentation> assignedSupervisors) {
-        this.assignedSupervisors = assignedSupervisors;
     }
 
     public ApplicationSummaryRepresentation getResourceSummary() {

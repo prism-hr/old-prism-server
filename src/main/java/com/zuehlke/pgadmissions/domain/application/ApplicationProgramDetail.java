@@ -134,17 +134,13 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.application = application;
         return this;
     }
-
-    public String getStartDateDisplay(String dateFormat) {
-        return startDate == null ? null : startDate.toString(dateFormat);
-    }
-
-    public String getReferralSourceDisplay() {
-        return referralSource == null ? null : referralSource.getName();
-    }
-
+    
     public PrismStudyOption getStudyOptionDisplay() {
         return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getName());
+    }
+    
+    public String getReferralSourceDisplay() {
+        return referralSource == null ? null : referralSource.getName();
     }
 
 }

@@ -184,25 +184,13 @@ public class ApplicationQualification extends ApplicationSection {
         this.completed = completed;
         return this;
     }
-
+    
     public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat);
     }
 
     public String getAwardDateDisplay(String dateFormat) {
         return awardDate == null ? null : awardDate.toString(dateFormat);
-    }
-
-    public String getProgramDisplay() {
-        return program == null ? null : program.getName();
-    }
-
-    public String getInstitutionDisplay() {
-        return program == null ? null : program.getInstitution().getName();
-    }
-
-    public String getQualificationTypeDisplay() {
-        return program == null ? null : program.getQualificationType().getName();
     }
 
 }

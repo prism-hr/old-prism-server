@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -78,7 +78,7 @@ public class UserDAO {
                 .list();
     }
 
-    public String getUserInstitutionId(User user, Institution institution, PrismUserIdentity identityType) {
+    public String getUserInstitutionId(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
         return (String) sessionFactory.getCurrentSession().createCriteria(UserInstitutionIdentity.class) //
                 .setProjection(Projections.property("identifier")) //
                 .add(Restrictions.eq("user", user)) //

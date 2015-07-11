@@ -18,13 +18,13 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
@@ -203,13 +203,13 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
     private void validateDemographicConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        boolean personalDetailNull = personalDetail == null;
 
-        ImportedEntitySimple ethnicity = personalDetailNull ? null : personalDetail.getEthnicity();
-        ImportedEntitySimple disability = personalDetailNull ? null : personalDetail.getDisability();
-
-        validateRequiredConstraint(ethnicity, "personalDetail", "ethnicity", configuration, errors);
-        validateRequiredConstraint(disability, "personalDetail", "disability", configuration, errors);
+        if (personalDetail != null) {
+            ApplicationDemographic demographic = personalDetail.getDemographic();
+    
+            validateRequiredConstraint(demographic.getEthnicity(), "personalDetail", "ethnicity", configuration, errors);
+            validateRequiredConstraint(demographic.getDisability(), "personalDetail", "disability", configuration, errors);
+        }
     }
 
     private void validateCriminalConvictionConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {

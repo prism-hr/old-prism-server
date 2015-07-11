@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.application;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,7 +16,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
@@ -51,6 +51,10 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     private ImportedEntitySimple country;
 
     @ManyToOne
+    @JoinColumn(name = "imported_domicile_id")
+    private ImportedEntitySimple domicile;
+
+    @ManyToOne
     @JoinColumn(name = "imported_nationality_id1")
     private ImportedEntitySimple firstNationality;
 
@@ -80,17 +84,8 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @Size(max = 50)
     private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "imported_ethnicity_id")
-    private ImportedEntitySimple ethnicity;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_disability_id")
-    private ImportedEntitySimple disability;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_domicile_id")
-    private ImportedEntitySimple domicile;
+    @Embedded
+    private ApplicationDemographic demographic;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -228,20 +223,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.skype = skype;
     }
 
-    public ImportedEntitySimple getEthnicity() {
-        return ethnicity;
+    public ApplicationDemographic getDemographic() {
+        return demographic;
     }
 
-    public void setEthnicity(ImportedEntitySimple ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public ImportedEntitySimple getDisability() {
-        return disability;
-    }
-
-    public void setDisability(ImportedEntitySimple disability) {
-        this.disability = disability;
+    public void setDemographic(ApplicationDemographic demographic) {
+        this.demographic = demographic;
     }
 
     @Override
@@ -262,115 +249,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     public ApplicationPersonalDetail withApplication(Application application) {
         this.application = application;
         return this;
-    }
-
-    public ApplicationPersonalDetail withTitle(ImportedEntitySimple title) {
-        this.title = title;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withGender(ImportedEntitySimple gender) {
-        this.gender = gender;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withCountry(ImportedEntitySimple country) {
-        this.country = country;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withFirstNationality(ImportedEntitySimple firstNationality) {
-        this.firstNationality = firstNationality;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withSecondNationality(ImportedEntitySimple secondNationality) {
-        this.secondNationality = secondNationality;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withFirstLanguageLocale(Boolean firstLanguageLocale) {
-        this.firstLanguageLocale = firstLanguageLocale;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withLanguageQualification(ApplicationLanguageQualification languageQualification) {
-        this.languageQualification = languageQualification;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withDomicile(final ImportedEntitySimple domicile) {
-        this.domicile = domicile;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withRequiresVisa(Boolean requiresVisa) {
-        this.visaRequired = requiresVisa;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withPassport(ApplicationPassport passport) {
-        this.passport = passport;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withPhone(String phoneNumber) {
-        this.phone = phoneNumber;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withSkype(String skype) {
-        this.skype = skype;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withEthnicity(ImportedEntitySimple ethnicity) {
-        this.ethnicity = ethnicity;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withDisability(ImportedEntitySimple disability) {
-        this.disability = disability;
-        return this;
-    }
-
-    public String getDateOfBirth(String dateFormat) {
-        return dateOfBirth == null ? null : dateOfBirth.toString(dateFormat);
-    }
-
-    public String getTitleDisplay() {
-        return title == null ? null : title.getName();
-    }
-
-    public String getGenderDisplay() {
-        return gender == null ? null : gender.getName();
-    }
-
-    public String getCountryDisplay() {
-        return country == null ? null : country.getName();
-    }
-
-    public String getDomicileDisplay() {
-        return domicile == null ? null : domicile.getName();
-    }
-
-    public String getEthnicityDisplay() {
-        return ethnicity == null ? null : ethnicity.getName();
-    }
-
-    public String getDisabilityDisplay() {
-        return disability == null ? null : disability.getName();
-    }
-
-    public String getNationalityDisplay() {
-        String first = firstNationality == null ? null : firstNationality.getName();
-        String second = secondNationality == null ? null : secondNationality.getName();
-        return Joiner.on(", ").skipNulls().join(first, second);
     }
 
 }

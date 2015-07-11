@@ -1,18 +1,18 @@
 package com.zuehlke.pgadmissions.rest.representation.user;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 
 public class UserInstitutionIdentityRepresentation {
 
-    private PrismUserIdentity identityType;
+    private PrismUserInstitutionIdentity identityType;
 
     private String identifier;
 
-    public PrismUserIdentity getIdentityType() {
+    public PrismUserInstitutionIdentity getIdentityType() {
         return identityType;
     }
 
-    public void setIdentityType(PrismUserIdentity identityType) {
+    public void setIdentityType(PrismUserInstitutionIdentity identityType) {
         this.identityType = identityType;
     }
 
@@ -22,6 +22,16 @@ public class UserInstitutionIdentityRepresentation {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+    
+    public UserInstitutionIdentityRepresentation withIdentityType(PrismUserInstitutionIdentity identityType) {
+        this.identityType = identityType;
+        return this;
+    }
+    
+    public UserInstitutionIdentityRepresentation withIdentifier(String identifier) {
+        this.identifier = identifier;
+        return this;
     }
 
 }

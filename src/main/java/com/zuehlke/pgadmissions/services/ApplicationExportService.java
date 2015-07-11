@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_EXPORT_PROGRAM_INSTANCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity.STUDY_APPLICANT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_EXPORT;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.util.List;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -43,13 +39,11 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicati
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentExport;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationExportResponseDTO;
 import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
 import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
@@ -85,12 +79,6 @@ public class ApplicationExportService {
     private WebServiceTemplate webServiceTemplate;
 
     @Inject
-    private CommentService commentService;
-
-    @Inject
-    private ResourceService resourceService;
-
-    @Inject
     private UserService userService;
 
     @Inject
@@ -98,6 +86,9 @@ public class ApplicationExportService {
 
     @Inject
     protected ApplicationService applicationService;
+
+    @Inject
+    protected ApplicationMapper applicationMapper;
 
     @Inject
     protected ActionService actionService;
@@ -136,24 +127,10 @@ public class ApplicationExportService {
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws Exception {
         localize(application);
-
-        String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), STUDY_APPLICANT);
-        Comment offerRecommendationComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-        User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
-        ResourceStudyOptionInstance exportProgramInstance = resourceService.getFirstStudyOptionInstance(application.getProgram(), application
-                .getProgramDetail().getStudyOption());
-        List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
-
-        if (exportProgramInstance == null) {
-            throw new ApplicationExportException(SYSTEM_NO_EXPORT_PROGRAM_INSTANCE.name() + " for " + application.getCode());
-        }
-
         return applicationContext
                 .getBean(ApplicationExportBuilder.class)
                 .localize(propertyLoader)
-                .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress("127.0.0.1")
-                        .withOfferRecommendationComment(offerRecommendationComment).withPrimarySupervisor(primarySupervisor)
-                        .withExportProgramInstance(exportProgramInstance).withApplicationReferences(applicationExportReferences));
+                .build(applicationMapper.getApplicationRepresentationExport(application));
     }
 
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws Exception {

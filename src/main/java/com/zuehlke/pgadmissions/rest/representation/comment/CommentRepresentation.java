@@ -147,19 +147,19 @@ public class CommentRepresentation {
         this.applicationInterested = applicationInterested;
     }
 
-    public final CommentInterviewAppointmentRepresentation getInterviewAppointment() {
+    public CommentInterviewAppointmentRepresentation getInterviewAppointment() {
         return interviewAppointment;
     }
 
-    public final void setInterviewAppointment(CommentInterviewAppointmentRepresentation interviewAppointment) {
+    public void setInterviewAppointment(CommentInterviewAppointmentRepresentation interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
     }
 
-    public final CommentInterviewInstructionRepresentation getInterviewInstruction() {
+    public CommentInterviewInstructionRepresentation getInterviewInstruction() {
         return interviewInstruction;
     }
 
-    public final void setInterviewInstruction(CommentInterviewInstructionRepresentation interviewInstruction) {
+    public void setInterviewInstruction(CommentInterviewInstructionRepresentation interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
     }
 
@@ -195,27 +195,27 @@ public class CommentRepresentation {
         this.applicationReserveStatus = applicationReserveStatus;
     }
 
-    public final String getRejectionReason() {
+    public String getRejectionReason() {
         return rejectionReason;
     }
 
-    public final void setRejectionReason(String rejectionReason) {
+    public void setRejectionReason(String rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
 
-    public final String getRejectionReasonSystem() {
+    public String getRejectionReasonSystem() {
         return rejectionReasonSystem;
     }
 
-    public final void setRejectionReasonSystem(String rejectionReasonSystem) {
+    public void setRejectionReasonSystem(String rejectionReasonSystem) {
         this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
-    public final BigDecimal getApplicationRating() {
+    public BigDecimal getApplicationRating() {
         return applicationRating;
     }
 
-    public final void setApplicationRating(BigDecimal applicationRating) {
+    public void setApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
     }
 

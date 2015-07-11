@@ -136,6 +136,10 @@ public class DocumentService {
         }
     }
 
+    public byte[] getDocumentContent(Integer document) throws IntegrationException {
+        return getDocumentContent(getById(document));
+    }    
+    
     public byte[] getDocumentContent(Document document) throws IntegrationException {
         if (document.getExported()) {
             AmazonS3 amazonClient = getAmazonClient();

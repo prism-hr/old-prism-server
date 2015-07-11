@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAssignmentSection;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -121,7 +122,6 @@ public class ApplicationSectionService {
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         if (programDetail == null) {
             programDetail = new ApplicationProgramDetail();
-            application.setProgramDetail(programDetail);
         }
 
         application.setPreviousApplication(programDetailDTO.getPreviousApplication());
@@ -148,6 +148,7 @@ public class ApplicationSectionService {
         List<String> secondaryThemes = programDetailDTO.getSecondaryThemes();
         application.setSecondaryTheme(secondaryThemes.isEmpty() ? null : Joiner.on("|").join(secondaryThemes));
 
+        application.setProgramDetail(programDetail);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }
 
@@ -231,15 +232,18 @@ public class ApplicationSectionService {
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
 
         Integer ethnicityId = personalDetailDTO.getEthnicity();
-        if (ethnicityId != null) {
-            ImportedEntitySimple ethnicity = importedEntityService.getById(ImportedEntitySimple.class, ethnicityId);
-            personalDetail.setEthnicity(ethnicity);
-        }
-
         Integer disabilityId = personalDetailDTO.getDisability();
-        if (disabilityId != null) {
-            ImportedEntitySimple disability = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getDisability());
-            personalDetail.setDisability(disability);
+        if (!(ethnicityId == null && disabilityId == null)) {
+            ApplicationDemographic demographic = new ApplicationDemographic();
+            if (ethnicityId != null) {
+                demographic.setEthnicity(importedEntityService.getById(ImportedEntitySimple.class, ethnicityId));
+            }
+
+            if (disabilityId != null) {
+                demographic.setDisability(importedEntityService.getById(ImportedEntitySimple.class, disabilityId));
+            }
+            
+            personalDetail.setDemographic(demographic);
         }
 
         updateLanguageQualification(personalDetailDTO, institution, personalDetail);

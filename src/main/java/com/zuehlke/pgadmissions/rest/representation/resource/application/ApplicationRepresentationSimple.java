@@ -7,8 +7,8 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 
-public class ApplicationRepresentation extends ResourceRepresentationExtended {
-    
+public class ApplicationRepresentationSimple extends ResourceRepresentationExtended {
+
     private LocalDate closingDate;
 
     private DateTime submittedTimestamp;
@@ -16,9 +16,9 @@ public class ApplicationRepresentation extends ResourceRepresentationExtended {
     private Boolean previousApplication;
 
     private ApplicationProgramDetailRepresentation programDetail;
-    
+
     private ApplicationStudyDetailRepresentation studyDetail;
-    
+
     private List<String> primaryThemes;
 
     private List<String> secondaryThemes;

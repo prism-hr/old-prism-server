@@ -49,10 +49,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -114,35 +112,23 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public User getPrimarySupervisor(Comment offerRecommendationComment) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
-                .setProjection(Projections.property("user")) //
-                .add(Restrictions.eq("comment", offerRecommendationComment)) //
-                .add(Restrictions.eq("role.id", PrismRole.APPLICATION_PRIMARY_SUPERVISOR)) //
-                .uniqueResult();
-    }
-
     public List<ApplicationReferenceDTO> getApplicationRefereesResponded(Application application) {
-        return (List<ApplicationReferenceDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class, "applicationReferee") //
+        return (List<ApplicationReferenceDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
                         .add(Projections.property("user"), "user") //
+                        .add(Projections.property("refereeType"), "refereeType") //
+                        .add(Projections.property("jobEmployer"), "jobEmployer") //
                         .add(Projections.property("jobTitle"), "jobTitle") //
-                        .add(Projections.property("address.addressLine1"), "addressLine1") //
-                        .add(Projections.property("address.addressLine2"), "addressLine2") //
-                        .add(Projections.property("address.addressTown"), "addressTown") //
-                        .add(Projections.property("address.addressRegion"), "addressRegion") //
-                        .add(Projections.property("address.addressCode"), "addressCode") //
-                        .add(Projections.groupProperty("domicileMapping.code"), "addressDomicile") //
+                        .add(Projections.property("address"), "address") //
+                        .add(Projections.property("phone"), "phone") //
+                        .add(Projections.property("skype"), "skype") //
                         .add(Projections.property("comment"), "comment")) //
-                .createAlias("address", "address", JoinType.INNER_JOIN) //
-                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
-                .createAlias("domicile.mappings", "domicileMapping", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
                 .addOrder(Order.desc("comment.applicationRating")) //
                 .addOrder(Order.asc("comment.createdTimestamp")) //
                 .addOrder(Order.asc("comment.id")) //
-                .addOrder(Order.desc("domicileMapping.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReferenceDTO.class)) //
                 .list();
     }

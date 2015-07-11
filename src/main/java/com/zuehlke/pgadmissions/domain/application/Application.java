@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_RETAINED;
@@ -56,7 +55,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -860,23 +858,6 @@ public class Application extends Resource {
         return parentResources;
     }
 
-    public String getInstitutionDisplay() {
-        return institution == null ? null : institution.getTitle();
-    }
-
-    public String getDepartmentDisplay() {
-        Department department = getDepartment();
-        return department == null ? null : department.getTitle();
-    }
-
-    public String getProgramDisplay() {
-        return program == null ? null : program.getTitle();
-    }
-
-    public String getProjectDisplay() {
-        return project == null ? null : project.getTitle();
-    }
-
     public String getCreatedTimestampDisplay(String dateFormat) {
         return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat);
     }
@@ -889,24 +870,12 @@ public class Application extends Resource {
         return closingDate == null ? null : closingDate.toString(dateFormat);
     }
 
-    public String getConfirmedStartDateDisplay(String dateFormat) {
-        return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat);
-    }
-
-    public String getApplicationRatingAverageDisplay() {
-        return applicationRatingAverage == null ? null : applicationRatingAverage.toPlainString();
-    }
-
     public String getPrimaryThemeDisplay() {
         return primaryTheme == null ? null : primaryTheme.replace("|", ", ");
     }
 
     public String getSecondaryThemeDisplay() {
         return secondaryTheme == null ? null : secondaryTheme.replace("|", ", ");
-    }
-
-    public boolean isApproved() {
-        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != APPLICATION_APPROVED;
     }
 
     public boolean isSubmitted() {
@@ -938,10 +907,10 @@ public class Application extends Resource {
 
     @Override
     public ResourceSignature getResourceSignature() {
+        Resource parentResource = getParentResource();
         return new ResourceSignature()
                 .addProperty("user", user)
-                .addProperty("program", program)
-                .addProperty("project", project)
+                .addProperty(parentResource.getResourceScope().getLowerCamelName(), parentResource)
                 .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED)
                 .addExclusion("state.id", APPLICATION_APPROVED_PENDING_EXPORT)
                 .addExclusion("state.id", APPLICATION_APPROVED_PENDING_CORRECTION)

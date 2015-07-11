@@ -64,7 +64,7 @@ public class ImportedLanguageQualificationType extends ImportedEntity<Integer, I
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "importedLanguageQualificationType")
+    @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedLanguageQualificationTypeMapping> mappings = Sets.newHashSet();
 
     @Override

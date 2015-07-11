@@ -182,11 +182,7 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
         this.endDate = endDate;
         return this;
     }
-
-    public String getEmployerAddressLocation() {
-        return employerAddress == null ? null : employerAddress.getLocationString();
-    }
-
+    
     public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat);
     }

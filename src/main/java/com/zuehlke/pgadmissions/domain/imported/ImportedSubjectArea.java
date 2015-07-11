@@ -46,7 +46,7 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "importedSubjectArea")
+    @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedSubjectAreaMapping> mappings = Sets.newHashSet();
 
     @Override

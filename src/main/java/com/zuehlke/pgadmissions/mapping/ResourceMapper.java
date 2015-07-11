@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
@@ -42,6 +43,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepre
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
@@ -119,7 +121,7 @@ public class ResourceMapper {
 
             if (resourceScope.equals(INSTITUTION)) {
                 representation.setTitle(row.getInstitutionTitle());
-                representation.setLogoImage(documentMapper.getDocumentRepresentation(row.getInstitutionLogoImageId()));
+                setInstitutionLogoImage(row, representation);
             } else {
                 representation.setInstitution(new ResourceRepresentationSimple().withId(institutionId).withTitle(row.getInstitutionTitle())
                         .withLogoImage(documentMapper.getDocumentRepresentation(row.getInstitutionLogoImageId())));
@@ -213,7 +215,6 @@ public class ResourceMapper {
         User currentUser = userService.getCurrentUser();
 
         V representation = getResourceRepresentation(resource, returnType);
-
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
 
         for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
@@ -225,18 +226,23 @@ public class ResourceMapper {
             }
         }
 
+        DateTime updatedTimestamp = resource.getUpdatedTimestamp();
+        List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
+
+        setRaisesUrgentFlag((ResourceRepresentationStandard) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
+        setRaisesUpdateFlag((ResourceRepresentationStandard) representation, baseline, updatedTimestamp);
+
+        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && !actionService.hasRedactions(resource, userService.getCurrentUser())) {
+            representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
+        }
+
         representation.setState(stateMapper.getStateRepresentationSimple(resource.getState()));
         representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));
         representation.setSecondaryStates(stateMapper.getSecondaryStateRepresentations(resource));
 
-        List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        DateTime updatedTimestamp = resource.getUpdatedTimestamp();
-
         representation.setCreatedTimestamp(resource.getCreatedTimestamp());
         representation.setUpdatedTimestamp(updatedTimestamp);
-
-        setRaisesUrgentFlag((ResourceRepresentationStandard) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
-        setRaisesUpdateFlag((ResourceRepresentationStandard) representation, baseline, updatedTimestamp);
+        representation.setSequenceIdentifier(resource.getSequenceIdentifier());
 
         representation.setActions(actions);
         representation.setTimeline(commentMapper.getTimelineRepresentation(resource, currentUser));
@@ -388,6 +394,37 @@ public class ResourceMapper {
         return summary;
     }
 
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
+    }
+
+    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
+        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
+            index.put(processingSummary.getApplicationYear(), processingSummary);
+        }
+        return index;
+    }
+
+    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+            List<ResourceReportFilterPropertyDTO> constraints) {
+        LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
+        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
+            index.put(new ResourceProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
+        }
+        return index;
+    }
+
+    public ResourceStudyOptionInstanceRepresentation getResourceStudyOptionInstanceRepresentation(ResourceStudyOptionInstance resourceStudyOptionInstance) {
+        return new ResourceStudyOptionInstanceRepresentation().withApplicationStartDate(resourceStudyOptionInstance.getApplicationStartDate())
+                .withApplicationCloseDate(resourceStudyOptionInstance.getApplicationCloseDate())
+                .withBusinessYear(resourceStudyOptionInstance.getBusinessYear()).withIdentifier(resourceStudyOptionInstance.getIdentifier());
+    }
+
     private List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
         List<ResourceConditionRepresentation> representations = Lists.newLinkedList();
         for (ResourceCondition condition : resource.getResourceConditions()) {
@@ -418,32 +455,14 @@ public class ResourceMapper {
         representation.setRaisesUpdateFlag(updatedTimestamp.isAfter(baseline.minusDays(1)));
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
-        return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
-    }
-
-    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
-        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
-        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
-            index.put(processingSummary.getApplicationYear(), processingSummary);
+    private void setInstitutionLogoImage(ResourceListRowDTO row, ResourceListRowRepresentation representation) {
+        Integer institutionLogoImage = row.getInstitutionLogoImageId();
+        if (institutionLogoImage != null) {
+            representation.setLogoImage(documentMapper.getDocumentRepresentation(institutionLogoImage));
         }
-        return index;
     }
 
-    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
-        LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
-        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
-            index.put(new ResourceProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
-        }
-        return index;
-    }
-
-    public static class ResourceProcessingMonth {
+    private static class ResourceProcessingMonth {
 
         private String year;
 

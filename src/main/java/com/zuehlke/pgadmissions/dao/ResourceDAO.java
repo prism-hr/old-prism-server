@@ -30,11 +30,13 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -435,6 +437,14 @@ public class ResourceDAO {
         }
 
         return criteria;
+    }
+
+    public List<PrismStateGroup> getResourceStateGroups(Resource resource) {
+        return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("state.stateGroup.id")) //
+                .createAlias("state", "state") //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .list();
     }
 
 }

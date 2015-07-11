@@ -1,31 +1,27 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.List;
+
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -34,34 +30,34 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Scope(SCOPE_PROTOTYPE)
 public class ApplicationDownloadService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationDownloadService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationDownloadService.class);
 
-    @Autowired
-    private ActionService actionService;
-
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private SystemService systemService;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
-    @Autowired
+    @Inject
+    private ApplicationMapper applicationMapper;
+
+    @Inject
     private ApplicationContext applicationContext;
 
-    public void build(ApplicationDownloadDTO applicationDownloadDTO, PropertyLoader propertyLoader,
+    public void build(ApplicationRepresentationExport application, PropertyLoader propertyLoader,
             ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper, final OutputStream outputStream) {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
             applicationContext.getBean(ApplicationDownloadBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
-                    .build(applicationDownloadDTO, pdfDocument, pdfWriter);
+                    .build(application, pdfDocument, pdfWriter);
             pdfDocument.newPage();
             pdfDocument.close();
         } catch (Exception e) {
-            LOGGER.error("Error building download for application " + applicationDownloadDTO.getApplication().getCode(), e);
+            logger.error("Error building download for application " + application.getCode(), e);
         }
     }
 
@@ -97,23 +93,11 @@ public class ApplicationDownloadService {
                 specificApplicationDownloadBuilderHelpers.put(program, downloadBuilderHelper);
 
                 try {
-                    List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(application, user);
-                    if (actionEnhancements.size() > 0) {
-                        actionEnhancements.retainAll(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements());
-
-                        boolean includeEqualOpportunities = actionEnhancements.size() > 0;
-                        boolean includeReferences = !actionService.hasRedactions(PrismScope.APPLICATION, Sets.newHashSet(applicationIds), user);
-
-                        ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
-                                .withDownloadMode(ApplicationDownloadMode.USER).withIncludeEqualOpportunties(includeEqualOpportunities)
-                                .withIncludeAttachments(true).withIncludeAssessments(includeReferences);
-
-                        applicationContext.getBean(ApplicationDownloadBuilder.class)
-                                .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))
-                                .build(applicationDownloadDTO, pdfDocument, pdfWriter);
-                    }
+                    applicationContext.getBean(ApplicationDownloadBuilder.class)
+                            .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))
+                            .build(applicationMapper.getApplicationRepresentationExport(application), pdfDocument, pdfWriter);
                 } catch (PdfDocumentBuilderException e) {
-                    LOGGER.error("Error building download for application " + application.getCode(), e);
+                    logger.error("Error building download for application " + application.getCode(), e);
                 }
                 pdfDocument.newPage();
             }
@@ -121,7 +105,7 @@ public class ApplicationDownloadService {
             pdfDocument.close();
 
         } catch (Exception e) {
-            LOGGER.error("Error downloading applications for " + user.getFullName(), e);
+            logger.error("Error downloading applications for " + user.getFullName(), e);
         }
     }
 

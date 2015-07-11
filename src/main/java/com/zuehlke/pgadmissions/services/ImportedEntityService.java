@@ -16,11 +16,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -34,7 +29,6 @@ import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;

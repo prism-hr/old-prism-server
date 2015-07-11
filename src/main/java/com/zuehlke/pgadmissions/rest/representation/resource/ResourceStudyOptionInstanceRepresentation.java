@@ -43,5 +43,25 @@ public class ResourceStudyOptionInstanceRepresentation {
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
+    
+    public ResourceStudyOptionInstanceRepresentation withApplicationStartDate(LocalDate applicationStartDate) {
+        this.applicationStartDate = applicationStartDate;
+        return this;
+    }
+    
+    public ResourceStudyOptionInstanceRepresentation withApplicationCloseDate(LocalDate applicationCloseDate) {
+        this.applicationCloseDate = applicationCloseDate;
+        return this;
+    }
+    
+    public ResourceStudyOptionInstanceRepresentation withBusinessYear(String businessYear) {
+        this.businessYear = businessYear;
+        return this;
+    }
 
+    public ResourceStudyOptionInstanceRepresentation withIdentifier(String identifier) {
+        this.identifier = identifier;
+        return this;
+    }
+    
 }

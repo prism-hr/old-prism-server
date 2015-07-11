@@ -10,9 +10,10 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,11 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadEq
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
+//TODO move this shit into the adapter
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class ApplicationDocumentExportBuilder {
@@ -44,16 +45,19 @@ public class ApplicationDocumentExportBuilder {
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private ApplicationDownloadService applicationDownloadService;
 
-    @Autowired
+    @Inject
     private DocumentService documentService;
 
-    @Autowired
+    @Inject
+    private ApplicationMapper applicationMapper;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws Exception {
@@ -169,12 +173,12 @@ public class ApplicationDocumentExportBuilder {
     }
 
     private void buildReferences(Application application, Properties contentsProperties, ZipOutputStream zos) throws Exception {
-        List<ApplicationReferenceDTO> references = applicationService.getApplicationExportReferees(application);
+        List<ApplicationRefereeRepresentation> references = applicationService.getApplicationExportReferees(application);
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             zos.write(applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
-                    .build(application, references.get(i).getComment()));
+                    .build(applicationMapper.getApplicationRepresentationExport(application), references.get(i).getComment()));
             zos.closeEntry();
             int referenceNumberId = i + 1;
             contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
@@ -188,9 +192,8 @@ public class ApplicationDocumentExportBuilder {
         String applicationFilename = "ApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
-            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
-                    .withDownloadMode(ApplicationDownloadMode.SYSTEM).withIncludeEqualOpportunties(true);
-            applicationDownloadService.build(applicationDownloadDTO, propertyLoader, applicationDownloadBuilderHelper, zos);
+            applicationDownloadService.build(applicationMapper.getApplicationRepresentationExport(application), propertyLoader,
+                    applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
         }
@@ -204,9 +207,7 @@ public class ApplicationDocumentExportBuilder {
         String applicationFilename = "MergedApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverFilename));
         try {
-            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
-                    .withDownloadMode(ApplicationDownloadMode.SYSTEM).withIncludeAssessments(true);
-            applicationDownloadService.build(applicationDownloadDTO, propertyLoader, applicationDownloadBuilderHelper, zos);
+            applicationDownloadService.build(applicationMapper.getApplicationRepresentationExport(application), propertyLoader, applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
         }

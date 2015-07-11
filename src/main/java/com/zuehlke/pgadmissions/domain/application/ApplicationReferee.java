@@ -176,8 +176,4 @@ public class ApplicationReferee extends ApplicationAssignmentSection {
         return this;
     }
 
-    public String getAddressDisplay() {
-        return address == null ? null : address.getLocationString();
-    }
-
 }

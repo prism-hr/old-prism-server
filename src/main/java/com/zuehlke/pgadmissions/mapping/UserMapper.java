@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
@@ -24,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
@@ -101,6 +104,12 @@ public class UserMapper {
         return representation;
     }
 
+    public UserInstitutionIdentityRepresentation getUserInstitutionIdentityRepresentation(User user, Institution institution,
+            PrismUserInstitutionIdentity identityType) {
+        return new UserInstitutionIdentityRepresentation().withIdentityType(identityType).withIdentifier(
+                userService.getUserInstitutionIdentity(user, institution, identityType));
+    }
+
     private UserRepresentationUnverified getUserRepresentationUnverified(User user, String noDiagnosisMessage) {
         UserRepresentationUnverified representation = getUserRepresentation(user, UserRepresentationUnverified.class);
 
@@ -121,6 +130,7 @@ public class UserMapper {
         representation.setFirstName2(user.getFirstName2());
         representation.setFirstName3(user.getFirstName3());
         representation.setLastName(user.getLastName());
+        representation.setFullName(user.getFullName());
         representation.setEmail(user.getEmail());
 
         UserAccount userAccount = user.getUserAccount();

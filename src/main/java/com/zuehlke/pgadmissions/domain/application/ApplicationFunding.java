@@ -174,12 +174,4 @@ public class ApplicationFunding extends ApplicationSection {
         return this;
     }
 
-    public String getAwardDateDisplay(String dateFormat) {
-        return awardDate == null ? null : awardDate.toString(dateFormat);
-    }
-
-    public String getFundingSourceDisplay() {
-        return fundingSource == null ? null : fundingSource.getName();
-    }
-
 }

@@ -8,6 +8,8 @@ public class UserRepresentationSimple extends UserRepresentation {
 
     private String firstName3;
 
+    private String fullName;
+
     private String accountProfileUrl;
 
     private String accountImageUrl;
@@ -36,6 +38,14 @@ public class UserRepresentationSimple extends UserRepresentation {
 
     public void setFirstName3(String firstName3) {
         this.firstName3 = firstName3;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getAccountProfileUrl() {

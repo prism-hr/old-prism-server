@@ -34,9 +34,7 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     private String phone;
 
-    private ImportedEntityResponse ethnicity;
-
-    private ImportedEntityResponse disability;
+    private ApplicationDemographicRepresentation demographic;
 
     public ImportedEntityResponse getTitle() {
         return title;
@@ -150,20 +148,12 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.phone = phone;
     }
 
-    public ImportedEntityResponse getEthnicity() {
-        return ethnicity;
+    public ApplicationDemographicRepresentation getDemographic() {
+        return demographic;
     }
 
-    public void setEthnicity(ImportedEntityResponse ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public ImportedEntityResponse getDisability() {
-        return disability;
-    }
-
-    public void setDisability(ImportedEntityResponse disability) {
-        this.disability = disability;
+    public void setDemographic(ApplicationDemographicRepresentation demographic) {
+        this.demographic = demographic;
     }
 
     public ApplicationPersonalDetailRepresentation withTitle(ImportedEntityResponse title) {
@@ -233,16 +223,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     public ApplicationPersonalDetailRepresentation withSkype(String skype) {
         this.skype = skype;
-        return this;
-    }
-
-    public ApplicationPersonalDetailRepresentation withEthnicity(ImportedEntityResponse ethnicity) {
-        this.ethnicity = ethnicity;
-        return this;
-    }
-
-    public ApplicationPersonalDetailRepresentation withDisability(ImportedEntityResponse disability) {
-        this.disability = disability;
         return this;
     }
 

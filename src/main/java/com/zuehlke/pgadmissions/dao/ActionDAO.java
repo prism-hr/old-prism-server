@@ -212,7 +212,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("creationScope.id", creationScope)) //
                 .list();
     }
-
+    
     public List<ActionRedactionDTO> getRedactions(Resource resource, List<PrismRole> roleIds) {
         return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //

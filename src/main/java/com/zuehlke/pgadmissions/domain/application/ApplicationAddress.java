@@ -93,12 +93,4 @@ public class ApplicationAddress extends ApplicationSection {
         return this;
     }
 
-    public String getCurrentAddressDisplay() {
-        return currentAddress == null ? null : currentAddress.getLocationString();
-    }
-
-    public String getConcactAddressDisplay() {
-        return contactAddress == null ? null : contactAddress.getLocationString();
-    }
-
 }

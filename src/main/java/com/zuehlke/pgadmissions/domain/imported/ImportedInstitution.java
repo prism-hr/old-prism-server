@@ -48,7 +48,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "importedInstitution")
+    @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
 
     @Override

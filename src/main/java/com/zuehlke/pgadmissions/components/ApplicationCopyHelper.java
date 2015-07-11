@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -102,11 +103,14 @@ public class ApplicationCopyHelper {
                     WORKFLOW_PROPERTY, APPLICATION_DEMOGRAPHIC, to.getWorkflowPropertyConfigurationVersion());
 
             if (BooleanUtils.isTrue(demographicConfiguration.getEnabled())) {
-                ImportedEntitySimple ethnicity = from.getPersonalDetail().getEthnicity();
-                ImportedEntitySimple disability = from.getPersonalDetail().getDisability();
+                ApplicationDemographic fromDemographic = from.getPersonalDetail().getDemographic();
 
-                personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, ethnicity, personalDetail));
-                personalDetail.setDisability(getEnabledImportedObject(toInstitution, disability, personalDetail));
+                ImportedEntitySimple ethnicity = getEnabledImportedObject(toInstitution, fromDemographic.getEthnicity(), personalDetail);
+                ImportedEntitySimple disability = getEnabledImportedObject(toInstitution, fromDemographic.getDisability(), personalDetail);
+                
+                if (fromDemographic != null) {
+                    personalDetail.setDemographic(new ApplicationDemographic().withEthnicity(ethnicity).withDisability(disability));
+                }
 
                 if (BooleanUtils.isTrue(demographicConfiguration.getRequired()) && (ethnicity == null || disability == null)) {
                     sectionsWithErrors.add(personalDetail);

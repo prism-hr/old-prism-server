@@ -123,8 +123,4 @@ public class ApplicationPrize extends ApplicationSection {
         return this;
     }
 
-    public String getAwardDateDisplay(String dateFormat) {
-        return awardDate.toString(dateFormat);
-    }
-
 }

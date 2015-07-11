@@ -147,11 +147,22 @@ public class ImportedEntityDAO {
         return getImportedEntityMappings(institution, prismImportedEntity, true);
     }
 
-    public void disableImportedEntities(PrismImportedEntity importedEntity) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + importedEntity.getEntityClass().getSimpleName() + " " //
-                        + "set enabled = false") //
-                .executeUpdate();
+    public void disableImportedEntities(PrismImportedEntity prismImportedEntity) {
+        String queryString = "update " + prismImportedEntity.getEntityClass().getSimpleName() + " " //
+                + "set enabled = false";
+        
+        boolean simpleEntity = prismImportedEntity.getEntityClass().equals(ImportedEntitySimple.class);
+        if (simpleEntity) {
+            queryString = queryString + " where type = :type";
+        }
+        
+        Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+        
+        if (simpleEntity) {
+            query.setParameter("type", prismImportedEntity);
+        }
+        
+        query.executeUpdate();
     }
 
     public void mergeImportedEntities(String table, String columns, String inserts, String updates) {

@@ -23,5 +23,20 @@ public class AddressApplicationRepresentation extends Address implements Address
         this.domicile = domicile;
         return this;
     }
+    
+    public AddressApplicationRepresentation withAddressLine1(String addressLine1) {
+        setAddressLine1(addressLine1);
+        return this;
+    }
 
+    public AddressApplicationRepresentation withAddressTown(String addressTown) {
+        setAddressTown(addressTown);
+        return this;
+    }
+    
+    public AddressApplicationRepresentation withAddressCode(String addressCode) {
+        setAddressCode(addressCode);
+        return this;
+    }
+    
 }

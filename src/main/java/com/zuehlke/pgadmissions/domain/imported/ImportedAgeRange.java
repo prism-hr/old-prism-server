@@ -39,7 +39,7 @@ public class ImportedAgeRange extends ImportedEntity<Integer, ImportedAgeRangeMa
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "importedAgeRange")
+    @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedAgeRangeMapping> mappings = Sets.newHashSet();
 
     @Override

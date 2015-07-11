@@ -90,8 +90,4 @@ public class ApplicationStudyDetail {
         return this;
     }
 
-    public String getStudyStartDateDisplay(String dateFormat) {
-        return studyStartDate == null ? null : studyStartDate.toString(dateFormat);
-    }
-
 }

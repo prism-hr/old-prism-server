@@ -9,12 +9,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_REFER_TO_DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
-import javax.inject.Inject;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -25,6 +24,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicantTp;
@@ -58,28 +61,22 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDemographicRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationLanguageQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
+import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
@@ -89,9 +86,6 @@ public class ApplicationExportBuilder {
     @Value("${xml.export.source}")
     private String exportSource;
 
-    @Inject
-    private ImportedEntityService importedEntityService;
-
     private final ObjectFactory objectFactory = new ObjectFactory();
 
     private PropertyLoader propertyLoader;
@@ -99,9 +93,9 @@ public class ApplicationExportBuilder {
     @Autowired
     private ApplicationExportBuilderHelper applicationExportBuilderHelper;
 
-    public SubmitAdmissionsApplicationRequest build(ApplicationExportDTO applicationExportDTO) throws Exception {
+    public SubmitAdmissionsApplicationRequest build(ApplicationRepresentationExport applicationExport) throws Exception {
         SubmitAdmissionsApplicationRequest request = objectFactory.createSubmitAdmissionsApplicationRequest();
-        request.setApplication(buildApplication(applicationExportDTO));
+        request.setApplication(buildApplication(applicationExport));
         return request;
     }
 
@@ -110,58 +104,68 @@ public class ApplicationExportBuilder {
         return this;
     }
 
-    private ApplicationTp buildApplication(ApplicationExportDTO applicationExportDTO) throws Exception {
+    private ApplicationTp buildApplication(ApplicationRepresentationExport applicationExport) throws Exception {
         ApplicationTp applicationTp = objectFactory.createApplicationTp();
         applicationTp.setSource(exportSource);
-        applicationTp.setApplicant(buildApplicant(applicationExportDTO));
-        applicationTp.setCourseApplication(buildCourseApplication(applicationExportDTO));
+        applicationTp.setApplicant(buildApplicant(applicationExport));
+        applicationTp.setCourseApplication(buildCourseApplication(applicationExport));
         return applicationTp;
     }
 
-    private ApplicantTp buildApplicant(ApplicationExportDTO applicationExportDTO) throws Exception {
-        Application application = applicationExportDTO.getApplication();
+    private ApplicantTp buildApplicant(ApplicationRepresentationExport applicationExport) throws Exception {
 
         ApplicantTp applicant = objectFactory.createApplicantTp();
-        applicant.setFullName(buildFullName(application));
-        applicant.setSex(buildGender(application));
-        applicant.setDateOfBirth(buildDateOfBirth(application));
-        applicant.setNationality(buildFirstNationality(application));
-        applicant.setSecondaryNationality(buildSecondNationality(application));
-        applicant.setCountryOfBirth(buildCountry(application));
-        applicant.setCountryOfDomicile(buildDomicile(application));
-        applicant.setVisaRequired(BooleanUtils.toBoolean(application.getPersonalDetail().getVisaRequired()));
+        applicant.setFullName(buildFullName(applicationExport));
+        applicant.setSex(buildGender(applicationExport));
+        applicant.setDateOfBirth(buildDateOfBirth(applicationExport));
+        applicant.setNationality(buildFirstNationality(applicationExport));
+        applicant.setSecondaryNationality(buildSecondNationality(applicationExport));
+        applicant.setCountryOfBirth(buildCountry(applicationExport));
+        applicant.setCountryOfDomicile(buildDomicile(applicationExport));
 
-        if (BooleanUtils.isTrue(application.getPersonalDetail().getVisaRequired())) {
-            applicant.setPassport(buildPassport(application));
+        boolean visaRequired = BooleanUtils.toBoolean(applicationExport.getPersonalDetail().getVisaRequired());
+        applicant.setVisaRequired(visaRequired);
+        if (visaRequired) {
+            applicant.setPassport(buildPassport(applicationExport));
+        }
+        
+        ApplicationDemographicRepresentation demographic = applicationExport.getPersonalDetail().getDemographic();
+        if (demographic != null) {
+            applicant.setEthnicity(buildEthnicity(demographic.getEthnicity()));
+            applicant.setDisability(buildDisability(demographic.getDisability()));
         }
 
-        applicant.setDisability(buildDisability(application));
-        applicant.setEthnicity(buildEthnicity(application));
-        applicant.setHomeAddress(buildHomeAddress(application));
-        applicant.setCorrespondenceAddress(buildCorrespondenceAddress(application));
-        applicant.setCriminalConvictionDetails(applicationExportBuilderHelper.cleanString(application.getAdditionalInformation().getConvictionsText()));
-        applicant.setCriminalConvictions(application.getAdditionalInformation().getConvictionsText() != null);
-        applicant.setQualificationList(buildQualificationDetails(application));
-        applicant.setEmployerList(buildEmployer(application));
-        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(application.getPersonalDetail().getFirstLanguageLocale()));
-        applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification(application));
-        applicant.setApplicantID(StringUtils.trimToNull(applicationExportDTO.getCreatorExportId()));
+        UserRepresentationSimple user = applicationExport.getUser();
+        ApplicationAddressRepresentation address = applicationExport.getAddress();
+        applicant.setHomeAddress(buildHomeAddress(address.getCurrentAddress(), user));
+        applicant.setCorrespondenceAddress(buildHomeAddress(address.getContactAddress(), user));
+
+        String convictionsText = applicationExport.getAdditionalInformation().getConvictionsText();
+        applicant.setCriminalConvictionDetails(applicationExportBuilderHelper.cleanString(convictionsText));
+        applicant.setCriminalConvictions(convictionsText != null);
+        applicant.setQualificationList(buildQualificationDetails(applicationExport));
+        applicant.setEmployerList(buildEmployer(applicationExport));
+        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationExport.getPersonalDetail().getFirstLanguageLocale()));
+        applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification(applicationExport));
+
+        UserInstitutionIdentityRepresentation identity = applicationExport.getUserInstitutionIdentity();
+        applicant.setApplicantID(StringUtils.trimToNull(identity == null ? null : identity.getIdentifier()));
 
         return applicant;
     }
 
-    private DomicileTp buildDomicile(Application application) {
+    private DomicileTp buildDomicile(ApplicationRepresentationExport applicationExport) {
         DomicileTp domicileTp = objectFactory.createDomicileTp();
-        ImportedEntitySimple domicile = application.getPersonalDetail().getDomicile();
-        domicileTp.setCode(getImportedEntityCode(application.getInstitution(), domicile));
+        ImportedEntityResponse domicile = applicationExport.getPersonalDetail().getDomicile();
+        domicileTp.setCode(getImportedEntityCode(domicile));
         domicileTp.setName(domicile.getName());
         return domicileTp;
     }
 
-    private NameTp buildFullName(Application application) {
+    private NameTp buildFullName(ApplicationRepresentationExport applicationExport) {
         NameTp nameTp = objectFactory.createNameTp();
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        User applicant = application.getUser();
+        ApplicationPersonalDetailRepresentation personalDetail = applicationExport.getPersonalDetail();
+        UserRepresentationSimple applicant = applicationExport.getUser();
         nameTp.setSurname(applicant.getLastName());
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());
@@ -170,48 +174,48 @@ public class ApplicationExportBuilder {
         return nameTp;
     }
 
-    private GenderTp buildGender(Application application) {
-        return GenderTp.valueOf(getImportedEntityCode(application.getInstitution(), application.getPersonalDetail().getGender()));
+    private GenderTp buildGender(ApplicationRepresentationExport applicationExport) {
+        return GenderTp.valueOf(getImportedEntityCode(applicationExport.getPersonalDetail().getGender()));
     }
 
-    private XMLGregorianCalendar buildDateOfBirth(Application application) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+    private XMLGregorianCalendar buildDateOfBirth(ApplicationRepresentationExport applicationExport) {
+        ApplicationPersonalDetailRepresentation personalDetail = applicationExport.getPersonalDetail();
         return applicationExportBuilderHelper.buildXmlDate(personalDetail.getDateOfBirth());
     }
 
-    private NationalityTp buildFirstNationality(Application application) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        ImportedEntitySimple firstNationality = personalDetail.getFirstNationality();
+    private NationalityTp buildFirstNationality(ApplicationRepresentationExport applicationExport) {
+        ApplicationPersonalDetailRepresentation personalDetail = applicationExport.getPersonalDetail();
+        ImportedEntityResponse firstNationality = personalDetail.getFirstNationality();
         NationalityTp nationalityTp = objectFactory.createNationalityTp();
-        nationalityTp.setCode(getImportedEntityCode(application.getInstitution(), firstNationality));
+        nationalityTp.setCode(getImportedEntityCode(firstNationality));
         nationalityTp.setName(firstNationality.getName());
         return nationalityTp;
     }
 
-    private NationalityTp buildSecondNationality(Application application) {
-        ImportedEntitySimple secondNationality = application.getPersonalDetail().getSecondNationality();
+    private NationalityTp buildSecondNationality(ApplicationRepresentationExport applicationExport) {
+        ImportedEntityResponse secondNationality = applicationExport.getPersonalDetail().getSecondNationality();
         NationalityTp nationalityTp = objectFactory.createNationalityTp();
 
         if (secondNationality == null) {
             return null;
         } else {
-            nationalityTp.setCode(getImportedEntityCode(application.getInstitution(), secondNationality));
+            nationalityTp.setCode(getImportedEntityCode(secondNationality));
             nationalityTp.setName(secondNationality.getName());
             return nationalityTp;
         }
     }
 
-    private CountryTp buildCountry(Application application) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+    private CountryTp buildCountry(ApplicationRepresentationExport applicationExport) {
+        ApplicationPersonalDetailRepresentation personalDetail = applicationExport.getPersonalDetail();
         CountryTp countryTp = objectFactory.createCountryTp();
-        ImportedEntitySimple country = personalDetail.getCountry();
-        countryTp.setCode(getImportedEntityCode(application.getInstitution(), country));
+        ImportedEntityResponse country = personalDetail.getCountry();
+        countryTp.setCode(getImportedEntityCode(country));
         countryTp.setName(country.getName());
         return countryTp;
     }
 
-    private PassportTp buildPassport(Application application) throws Exception {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+    private PassportTp buildPassport(ApplicationRepresentationExport applicationExport) throws Exception {
+        ApplicationPersonalDetailRepresentation personalDetail = applicationExport.getPersonalDetail();
         if (personalDetail.getPassport() == null) {
             PassportTp passportTp = objectFactory.createPassportTp();
             String notProvided = propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED);
@@ -230,80 +234,57 @@ public class ApplicationExportBuilder {
         }
     }
 
-    private DisabilityTp buildDisability(Application application) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+    private EthnicityTp buildEthnicity(ImportedEntityResponse ethnicity) {
+        EthnicityTp ethnicityTp = objectFactory.createEthnicityTp();
+        ethnicityTp.setCode(getImportedEntityCode(ethnicity));
+        ethnicityTp.setName(ethnicity.getName());
+        return ethnicityTp;
+    }
+    
+    private DisabilityTp buildDisability(ImportedEntityResponse disability) {
         DisabilityTp disabilityTp = objectFactory.createDisabilityTp();
-        ImportedEntitySimple disability = personalDetail.getDisability();
-        disabilityTp.setCode(getImportedEntityCode(application.getInstitution(), disability));
+        disabilityTp.setCode(getImportedEntityCode(disability));
         disabilityTp.setName(disability.getName());
         return disabilityTp;
     }
 
-    private EthnicityTp buildEthnicity(Application application) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        EthnicityTp ethnicityTp = objectFactory.createEthnicityTp();
-        ImportedEntitySimple ethnicity = personalDetail.getEthnicity();
-        ethnicityTp.setCode(getImportedEntityCode(application.getInstitution(), ethnicity));
-        ethnicityTp.setName(ethnicity.getName());
-        return ethnicityTp;
-    }
-
-    private ContactDtlsTp buildHomeAddress(Application application) throws Exception {
+    private ContactDtlsTp buildHomeAddress(AddressApplicationRepresentation address, UserRepresentationSimple user) throws Exception {
         ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
         AddressTp addressTp = objectFactory.createAddressTp();
-        AddressApplication currentAddress = application.getAddress().getCurrentAddress();
-        addressTp.setAddressLine1(currentAddress.getAddressLine1());
-        addressTp.setAddressLine2(currentAddress.getAddressLine2());
-        addressTp.setAddressLine3(currentAddress.getAddressTown());
-        addressTp.setAddressLine4(currentAddress.getAddressRegion());
+        addressTp.setAddressLine1(address.getAddressLine1());
+        addressTp.setAddressLine2(address.getAddressLine2());
+        addressTp.setAddressLine3(address.getAddressTown());
+        addressTp.setAddressLine4(address.getAddressRegion());
 
-        String addressCode = currentAddress.getAddressCode();
+        String addressCode = address.getAddressCode();
         addressTp.setPostCode(addressCode == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
 
-        addressTp.setCountry(getImportedEntityCode(application.getInstitution(), currentAddress.getDomicile()));
+        addressTp.setCountry(getImportedEntityCode(address.getDomicile()));
         contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(application.getUser().getEmail());
+        contactDtlsTp.setEmail(user.getEmail());
         contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
         return contactDtlsTp;
     }
 
-    private ContactDtlsTp buildCorrespondenceAddress(Application application) throws Exception {
-        AddressApplication contactAddress = application.getAddress().getContactAddress();
-        ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
-        AddressTp addressTp = objectFactory.createAddressTp();
-        addressTp.setAddressLine1(contactAddress.getAddressLine1());
-        addressTp.setAddressLine2(contactAddress.getAddressLine2());
-        addressTp.setAddressLine3(contactAddress.getAddressTown());
-        addressTp.setAddressLine4(contactAddress.getAddressRegion());
-
-        String addressCode = contactAddress.getAddressCode();
-        addressTp.setPostCode(addressCode == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
-
-        addressTp.setCountry(getImportedEntityCode(application.getInstitution(), contactAddress.getDomicile()));
-        contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
-        return contactDtlsTp;
-    }
-
-    private CourseApplicationTp buildCourseApplication(ApplicationExportDTO applicationExportDTO) throws Exception {
-        Application application = applicationExportDTO.getApplication();
+    private CourseApplicationTp buildCourseApplication(ApplicationRepresentationExport applicationExport) throws Exception {
 
         CourseApplicationTp applicationTp = objectFactory.createCourseApplicationTp();
-        LocalDate confirmedStartDate = application.getConfirmedStartDate();
+        ApplicationOfferRepresentation offer = applicationExport.getOfferRecommendation();
+
+        LocalDate confirmedStartDate = offer.getPositionProvisionalStartDate();
+
         applicationTp.setStartMonth(confirmedStartDate == null ? null : confirmedStartDate.toDateTimeAtStartOfDay());
-        applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName(applicationExportDTO.getPrimarySupervisor()));
+        applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName(applicationExport.getAssignedSupervisors()));
         applicationTp.setPersonalStatement(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
-        applicationTp.setSourcesOfInterest(buildSourcesOfInterest(application, applicationTp));
-        applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
-        applicationTp.setExternalApplicationID(application.getCode());
+        applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationExport));
+        applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(applicationExport.getSubmittedTimestamp()));
+        applicationTp.setExternalApplicationID(applicationExport.getCode());
 
-        String creatorIpAddress = applicationExportDTO.getCreatorIpAddress();
-        applicationTp.setIpAddress(creatorIpAddress == null ? propertyLoader.load(SYSTEM_IP_PLACEHOLDER) : creatorIpAddress);
-        applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
-        applicationTp.setRefereeList(buildReferee(application.getInstitution(), applicationExportDTO.getApplicationReferences()));
+        applicationTp.setIpAddress(propertyLoader.load(SYSTEM_IP_PLACEHOLDER));
+        applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(applicationExport.getSubmittedTimestamp()));
+        applicationTp.setRefereeList(buildReferee(applicationExport.getReferees()));
 
-        switch (application.getState().getStateGroup().getId()) {
+        switch (applicationExport.getState().getStateGroup()) {
         case APPLICATION_WITHDRAWN:
             applicationTp.setApplicationStatus("WITHDRAWN");
             break;
@@ -316,41 +297,34 @@ public class ApplicationExportBuilder {
             applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
-            throw new Error("Application in state " + application.getState().getId().name() + " cannot be exported");
+            throw new Error("Application in state " + applicationExport.getState().getState().name() + " cannot be exported");
         }
 
-        applicationTp.setProgramme(buildProgrammeOccurence(applicationExportDTO));
+        applicationTp.setProgramme(buildProgrammeOccurence(applicationExport));
 
-        Comment offerRecommendationComment = applicationExportDTO.getOfferRecommendationComment();
-        if (offerRecommendationComment != null) {
-            CommentPositionDetail positionDetail = offerRecommendationComment.getPositionDetail();
-            applicationTp.setAtasStatement(positionDetail == null ? null : positionDetail.getPositionDescription());
+        if (offer != null) {
+            applicationTp.setAtasStatement(offer.getPositionDescription());
 
-            CommentOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
-            if (offerDetail != null) {
-                String none = propertyLoader.load(SYSTEM_NONE);
-                LocalDate positionProvisionalStartDate = offerDetail.getPositionProvisionalStartDate();
-                String conditions = offerDetail.getAppointmentConditions();
+            String none = propertyLoader.load(SYSTEM_NONE);
+            LocalDate positionProvisionalStartDate = offer.getPositionProvisionalStartDate();
+            String conditions = offer.getAppointmentConditions();
 
-                String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + (conditions == null ? none : conditions)
-                        + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": "
-                        + (positionProvisionalStartDate == null ? none : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT)));
-                applicationTp.setDepartmentalOfferConditions(offerSummary);
-            }
+            String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + (conditions == null ? none : conditions)
+                    + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": "
+                    + (positionProvisionalStartDate == null ? none : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT)));
+            applicationTp.setDepartmentalOfferConditions(offerSummary);
         }
 
         return applicationTp;
     }
 
-    private ProgrammeOccurrenceTp buildProgrammeOccurence(ApplicationExportDTO applicationExportDTO) throws Exception {
-        Application application = applicationExportDTO.getApplication();
-
-        Program program = application.getProgram();
+    private ProgrammeOccurrenceTp buildProgrammeOccurence(ApplicationRepresentationExport applicationExport) throws Exception {
+        ResourceRepresentationSimple program = applicationExport.getProgram();
         ProgrammeOccurrenceTp occurrenceTp = objectFactory.createProgrammeOccurrenceTp();
         occurrenceTp.setCode(program.getImportedCode());
-        occurrenceTp.setModeOfAttendance(buildModeofattendance(application));
+        occurrenceTp.setModeOfAttendance(buildModeofattendance(applicationExport));
 
-        ResourceStudyOptionInstance exportProgramInstance = applicationExportDTO.getExportProgramInstance();
+        ResourceStudyOptionInstanceRepresentation exportProgramInstance = applicationExport.getResourceStudyOptionInstance();
         occurrenceTp.setAcademicYear(applicationExportBuilderHelper.buildXmlDateYearOnly(exportProgramInstance.getBusinessYear()));
         String exportInstanceIdentifier = exportProgramInstance.getIdentifier();
         occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : exportInstanceIdentifier);
@@ -359,43 +333,46 @@ public class ApplicationExportBuilder {
         return occurrenceTp;
     }
 
-    private ModeofattendanceTp buildModeofattendance(Application application) {
-        ApplicationProgramDetail programmeDetails = application.getProgramDetail();
+    private ModeofattendanceTp buildModeofattendance(ApplicationRepresentationExport applicationExport) {
+        ApplicationProgramDetailRepresentation programmeDetail = applicationExport.getProgramDetail();
         ModeofattendanceTp modeofattendanceTp = objectFactory.createModeofattendanceTp();
-        ImportedEntitySimple studyOption = programmeDetails.getStudyOption();
-        modeofattendanceTp.setCode(getImportedEntityCode(application.getInstitution(), studyOption));
+        ImportedEntityResponse studyOption = programmeDetail.getStudyOption();
+        modeofattendanceTp.setCode(getImportedEntityCode(studyOption));
         modeofattendanceTp.setName(studyOption.getName());
         return modeofattendanceTp;
     }
 
-    private NameTp buildAgreedSupervisorName(User primarySupervisor) {
-        if (primarySupervisor != null) {
-            NameTp nameTp = objectFactory.createNameTp();
-            nameTp.setForename1(primarySupervisor.getFirstName());
-            nameTp.setSurname(primarySupervisor.getLastName());
-            return nameTp;
+    private NameTp buildAgreedSupervisorName(List<ApplicationAssignedSupervisorRepresentation> supervisors) {
+        for (ApplicationAssignedSupervisorRepresentation supervisor : supervisors) {
+            if (supervisor.getRole().equals(APPLICATION_PRIMARY_SUPERVISOR)) {
+                NameTp nameTp = objectFactory.createNameTp();
+                UserRepresentationSimple user = supervisor.getUser();
+                nameTp.setForename1(user.getFirstName());
+                nameTp.setSurname(user.getLastName());
+                return nameTp;
+            }
         }
         return null;
     }
 
-    private SourceOfInterestTp buildSourcesOfInterest(Application application, CourseApplicationTp applicationTp) {
-        ApplicationProgramDetail programmeDetails = application.getProgramDetail();
+    private SourceOfInterestTp buildSourcesOfInterest(ApplicationRepresentationExport applicationExport) {
+        ApplicationProgramDetailRepresentation programDetails = applicationExport.getProgramDetail();
         SourceOfInterestTp interestTp = objectFactory.createSourceOfInterestTp();
-        ImportedEntitySimple sourceOfInterest = programmeDetails.getReferralSource();
-        if (sourceOfInterest == null) {
-            return null;
+        ImportedEntityResponse sourceOfInterest = programDetails.getReferralSource();
+        if (sourceOfInterest != null) {
+            interestTp.setCode(getImportedEntityCode(sourceOfInterest));
+            interestTp.setName(sourceOfInterest.getName());
+            return interestTp;
         }
-        interestTp.setCode(getImportedEntityCode(application.getInstitution(), sourceOfInterest));
-        interestTp.setName(sourceOfInterest.getName());
-        return interestTp;
+        return null;
     }
 
-    private QualificationDetailsTp buildQualificationDetails(Application application) throws Exception {
+    private QualificationDetailsTp buildQualificationDetails(ApplicationRepresentationExport applicationExport) throws Exception {
         QualificationDetailsTp resultList = objectFactory.createQualificationDetailsTp();
 
-        Set<ApplicationQualification> qualifications = application.getQualifications();
+        List<ApplicationQualificationRepresentation> qualifications = applicationExport.getQualifications();
         if (!qualifications.isEmpty()) {
-            for (ApplicationQualification qualification : qualifications) {
+            for (ApplicationQualificationRepresentation qualification : qualifications) {
                 QualificationsTp qualificationsTp = objectFactory.createQualificationsTp();
 
                 qualificationsTp.setStartDate(applicationExportBuilderHelper.buildXmlDate(qualification.getStartDate()));
@@ -404,24 +381,24 @@ public class ApplicationExportBuilder {
                 qualificationsTp.setGrade(qualification.getGrade());
                 qualificationsTp.setLanguageOfInstruction(qualification.getLanguage());
 
-                ImportedProgram importedProgram = qualification.getProgram();
+                ImportedProgramResponse importedProgram = qualification.getProgram();
                 qualificationsTp.setMainSubject(importedProgram.getName());
 
                 QualificationTp qualificationTp = objectFactory.createQualificationTp();
-                ImportedEntitySimple qualificationType = importedProgram.getQualificationType();
-                qualificationTp.setCode(getImportedEntityCode(application.getInstitution(), qualificationType));
+                ImportedEntityResponse qualificationType = importedProgram.getQualificationType();
+                qualificationTp.setCode(getImportedEntityCode(qualificationType));
                 qualificationTp.setName(qualificationType.getName());
                 qualificationsTp.setQualification(qualificationTp);
 
                 InstitutionTp institutionTp = objectFactory.createInstitutionTp();
-                ImportedInstitution institution = qualification.getProgram().getInstitution();
-                String institutionCode = getImportedEntityCode(application.getInstitution(), institution);
+                ImportedInstitutionResponse institution = qualification.getProgram().getInstitution();
+                String institutionCode = getImportedEntityCode(institution);
                 institutionTp.setCode(institutionCode.startsWith("CUST") ? "OTHER" : institutionCode);
                 institutionTp.setName(qualification.getProgram().getName());
 
                 CountryTp countryTp = objectFactory.createCountryTp();
-                ImportedEntitySimple domicile = institution.getDomicile();
-                countryTp.setCode(getImportedEntityCode(application.getInstitution(), domicile));
+                ImportedEntityResponse domicile = institution.getDomicile();
+                countryTp.setCode(getImportedEntityCode(domicile));
                 countryTp.setName(domicile.getName());
                 institutionTp.setCountry(countryTp);
 
@@ -458,11 +435,11 @@ public class ApplicationExportBuilder {
         return resultList;
     }
 
-    private EmploymentDetailsTp buildEmployer(Application application) {
+    private EmploymentDetailsTp buildEmployer(ApplicationRepresentationExport applicationExport) {
         EmploymentDetailsTp resultList = objectFactory.createEmploymentDetailsTp();
-        Set<ApplicationEmploymentPosition> employmentPositions = application.getEmploymentPositions();
+        List<ApplicationEmploymentPositionRepresentation> employmentPositions = applicationExport.getEmploymentPositions();
         if (!employmentPositions.isEmpty()) {
-            for (ApplicationEmploymentPosition employmentPosition : employmentPositions) {
+            for (ApplicationEmploymentPositionRepresentation employmentPosition : employmentPositions) {
                 AppointmentTp appointmentTp = objectFactory.createAppointmentTp();
 
                 appointmentTp.setJobTitle(employmentPosition.getPosition());
@@ -480,12 +457,12 @@ public class ApplicationExportBuilder {
         return resultList;
     }
 
-    private RefereeListTp buildReferee(Institution institution, List<ApplicationReferenceDTO> exportReferees) throws Exception {
+    private RefereeListTp buildReferee(List<ApplicationRefereeRepresentation> exportReferees) throws Exception {
         int referenceCount = exportReferees.size();
         RefereeListTp resultList = objectFactory.createRefereeListTp();
 
         for (int i = 0; i < referenceCount; i++) {
-            ApplicationReferenceDTO reference = exportReferees.get(i);
+            ApplicationRefereeRepresentation reference = exportReferees.get(i);
             RefereeTp refereeTp = objectFactory.createRefereeTp();
             refereeTp.setPosition(reference.getJobTitle());
             NameTp nameTp = objectFactory.createNameTp();
@@ -498,12 +475,13 @@ public class ApplicationExportBuilder {
             contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
 
             AddressTp addressTp = objectFactory.createAddressTp();
-            addressTp.setAddressLine1(reference.getAddressLine1());
-            addressTp.setAddressLine2(reference.getAddressLine2());
-            addressTp.setAddressLine3(reference.getAddressTown());
-            addressTp.setAddressLine4(reference.getAddressRegion());
-            addressTp.setPostCode(reference.getAddressCode());
-            addressTp.setCountry(getImportedEntityCode(institution, reference.getAddressDomicile()));
+            AddressApplicationRepresentation address = reference.getAddress();
+            addressTp.setAddressLine1(address.getAddressLine1());
+            addressTp.setAddressLine2(address.getAddressLine2());
+            addressTp.setAddressLine3(address.getAddressTown());
+            addressTp.setAddressLine4(address.getAddressRegion());
+            addressTp.setPostCode(address.getAddressCode());
+            addressTp.setCountry(getImportedEntityCode(address.getDomicile()));
             contactDtlsTp.setAddressDtls(addressTp);
             refereeTp.setContactDetails(contactDtlsTp);
             resultList.getReferee().add(refereeTp);
@@ -511,16 +489,17 @@ public class ApplicationExportBuilder {
         return resultList;
     }
 
-    private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification(Application application) throws Exception {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+    private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification(ApplicationRepresentationExport applicationExport) throws Exception {
+        ApplicationPersonalDetailRepresentation personalDetail = applicationExport.getPersonalDetail();
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = objectFactory.createEnglishLanguageQualificationDetailsTp();
 
-        if (personalDetail.getLanguageQualificationAvailable()) {
-            ApplicationLanguageQualification languageQualification = personalDetail.getLanguageQualification();
+        ApplicationLanguageQualificationRepresentation languageQualification = personalDetail.getLanguageQualification();
+
+        if (languageQualification != null) {
             EnglishLanguageTp englishLanguageTp = objectFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(applicationExportBuilderHelper.buildXmlDate(languageQualification.getExamDate()));
 
-            String languageQualificationTypeCode = getImportedEntityCode(application.getInstitution(), languageQualification.getLanguageQualificationType());
+            String languageQualificationTypeCode = getImportedEntityCode(languageQualification.getLanguageQualificationType());
             if (languageQualificationTypeCode.startsWith("OTHER")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
                 englishLanguageTp.setOtherLanguageExam(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
@@ -565,9 +544,8 @@ public class ApplicationExportBuilder {
         return englishLanguageQualificationDetailsTp;
     }
 
-    public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> String getImportedEntityCode(Institution institution, T importedEntity) {
-        V mapping = importedEntityService.getEnabledImportedEntityMapping(institution, (T) importedEntity);
-        return mapping == null ? null : mapping.getCode();
+    public <T extends ImportedEntityResponse> String getImportedEntityCode(T importedEntity) {
+        return importedEntity == null ? null : importedEntity.getCode();
     }
 
 }

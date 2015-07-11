@@ -80,7 +80,6 @@ public class ApplicationSectionService {
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         if (programDetail == null) {
             programDetail = new ApplicationProgramDetail();
-            application.setProgramDetail(programDetail);
         }
 
         application.setPreviousApplication(programDetailDTO.getPreviousApplication());
@@ -107,6 +106,7 @@ public class ApplicationSectionService {
         List<String> secondaryThemes = programDetailDTO.getSecondaryThemes();
         application.setSecondaryTheme(secondaryThemes.isEmpty() ? null : Joiner.on("|").join(secondaryThemes));
 
+        application.setProgramDetail(programDetail);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }
 

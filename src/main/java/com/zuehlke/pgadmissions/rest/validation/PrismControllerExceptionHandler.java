@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.exceptions.*;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,22 +29,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
-import com.zuehlke.pgadmissions.exceptions.PrismConflictException;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -52,12 +41,6 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private SystemService systemService;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     @ExceptionHandler(value = WorkflowPermissionException.class)
     public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, ServletWebRequest request) {
@@ -107,11 +90,10 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
     protected ResponseEntity<Object> handleValidationErrors(Exception ex, HttpHeaders headers, WebRequest request, Errors errors) {
         List<FieldError> fieldErrors = errors.getFieldErrors();
         List<ValidationErrorRepresentation> validationErrorRepresentations = Lists.newLinkedList();
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
         for (FieldError fieldError : fieldErrors) {
             ValidationErrorRepresentation errorRepresentation = new ValidationErrorRepresentation();
-            String message = propertyLoader.load(PrismDisplayPropertyDefinition.valueOf(fieldError.getCode()));
-            errorRepresentation.setErrorMessage(message);
+            errorRepresentation.setErrorCode(fieldError.getCode());
+            errorRepresentation.setErrorMessage(fieldError.getDefaultMessage());
             errorRepresentation.setFieldNames(new String[] { fieldError.getField() });
             validationErrorRepresentations.add(errorRepresentation);
         }

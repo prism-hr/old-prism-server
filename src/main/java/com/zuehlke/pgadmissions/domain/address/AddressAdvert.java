@@ -1,11 +1,17 @@
 package com.zuehlke.pgadmissions.domain.address;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
+
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
-import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "advert_address")

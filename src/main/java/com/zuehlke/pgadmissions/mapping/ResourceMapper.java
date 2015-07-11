@@ -16,11 +16,14 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -86,6 +89,9 @@ public class ResourceMapper {
 
     @Inject
     private InstitutionMapper institutionMapper;
+
+    @Inject
+    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private RoleMapper roleMapper;
@@ -268,9 +274,13 @@ public class ResourceMapper {
             Class<V> returnType) throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
 
-        representation.setStudyOptions(resourceService.getStudyOptions(resource));
-        representation.setStudyLocations(resourceService.getStudyLocations(resource));
+        List<ImportedEntityResponse> studyOptions = Lists.newLinkedList();
+        for (ImportedEntitySimple studyOption : resourceService.getStudyOptions(resource)) {
+            studyOptions.add(importedEntityMapper.getImportedEntityRepresentation(studyOption));
+        }
 
+        representation.setStudyOptions(studyOptions);
+        representation.setStudyLocations(resourceService.getStudyLocations(resource));
         return representation;
 
     }
@@ -425,7 +435,7 @@ public class ResourceMapper {
                 .withBusinessYear(resourceStudyOptionInstance.getBusinessYear()).withIdentifier(resourceStudyOptionInstance.getIdentifier());
     }
 
-    private List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
+    public List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
         List<ResourceConditionRepresentation> representations = Lists.newLinkedList();
         for (ResourceCondition condition : resource.getResourceConditions()) {
             representations.add(new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition()).withPartnerMode(

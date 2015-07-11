@@ -487,17 +487,17 @@ public class ResourceService {
         return resourceDAO.getResourceAttribute(resource, ResourceStudyOption.class, "studyOption", studyOption);
     }
 
-    public List<PrismStudyOption> getStudyOptions(ResourceOpportunity resource) {
+    public List<ImportedEntitySimple> getStudyOptions(ResourceOpportunity resource) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
-            List<PrismStudyOption> prismStudyOptions = Lists.newArrayList();
+            List<ImportedEntitySimple> prismStudyOptions = Lists.newLinkedList();
             List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
             for (ResourceStudyOption studyOption : studyOptions) {
-                prismStudyOptions.add(PrismStudyOption.valueOf(studyOption.getStudyOption().getName()));
+                prismStudyOptions.add(studyOption.getStudyOption());
             }
             return prismStudyOptions;
         }
 
-        List<PrismStudyOption> filteredStudyOptions = Lists.newLinkedList();
+        List<ImportedEntitySimple> filteredStudyOptions = Lists.newLinkedList();
         List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributes(resource, ResourceStudyOption.class, "studyOption", "id");
 
         PrismScope lastResourceScope = null;
@@ -506,7 +506,7 @@ public class ResourceService {
             if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
                 break;
             }
-            filteredStudyOptions.add(PrismStudyOption.valueOf(studyOption.getStudyOption().getName()));
+            filteredStudyOptions.add(studyOption.getStudyOption());
             lastResourceScope = thisResourceScope;
         }
 

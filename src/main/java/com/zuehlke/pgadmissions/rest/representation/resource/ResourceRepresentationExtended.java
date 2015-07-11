@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
 public class ResourceRepresentationExtended extends ResourceRepresentationStandard {
 

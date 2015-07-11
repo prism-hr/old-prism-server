@@ -1,9 +1,46 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.WordUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
-import com.google.common.collect.*;
-import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -11,31 +48,23 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.workflow.*;
-import com.zuehlke.pgadmissions.mapping.*;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.mapping.ActionMapper;
+import com.zuehlke.pgadmissions.mapping.AdvertMapper;
+import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
+import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
+import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
-import org.apache.commons.lang.WordUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 
 @Service
 @Transactional

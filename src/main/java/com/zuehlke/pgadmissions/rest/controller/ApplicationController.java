@@ -1,19 +1,43 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
-import com.zuehlke.pgadmissions.rest.dto.application.*;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = { "api/applications" })

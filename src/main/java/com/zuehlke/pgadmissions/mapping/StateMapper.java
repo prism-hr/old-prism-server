@@ -1,5 +1,15 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -8,14 +18,6 @@ import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.services.StateService;
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

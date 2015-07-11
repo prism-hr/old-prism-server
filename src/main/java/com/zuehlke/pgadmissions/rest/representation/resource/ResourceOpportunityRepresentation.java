@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import java.util.List;
+
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
 public class ResourceOpportunityRepresentation extends ResourceParentRepresentation {
 

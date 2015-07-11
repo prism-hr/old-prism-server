@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
+
+import java.util.List;
 
 public class AdvertRepresentationSimple {
 
@@ -11,8 +12,8 @@ public class AdvertRepresentationSimple {
     private String summary;
 
     private String description;
-    
-    private Integer backgroundImage;
+
+    private DocumentRepresentation backgroundImage;
 
     private String homepage;
 
@@ -58,11 +59,11 @@ public class AdvertRepresentationSimple {
         this.description = description;
     }
 
-    public Integer getBackgroundImage() {
+    public DocumentRepresentation getBackgroundImage() {
         return backgroundImage;
     }
 
-    public void setBackgroundImage(Integer backgroundImage) {
+    public void setBackgroundImage(DocumentRepresentation backgroundImage) {
         this.backgroundImage = backgroundImage;
     }
 

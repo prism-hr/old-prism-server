@@ -17,7 +17,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
@@ -39,7 +39,7 @@ public class ResourceListFilterConstraint {
 
     @Column(name = "filter_property", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismResourceListContraint filterProperty;
+    private PrismResourceListConstraint filterProperty;
 
     @Column(name = "filter_expression", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -92,11 +92,11 @@ public class ResourceListFilterConstraint {
         this.filter = filter;
     }
 
-    public final PrismResourceListContraint getFilterProperty() {
+    public final PrismResourceListConstraint getFilterProperty() {
         return filterProperty;
     }
 
-    public final void setFilterProperty(PrismResourceListContraint filterProperty) {
+    public final void setFilterProperty(PrismResourceListConstraint filterProperty) {
         this.filterProperty = filterProperty;
     }
 
@@ -185,7 +185,7 @@ public class ResourceListFilterConstraint {
         return this;
     }
 
-    public ResourceListFilterConstraint withFilterProperty(PrismResourceListContraint filterProperty) {
+    public ResourceListFilterConstraint withFilterProperty(PrismResourceListConstraint filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }

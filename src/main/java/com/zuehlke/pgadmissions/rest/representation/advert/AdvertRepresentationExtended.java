@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
@@ -14,8 +17,10 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private ResourceRepresentationSimple department;
 
+    private List<ResourceConditionRepresentation> conditions;
+
     private PrismOpportunityType opportunityType;
-    
+
     private String title;
 
     public UserRepresentationSimple getUser() {
@@ -50,6 +55,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.department = department;
     }
 
+    public List<ResourceConditionRepresentation> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(List<ResourceConditionRepresentation> conditions) {
+        this.conditions = conditions;
+    }
+
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
@@ -65,5 +78,5 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
 }

@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
+import java.util.List;
 
 public class ResourceOpportunityRepresentation extends ResourceParentRepresentation {
 
     private PrismOpportunityType opportunityType;
 
-    private List<PrismStudyOption> studyOptions;
+    private List<ImportedEntityResponse> studyOptions;
 
     private List<String> studyLocations;
 
@@ -25,11 +25,11 @@ public class ResourceOpportunityRepresentation extends ResourceParentRepresentat
         this.opportunityType = opportunityType;
     }
 
-    public List<PrismStudyOption> getStudyOptions() {
+    public List<ImportedEntityResponse> getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+    public void setStudyOptions(List<ImportedEntityResponse> studyOptions) {
         this.studyOptions = studyOptions;
     }
 

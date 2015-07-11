@@ -163,7 +163,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_LINK(SYSTEM_GLOBAL, "Link"),
     SYSTEM_NOW(SYSTEM_GLOBAL, "Now"),
     SYSTEM_NA(SYSTEM_GLOBAL, "N/A"),
-    SYSTEM_NO_DIAGNOSTIC_INFORMATION(SYSTEM_GLOBAL, "Diagnostic information not available"), 
+    SYSTEM_NO_DIAGNOSTIC_INFORMATION(SYSTEM_GLOBAL, "Diagnostic information not available"),
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -2032,8 +2032,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_REFEREE_PHONE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The employer telephone number of the referee."),
     APPLICATION_REFEREE_SKYPE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Skype user name"),
     APPLICATION_REFEREE_SKYPE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The Skype address of the referee."),
-    APPLICATION_REFEREE_TYPE_ACADEMIC(APPLICATION_REFEREE, "Academic"),
-    APPLICATION_REFEREE_TYPE_EMPLOYER(APPLICATION_REFEREE, "Employer"),
     APPLICATION_REFEREE_REFERENCE_APPENDIX(APPLICATION_REFEREE, "Reference"),
     APPLICATION_REFEREE_REFERENCE_COMMENT(APPLICATION_REFEREE, "Reference Comment"),
     APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT(

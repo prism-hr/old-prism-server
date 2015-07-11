@@ -1,22 +1,15 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_AGE_RANGE;
-
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import uk.co.alumeni.prism.api.model.imported.ImportedAgeRangeDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
+import uk.co.alumeni.prism.api.model.imported.ImportedAgeRangeDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+
+import javax.persistence.*;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_AGE_RANGE;
 
 @Entity
 @Table(name = "IMPORTED_AGE_RANGE")
@@ -81,7 +74,7 @@ public class ImportedAgeRange extends ImportedEntity<Integer, ImportedAgeRangeMa
     public Integer getUpperBound() {
         return upperBound;
     }
-    
+
     @Override
     public void setUpperBound(Integer upperBound) {
         this.upperBound = upperBound;

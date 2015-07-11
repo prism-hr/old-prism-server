@@ -201,7 +201,7 @@ public class ResourceController {
         roleService.setResourceOwner(resource, user);
     }
 
-    @RequestMapping(value = "/{resourceId}/", method = RequestMethod.POST)
+    @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody CommentDTO commentDTO) throws Exception {

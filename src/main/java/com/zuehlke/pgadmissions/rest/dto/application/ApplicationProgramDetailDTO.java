@@ -1,14 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.rest.dto.EntityDTO;
+import org.joda.time.LocalDate;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class ApplicationProgramDetailDTO {
 
@@ -16,15 +14,15 @@ public class ApplicationProgramDetailDTO {
     private Boolean previousApplication;
 
     private PrismOpportunityType opportunityType;
-    
+
     @NotNull
-    private PrismStudyOption studyOption;
+    private EntityDTO studyOption;
 
     @NotNull
     private LocalDate startDate;
 
     @NotNull
-    private Integer referralSource;
+    private EntityDTO referralSource;
 
     private List<String> primaryThemes = Lists.newArrayList();
 
@@ -46,11 +44,11 @@ public class ApplicationProgramDetailDTO {
         this.opportunityType = opportunityType;
     }
 
-    public PrismStudyOption getStudyOption() {
+    public EntityDTO getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(PrismStudyOption studyOption) {
+    public void setStudyOption(EntityDTO studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -62,11 +60,11 @@ public class ApplicationProgramDetailDTO {
         this.startDate = startDate;
     }
 
-    public Integer getReferralSource() {
+    public EntityDTO getReferralSource() {
         return referralSource;
     }
 
-    public void setReferralSource(Integer referralSource) {
+    public void setReferralSource(EntityDTO referralSource) {
         this.referralSource = referralSource;
     }
 

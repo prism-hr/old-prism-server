@@ -1,29 +1,7 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -33,6 +11,20 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 
 @Component
 public class ApplicationValidator extends LocalValidatorFactoryBean implements Validator {
@@ -73,68 +65,68 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
         for (WorkflowPropertyConfiguration configuration : configurations) {
             switch (configuration.getDefinition().getId()) {
-            case APPLICATION_ASSIGN_REFEREE:
-                validateRangeConstraint(application, "referees", configuration, errors);
-                break;
-            case APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR:
-                validateRangeConstraint(application, "supervisors", configuration, errors);
-                break;
-            case APPLICATION_DEMOGRAPHIC:
-                validateDemographicConstraint(application, configuration, errors);
-                break;
-            case APPLICATION_CRIMINAL_CONVICTION:
-                validateCriminalConvictionConstraint(application, configuration, errors);
-                break;
-            case APPLICATION_DOCUMENT_COVERING_LETTER:
-                validateDocumentConstraint(application, "coveringLetter", configuration, errors);
-                break;
-            case APPLICATION_DOCUMENT_CV:
-                validateDocumentConstraint(application, "cv", configuration, errors);
-                break;
-            case APPLICATION_DOCUMENT_PERSONAL_STATEMENT:
-                validateDocumentConstraint(application, "personalStatement", configuration, errors);
-                break;
-            case APPLICATION_DOCUMENT_RESEARCH_STATEMENT:
-                validateDocumentConstraint(application, "researchStatement", configuration, errors);
-                break;
-            case APPLICATION_EMPLOYMENT_POSITION:
-                validateRangeConstraint(application, "employmentPositions", configuration, errors);
-                break;
-            case APPLICATION_FUNDING:
-                validateRangeConstraint(application, "fundings", configuration, errors);
-                break;
-            case APPLICATION_FUNDING_PROOF_OF_AWARD:
-                validateDocumentConstraint(application, "fundings", "document", configuration, errors);
-                break;
-            case APPLICATION_LANGUAGE:
-                validateLanguageConstraint(application, configuration, errors);
-                break;
-            case APPLICATION_LANGUAGE_PROOF_OF_AWARD:
-                validateLanguageDocumentConstraint(application, configuration, errors);
-                break;
-            case APPLICATION_PRIZE:
-                validateRangeConstraint(application, "prizes", configuration, errors);
-                break;
-            case APPLICATION_QUALIFICATION:
-                validateRangeConstraint(application, "qualifications", configuration, errors);
-                break;
-            case APPLICATION_QUALIFICATION_PROOF_OF_AWARD:
-                validateDocumentConstraint(application, "qualifications", "document", configuration, errors);
-                break;
-            case APPLICATION_RESIDENCE:
-                validateResidenceConstraint(application, configuration, errors);
-                break;
-            case APPLICATION_STUDY_DETAIL:
-                validateStudyDetailConstraint(errors, application, configuration);
-                break;
-            case APPLICATION_THEME_PRIMARY:
-                validateImplodedRangeConstraint(application, "primaryTheme", configuration, errors);
-                break;
-            case APPLICATION_THEME_SECONDARY:
-                validateImplodedRangeConstraint(application, "secondaryTheme", configuration, errors);
-                break;
-            default:
-                break;
+                case APPLICATION_ASSIGN_REFEREE:
+                    validateRangeConstraint(application, "referees", configuration, errors);
+                    break;
+                case APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR:
+                    validateRangeConstraint(application, "supervisors", configuration, errors);
+                    break;
+                case APPLICATION_DEMOGRAPHIC:
+                    validateDemographicConstraint(application, configuration, errors);
+                    break;
+                case APPLICATION_CRIMINAL_CONVICTION:
+                    validateCriminalConvictionConstraint(application, configuration, errors);
+                    break;
+                case APPLICATION_DOCUMENT_COVERING_LETTER:
+                    validateDocumentConstraint(application, "coveringLetter", configuration, errors);
+                    break;
+                case APPLICATION_DOCUMENT_CV:
+                    validateDocumentConstraint(application, "cv", configuration, errors);
+                    break;
+                case APPLICATION_DOCUMENT_PERSONAL_STATEMENT:
+                    validateDocumentConstraint(application, "personalStatement", configuration, errors);
+                    break;
+                case APPLICATION_DOCUMENT_RESEARCH_STATEMENT:
+                    validateDocumentConstraint(application, "researchStatement", configuration, errors);
+                    break;
+                case APPLICATION_EMPLOYMENT_POSITION:
+                    validateRangeConstraint(application, "employmentPositions", configuration, errors);
+                    break;
+                case APPLICATION_FUNDING:
+                    validateRangeConstraint(application, "fundings", configuration, errors);
+                    break;
+                case APPLICATION_FUNDING_PROOF_OF_AWARD:
+                    validateDocumentConstraint(application, "fundings", "document", configuration, errors);
+                    break;
+                case APPLICATION_LANGUAGE:
+                    validateLanguageConstraint(application, configuration, errors);
+                    break;
+                case APPLICATION_LANGUAGE_PROOF_OF_AWARD:
+                    validateLanguageDocumentConstraint(application, configuration, errors);
+                    break;
+                case APPLICATION_PRIZE:
+                    validateRangeConstraint(application, "prizes", configuration, errors);
+                    break;
+                case APPLICATION_QUALIFICATION:
+                    validateRangeConstraint(application, "qualifications", configuration, errors);
+                    break;
+                case APPLICATION_QUALIFICATION_PROOF_OF_AWARD:
+                    validateDocumentConstraint(application, "qualifications", "document", configuration, errors);
+                    break;
+                case APPLICATION_RESIDENCE:
+                    validateResidenceConstraint(application, configuration, errors);
+                    break;
+                case APPLICATION_STUDY_DETAIL:
+                    validateStudyDetailConstraint(errors, application, configuration);
+                    break;
+                case APPLICATION_THEME_PRIMARY:
+                    validateImplodedRangeConstraint(application, "primaryTheme", configuration, errors);
+                    break;
+                case APPLICATION_THEME_SECONDARY:
+                    validateImplodedRangeConstraint(application, "secondaryTheme", configuration, errors);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -149,7 +141,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             ResourceStudyOption studyOption = resourceService.getStudyOption(opportunity, programDetail.getStudyOption());
 
             if (studyOption == null) {
-                List<PrismStudyOption> otherStudyOptions = resourceService.getStudyOptions(opportunity);
+                List<ImportedEntitySimple> otherStudyOptions = resourceService.getStudyOptions(opportunity);
                 if (otherStudyOptions.isEmpty()) {
                     throw new PrismCannotApplyException();
                 }
@@ -159,9 +151,9 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 LocalDate latestStartDate = applicationService.getLatestStartDate(application, studyOption);
 
                 if (startDate.isBefore(earliestStartDate)) {
-                    errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
+                    errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
                 } else if (startDate.isAfter(latestStartDate)) {
-                    errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
+                    errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
                 }
             }
 
@@ -184,7 +176,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     }
 
     private void validateDocumentConstraint(Application application, String property, String propertyDocument, WorkflowPropertyConfiguration configuration,
-            Errors errors) throws Error {
+                                            Errors errors) throws Error {
         int i = 0;
         Collection<?> instances = (Collection<?>) PrismReflectionUtils.getProperty(application, property);
         for (Object instance : instances) {

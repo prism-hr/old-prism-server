@@ -2,10 +2,14 @@ package com.zuehlke.pgadmissions.rest.dto.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
+import javax.validation.constraints.NotNull;
+
 public class ResourceDTO {
 
+    @NotNull
     private PrismScope scope;
 
+    @NotNull
     private Integer id;
 
     public PrismScope getScope() {

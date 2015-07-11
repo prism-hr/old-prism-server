@@ -3,10 +3,15 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public class ApplicationDTO implements ResourceCreationDTO {
 
+    @Valid
     private ResourceDTO parentResource;
 
+    @NotNull
     private Integer workflowPropertyConfigurationVersion;
 
     @Override

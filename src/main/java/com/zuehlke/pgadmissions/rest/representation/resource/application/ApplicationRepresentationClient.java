@@ -1,16 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import java.util.List;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
+import java.util.List;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
 
     private List<String> possibleThemes;
 
-    private List<PrismStudyOption> possibleStudyOptions;
+    private List<ImportedEntityResponse> possibleStudyOptions;
 
     private List<String> possibleLocations;
 
@@ -32,11 +32,11 @@ public class ApplicationRepresentationClient extends ApplicationRepresentationEx
         this.possibleThemes = possibleThemes;
     }
 
-    public List<PrismStudyOption> getPossibleStudyOptions() {
+    public List<ImportedEntityResponse> getPossibleStudyOptions() {
         return possibleStudyOptions;
     }
 
-    public void setPossibleStudyOptions(List<PrismStudyOption> possibleStudyOptions) {
+    public void setPossibleStudyOptions(List<ImportedEntityResponse> possibleStudyOptions) {
         this.possibleStudyOptions = possibleStudyOptions;
     }
 

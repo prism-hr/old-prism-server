@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.selectors.filter;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint.SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint.USER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint.SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint.USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_SUPERVISOR_GROUP;
 
@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListContraint;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
@@ -35,7 +35,7 @@ public class ResourceByUserAndRoleSelector implements PrismResourceListFilterSel
     @Override
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
         List<PrismRole> roles = Lists.newArrayList();
-        PrismResourceListContraint filter = constraint.getFilterProperty();
+        PrismResourceListConstraint filter = constraint.getFilterProperty();
         if (filter == SUPERVISOR) {
             String searchTerm = constraint.getValueString();
             roles.addAll(Lists.<PrismRole> newArrayList(APPLICATION_CONFIRMED_SUPERVISOR_GROUP.getRoles()));

@@ -168,10 +168,13 @@ public class ApplicationMapper {
     private ApplicationProgramDetailRepresentation getApplicationProgramDetailRepresentation(Application application,
                                                                                              Institution institution) {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
-        return new ApplicationProgramDetailRepresentation()
-                .withStudyOption(getImportedEntityRepresentation(applicationProgramDetail.getStudyOption(), institution))
-                .withStartDate(applicationProgramDetail.getStartDate())
-                .withReferralSource(getImportedEntityRepresentation(applicationProgramDetail.getReferralSource(), institution));
+        if (applicationProgramDetail != null) {
+            return new ApplicationProgramDetailRepresentation()
+                    .withStudyOption(getImportedEntityRepresentation(applicationProgramDetail.getStudyOption(), institution))
+                    .withStartDate(applicationProgramDetail.getStartDate())
+                    .withReferralSource(getImportedEntityRepresentation(applicationProgramDetail.getReferralSource(), institution));
+        }
+        return null;
     }
 
     private ApplicationStudyDetailRepresentation getApplicationStudyDetailRepresentation(Application application) {

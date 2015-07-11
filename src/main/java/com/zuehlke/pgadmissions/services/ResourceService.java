@@ -122,17 +122,17 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T DTO) throws Exception {
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T dto) throws Exception {
         PrismScope creationScope = action.getCreationScope().getId();
 
         ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
-        Resource resource = resourceCreator.create(user, DTO);
+        Resource resource = resourceCreator.create(user, dto);
 
-        Integer workflowPropertyConfigurationVersion = DTO.getWorkflowPropertyConfigurationVersion();
+        Integer workflowPropertyConfigurationVersion = dto.getWorkflowPropertyConfigurationVersion();
         if (workflowPropertyConfigurationVersion == null) {
             customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource, creationScope);
         }
-        resource.setWorkflowPropertyConfigurationVersion(DTO.getWorkflowPropertyConfigurationVersion());
+        resource.setWorkflowPropertyConfigurationVersion(dto.getWorkflowPropertyConfigurationVersion());
 
         Role role = roleService.getById(PrismRole.valueOf(creationScope.name() + "_ADMINISTRATOR"));
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
@@ -189,7 +189,7 @@ public class ResourceService {
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             T resourceDTO = (T) commentDTO.getNewResource().getResource();
             Action action = actionService.getById(commentDTO.getAction());
-            resourceDTO.setParentResource(new ResourceDTO().withScope(action.getCreationScope().getId()).withId(resourceId));
+            resourceDTO.setParentResource(new ResourceDTO().withScope(action.getScope().getId()).withId(resourceId));
             return createResource(user, action, resourceDTO);
         }
 

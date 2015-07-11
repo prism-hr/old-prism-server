@@ -149,8 +149,8 @@ public class ResourceService {
         if (creationScope != null) {
             boolean isInstitution = creationScope.equals(INSTITUTION);
 
-            if (isInstitution || ((ResourceParentDivisionDTO) parentDTO).getParentResource() != null) {
-                PrismScope scope = isInstitution ? SYSTEM : ((ResourceParentDivisionDTO) parentDTO).getParentResource().getScope();
+            if (isInstitution || parentDTO.getParentResource() != null) {
+                PrismScope scope = isInstitution ? SYSTEM : parentDTO.getParentResource().getScope();
 
                 Action action = actionService.getById(PrismAction.valueOf(scope.name() + "_CREATE_" + creationScope.name()));
                 return (U) createResource(user, action, parentDTO).getResource();

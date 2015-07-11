@@ -1,23 +1,29 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByValueClass;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.AdvertDAO;
+import com.zuehlke.pgadmissions.domain.Competence;
+import com.zuehlke.pgadmissions.domain.TargetEntity;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
+import com.zuehlke.pgadmissions.domain.advert.*;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
+import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
+import com.zuehlke.pgadmissions.mapping.AdvertMapper;
+import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
@@ -30,48 +36,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.AdvertDAO;
-import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.TargetEntity;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttributes;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
-import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
-import com.zuehlke.pgadmissions.mapping.AddressMapper;
-import com.zuehlke.pgadmissions.mapping.AdvertMapper;
-import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByValueClass;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 @Service
 @Transactional
@@ -107,9 +87,6 @@ public class AdvertService {
 
     @Inject
     private AdvertMapper advertMapper;
-
-    @Inject
-    private AddressMapper addressMapper;
 
     @Inject
     private RestTemplate restTemplate;
@@ -176,7 +153,7 @@ public class AdvertService {
             updateAddress(advert, addressDTO);
         } else if (address == null) {
             if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
-                address = getResourceAddress((ResourceParent) parentResource);
+                address = getResourceAddress(parentResource);
                 addressDTO = advertMapper.getAddressDTO(address);
                 updateAddress(advert, addressDTO);
             } else {
@@ -283,7 +260,7 @@ public class AdvertService {
                 targetClass = getByValueClass(valueClass).getAttributeClass();
             }
 
-            TargetEntity value = null;
+            TargetEntity value;
             Integer valueId = target.getValue();
             if (valueId == null && target.getClass().equals(AdvertCompetenceDTO.class)) {
                 AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) target;
@@ -294,7 +271,7 @@ public class AdvertService {
                 throw new Error();
             }
 
-            AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertTarget(advert, targetClass, value, target.getImportance());
+            AdvertTarget<?> entityTarget = createAdvertTarget(advert, targetClass, value, target.getImportance());
             targets.storeAttribute(entityTarget);
         }
     }
@@ -383,20 +360,6 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
 
-    public AddressAdvert createAddressCopy(AddressAdvert address) {
-        AddressAdvert newAddress = addressMapper.transform(address, AddressAdvert.class);
-        newAddress.setDomicile(address.getDomicile());
-
-        GeographicLocation oldLocation = address.getLocation();
-        if (oldLocation != null) {
-            GeographicLocation newLocation = new GeographicLocation().withLocationX(oldLocation.getLocationX()).withLocationY(oldLocation.getLocationY());
-            newAddress.setLocation(newLocation);
-        }
-
-        entityService.save(newAddress);
-        return newAddress;
-    }
-
     public List<String> getAdvertAttributes(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
         return advertDAO.getAdvertAttributes(institution, clazz);
     }
@@ -432,7 +395,7 @@ public class AdvertService {
         }
         return targets;
     }
-    
+
     public List<String> getAdvertThemes(Advert advert) {
         List<String> themes = Lists.newLinkedList();
         AdvertCategories categories = getAdvertCategories(advert);
@@ -445,7 +408,7 @@ public class AdvertService {
     public List<ImportedAdvertDomicile> getAdvertDomiciles() {
         return advertDAO.getAdvertDomiciles();
     }
-    
+
     public Integer getBackgroundImage(Advert advert) {
         Document backgroundImage = advert.getBackgroundImage();
         if (backgroundImage == null) {
@@ -552,7 +515,7 @@ public class AdvertService {
             todaysRate = response.getQuery().getResults().getRate().getRate();
 
             if (todaysRates == null) {
-                todaysRates = new HashMap<String, BigDecimal>();
+                todaysRates = new HashMap<>();
                 todaysRates.put(pair, todaysRate);
                 exchangeRates.put(baseline, todaysRates);
             } else {
@@ -568,11 +531,9 @@ public class AdvertService {
     }
 
     private void removeExpiredExchangeRates(LocalDate baseline) {
-        for (LocalDate day : exchangeRates.keySet()) {
-            if (day.isBefore(baseline)) {
-                exchangeRates.remove(day);
-            }
-        }
+        exchangeRates.keySet().stream()
+                .filter(day -> day.isBefore(baseline))
+                .forEach(exchangeRates::remove);
     }
 
     private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO feeDTO) {

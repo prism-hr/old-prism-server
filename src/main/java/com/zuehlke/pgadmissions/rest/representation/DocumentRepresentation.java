@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-/**
- * I am making an effort to keep the naming and package structuring consistent in different layers of the application, to keep the codebase as manageable as possible, e.g.
- * Document (Entity) => DocumentRepresentation (Representation), DocumentDTO (DTO), or
- * File (Entity) => FileRepresentation (Representation), FileDTO (DTO) 
- * We try our best not to mix it up
- * @author alastair
- *
- */
 public class DocumentRepresentation {
 
     private Integer id;

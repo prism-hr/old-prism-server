@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.*;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 
@@ -82,7 +84,8 @@ public class AdvertMapper {
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());
 
-        representation.setBackgroundImage(advertService.getBackgroundImage(advert));
+        Integer backgroundImageId = advertService.getBackgroundImage(advert);
+        representation.setBackgroundImage(backgroundImageId != null ? new DocumentRepresentation().withId(backgroundImageId) : null);
         representation.setHomepage(advert.getHomepage());
         representation.setApplyHomepage(advert.getApplyHomepage());
 
@@ -90,8 +93,8 @@ public class AdvertMapper {
         representation.setAddress(getAdvertAddressRepresentation(advert));
         representation.setFinancialDetails(getAdvertFinancialDetailsRepresentation(advert));
 
-        representation.setClosingDate(getAdvertClosingDateReprentation(advert));
-        representation.setClosingDates(getAdvertClosingDateReprentations(advert));
+        representation.setClosingDate(getAdvertClosingDateRepresentation(advert));
+        representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
         representation.setTargets(getAdvertTargetsRepresentation(advert));
@@ -111,11 +114,7 @@ public class AdvertMapper {
 
     public List<ImportedAdvertDomicileResponse> getAdvertDomicileRepresentations() {
         List<ImportedAdvertDomicile> importedAdvertDomiciles = advertService.getAdvertDomiciles();
-        List<ImportedAdvertDomicileResponse> representations = Lists.newLinkedList();
-        for (ImportedAdvertDomicile importedAdvertDomicile : importedAdvertDomiciles) {
-            representations.add(getAdvertDomicileRepresentation(importedAdvertDomicile));
-        }
-        return representations;
+        return importedAdvertDomiciles.stream().map(this::getAdvertDomicileRepresentation).collect(Collectors.toList());
     }
 
     public List<AdvertRepresentationExtended> getRecommendedAdvertRepresentations(Application application) {
@@ -154,7 +153,7 @@ public class AdvertMapper {
         return null;
     }
 
-    private AdvertClosingDateRepresentation getAdvertClosingDateReprentation(Advert advert) {
+    private AdvertClosingDateRepresentation getAdvertClosingDateRepresentation(Advert advert) {
         AdvertClosingDate closingDate = advert.getClosingDate();
         return closingDate == null ? null : getAdvertClosingDateRepresentation(closingDate);
     }
@@ -163,12 +162,8 @@ public class AdvertMapper {
         return new AdvertClosingDateRepresentation().withId(closingDate.getId()).withClosingDate(closingDate.getClosingDate());
     }
 
-    private List<AdvertClosingDateRepresentation> getAdvertClosingDateReprentations(Advert advert) {
-        List<AdvertClosingDateRepresentation> representations = Lists.newLinkedList();
-        for (AdvertClosingDate closingDate : advert.getClosingDates()) {
-            representations.add(getAdvertClosingDateRepresentation(closingDate));
-        }
-        return representations;
+    private List<AdvertClosingDateRepresentation> getAdvertClosingDateRepresentations(Advert advert) {
+        return advert.getClosingDates().stream().map(this::getAdvertClosingDateRepresentation).collect(Collectors.toList());
     }
 
     private AdvertCategoriesRepresentation getAdvertCategoriesRepresentation(Advert advert) {
@@ -179,11 +174,7 @@ public class AdvertMapper {
     }
 
     private <T extends AdvertAttribute<U>, U> List<U> getAdvertCategoryRepresentations(Set<T> categories) {
-        List<U> representations = Lists.newLinkedList();
-        for (T category : categories) {
-            representations.add(category.getValue());
-        }
-        return representations;
+        return categories.stream().map(T::getValue).collect(Collectors.toList());
     }
 
     private AdvertTargetsRepresentation getAdvertTargetsRepresentation(Advert advert) {

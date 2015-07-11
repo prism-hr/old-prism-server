@@ -1,28 +1,8 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
+import com.zuehlke.pgadmissions.domain.advert.*;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -35,16 +15,18 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.*;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 
 @Service
 @Transactional
@@ -65,14 +47,14 @@ public class AdvertMapper {
     public AdvertRepresentationSimple getAdvertRepresentationSimple(Advert advert) {
         return getAdvertRepresentation(advert, AdvertRepresentationSimple.class);
     }
-    
+
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
-        
+
         ResourceParent resource = advert.getResource();
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
         representation.setResource(resourceMapper.getResourceRepresentationSimple(resource));
-        
+
         Institution institution = resource.getInstitution();
         if (!institution.sameAs(resource)) {
             representation.setInstitution(resourceMapper.getResourceRepresentationSimple(institution));
@@ -82,36 +64,38 @@ public class AdvertMapper {
         if (!(department == null || department.sameAs(resource))) {
             representation.setDepartment(resourceMapper.getResourceRepresentationSimple(resource));
         }
-        
+
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             representation.setOpportunityType(PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName()));
         }
-        
+
+        representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
+
         representation.setTitle(advert.getTitle());
         return representation;
     }
-    
+
     public <T extends AdvertRepresentationSimple> T getAdvertRepresentation(Advert advert, Class<T> returnType) {
         T representation = BeanUtils.instantiate(returnType);
-        
+
         representation.setId(advert.getId());
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());
-        
+
         representation.setBackgroundImage(advertService.getBackgroundImage(advert));
         representation.setHomepage(advert.getHomepage());
         representation.setApplyHomepage(advert.getApplyHomepage());
-        
+
         representation.setTelephone(advert.getTelephone());
         representation.setAddress(getAdvertAddressRepresentation(advert));
         representation.setFinancialDetails(getAdvertFinancialDetailsRepresentation(advert));
-        
+
         representation.setClosingDate(getAdvertClosingDateReprentation(advert));
         representation.setClosingDates(getAdvertClosingDateReprentations(advert));
-        
+
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
         representation.setTargets(getAdvertTargetsRepresentation(advert));
-        
+
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());
         return representation;
     }

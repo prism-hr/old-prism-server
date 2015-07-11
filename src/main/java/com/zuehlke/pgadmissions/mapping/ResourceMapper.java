@@ -5,7 +5,10 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.*;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
@@ -214,8 +217,8 @@ public class ResourceMapper {
         representation.setCreatedTimestamp(resource.getCreatedTimestamp());
         representation.setUpdatedTimestamp(updatedTimestamp);
 
-        setRaisesUrgentFlag((ResourceRepresentationStandard) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
-        setRaisesUpdateFlag((ResourceRepresentationStandard) representation, baseline, updatedTimestamp);
+        setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
+        setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
         representation.setActions(actions);
         representation.setTimeline(commentMapper.getTimelineRepresentation(resource, currentUser));
@@ -227,8 +230,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource,
-                                                                                                                Class<V> returnType) throws Exception {
+    public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(
+            T resource, Class<V> returnType) throws Exception {
         V representation = getResourceRepresentationExtended(resource, returnType);
 
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
@@ -237,8 +240,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource,
-                                                                                                                               Class<V> returnType) throws Exception {
+    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(
+            T resource, Class<V> returnType) throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
 
         List<ImportedEntityResponse> studyOptions = resourceService.getStudyOptions(resource).stream()
@@ -251,15 +254,15 @@ public class ResourceMapper {
 
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentationClient> V getResourceParentRepresentationClient(T resource, Class<V> returnType)
-            throws Exception {
+    public <T extends ResourceParent, V extends ResourceParentRepresentationClient> V getResourceParentRepresentationClient(
+            T resource, Class<V> returnType) throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
         representation.setResourceSummary(getResourceSummaryRepresentation(resource));
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource,
-                                                                                                                                           Class<V> returnType) throws Exception {
+    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(
+            T resource, Class<V> returnType) throws Exception {
         V representation = getResourceOpportunityRepresentation(resource, returnType);
         representation.setResourceSummary(getResourceSummaryRepresentation(resource));
         return representation;
@@ -370,13 +373,10 @@ public class ResourceMapper {
         return summary;
     }
 
-    private List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
-        List<ResourceConditionRepresentation> representations = Lists.newLinkedList();
-        for (ResourceCondition condition : resource.getResourceConditions()) {
-            representations.add(new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition()).withPartnerMode(
-                    condition.getPartnerMode()));
-        }
-        return representations;
+    public List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
+        return resource.getResourceConditions().stream()
+                .map(condition -> new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition()).withPartnerMode(condition.getPartnerMode()))
+                .collect(Collectors.toList());
     }
 
     private List<ResourceSummaryPlotConstraintRepresentation> getResourceSummaryPlotConstraintRepresentation(ResourceReportFilterDTO filterDTO) {

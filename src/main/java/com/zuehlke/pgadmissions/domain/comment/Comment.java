@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
@@ -12,25 +11,20 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 
@@ -100,7 +94,7 @@ public class Comment extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -248,12 +242,12 @@ public class Comment extends WorkflowResourceExecution {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
@@ -593,7 +587,7 @@ public class Comment extends WorkflowResourceExecution {
         this.export = export;
         return this;
     }
-    
+
     public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
         assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
         return this;
@@ -696,7 +690,7 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     public boolean isInterviewScheduledExpeditedComment() {
-        return action.getId().equals(APPLICATION_ASSIGN_INTERVIEWERS) //
+        return action.getId().equals(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) //
                 && Arrays.asList(APPLICATION_INTERVIEW_PENDING_INTERVIEW, APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(transitionState.getId());
     }
 
@@ -723,7 +717,7 @@ public class Comment extends WorkflowResourceExecution {
         if (BooleanUtils.isTrue(action.getTransitionAction())) {
             if (!Objects.equal(stateGroup, transitionStateGroup)) {
                 return true;
-            } else if (action.getActionType().equals(USER_INVOCATION) && BooleanUtils.isTrue(stateGroup.getRepeatable())
+            } else if (isUserComment() && BooleanUtils.isTrue(stateGroup.getRepeatable())
                     && !Objects.equal(state, transitionState)) {
                 return true;
             }
@@ -744,7 +738,7 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     public boolean isUserComment() {
-        return action.getActionType() == USER_INVOCATION;
+        return BooleanUtils.isFalse(action.getSystemInvocationOnly());
     }
 
     public boolean isSecondaryStateGroupTransitionComment() {
@@ -780,14 +774,6 @@ public class Comment extends WorkflowResourceExecution {
         return applicationReserveStatus != null;
     }
 
-    public boolean isProjectPartnerApproveComment() {
-        return action.getId().equals(PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE) && transitionState.getId().equals(PROJECT_APPROVAL);
-    }
-
-    public boolean isProgramPartnerApproveComment() {
-        return action.getId().equals(PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE) && transitionState.getId().equals(PROGRAM_APPROVAL);
-    }
-
     public String getApplicationRatingDisplay() {
         return applicationRating == null ? null : applicationRating.toPlainString();
     }
@@ -818,7 +804,7 @@ public class Comment extends WorkflowResourceExecution {
         TimeZone interviewTimezone = interviewAppointment == null ? null : interviewAppointment.getInterviewTimeZone();
         return interviewTimezone == null ? null : interviewTimezone.getDisplayName();
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return null;

@@ -9,8 +9,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -84,7 +81,7 @@ public class ActionDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.actionType", SYSTEM_INVOCATION)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", true)) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getResourceStateActionConstraint()) //
                 .setMaxResults(1) //
@@ -130,7 +127,7 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.eq(resourceReference + ".id", resourceId)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -168,7 +165,7 @@ public class ActionDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM)) //
                         .add(Restrictions.isNotNull("resourceCondition.id")))
-                .add(Restrictions.eq("action.actionType", USER_INVOCATION)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isNull("stateActionAssignment.id"));
 
         for (PrismScope exclusion : exclusions) {
@@ -207,7 +204,7 @@ public class ActionDAO {
     public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("actionType", USER_INVOCATION)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.eq("actionCategory", CREATE_RESOURCE)) //
                 .add(Restrictions.eq("creationScope.id", creationScope)) //
                 .list();

@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -132,7 +133,7 @@ public class SystemInitialisationHelper {
 
     public void verifyActionCreation() {
         for (Action action : actionService.getActions()) {
-            assertEquals(action.getId().getActionType(), action.getActionType());
+            assertEquals(action.getId().isSystemInvocationOnly(), BooleanUtils.toBoolean(action.getSystemInvocationOnly()));
             assertEquals(action.getId().getActionCategory(), action.getActionCategory());
             assertEquals(action.getId().isRatingAction(), action.getRatingAction());
             assertEquals(action.getId().isDeclinableAction(), action.getDeclinableAction());

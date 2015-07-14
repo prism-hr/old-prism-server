@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 
 @Entity
 @Table(name = "action")
@@ -26,9 +25,8 @@ public class Action extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismAction id;
 
-    @Column(name = "action_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismActionType actionType;
+    @Column(name = "system_invocation_only", nullable = false)
+    private Boolean systemInvocationOnly;
 
     @Column(name = "action_category", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -77,12 +75,12 @@ public class Action extends WorkflowDefinition {
         this.id = id;
     }
 
-    public PrismActionType getActionType() {
-        return actionType;
+    public Boolean getSystemInvocationOnly() {
+        return systemInvocationOnly;
     }
 
-    public void setActionType(PrismActionType actionType) {
-        this.actionType = actionType;
+    public void setSystemInvocationOnly(Boolean systemInvocationOnly) {
+        this.systemInvocationOnly = systemInvocationOnly;
     }
 
     public PrismActionCategory getActionCategory() {
@@ -180,8 +178,8 @@ public class Action extends WorkflowDefinition {
         return this;
     }
 
-    public Action withActionType(PrismActionType actionType) {
-        this.actionType = actionType;
+    public Action withSystemInvocationOnly(Boolean systemInvocationOnly) {
+        this.systemInvocationOnly = systemInvocationOnly;
         return this;
     }
 

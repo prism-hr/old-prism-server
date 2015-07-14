@@ -336,7 +336,7 @@ public class SystemService {
             Scope scope = scopeService.getById(prismAction.getScope());
             ActionCustomQuestionDefinition actionCustomQuestionDefinition = actionService
                     .getCustomQuestionDefinitionById(prismAction.getActionCustomQuestion());
-            Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
+            Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
                     .withActionCustomQuestionDefinition(actionCustomQuestionDefinition).withScope(scope);

@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
@@ -25,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,7 +147,7 @@ public class WorkflowConfigurationHelper {
 
             PrismActionCategory actionCategory = action.getActionCategory();
 
-            if (action.getActionType() == SYSTEM_INVOCATION) {
+            if (BooleanUtils.isTrue(action.getSystemInvocationOnly())) {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
                 assertFalse(stateAction.getRaisesUrgentFlag());
                 assertNull(stateAction.getNotificationDefinition());
@@ -275,7 +275,7 @@ public class WorkflowConfigurationHelper {
             Action action = stateAction.getAction();
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
 
-            if (action.getActionType() == SYSTEM_INVOCATION) {
+            if (BooleanUtils.isTrue(action.getSystemInvocationOnly())) {
                 assertTrue(assignments.size() == 0);
             }
 

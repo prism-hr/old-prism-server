@@ -561,8 +561,7 @@ public class ResourceService {
                 resourceOpportunity.setOpportunityType(program.getOpportunityType());
             } else {
                 resourceOpportunity.setOpportunityType(importedEntityService.getByName(ImportedEntitySimple.class, resourceOpportunityDTO
-                        .getOpportunityType()
-                        .name()));
+                        .getOpportunityType().name()));
                 setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions(), new LocalDate());
             }
 

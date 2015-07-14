@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADVERTISER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
@@ -37,7 +37,7 @@ public class ProgramCreatedResolver implements StateTransitionResolver {
         List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         if (!activeInstitutionStates.contains(institution.getState().getId())) {
             return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROGRAM_APPROVAL_INSTITUTION);
-        } else if (roleService.hasUserRole(resource, user, INSTITUTION_ADVERTISER_GROUP)) {
+        } else if (roleService.hasUserRole(resource, user, INSTITUTION_ADMINISTRATOR_GROUP)) {
             return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROGRAM_APPROVED);
         }
         return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROGRAM_APPROVAL);

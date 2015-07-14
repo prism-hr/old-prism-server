@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
@@ -34,9 +35,16 @@ public enum PrismStateGroup implements PrismLocalizableDefinition {
     PROGRAM_REJECTED(PROGRAM), //
     PROGRAM_DISABLED(PROGRAM), //
     PROGRAM_WITHDRAWN(PROGRAM), //
+    DEPARTMENT_APPROVAL_INSTITUTION(DEPARTMENT), //
+    DEPARTMENT_APPROVAL(DEPARTMENT), //
+    DEPARTMENT_APPROVED(DEPARTMENT), //
+    DEPARTMENT_REJECTED(DEPARTMENT), //
+    DEPARTMENT_DISABLED(DEPARTMENT), //
+    DEPARTMENT_WITHDRAWN(DEPARTMENT), //
     INSTITUTION_APPROVAL(INSTITUTION), //
     INSTITUTION_APPROVED(INSTITUTION), //
     INSTITUTION_REJECTED(INSTITUTION), //
+    INSTITUTION_DISABLED(INSTITUTION), //
     INSTITUTION_WITHDRAWN(INSTITUTION), //
     SYSTEM_RUNNING(SYSTEM);
 

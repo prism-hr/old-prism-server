@@ -1,14 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
 import java.util.Map;
@@ -153,7 +149,7 @@ public class ActionService {
     }
 
     public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
-        if (action.getActionType() == USER_INVOCATION) {
+        if (BooleanUtils.isFalse(action.getSystemInvocationOnly())) {
             return actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
         } else {
             return actionDAO.getSystemRedirectAction(duplicateResource);
@@ -228,27 +224,9 @@ public class ActionService {
         List<Action> actions = getActions();
         Map<PrismAction, Action> fallbackActions = Maps.newHashMap();
         for (Action action : actions) {
-            PrismAction fallbackActionId;
             Scope creationScope = action.getCreationScope();
-            switch (creationScope == null ? action.getScope().getId() : creationScope.getId()) {
-            case APPLICATION:
-                fallbackActionId = SYSTEM_VIEW_APPLICATION_LIST;
-                break;
-            case INSTITUTION:
-                fallbackActionId = SYSTEM_VIEW_INSTITUTION_LIST;
-                break;
-            case PROGRAM:
-                fallbackActionId = SYSTEM_VIEW_PROGRAM_LIST;
-                break;
-            case PROJECT:
-                fallbackActionId = SYSTEM_VIEW_PROJECT_LIST;
-                break;
-            case SYSTEM:
-                fallbackActionId = SYSTEM_VIEW_EDIT;
-                break;
-            default:
-                throw new UnsupportedOperationException();
-            }
+            PrismScope actionScopeId = creationScope == null ? action.getScope().getId() : creationScope.getId();
+            PrismAction fallbackActionId = actionScopeId == SYSTEM ? SYSTEM_VIEW_EDIT : PrismAction.valueOf("SYSTEM_VIEW_" + actionScopeId.name() + "_LIST");
             Action fallbackAction = fallbackActions.get(fallbackActionId);
             if (fallbackAction == null) {
                 fallbackAction = getById(fallbackActionId);

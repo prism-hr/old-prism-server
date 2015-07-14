@@ -42,14 +42,14 @@ public class ImportedEntityDAO {
 
     public ImportedInstitution getImportedInstitutionByName(Integer domicile, String name) {
         return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("importedDomicile.id", domicile)) //
+                .add(Restrictions.eq("domicile.id", domicile)) //
                 .add(Restrictions.eq("name", name)) //
                 .uniqueResult();
     }
 
     public ImportedProgram getImportedProgramByName(ImportedInstitution importedInstitution, String name) {
         return (ImportedProgram) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
-                .add(Restrictions.eq("importedInstitution", importedInstitution)) //
+                .add(Restrictions.eq("institution", importedInstitution)) //
                 .add(Restrictions.eq("name", name)) //
                 .uniqueResult();
     }

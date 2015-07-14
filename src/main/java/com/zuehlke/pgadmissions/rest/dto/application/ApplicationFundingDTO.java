@@ -1,21 +1,20 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ApplicationFundingDTO {
 
     private Integer id;
 
     @NotNull
-    private Integer fundingSource;
+    private ImportedEntityDTO fundingSource;
 
     @NotEmpty
     @Size(max = 255)
@@ -54,11 +53,11 @@ public class ApplicationFundingDTO {
         this.sponsor = sponsor;
     }
 
-    public Integer getFundingSource() {
+    public ImportedEntityDTO getFundingSource() {
         return fundingSource;
     }
 
-    public void setFundingSource(Integer fundingSource) {
+    public void setFundingSource(ImportedEntityDTO fundingSource) {
         this.fundingSource = fundingSource;
     }
 

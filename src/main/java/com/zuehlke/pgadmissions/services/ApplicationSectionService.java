@@ -290,12 +290,11 @@ public class ApplicationSectionService {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
-        if (employmentPositionId != null) {
+        if (employmentPositionId == null) {
+            employmentPosition = new ApplicationEmploymentPosition();
+        } else {
             employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
                     ImmutableMap.of("application", application, "id", employmentPositionId));
-        } else {
-            employmentPosition = new ApplicationEmploymentPosition();
-            application.getEmploymentPositions().add(employmentPosition);
         }
 
         employmentPosition.setEmployerName(employmentPositionDTO.getEmployerName());
@@ -314,6 +313,10 @@ public class ApplicationSectionService {
         employmentPosition.setCurrent(BooleanUtils.isTrue(employmentPositionDTO.getCurrent()));
         employmentPosition.setEndDate(employmentPositionDTO.getEndDate());
         employmentPosition.setLastUpdatedTimestamp(DateTime.now());
+
+        if (employmentPositionId == null) {
+            application.getEmploymentPositions().add(employmentPosition);
+        }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
@@ -337,7 +340,7 @@ public class ApplicationSectionService {
             funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         }
 
-        ImportedEntitySimple fundingSource = importedEntityService.getById(ImportedEntitySimple.class, fundingDTO.getFundingSource());
+        ImportedEntitySimple fundingSource = importedEntityService.getById(ImportedEntitySimple.class, fundingDTO.getFundingSource().getId());
 
         funding.setFundingSource(fundingSource);
         funding.setSponsor(fundingDTO.getSponsor());
@@ -568,7 +571,7 @@ public class ApplicationSectionService {
     }
 
     private void copyAddress(AddressApplication to, AddressApplicationDTO from) {
-        ImportedEntitySimple currentAddressDomicile = importedEntityService.getById(ImportedEntitySimple.class, from.getDomicile());
+        ImportedEntitySimple currentAddressDomicile = importedEntityService.getById(ImportedEntitySimple.class, from.getDomicile().getId());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());
         to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));

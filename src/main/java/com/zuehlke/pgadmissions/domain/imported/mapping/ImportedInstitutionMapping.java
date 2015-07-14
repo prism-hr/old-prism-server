@@ -1,19 +1,11 @@
 package com.zuehlke.pgadmissions.domain.imported.mapping;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "imported_institution_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_institution_id", "code" }) })
@@ -40,7 +32,7 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
     @Column(name = "imported_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime importedTimestamp;
-    
+
     @Override
     public Integer getId() {
         return id;
@@ -60,7 +52,7 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public ImportedInstitution getImportedEntity() {
         return importedEntity;
@@ -90,17 +82,21 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public DateTime getImportedTimestamp() {
         return importedTimestamp;
     }
-    
+
+    public void setImportedTimestamp(DateTime importedTimestamp) {
+        this.importedTimestamp = importedTimestamp;
+    }
+
     public ImportedInstitutionMapping withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
-    
+
     public ImportedInstitutionMapping withImportedInstitution(ImportedInstitution importedInstitution) {
         this.importedEntity = importedInstitution;
         return this;
@@ -111,9 +107,14 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
         return this;
     }
 
+    public ImportedInstitutionMapping withImportedTimestamp(DateTime importedTimestamp) {
+        this.importedTimestamp = importedTimestamp;
+        return this;
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedInstitution", importedEntity);
+        return super.getResourceSignature().addProperty("institution", importedEntity);
     }
 
 }

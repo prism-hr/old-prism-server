@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 
 import java.util.List;
 
@@ -19,12 +17,8 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
@@ -32,16 +26,10 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor
 public class ProjectPostprocessor implements ResourceProcessor {
 
     @Inject
-    private ActionService actionService;
-
-    @Inject
     private AdvertService advertService;
 
     @Inject
     private RoleService roleService;
-
-    @Inject
-    private StateService stateService;
 
     @Inject
     private UserService userService;
@@ -68,10 +56,6 @@ public class ProjectPostprocessor implements ResourceProcessor {
         if (comment.isProjectViewEditComment()) {
             connectProjectSupervisors(project, comment);
         }
-
-        if (comment.isProjectPartnerApproveComment()) {
-            postProcessProjectPartnerApproval(project, comment);
-        }
     }
 
     private void connectProjectSupervisors(Project project, Comment comment) {
@@ -79,17 +63,6 @@ public class ProjectPostprocessor implements ResourceProcessor {
             List<User> users = Lists.newLinkedList(roleService.getRoleUsers(project, PROJECT_PRIMARY_SUPERVISOR));
             users.addAll(roleService.getRoleUsers(project, PROJECT_SECONDARY_SUPERVISOR));
             userService.createUserConnections(users);
-        }
-    }
-
-    private void postProcessProjectPartnerApproval(Project project, Comment comment) throws Exception {
-        User user = comment.getUser();
-        Action action = actionService.getById(PROJECT_COMPLETE_APPROVAL_STAGE);
-        if (actionService.checkActionAvailable(project, action, user, false)) {
-            State transitionState = stateService.getById(PROJECT_APPROVED);
-            Comment approveComment = new Comment().withUser(user).withResource(project).withAction(action).withDeclinedResponse(false)
-                    .withTransitionState(transitionState).withCreatedTimestamp(new DateTime());
-            actionService.executeAction(project, action, approveComment);
         }
     }
 

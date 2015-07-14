@@ -164,8 +164,8 @@ public class ImportedEntityService {
     public void disableImportedPrograms(Integer institutionId, List<Integer> updates, LocalDate baseline) {
         Institution institution = institutionService.getById(institutionId);
         importedEntityDAO.disableImportedPrograms(institution, updates, baseline);
-        importedEntityDAO.disableImportedProgramStudyOptions(institution, updates);
         importedEntityDAO.disableImportedProgramStudyOptionInstances(institution, updates);
+        importedEntityDAO.disableImportedProgramStudyOptions(institution, updates);
     }
 
     public void mergeImportedEntities(Integer importedEntityFeedId, List<Object> definitions) throws Exception {

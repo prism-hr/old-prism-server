@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -26,6 +27,12 @@ public class ProgramPostprocessor implements ResourceProcessor {
         Program program = (Program) resource;
         DateTime updatedTimestamp = program.getUpdatedTimestamp();
         program.setUpdatedTimestampSitemap(updatedTimestamp);
+
+        Department department = program.getDepartment();
+        if (department != null) {
+            department.setUpdatedTimestampSitemap(updatedTimestamp);
+        }
+
         program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
 

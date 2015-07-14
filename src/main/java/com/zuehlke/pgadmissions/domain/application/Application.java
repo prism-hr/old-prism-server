@@ -850,7 +850,7 @@ public class Application extends Resource {
 
     public Set<ResourceParent> getParentResources() {
         Set<ResourceParent> parentResources = Sets.newLinkedHashSet();
-        for (ResourceParent parentResource : new ResourceParent[] { project, program, institution }) {
+        for (ResourceParent parentResource : new ResourceParent[] { project, program, department, institution }) {
             if (parentResource != null) {
                 parentResources.add(parentResource);
             }

@@ -30,12 +30,12 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunityAttribute;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
 
 @Entity
 @Table(name = "ADVERT")
-public class Advert extends ResourceParentAttribute {
+public class Advert extends ResourceOpportunityAttribute {
 
     @Id
     @GeneratedValue
@@ -65,7 +65,7 @@ public class Advert extends ResourceParentAttribute {
     private String telephone;
 
     @OneToOne
-    @JoinColumn(name = "institution_address_id")
+    @JoinColumn(name = "advert_address_id")
     private AddressAdvert address;
 
     @Embedded
@@ -111,6 +111,9 @@ public class Advert extends ResourceParentAttribute {
 
     @OneToOne(mappedBy = "advert")
     private Institution institution;
+
+    @OneToOne(mappedBy = "advert")
+    private Department department;
 
     @OneToOne(mappedBy = "advert")
     private Program program;
@@ -244,14 +247,20 @@ public class Advert extends ResourceParentAttribute {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    @Override
     public Institution getInstitution() {
         return institution;
     }
-
-    @Override
+    
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override
@@ -305,11 +314,7 @@ public class Advert extends ResourceParentAttribute {
     }
 
     public ResourceParent getResource() {
-        return ObjectUtils.firstNonNull(getResourceParent(), getResourceOpportunity());
-    }
-
-    public ResourceParent getResourceParent() {
-        return ObjectUtils.firstNonNull(institution);
+        return ObjectUtils.firstNonNull(institution, department, getResourceOpportunity());
     }
 
     public ResourceOpportunity getResourceOpportunity() {
@@ -318,10 +323,6 @@ public class Advert extends ResourceParentAttribute {
 
     public boolean isAdvertOfScope(PrismScope scope) {
         return getResource().getResourceScope().equals(scope);
-    }
-
-    public Department getDepartment() {
-        return getResource().getDepartment();
     }
 
     public boolean hasConvertedFee() {

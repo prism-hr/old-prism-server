@@ -1,21 +1,15 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.services.StaticDataService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.bind.annotation.*;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/static")
@@ -47,14 +41,19 @@ public class StaticDataController {
         return staticDataService.getInstitutionData(institutionId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/domiciles/{domicileId}/importedInstitutions")
-    public List<ImportedEntityResponse> getImportedInstitutions(@PathVariable Integer domicileId, @RequestParam Integer institutionId) {
-        return staticDataService.getImportedInstitutions(institutionId, domicileId);
+    @RequestMapping(method = RequestMethod.GET, value = "/institutions/{institutionId}/importedInstitutions")
+    public List<ImportedEntityResponse> getImportedInstitutions(@PathVariable Integer institutionId, @RequestParam Integer importedDomicileId) {
+        return staticDataService.getImportedInstitutions(institutionId, importedDomicileId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/importedInstitutions/{importedInstitutionId}/importedPrograms")
-    public List<ImportedEntityResponse> getImportedPrograms(@PathVariable Integer importedInstitutionId, @RequestParam Integer institutionId) {
+    @RequestMapping(method = RequestMethod.GET, value = "/institutions/{institutionId}/importedPrograms", params = "importedInstitutionId")
+    public List<ImportedEntityResponse> getImportedPrograms(@PathVariable Integer institutionId, @RequestParam Integer importedInstitutionId) {
         return staticDataService.getImportedPrograms(institutionId, importedInstitutionId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/institutions/{institutionId}/importedPrograms", params = "q")
+    public List<ImportedProgramResponse> searchImportedPrograms(@PathVariable Integer institutionId, @RequestParam String q) {
+        return staticDataService.searchImportedPrograms(institutionId, q);
     }
 
 }

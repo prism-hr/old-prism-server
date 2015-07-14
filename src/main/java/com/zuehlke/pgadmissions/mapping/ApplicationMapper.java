@@ -252,7 +252,7 @@ public class ApplicationMapper {
                     .withLanguageQualification(getApplicationLanguageQualificationRepresentation(applicationPersonalDetail, institution))
                     .withDomicile(getImportedEntityRepresentation(applicationPersonalDetail.getDomicile(), institution))
                     .withVisaRequired(applicationPersonalDetail.getVisaRequired())
-                    .withPassport(getApplicationPassportRepresentation(applicationPersonalDetail, institution)).withPhone(applicationPersonalDetail.getPhone())
+                    .withPassport(getApplicationPassportRepresentation(applicationPersonalDetail)).withPhone(applicationPersonalDetail.getPhone())
                     .withSkype(applicationPersonalDetail.getSkype());
 
             if (applicationService.isCanViewEqualOpportunitiesData(application, userService.getCurrentUser())) {
@@ -292,7 +292,7 @@ public class ApplicationMapper {
         return null;
     }
 
-    private ApplicationPassportRepresentation getApplicationPassportRepresentation(ApplicationPersonalDetail applicationPersonalDetail, Institution institution) {
+    private ApplicationPassportRepresentation getApplicationPassportRepresentation(ApplicationPersonalDetail applicationPersonalDetail) {
         ApplicationPassport applicationPassport = applicationPersonalDetail.getPassport();
 
         if (applicationPassport != null) {
@@ -400,6 +400,7 @@ public class ApplicationMapper {
 
             Document researchStatement = applicationDocument.getResearchStatement();
             representation.setResearchStatement(researchStatement == null ? null : documentMapper.getDocumentRepresentation(researchStatement));
+            return representation;
         }
 
         return null;

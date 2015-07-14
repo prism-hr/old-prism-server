@@ -365,7 +365,7 @@ public class ImportedEntityService {
 
     private void createImportedInstitutionMapping(Institution institution, ImportedInstitution importedInstitution) {
         ImportedInstitutionMapping importedInstitutionMapping = new ImportedInstitutionMapping().withInstitution(institution)
-                .withImportedInstitution(importedInstitution).withEnabled(true);
+                .withImportedInstitution(importedInstitution).withEnabled(true).withImportedTimestamp(DateTime.now());
         entityService.getOrCreate(importedInstitutionMapping);
         importedInstitution.getMappings().add(importedInstitutionMapping);
     }

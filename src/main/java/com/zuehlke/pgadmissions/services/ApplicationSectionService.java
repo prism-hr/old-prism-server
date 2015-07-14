@@ -1,56 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAssignmentSection;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -70,23 +26,25 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import org.apache.commons.lang3.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 @Service
 @Transactional
@@ -166,7 +124,6 @@ public class ApplicationSectionService {
         ApplicationSupervisor supervisor;
         if (supervisorId == null) {
             supervisor = new ApplicationSupervisor();
-            application.getSupervisors().add(supervisor);
         } else {
             supervisor = entityService.getByProperties(ApplicationSupervisor.class, ImmutableMap.of("application", application, "id", supervisorId));
         }
@@ -177,6 +134,10 @@ public class ApplicationSectionService {
         supervisor.setUser(newUser);
         supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
         supervisor.setLastUpdatedTimestamp(DateTime.now());
+
+        if (supervisorId == null) {
+            application.getSupervisors().add(supervisor);
+        }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR);
         return supervisor;
@@ -199,18 +160,16 @@ public class ApplicationSectionService {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         if (personalDetail == null) {
             personalDetail = new ApplicationPersonalDetail();
-            application.setPersonalDetail(personalDetail);
         }
 
         updateUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
 
-        ImportedEntitySimple title = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getTitle());
-        ImportedEntitySimple gender = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getGender());
-        ImportedEntitySimple country = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getCountry());
-        ImportedEntitySimple firstNationality = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getFirstNationality());
-        ImportedEntitySimple secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.getById(
-                ImportedEntitySimple.class, personalDetailDTO.getSecondNationality()) : null;
-        ImportedEntitySimple residenceCountry = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getDomicile());
+        ImportedEntitySimple title = personalDetailDTO.getTitle() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getTitle().getId()) : null;
+        ImportedEntitySimple gender = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getGender().getId());
+        ImportedEntitySimple country = personalDetailDTO.getCountry() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getCountry().getId()) : null;
+        ImportedEntitySimple firstNationality = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getFirstNationality().getId());
+        ImportedEntitySimple secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getSecondNationality().getId()) : null;
+        ImportedEntitySimple residenceCountry = personalDetailDTO.getDomicile() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getDomicile().getId()) : null;
 
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
@@ -231,36 +190,29 @@ public class ApplicationSectionService {
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
 
-        Integer ethnicityId = personalDetailDTO.getEthnicity();
-        Integer disabilityId = personalDetailDTO.getDisability();
-        if (!(ethnicityId == null && disabilityId == null)) {
-            ApplicationDemographic demographic = new ApplicationDemographic();
-            if (ethnicityId != null) {
-                demographic.setEthnicity(importedEntityService.getById(ImportedEntitySimple.class, ethnicityId));
-            }
-
-            if (disabilityId != null) {
-                demographic.setDisability(importedEntityService.getById(ImportedEntitySimple.class, disabilityId));
-            }
-            
-            personalDetail.setDemographic(demographic);
+        ApplicationDemographicDTO demographicDTO = personalDetailDTO.getDemographic();
+        ApplicationDemographic demographic = new ApplicationDemographic();
+        if (demographicDTO != null) {
+            demographic.setEthnicity(demographicDTO.getEthnicity() != null ? importedEntityService.getById(ImportedEntitySimple.class, demographicDTO.getEthnicity().getId()) : null);
+            demographic.setDisability(demographicDTO.getDisability() != null ? importedEntityService.getById(ImportedEntitySimple.class, demographicDTO.getDisability().getId()) : null);
         }
+        personalDetail.setDemographic(demographic);
 
         updateLanguageQualification(personalDetailDTO, institution, personalDetail);
         updatePassport(personalDetailDTO, personalDetail);
         personalDetail.setLastUpdatedTimestamp(DateTime.now());
+
+        application.setPersonalDetail(personalDetail);
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
 
     public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws Exception {
         Application application = applicationService.getById(applicationId);
-        Institution institution = application.getInstitution();
 
         ApplicationAddress address = application.getAddress();
         if (address == null) {
             address = new ApplicationAddress();
-            application.setAddress(address);
         }
 
         AddressApplicationDTO currentAddressDTO = addressDTO.getCurrentAddress();
@@ -269,7 +221,7 @@ public class ApplicationSectionService {
             currentAddress = new AddressApplication();
             address.setCurrentAddress(currentAddress);
         }
-        copyAddress(institution, currentAddress, currentAddressDTO);
+        copyAddress(currentAddress, currentAddressDTO);
 
         AddressApplicationDTO contactAddressDTO = addressDTO.getContactAddress();
         AddressApplication contactAddress = address.getContactAddress();
@@ -277,8 +229,10 @@ public class ApplicationSectionService {
             contactAddress = new AddressApplication();
             address.setContactAddress(contactAddress);
         }
-        copyAddress(institution, contactAddress, contactAddressDTO);
+        copyAddress(contactAddress, contactAddressDTO);
         address.setLastUpdatedTimestamp(DateTime.now());
+
+        application.setAddress(address);
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
@@ -290,7 +244,6 @@ public class ApplicationSectionService {
         ApplicationQualification qualification;
         if (qualificationId == null) {
             qualification = new ApplicationQualification();
-            application.getQualifications().add(qualification);
         } else {
             qualification = entityService.getByProperties(ApplicationQualification.class, ImmutableMap.of("application", application, "id", qualificationId));
         }
@@ -313,6 +266,10 @@ public class ApplicationSectionService {
             qualification.setDocument(qualificationDocument);
         }
         qualification.setLastUpdatedTimestamp(DateTime.now());
+
+        if (qualificationId == null) {
+            application.getQualifications().add(qualification);
+        }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
@@ -349,7 +306,7 @@ public class ApplicationSectionService {
             employerAddress = new AddressApplication();
             employmentPosition.setEmployerAddress(employerAddress);
         }
-        copyAddress(application.getInstitution(), employerAddress, employerAddressDTO);
+        copyAddress(employerAddress, employerAddressDTO);
 
         employmentPosition.setPosition(employmentPositionDTO.getPosition());
         employmentPosition.setRemit(employmentPositionDTO.getRemit());
@@ -376,7 +333,6 @@ public class ApplicationSectionService {
         ApplicationFunding funding;
         if (fundingId == null) {
             funding = new ApplicationFunding();
-            application.getFundings().add(funding);
         } else {
             funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         }
@@ -397,6 +353,10 @@ public class ApplicationSectionService {
         }
         funding.setLastUpdatedTimestamp(DateTime.now());
 
+        if (fundingId == null) {
+            application.getFundings().add(funding);
+        }
+
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
         return funding;
     }
@@ -414,7 +374,6 @@ public class ApplicationSectionService {
         ApplicationPrize prize;
         if (prizeId == null) {
             prize = new ApplicationPrize();
-            application.getPrizes().add(prize);
         } else {
             prize = entityService.getByProperties(ApplicationPrize.class, ImmutableMap.of("application", application, "id", prizeId));
         }
@@ -424,6 +383,10 @@ public class ApplicationSectionService {
         prize.setDescription(prizeDTO.getDescription());
         prize.setAwardDate(prizeDTO.getAwardDate());
         prize.setLastUpdatedTimestamp(DateTime.now());
+
+        if (prizeId == null) {
+            application.getPrizes().add(prize);
+        }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
         return prize;
@@ -442,7 +405,6 @@ public class ApplicationSectionService {
         ApplicationReferee referee;
         if (refereeId == null) {
             referee = new ApplicationReferee();
-            application.getReferees().add(referee);
         } else {
             referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         }
@@ -465,10 +427,14 @@ public class ApplicationSectionService {
             referee.setAddress(addressApplication);
         }
 
-        copyAddress(application.getInstitution(), addressApplication, addressApplicationDTO);
+        copyAddress(addressApplication, addressApplicationDTO);
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
         referee.setLastUpdatedTimestamp(DateTime.now());
+
+        if (refereeId == null) {
+            application.getReferees().add(referee);
+        }
 
         List<CommentAssignedUser> assignees = getUserAssignmentsCreate(application, oldUser, newUser, APPLICATION_REFEREE);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
@@ -488,7 +454,6 @@ public class ApplicationSectionService {
         ApplicationDocument document = application.getDocument();
         if (document == null) {
             document = new ApplicationDocument();
-            application.setDocument(document);
         }
 
         Document personalStatement = documentDTO.getPersonalStatement() != null ? documentService.getById(documentDTO.getPersonalStatement().getId(),
@@ -504,6 +469,8 @@ public class ApplicationSectionService {
         document.setCoveringLetter(coveringLetter);
         document.setLastUpdatedTimestamp(DateTime.now());
 
+        application.setDocument(document);
+
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
@@ -513,23 +480,24 @@ public class ApplicationSectionService {
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
         if (additionalInformation == null) {
             additionalInformation = new ApplicationAdditionalInformation();
-            application.setAdditionalInformation(additionalInformation);
         }
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
         additionalInformation.setLastUpdatedTimestamp(DateTime.now());
+
+        application.setAdditionalInformation(additionalInformation);
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
     public void reassignApplicationSections(User oldUser, User newUser) {
         for (Application application : oldUser.getApplications()) {
-            reassigApplicationSections(application.getSupervisors(), oldUser, newUser);
-            reassigApplicationSections(application.getReferees(), oldUser, newUser);
+            reassignApplicationSections(application.getSupervisors(), oldUser, newUser);
+            reassignApplicationSections(application.getReferees(), oldUser, newUser);
         }
     }
 
-    private <T extends ApplicationAssignmentSection> void reassigApplicationSections(Set<T> assignmentSections, User oldUser, User newUser) {
+    private <T extends ApplicationAssignmentSection> void reassignApplicationSections(Set<T> assignmentSections, User oldUser, User newUser) {
         for (T assignmentSection : assignmentSections) {
             assignmentSection.setUser(newUser);
             ApplicationAssignmentSection duplicateAssignmentSection = entityService.getDuplicateEntity(assignmentSection);
@@ -561,12 +529,12 @@ public class ApplicationSectionService {
             ApplicationPassport passport = personalDetail.getPassport();
             if (passport == null) {
                 passport = new ApplicationPassport();
-                personalDetail.setPassport(passport);
             }
             passport.setNumber(passportDTO.getNumber());
             passport.setName(passportDTO.getName());
             passport.setIssueDate(passportDTO.getIssueDate());
             passport.setExpiryDate(passportDTO.getExpiryDate());
+            personalDetail.setPassport(passport);
         }
     }
 
@@ -578,11 +546,10 @@ public class ApplicationSectionService {
             ApplicationLanguageQualification languageQualification = personalDetail.getLanguageQualification();
             if (languageQualification == null) {
                 languageQualification = new ApplicationLanguageQualification();
-                personalDetail.setLanguageQualification(languageQualification);
             }
 
             ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(ImportedLanguageQualificationType.class,
-                    languageQualificationDTO.getType());
+                    languageQualificationDTO.getType().getId());
             languageQualification.setLanguageQualificationType(languageQualificationType);
             languageQualification.setExamDate(languageQualificationDTO.getExamDate());
             languageQualification.setOverallScore(languageQualificationDTO.getOverallScore());
@@ -596,10 +563,11 @@ public class ApplicationSectionService {
                 Document languageQualificationDocument = documentService.getById(upload.getId(), PrismFileCategory.DOCUMENT);
                 languageQualification.setDocument(languageQualificationDocument);
             }
+            personalDetail.setLanguageQualification(languageQualification);
         }
     }
 
-    private void copyAddress(Institution institution, AddressApplication to, AddressApplicationDTO from) {
+    private void copyAddress(AddressApplication to, AddressApplicationDTO from) {
         ImportedEntitySimple currentAddressDomicile = importedEntityService.getById(ImportedEntitySimple.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());

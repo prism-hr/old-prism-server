@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
+import uk.co.alumeni.prism.utils.validation.DatePast;
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDate;
-
-import uk.co.alumeni.prism.utils.validation.DatePast;
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ApplicationPersonalDetailDTO {
 
@@ -34,27 +34,23 @@ public class ApplicationPersonalDetailDTO {
     private ApplicationPassportDTO passport;
 
     @NotNull
-    private Integer firstNationality;
+    private ImportedEntityDTO firstNationality;
 
-    private Integer secondNationality;
+    private ImportedEntityDTO secondNationality;
 
-    private Integer title;
+    private ImportedEntityDTO title;
 
     @NotNull
-    private Integer gender;
+    private ImportedEntityDTO gender;
 
     @NotNull
     @DatePast
     private LocalDate dateOfBirth;
 
     @NotNull
-    private Integer country;
+    private ImportedEntityDTO country;
 
-    private Integer ethnicity;
-
-    private Integer disability;
-
-    private Integer domicile;
+    private ImportedEntityDTO domicile;
 
     @Size(min = 1)
     private String studyLocation;
@@ -64,6 +60,8 @@ public class ApplicationPersonalDetailDTO {
 
     @Size(min = 1)
     private String studyArea;
+
+    private ApplicationDemographicDTO demographic;
 
     public ApplicationPersonalDetailUserDTO getUser() {
         return user;
@@ -121,35 +119,35 @@ public class ApplicationPersonalDetailDTO {
         this.passport = passport;
     }
 
-    public Integer getFirstNationality() {
+    public ImportedEntityDTO getFirstNationality() {
         return firstNationality;
     }
 
-    public void setFirstNationality(Integer firstNationality) {
+    public void setFirstNationality(ImportedEntityDTO firstNationality) {
         this.firstNationality = firstNationality;
     }
 
-    public Integer getSecondNationality() {
+    public ImportedEntityDTO getSecondNationality() {
         return secondNationality;
     }
 
-    public void setSecondNationality(Integer secondNationality) {
+    public void setSecondNationality(ImportedEntityDTO secondNationality) {
         this.secondNationality = secondNationality;
     }
 
-    public Integer getTitle() {
+    public ImportedEntityDTO getTitle() {
         return title;
     }
 
-    public void setTitle(Integer title) {
+    public void setTitle(ImportedEntityDTO title) {
         this.title = title;
     }
 
-    public Integer getGender() {
+    public ImportedEntityDTO getGender() {
         return gender;
     }
 
-    public void setGender(Integer gender) {
+    public void setGender(ImportedEntityDTO gender) {
         this.gender = gender;
     }
 
@@ -161,35 +159,19 @@ public class ApplicationPersonalDetailDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Integer getCountry() {
+    public ImportedEntityDTO getCountry() {
         return country;
     }
 
-    public void setCountry(Integer country) {
+    public void setCountry(ImportedEntityDTO country) {
         this.country = country;
     }
 
-    public Integer getEthnicity() {
-        return ethnicity;
-    }
-
-    public void setEthnicity(Integer ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public Integer getDisability() {
-        return disability;
-    }
-
-    public void setDisability(Integer disability) {
-        this.disability = disability;
-    }
-
-    public Integer getDomicile() {
+    public ImportedEntityDTO getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(Integer domicile) {
+    public void setDomicile(ImportedEntityDTO domicile) {
         this.domicile = domicile;
     }
 
@@ -215,5 +197,13 @@ public class ApplicationPersonalDetailDTO {
 
     public void setStudyArea(String studyArea) {
         this.studyArea = studyArea;
+    }
+
+    public ApplicationDemographicDTO getDemographic() {
+        return demographic;
+    }
+
+    public void setDemographic(ApplicationDemographicDTO demographic) {
+        this.demographic = demographic;
     }
 }

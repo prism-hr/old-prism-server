@@ -1,21 +1,20 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.constraints.NotNull;
-
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-import uk.co.alumeni.prism.utils.validation.DatePast;
-
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import javax.validation.constraints.NotNull;
 
 public class ApplicationLanguageQualificationDTO {
 
     @NotNull
-    private Integer type;
+    private ImportedEntityDTO type;
 
     @NotNull
-    @DatePast
+    @DateNotFuture
     private LocalDate examDate;
 
     @NotEmpty
@@ -35,11 +34,11 @@ public class ApplicationLanguageQualificationDTO {
 
     private FileDTO document;
 
-    public Integer getType() {
+    public ImportedEntityDTO getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(ImportedEntityDTO type) {
         this.type = type;
     }
 

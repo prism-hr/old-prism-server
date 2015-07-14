@@ -1,14 +1,19 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
+import org.hibernate.validator.constraints.URL;
+
 import javax.validation.constraints.NotNull;
 
 public class ImportedProgramDTO extends ImportedEntityDTO {
 
     @NotNull
     private ImportedInstitutionDTO institution;
-    
+
     @NotNull
-    private Integer qualificationType;
+    private ImportedEntityDTO qualificationType;
+
+    @URL
+    private String homepage;
 
     public ImportedInstitutionDTO getInstitution() {
         return institution;
@@ -18,12 +23,19 @@ public class ImportedProgramDTO extends ImportedEntityDTO {
         this.institution = institution;
     }
 
-    public Integer getQualificationType() {
+    public ImportedEntityDTO getQualificationType() {
         return qualificationType;
     }
 
-    public void setQualificationType(Integer qualificationType) {
+    public void setQualificationType(ImportedEntityDTO qualificationType) {
         this.qualificationType = qualificationType;
     }
 
+    public String getHomepage() {
+        return homepage;
+    }
+
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
 }

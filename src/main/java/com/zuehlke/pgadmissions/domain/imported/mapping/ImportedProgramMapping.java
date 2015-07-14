@@ -1,19 +1,11 @@
 package com.zuehlke.pgadmissions.domain.imported.mapping;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "imported_program_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_program_id", "code" }) })
@@ -111,9 +103,15 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
         return this;
     }
 
+    public ImportedProgramMapping withImportedTimestamp(final DateTime importedTimestamp) {
+        this.importedTimestamp = importedTimestamp;
+        return this;
+    }
+
+
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedProgram", importedEntity);
+        return super.getResourceSignature().addProperty("importedEntity", importedEntity);
     }
 
 }

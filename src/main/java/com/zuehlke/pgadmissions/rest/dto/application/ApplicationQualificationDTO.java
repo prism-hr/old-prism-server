@@ -1,25 +1,19 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ApplicationQualificationDTO {
 
     private Integer id;
-
-    @NotEmpty
-    @Size(max = 200)
-    private String subject;
 
     @NotNull
     private ImportedProgramDTO program;
@@ -57,14 +51,6 @@ public class ApplicationQualificationDTO {
 
     public void setProgram(ImportedProgramDTO program) {
         this.program = program;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
     }
 
     public LocalDate getStartDate() {

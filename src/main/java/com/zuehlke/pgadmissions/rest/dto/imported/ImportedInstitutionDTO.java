@@ -5,13 +5,13 @@ import javax.validation.constraints.NotNull;
 public class ImportedInstitutionDTO extends ImportedEntityDTO {
 
     @NotNull
-    private Integer domicile;
+    private ImportedEntityDTO domicile;
 
-    public Integer getDomicile() {
+    public ImportedEntityDTO getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(Integer domicile) {
+    public void setDomicile(ImportedEntityDTO domicile) {
         this.domicile = domicile;
     }
 

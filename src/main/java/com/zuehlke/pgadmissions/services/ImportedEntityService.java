@@ -330,7 +330,7 @@ public class ImportedEntityService {
     private ImportedInstitution getOrCreateImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
         Integer importedInstitutionId = importedInstitutionDTO.getId();
         if (importedInstitutionId == null) {
-            ImportedInstitution importedInstitution = importedEntityDAO.getImportedInstitutionByName(importedInstitutionDTO.getDomicile(),
+            ImportedInstitution importedInstitution = importedEntityDAO.getImportedInstitutionByName(importedInstitutionDTO.getDomicile().getId(),
                     importedInstitutionDTO.getName());
             if (importedInstitution == null) {
                 return createImportedInstitution(institution, importedInstitutionDTO);
@@ -346,7 +346,7 @@ public class ImportedEntityService {
     }
 
     private ImportedInstitution createImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
-        ImportedEntitySimple domicile = getById(ImportedEntitySimple.class, importedInstitutionDTO.getDomicile());
+        ImportedEntitySimple domicile = getById(ImportedEntitySimple.class, importedInstitutionDTO.getDomicile().getId());
         ImportedInstitution importedInstitution = new ImportedInstitution().withDomicile(domicile).withName(importedInstitutionDTO.getName())
                 .withEnabled(false);
         entityService.save(importedInstitution);
@@ -355,9 +355,9 @@ public class ImportedEntityService {
     }
 
     private ImportedProgram createImportedProgram(Institution institution, ImportedInstitution importedInstitution, ImportedProgramDTO importedProgramDTO) {
-        ImportedEntitySimple qualificationType = getById(ImportedEntitySimple.class, importedProgramDTO.getQualificationType());
+        ImportedEntitySimple qualificationType = getById(ImportedEntitySimple.class, importedProgramDTO.getQualificationType().getId());
         ImportedProgram program = new ImportedProgram().withInstitution(importedInstitution).withQualificationType(qualificationType)
-                .withName(importedProgramDTO.getName()).withEnabled(false);
+                .withName(importedProgramDTO.getName()).withHomepage(importedProgramDTO.getHomepage()).withEnabled(false);
         entityService.save(program);
         createImportedProgramMapping(institution, program);
         return program;
@@ -372,7 +372,7 @@ public class ImportedEntityService {
 
     private void createImportedProgramMapping(Institution institution, ImportedProgram importedProgram) {
         ImportedProgramMapping importedProgramMapping = new ImportedProgramMapping().withInstitution(institution)
-                .withImportedProgram(importedProgram).withEnabled(true);
+                .withImportedProgram(importedProgram).withEnabled(true).withImportedTimestamp(new DateTime());
         entityService.getOrCreate(importedProgramMapping);
         importedProgram.getMappings().add(importedProgramMapping);
     }

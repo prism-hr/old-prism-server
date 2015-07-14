@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
 
-    private ImportedLanguageQualificationTypeResponse languageQualificationType;
+    private ImportedLanguageQualificationTypeResponse type;
 
     private LocalDate examDate;
 
@@ -24,12 +24,12 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
 
     private DocumentRepresentation document;
 
-    public ImportedLanguageQualificationTypeResponse getLanguageQualificationType() {
-        return languageQualificationType;
+    public ImportedLanguageQualificationTypeResponse getType() {
+        return type;
     }
 
-    public void setLanguageQualificationType(ImportedLanguageQualificationTypeResponse languageQualificationType) {
-        this.languageQualificationType = languageQualificationType;
+    public void setType(ImportedLanguageQualificationTypeResponse type) {
+        this.type = type;
     }
 
     public LocalDate getExamDate() {
@@ -88,8 +88,8 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         this.document = document;
     }
 
-    public ApplicationLanguageQualificationRepresentation withLanguageQualificationType(ImportedLanguageQualificationTypeResponse languageQualificationType) {
-        this.languageQualificationType = languageQualificationType;
+    public ApplicationLanguageQualificationRepresentation withType(final ImportedLanguageQualificationTypeResponse type) {
+        this.type = type;
         return this;
     }
 

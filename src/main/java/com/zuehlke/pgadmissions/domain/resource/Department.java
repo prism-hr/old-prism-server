@@ -1,24 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -27,6 +8,14 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "title" }) })
@@ -50,6 +39,11 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+
+    @OneToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -178,14 +172,12 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Advert getAdvert() {
-        // TODO Auto-generated method stub
-        return null;
+        return advert;
     }
 
     @Override
     public void setAdvert(Advert advert) {
-        // TODO Auto-generated method stub
-
+        this.advert = advert;
     }
 
     @Override

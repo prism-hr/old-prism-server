@@ -329,7 +329,7 @@ public class ApplicationService {
                 application.getWorkflowPropertyConfigurationVersion());
         if (application.isSubmitted()) {
             for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
-                PrismWorkflowPropertyDefinition property = (PrismWorkflowPropertyDefinition) configuration.getProperty();
+                PrismWorkflowPropertyDefinition property = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
                 if (property == APPLICATION_ASSIGN_REFEREE) {
                     configuration.setMaximum(property.getMaximumPermitted());
                 } else if (property == APPLICATION_POSITION_DETAIL

@@ -35,7 +35,7 @@ public class NotificationConfigurationRepresentation extends WorkflowConfigurati
     }
 
     public NotificationConfigurationRepresentation withProperty(PrismNotificationDefinition property) {
-        setProperty(property);
+        setDefinitionId(property);
         return this;
     }
 
@@ -43,12 +43,12 @@ public class NotificationConfigurationRepresentation extends WorkflowConfigurati
         this.subject = subject;
         return this;
     }
-    
+
     public NotificationConfigurationRepresentation withContent(String content) {
         this.content = content;
         return this;
     }
-    
+
     public NotificationConfigurationRepresentation withReminderInteger(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
         return this;

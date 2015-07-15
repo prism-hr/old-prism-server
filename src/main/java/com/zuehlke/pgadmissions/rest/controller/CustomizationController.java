@@ -241,7 +241,7 @@ public class CustomizationController {
         Map<PrismDisplayPropertyDefinition, String> index = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation translation : translations) {
             DisplayPropertyConfigurationRepresentation translationRepresentation = (DisplayPropertyConfigurationRepresentation) translation;
-            index.put((PrismDisplayPropertyDefinition) translation.getProperty(), translationRepresentation.getValue());
+            index.put((PrismDisplayPropertyDefinition) translation.getDefinitionId(), translationRepresentation.getValue());
         }
         List<DisplayPropertyConfigurationRepresentation> representations = Lists.newLinkedList();
         for (PrismDisplayPropertyDefinition definition : PrismDisplayPropertyDefinition.getProperties(category)) {

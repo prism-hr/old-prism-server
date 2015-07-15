@@ -1,14 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
-
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import java.util.List;
 
 public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDefinition<AdvertDTO> {
 
@@ -20,7 +18,7 @@ public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDef
     @NotNull
     private AdvertDTO advert;
 
-    private List<ResourceConditionDTO> resourceConditions;
+    private List<ResourceConditionDTO> conditions;
 
     @Override
     public ResourceDTO getParentResource() {
@@ -52,12 +50,12 @@ public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDef
         this.advert = advert;
     }
 
-    public List<ResourceConditionDTO> getResourceConditions() {
-        return resourceConditions;
+    public List<ResourceConditionDTO> getConditions() {
+        return conditions;
     }
 
-    public void setResourceConditions(List<ResourceConditionDTO> resourceConditions) {
-        this.resourceConditions = resourceConditions;
+    public void setConditions(List<ResourceConditionDTO> conditions) {
+        this.conditions = conditions;
     }
 
     public static class ResourceConditionDTO {

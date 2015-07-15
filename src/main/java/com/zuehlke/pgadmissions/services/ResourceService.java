@@ -533,7 +533,7 @@ public class ResourceService {
             setStudyLocations(resourceOpportunity, resourceOpportunityDTO.getStudyLocations());
         }
 
-        setResourceConditions(resource, resourceDTO.getResourceConditions());
+        setResourceConditions(resource, resourceDTO.getConditions());
     }
 
     public void setResourceConditions(ResourceParent resource, List<ResourceConditionDTO> resourceConditions) {
@@ -605,7 +605,7 @@ public class ResourceService {
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
 
-        List<ResourceConditionDTO> resourceConditions = resourceDTO.getResourceConditions();
+        List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
         setStudyLocations(resource, resourceDTO.getStudyLocations());
 

@@ -314,8 +314,8 @@ public class CustomizationDAO {
                 + "from Program " //
                 + "where institution = :institution " //
                 + "and opportunityType in (" //
-                + "from opportunityType " //
-                + "where code like :opportunityTypeName)) "
+                + "from ImportedEntitySimple " //
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' and code like :opportunityTypeName)) "
                 + "or project in (" //
                 + "from Project " //
                 + "where institution = :institution " //

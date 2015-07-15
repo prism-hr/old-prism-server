@@ -70,7 +70,7 @@ public class StateGroup extends WorkflowDefinition {
 		return this;
 	}
 
-	public StateGroup withSequenceOrder(Integer ordinal) {
+	public StateGroup withOrdinal(Integer ordinal) {
 		this.ordinal = ordinal;
 		return this;
 	}

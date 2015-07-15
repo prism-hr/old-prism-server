@@ -243,7 +243,6 @@ public class StaticDataService {
         }
 
         staticData.put("institution", resourceMapper.getResourceRepresentationSimple(institution));
-        staticData.put("departments", departmentService.getDepartments(institutionId));
         staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;
     }

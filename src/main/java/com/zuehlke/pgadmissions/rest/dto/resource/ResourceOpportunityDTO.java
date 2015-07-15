@@ -1,23 +1,20 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import org.apache.commons.lang3.ObjectUtils;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Set;
 
 public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
         ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType, ResourceStudyOptionDTO> {
 
     private ResourceParentDivisionDTO newDepartment;
-    
+
     @NotNull
     private PrismOpportunityType opportunityType;
 
@@ -27,12 +24,12 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
 
     private Boolean requirePositionDefinition;
 
-    private List<PrismStudyOption> studyOptions;
+    private List<ImportedEntityDTO> studyOptions;
 
     private List<String> studyLocations;
 
     private Set<ResourceStudyOptionDTO> instanceGroups;
-    
+
     public ResourceParentDivisionDTO getNewDepartment() {
         return newDepartment;
     }
@@ -77,11 +74,11 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
         this.requirePositionDefinition = requirePositionDefinition;
     }
 
-    public List<PrismStudyOption> getStudyOptions() {
+    public List<ImportedEntityDTO> getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+    public void setStudyOptions(List<ImportedEntityDTO> studyOptions) {
         this.studyOptions = studyOptions;
     }
 
@@ -102,7 +99,7 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
     public void setInstanceGroups(Set<ResourceStudyOptionDTO> instanceGroups) {
         this.instanceGroups = instanceGroups;
     }
-    
+
     @Override
     public ResourceParentDTO getNewParentResource() {
         return ObjectUtils.firstNonNull(newDepartment, super.getNewParentResource());

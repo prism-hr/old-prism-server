@@ -1,20 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
+import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.URL;
-
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
-
-import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
-
 public class AdvertDTO {
-
-    @NotEmpty
-    @Size(max = 255)
-    private String title;
 
     @NotEmpty
     @Size(max = 1000)
@@ -33,17 +27,9 @@ public class AdvertDTO {
 
     @Valid
     private AdvertCategoriesDTO categories;
-    
+
     @Valid
     private AdvertTargetsDTO targets;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getSummary() {
         return summary;

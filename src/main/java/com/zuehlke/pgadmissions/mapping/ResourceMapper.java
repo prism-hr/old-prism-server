@@ -207,8 +207,8 @@ public class ResourceMapper {
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
 
-        setRaisesUrgentFlag((ResourceRepresentationStandard) representation, (List<ActionRepresentationSimple>) (List<?>) actions);
-        setRaisesUpdateFlag((ResourceRepresentationStandard) representation, baseline, updatedTimestamp);
+        setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
+        setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass()) && !actionService.hasRedactions(resource, userService.getCurrentUser())) {
             representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
@@ -233,7 +233,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource,
-            Class<V> returnType) throws Exception {
+                                                                                                                Class<V> returnType) throws Exception {
         V representation = getResourceRepresentationExtended(resource, returnType);
 
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
@@ -243,7 +243,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource,
-            Class<V> returnType) throws Exception {
+                                                                                                                               Class<V> returnType) throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
 
         List<ImportedEntityResponse> studyOptions = Lists.newLinkedList();
@@ -268,7 +268,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource,
-            Class<V> returnType) throws Exception {
+                                                                                                                                           Class<V> returnType) throws Exception {
         V representation = getResourceOpportunityRepresentation(resource, returnType);
         representation.setResourceSummary(getResourceSummaryRepresentation(resource));
         return representation;
@@ -336,7 +336,7 @@ public class ResourceMapper {
     }
 
     public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                          List<ResourceReportFilterPropertyDTO> constraints) {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
@@ -380,12 +380,12 @@ public class ResourceMapper {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                         List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
     public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                                                List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -395,7 +395,7 @@ public class ResourceMapper {
     }
 
     public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
+                                                                                                                                List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {

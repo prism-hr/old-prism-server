@@ -1,14 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
@@ -22,6 +13,13 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -35,7 +33,7 @@ public class InstitutionService {
 
     @Inject
     private EntityService entityService;
-    
+
     @Inject
     private ResourceService resourceService;
 
@@ -83,7 +81,7 @@ public class InstitutionService {
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
 
-        resourceService.setResourceConditions(institution, institutionDTO.getResourceConditions());
+        resourceService.setResourceConditions(institution, institutionDTO.getConditions());
     }
 
     public List<String> listAvailableCurrencies() {

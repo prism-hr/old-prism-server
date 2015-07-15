@@ -2,14 +2,14 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 
 public class WorkflowConfigurationRepresentation {
 
-    private Enum<?> property;
+    private Enum<?> definitionId;
 
-    public Enum<?> getProperty() {
-        return property;
+    public Enum<?> getDefinitionId() {
+        return definitionId;
     }
 
-    public void setProperty(Enum<?> property) {
-        this.property = property;
+    public void setDefinitionId(Enum<?> definitionId) {
+        this.definitionId = definitionId;
     }
 
 }

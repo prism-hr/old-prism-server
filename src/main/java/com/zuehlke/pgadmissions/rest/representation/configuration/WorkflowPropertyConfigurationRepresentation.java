@@ -54,9 +54,9 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
     public void setMaximum(Integer maximum) {
         this.maximum = maximum;
     }
-    
+
     public WorkflowPropertyConfigurationRepresentation withProperty(PrismWorkflowPropertyDefinition property) {
-        setProperty(property);
+        setDefinitionId(property);
         return this;
     }
 
@@ -69,7 +69,7 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
         this.enabled = enabled;
         return this;
     }
-    
+
     public WorkflowPropertyConfigurationRepresentation withRequired(Boolean required) {
         this.required = required;
         return this;
@@ -79,15 +79,15 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
         this.minimum = minimum;
         return this;
     }
-    
+
     public WorkflowPropertyConfigurationRepresentation withMaximum(Integer maximum) {
         this.maximum = maximum;
         return this;
     }
-    
+
     public WorkflowPropertyConfigurationRepresentation withVersion(Integer version) {
         setVersion(version);
         return this;
-    }    
+    }
 
 }

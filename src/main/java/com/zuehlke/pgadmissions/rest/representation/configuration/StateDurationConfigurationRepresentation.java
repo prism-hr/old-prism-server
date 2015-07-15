@@ -15,7 +15,7 @@ public class StateDurationConfigurationRepresentation extends WorkflowConfigurat
     }
 
     public StateDurationConfigurationRepresentation withProperty(PrismStateDurationDefinition property) {
-        setProperty(property);
+        setDefinitionId(property);
         return this;
     }
 

@@ -13,12 +13,12 @@ public class DisplayPropertyConfigurationRepresentation extends WorkflowConfigur
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	public DisplayPropertyConfigurationRepresentation withProperty(PrismDisplayPropertyDefinition property) {
-		super.setProperty(property);
+		super.setDefinitionId(property);
 		return this;
 	}
-	
+
 	public DisplayPropertyConfigurationRepresentation withValue(String value) {
 		this.value = value;
 		return this;

@@ -1,90 +1,19 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_ELIGIBILITY_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_SUPERVISION_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PURGE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_CLOSING_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_INTERVIEW_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.PROGRAM_END_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.PROJECT_END_DATE;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.application.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.program.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.project.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.system.PrismSystemRunning;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
-
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedCompletedRetained;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedPendingCorrection;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedPendingExport;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingAvailability;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingFeedback;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingInterview;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingScheduling;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReference;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReferencePendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejected;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejectedCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejectedCompletedRetained;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejectedPendingCorrection;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejectedPendingExport;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReserved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReservedPendingReallocation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReservedWaiting;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReview;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReviewPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReviewPendingFeedback;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationUnsubmitted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationUnsubmittedPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidationPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationVerification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationVerificationPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedRetained;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedUnsubmitted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedUnsubmittedRetained;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnPendingCorrection;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnPendingExport;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApprovalPendingCorrection;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionRejected;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWithdrawn;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApprovalInstitution;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApprovalPendingCorrection;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledPendingReactivation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramRejected;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWithdrawn;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApprovalInstitution;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApprovalPendingCorrection;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledPendingReactivation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectRejected;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWithdrawn;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.system.PrismSystemRunning;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.*;
 
 public enum PrismState {
 
@@ -193,6 +122,7 @@ public enum PrismState {
     INSTITUTION_DISABLED_COMPLETED(PrismStateGroup.INSTITUTION_DISABLED, null, null, null),
     INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, null, PrismInstitutionRejected.class),
     INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, null, PrismInstitutionWithdrawn.class),
+    DEPARTMENT_APPROVED(PrismStateGroup.DEPARTMENT_APPROVED, null, null, null),
     SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, PrismSystemRunning.class);
 
     private static final HashMap<PrismState, PrismWorkflowState> workflowStateDefinitions = Maps.newHashMap();

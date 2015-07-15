@@ -91,6 +91,3 @@ delete
 from role
 where id like "%_ADVERTISER"
 ;
-
-update state_group set ordinal = ordinal + 100
-;

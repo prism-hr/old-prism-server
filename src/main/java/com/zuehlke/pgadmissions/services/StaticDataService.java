@@ -54,9 +54,6 @@ public class StaticDataService {
     private CustomizationService customizationService;
 
     @Inject
-    private DepartmentService departmentService;
-
-    @Inject
     private EntityService entityService;
 
     @Inject

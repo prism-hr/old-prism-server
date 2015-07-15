@@ -295,49 +295,54 @@ public class CustomizationDAO {
                 + "from Program " //
                 + "where system = :system " //
                 + "and opportunityType in (" //
-                + "from opportunityType " //
-                + "where code like :opportunityTypeName)) "
+                + "from ImportedEntitySimple " //
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
+                + "and code like :opportunityTypeName)) "
                 + "or project in (" //
                 + "from Project " //
                 + "where system = :system " //
                 + "and opportunityType in (" //
-                + "from opportunityType " //
-                + "where code like :opportunityTypeName)) " //
+                + "from ImportedEntitySimple " //
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
+                + "and code like :opportunityTypeName)) "
                 + opportunityTypeCriterion + ")";
     }
 
     private static String getInstitutionInheritanceCriterion(String opportunityTypeCriterion) {
         return "and (department in (" //
                 + "from Department " //
-                + "where system = :system) " //
+                + "where institution = :institution) " //
                 + "or program in (" //
                 + "from Program " //
                 + "where institution = :institution " //
                 + "and opportunityType in (" //
-                + "from opportunityType " //
-                + "where code like :opportunityTypeName)) "
+                + "from ImportedEntitySimple " //
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
+                + "and code like :opportunityTypeName)) "
                 + "or project in (" //
                 + "from Project " //
                 + "where institution = :institution " //
                 + "and opportunityType in (" //
-                + "from opportunityType " //
-                + "where code like :opportunityTypeName)) " //
+                + "from ImportedEntitySimple " //
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
+                + "and code like :opportunityTypeName)) "
                 + opportunityTypeCriterion + ")";
     }
 
     private static String getDepartmentInheritanceCriterion(String opportunityTypeCriterion) {
         return "and (program in (" //
                 + "from Program " //
-                + "where institution = :institution " //
+                + "where institution = :department " //
                 + "and opportunityType in (" //
                 + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' and code like :opportunityTypeName)) "
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
+                + "and code like :opportunityTypeName)) "
                 + "or project in (" //
                 + "from Project " //
-                + "where institution = :institution " //
                 + "and opportunityType in (" //
-                + "from opportunityType " //
-                + "where code like :opportunityTypeName)) " //
+                + "from ImportedEntitySimple " //
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
+                + "and code like :opportunityTypeName)) "
                 + opportunityTypeCriterion + ")";
     }
 
@@ -347,7 +352,8 @@ public class CustomizationDAO {
                 + "where program = :program " //
                 + "and opportunityType in (" //
                 + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' and code like :opportunityTypeName)) " //
+                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
+                + "and code like :opportunityTypeName)) "
                 + opportunityTypeCriterion + ")";
     }
 

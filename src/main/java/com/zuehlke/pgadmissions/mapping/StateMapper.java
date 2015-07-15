@@ -51,7 +51,7 @@ public class StateMapper {
     }
 
     public List<StateRepresentationExtended> getStateRepresentations(Resource resource, PrismAction action) {
-        List<StateSelectableDTO> states = stateService.getSelectableTransitionStates(resource.getState(), action, resource.getAdvert().isImported());
+        List<StateSelectableDTO> states = stateService.getSelectableTransitionStates(resource.getState(), action);
         return states.stream()
                 .map(state -> getStateRepresentationExtended(state.getState(), BooleanUtils.toBoolean(state.getParallelizable())))
                 .collect(Collectors.toList());

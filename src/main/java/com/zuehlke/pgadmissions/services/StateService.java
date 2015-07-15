@@ -270,8 +270,8 @@ public class StateService {
         return stateDAO.getSecondaryResourceStates(resourceScope, resourceId);
     }
 
-    public List<StateSelectableDTO> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
-        return stateDAO.getSelectableTransitionStates(state, actionId, importedResource);
+    public List<StateSelectableDTO> getSelectableTransitionStates(State state, PrismAction actionId) {
+        return stateDAO.getSelectableTransitionStates(state, actionId);
     }
 
     public void setRepeatableStateGroups() {

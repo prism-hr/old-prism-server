@@ -18,6 +18,10 @@ alter table action
 	modify column system_invocation_only int(1) unsigned not null after id
 ;
 
+insert into scope
+values ('DEPARTMENT', 'DT', 15)
+;
+
 insert into state_group
 values ("DEPARTMENT_APPROVED", 2, 1, "DEPARTMENT")
 ;
@@ -26,7 +30,7 @@ insert into state(id, state_group_id, scope_id)
 values ("DEPARTMENT_APPROVED", "DEPARTMENT_APPROVED", "DEPARTMENT")
 ;
 
-insert into action(id, system_invocation_only, action_category, rating_action, transition_action, 
+insert into action(id, system_invocation_only, action_category, rating_action, transition_action,
 	declinable_action, visible_action, fallback_action_id, scope_id, creation_scope_id)
 values ("SYSTEM_VIEW_DEPARTMENT_LIST", false, "VIEW_RESOURCE_LIST", false, false, false, false,
 	"SYSTEM_VIEW_EDIT", "SYSTEM", null),
@@ -54,9 +58,9 @@ alter table comment
 	add index (department_id)
 ;
 
-insert into comment(department_id, user_id, action_id, 
+insert into comment(department_id, user_id, action_id,
 	declined_response, state_id, transition_state_id, created_timestamp)
-	select id, user_id, "INSTITUTION_CREATE_DEPARTMENT", false, state_id, 
+	select id, user_id, "INSTITUTION_CREATE_DEPARTMENT", false, state_id,
 		state_id, created_timestamp
 	from department
 ;
@@ -83,7 +87,7 @@ insert into comment_assigned_user (comment_id, user_id, role_id, role_transition
 	where department_id is not null
 ;
 
-delete 
+delete
 from role
 where id like "%_ADVERTISER"
 ;

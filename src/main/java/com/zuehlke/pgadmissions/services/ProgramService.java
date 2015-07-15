@@ -108,7 +108,7 @@ public class ProgramService {
     }
 
     public void update(Integer programId, ResourceOpportunityDTO resourceOpportunityDTO, Comment comment) throws Exception {
-        resourceService.updateResource(PROGRAM, programId, resourceOpportunityDTO, comment);
+        resourceService.updateResource(PROGRAM, programId, resourceOpportunityDTO);
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId, List<PrismState> activeProgramStates) {

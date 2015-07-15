@@ -1,32 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -34,57 +7,22 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentState;
-import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
-import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.comment.*;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.resource.*;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.dto.ActionDTO;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
-import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
+import com.zuehlke.pgadmissions.dto.*;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.*;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceConditionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -98,6 +36,30 @@ import com.zuehlke.pgadmissions.workflow.resource.seo.social.SocialRepresentatio
 import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
 import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 @Service
 @Transactional
@@ -394,12 +356,12 @@ public class ResourceService {
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
         return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
         return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
@@ -562,7 +524,10 @@ public class ResourceService {
             } else {
                 resourceOpportunity.setOpportunityType(importedEntityService.getByName(ImportedEntitySimple.class, resourceOpportunityDTO
                         .getOpportunityType().name()));
-                setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions(), new LocalDate());
+                List<ImportedEntitySimple> studyOptions = resourceOpportunityDTO.getStudyOptions().stream()
+                        .map(studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId()))
+                        .collect(Collectors.toList());
+                setStudyOptions(resourceOpportunity, studyOptions, LocalDate.now());
             }
 
             setStudyLocations(resourceOpportunity, resourceOpportunityDTO.getStudyLocations());
@@ -598,21 +563,20 @@ public class ResourceService {
         }
     }
 
-    public void setStudyOptions(ResourceOpportunity resource, List<PrismStudyOption> prismStudyOptions, LocalDate baseline) {
+    public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
         resource.getInstanceGroups().clear();
         entityService.flush();
 
         LocalDate close = getResourceEndDate(resource);
-        if (prismStudyOptions == null) {
-            PrismScope resourceScope = resource.getResourceScope();
-            if (!resourceScope.equals(INSTITUTION)) {
-                prismStudyOptions = PrismOpportunityType.valueOf(resource.getOpportunityType().getName()).getDefaultStudyOptions();
-            }
+        if (studyOptions == null) {
+            List<PrismStudyOption> prismStudyOptions = PrismOpportunityType.valueOf(resource.getOpportunityType().getName()).getDefaultStudyOptions();
+            studyOptions = prismStudyOptions.stream()
+                    .map(prismStudyOption -> importedEntityService.getByName(ImportedEntitySimple.class, prismStudyOption.name()))
+                    .collect(Collectors.toList());
         }
 
-        for (PrismStudyOption prismStudyOption : prismStudyOptions) {
+        for (ImportedEntitySimple studyOption : studyOptions) {
             if (close == null || close.isAfter(baseline)) {
-                ImportedEntitySimple studyOption = importedEntityService.getByName(ImportedEntitySimple.class, prismStudyOption.name());
                 resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
                         .withApplicationCloseDate(close));
             }
@@ -630,7 +594,7 @@ public class ResourceService {
         }
     }
 
-    public void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO, Comment comment) throws Exception {
+    public void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) throws Exception {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
 
         AdvertDTO advertDTO = resourceDTO.getAdvert();
@@ -642,15 +606,17 @@ public class ResourceService {
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getResourceConditions();
-        setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO> newArrayList() : resourceConditions);
+        setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
         setStudyLocations(resource, resourceDTO.getStudyLocations());
 
         if (!resource.getAdvert().isImported()) {
             ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class, resourceDTO.getOpportunityType().name());
             resource.setOpportunityType(opportunityType);
 
-            List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
-            setStudyOptions(resource, studyOptions == null ? Lists.<PrismStudyOption> newArrayList() : studyOptions, new LocalDate());
+            List<ImportedEntitySimple> studyOptions = resourceDTO.getStudyOptions().stream()
+                    .map(studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId()))
+                    .collect(Collectors.toList());
+            setStudyOptions(resource, studyOptions == null ? Lists.<ImportedEntitySimple>newArrayList() : studyOptions, new LocalDate());
         }
     }
 
@@ -702,16 +668,11 @@ public class ResourceService {
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(
             Set<T> resourceStateDefinitions, Set<U> commentStateDefinitions) {
-        List<State> preservedStates = Lists.newArrayListWithCapacity(commentStateDefinitions.size());
-        for (CommentStateDefinition commentStateDefinition : commentStateDefinitions) {
-            preservedStates.add(commentStateDefinition.getState());
-        }
+        List<State> preservedStates = commentStateDefinitions.stream().map(CommentStateDefinition::getState).collect(Collectors.toList());
 
-        for (T resourceState : resourceStateDefinitions) {
-            if (!preservedStates.contains(resourceState.getState())) {
-                entityService.delete(resourceState);
-            }
-        }
+        resourceStateDefinitions.stream()
+                .filter(resourceState -> !preservedStates.contains(resourceState.getState()))
+                .forEach(entityService::delete);
         resourceStateDefinitions.clear();
     }
 

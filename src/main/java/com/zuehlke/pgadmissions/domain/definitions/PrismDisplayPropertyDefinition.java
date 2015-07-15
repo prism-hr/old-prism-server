@@ -1397,8 +1397,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Possible Locations"),
     SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT,
             "The locations at which it is possible for successful applicants of your opportunity to attend at."),
-    SYSTEM_RESOURCE_PARENT_END_DATE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "End Date"),
-    SYSTEM_RESOURCE_PARENT_END_DATE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The end date of the opportunity."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Business Year Start Month"),
     SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The month of the year that your business year starts from. We use this knowledge to provide you with reports in a format the makes the greatest sense to you."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Currency"),

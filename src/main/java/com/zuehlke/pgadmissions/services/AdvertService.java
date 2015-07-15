@@ -157,10 +157,6 @@ public class AdvertService {
     }
 
     public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO) throws Exception {
-        if (BooleanUtils.isFalse(advert.isImported())) {
-            advert.setTitle(advertDTO.getTitle());
-        }
-
         advert.setSummary(advertDTO.getSummary());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
         advert.setTelephone(advertDTO.getTelephone());

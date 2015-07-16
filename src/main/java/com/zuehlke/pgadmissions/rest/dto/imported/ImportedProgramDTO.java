@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
-import org.hibernate.validator.constraints.URL;
-
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.URL;
 
 public class ImportedProgramDTO extends ImportedEntityDTO {
 

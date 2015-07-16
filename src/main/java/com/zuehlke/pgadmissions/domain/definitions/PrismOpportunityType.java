@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartTyp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 
-public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType> {
+public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>, PrismLocalizableDefinition {
 
     STUDY_UNDERGRADUATE(STUDY, 36, 48, SCHEDULED, //
             Lists.newArrayList(new PrismResourceCondition(ACCEPT_PROGRAM, false), //
@@ -226,6 +226,11 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
             }
         }
         return Lists.newArrayList(mergedResourceConditions);
+    }
+
+    @Override
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
+        return PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITY_TYPE_" + name());
     }
 
 }

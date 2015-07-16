@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
+
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-import javax.validation.constraints.NotNull;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 
 public class ApplicationLanguageQualificationDTO {
 

@@ -1,11 +1,19 @@
 package com.zuehlke.pgadmissions.domain.imported.mapping;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
 @Table(name = "imported_program_mapping", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_program_id", "code" }) })

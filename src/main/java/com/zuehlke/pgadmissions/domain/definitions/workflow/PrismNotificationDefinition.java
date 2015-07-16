@@ -36,8 +36,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
-public enum PrismNotificationDefinition {
+public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
 
     APPLICATION_COMPLETE_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, //
             Lists.newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, ACTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
@@ -202,6 +204,11 @@ public enum PrismNotificationDefinition {
 
     private static void buildReminderDefinition(PrismNotificationDefinition template, PrismNotificationDefinition reminder, Integer defaultDuration) {
         reminderDefinitions.put(template, new PrismReminderDefinition().withDefinition(reminder).withDefaultDuration(defaultDuration));
+    }
+    
+    @Override
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
+        return PrismDisplayPropertyDefinition.valueOf("SYSTEM_NOTIFICATION_TEMPLATE_" + name());
     }
 
     public static class PrismReminderDefinition {

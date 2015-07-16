@@ -11,7 +11,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-public enum PrismRole {
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+
+public enum PrismRole implements PrismLocalizableDefinition {
 
     APPLICATION_ADMINISTRATOR(ADMINISTRATOR, APPLICATION), //
     APPLICATION_CREATOR(APPLICANT, APPLICATION), //
@@ -59,6 +62,11 @@ public enum PrismRole {
         return scope;
     }
 
+    @Override
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
+        return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ROLE_" + name());
+    }
+    
     public enum PrismRoleCategory {
 
         ADMINISTRATOR, //

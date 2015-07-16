@@ -1,5 +1,23 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
@@ -7,7 +25,12 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.*;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
@@ -15,24 +38,30 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryRepresentation.ResourceCountRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.services.*;
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.ScopeService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 @Transactional

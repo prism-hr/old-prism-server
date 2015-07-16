@@ -51,7 +51,7 @@ public class ImportedEntityMapper {
 
     @Inject
     private ImportedEntityService importedEntityService;
-    
+
     @Inject
     private SystemService systemService;
 
@@ -96,9 +96,10 @@ public class ImportedEntityMapper {
         if (entityNameClass == null) {
             representation.setName(entity.getName());
         } else {
-            PropertyLoader loader = loaders.get(institution);
+            Resource resource = institutionNull ? systemService.getSystem() : institution;
+            PropertyLoader loader = loaders.get(resource);
             if (loader == null) {
-                loader = applicationContext.getBean(PropertyLoader.class).localize(institutionNull ? systemService.getSystem() : institution);
+                loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
                 loaders.put(institution, loader);
             }
 

@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
@@ -39,7 +40,8 @@ public enum PrismRoleGroup {
     PROJECT_ADMINISTRATOR_GROUP(INSTITUTION_ADMINISTRATOR, PROGRAM_ADMINISTRATOR, PROJECT_ADMINISTRATOR), //
     PROGRAM_PARENT_ADMINISTRATOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR), //
     PROGRAM_ADMINISTRATOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR, PROGRAM_ADMINISTRATOR), //
-    INSTITUTION_ADMINISTRATOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR);
+    INSTITUTION_ADMINISTRATOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR), //
+    DEPARTMENT_ADMINISTRATOR_GROUP(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR, DEPARTMENT_ADMINISTRATOR);
 
     private PrismRole[] roles;
 

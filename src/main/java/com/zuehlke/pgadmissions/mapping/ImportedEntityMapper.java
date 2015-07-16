@@ -86,13 +86,13 @@ public class ImportedEntityMapper {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private <S, T extends ImportedEntity<S, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityResponseDefinition<S> & ImportedEntityMappingDefinition, W extends PrismLocalizableDefinition> V getImportedEntitySimpleRepresentation(
+    private <S, T extends ImportedEntity<S, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityResponseDefinition<S> & ImportedEntityMappingDefinition> V getImportedEntitySimpleRepresentation(
             T entity, Institution institution, Class<V> returnType) {
         V representation = BeanUtils.instantiate(returnType);
         representation.setId(entity.getId());
 
         boolean institutionNull = institution == null;
-        Class<W> entityNameClass = (Class<W>) entity.getType().getEntityClassName();
+        Class<?> entityNameClass = (Class<?>) entity.getType().getEntityClassName();
         if (entityNameClass == null) {
             representation.setName(entity.getName());
         } else {
@@ -103,7 +103,7 @@ public class ImportedEntityMapper {
                 loaders.put(institution, loader);
             }
 
-            representation.setName(loader.load(((W) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName())).getDisplayProperty()));
+            representation.setName(loader.load(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName())).getDisplayProperty()));
         }
 
         if (institutionNull) {

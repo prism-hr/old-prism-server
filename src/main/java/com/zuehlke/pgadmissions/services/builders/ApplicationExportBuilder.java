@@ -1,13 +1,21 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.*;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.*;
-import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PREFERRED_START_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_IP_PLACEHOLDER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NONE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OTHER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_REFER_TO_DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
@@ -16,16 +24,60 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicantTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AppointmentTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ContactDtlsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.CountryTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.DisabilityTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.DomicileTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmployerTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmploymentDetailsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageQualificationDetailsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageScoreTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EthnicityTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.GenderTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.InstitutionTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.LanguageBandScoreTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ModeofattendanceTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.NationalityTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.PassportTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ProgrammeOccurrenceTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationDetailsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsinEnglishTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDemographicRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationLanguageQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
+import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

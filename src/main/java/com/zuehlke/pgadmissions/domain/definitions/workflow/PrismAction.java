@@ -35,8 +35,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
-public enum PrismAction {
+public enum PrismAction implements PrismLocalizableDefinition {
 
     // TODO work out how endorsement action works
     APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
@@ -365,6 +367,11 @@ public enum PrismAction {
                 new PrismActionRedaction().withRole(APPLICATION_POTENTIAL_INTERVIEWEE).withRedactionType(ALL_ASSESSMENT_CONTENT), //
                 new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT), //
                 new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT));
+    }
+    
+    @Override
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
+        return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ACTION_" + name());
     }
 
 }

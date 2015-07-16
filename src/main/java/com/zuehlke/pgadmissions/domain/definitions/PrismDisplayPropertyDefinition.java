@@ -1,12 +1,85 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_ADVERT_DETAILS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CATEGORIES;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CLOSING_DATES;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_FEES_AND_PAYMENTS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_DOMAIN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_STATISTICS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
 
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -139,9 +212,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_GROUP_PROGRAM_REJECTED(SYSTEM_STATE_GROUP, "Rejected"),
     SYSTEM_STATE_GROUP_PROGRAM_DISABLED(SYSTEM_STATE_GROUP, "Disabled"),
     SYSTEM_STATE_GROUP_PROGRAM_WITHDRAWN(SYSTEM_STATE_GROUP, "Withdrawn"),
+    SYSTEM_STATE_GROUP_DEPARTMENT_APPROVAL(SYSTEM_STATE_GROUP, "Approval"),
+    SYSTEM_STATE_GROUP_DEPARTMENT_APPROVAL_INSTITUTION(SYSTEM_STATE_GROUP, "Institution Initialization"),
+    SYSTEM_STATE_GROUP_DEPARTMENT_APPROVED(SYSTEM_STATE_GROUP, "Approved"),
+    SYSTEM_STATE_GROUP_DEPARTMENT_REJECTED(SYSTEM_STATE_GROUP, "Rejected"),
+    SYSTEM_STATE_GROUP_DEPARTMENT_DISABLED(SYSTEM_STATE_GROUP, "Disabled"),
+    SYSTEM_STATE_GROUP_DEPARTMENT_WITHDRAWN(SYSTEM_STATE_GROUP, "Withdrawn"),
     SYSTEM_STATE_GROUP_INSTITUTION_APPROVAL(SYSTEM_STATE_GROUP, "Approval"),
     SYSTEM_STATE_GROUP_INSTITUTION_APPROVED(SYSTEM_STATE_GROUP, "Approved"),
     SYSTEM_STATE_GROUP_INSTITUTION_REJECTED(SYSTEM_STATE_GROUP, "Rejected"),
+    SYSTEM_STATE_GROUP_INSTITUTION_DISABLED(SYSTEM_STATE_GROUP, "Disabled"),
     SYSTEM_STATE_GROUP_INSTITUTION_WITHDRAWN(SYSTEM_STATE_GROUP, "Withdrawn"),
     SYSTEM_STATE_GROUP_SYSTEM_RUNNING(SYSTEM_STATE_GROUP, "Running"),
 
@@ -215,40 +295,70 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_INSTITUTION_CORRECT(SYSTEM_ACTION, "Correct"),
     SYSTEM_ACTION_INSTITUTION_CREATE_INSTITUTION(SYSTEM_ACTION, "Create Institution"),
+    SYSTEM_ACTION_INSTITUTION_CREATE_DEPARTMENT(SYSTEM_ACTION, "Create Department"),
+    SYSTEM_ACTION_INSTITUTION_CREATE_DEPARTMENT_PROMOTE_OPPORTUNITY(SYSTEM_ACTION, "Promote Department"),
     SYSTEM_ACTION_INSTITUTION_CREATE_PROGRAM(SYSTEM_ACTION, "Create Program"),
-    SYSTEM_ACTION_INSTITUTION_CREATE_PROGRAM_PROMOTE_OPPORTUNITY(SYSTEM_ACTION, "Promote Opportunity"),
+    SYSTEM_ACTION_INSTITUTION_CREATE_PROGRAM_PROMOTE_OPPORTUNITY(SYSTEM_ACTION, "Promote Program"),
     SYSTEM_ACTION_INSTITUTION_CREATE_PROJECT(SYSTEM_ACTION, "Create Project"),
-    SYSTEM_ACTION_INSTITUTION_CREATE_PROJECT_PROMOTE_OPPORTUNITY(SYSTEM_ACTION, "Promote Opportunity"),
+    SYSTEM_ACTION_INSTITUTION_CREATE_PROJECT_PROMOTE_OPPORTUNITY(SYSTEM_ACTION, "Promote Project"),
     SYSTEM_ACTION_INSTITUTION_CREATE_APPLICATION(SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_INSTITUTION_EMAIL_CREATOR(SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_INSTITUTION_ESCALATE(SYSTEM_ACTION, "Escalate"),
+    SYSTEM_ACTION_INSTITUTION_IMPORT_DEPARTMENT(SYSTEM_ACTION, "Import Department"),
     SYSTEM_ACTION_INSTITUTION_IMPORT_PROGRAM(SYSTEM_ACTION, "Import Program"),
+    SYSTEM_ACTION_INSTITUTION_IMPORT_PROJECT(SYSTEM_ACTION, "Import Project"),
     SYSTEM_ACTION_INSTITUTION_WITHDRAW(SYSTEM_ACTION, "Withdraw"),
+    SYSTEM_ACTION_INSTITUTION_ENDORSE(SYSTEM_ACTION, "Endorse"),
+    SYSTEM_ACTION_DEPARTMENT_STARTUP(SYSTEM_ACTION, "Program Startup"),
+    SYSTEM_ACTION_DEPARTMENT_COMPLETE_APPROVAL_STAGE(SYSTEM_ACTION, "Complete Approval"),
+    SYSTEM_ACTION_DEPARTMENT_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
+    SYSTEM_ACTION_DEPARTMENT_CORRECT(SYSTEM_ACTION, "Correct"),
+    SYSTEM_ACTION_DEPARTMENT_CREATE_APPLICATION(SYSTEM_ACTION, "Create Application"),
+    SYSTEM_ACTION_DEPARTMENT_CREATE_PROGRAM(SYSTEM_ACTION, "Create Program"),
+    SYSTEM_ACTION_DEPARTMENT_CREATE_PROGRAM_PROMOTE_OPPORTUNITY(SYSTEM_ACTION, "Promote Program"),
+    SYSTEM_ACTION_DEPARTMENT_CREATE_PROJECT(SYSTEM_ACTION, "Create Project"),
+    SYSTEM_ACTION_DEPARTMENT_CREATE_PROJECT_PROMOTE_OPPORTUNITY(SYSTEM_ACTION, "Promote Project"),
+    SYSTEM_ACTION_DEPARTMENT_IMPORT_PROGRAM(SYSTEM_ACTION, "Import Program"),
+    SYSTEM_ACTION_DEPARTMENT_IMPORT_PROJECT(SYSTEM_ACTION, "Import Project"),
+    SYSTEM_ACTION_DEPARTMENT_EMAIL_CREATOR(SYSTEM_ACTION, "Email Creator"),
+    SYSTEM_ACTION_DEPARTMENT_ESCALATE(SYSTEM_ACTION, "Escalate"),
+    SYSTEM_ACTION_DEPARTMENT_RESTORE(SYSTEM_ACTION, "Restore"),
+    SYSTEM_ACTION_DEPARTMENT_WITHDRAW(SYSTEM_ACTION, "Withdraw"),
+    SYSTEM_ACTION_DEPARTMENT_ENDORSE(SYSTEM_ACTION, "Endorse"),
+    SYSTEM_ACTION_DEPARTMENT_SUSPEND(SYSTEM_ACTION, "Suspend"),
     SYSTEM_ACTION_PROGRAM_STARTUP(SYSTEM_ACTION, "Program Startup"),
     SYSTEM_ACTION_PROGRAM_COMPLETE_APPROVAL_STAGE(SYSTEM_ACTION, "Complete Approval"),
-    SYSTEM_ACTION_PROGRAM_CONCLUDE(SYSTEM_ACTION, "Conclude"),
     SYSTEM_ACTION_PROGRAM_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_PROGRAM_CORRECT(SYSTEM_ACTION, "Correct"),
     SYSTEM_ACTION_PROGRAM_CREATE_APPLICATION(SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_PROGRAM_CREATE_PROJECT(SYSTEM_ACTION, "Create Project"),
+    SYSTEM_ACTION_PROGRAM_IMPORT_PROJECT(SYSTEM_ACTION, "Import Project"),
     SYSTEM_ACTION_PROGRAM_EMAIL_CREATOR(SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_PROGRAM_ESCALATE(SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_PROGRAM_RESTORE(SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROGRAM_WITHDRAW(SYSTEM_ACTION, "Withdraw"),
+    SYSTEM_ACTION_PROGRAM_ENDORSE(SYSTEM_ACTION, "Endorse"),
+    SYSTEM_ACTION_PROGRAM_SUSPEND(SYSTEM_ACTION, "Suspend"),
     SYSTEM_ACTION_PROJECT_STARTUP(SYSTEM_ACTION, "Project Startup"),
     SYSTEM_ACTION_PROJECT_COMPLETE_APPROVAL_STAGE(SYSTEM_ACTION, "Complete Approval"),
-    SYSTEM_ACTION_PROJECT_CONCLUDE(SYSTEM_ACTION, "Conclude"),
     SYSTEM_ACTION_PROJECT_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_PROJECT_CORRECT(SYSTEM_ACTION, "Correct"),
     SYSTEM_ACTION_PROJECT_CREATE_APPLICATION(SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_PROJECT_EMAIL_CREATOR(SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_PROJECT_ESCALATE(SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_PROJECT_RESTORE(SYSTEM_ACTION, "Restore"),
-    SYSTEM_ACTION_PROJECT_SUSPEND(SYSTEM_ACTION, "Suspend"),
     SYSTEM_ACTION_PROJECT_TERMINATE(SYSTEM_ACTION, "Terminate"),
     SYSTEM_ACTION_PROJECT_WITHDRAW(SYSTEM_ACTION, "Withdraw"),
+    SYSTEM_ACTION_PROJECT_ENDORSE(SYSTEM_ACTION, "Endorse"),
+    SYSTEM_ACTION_PROJECT_SUSPEND(SYSTEM_ACTION, "Suspend"),
+    SYSTEM_ACTION_SYSTEM_STARTUP(SYSTEM_ACTION, "Startup"),
     SYSTEM_ACTION_SYSTEM_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_SYSTEM_CREATE_INSTITUTION(SYSTEM_ACTION, "Create Institution"),
+    SYSTEM_ACTION_SYSTEM_VIEW_INSTITUTION_LIST(SYSTEM_ACTION, "View Institutions"),
+    SYSTEM_ACTION_SYSTEM_VIEW_DEPARTMENT_LIST(SYSTEM_ACTION, "View Departments"),
+    SYSTEM_ACTION_SYSTEM_VIEW_PROGRAM_LIST(SYSTEM_ACTION, "View Programs"),
+    SYSTEM_ACTION_SYSTEM_VIEW_PROJECT_LIST(SYSTEM_ACTION, "View Projects"),
+    SYSTEM_ACTION_SYSTEM_VIEW_APPLICATION_LIST(SYSTEM_ACTION, "View Applications"),
     SYSTEM_ACTION_SYSTEM_MANAGE_ACCOUNT(SYSTEM_ACTION, "Manage Account"),
 
     /*

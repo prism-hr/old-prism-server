@@ -1,32 +1,59 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.*;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityMappingDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-import uk.co.alumeni.prism.api.model.imported.response.*;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.io.InputStream;
-import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityMappingDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
 public class ImportedEntityMapper {
 
+    private Map<Resource, PropertyLoader> loaders = Maps.newHashMap();
+
     @Inject
     private ImportedEntityService importedEntityService;
+    
+    @Inject
+    private SystemService systemService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -38,7 +65,7 @@ public class ImportedEntityMapper {
         return getImportedEntityRepresentation(entity, null);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity, Institution institution) {
         Class<?> entityClass = entity.getClass();
         if (ImportedAgeRange.class.equals(entityClass)) {
@@ -58,14 +85,27 @@ public class ImportedEntityMapper {
         return (U) getImportedEntitySimpleRepresentation((ImportedEntitySimple) entity, institution, ImportedEntityResponse.class);
     }
 
-    private <S, T extends ImportedEntity<S, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityResponseDefinition<S> & ImportedEntityMappingDefinition> V getImportedEntitySimpleRepresentation(
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private <S, T extends ImportedEntity<S, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityResponseDefinition<S> & ImportedEntityMappingDefinition, W extends PrismLocalizableDefinition> V getImportedEntitySimpleRepresentation(
             T entity, Institution institution, Class<V> returnType) {
         V representation = BeanUtils.instantiate(returnType);
-
         representation.setId(entity.getId());
-        representation.setName(entity.getName());
 
-        if (institution != null) {
+        boolean institutionNull = institution == null;
+        Class<W> entityNameClass = (Class<W>) entity.getType().getEntityClassName();
+        if (entityNameClass == null) {
+            representation.setName(entity.getName());
+        } else {
+            PropertyLoader loader = loaders.get(institution);
+            if (loader == null) {
+                loader = applicationContext.getBean(PropertyLoader.class).localize(institutionNull ? systemService.getSystem() : institution);
+                loaders.put(institution, loader);
+            }
+
+            representation.setName(loader.load(((W) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName())).getDisplayProperty()));
+        }
+
+        if (institutionNull) {
             U mapping = importedEntityService.getEnabledImportedEntityMapping(institution, entity);
             if (mapping != null) {
                 representation.setCode(mapping.getCode());
@@ -85,9 +125,9 @@ public class ImportedEntityMapper {
     }
 
     public ImportedAdvertDomicileResponse getImportedAdvertDomicileRepresentation(ImportedAdvertDomicile advertDomicile, Institution institution) {
-        return getImportedEntitySimpleRepresentation(advertDomicile, institution, ImportedAdvertDomicileResponse.class).withCurrency(advertDomicile.getCurrency());
+        return getImportedEntitySimpleRepresentation(advertDomicile, institution, ImportedAdvertDomicileResponse.class).withCurrency(
+                advertDomicile.getCurrency());
     }
-
 
     public ImportedEntityResponse getImportedInstitutionSimpleRepresentation(ImportedInstitution importedInstitution) {
         return getImportedEntitySimpleRepresentation(importedInstitution, null, ImportedInstitutionResponse.class);

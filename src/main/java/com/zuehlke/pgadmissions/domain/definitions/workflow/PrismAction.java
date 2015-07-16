@@ -119,6 +119,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(PROGRAM)), //
     PROGRAM_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_SUSPEND(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROGRAM)), //
     PROJECT_STARTUP(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //

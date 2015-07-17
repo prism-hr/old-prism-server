@@ -1,85 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_ADVERT_DETAILS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CATEGORIES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CLOSING_DATES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_FEES_AND_PAYMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_DOMAIN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_STATISTICS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -715,136 +642,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_FUNCTION_SUPPLY_CHAIN(SYSTEM_ADVERT_FUNCTION, "Supply Chain"),
     SYSTEM_ADVERT_FUNCTION_TRAINING(SYSTEM_ADVERT_FUNCTION, "Training"),
     SYSTEM_ADVERT_FUNCTION_WRITING_EDITING(SYSTEM_ADVERT_FUNCTION, "Writing/Editing"),
-
-    /*
-     * *************** SYSTEM ADVERT DOMAIN *********************
-     */
-
-    SYSTEM_ADVERT_DOMAIN_PRECLINICAL_MEDICINE(SYSTEM_ADVERT_DOMAIN, "Preclinical Medicine"), //
-    SYSTEM_ADVERT_DOMAIN_PRECLINICAL_DENTISTRY(SYSTEM_ADVERT_DOMAIN, "Clinical Medicine"), //
-    SYSTEM_ADVERT_DOMAIN_CLINICAL_MEDICINE(SYSTEM_ADVERT_DOMAIN, "Preclinical Dentistry"), //
-    SYSTEM_ADVERT_DOMAIN_CLINICAL_DENTISTRY(SYSTEM_ADVERT_DOMAIN, "Clinical Dentistry"), //
-    SYSTEM_ADVERT_DOMAIN_ANATOMY_PHYSIOLOGY(SYSTEM_ADVERT_DOMAIN, "Anatomy & Physiology"), //
-    SYSTEM_ADVERT_DOMAIN_PHARMACOLOGY(SYSTEM_ADVERT_DOMAIN, "Pharmacology"), //
-    SYSTEM_ADVERT_DOMAIN_PHARMACY(SYSTEM_ADVERT_DOMAIN, "Pharmacy"), //
-    SYSTEM_ADVERT_DOMAIN_NUTRITION(SYSTEM_ADVERT_DOMAIN, "Nutrition"), //
-    SYSTEM_ADVERT_DOMAIN_OPTHALMICS(SYSTEM_ADVERT_DOMAIN, "Ophthalmics"), //
-    SYSTEM_ADVERT_DOMAIN_AUDIOLOGY(SYSTEM_ADVERT_DOMAIN, "Audiology"), //
-    SYSTEM_ADVERT_DOMAIN_NURSING(SYSTEM_ADVERT_DOMAIN, "Nursing"), //
-    SYSTEM_ADVERT_DOMAIN_MEDICAL_TECHNOLOGY(SYSTEM_ADVERT_DOMAIN, "Medical Technology"), //
-    SYSTEM_ADVERT_DOMAIN_BIOLOGY(SYSTEM_ADVERT_DOMAIN, "Biology"), //
-    SYSTEM_ADVERT_DOMAIN_BOTANY(SYSTEM_ADVERT_DOMAIN, "Botany"), //
-    SYSTEM_ADVERT_DOMAIN_ZOOLOGY(SYSTEM_ADVERT_DOMAIN, "Zoology"), //
-    SYSTEM_ADVERT_DOMAIN_GENETICS(SYSTEM_ADVERT_DOMAIN, "Genetics"), //
-    SYSTEM_ADVERT_DOMAIN_MICROBIOLOGY(SYSTEM_ADVERT_DOMAIN, "Microbiology"), //
-    SYSTEM_ADVERT_DOMAIN_MOLECULAR_BIOLOGY_BIOPHYSICS(SYSTEM_ADVERT_DOMAIN, "Molecular Biology & Biophysics"), //
-    SYSTEM_ADVERT_DOMAIN_BIOCHEMISTRY(SYSTEM_ADVERT_DOMAIN, "Biochemistry"), //
-    SYSTEM_ADVERT_DOMAIN_PSYCHOLOGY(SYSTEM_ADVERT_DOMAIN, "Psychology"), //
-    SYSTEM_ADVERT_DOMAIN_VETERINARY_SCIENCES(SYSTEM_ADVERT_DOMAIN, "Veterinary Science"), //
-    SYSTEM_ADVERT_DOMAIN_AGRICULTURE(SYSTEM_ADVERT_DOMAIN, "Agriculture"), //
-    SYSTEM_ADVERT_DOMAIN_FORESTRY(SYSTEM_ADVERT_DOMAIN, "Forestry"), //
-    SYSTEM_ADVERT_DOMAIN_FOOD_SCIENCE(SYSTEM_ADVERT_DOMAIN, "Food Science"), //
-    SYSTEM_ADVERT_DOMAIN_AGRICULTURAL_SCIENCE(SYSTEM_ADVERT_DOMAIN, "Agricultural Science"), //
-    SYSTEM_ADVERT_DOMAIN_CHEMISTRY(SYSTEM_ADVERT_DOMAIN, "Chemistry"), //
-    SYSTEM_ADVERT_DOMAIN_MATERIALS(SYSTEM_ADVERT_DOMAIN, "Materials"), //
-    SYSTEM_ADVERT_DOMAIN_PHYSICS(SYSTEM_ADVERT_DOMAIN, "Physics"), //
-    SYSTEM_ADVERT_DOMAIN_ARCHAEOLOGY(SYSTEM_ADVERT_DOMAIN, "Archaeology"), //
-    SYSTEM_ADVERT_DOMAIN_ASTRONOMY(SYSTEM_ADVERT_DOMAIN, "Astronomy"), //
-    SYSTEM_ADVERT_DOMAIN_GEOLOGY(SYSTEM_ADVERT_DOMAIN, "Geology"), //
-    SYSTEM_ADVERT_DOMAIN_OCEANOGRAPHY(SYSTEM_ADVERT_DOMAIN, "Oceanography"), //
-    SYSTEM_ADVERT_DOMAIN_GEOGRAPHY(SYSTEM_ADVERT_DOMAIN, "Geography"), //
-    SYSTEM_ADVERT_DOMAIN_ENVIRONMENTAL_SCIENCE(SYSTEM_ADVERT_DOMAIN, "Environmental Science"), //
-    SYSTEM_ADVERT_DOMAIN_MATHEMATICS(SYSTEM_ADVERT_DOMAIN, "Mathematics"), //
-    SYSTEM_ADVERT_DOMAIN_STATISTICS(SYSTEM_ADVERT_DOMAIN, "Statistics"), //
-    SYSTEM_ADVERT_DOMAIN_COMPUTER_SCIENCE(SYSTEM_ADVERT_DOMAIN, "Computer Science"), //
-    SYSTEM_ADVERT_DOMAIN_CIVIL_ENGINEERING(SYSTEM_ADVERT_DOMAIN, "Civil Engineering"), //
-    SYSTEM_ADVERT_DOMAIN_MECHANICAL_ENGINEERING(SYSTEM_ADVERT_DOMAIN, "Mechanical Engineering"), //
-    SYSTEM_ADVERT_DOMAIN_AERONAUTICAL_ENGINEERING(SYSTEM_ADVERT_DOMAIN, "Aeronautical Engineering"), //
-    SYSTEM_ADVERT_DOMAIN_ELECTRICAL_ENGINEERING(SYSTEM_ADVERT_DOMAIN, "Electrical Engineering"), //
-    SYSTEM_ADVERT_DOMAIN_ELECTRONIC_ENGINEERING(SYSTEM_ADVERT_DOMAIN, "Electronic Engineering"), //
-    SYSTEM_ADVERT_DOMAIN_PRODUCTION_ENGINEERING(SYSTEM_ADVERT_DOMAIN, "Production Engineering"), //
-    SYSTEM_ADVERT_DOMAIN_CHEMICAL_ENGINEERING(SYSTEM_ADVERT_DOMAIN, "Chemical Engineering"), //
-    SYSTEM_ADVERT_DOMAIN_MINERALS_TECHNOLOGY(SYSTEM_ADVERT_DOMAIN, "Minerals Technology"), //
-    SYSTEM_ADVERT_DOMAIN_METALLURGY(SYSTEM_ADVERT_DOMAIN, "Metallurgy"), //
-    SYSTEM_ADVERT_DOMAIN_CERAMICS_GLASSES(SYSTEM_ADVERT_DOMAIN, "Ceramics & Glasses"), //
-    SYSTEM_ADVERT_DOMAIN_POLYMERS_TEXTILES(SYSTEM_ADVERT_DOMAIN, "Polymers & Textiles"), //
-    SYSTEM_ADVERT_DOMAIN_MARITIME_TECHNOLOGY(SYSTEM_ADVERT_DOMAIN, "Maritime Technology"), //
-    SYSTEM_ADVERT_DOMAIN_BIOTECHNOLOGY(SYSTEM_ADVERT_DOMAIN, "Biotechnology"), //
-    SYSTEM_ADVERT_DOMAIN_ARCHITECTURE(SYSTEM_ADVERT_DOMAIN, "Architecture"), //
-    SYSTEM_ADVERT_DOMAIN_BUILDING(SYSTEM_ADVERT_DOMAIN, "Building"), //
-    SYSTEM_ADVERT_DOMAIN_ENVIRONMENTAL_TECHNOLOGY(SYSTEM_ADVERT_DOMAIN, "Environmental Technology"), //
-    SYSTEM_ADVERT_DOMAIN_TOWN_PLANNING(SYSTEM_ADVERT_DOMAIN, "Town Planning"), //
-    SYSTEM_ADVERT_DOMAIN_ECONOMICS(SYSTEM_ADVERT_DOMAIN, "Economics"), //
-    SYSTEM_ADVERT_DOMAIN_SOCIOLOGY(SYSTEM_ADVERT_DOMAIN, "Sociology"), //
-    SYSTEM_ADVERT_DOMAIN_SOCIAL_POLICY_ADMINISTRATION(SYSTEM_ADVERT_DOMAIN, "Social Policy Administration"), //
-    SYSTEM_ADVERT_DOMAIN_SOCIAL_WORK(SYSTEM_ADVERT_DOMAIN, "Social Work"), //
-    SYSTEM_ADVERT_DOMAIN_ANTHROPOLOGY(SYSTEM_ADVERT_DOMAIN, "Anthropology"), //
-    SYSTEM_ADVERT_DOMAIN_POLITICS(SYSTEM_ADVERT_DOMAIN, "Politics"), //
-    SYSTEM_ADVERT_DOMAIN_BUSINESS_MANAGEMENT(SYSTEM_ADVERT_DOMAIN, "Business Management & Administration"), //
-    SYSTEM_ADVERT_DOMAIN_OPERATIONAL_RESEARCH(SYSTEM_ADVERT_DOMAIN, "Operational Research"), //
-    SYSTEM_ADVERT_DOMAIN_FINANCIAL_MANAGEMENT(SYSTEM_ADVERT_DOMAIN, "Financial Management"), //
-    SYSTEM_ADVERT_DOMAIN_ACCOUNTANCY(SYSTEM_ADVERT_DOMAIN, "Accountancy"), //
-    SYSTEM_ADVERT_DOMAIN_MARKETING(SYSTEM_ADVERT_DOMAIN, "Marketing"), //
-    SYSTEM_ADVERT_DOMAIN_INDUSTRIAL_RELATIONS(SYSTEM_ADVERT_DOMAIN, "Industrial Relations"), //
-    SYSTEM_ADVERT_DOMAIN_CATERING_HOSPITALITY(SYSTEM_ADVERT_DOMAIN, "Catering & Hospitality"), //
-    SYSTEM_ADVERT_DOMAIN_ESTATE_MANAGEMENT(SYSTEM_ADVERT_DOMAIN, "Land & Property Management"), //
-    SYSTEM_ADVERT_DOMAIN_TRANSPORT_MANAGEMENT(SYSTEM_ADVERT_DOMAIN, "Transport"), //
-    SYSTEM_ADVERT_DOMAIN_LIBRARIANSHIP(SYSTEM_ADVERT_DOMAIN, "Librarianship"), //
-    SYSTEM_ADVERT_DOMAIN_INFORMATION_SCIENCE(SYSTEM_ADVERT_DOMAIN, "Information Science"), //
-    SYSTEM_ADVERT_DOMAIN_COMMUNICATION_STUDIES(SYSTEM_ADVERT_DOMAIN, "Communication Studies"), //
-    SYSTEM_ADVERT_DOMAIN_MEDIA_STUDIES(SYSTEM_ADVERT_DOMAIN, "Medial Studies"), //
-    SYSTEM_ADVERT_DOMAIN_PUBLISHING(SYSTEM_ADVERT_DOMAIN, "Publishing"), //
-    SYSTEM_ADVERT_DOMAIN_JOURNALISM(SYSTEM_ADVERT_DOMAIN, "Journalism"), //
-    SYSTEM_ADVERT_DOMAIN_LINGUISTICS(SYSTEM_ADVERT_DOMAIN, "Linguistics"), //
-    SYSTEM_ADVERT_DOMAIN_COMPARATIVE_LITERATURE(SYSTEM_ADVERT_DOMAIN, "Comparative Literature"), //
-    SYSTEM_ADVERT_DOMAIN_ENGLISH(SYSTEM_ADVERT_DOMAIN, "English"), //
-    SYSTEM_ADVERT_DOMAIN_AMERICAN_STUDIES(SYSTEM_ADVERT_DOMAIN, "American Studies"), //
-    SYSTEM_ADVERT_DOMAIN_CELTIC_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Celtic Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_LATIN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Latin Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_GREEK_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Greek Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_CLASSICS(SYSTEM_ADVERT_DOMAIN, "Classics"), //
-    SYSTEM_ADVERT_DOMAIN_ANCIENT_LANGUAGES(SYSTEM_ADVERT_DOMAIN, "Ancient Languages"), //
-    SYSTEM_ADVERT_DOMAIN_FRENCH_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "French Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_GERMAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "German Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_ITALIAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Italian Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_SPANISH_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Spanish Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_PORTUGUESE_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Portuguese Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_LATIN_AMERICAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Latin American Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_SCANDINAVIAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Scandinavian Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_RUSSIAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Russian Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_SLAVONIC_EAST_EUROPEAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Slavonic & Eastern European Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_EUROPEAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Other European Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_CHINESE_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Chinese Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_JAPANESE_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Japanese Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_ASIAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Asian Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_MIDDLE_EAST_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "Middle Eastern Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_AFRICAN_LITERATURE_CULTURE(SYSTEM_ADVERT_DOMAIN, "African Languages, Literature & Culture"), //
-    SYSTEM_ADVERT_DOMAIN_HISTORY(SYSTEM_ADVERT_DOMAIN, "History"), //
-    SYSTEM_ADVERT_DOMAIN_ECONOMIC_SOCIAL_HISTORY(SYSTEM_ADVERT_DOMAIN, "Economic & Social History"), //
-    SYSTEM_ADVERT_DOMAIN_HISTORY_ART(SYSTEM_ADVERT_DOMAIN, "History of Art"), //
-    SYSTEM_ADVERT_DOMAIN_HISTORY_PHILOSOPHY_SCIENCE(SYSTEM_ADVERT_DOMAIN, "History & Philosophy of Science"), //
-    SYSTEM_ADVERT_DOMAIN_PHILOSOPHY(SYSTEM_ADVERT_DOMAIN, "Philosophy"), //
-    SYSTEM_ADVERT_DOMAIN_THEOLOGY_RELIGION(SYSTEM_ADVERT_DOMAIN, "Theology & Religious Studies"), //
-    SYSTEM_ADVERT_DOMAIN_HUMANITIES(SYSTEM_ADVERT_DOMAIN, "Humanities"), //
-    SYSTEM_ADVERT_DOMAIN_FINE_ART(SYSTEM_ADVERT_DOMAIN, "Fine Art"), //
-    SYSTEM_ADVERT_DOMAIN_DESIGN(SYSTEM_ADVERT_DOMAIN, "Design"), //
-    SYSTEM_ADVERT_DOMAIN_MUSIC(SYSTEM_ADVERT_DOMAIN, "Music"), //
-    SYSTEM_ADVERT_DOMAIN_DRAMA(SYSTEM_ADVERT_DOMAIN, "Drama"), //
-    SYSTEM_ADVERT_DOMAIN_CINEMATICS(SYSTEM_ADVERT_DOMAIN, "Cinematics"), //
-    SYSTEM_ADVERT_DOMAIN_CRAFTS(SYSTEM_ADVERT_DOMAIN, "Crafts"), //
-    SYSTEM_ADVERT_DOMAIN_BEAUTY_HAIRDRESSING(SYSTEM_ADVERT_DOMAIN, "Beauty & Hairdressing"), //
-    SYSTEM_ADVERT_DOMAIN_TEACHER_TRAINING(SYSTEM_ADVERT_DOMAIN, "Teacher Training"), //
-    SYSTEM_ADVERT_DOMAIN_PHYSICAL_EDUCATION(SYSTEM_ADVERT_DOMAIN, "Physical Education"), //
-    SYSTEM_ADVERT_DOMAIN_ACADEMIC_STUDIES(SYSTEM_ADVERT_DOMAIN, "Theory of Education"), //
-    SYSTEM_ADVERT_DOMAIN_CHILD_TEACHING(SYSTEM_ADVERT_DOMAIN, "Child Teaching"), //
-    SYSTEM_ADVERT_DOMAIN_ADULT_TEACHING(SYSTEM_ADVERT_DOMAIN, "Adult Teaching"), //
-    SYSTEM_ADVERT_DOMAIN_SPECIAL_NEEDS_TEACHING(SYSTEM_ADVERT_DOMAIN, "Teaching for Special Needs"), //
-    SYSTEM_ADVERT_DOMAIN_EDUCATIONAL_TECHNOLOGY(SYSTEM_ADVERT_DOMAIN, "Educational Technology"), //
-    SYSTEM_ADVERT_DOMAIN_EDUCATION_MANAGEMENT(SYSTEM_ADVERT_DOMAIN, "Education Management"), //
-    SYSTEM_ADVERT_DOMAIN_COMBINED_SCIENCE(SYSTEM_ADVERT_DOMAIN, "Combined Sciences"), //
-    SYSTEM_ADVERT_DOMAIN_COMBINED_SOCIAL_SCIENCE(SYSTEM_ADVERT_DOMAIN, "Combined Social Sciences"), //
-    SYSTEM_ADVERT_DOMAIN_COMBINED_ART(SYSTEM_ADVERT_DOMAIN, "Combined Arts"), //
-    SYSTEM_ADVERT_DOMAIN_RESEARCH_METHODS(SYSTEM_ADVERT_DOMAIN, "Research Methods"), //
 
     /*
      * *************** SYSTEM NOTIFICATION TEMPLATE *********************
@@ -1734,7 +1531,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     PROGRAM_CATEGORIES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Categories"),
-    PROGRAM_CATEGORIES_APPLICATION_REQUIREMENTS_SUBHEADER(PROGRAM_ADVERT_CATEGORIES, "Application Requirements"),
     PROGRAM_CATEGORIES_DOMAINS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Domains"),
     PROGRAM_CATEGORIES_DOMAINS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the domains/sectors that your advert is relevant to"),
     PROGRAM_CATEGORIES_FUNCTIONS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Functions"),

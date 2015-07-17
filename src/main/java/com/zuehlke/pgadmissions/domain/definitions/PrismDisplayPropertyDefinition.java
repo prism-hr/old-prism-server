@@ -1537,11 +1537,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_CATEGORIES_FUNCTIONS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the job functions that your advert is relevant to."),
     PROGRAM_CATEGORIES_INDUSTRIES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Industries"),
     PROGRAM_CATEGORIES_INDUSTRIES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the industries that your advert is relevant to."),
-    PROGRAM_CATEGORIES_COMPETENCIES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Competencies"),
-    PROGRAM_CATEGORIES_COMPETENCIES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the competencies that you are looking for in your applicants."),
-    PROGRAM_CATEGORIES_SUBJECTS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Subjects"),
-    PROGRAM_CATEGORIES_SUBJECTS_HINT(PROGRAM_ADVERT_CATEGORIES,
-            "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
+
+    /*
+     * *************** PROGRAM ADVERT CATEGORIES *********************
+     */
+
+    PROGRAM_TARGETS_HEADER(PROGRAM_ADVERT_TARGETS, "Targets"),
+    PROGRAM_TARGETS_COMPETENCES_LABEL(PROGRAM_ADVERT_TARGETS, "Competences"),
+    PROGRAM_TARGETS_COMPETENCES_HINT(PROGRAM_ADVERT_TARGETS, "Specify the competences that you are looking for in your applicants."),
+    PROGRAM_TARGETS_SUBJECTS_LABEL(PROGRAM_ADVERT_TARGETS, "Subject Areas"),
+    PROGRAM_TARGETS_SUBJECTS_HINT(PROGRAM_ADVERT_TARGETS, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
 
     /*
      * *************** PROGRAM ADVERT CLOSING DATES *********************

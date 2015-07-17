@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "ADVERT_THEME", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }) })
+@Table(name = "advert_theme", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }) })
 public class AdvertTheme extends AdvertAttribute<String> {
 
     @Id

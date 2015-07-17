@@ -1,20 +1,12 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+
 @Entity
-@Table(name = "ADVERT_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "institution_id" }) })
+@Table(name = "advert_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "institution_id" }) })
 public class AdvertInstitution extends AdvertTarget<Institution> {
 
     @Id
@@ -28,9 +20,6 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution value;
-
-    @Column(name = "importance", nullable = false)
-    private BigDecimal importance;
 
     @Override
     public Integer getId() {
@@ -60,16 +49,6 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
     @Override
     public void setValue(Institution institution) {
         this.value = institution;
-    }
-
-    @Override
-    public BigDecimal getImportance() {
-        return importance;
-    }
-
-    @Override
-    public void setImportance(BigDecimal importance) {
-        this.importance = importance;
     }
 
     @Override

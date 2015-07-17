@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-import java.util.List;
+import com.google.common.collect.ImmutableMap;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Map;
 
 public class AdvertTargetsDTO {
 
@@ -56,14 +57,10 @@ public class AdvertTargetsDTO {
         this.subjectAreas = subjectAreas;
     }
 
-    public List<AdvertTargetDTO> getTargets() {
-        List<AdvertTargetDTO> attributes = Lists.newLinkedList();
-        attributes.addAll(competences);
-        attributes.addAll(institutions);
-        attributes.addAll(departments);
-        attributes.addAll(programs);
-        attributes.addAll(subjectAreas);
-        return attributes;
+    public Map<String, List<? extends AdvertTargetDTO>> getTargets() {
+        Map<String, List<? extends AdvertTargetDTO>> maps = ImmutableMap.of("competences", competences, "institutions", institutions,
+                "departments", departments, "programs", programs, "subjectAreas", subjectAreas);
+        return maps;
     }
 
 }

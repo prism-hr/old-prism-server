@@ -1,12 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismDisplayPropertyCategory {
 
@@ -64,6 +60,7 @@ public enum PrismDisplayPropertyCategory {
     PROGRAM_FORM(PROGRAM),
     PROGRAM_ADVERT_FEES_AND_PAYMENTS(PROGRAM),
     PROGRAM_ADVERT_CATEGORIES(PROGRAM),
+    PROGRAM_ADVERT_TARGETS(PROGRAM),
     PROGRAM_ADVERT_CLOSING_DATES(PROGRAM),
     PROJECT_COMMENT(PROJECT),
     PROJECT_FORM(PROJECT),

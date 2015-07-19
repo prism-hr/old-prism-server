@@ -15,8 +15,7 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
 @Entity
-@Table(name = "role_transition", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type",
-        "partner_mode" }) })
+@Table(name = "role_transition", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type" }) })
 public class RoleTransition implements UniqueEntity {
 
     @Id
@@ -34,9 +33,6 @@ public class RoleTransition implements UniqueEntity {
     @Column(name = "role_transition_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismRoleTransitionType roleTransitionType;
-
-    @Column(name = "partner_mode", nullable = false)
-    private Boolean partnerMode;
 
     @ManyToOne
     @JoinColumn(name = "transition_role_id", nullable = false)
@@ -85,14 +81,6 @@ public class RoleTransition implements UniqueEntity {
 
     public void setRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
         this.roleTransitionType = roleTransitionType;
-    }
-
-    public Boolean getPartnerMode() {
-        return partnerMode;
-    }
-
-    public void setPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
     }
 
     public Boolean getRestrictToActionOwner() {
@@ -150,11 +138,6 @@ public class RoleTransition implements UniqueEntity {
         return this;
     }
 
-    public RoleTransition withPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
-        return this;
-    }
-
     public RoleTransition withTransitionRole(Role transitionRole) {
         this.transitionRole = transitionRole;
         return this;
@@ -183,7 +166,7 @@ public class RoleTransition implements UniqueEntity {
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("stateTransition", stateTransition).addProperty("role", role)
-                .addProperty("roleTransitionType", roleTransitionType).addProperty("partnerMode", partnerMode);
+                .addProperty("roleTransitionType", roleTransitionType);
     }
 
 }

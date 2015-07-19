@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
@@ -18,7 +19,7 @@ public enum PrismStateDurationDefinition {
     APPLICATION_PURGE_DURATION(364, false, APPLICATION), //
     PROJECT_ESCALATE_DURATION(28, true, PROJECT), //
     PROGRAM_ESCALATE_DURATION(28, true, PROGRAM), //
-    DEPARTMENT_ESCALATE_DURATION(28, true, PROGRAM), //
+    DEPARTMENT_ESCALATE_DURATION(28, true, DEPARTMENT), //
     INSTITUTION_ESCALATE_DURATION(28, true, INSTITUTION);
 
     private Integer defaultDuration;

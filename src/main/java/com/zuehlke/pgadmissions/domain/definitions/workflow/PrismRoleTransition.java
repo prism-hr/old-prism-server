@@ -7,8 +7,6 @@ public class PrismRoleTransition {
     private PrismRole role;
 
     private PrismRoleTransitionType transitionType;
-    
-    private Boolean partnerMode = false;
 
     private PrismRole transitionRole;
 
@@ -27,10 +25,6 @@ public class PrismRoleTransition {
     public PrismRoleTransitionType getTransitionType() {
         return transitionType;
     }
-    
-    public Boolean getPartnerMode() {
-        return partnerMode;
-    }
 
     public PrismRole getTransitionRole() {
         return transitionRole;
@@ -41,10 +35,10 @@ public class PrismRoleTransition {
     }
 
     public void setRestrictToActionOwner(Boolean restrictToActionOwner) {
-		this.restrictToActionOwner = restrictToActionOwner;
-	}
+        this.restrictToActionOwner = restrictToActionOwner;
+    }
 
-	public Integer getMinimumPermitted() {
+    public Integer getMinimumPermitted() {
         return minimumPermitted;
     }
 
@@ -66,11 +60,6 @@ public class PrismRoleTransition {
         return this;
     }
 
-    public PrismRoleTransition withPartnerMode() {
-        this.partnerMode = true;
-        return this;
-    }
-    
     public PrismRoleTransition withTransitionRole(PrismRole transitionRole) {
         this.transitionRole = transitionRole;
         return this;
@@ -90,7 +79,7 @@ public class PrismRoleTransition {
         this.maximumPermitted = maximumPermitted;
         return this;
     }
-    
+
     public PrismRoleTransition withPropertyDefinition(PrismWorkflowPropertyDefinition propertyDefinition) {
         this.propertyDefinition = propertyDefinition;
         return this;

@@ -34,6 +34,11 @@ public abstract class PrismWorkflowState {
 	private void indexStateActionsByAction() {
 		for (PrismStateAction stateAction : stateActions) {
 			stateActionsByAction.put(stateAction.getAction(), stateAction);
+			
+			PrismAction actionOther = stateAction.getActionOther();
+			if (actionOther != null) {
+			    stateActionsByAction.put(actionOther, stateAction);
+			}
 		}
 	}
 

@@ -305,7 +305,7 @@ public class SystemInitialisationHelper {
 
         for (StateActionNotification stateActionNotification : stateActionNotifications) {
             PrismStateActionNotification prismStateActionNotification = new PrismStateActionNotification().withRole(stateActionNotification.getRole().getId())
-                    .withPartnerMode(stateActionNotification.getPartnerMode()).withDefinition(stateActionNotification.getNotificationDefinition().getId());
+                    .withDefinition(stateActionNotification.getNotificationDefinition().getId());
             assertTrue(prismStateAction.getNotifications().contains(prismStateActionNotification));
         }
     }

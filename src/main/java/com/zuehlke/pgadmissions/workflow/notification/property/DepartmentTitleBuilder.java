@@ -9,7 +9,7 @@ public class DepartmentTitleBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getDepartment().getTitle();
+        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getDepartment().getName();
     }
 
 }

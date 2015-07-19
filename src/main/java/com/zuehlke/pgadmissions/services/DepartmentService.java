@@ -37,7 +37,7 @@ public class DepartmentService {
     public Department getOrCreateDepartment(Institution institution, DepartmentDTO departmentDTO) {
         Integer departmentId = departmentDTO.getId();
         if (departmentId == null) {
-            return getOrCreateDepartment(new Department().withInstitution(institution).withTitle(departmentDTO.getTitle()));
+            return getOrCreateDepartment(new Department().withInstitution(institution).withName(departmentDTO.getTitle()));
         }
         return getById(departmentId);
     }

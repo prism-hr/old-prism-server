@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 
 @Entity
-@Table(name = "APPLICATION_QUALIFICATION")
+@Table(name = "application_qualification")
 public class ApplicationQualification extends ApplicationSection {
 
     @Id

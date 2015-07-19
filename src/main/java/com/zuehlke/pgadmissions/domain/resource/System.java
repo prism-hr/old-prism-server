@@ -41,8 +41,8 @@ public class System extends Resource {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "title", nullable = false, unique = true)
-    private String title;
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 
     @Column(name = "minimum_wage", nullable = false)
     private BigDecimal minimumWage;
@@ -147,12 +147,12 @@ public class System extends Resource {
         this.code = code;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public BigDecimal getMinimumWage() {
@@ -424,8 +424,8 @@ public class System extends Resource {
         return this;
     }
 
-    public System withTitle(String title) {
-        this.title = title;
+    public System withName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -465,7 +465,7 @@ public class System extends Resource {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("title", title);
+        return new ResourceSignature().addProperty("name", name);
     }
 
 }

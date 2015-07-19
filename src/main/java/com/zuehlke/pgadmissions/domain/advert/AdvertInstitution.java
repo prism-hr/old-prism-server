@@ -56,8 +56,8 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
     }
 
     @Override
-    public String getTitle() {
-        return value.getTitle();
+    public String getName() {
+        return value.getName();
     }
 
 }

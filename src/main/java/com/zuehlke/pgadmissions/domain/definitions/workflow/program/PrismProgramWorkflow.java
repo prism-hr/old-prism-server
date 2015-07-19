@@ -24,10 +24,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 
 public class PrismProgramWorkflow {
 
-    public static PrismStateAction programEmailCreator() {
-        return new PrismStateAction() //
-                .withAction(PROGRAM_EMAIL_CREATOR) //
-                .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP) //
+    public static PrismStateAction programEmailCreatorUnnapproved() {
+        return programEmailCreatorAbstract();
+    }
+
+    public static PrismStateAction programEmailCreatorApproved() {
+        return programEmailCreatorAbstract() //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
@@ -80,6 +82,12 @@ public class PrismProgramWorkflow {
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST));
+    }
+
+    private static PrismStateAction programEmailCreatorAbstract() {
+        return new PrismStateAction() //
+                .withAction(PROGRAM_EMAIL_CREATOR) //
+                .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP);
     }
 
     private static PrismStateAction programEscalateAbstract() {

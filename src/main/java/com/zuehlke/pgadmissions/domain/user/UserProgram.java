@@ -12,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 
 @Entity
-@Table(name = "USER_PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "imported_program_id" }) })
+@Table(name = "user_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "imported_program_id" }) })
 public class UserProgram extends UserImportedEntityRelation {
 
     @Id

@@ -326,6 +326,21 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionType(DELETE) //
                     .withTransitionRole(PROGRAM_VIEWER)),
 
+    DEPARTMENT_CREATE_ADMINISTRATOR_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_ADMINISTRATOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(DEPARTMENT_ADMINISTRATOR) //
+                    .withRestrictToOwner() //
+                    .withMinimumPermitted(1) //
+                    .withMaximumPermitted(1)),
+
+    DEPARTMENT_REVIVE_ADMINISTRATOR_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_ADMINISTRATOR) //
+                    .withTransitionType(REVIVE) //
+                    .withTransitionRole(DEPARTMENT_ADMINISTRATOR)),
+
     DEPARTMENT_MANAGE_USERS_GROUP( //
             new PrismRoleTransition() //
                     .withRole(DEPARTMENT_ADMINISTRATOR) //

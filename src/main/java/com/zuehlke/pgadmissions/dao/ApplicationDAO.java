@@ -44,7 +44,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -64,7 +63,6 @@ import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 
 import freemarker.template.Template;
 
@@ -166,26 +164,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public ApplicationQualification getLatestApplicationQualification(Application application) {
-        return (ApplicationQualification) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("completed", true)) //
-                .addOrder(Order.desc("awardDate")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public ApplicationEmploymentPosition getLatestApplicationEmploymentPosition(Application application) {
-        return (ApplicationEmploymentPosition) sessionFactory.getCurrentSession().createCriteria(ApplicationEmploymentPosition.class) //
-                .add(Restrictions.eq("application", application)) //
-                .addOrder(Order.desc("current")) //
-                .addOrder(Order.desc("endDate")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
     public Long getProvidedReferenceCount(Application application) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.rowCount()) //
@@ -204,20 +182,8 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public List<OtherApplicationSummaryRepresentation> getOtherLiveApplications(Application application) {
-        return (List<OtherApplicationSummaryRepresentation>) sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
-                        .add(Projections.property("code"), "code") //
-                        .add(Projections.property("program.title"), "program") //
-                        .add(Projections.property("project.title"), "project") //
-                        .add(Projections.property("applicationRatingCount"), "ratingCount") //
-                        .add(Projections.property("applicationRatingAverage"), "ratingAverage") //
-                        .add(Projections.property("stateGroup.id"), "stateGroup")) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+    public List<Application> getOtherLiveApplications(Application application) {
+        return (List<Application>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .add(Restrictions.eq("institution", application.getInstitution())) //
                 .add(Restrictions.eq("user", application.getUser())) //
                 .add(Restrictions.ne("id", application.getId())) //
@@ -225,7 +191,6 @@ public class ApplicationDAO {
                         .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VALIDATION.ordinal(), APPLICATION_RESERVED.ordinal())) //
                         .add(Restrictions.in("state.id", Arrays.asList(APPLICATION_APPROVAL, APPLICATION_REJECTED)))) //
                 .addOrder(Order.desc("sequenceIdentifier")) //
-                .setResultTransformer(Transformers.aliasToBean(OtherApplicationSummaryRepresentation.class)) //
                 .list();
     }
 

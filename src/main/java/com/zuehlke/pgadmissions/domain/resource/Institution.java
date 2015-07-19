@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
-@Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
+@Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "name" }) })
 public class Institution extends ResourceParent {
 
     @Id
@@ -56,8 +56,8 @@ public class Institution extends ResourceParent {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "title", nullable = false, unique = true)
-    private String title;
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 
     @OneToOne
     @JoinColumn(name = "logo_image_id")
@@ -183,13 +183,13 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Document getLogoImage() {
@@ -315,8 +315,8 @@ public class Institution extends ResourceParent {
         return this;
     }
 
-    public Institution withTitle(String title) {
-        this.title = title;
+    public Institution withName(String name) {
+        this.name = name;
         return this;
     }
 

@@ -1,38 +1,49 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.advert.*;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
+import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -225,18 +236,6 @@ public class AdvertDAO {
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
     }
 
-    public Set<String> getAvailableAdvertThemes(Advert advert, Set<String> themes) {
-        themes = themes == null ? Sets.newTreeSet() : themes;
-        themes.addAll(getAdvertThemes(advert));
-
-        Resource parentResource = advert.getResource().getParentResource();
-        if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
-            getAvailableAdvertThemes(parentResource.getAdvert(), themes);
-        }
-
-        return themes;
-    }
-
     public List<Integer> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.property("id")) //
@@ -317,18 +316,16 @@ public class AdvertDAO {
         if (keyword != null) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.ilike("theme.theme", MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("name", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("programPartner.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectPartner.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("programDepartment.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("programInstitution.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectDepartment.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectInstitution.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("program.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("project.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("programDepartment.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("programInstitution.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectProgram.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectDepartment.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectInstitution.name", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectUser.firstName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectUser.lastName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectUser.email", keyword, MatchMode.ANYWHERE))); //
@@ -420,9 +417,7 @@ public class AdvertDAO {
         if (institutions != null) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.in("programInstitution.id", institutions)) //
-                    .add(Restrictions.in("programPartner.id", institutions)) //
-                    .add(Restrictions.in("projectInstitution.id", institutions)) //
-                    .add(Restrictions.in("projectPartner.id", institutions))); //
+                    .add(Restrictions.in("projectInstitution.id", institutions))); //
         }
     }
 

@@ -82,6 +82,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     PROJECT_STARTUP(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_UNENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROJECT)), //
     PROJECT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
@@ -94,6 +95,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     PROGRAM_STARTUP(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_UNENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROGRAM)), //
     PROGRAM_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
@@ -108,6 +110,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     DEPARTMENT_STARTUP(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_ENDORSE(getDefaultProcessResourceActionDefinition(DEPARTMENT)), //
+    DEPARTMENT_UNENDORSE(getDefaultProcessResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
@@ -123,6 +126,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(DEPARTMENT)), //
 
     INSTITUTION_ENDORSE(getDefaultProcessResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_UNENDORSE(getDefaultProcessResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_CORRECT(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //

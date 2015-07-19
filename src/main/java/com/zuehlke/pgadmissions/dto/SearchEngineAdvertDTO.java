@@ -8,11 +8,12 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
+// TODO add departments
 public class SearchEngineAdvertDTO {
 
     private Integer projectId;
 
-    private String projectTitle;
+    private String projectName;
 
     private String projectSummary;
 
@@ -20,7 +21,7 @@ public class SearchEngineAdvertDTO {
 
     private Integer programId;
 
-    private String programTitle;
+    private String programName;
 
     private String programSummary;
 
@@ -28,7 +29,7 @@ public class SearchEngineAdvertDTO {
 
     private Integer institutionId;
 
-    private String institutionTitle;
+    private String institutionName;
 
     private String institutionSummary;
 
@@ -50,12 +51,12 @@ public class SearchEngineAdvertDTO {
         this.projectId = projectId;
     }
 
-    public final String getProjectTitle() {
-        return projectTitle;
+    public final String getProjectName() {
+        return projectName;
     }
 
-    public final void setProjectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
+    public final void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public final String getProjectSummary() {
@@ -82,12 +83,12 @@ public class SearchEngineAdvertDTO {
         this.programId = programId;
     }
 
-    public final String getProgramTitle() {
-        return programTitle;
+    public final String getProgramName() {
+        return programName;
     }
 
-    public final void setProgramTitle(String programTitle) {
-        this.programTitle = programTitle;
+    public final void setProgramName(String programName) {
+        this.programName = programName;
     }
 
     public final String getProgramSummary() {
@@ -114,12 +115,12 @@ public class SearchEngineAdvertDTO {
         this.institutionId = institutionId;
     }
 
-    public final String getInstitutionTitle() {
-        return institutionTitle;
+    public final String getInstitutionName() {
+        return institutionName;
     }
 
-    public final void setInstitutionTitle(String institutionTitle) {
-        this.institutionTitle = institutionTitle;
+    public final void setInstitutionName(String institutionName) {
+        this.institutionName = institutionName;
     }
 
     public final String getInstitutionSummary() {
@@ -171,7 +172,7 @@ public class SearchEngineAdvertDTO {
     }
 
     public String getTitle() {
-        return Joiner.on(" ").skipNulls().join(projectTitle, programTitle, institutionTitle);
+        return Joiner.on(" ").skipNulls().join(projectName, programName, institutionName);
     }
 
     public String getDescription() throws UnsupportedEncodingException {

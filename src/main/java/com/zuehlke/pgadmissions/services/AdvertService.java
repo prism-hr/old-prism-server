@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByValueClass;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByPropertyName;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -43,10 +44,10 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertAttributes;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -235,19 +236,24 @@ public class AdvertService {
             advert.setCategories(categories);
         }
 
-        Class<?> valueClass = null;
-        Class<? extends AdvertAttribute<?>> categoryClass = null;
-        for (Object category : categoriesDTO.getCategories()) {
-            Class<?> newValueClass = category.getClass();
-            if (valueClass == null || !newValueClass.equals(valueClass)) {
-                valueClass = newValueClass;
-                clearAdvertAttributes(categories, valueClass);
-                categoryClass = getByValueClass(valueClass).getAttributeClass();
-            }
+        Map<String, List<?>> categoriesMap = categoriesDTO.getCategories();
+        for (String propertyName : categoriesMap.keySet()) {
+            List<?> dtoValues = categoriesMap.get(propertyName);
+            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
+            Class<? extends AdvertAttribute<?>> categoryClass = advertAttribute.getAttributeClass();
+            Class<?> valueClass = advertAttribute.getValueClass();
+            clearAdvertAttributes(categories, valueClass);
 
-            AdvertAttribute<?> entityCategory = createAdvertAttribute(advert, categoryClass, category);
-            entityService.getOrCreate(entityCategory);
-            categories.storeAttribute(entityCategory);
+            for (Object dtoValue : dtoValues) {
+                Class<?> newValueClass = dtoValue.getClass();
+                if (valueClass == null || !newValueClass.equals(valueClass)) {
+                    valueClass = newValueClass;
+                }
+
+                AdvertAttribute<?> entityCategory = createAdvertAttribute(advert, categoryClass, dtoValue);
+                entityService.getOrCreate(entityCategory);
+                categories.storeAttribute(entityCategory);
+            }
         }
     }
 
@@ -265,29 +271,30 @@ public class AdvertService {
             advert.setTargets(targets);
         }
 
-        Class<?> valueClass = null;
-        Class<? extends AdvertAttribute<?>> targetClass = null;
-        for (AdvertTargetDTO target : targetsDTO.getTargets()) {
-            Class<?> newValueClass = target.getClass();
-            if (valueClass == null || !newValueClass.equals(valueClass)) {
-                valueClass = newValueClass;
-                clearAdvertAttributes(targets, valueClass);
-                targetClass = getByValueClass(valueClass).getAttributeClass();
-            }
+        Map<String, List<? extends AdvertTargetDTO>> targetsMap = targetsDTO.getTargets();
+        for (String propertyName : targetsMap.keySet()) {
+            List<? extends AdvertTargetDTO> dtoValues = targetsMap.get(propertyName);
+            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
+            Class<? extends AdvertAttribute<?>> targetClass = advertAttribute.getAttributeClass();
+            Class<?> valueClass = advertAttribute.getValueClass();
 
-            TargetEntity value;
-            Integer valueId = target.getValue();
-            if (valueId == null && target.getClass().equals(AdvertCompetenceDTO.class)) {
-                AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) target;
-                value = getOrCreateCompetence(competenceDTO);
-            } else if (valueId != null) {
-                value = (TargetEntity) entityService.getById(valueClass, target.getValue());
-            } else {
-                throw new Error();
-            }
+            clearAdvertAttributes(targets, valueClass);
+            for (AdvertTargetDTO dtoValue : dtoValues) {
+                TargetEntity value;
+                Integer valueId = dtoValue.getId();
+                if (valueId == null && dtoValue.getClass().equals(AdvertCompetenceDTO.class)) {
+                    AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) dtoValue;
+                    value = getOrCreateCompetence(competenceDTO);
+                } else if (valueId != null) {
+                    value = (TargetEntity) entityService.getById(valueClass, dtoValue.getId());
+                } else {
+                    throw new Error();
+                }
 
-            AdvertTarget<?> entityTarget = createAdvertTarget(advert, targetClass, value, target.getImportance());
-            targets.storeAttribute(entityTarget);
+                AdvertAttribute<?> entityTarget = createAdvertAttribute(advert, targetClass, value);
+                entityService.getOrCreate(entityTarget);
+                targets.storeAttribute(entityTarget);
+            }
         }
     }
 
@@ -415,16 +422,16 @@ public class AdvertService {
         }
         return themes;
     }
-    
-    public Set<String> getPossibleAdvertThemes(Advert advert, Set<String> themes) {
+
+    public Set<String> getAvailableAdvertThemes(Advert advert, Set<String> themes) {
         themes = themes == null ? Sets.newTreeSet() : themes;
         themes.addAll(getAdvertThemes(advert));
-        
+
         Resource parentResource = advert.getResource().getParentResource();
         if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
-            getPossibleAdvertThemes(parentResource.getAdvert(), themes);
+            getAvailableAdvertThemes(parentResource.getAdvert(), themes);
         }
-        
+
         return themes;
     }
 
@@ -671,7 +678,7 @@ public class AdvertService {
         } else {
             updateAddress(addressDTO, address);
         }
-        geocodableLocationService.setLocation(addressDTO.getGoogleId(), advert.getTitle(), address);
+        geocodableLocationService.setLocation(addressDTO.getGoogleId(), advert.getName(), address);
     }
 
     private void updateAddress(AddressAdvertDTO addressDTO, AddressAdvert address) {
@@ -702,12 +709,6 @@ public class AdvertService {
         return address;
     }
 
-    private AdvertTarget<?> createAdvertTarget(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object value, BigDecimal importance) {
-        AdvertTarget<?> entityTarget = (AdvertTarget<?>) createAdvertAttribute(advert, attributeClass, value);
-        entityTarget.setImportance(importance);
-        return entityTarget;
-    }
-
     private AdvertAttribute<?> createAdvertAttribute(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object value) {
         AdvertAttribute<?> entityAttribute = BeanUtils.instantiate(attributeClass);
         entityAttribute.setAdvert(advert);
@@ -723,7 +724,7 @@ public class AdvertService {
     }
 
     private Competence getOrCreateCompetence(AdvertCompetenceDTO competenceDTO) {
-        Competence transientCompetence = new Competence().withTitle(competenceDTO.getTitle()).withDescription(competenceDTO.getDescription());
+        Competence transientCompetence = new Competence().withName(competenceDTO.getName()).withDescription(competenceDTO.getDescription());
         Competence persistentCompetence = entityService.getDuplicateEntity(transientCompetence);
         if (persistentCompetence == null) {
             entityService.save(transientCompetence);

@@ -23,10 +23,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 
 public class PrismDepartmentWorkflow {
 
-    public static PrismStateAction departmentEmailCreator() {
-        return new PrismStateAction() //
-                .withAction(DEPARTMENT_EMAIL_CREATOR) //
-                .withAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP) //
+    public static PrismStateAction departmentEmailCreatorUnnapproved() {
+        return departmentEmailCreatorAbstract();
+    }
+
+    public static PrismStateAction departmentEmailCreatorApproved() {
+        return departmentEmailCreatorAbstract() //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
@@ -39,34 +41,34 @@ public class PrismDepartmentWorkflow {
     }
 
     public static PrismStateAction departmentTerminateUnapproved() {
-        return programTerminateAbstract()
+        return departmentTerminateAbstract()
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_REJECTED) //
                         .withTransitionAction(DEPARTMENT_TERMINATE));
     }
 
     public static PrismStateAction departmentTerminateApproved() {
-        return programTerminateAbstract()
+        return departmentTerminateAbstract()
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_DISABLED_COMPLETED) //
                         .withTransitionAction(DEPARTMENT_TERMINATE));
     }
 
     public static PrismStateAction departmentViewEditUnapproved() {
-        return programViewEditAbstract() //
+        return departmentViewEditAbstract() //
                 .withActionEnhancement(DEPARTMENT_VIEW_AS_USER) //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentViewEditApproved() {
-        return programViewEditAbstract() //
+        return departmentViewEditAbstract() //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }
 
-    public static PrismStateAction programWithdraw() {
+    public static PrismStateAction departmentWithdraw() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_WITHDRAW) //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR) //
@@ -75,13 +77,19 @@ public class PrismDepartmentWorkflow {
                         .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST));
     }
 
-    private static PrismStateAction programTerminateAbstract() {
+    private static PrismStateAction departmentEmailCreatorAbstract() {
+        return new PrismStateAction() //
+                .withAction(DEPARTMENT_EMAIL_CREATOR) //
+                .withAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP);
+    }
+
+    private static PrismStateAction departmentTerminateAbstract() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_TERMINATE) //
                 .withNotifications(DEPARTMENT_ADMINISTRATOR_GROUP, SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION);
     }
 
-    private static PrismStateAction programViewEditAbstract() {
+    private static PrismStateAction departmentViewEditAbstract() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_VIEW_EDIT);
     }

@@ -238,7 +238,7 @@ public class ResourceDAO {
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ilike("code", searchTerm, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE))) //
+                        .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
 

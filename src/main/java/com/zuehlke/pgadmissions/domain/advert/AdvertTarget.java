@@ -4,6 +4,6 @@ public abstract class AdvertTarget<T> extends AdvertAttribute<T> {
 
     public abstract Integer getValueId();
 
-    public abstract String getTitle();
+    public abstract String getName();
 
 }

@@ -22,7 +22,7 @@ public class InstitutionMapper {
 
     public InstitutionRepresentationClient getInstitutionRepresentationClient(Institution institution) throws Exception {
         InstitutionRepresentationClient representation = getInstitutionRepresentation(institution, InstitutionRepresentationClient.class);
-        representation.setResourceSummary(resourceMapper.getResourceSummaryRepresentation(institution));
+        resourceMapper.appendResourceSummaryRepresentation(institution, representation);
         return representation;
     }
 

@@ -11,7 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.Prism
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
-public class PrismProjectApprovalInstitution extends PrismWorkflowState {
+public class PrismProjectApprovalParent extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {

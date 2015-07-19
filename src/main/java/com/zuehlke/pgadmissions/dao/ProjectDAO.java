@@ -52,15 +52,15 @@ public class ProjectDAO {
         return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "projectId") //
-                        .add(Projections.property("advert.title"), "projectTitle") //
+                        .add(Projections.property("advert.name"), "projectTitle") //
                         .add(Projections.property("advert.summary"), "projectSummary") //
                         .add(Projections.property("advert.description"), "projectDescription") //
                         .add(Projections.property("program.id"), "programId") //
-                        .add(Projections.property("programAdvert.title"), "programTitle") //
+                        .add(Projections.property("programAdvert.name"), "programTitle") //
                         .add(Projections.property("programAdvert.summary"), "programSummary") //
                         .add(Projections.property("programAdvert.description"), "programDescription") //
                         .add(Projections.property("institution.id"), "institutionId") //
-                        .add(Projections.property("institutionAdvert.title"), "institutionTitle") //
+                        .add(Projections.property("institutionAdvert.name"), "institutionTitle") //
                         .add(Projections.property("institutionAdvert.summary"), "institutionSummary") //
                         .add(Projections.property("institutionAdvert.homepage"), "institutionHomepage")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -79,7 +79,7 @@ public class ProjectDAO {
         return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
-                        .add(Projections.property("title"), "title")) //
+                        .add(Projections.property("name"), "name")) //
                 .add(Restrictions.eq("program.id", programId)) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(Restrictions.isNotEmpty("resourceConditions")) //
@@ -92,7 +92,7 @@ public class ProjectDAO {
         return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
-                        .add(Projections.property("title"), "title")) //
+                        .add(Projections.property("name"), "name")) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(Restrictions.isNotEmpty("resourceConditions")) //

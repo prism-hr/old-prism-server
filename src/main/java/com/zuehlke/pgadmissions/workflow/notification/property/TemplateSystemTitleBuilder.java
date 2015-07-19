@@ -9,7 +9,7 @@ public class TemplateSystemTitleBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getSystem().getTitle();
+        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getSystem().getName();
     }
     
 }

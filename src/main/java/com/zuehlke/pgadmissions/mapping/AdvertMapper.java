@@ -1,8 +1,30 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.*;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -16,20 +38,16 @@ import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.*;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 
 @Service
 @Transactional
@@ -74,7 +92,7 @@ public class AdvertMapper {
 
         representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
 
-        representation.setTitle(advert.getTitle());
+        representation.setName(advert.getName());
         return representation;
     }
 
@@ -187,15 +205,17 @@ public class AdvertMapper {
     }
 
     private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Collection<AdvertCompetence> competences) {
-        return competences.stream()
-                .map(competence -> new AdvertCompetenceRepresentation().withId(competence.getValueId()).withName(competence.getTitle())
-                        .withDescription(competence.getValue().getDescription()))
+        return competences
+                .stream()
+                .<AdvertCompetenceRepresentation> map(
+                        competence -> new AdvertCompetenceRepresentation().withId(competence.getValueId()).withName(competence.getName())
+                                .withDescription(competence.getValue().getDescription()))
                 .collect(Collectors.toList());
     }
 
     private <T extends AdvertTarget<?>> List<AdvertTargetRepresentation> getAdvertTargetRepresentations(Set<T> targets) {
         return targets.stream()
-                .map(target -> new AdvertTargetRepresentation().withId(target.getValueId()).withName(target.getTitle()))
+                .<AdvertTargetRepresentation> map(target -> new AdvertTargetRepresentation().withId(target.getValueId()).withName(target.getName()))
                 .collect(Collectors.toList());
     }
 

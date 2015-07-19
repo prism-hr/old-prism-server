@@ -35,7 +35,7 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
                 Advert advert = advertRecommendation.getAdvert();
                 ResourceParent resourceParent = advert.getResource();
 
-                String title = "<b>" + advert.getTitle() + "</b>";
+                String title = "<b>" + advert.getName() + "</b>";
                 String summary = advert.getSummary();
 
                 String applyHomepage = advert.getApplyHomepage();

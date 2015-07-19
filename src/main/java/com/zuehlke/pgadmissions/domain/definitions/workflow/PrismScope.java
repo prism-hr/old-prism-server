@@ -64,7 +64,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourceDTOClass(InstitutionDTO.class) //
             .withResourceShortCode("IN") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
-                    .withColumn("institution", "title") //
+                    .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id")) //
             .withActionExecutor(InstitutionExecutor.class) //
             .withResourceCreator(InstitutionCreator.class) //
@@ -76,18 +76,18 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourceDTOClass(ResourceParentDivisionDTO.class)
             .withResourceShortCode("DT") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
-                    .withColumn("institution", "title") //
+                    .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("department", "title"))), // T
+                    .withColumn("department", "name"))), // T
     PROGRAM(new PrismScopeDefinition() //
             .withResourceClass(Program.class) //
             .withResourceDTOClass(ResourceOpportunityDTO.class) //
             .withResourceShortCode("PM") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
-                    .withColumn("institution", "title") //
+                    .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("department", "title") //
-                    .withColumn("program", "title")) //
+                    .withColumn("department", "name") //
+                    .withColumn("program", "name")) //
             .withActionExecutor(ProgramExecutor.class) //
             .withResourceCreator(ProgramCreator.class) //
             .withResourcePersister(ProgramPersister.class) //
@@ -99,11 +99,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourceDTOClass(ProjectDTO.class) //
             .withResourceShortCode("PT") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
-                    .withColumn("institution", "title") //
+                    .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("department", "title") //
-                    .withColumn("program", "title") //
-                    .withColumn("project", "title")) //
+                    .withColumn("department", "name") //
+                    .withColumn("program", "name") //
+                    .withColumn("project", "name")) //
             .withActionExecutor(ProjectExecutor.class) //
             .withResourceCreator(ProjectCreator.class) //
             .withResourcePersister(ProjectPersister.class) //
@@ -115,11 +115,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourceDTOClass(ApplicationDTO.class) //
             .withResourceShortCode("AN") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
-                    .withColumn("institution", "title") //
+                    .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("department", "title") //
-                    .withColumn("program", "title") //
-                    .withColumn("project", "title")) //
+                    .withColumn("department", "name") //
+                    .withColumn("program", "name") //
+                    .withColumn("project", "name")) //
             .withActionExecutor(ApplicationExecutor.class) //
             .withResourceCreator(ApplicationCreator.class) //
             .withResourcePersister(ApplicationPersister.class) //

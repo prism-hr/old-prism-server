@@ -695,21 +695,21 @@ public class ApplicationDownloadBuilder {
 
     private void addApplicationSummary(ApplicationRepresentationExport application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize)
             throws Exception {
-        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_INSTITUTION), application.getInstitution().getTitle(), fontSize, table);
+        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_INSTITUTION), application.getInstitution().getName(), fontSize, table);
 
         ResourceRepresentationSimple department = application.getDepartment();
         if (department != null) {
-            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_DEPARTMENT), department.getTitle(), fontSize, table);
+            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_DEPARTMENT), department.getName(), fontSize, table);
         }
 
         ResourceRepresentationSimple program = application.getProgram();
         if (program != null) {
-            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROGRAM), program.getTitle(), fontSize, table);
+            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROGRAM), program.getName(), fontSize, table);
         }
 
         ResourceRepresentationSimple project = application.getProject();
         if (project != null) {
-            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROJECT), project.getTitle(), fontSize, table);
+            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROJECT), project.getName(), fontSize, table);
         }
 
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(APPLICATION_PREVIOUS_APPLICATION),

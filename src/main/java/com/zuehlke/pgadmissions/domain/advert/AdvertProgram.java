@@ -56,7 +56,7 @@ public class AdvertProgram extends AdvertTarget<ImportedProgram> {
     }
 
     @Override
-    public String getTitle() {
+    public String getName() {
         return value.getName();
     }
 

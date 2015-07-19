@@ -27,8 +27,8 @@ public class AdvertTargetRepresentation {
         return this;
     }
 
-    public AdvertTargetRepresentation withName(String title) {
-        this.name = title;
+    public AdvertTargetRepresentation withName(String name) {
+        this.name = name;
         return this;
     }
 

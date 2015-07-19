@@ -67,7 +67,7 @@ public class InstitutionService {
         advertService.updateAdvert(institution.getParentResource(), advert, advertDTO);
         institution.setGoogleId(advert.getAddress().getGoogleId());
 
-        institution.setTitle(advert.getTitle());
+        institution.setName(advert.getName());
 
         String oldCurrency = institution.getCurrency();
         String newCurrency = institutionDTO.getCurrency();
@@ -153,7 +153,7 @@ public class InstitutionService {
             ResourceChildCreationDTO institution = new ResourceChildCreationDTO()
                     .withResource(institutionProjectParent.getResource()).withPartnerMode(institutionProjectParent.getPartnerMode());
             index.put(institutionProjectParent.getResource().getId(), institution);
-            institutions.put(institutionProjectParent.getResource().getTitle(), institution);
+            institutions.put(institutionProjectParent.getResource().getName(), institution);
         }
 
         List<PrismState> programStates = stateService.getActiveProgramStates();
@@ -163,7 +163,7 @@ public class InstitutionService {
         for (ResourceChildCreationDTO institutionProgramProjectParent : institutionProgramProjectParents) {
             ResourceChildCreationDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
             if (institution == null) {
-                institutions.put(institutionProgramProjectParent.getResource().getTitle(),
+                institutions.put(institutionProgramProjectParent.getResource().getName(),
                         new ResourceChildCreationDTO().withResource(institutionProgramProjectParent.getResource()));
             }
         }

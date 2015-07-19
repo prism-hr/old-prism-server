@@ -64,7 +64,7 @@ public class ProgramDAO {
         return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id")) //
-                        .add(Projections.property("title"))) //
+                        .add(Projections.property("name"))) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.eq("resourceState.state.id", PROGRAM_APPROVED)) //
@@ -76,12 +76,12 @@ public class ProgramDAO {
         return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
-                        .add(Projections.property("title"), "title")) //
+                        .add(Projections.property("name"), "name")) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.not( //
                         Restrictions.in("state.id", Arrays.asList(PROGRAM_REJECTED, PROGRAM_WITHDRAWN, PROGRAM_DISABLED_COMPLETED)))) //
-                .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE)) //
-                .addOrder(Order.desc("title")) //
+                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
+                .addOrder(Order.desc("name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
                 .list();
     }
@@ -136,11 +136,11 @@ public class ProgramDAO {
         return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "programId") //
-                        .add(Projections.property("advert.title"), "programTitle") //
+                        .add(Projections.property("advert.name"), "programName") //
                         .add(Projections.property("advert.summary"), "programSummary") //
                         .add(Projections.property("advert.description"), "programDescription") //
                         .add(Projections.property("institution.id"), "institutionId") //
-                        .add(Projections.property("institutionAdvert.title"), "institutionTitle") //
+                        .add(Projections.property("institutionAdvert.name"), "institutionName") //
                         .add(Projections.property("institutionAdvert.summary"), "institutionSummary") //
                         .add(Projections.property("institutionAdvert.homepage"), "institutionHomepage")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -157,7 +157,7 @@ public class ProgramDAO {
         return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
-                        .add(Projections.property("title"), "title")) //
+                        .add(Projections.property("name"), "name")) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(Restrictions.isNotEmpty("resourceConditions")) //
@@ -180,8 +180,7 @@ public class ProgramDAO {
                 .list();
     }
 
-    public List<ResourceChildCreationDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId, List<PrismState> states,
-            boolean userLoggedIn) {
+    public List<ResourceChildCreationDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId, List<PrismState> states, boolean userLoggedIn) {
         return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("program"), "resource") //
@@ -195,7 +194,7 @@ public class ProgramDAO {
                 .add(Restrictions.in("state.id", states)) //
                 .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROJECT))
-                .addOrder(Order.asc("program.title")) //
+                .addOrder(Order.asc("program.name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }

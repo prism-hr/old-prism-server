@@ -18,7 +18,7 @@ public class ResourceParentSocialRepresentationBuilder implements SocialRepresen
     @Override
     public SocialMetadataDTO build(Advert advert) throws Exception {
         Resource parentResource = advert.getResource();
-        return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getTitle()).withDescription(advert.getSummary())
+        return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getName()).withDescription(advert.getSummary())
                 .withThumbnailUrl(resourceService.getSocialThumbnailUrl(parentResource)).withResourceUrl(resourceService.getSocialResourceUrl(parentResource));
     }
 

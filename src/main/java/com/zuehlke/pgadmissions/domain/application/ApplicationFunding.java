@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
-@Table(name = "APPLICATION_FUNDING")
+@Table(name = "application_funding")
 public class ApplicationFunding extends ApplicationSection {
 
     @Id

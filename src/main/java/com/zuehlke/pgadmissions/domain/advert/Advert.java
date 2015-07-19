@@ -22,8 +22,8 @@ public class Advert extends ResourceOpportunityAttribute {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "summary")
     private String summary;
@@ -124,12 +124,12 @@ public class Advert extends ResourceOpportunityAttribute {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSummary() {
@@ -289,8 +289,8 @@ public class Advert extends ResourceOpportunityAttribute {
         return resource == null ? false : resource.getImportedCode() != null;
     }
 
-    public Advert withTitle(String title) {
-        this.title = title;
+    public Advert withName(String name) {
+        this.name = name;
         return this;
     }
 

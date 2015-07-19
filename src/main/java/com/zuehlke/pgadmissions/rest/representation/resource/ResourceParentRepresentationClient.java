@@ -1,17 +1,31 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.util.List;
+
 public class ResourceParentRepresentationClient extends ResourceParentRepresentation implements ResourceRepresentationClient {
 
-    private ResourceSummaryRepresentation resourceSummary;
+    private List<ResourceCountRepresentation> counts;
+
+    private ResourceSummaryPlotRepresentation plot;
 
     @Override
-    public ResourceSummaryRepresentation getResourceSummary() {
-        return resourceSummary;
+    public List<ResourceCountRepresentation> getCounts() {
+        return counts;
     }
 
     @Override
-    public void setResourceSummary(ResourceSummaryRepresentation resourceProcessing) {
-        this.resourceSummary = resourceProcessing;
+    public void setCounts(List<ResourceCountRepresentation> counts) {
+        this.counts = counts;
+    }
+
+    @Override
+    public ResourceSummaryPlotRepresentation getPlot() {
+        return plot;
+    }
+
+    @Override
+    public void setPlot(ResourceSummaryPlotRepresentation plot) {
+        this.plot = plot;
     }
 
 }

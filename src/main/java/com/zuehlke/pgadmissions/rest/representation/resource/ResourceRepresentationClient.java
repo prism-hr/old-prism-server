@@ -1,9 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.util.List;
+
 public interface ResourceRepresentationClient {
 
-    public ResourceSummaryRepresentation getResourceSummary();
+    public List<ResourceCountRepresentation> getCounts();
 
-    public void setResourceSummary(ResourceSummaryRepresentation resourceSummary);
+    public void setCounts(List<ResourceCountRepresentation> counts);
+
+    public ResourceSummaryPlotRepresentation getPlot();
+
+    public void setPlot(ResourceSummaryPlotRepresentation plot);
 
 }

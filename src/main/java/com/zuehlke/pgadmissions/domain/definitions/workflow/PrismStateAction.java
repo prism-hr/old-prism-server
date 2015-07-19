@@ -13,8 +13,10 @@ public class PrismStateAction {
     private Boolean raisesUrgentFlag = false;
 
     private PrismActionCondition actionCondition;
-    
+
     private PrismActionResolution actionResolution;
+
+    private PrismAction actionOther;
 
     private PrismActionEnhancement actionEnhancement;
 
@@ -42,6 +44,10 @@ public class PrismStateAction {
         return actionResolution;
     }
 
+    public PrismAction getActionOther() {
+        return actionOther;
+    }
+
     public PrismActionEnhancement getActionEnhancement() {
         return actionEnhancement;
     }
@@ -67,18 +73,25 @@ public class PrismStateAction {
         return this;
     }
 
+    public PrismStateAction withActionResolution(PrismAction action, PrismActionResolution actionResolution, PrismAction actionOther) {
+        this.action = action;
+        this.actionResolution = actionResolution;
+        this.actionOther = actionOther;
+        return this;
+    }
+
     public PrismStateAction withRaisesUrgentFlag() {
         this.raisesUrgentFlag = true;
         return this;
     }
 
-    public PrismStateAction withCondition(PrismActionCondition actionCondition) {
+    public PrismStateAction withActionCondition(PrismActionCondition actionCondition) {
         this.actionCondition = actionCondition;
         return this;
     }
-    
-    public PrismStateAction withResolution(PrismActionResolution actionResolution) {
-        this.actionResolution = actionResolution;
+
+    public PrismStateAction withActionOther(PrismAction actionOther) {
+        this.actionOther = actionOther;
         return this;
     }
 
@@ -127,12 +140,12 @@ public class PrismStateAction {
         withPartnerAssignments(roles.getRoles());
         return this;
     }
-    
+
     public PrismStateAction withPartnerAssignments(PrismRole role, PrismActionEnhancement actionEnhancement) {
         this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode().withActionEnhancement(actionEnhancement));
         return this;
     }
-    
+
     public PrismStateAction withPartnerAssignments(PrismRoleGroup roles, PrismActionEnhancement actionEnhancement) {
         for (PrismRole role : roles.getRoles()) {
             this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode().withActionEnhancement(actionEnhancement));

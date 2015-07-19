@@ -9,7 +9,7 @@ public class ProjectTitleBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getProject().getTitle();
+        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getProject().getName();
     }
 
 }

@@ -218,7 +218,7 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType) throws Exception {
+    public <T extends Resource, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType) {
         DateTime baseline = new DateTime();
         User currentUser = userService.getCurrentUser();
 
@@ -261,8 +261,7 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType)
-            throws Exception {
+    public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationExtended(resource, returnType);
 
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));

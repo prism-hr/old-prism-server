@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 public class AdvertTargetsDTO {
 

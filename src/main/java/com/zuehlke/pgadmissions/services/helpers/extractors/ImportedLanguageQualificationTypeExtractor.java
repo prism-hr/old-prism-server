@@ -1,13 +1,18 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import org.springframework.stereotype.Component;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedLanguageQualificationTypeRequest;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
+import org.springframework.stereotype.Component;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedLanguageQualificationTypeRequest;
+
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 @Component
 public class ImportedLanguageQualificationTypeExtractor implements ImportedEntityExtractor<ImportedLanguageQualificationTypeRequest> {

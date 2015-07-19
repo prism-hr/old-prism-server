@@ -115,7 +115,6 @@ public class CustomizationController {
     public List<WorkflowConfigurationRepresentation> getConfigurationsWithVersion(
             @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam Integer version) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         return customizationService.getConfigurationRepresentationsWithVersion(configurationType, version);
     }
 

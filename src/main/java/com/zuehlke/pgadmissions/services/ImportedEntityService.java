@@ -1,10 +1,33 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
@@ -15,21 +38,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
 
 @Service
 @Transactional
@@ -229,7 +237,6 @@ public class ImportedEntityService {
         return importedEntityDAO.getMostUsedDomicile(institution);
     }
 
-
     public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
         return importedEntityDAO.getAgeRange(institution, age);
     }
@@ -368,32 +375,37 @@ public class ImportedEntityService {
         importedProgram.getMappings().add(importedProgramMapping);
     }
 
-// TODO generalize for API creation
-//    private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {
-//        Comment lastImportComment = commentService.getLatestComment(program, INSTITUTION_CREATE_PROGRAM, INSTITUTION_IMPORT_PROGRAM);
-//        PrismAction actionId = lastImportComment == null ? INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM;
-//
-//        User invoker = program.getUser();
-//        Role invokerRole = roleService.getCreatorRole(program);
-//
-//        State state = program.getState();
-//        State transitionState = null;
-//        if (state == null) {
-//            transitionState = stateService.getById(PROGRAM_APPROVED);
-//        } else {
-//            PrismState stateId = state.getId();
-//            if (stateId.equals(PROGRAM_APPROVED)) {
-//                transitionState = state;
-//            } else if (stateId.equals(PROGRAM_DISABLED_PENDING_REACTIVATION)) {
-//                actionId = PROGRAM_RESTORE;
-//            }
-//        }
-//
-//        Action action = actionService.getById(actionId);
-//        Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
-//                .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
-//        actionService.executeAction(program, action, comment);
-//    }
+    // TODO generalize for API creation
+    // private void executeProgramImportAction(Program program, DateTime
+    // baselineTime) throws Exception {
+    // Comment lastImportComment = commentService.getLatestComment(program,
+    // INSTITUTION_CREATE_PROGRAM, INSTITUTION_IMPORT_PROGRAM);
+    // PrismAction actionId = lastImportComment == null ?
+    // INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM;
+    //
+    // User invoker = program.getUser();
+    // Role invokerRole = roleService.getCreatorRole(program);
+    //
+    // State state = program.getState();
+    // State transitionState = null;
+    // if (state == null) {
+    // transitionState = stateService.getById(PROGRAM_APPROVED);
+    // } else {
+    // PrismState stateId = state.getId();
+    // if (stateId.equals(PROGRAM_APPROVED)) {
+    // transitionState = state;
+    // } else if (stateId.equals(PROGRAM_DISABLED_PENDING_REACTIVATION)) {
+    // actionId = PROGRAM_RESTORE;
+    // }
+    // }
+    //
+    // Action action = actionService.getById(actionId);
+    // Comment comment = new
+    // Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
+    // .withTransitionState(transitionState).addAssignedUser(invoker,
+    // invokerRole, PrismRoleTransitionType.CREATE);
+    // actionService.executeAction(program, action, comment);
+    // }
 
     private <V extends ImportedEntityMapping<?>> List<V> getFilteredImportedEntityMappings(List<V> mappings) {
         Map<ImportedEntity<?, ?>, V> filteredMappings = Maps.newHashMap();
@@ -407,7 +419,7 @@ public class ImportedEntityService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ImportedEntityRequest> void insertImportedEntities(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable)             {
+    private <T extends ImportedEntityRequest> void insertImportedEntities(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable) {
         ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
         List<String> rows = extractor.extract(prismImportedEntity, definitions, enable);
         importedEntityDAO.mergeImportedEntities(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),

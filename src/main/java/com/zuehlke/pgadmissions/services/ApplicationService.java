@@ -224,8 +224,7 @@ public class ApplicationService {
 
         // TODO move this shit into the adapter
         WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(
-                WORKFLOW_PROPERTY, application, application.getInstitution().getUser(), APPLICATION_ASSIGN_REFEREE,
-                application.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, application, APPLICATION_ASSIGN_REFEREE, application.getWorkflowPropertyConfigurationVersion());
 
         int referencesPending = configuration.getMinimum() - references.size();
         if (referencesPending > 0) {
@@ -322,7 +321,7 @@ public class ApplicationService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
+    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) {
         List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
         customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
                 application.getWorkflowPropertyConfigurationVersion());

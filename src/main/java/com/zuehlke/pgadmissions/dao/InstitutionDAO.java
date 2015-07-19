@@ -229,6 +229,7 @@ public class InstitutionDAO {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class)
                 .add(searchDisjunction)
                 .add(Restrictions.eq("state.id", INSTITUTION_APPROVED))
+                .setMaxResults(10)
                 .list();
     }
 

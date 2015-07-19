@@ -1541,6 +1541,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_TARGETS_HEADER(PROGRAM_ADVERT_TARGETS, "Targets"),
     PROGRAM_TARGETS_COMPETENCES_LABEL(PROGRAM_ADVERT_TARGETS, "Competences"),
     PROGRAM_TARGETS_COMPETENCES_HINT(PROGRAM_ADVERT_TARGETS, "Specify the competences that you are looking for in your applicants."),
+    PROGRAM_TARGETS_INSTITUTIONS_LABEL(PROGRAM_ADVERT_TARGETS, "Institutions"),
+    PROGRAM_TARGETS_INSTITUTIONS_HINT(PROGRAM_ADVERT_TARGETS, "???"),
+    PROGRAM_TARGETS_ORGANISATIONS_LABEL(PROGRAM_ADVERT_TARGETS, "Organisations"),
+    PROGRAM_TARGETS_ORGANISATIONS_HINT(PROGRAM_ADVERT_TARGETS, "???"),
     PROGRAM_TARGETS_SUBJECT_AREAS_LABEL(PROGRAM_ADVERT_TARGETS, "Subject Areas"),
     PROGRAM_TARGETS_SUBJECT_AREAS_HINT(PROGRAM_ADVERT_TARGETS, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
 

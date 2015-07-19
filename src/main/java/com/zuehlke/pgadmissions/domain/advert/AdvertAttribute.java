@@ -15,11 +15,6 @@ public abstract class AdvertAttribute <T> implements UniqueEntity {
     public abstract T getValue();
 
     public abstract void setValue(T value);
-    
-    @SuppressWarnings("unchecked")
-    public void forceSetValue(Object value) {
-        setValue((T) value);
-    }
 
     @Override
     public ResourceSignature getResourceSignature() {

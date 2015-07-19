@@ -2,14 +2,14 @@ package com.zuehlke.pgadmissions.rest.dto.advert;
 
 public class AdvertTargetDTO {
 
-    private Integer value;
+    private Integer id;
 
-    public Integer getValue() {
-        return value;
+    public Integer getId() {
+        return id;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 }

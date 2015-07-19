@@ -4,7 +4,7 @@ public class AdvertTargetRepresentation {
 
     private Integer id;
 
-    private String title;
+    private String name;
 
     public Integer getId() {
         return id;
@@ -14,12 +14,12 @@ public class AdvertTargetRepresentation {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public AdvertTargetRepresentation withId(Integer id) {
@@ -27,8 +27,8 @@ public class AdvertTargetRepresentation {
         return this;
     }
 
-    public AdvertTargetRepresentation withTitle(String title) {
-        this.title = title;
+    public AdvertTargetRepresentation withName(String title) {
+        this.name = title;
         return this;
     }
 

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.advert;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "advert_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "institution_id" }) })
@@ -49,6 +48,11 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
     @Override
     public void setValue(Institution institution) {
         this.value = institution;
+    }
+
+    @Override
+    public Integer getValueId() {
+        return value.getId();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -111,7 +112,7 @@ public class AdvertService {
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             if (resource.getInstitution() != null) {
-                queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
+                queryDTO.setInstitutions(new Integer[]{resource.getInstitution().getId()});
             }
         }
 
@@ -220,13 +221,15 @@ public class AdvertService {
         Map<String, List<?>> categoriesMap = categoriesDTO.getCategories();
         for (String propertyName : categoriesMap.keySet()) {
             List<?> dtoValues = categoriesMap.get(propertyName);
-            Class<? extends AdvertAttribute<?>> categoryClass = getByPropertyName(propertyName).getAttributeClass();
-            Class<?> valueClass = null;
-            for(Object dtoValue : dtoValues) {
+            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
+            Class<? extends AdvertAttribute<?>> categoryClass = advertAttribute.getAttributeClass();
+            Class<?> valueClass = advertAttribute.getValueClass();
+            clearAdvertAttributes(categories, valueClass);
+
+            for (Object dtoValue : dtoValues) {
                 Class<?> newValueClass = dtoValue.getClass();
                 if (valueClass == null || !newValueClass.equals(valueClass)) {
                     valueClass = newValueClass;
-                    clearAdvertAttributes(categories, valueClass);
                 }
 
                 AdvertAttribute<?> entityCategory = createAdvertAttribute(advert, categoryClass, dtoValue);
@@ -253,23 +256,19 @@ public class AdvertService {
         Map<String, List<? extends AdvertTargetDTO>> targetsMap = targetsDTO.getTargets();
         for (String propertyName : targetsMap.keySet()) {
             List<? extends AdvertTargetDTO> dtoValues = targetsMap.get(propertyName);
-            Class<? extends AdvertAttribute<?>> targetClass = getByPropertyName(propertyName).getAttributeClass();
-            Class<?> valueClass = null;
+            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
+            Class<? extends AdvertAttribute<?>> targetClass = advertAttribute.getAttributeClass();
+            Class<?> valueClass = advertAttribute.getValueClass();
 
-            for(AdvertTargetDTO dtoValue : dtoValues) {
-                Class<?> newValueClass = dtoValue.getClass();
-                if (valueClass == null || !newValueClass.equals(valueClass)) {
-                    valueClass = newValueClass;
-                    clearAdvertAttributes(targets, valueClass);
-                }
-
+            clearAdvertAttributes(targets, valueClass);
+            for (AdvertTargetDTO dtoValue : dtoValues) {
                 TargetEntity value;
-                Integer valueId = dtoValue.getValue();
+                Integer valueId = dtoValue.getId();
                 if (valueId == null && dtoValue.getClass().equals(AdvertCompetenceDTO.class)) {
                     AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) dtoValue;
                     value = getOrCreateCompetence(competenceDTO);
                 } else if (valueId != null) {
-                    value = (TargetEntity) entityService.getById(valueClass, dtoValue.getValue());
+                    value = (TargetEntity) entityService.getById(valueClass, dtoValue.getId());
                 } else {
                     throw new Error();
                 }
@@ -433,7 +432,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
+                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
         try {
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -445,7 +444,7 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -564,7 +563,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
-            LocalDate baseline) {
+                                        LocalDate baseline) {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 
@@ -699,7 +698,7 @@ public class AdvertService {
     }
 
     private Competence getOrCreateCompetence(AdvertCompetenceDTO competenceDTO) {
-        Competence transientCompetence = new Competence().withTitle(competenceDTO.getTitle()).withDescription(competenceDTO.getDescription());
+        Competence transientCompetence = new Competence().withTitle(competenceDTO.getName()).withDescription(competenceDTO.getDescription());
         Competence persistentCompetence = entityService.getDuplicateEntity(transientCompetence);
         if (persistentCompetence == null) {
             entityService.save(transientCompetence);

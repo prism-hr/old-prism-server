@@ -232,7 +232,7 @@ public class StaticDataService {
     public Map<String, Object> getAdvertCompetences() {
         List<Competence> competences = entityService.list(Competence.class);
         List<AdvertCompetenceRepresentation> competenceRepresentations = competences.stream()
-                .map(competence -> new AdvertCompetenceRepresentation().withId(competence.getId()).withTitle(competence.getTitle()).withDescription(competence.getDescription()))
+                .map(competence -> new AdvertCompetenceRepresentation().withId(competence.getId()).withName(competence.getName()).withDescription(competence.getDescription()))
                 .collect(Collectors.toList());
         return Collections.singletonMap("competences", competenceRepresentations);
     }

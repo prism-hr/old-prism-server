@@ -1,21 +1,19 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
+import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -25,7 +23,9 @@ import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -47,33 +47,14 @@ public class InstitutionController {
     @Inject
     private ResourceMapper resourceMapper;
 
+    @Inject
+    private InstitutionMapper institutionMapper;
+
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    public List<ResourceRepresentationSimple> getInstitutions() {
-        List<Institution> institutions;
-        institutions = institutionService.list();
-        List<ResourceRepresentationSimple> representations = Lists.newArrayListWithCapacity(institutions.size());
-        for (Institution institution : institutions) {
-            AddressAdvert address = institution.getAdvert().getAddress();
-            String name = Joiner.on(" - ").skipNulls().join(institution.getTitle(), address.getAddressTown(), address.getAddressCode());
-            ResourceRepresentationSimple representation = new ResourceRepresentationSimple().withId(institution.getId()).withTitle(name);
-
-            Document logoImage = institution.getLogoImage();
-            if (logoImage != null) {
-                representation.setLogoImage(new DocumentRepresentation().withId(logoImage.getId()));
-            }
-
-            representations.add(representation);
-        }
-        return representations;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, params = "query")
-    public List<ResourceRepresentationSimple> getInstitutions(@RequestParam String query, @RequestParam(required = false) String[] googleIds) {
-        List<ResourceRepresentationSimple> representations = Lists.newLinkedList();
-        for (Institution institution : institutionService.getInstitutions(query, googleIds)) {
-            representations.add(resourceMapper.getResourceRepresentationSimple(institution));
-        }
-        return representations;
+    public List<InstitutionRepresentationSimple> getInstitutions(@RequestParam(required = false) String query, @RequestParam(required = false) String[] googleIds) {
+        return institutionService.getInstitutions(query, googleIds).stream()
+                .map(institutionMapper::getInstitutionRepresentationSimple)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "accepting")
@@ -103,7 +84,7 @@ public class InstitutionController {
     }
 
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)
-    public List<ResourceRepresentationSimple> getPrograms(@PathVariable Integer institutionId) throws Exception {
+    public List<ResourceRepresentationSimple> getPrograms(@PathVariable Integer institutionId) {
         return programService.getApprovedPrograms(institutionId);
     }
 
@@ -114,7 +95,7 @@ public class InstitutionController {
 
     @RequestMapping(value = "/{institutionId}/importedData/{type}", method = RequestMethod.POST)
     public <T extends ImportedEntityRequest> void importData(@PathVariable Integer institutionId, @PathVariable PrismImportedEntity type,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws IOException {
         List<T> representations = importedEntityMapper.getImportedEntityRepresentations(type, request.getInputStream());
         importedEntityService.mergeImportedEntities(institutionService.getById(institutionId), type, representations);
     }

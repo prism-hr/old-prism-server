@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
@@ -17,31 +7,26 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDef
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
-import com.zuehlke.pgadmissions.rest.representation.configuration.ActionCustomQuestionConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.StateDurationConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.*;
 import com.zuehlke.pgadmissions.rest.representation.workflow.NotificationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateDurationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDefinitionRepresentation;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 
 @Service
 @Transactional
@@ -81,7 +66,7 @@ public class CustomizationMapper {
 
     @SuppressWarnings("unchecked")
     public <T extends WorkflowConfiguration<?>, U extends WorkflowConfigurationRepresentation> U getWorkflowConfigurationRepresentation(T configuration) {
-        Class<T> configurationClass = (Class<T>) configuration.getClass();
+        Class<T> configurationClass = (Class) configuration.getClass();
 
         if (ActionCustomQuestionConfiguration.class.equals(configurationClass)) {
             return (U) getActionCustomQuestionConfigurationRepresentation((ActionCustomQuestionConfiguration) configuration);

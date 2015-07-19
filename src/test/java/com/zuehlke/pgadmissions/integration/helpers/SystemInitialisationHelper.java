@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -16,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -207,7 +208,7 @@ public class SystemInitialisationHelper {
             DisplayPropertyDefinition displayProperty = value.getDefinition();
             PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
-            assertEquals(value.getOpportunityType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
+            assertEquals(value.getOpportunityType(), displayProperty.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
             assertEquals(displayProperty.getCategory(), prismDisplayProperty.getCategory());
             assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
             assertTrue(value.getSystemDefault());
@@ -225,10 +226,9 @@ public class SystemInitialisationHelper {
             assertEquals(prismNotificationDefinition.getReminderDefinition(), (definition.getReminderDefinition()) == null ? null : definition
                     .getReminderDefinition().getId());
 
-            NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION,
-                    system, definition);
+            NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, system, definition);
 
-            assertEquals(configuration.getOpportunityType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
+            assertEquals(configuration.getOpportunityType(), definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
             assertEquals(configuration.getDefinition(), definition);
             assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
@@ -243,13 +243,13 @@ public class SystemInitialisationHelper {
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDurationConfiguration stateDurationConfiguration = (StateDurationConfiguration) customizationService.getConfiguration(
-                    PrismConfiguration.STATE_DURATION, system, state.getStateDurationDefinition());
+            StateDurationConfiguration configuration = (StateDurationConfiguration) customizationService.getConfiguration(STATE_DURATION, system,
+                    state.getStateDurationDefinition());
 
-            assertEquals(stateDurationConfiguration.getOpportunityType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType()
+            assertEquals(configuration.getOpportunityType(), state.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType()
                     : null);
-            assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), stateDurationConfiguration.getDuration());
-            assertTrue(stateDurationConfiguration.getSystemDefault());
+            assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), configuration.getDuration());
+            assertTrue(configuration.getSystemDefault());
         }
     }
 

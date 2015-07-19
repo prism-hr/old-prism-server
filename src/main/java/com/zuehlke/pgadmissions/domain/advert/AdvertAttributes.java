@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-public abstract class AdvertAttributes {
+public interface AdvertAttributes {
 
-    public abstract void clearAttributes(Object value);
-    
-    public abstract void storeAttribute(AdvertAttribute<?> value);
+    void storeAttribute(AdvertAttribute<?> value);
 
 }

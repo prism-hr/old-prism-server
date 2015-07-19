@@ -10,8 +10,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 
 public abstract class ResourceParent extends Resource implements ResourceParentDefinition<Advert> {
 
-    public abstract void setTitle(String title);
-
     public abstract DateTime getUpdatedTimestampSitemap();
 
     public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);
@@ -34,7 +32,7 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("title", getTitle());
+        return new ResourceSignature().addProperty("name", getName());
     }
 
 }

@@ -34,7 +34,7 @@ public class ProjectCreator implements ResourceCreator<ProjectDTO> {
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(parentResource, advertDTO);
 
-        Project project = new Project().withUser(user).withParentResource(parentResource).withAdvert(advert).withTitle(advert.getTitle())
+        Project project = new Project().withUser(user).withParentResource(parentResource).withAdvert(advert).withName(advert.getName())
                 .withDurationMinimum(newResource.getDurationMinimum()).withDurationMaximum(newResource.getDurationMaximum())
                 .withRequirePositionDefinition(BooleanUtils.toBoolean(newResource.getRequirePositionDefinition()));
 

@@ -54,7 +54,7 @@ public class InstitutionDAO {
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("advert.domicile", domicile)) //
                 .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
-                .addOrder(Order.asc("title")) //
+                .addOrder(Order.asc("name")) //
                 .list();
     }
 
@@ -140,7 +140,7 @@ public class InstitutionDAO {
         return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id"), "institutionId") //
-                        .add(Projections.property("advert.title"), "institutionTitle") //
+                        .add(Projections.property("advert.name"), "institutionName") //
                         .add(Projections.property("advert.summary"), "institutionSummary") //
                         .add(Projections.property("advert.homepage"), "institutionHomepage")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -171,7 +171,7 @@ public class InstitutionDAO {
         return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id"), "id") //
-                        .add(Projections.property("title"), "title")) //
+                        .add(Projections.property("name"), "name")) //
                 .createAlias("programs", "program", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.in("program.state.id", programStates)) //
@@ -224,7 +224,7 @@ public class InstitutionDAO {
     }
 
     public List<Institution> getInstitutions(String searchTerm, String[] googleIds) {
-        Criterion searchCriterion = Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE);
+        Criterion searchCriterion = Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE);
         if (googleIds != null && googleIds.length > 0) {
             searchCriterion = Restrictions.disjunction()
                     .add(searchCriterion)
@@ -250,7 +250,7 @@ public class InstitutionDAO {
                 .add(Restrictions.in("state.id", states)) //
                 .add(getResourceConditionConstraint(ACCEPT_PROGRAM, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROGRAM)) //
-                .addOrder(Order.asc("institution.title")) //
+                .addOrder(Order.asc("institution.name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }
@@ -268,7 +268,7 @@ public class InstitutionDAO {
                 .add(Restrictions.in("state.id", states)) //
                 .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROJECT)) //
-                .addOrder(Order.asc("institution.title")) //
+                .addOrder(Order.asc("institution.name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }
@@ -288,7 +288,7 @@ public class InstitutionDAO {
                 .add(Restrictions.in("state.id", states)) //
                 .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
                 .add(Restrictions.eq("action.creationScope.id", PROJECT)) //
-                .addOrder(Order.asc("institution.title")) //
+                .addOrder(Order.asc("institution.name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }

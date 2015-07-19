@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 
@@ -28,7 +28,7 @@ public class ProgramStartedResolver implements StateTransitionResolver {
     @Override
     public StateTransition resolve(Resource resource, Comment comment) {
         User user = resource.getUser();
-        if (roleService.hasUserRole(resource, user, INSTITUTION_ADMINISTRATOR_GROUP)) {
+        if (roleService.hasUserRole(resource, user, DEPARTMENT_ADMINISTRATOR_GROUP)) {
             return stateService.getStateTransition(resource, comment.getAction(), PROGRAM_APPROVED);
         }
         return stateService.getStateTransition(resource, comment.getAction(), PROGRAM_APPROVAL);

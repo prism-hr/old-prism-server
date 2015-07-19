@@ -26,8 +26,6 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     private BigDecimal applicationRatingAverage;
 
-    private StateRepresentationSimple state;
-
     private StateRepresentationSimple previousState;
 
     private List<StateRepresentationSimple> secondaryStates;
@@ -35,7 +33,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private DateTime createdTimestamp;
 
     private DateTime updatedTimestamp;
-    
+
     private String sequenceIdentifier;
 
     public UserRepresentationSimple getUser() {
@@ -102,14 +100,6 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public StateRepresentationSimple getState() {
-        return state;
-    }
-
-    public void setState(StateRepresentationSimple state) {
-        this.state = state;
-    }
-
     public StateRepresentationSimple getPreviousState() {
         return previousState;
     }
@@ -141,7 +131,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }

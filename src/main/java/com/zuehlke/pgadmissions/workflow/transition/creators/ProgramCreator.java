@@ -34,7 +34,7 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(parentResource, advertDTO);
 
-        Program program = new Program().withUser(user).withParentResource(parentResource).withAdvert(advert).withTitle(advert.getTitle())
+        Program program = new Program().withUser(user).withParentResource(parentResource).withAdvert(advert).withName(advert.getName())
                 .withDurationMinimum(newResource.getDurationMinimum()).withDurationMaximum(newResource.getDurationMaximum())
                 .withRequirePositionDefinition(BooleanUtils.toBoolean(newResource.getRequirePositionDefinition()));
 

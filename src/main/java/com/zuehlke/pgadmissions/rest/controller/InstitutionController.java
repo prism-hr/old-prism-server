@@ -54,8 +54,8 @@ public class InstitutionController {
         List<ResourceRepresentationSimple> representations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
             AddressAdvert address = institution.getAdvert().getAddress();
-            String name = Joiner.on(" - ").skipNulls().join(institution.getTitle(), address.getAddressTown(), address.getAddressCode());
-            ResourceRepresentationSimple representation = new ResourceRepresentationSimple().withId(institution.getId()).withTitle(name);
+            String name = Joiner.on(" - ").skipNulls().join(institution.getName(), address.getAddressTown(), address.getAddressCode());
+            ResourceRepresentationSimple representation = new ResourceRepresentationSimple().withId(institution.getId()).withName(name);
 
             Document logoImage = institution.getLogoImage();
             if (logoImage != null) {
@@ -127,7 +127,7 @@ public class InstitutionController {
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
                 opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
             }
-            return new ResourceChildCreationRepresentation().withId(resource.getId()).withTitle(resource.getTitle())
+            return new ResourceChildCreationRepresentation().withId(resource.getId()).withName(resource.getName())
                     .withPartnerMode(input.getPartnerMode()).withOpportunityType(opportunityType);
         }
     }

@@ -15,7 +15,7 @@ import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.Competence;
 
 @Entity
-@Table(name = "COMMENT_COMPETENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "competence_id" }) })
+@Table(name = "comment_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "competence_id" }) })
 public class CommentCompetence {
 
     @Id

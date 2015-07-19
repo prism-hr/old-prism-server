@@ -82,8 +82,8 @@ public class Project extends ResourceOpportunity {
     @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
     private ImportedEntitySimple opportunityType;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
@@ -272,13 +272,13 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -547,8 +547,8 @@ public class Project extends ResourceOpportunity {
         return this;
     }
 
-    public Project withTitle(String title) {
-        this.title = title;
+    public Project withName(String name) {
+        this.name = name;
         return this;
     }
 

@@ -25,7 +25,7 @@ public class DepartmentDAO {
         return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
-                        .add(Projections.property("title"), "title")) //
+                        .add(Projections.property("name"), "name")) //
                 .add(Restrictions.eq("institution", institution)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class))
                 .list();

@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
-@Table(name = "USER_COMPETENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "competence_id" }) })
+@Table(name = "user_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "competence_id" }) })
 public class UserCompetence implements UniqueEntity {
 
     @Id

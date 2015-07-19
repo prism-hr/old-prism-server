@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
@@ -35,7 +33,6 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 
@@ -43,9 +40,6 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 @RequestMapping(value = { "api/applications" })
 @PreAuthorize("isAuthenticated()")
 public class ApplicationController {
-
-    @Inject
-    private ApplicationMapper applicationMapper;
 
     @Inject
     private ApplicationService applicationService;
@@ -192,12 +186,6 @@ public class ApplicationController {
     public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO)
             throws Exception {
         applicationSectionService.updateAdditionalInformation(applicationId, additionalInformationDTO);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=summary")
-    public ApplicationSummaryRepresentation getSummary(@PathVariable Integer applicationId) throws Exception {
-        Application application = applicationService.getById(applicationId);
-        return applicationMapper.getApplicationSummary(application);
     }
 
 }

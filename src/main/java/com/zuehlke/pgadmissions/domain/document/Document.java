@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Entity
-@Table(name = "DOCUMENT")
+@Table(name = "document")
 public class Document {
 
     @Id

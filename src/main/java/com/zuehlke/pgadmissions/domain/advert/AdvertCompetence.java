@@ -52,7 +52,7 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
     }
 
     @Override
-    public String getTitle() {
+    public String getName() {
         return value.getName();
     }
 

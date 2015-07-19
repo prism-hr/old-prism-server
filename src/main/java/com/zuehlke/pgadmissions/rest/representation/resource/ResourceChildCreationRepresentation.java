@@ -29,8 +29,8 @@ public class ResourceChildCreationRepresentation extends ResourceRepresentationS
         return this;
     }
 
-    public ResourceChildCreationRepresentation withTitle(String title) {
-        setTitle(title);
+    public ResourceChildCreationRepresentation withName(String name) {
+        setName(name);
         return this;
     }
 

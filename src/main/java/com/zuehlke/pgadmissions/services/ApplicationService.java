@@ -46,7 +46,6 @@ import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
@@ -81,14 +80,12 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRe
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
-@SuppressWarnings("unchecked")
 public class ApplicationService {
 
     @Value("${application.url}")
@@ -324,6 +321,7 @@ public class ApplicationService {
         return dataTable;
     }
 
+    @SuppressWarnings("unchecked")
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
         List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
         customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
@@ -385,14 +383,6 @@ public class ApplicationService {
         return applicationDAO.getApplicationsByMatchingSuggestedSupervisor(searchTerm);
     }
 
-    public ApplicationQualification getLatestApplicationQualification(Application application) {
-        return applicationDAO.getLatestApplicationQualification(application);
-    }
-
-    public ApplicationEmploymentPosition getLatestApplicationEmploymentPosition(Application application) {
-        return applicationDAO.getLatestApplicationEmploymentPosition(application);
-    }
-
     public Long getProvidedReferenceCount(Application application) {
         return applicationDAO.getProvidedReferenceCount(application);
     }
@@ -401,7 +391,7 @@ public class ApplicationService {
         return applicationDAO.getDeclinedReferenceCount(application);
     }
 
-    public List<OtherApplicationSummaryRepresentation> getOtherLiveApplications(Application application) {
+    public List<Application> getOtherLiveApplications(Application application) {
         return applicationDAO.getOtherLiveApplications(application);
     }
 

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
 
 @Entity
-@Table(name = "IMPORTED_AGE_RANGE")
+@Table(name = "imported_age_range")
 public class ImportedAgeRange extends ImportedEntity<Integer, ImportedAgeRangeMapping> implements ImportedAgeRangeDefinition,
         ImportedEntityResponseDefinition<Integer> {
 

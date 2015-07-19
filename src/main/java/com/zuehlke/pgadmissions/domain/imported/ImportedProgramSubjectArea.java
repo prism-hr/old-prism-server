@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.WeightedRelation;
 
 @Entity
-@Table(name = "IMPORTED_PROGRAM_SUBJECT_AREA", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_program_id", "imported_subject_area_id" }) })
+@Table(name = "imported_program_subject_area", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_program_id", "imported_subject_area_id" }) })
 public class ImportedProgramSubjectArea extends WeightedRelation implements UniqueEntity {
 
     @Id

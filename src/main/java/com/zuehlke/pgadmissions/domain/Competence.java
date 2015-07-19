@@ -6,15 +6,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table
-@Entity(name = "COMPETENCE")
+@Entity
+@Table(name = "competence")
 public class Competence implements UniqueEntity, TargetEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description", nullable = false)
@@ -44,8 +44,8 @@ public class Competence implements UniqueEntity, TargetEntity {
         this.description = description;
     }
 
-    public Competence withTitle(String title) {
-        this.name = title;
+    public Competence withName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -56,7 +56,7 @@ public class Competence implements UniqueEntity, TargetEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addExclusion("title", name);
+        return new ResourceSignature().addExclusion("name", name);
     }
 
 }

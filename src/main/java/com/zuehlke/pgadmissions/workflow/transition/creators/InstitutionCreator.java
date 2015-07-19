@@ -44,7 +44,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         FileDTO logoImageDTO = newResource.getLogoImage();
         Document logoImage = logoImageDTO == null ? null : documentService.getById(logoImageDTO.getId());
 
-        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withTitle(advert.getTitle())
+        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName())
                 .withCurrency(newResource.getCurrency()).withBusinessYearStartMonth(newResource.getBusinessYearStartMonth())
                 .withMinimumWage(newResource.getMinimumWage()).withGoogleId(advert.getAddress().getGoogleId()).withUclInstitution(false)
                 .withCreatedTimestamp(new DateTime()).withLogoImage(logoImage);

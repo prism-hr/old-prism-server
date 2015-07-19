@@ -291,7 +291,7 @@ public class SystemService {
     public SocialMetadataDTO getSocialMetadata() throws Exception {
         System system = getSystem();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
-        return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getTitle())
+        return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getName())
                 .withDescription(loader.load(SYSTEM_DESCRIPTION))
                 .withThumbnailUrl(resourceService.getSocialThumbnailUrl(system)).withResourceUrl(resourceService.getSocialResourceUrl(system));
     }
@@ -437,7 +437,7 @@ public class SystemService {
 
         if (system == null) {
             State systemRunning = stateService.getById(SYSTEM_RUNNING);
-            system = new System().withId(systemId).withTitle(systemName).withMinimumWage(systemMinimumWage).withUser(systemUser).withState(systemRunning)
+            system = new System().withId(systemId).withName(systemName).withMinimumWage(systemMinimumWage).withUser(systemUser).withState(systemRunning)
                     .withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
             entityService.save(system);
 
@@ -447,7 +447,7 @@ public class SystemService {
             system.getResourceStates().add(systemState);
         } else {
             system.setId(systemId);
-            system.setTitle(systemName);
+            system.setName(systemName);
             system.setUser(systemUser);
             system.setUpdatedTimestamp(baseline);
         }
@@ -529,16 +529,13 @@ public class SystemService {
         for (State state : stateService.getStates()) {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                 Action action = actionService.getById(prismStateAction.getAction());
-                NotificationDefinition template = notificationService.getById(prismStateAction.getNotification());
-                StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
-                        .withActionCondition(prismStateAction.getActionCondition()).withActionEnhancement(prismStateAction.getActionEnhancement())
-                        .withNotificationDefinition(template);
-                entityService.save(stateAction);
-                state.getStateActions().add(stateAction);
+                initializeStateAction(state, action, prismStateAction);
 
-                initializeStateActionAssignments(prismStateAction, stateAction);
-                initializeStateActionNotifications(prismStateAction, stateAction);
-                initializeStateTransitions(prismStateAction, stateAction);
+                PrismAction prismActionOther = prismStateAction.getActionOther();
+                if (prismActionOther != null) {
+                    Action actionOther = actionService.getById(prismActionOther);
+                    initializeStateAction(state, actionOther, prismStateAction);
+                }
             }
         }
 
@@ -555,6 +552,19 @@ public class SystemService {
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObsoleteNotificationConfigurations();
         roleService.deleteObsoleteUserRoles();
+    }
+
+    private void initializeStateAction(State state, Action action, PrismStateAction prismStateAction) {
+        NotificationDefinition template = notificationService.getById(prismStateAction.getNotification());
+        StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
+                .withActionCondition(prismStateAction.getActionCondition()).withActionEnhancement(prismStateAction.getActionEnhancement())
+                .withNotificationDefinition(template);
+        entityService.save(stateAction);
+        state.getStateActions().add(stateAction);
+
+        initializeStateActionAssignments(prismStateAction, stateAction);
+        initializeStateActionNotifications(prismStateAction, stateAction);
+        initializeStateTransitions(prismStateAction, stateAction);
     }
 
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {

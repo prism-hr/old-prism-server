@@ -107,7 +107,7 @@ public class ApplicationCopyHelper {
 
                 ImportedEntitySimple ethnicity = getEnabledImportedObject(toInstitution, fromDemographic.getEthnicity(), personalDetail);
                 ImportedEntitySimple disability = getEnabledImportedObject(toInstitution, fromDemographic.getDisability(), personalDetail);
-                
+
                 if (fromDemographic != null) {
                     personalDetail.setDemographic(new ApplicationDemographic().withEthnicity(ethnicity).withDisability(disability));
                 }

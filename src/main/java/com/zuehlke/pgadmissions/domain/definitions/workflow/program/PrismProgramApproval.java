@@ -10,7 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PENDING_CORRECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROGRAM_APPROVED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_APPROVE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programWithdraw;
@@ -31,7 +31,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
 		                .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
 		                .withTransitionEvaluation(PROGRAM_APPROVED_OUTCOME))); //
 
-		stateActions.add(programEmailCreator()); //
+		stateActions.add(programEmailCreatorUnnapproved()); //
 		stateActions.add(programEscalateUnapproved()); //
 		stateActions.add(programViewEditUnapproved()); //
 		stateActions.add(programWithdraw());

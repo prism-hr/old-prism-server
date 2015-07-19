@@ -5,6 +5,7 @@ import java.util.List;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
@@ -21,7 +22,11 @@ public class ApplicationRepresentationClient extends ApplicationRepresentationEx
 
     private ApplicationInterviewRepresentation interview;
 
-    private ApplicationSummaryRepresentation resourceSummary;
+    private Integer referenceProvidedCount;
+
+    private Integer referenceDeclinedCount;
+
+    private List<ResourceRepresentationSimple> otherLiveApplications;
 
     private List<AdvertRepresentationExtended> recommendedAdverts;
 
@@ -73,12 +78,28 @@ public class ApplicationRepresentationClient extends ApplicationRepresentationEx
         this.interview = interview;
     }
 
-    public ApplicationSummaryRepresentation getResourceSummary() {
-        return resourceSummary;
+    public Integer getReferenceProvidedCount() {
+        return referenceProvidedCount;
     }
 
-    public void setResourceSummary(ApplicationSummaryRepresentation resourceSummary) {
-        this.resourceSummary = resourceSummary;
+    public void setReferenceProvidedCount(Integer referenceProvidedCount) {
+        this.referenceProvidedCount = referenceProvidedCount;
+    }
+
+    public Integer getReferenceDeclinedCount() {
+        return referenceDeclinedCount;
+    }
+
+    public void setReferenceDeclinedCount(Integer referenceDeclinedCount) {
+        this.referenceDeclinedCount = referenceDeclinedCount;
+    }
+
+    public List<ResourceRepresentationSimple> getOtherLiveApplications() {
+        return otherLiveApplications;
+    }
+
+    public void setOtherLiveApplications(List<ResourceRepresentationSimple> otherLiveApplications) {
+        this.otherLiveApplications = otherLiveApplications;
     }
 
     public List<AdvertRepresentationExtended> getRecommendedAdverts() {

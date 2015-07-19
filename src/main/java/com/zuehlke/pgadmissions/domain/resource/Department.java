@@ -57,8 +57,8 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "department_id")
@@ -107,12 +107,12 @@ public class Department extends ResourceParentDivision implements TargetEntity {
         this.importedCode = importedCode;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Department withInstitution(Institution institution) {
@@ -120,8 +120,8 @@ public class Department extends ResourceParentDivision implements TargetEntity {
         return this;
     }
 
-    public Department withTitle(String title) {
-        this.title = title;
+    public Department withName(String name) {
+        this.name = name;
         return this;
     }
 

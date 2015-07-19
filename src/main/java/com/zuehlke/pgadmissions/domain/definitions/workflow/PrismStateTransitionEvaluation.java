@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
@@ -27,8 +28,13 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationRejectedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationUpdateInterviewAvailabilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationWithdrawnResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentApprovedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentCreatedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentStartedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionCreatedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramStartedResolver;
@@ -62,7 +68,12 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationUpdateInterviewAvailabilityResolver.class), //
     APPLICATION_PURGED_OUTCOME(false, APPLICATION, ApplicationPurgedResolver.class), //
     INSTITUTION_APPROVED_OUTCOME(true, INSTITUTION, InstitutionApprovedResolver.class), //
+    INSTITUTION_UPDATED_OUTCOME(true, INSTITUTION, InstitutionUpdatedResolver.class), //
     INSTITUTION_CREATED_OUTCOME(false, INSTITUTION, InstitutionCreatedResolver.class), //
+    DEPARTMENT_APPROVED_OUTCOME(true, DEPARTMENT, DepartmentApprovedResolver.class), //
+    DEPARTMENT_UPDATED_OUTCOME(true, DEPARTMENT, DepartmentUpdatedResolver.class), //
+    DEPARTMENT_CREATED_OUTCOME(false, DEPARTMENT, DepartmentCreatedResolver.class), //
+    DEPARTMENT_STARTED_OUTCOME(false, DEPARTMENT, DepartmentStartedResolver.class), //
     PROGRAM_APPROVED_OUTCOME(true, PROGRAM, ProgramApprovedResolver.class), //
     PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
     PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //

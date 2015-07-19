@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
 
 @Entity
-@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE")
+@Table(name = "imported_language_qualification_type")
 public class ImportedLanguageQualificationType extends ImportedEntity<Integer, ImportedLanguageQualificationTypeMapping> implements
         ImportedLanguageQualificationTypeDefinition, ImportedEntityResponseDefinition<Integer> {
 

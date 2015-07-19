@@ -394,8 +394,13 @@ public class Application extends Resource {
     }
 
     @Override
-    public String getTitle() {
-        return user.getFullName();
+    public String getName() {
+        return null;
+    }
+    
+    @Override
+    public void setName(String name) {
+        return;
     }
 
     public ApplicationAddress getAddress() {
@@ -884,7 +889,7 @@ public class Application extends Resource {
 
     public String getParentResourceTitleDisplay() {
         ResourceParent parent = (ResourceParent) getParentResource();
-        return parent.getTitle();
+        return parent.getName();
     }
 
     public String getParentResourceCodeDisplay() {

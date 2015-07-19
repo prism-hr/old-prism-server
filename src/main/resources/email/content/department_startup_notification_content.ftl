@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Your specified organization for ${TEMPLATE_SYSTEM_TITLE} Department ${DEPARTMENT_CODE} has been approved
+    Your specified parent organization for ${TEMPLATE_SYSTEM_TITLE} Department ${DEPARTMENT_CODE} has been approved
     and is now ready to use. You may now log in now to access functions and assign other users.
 </p>
 

@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
 import java.io.IOException;
@@ -479,7 +479,7 @@ public class SystemService {
                             .withValue(
                                     prismDisplayPropertyDefinition.getDefaultValue());
                     customizationService.createOrUpdateConfiguration(DISPLAY_PROPERTY, system,
-                            prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
+                            prismScope.ordinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
                 }
             }
         }
@@ -512,7 +512,7 @@ public class SystemService {
             String subject = PrismFileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = PrismFileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
-            PrismOpportunityType opportunityType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismOpportunityType
+            PrismOpportunityType opportunityType = prismNotificationDefinition.getScope().ordinal() > DEPARTMENT.ordinal() ? PrismOpportunityType
                     .getSystemOpportunityType() : null;
 
             NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject)
@@ -527,12 +527,12 @@ public class SystemService {
         for (State state : stateService.getStates()) {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                 Action action = actionService.getById(prismStateAction.getAction());
-                initializeStateAction(state, action, prismStateAction);
+                initializeStateAction(state, action, prismStateAction, true);
 
                 PrismAction prismActionOther = prismStateAction.getActionOther();
                 if (prismActionOther != null) {
                     Action actionOther = actionService.getById(prismActionOther);
-                    initializeStateAction(state, actionOther, prismStateAction);
+                    initializeStateAction(state, actionOther, prismStateAction, false);
                 }
             }
         }
@@ -552,11 +552,15 @@ public class SystemService {
         roleService.deleteObsoleteUserRoles();
     }
 
-    private void initializeStateAction(State state, Action action, PrismStateAction prismStateAction) {
-        NotificationDefinition template = notificationService.getById(prismStateAction.getNotification());
+    private void initializeStateAction(State state, Action action, PrismStateAction prismStateAction, boolean notify) {
         StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
-                .withActionCondition(prismStateAction.getActionCondition()).withActionEnhancement(prismStateAction.getActionEnhancement())
-                .withNotificationDefinition(template);
+                .withActionCondition(prismStateAction.getActionCondition()).withActionEnhancement(prismStateAction.getActionEnhancement());
+        
+        if (notify) {
+            NotificationDefinition notificationDefinition = notificationService.getById(prismStateAction.getNotification());
+            stateAction.setNotificationDefinition(notificationDefinition);
+        }
+        
         entityService.save(stateAction);
         state.getStateActions().add(stateAction);
 
@@ -580,7 +584,7 @@ public class SystemService {
             Role role = roleService.getById(prismStateActionNotification.getRole());
             NotificationDefinition template = notificationService.getById(prismStateActionNotification.getNotification());
             StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role)
-                    .withPartnerMode(prismStateActionNotification.getPartnerMode()).withNotificationDefinition(template);
+                    .withNotificationDefinition(template);
             entityService.save(notification);
             stateAction.getStateActionNotifications().add(notification);
         }
@@ -628,9 +632,8 @@ public class SystemService {
                     WORKFLOW_PROPERTY, prismRoleTransition.getPropertyDefinition());
             RoleTransition roleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
                     .withRoleTransitionType(prismRoleTransition.getTransitionType()).withTransitionRole(transitionRole)
-                    .withPartnerMode(prismRoleTransition.getPartnerMode()).withRestrictToActionOwner(prismRoleTransition.getRestrictToActionOwner())
-                    .withMinimumPermitted(prismRoleTransition.getMinimumPermitted()).withMaximumPermitted(prismRoleTransition.getMaximumPermitted())
-                    .withWorkflowPropertyDefinition(workflowPropertyDefinition);
+                    .withRestrictToActionOwner(prismRoleTransition.getRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
+                    .withMaximumPermitted(prismRoleTransition.getMaximumPermitted()).withWorkflowPropertyDefinition(workflowPropertyDefinition);
             entityService.save(roleTransition);
             stateTransition.getRoleTransitions().add(roleTransition);
         }
@@ -658,7 +661,7 @@ public class SystemService {
             List<? extends WorkflowConfigurationDTO> configurationDTO) {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope,
-                    prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
+                    prismScope.ordinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
         }
     }
 

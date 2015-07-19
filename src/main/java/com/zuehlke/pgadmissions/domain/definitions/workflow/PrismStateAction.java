@@ -165,11 +165,6 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withPartnerNotifications(PrismRole role, PrismNotificationDefinition notification) {
-        notifications.add(new PrismStateActionNotification().withRole(role).withPartnerMode().withDefinition(notification));
-        return this;
-    }
-
     public PrismStateAction withTransitions(PrismStateTransition... transitions) {
         this.transitions.addAll(Arrays.asList(transitions));
         return this;

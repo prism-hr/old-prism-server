@@ -144,11 +144,6 @@ public class StateAction implements UniqueEntity {
         return this;
     }
 
-    public StateAction withNotificationDefinition(NotificationDefinition notificationTemplate) {
-        this.notificationDefinition = notificationTemplate;
-        return this;
-    }
-
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("state", state).addProperty("action", action);

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
@@ -64,7 +63,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WorkflowConfigurationHelper {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(WorkflowConfigurationHelper.class);
 
     private final Set<State> statesVisited = Sets.newHashSet();
 
@@ -221,7 +220,7 @@ public class WorkflowConfigurationHelper {
                 }
 
                 assertTrue(Objects.equal(state.getScope(), transitionState.getScope()) || Objects.equal(action.getCreationScope(), transitionState.getScope())
-                        || action.getId().equals(INSTITUTION_IMPORT_PROGRAM));
+                        || action.getId().name().contains("_IMPORT_"));
 
                 lastTransitionEvaluation = thisTransitionEvaluationId;
                 verifyRoleTransitions(stateTransition);
@@ -283,7 +282,9 @@ public class WorkflowConfigurationHelper {
                 Role assignedRole = assignment.getRole();
                 logger.info("Verifying assignment: " + assignedRole.getId().toString());
 
-                assertTrue(assignedRole.getScope().getOrdinal() <= state.getScope().getOrdinal());
+                if (BooleanUtils.isFalse(assignment.getPartnerMode())) {
+                    assertTrue(assignedRole.getScope().getOrdinal() <= state.getScope().getOrdinal());
+                }
             }
         }
     }

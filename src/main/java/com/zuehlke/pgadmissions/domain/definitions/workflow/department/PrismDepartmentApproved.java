@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_DEPARTMENT_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
@@ -54,7 +55,8 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withActionResolution(DEPARTMENT_ENDORSE, RESOLVE_ENDORSEMENT, DEPARTMENT_UNENDORSE) //
-                .withActionOther(DEPARTMENT_UNENDORSE) //
+                .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_DEPARTMENT_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(DEPARTMENT_ADMINISTRATOR_GROUP, SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION));
 

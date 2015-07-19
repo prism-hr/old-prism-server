@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
@@ -44,7 +45,8 @@ public class PrismProgramApproved extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withActionResolution(PROGRAM_ENDORSE, RESOLVE_ENDORSEMENT, PROGRAM_UNENDORSE) //
-                .withActionOther(PROGRAM_UNENDORSE)
+                .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION));
 

@@ -1,25 +1,34 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
-import static com.zuehlke.pgadmissions.utils.PrismFileUtils.getContentStream;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
+import com.zuehlke.pgadmissions.rest.dto.*;
+import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.PrismFileUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -28,78 +37,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.Scope;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
-import com.zuehlke.pgadmissions.exceptions.CustomizationException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
-import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.PrismFileUtils;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
 @Service
 public class SystemService {
@@ -269,14 +224,15 @@ public class SystemService {
     }
 
     @Transactional
-    public <T extends ImportedEntityRequest> void initializeSystemData() throws Exception {
+    public <T extends ImportedEntityRequest> void initializeSystemData() {
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
             try {
                 logger.info("Initializing system data for: " + prismImportedEntity.name());
-                List<T> representations = importedEntityMapper.getImportedEntityRepresentations(prismImportedEntity, getContentStream(defaultImportDirectory
-                        + "/" + prismImportedEntity.getUpperCamelName().replace("Imported", "") + ".json"));
+                String importFilePath = defaultImportDirectory + "/" + prismImportedEntity.getUpperCamelName().replace("Imported", "") + ".json";
+                InputStream stream = Resources.getResource(importFilePath).openStream();
+                List<T> representations = importedEntityMapper.getImportedEntityRepresentations(prismImportedEntity, stream);
                 importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
-            } catch (IllegalArgumentException e) {
+            } catch (IOException e) {
                 logger.error("Unable to open content stream for " + prismImportedEntity.name());
             }
         }
@@ -382,7 +338,7 @@ public class SystemService {
         }
     }
 
-    private void initializeStateDurationDefinitions() throws DeduplicationException {
+    private void initializeStateDurationDefinitions() {
         for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
             Scope scope = scopeService.getById(prismStateDuration.getScope());
             StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration)
@@ -391,7 +347,7 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationDefinitions() throws DeduplicationException, CustomizationException {
+    private void initializeNotificationDefinitions() {
         HashMap<PrismNotificationDefinition, NotificationDefinition> definitions = Maps.newHashMap();
         for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismNotificationDefinition.getScope());
@@ -456,8 +412,7 @@ public class SystemService {
         return system;
     }
 
-    private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
-            IllegalAccessException {
+    private void initializeStateDurationConfigurations(System system) {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             StateDurationConfigurationDTO configurationDTO = new StateDurationConfigurationDTO();
             for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
@@ -470,8 +425,7 @@ public class SystemService {
         }
     }
 
-    private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
-            IllegalAccessException {
+    private void initializeDisplayPropertyConfigurations(System system) {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
                 if (prismScope == prismDisplayPropertyDefinition.getCategory().getScope()) {
@@ -485,8 +439,7 @@ public class SystemService {
         }
     }
 
-    private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
-            IllegalAccessException {
+    private void initializeWorkflowPropertyConfigurations(System system) {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
@@ -508,8 +461,7 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
-            IllegalAccessException {
+    private void initializeNotificationConfigurations(System system) {
         for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
             String subject = PrismFileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = PrismFileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
@@ -647,8 +599,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-            List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException, DeduplicationException, InstantiationException,
-            IllegalAccessException {
+                                       List<? extends WorkflowConfigurationDTO> configurationDTO) {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope,
                     prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null, configurationDTO);

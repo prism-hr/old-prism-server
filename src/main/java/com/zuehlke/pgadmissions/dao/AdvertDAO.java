@@ -135,7 +135,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates,
-            List<Integer> advertsRecentlyAppliedFor) {
+                                                               List<Integer> advertsRecentlyAppliedFor) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("otherUserApplication.advert"), "advert") //
@@ -321,9 +321,7 @@ public class AdvertDAO {
                     .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("programPartner.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectPartner.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("programDepartment.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("programInstitution.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
@@ -418,11 +416,9 @@ public class AdvertDAO {
     private void appendInstitutionsConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         Integer[] institutions = queryDTO.getInstitutions();
         if (institutions != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.in("programInstitution.id", institutions)) //
-                    .add(Restrictions.in("programPartner.id", institutions)) //
-                    .add(Restrictions.in("projectInstitution.id", institutions)) //
-                    .add(Restrictions.in("projectPartner.id", institutions))); //
+            criteria.add(Restrictions.disjunction()
+                    .add(Restrictions.in("programInstitution.id", institutions))
+                    .add(Restrictions.in("projectInstitution.id", institutions)));
         }
     }
 

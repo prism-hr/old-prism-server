@@ -1,25 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -28,14 +8,32 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
-@Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "title" }) })
+@Table(name = "department", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "title"})})
 public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "system_id", nullable = false)
+    private System system;
+
+    @ManyToOne
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Institution institution;
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
@@ -48,10 +46,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @Column(name = "imported_code")
     private String importedCode;
 
-    @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
-
     @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)
@@ -60,12 +54,73 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "application_rating_count")
+    private Integer applicationRatingCount;
+
+    @Column(name = "application_rating_frequency")
+    private BigDecimal applicationRatingFrequency;
+
+    @Column(name = "application_rating_average")
+    private BigDecimal applicationRatingAverage;
+
+    @ManyToOne
+    @JoinColumn(name = "state_id")
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id")
+    private State previousState;
+
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dueDate;
+
+
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+
+    @Column(name = "updated_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
+
+    @Column(name = "updated_timestamp_sitemap", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestampSitemap;
+
+    @Column(name = "last_reminded_request_individual")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastRemindedRequestIndividual;
+
+    @Column(name = "last_reminded_request_syndicated")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastRemindedRequestSyndicated;
+
+    @Column(name = "last_notified_update_syndicated")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedUpdateSyndicated;
+
+    @Column(name = "workflow_property_configuration_version")
+    private Integer workflowPropertyConfigurationVersion;
+
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "department_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "department")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "department")
+    private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "department")
+    private Set<Comment> comments = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "department")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -127,14 +182,12 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public System getSystem() {
-        // TODO Auto-generated method stub
-        return null;
+        return system;
     }
 
     @Override
     public void setSystem(System system) {
-        // TODO Auto-generated method stub
-
+        this.system = system;
     }
 
     @Override
@@ -149,8 +202,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Department getDepartment() {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
     @Override
@@ -200,122 +252,102 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public State getState() {
-        // TODO Auto-generated method stub
-        return null;
+        return state;
     }
 
     @Override
     public void setState(State state) {
-        // TODO Auto-generated method stub
-
+        this.state = state;
     }
 
     @Override
     public State getPreviousState() {
-        // TODO Auto-generated method stub
-        return null;
+        return previousState;
     }
 
     @Override
     public void setPreviousState(State previousState) {
-        // TODO Auto-generated method stub
-
+        this.previousState = previousState;
     }
 
     @Override
     public LocalDate getDueDate() {
-        // TODO Auto-generated method stub
-        return null;
+        return dueDate;
     }
 
     @Override
     public void setDueDate(LocalDate dueDate) {
-        // TODO Auto-generated method stub
-
+        this.dueDate = dueDate;
     }
 
     @Override
     public DateTime getCreatedTimestamp() {
-        // TODO Auto-generated method stub
-        return null;
+        return createdTimestamp;
     }
 
     @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
-        // TODO Auto-generated method stub
-
+        this.createdTimestamp = createdTimestamp;
     }
 
     @Override
     public DateTime getUpdatedTimestamp() {
-        // TODO Auto-generated method stub
-        return null;
+        return updatedTimestamp;
     }
 
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
-        // TODO Auto-generated method stub
-
+        this.updatedTimestamp = updatedTimestamp;
     }
 
     @Override
     public LocalDate getLastRemindedRequestIndividual() {
-        // TODO Auto-generated method stub
-        return null;
+        return lastRemindedRequestIndividual;
     }
 
     @Override
     public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
-        // TODO Auto-generated method stub
-
+        this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
     }
 
     @Override
     public LocalDate getLastRemindedRequestSyndicated() {
-        // TODO Auto-generated method stub
-        return null;
+        return lastRemindedRequestSyndicated;
     }
 
     @Override
     public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
-        // TODO Auto-generated method stub
-
+        this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
     }
 
     @Override
     public LocalDate getLastNotifiedUpdateSyndicated() {
-        // TODO Auto-generated method stub
-        return null;
+        return lastNotifiedUpdateSyndicated;
     }
 
     @Override
     public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
-        // TODO Auto-generated method stub
-
+        this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
 
     @Override
     public Integer getWorkflowPropertyConfigurationVersion() {
-        // TODO Auto-generated method stub
-        return null;
+        return workflowPropertyConfigurationVersion;
     }
 
     @Override
     public void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion) {
-        // TODO Auto-generated method stub
-
+        this.workflowPropertyConfigurationVersion = workflowResourceConfigurationVersion;
     }
 
     @Override
     public String getSequenceIdentifier() {
-        // TODO Auto-generated method stub
-        return null;
+        return sequenceIdentifier;
     }
 
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
-        // TODO Auto-generated method stub
-
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
     @Override
@@ -325,8 +357,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Set<ResourcePreviousState> getResourcePreviousStates() {
-        // TODO Auto-generated method stub
-        return null;
+        return resourcePreviousStates;
     }
 
     @Override
@@ -336,62 +367,52 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Set<Comment> getComments() {
-        // TODO Auto-generated method stub
-        return null;
+        return comments;
     }
 
     @Override
     public Set<UserRole> getUserRoles() {
-        // TODO Auto-generated method stub
-        return null;
+        return userRoles;
     }
 
     @Override
     public DateTime getUpdatedTimestampSitemap() {
-        // TODO Auto-generated method stub
-        return null;
+        return updatedTimestampSitemap;
     }
 
     @Override
     public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
-        // TODO Auto-generated method stub
-
+        this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
 
     @Override
     public Integer getApplicationRatingCount() {
-        // TODO Auto-generated method stub
-        return null;
+        return applicationRatingCount;
     }
 
     @Override
     public void setApplicationRatingCount(Integer applicationRatingCount) {
-        // TODO Auto-generated method stub
-
+        this.applicationRatingCount = applicationRatingCount;
     }
 
     @Override
     public BigDecimal getApplicationRatingFrequency() {
-        // TODO Auto-generated method stub
-        return null;
+        return applicationRatingFrequency;
     }
 
     @Override
     public void setApplicationRatingFrequency(BigDecimal applicationRatingFrequency) {
-        // TODO Auto-generated method stub
-
+        this.applicationRatingFrequency = applicationRatingFrequency;
     }
 
     @Override
     public BigDecimal getApplicationRatingAverage() {
-        // TODO Auto-generated method stub
-        return null;
+        return applicationRatingAverage;
     }
 
     @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        // TODO Auto-generated method stub
-
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     @Override

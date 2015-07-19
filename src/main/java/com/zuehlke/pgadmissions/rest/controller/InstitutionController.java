@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -25,6 +23,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -67,13 +66,13 @@ public class InstitutionController {
         } else {
             throw new Error();
         }
-        return Lists.transform(institutions, new AcceptingResourceToRepresentationFunction());
+        return institutions.stream().map(new AcceptingResourceToRepresentationFunction()).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET, params = "accepting=projects")
     public List<ResourceChildCreationRepresentation> getAcceptingPrograms(@PathVariable Integer institutionId) {
         List<ResourceChildCreationDTO> programs = programService.getProgramsForWhichUserCanCreateProject(institutionId);
-        return Lists.transform(programs, new AcceptingResourceToRepresentationFunction());
+        return programs.stream().map(new AcceptingResourceToRepresentationFunction()).collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
@@ -95,7 +94,7 @@ public class InstitutionController {
 
     @RequestMapping(value = "/{institutionId}/importedData/{type}", method = RequestMethod.POST)
     public <T extends ImportedEntityRequest> void importData(@PathVariable Integer institutionId, @PathVariable PrismImportedEntity type,
-            HttpServletRequest request) throws IOException {
+                                                             HttpServletRequest request) throws IOException {
         List<T> representations = importedEntityMapper.getImportedEntityRepresentations(type, request.getInputStream());
         importedEntityService.mergeImportedEntities(institutionService.getById(institutionId), type, representations);
     }

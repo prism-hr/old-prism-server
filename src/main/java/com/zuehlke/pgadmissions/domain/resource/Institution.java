@@ -371,7 +371,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Override
     public void setInstitution(Institution institution) {
-        return;
     }
 
     @Override
@@ -381,7 +380,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Override
     public void setDepartment(Department department) {
-        return;
     }
 
     @Override
@@ -391,7 +389,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Override
     public void setProgram(Program program) {
-        return;
     }
 
     @Override
@@ -401,7 +398,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Override
     public void setProject(Project project) {
-        return;
     }
 
     @Override

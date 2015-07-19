@@ -1,18 +1,20 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.resource.Department;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
 
 @Repository
 public class DepartmentDAO {
@@ -20,7 +22,6 @@ public class DepartmentDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    @SuppressWarnings("unchecked")
     public List<ResourceRepresentationSimple> getDepartments(Institution institution) {
         return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
                 .setProjection(Projections.projectionList() //
@@ -28,6 +29,17 @@ public class DepartmentDAO {
                         .add(Projections.property("title"), "title")) //
                 .add(Restrictions.eq("institution", institution)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class))
+                .list();
+    }
+
+    public List<Department> getDepartments(String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Department.class);
+        if (searchTerm != null) {
+            criteria.add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE));
+        }
+        return criteria
+                .add(Restrictions.eq("state.id", DEPARTMENT_APPROVED))
+                .setMaxResults(10)
                 .list();
     }
 

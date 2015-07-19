@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Service
 @Transactional
@@ -45,6 +43,10 @@ public class DepartmentService {
     public List<ResourceRepresentationSimple> getDepartments(Integer institutionId) {
         Institution institution = institutionService.getById(institutionId);
         return departmentDAO.getDepartments(institution);
+    }
+
+    public List<Department> getDepartments(String searchTerm) {
+        return departmentDAO.getDepartments(searchTerm);
     }
 
 }

@@ -307,7 +307,7 @@ public class AdvertService {
             if (!duplicateAdvertClosingDate.getId().equals(persistentAdvertClosingDate.getId())) {
                 entityService.delete(persistentAdvertClosingDate);
             } else {
-                persistentAdvertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
+                persistentAdvertClosingDate.setValue(advertClosingDateDTO.getClosingDate());
             }
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
@@ -693,7 +693,7 @@ public class AdvertService {
     private AdvertClosingDate createAdvertClosingDate(Advert advert, AdvertClosingDateDTO advertClosingDateDTO) {
         AdvertClosingDate advertClosingDate = new AdvertClosingDate();
         advertClosingDate.setAdvert(advert);
-        advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
+        advertClosingDate.setValue(advertClosingDateDTO.getClosingDate());
         return advertClosingDate;
     }
 

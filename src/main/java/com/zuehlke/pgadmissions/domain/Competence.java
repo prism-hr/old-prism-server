@@ -15,7 +15,7 @@ public class Competence implements UniqueEntity, TargetEntity {
     private Integer id;
 
     @Column(name = "title", nullable = false)
-    private String title;
+    private String name;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -28,12 +28,12 @@ public class Competence implements UniqueEntity, TargetEntity {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String title) {
+        this.name = title;
     }
 
     public String getDescription() {
@@ -43,12 +43,12 @@ public class Competence implements UniqueEntity, TargetEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public Competence withTitle(String title) {
-        this.title = title;
+        this.name = title;
         return this;
     }
-    
+
     public Competence withDescription(String description) {
         this.description = description;
         return this;
@@ -56,7 +56,7 @@ public class Competence implements UniqueEntity, TargetEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addExclusion("title", title);
+        return new ResourceSignature().addExclusion("title", name);
     }
 
 }

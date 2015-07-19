@@ -17,8 +17,8 @@ public class AdvertCompetenceRepresentation extends AdvertTargetRepresentation {
         return this;
     }
 
-    public AdvertCompetenceRepresentation withTitle(String title) {
-        setTitle(title);
+    public AdvertCompetenceRepresentation withName(String title) {
+        setName(title);
         return this;
     }
 

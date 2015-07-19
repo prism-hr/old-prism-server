@@ -47,8 +47,13 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
     }
 
     @Override
+    public Integer getValueId() {
+        return value.getId();
+    }
+
+    @Override
     public String getTitle() {
-        return value.getTitle();
+        return value.getName();
     }
 
 }

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.advert;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "advert_subject_area", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "imported_subject_area_id" }) })
@@ -49,6 +48,11 @@ public class AdvertSubjectArea extends AdvertTarget<ImportedSubjectArea> {
     @Override
     public void setValue(ImportedSubjectArea subjectArea) {
         this.value = subjectArea;
+    }
+
+    @Override
+    public Integer getValueId() {
+        return value.getId();
     }
 
     @Override

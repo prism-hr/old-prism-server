@@ -188,17 +188,15 @@ public class AdvertMapper {
 
     private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Collection<AdvertCompetence> competences) {
         return competences.stream()
-                .map(competence -> new AdvertCompetenceRepresentation().withId(competence.getId()).withTitle(competence.getTitle())
+                .map(competence -> new AdvertCompetenceRepresentation().withId(competence.getValueId()).withName(competence.getTitle())
                         .withDescription(competence.getValue().getDescription()))
                 .collect(Collectors.toList());
     }
 
     private <T extends AdvertTarget<?>> List<AdvertTargetRepresentation> getAdvertTargetRepresentations(Set<T> targets) {
-        List<AdvertTargetRepresentation> representations = Lists.newLinkedList();
-        for (AdvertTarget<?> target : targets) {
-            representations.add(new AdvertTargetRepresentation().withId(target.getId()).withTitle(target.getTitle()));
-        }
-        return representations;
+        return targets.stream()
+                .map(target -> new AdvertTargetRepresentation().withId(target.getValueId()).withName(target.getTitle()))
+                .collect(Collectors.toList());
     }
 
     private AddressAdvertRepresentation getAdvertAddressRepresentation(Advert advert) {

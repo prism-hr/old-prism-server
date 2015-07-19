@@ -190,8 +190,8 @@ public class AdvertDAO {
     public AdvertClosingDate getNextAdvertClosingDate(Advert advert, LocalDate baseline) {
         return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class) //
                 .add(Restrictions.eq("advert", advert)) //
-                .add(Restrictions.ge("closingDate", baseline)) //
-                .addOrder(Order.asc("closingDate")) //
+                .add(Restrictions.ge("value", baseline)) //
+                .addOrder(Order.asc("value")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }

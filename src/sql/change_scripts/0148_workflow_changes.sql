@@ -201,3 +201,17 @@ set foreign_key_checks = 1
 update state
 set id = replace(id, "APPROVAL_INSTITUTION", "APPROVAL_PARENT")
 ;
+
+set foreign_key_checks = 0
+;
+
+update state
+set state_group_id = replace(state_group_id, "APPROVAL_INSTITUTION", "APPROVAL_PARENT")
+;
+
+set foreign_key_checks = 1
+;
+
+update state_group
+set id = replace(id, "APPROVAL_INSTITUTION", "APPROVAL_PARENT")
+;

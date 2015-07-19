@@ -97,6 +97,10 @@ public class CommentService {
         return prismActions.length > 0 ? commentDAO.getLatestComment(resource, user, prismActions) : null;
     }
 
+    public Comment getLatestComment(Resource resource, PrismAction actionId, DateTime baseline) {
+        return commentDAO.getLatestComment(resource, actionId, baseline);
+    }
+    
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
     }

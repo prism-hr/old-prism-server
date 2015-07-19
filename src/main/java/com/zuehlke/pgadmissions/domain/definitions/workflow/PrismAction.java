@@ -79,19 +79,33 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable(APPLICATION_PROVIDE_REFERENCE_CUSTOM)), //
     APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
     APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
-    INSTITUTION_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
-    INSTITUTION_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_CORRECT(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
-    INSTITUTION_CREATE_DEPARTMENT(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_CREATE_PROGRAM(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_CREATE_PROJECT(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_CREATE_APPLICATION(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(INSTITUTION)), //
-    INSTITUTION_ESCALATE(getDefaultEscalateResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_IMPORT_DEPARTMENT(getDefaultImportResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_IMPORT_PROGRAM(getDefaultImportResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(INSTITUTION)), //
-    INSTITUTION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(INSTITUTION)), //
+
+    PROJECT_STARTUP(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROJECT)), //
+    PROJECT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinition(PROJECT)), //
+    PROJECT_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(PROJECT)), //
+    PROJECT_ESCALATE(getDefaultEscalateResourceActionDefinition(PROJECT)), //
+    PROJECT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROJECT)), //
+
+    PROGRAM_STARTUP(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROGRAM)), //
+    PROGRAM_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_CREATE_APPLICATION(getDefaultCreateResourceActionDefinition(PROGRAM)), //
+    PROGRAM_CREATE_PROJECT(getDefaultCreateResourceActionDefinition(PROGRAM)), //
+    PROGRAM_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(PROGRAM)), //
+    PROGRAM_ESCALATE(getDefaultEscalateResourceActionDefinition(PROGRAM)), //
+    PROGRAM_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(PROGRAM)), //
+    PROGRAM_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROGRAM)), //
+
     DEPARTMENT_STARTUP(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_ENDORSE(getDefaultProcessResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
@@ -105,34 +119,25 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_IMPORT_PROGRAM(getDefaultImportResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
-    DEPARTMENT_SUSPEND(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
+    DEPARTMENT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //    
     DEPARTMENT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(DEPARTMENT)), //
-    PROGRAM_STARTUP(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROGRAM)), //
-    PROGRAM_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_CREATE_APPLICATION(getDefaultCreateResourceActionDefinition(PROGRAM)), //
-    PROGRAM_CREATE_PROJECT(getDefaultCreateResourceActionDefinition(PROGRAM)), //
-    PROGRAM_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(PROGRAM)), //
-    PROGRAM_ESCALATE(getDefaultEscalateResourceActionDefinition(PROGRAM)), //
-    PROGRAM_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(PROGRAM)), //
-    PROGRAM_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_SUSPEND(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROGRAM)), //
-    PROJECT_STARTUP(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROJECT)), //
-    PROJECT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinition(PROJECT)), //
-    PROJECT_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(PROJECT)), //
-    PROJECT_ESCALATE(getDefaultEscalateResourceActionDefinition(PROJECT)), //
-    PROJECT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_SUSPEND(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROJECT)), //
+
+    INSTITUTION_ENDORSE(getDefaultProcessResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
+    INSTITUTION_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_CORRECT(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
+    INSTITUTION_CREATE_DEPARTMENT(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_CREATE_PROGRAM(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_CREATE_PROJECT(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_CREATE_APPLICATION(getDefaultCreateResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(INSTITUTION)), //
+    INSTITUTION_ESCALATE(getDefaultEscalateResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_IMPORT_DEPARTMENT(getDefaultImportResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_IMPORT_PROGRAM(getDefaultImportResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_RESTORE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
+    INSTITUTION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(INSTITUTION)), //
+
     SYSTEM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(SYSTEM)), //
     SYSTEM_CREATE_INSTITUTION(getDefaultCreateResourceActionDefinition(SYSTEM)), //
     SYSTEM_STARTUP(getDefaultResourceActionDefinitionVisible(INITIALISE_RESOURCE, SYSTEM)), //
@@ -369,7 +374,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
                 new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT), //
                 new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT));
     }
-    
+
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ACTION_" + name());

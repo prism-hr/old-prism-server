@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDur
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PURGE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION;
@@ -63,6 +64,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedUnsubmittedRetained;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnPendingExport;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApproval;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApprovalInstitution;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApprovalPendingCorrection;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApproved;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentDisabledCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentRejected;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproved;
@@ -73,7 +81,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgram
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval;
@@ -81,7 +88,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProject
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.system.PrismSystemRunning;
@@ -167,8 +173,6 @@ public enum PrismState {
     PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null,
             PrismProjectApprovalPendingCorrection.class),
     PROJECT_APPROVED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_END_DATE, PrismProjectApproved.class),
-    PROJECT_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROJECT_DISABLED, PROJECT_ESCALATE_DURATION, null,
-            PrismProjectDisabledPendingReactivation.class),
     PROJECT_DISABLED_COMPLETED(PrismStateGroup.PROJECT_DISABLED, null, null, PrismProjectDisabledCompleted.class),
     PROJECT_REJECTED(PrismStateGroup.PROJECT_REJECTED, null, null, PrismProjectRejected.class),
     PROJECT_WITHDRAWN(PrismStateGroup.PROJECT_WITHDRAWN, null, null, PrismProjectWithdrawn.class),
@@ -178,22 +182,26 @@ public enum PrismState {
     PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramApprovalPendingCorrection.class),
     PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_END_DATE, PrismProgramApproved.class),
-    PROGRAM_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROGRAM_DISABLED, PROGRAM_ESCALATE_DURATION, null,
-            PrismProgramDisabledPendingReactivation.class),
     PROGRAM_DISABLED_COMPLETED(PrismStateGroup.PROGRAM_DISABLED, null, null, PrismProgramDisabledCompleted.class),
     PROGRAM_REJECTED(PrismStateGroup.PROGRAM_REJECTED, null, null, PrismProgramRejected.class),
     PROGRAM_WITHDRAWN(PrismStateGroup.PROGRAM_WITHDRAWN, null, null, PrismProgramWithdrawn.class),
+    DEPARTMENT_APPROVAL_INSTITUTION(PrismStateGroup.DEPARTMENT_APPROVAL_INSTITUTION, DEPARTMENT_ESCALATE_DURATION, null,
+            PrismDepartmentApprovalInstitution.class),
+    DEPARTMENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null, PrismDepartmentApproval.class),
+    DEPARTMENT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null,
+            PrismDepartmentApprovalPendingCorrection.class),
+    DEPARTMENT_APPROVED(PrismStateGroup.DEPARTMENT_APPROVED, null, null, PrismDepartmentApproved.class),
+    DEPARTMENT_DISABLED_COMPLETED(PrismStateGroup.DEPARTMENT_DISABLED, null, null, PrismDepartmentDisabledCompleted.class),
+    DEPARTMENT_REJECTED(PrismStateGroup.DEPARTMENT_REJECTED, null, null, PrismDepartmentRejected.class),
+    DEPARTMENT_WITHDRAWN(PrismStateGroup.DEPARTMENT_WITHDRAWN, null, null, PrismDepartmentWithdrawn.class),
     INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null, PrismInstitutionApproval.class),
     INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null,
             PrismInstitutionApprovalPendingCorrection.class),
     INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, null, PrismInstitutionApproved.class),
-    // TODO Build the representation classes
-    INSTITUTION_DISABLED_PENDING_REACTIVATION(PrismStateGroup.INSTITUTION_DISABLED, INSTITUTION_ESCALATE_DURATION, null,
-            null),
+    // TODO Build the definition classes
     INSTITUTION_DISABLED_COMPLETED(PrismStateGroup.INSTITUTION_DISABLED, null, null, null),
     INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, null, PrismInstitutionRejected.class),
     INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, null, PrismInstitutionWithdrawn.class),
-    DEPARTMENT_APPROVED(PrismStateGroup.DEPARTMENT_APPROVED, null, null, null),
     SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, PrismSystemRunning.class);
 
     private static final HashMap<PrismState, PrismWorkflowState> workflowStateDefinitions = Maps.newHashMap();

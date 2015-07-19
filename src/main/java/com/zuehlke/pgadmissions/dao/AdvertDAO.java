@@ -25,7 +25,6 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
@@ -235,30 +234,6 @@ public class AdvertDAO {
                                 .add(Restrictions.isNotNull("pay.currencySpecified")) //
                                 .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
-    }
-
-    public List<String> getAdvertAttributes(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
-                .setProjection(Projections.groupProperty("value")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNull("program.institution")) //
-                                .add(Restrictions.isNull("project.institution")) //
-                                .add(Restrictions.eqProperty("advert", "institution.advert"))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNull("advert.institution")) //
-                                .add(Restrictions.isNull("project.institution")) //
-                                .add(Restrictions.eq("program.institution", institution))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNull("advert.institution")) //
-                                .add(Restrictions.isNull("program.institution")) //
-                                .add(Restrictions.eq("projectProgram.institution", institution)))) //
-                .list();
     }
 
     public List<Integer> getAdvertsWithElapsedClosingDates(LocalDate baseline) {

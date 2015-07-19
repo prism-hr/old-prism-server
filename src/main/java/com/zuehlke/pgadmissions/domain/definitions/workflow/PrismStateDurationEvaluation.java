@@ -12,15 +12,15 @@ public enum PrismStateDurationEvaluation {
     APPLICATION_INTERVIEW_DATE(ApplicationInterviewDateResolver.class), //
     PROJECT_END_DATE(ProjectEndDateResolver.class), //
     PROGRAM_END_DATE(ProgramEndDateResolver.class);
-    
+
     private Class<? extends StateDurationResolver> resolver;
 
-	private PrismStateDurationEvaluation(Class<? extends StateDurationResolver> resolver) {
-	    this.resolver = resolver;
+    private PrismStateDurationEvaluation(Class<? extends StateDurationResolver> resolver) {
+        this.resolver = resolver;
     }
 
-	public Class<? extends StateDurationResolver> getResolver() {
-		return resolver;
-	}
+    public Class<? extends StateDurationResolver> getResolver() {
+        return resolver;
+    }
 
 }

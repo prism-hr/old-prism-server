@@ -6,7 +6,7 @@
     One or more of the PRiSM programs assigned to you have recently been updated.
 </p>
 <p>
-    Please login to view the applications and see the updates. Updates can be found in the application timeline.
+    Please login to view the programs and see the updates. Updates can be found in the program timeline.
 </p>
 
 ${SYSTEM_PROGRAM_HOMEPAGE}

@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -31,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
@@ -373,10 +375,6 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
 
-    public List<String> getAdvertAttributes(Institution institution, Class<? extends AdvertAttribute<?>> clazz) {
-        return advertDAO.getAdvertAttributes(institution, clazz);
-    }
-
     public void setSequenceIdentifier(Advert advert, String prefix) {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
     }
@@ -415,6 +413,18 @@ public class AdvertService {
         for (AdvertTheme theme : categories.getThemes()) {
             themes.add(theme.getValue());
         }
+        return themes;
+    }
+    
+    public Set<String> getPossibleAdvertThemes(Advert advert, Set<String> themes) {
+        themes = themes == null ? Sets.newTreeSet() : themes;
+        themes.addAll(getAdvertThemes(advert));
+        
+        Resource parentResource = advert.getResource().getParentResource();
+        if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
+            getPossibleAdvertThemes(parentResource.getAdvert(), themes);
+        }
+        
         return themes;
     }
 

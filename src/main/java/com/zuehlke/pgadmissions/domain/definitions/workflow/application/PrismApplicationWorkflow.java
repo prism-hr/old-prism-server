@@ -9,11 +9,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CORRECT_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
@@ -22,8 +22,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_APPROVER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
@@ -177,8 +179,12 @@ public class PrismApplicationWorkflow {
     public static PrismStateAction applicationViewEdit() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_VIEW_EDIT) //
-                .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_AS_ADMITTER) //
-                .withAssignments(INSTITUTION_ADMITTER, APPLICATION_VIEW_AS_ADMITTER) //
+                .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(INSTITUTION_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
@@ -193,8 +199,12 @@ public class PrismApplicationWorkflow {
     public static PrismStateAction applicationViewEditCorrect() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_VIEW_EDIT) // //
-                .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER) //
-                .withAssignments(INSTITUTION_ADMITTER, APPLICATION_VIEW_AS_ADMITTER) //
+                .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_APPROVER) //
+                .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(INSTITUTION_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
@@ -209,8 +219,12 @@ public class PrismApplicationWorkflow {
     public static PrismStateAction applicationViewEdit(PrismState state, PrismRoleTransition... roleTransitions) {
         return new PrismStateAction() //
                 .withAction(APPLICATION_VIEW_EDIT) //
-                .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER) //
-                .withAssignments(INSTITUTION_ADMITTER, APPLICATION_VIEW_EDIT_AS_ADMITTER) //
+                .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_APPROVER) //
+                .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(INSTITUTION_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //

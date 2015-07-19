@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.project;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_EMAIL_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ESCALATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_SUSPEND;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_WITHDRAW;
@@ -16,7 +15,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_MANAGE_USERS_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_PENDING_REACTIVATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_VIEW_EDIT_TRANSITION;
@@ -47,26 +45,6 @@ public class PrismProjectWorkflow {
                         .withTransitionAction(PROJECT_ESCALATE));
     }
 
-    public static PrismStateAction projectRestore() {
-        return projectViewEditAbstract()
-                .withActionEnhancement(PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP);
-    }
-
-    public static PrismStateAction projectSuspendUnapproved() {
-        return projectSuspendAbstract()
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(PROJECT_REJECTED) //
-                        .withTransitionAction(PROJECT_SUSPEND));
-    }
-
-    public static PrismStateAction projectSuspendApproved() {
-        return projectSuspendAbstract()
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(PROJECT_DISABLED_PENDING_REACTIVATION) //
-                        .withTransitionAction(PROJECT_SUSPEND));
-    }
-
     public static PrismStateAction projectTerminateUnapproved() {
         return projectTerminateAbstract()
                 .withTransitions(new PrismStateTransition() //
@@ -84,8 +62,7 @@ public class PrismProjectWorkflow {
     public static PrismStateAction projectViewEditUnapproved() {
         return projectViewEditAbstract()
                 .withActionEnhancement(PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
+                .withAssignments(PROJECT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction projectViewEditApproved() {
@@ -108,11 +85,6 @@ public class PrismProjectWorkflow {
     private static PrismStateAction projectEscalateAbstract() {
         return new PrismStateAction() //
                 .withAction(PROJECT_ESCALATE);
-    }
-
-    private static PrismStateAction projectSuspendAbstract() {
-        return new PrismStateAction() //
-                .withAction(PROJECT_SUSPEND);
     }
 
     private static PrismStateAction projectTerminateAbstract() {

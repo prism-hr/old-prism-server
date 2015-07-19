@@ -3,10 +3,10 @@
 </h1>
 
 <p>
-    One or more of the postgraduate research applications assigned to you have recently been updated.
+    One or more of the institutions assigned to you have recently been updated.
 </p>
 <p>
-    Please login to view the applications and see the updates. Updates can be found in the application timeline.
+    Please login to view the institutions and see the updates. Updates can be found in the institution timeline.
 </p>
 
 ${SYSTEM_INSTITUTION_HOMEPAGE}

@@ -21,8 +21,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -122,12 +120,7 @@ public class InstitutionController {
     public Map<String, List<String>> getCategoryTags(@PathVariable Integer institutionId) throws Exception {
         Map<String, List<String>> categoryTags = Maps.newLinkedHashMap();
         Institution institution = institutionService.getById(institutionId);
-
-        String category = "competencies";
-        categoryTags.put(category, advertService.getAdvertAttributes(institution, AdvertCompetence.class));
-        category = "themes";
-        categoryTags.put(category, advertService.getAdvertAttributes(institution, AdvertTheme.class));
-
+        categoryTags.put("themes", advertService.getAdvertThemes(institution.getAdvert()));
         return categoryTags;
     }
 

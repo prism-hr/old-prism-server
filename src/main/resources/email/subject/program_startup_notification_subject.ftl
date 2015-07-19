@@ -1,1 +1,1 @@
-Program ${PROGRAM_CODE} Partner Organization Approved
+Program ${PROGRAM_CODE} - Organization Approved

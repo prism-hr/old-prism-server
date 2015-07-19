@@ -12,7 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectSuspendUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectWithdraw;
@@ -35,7 +34,6 @@ public class PrismProjectApproval extends PrismWorkflowState {
 
         stateActions.add(projectEmailCreator());
         stateActions.add(projectEscalateUnapproved());
-        stateActions.add(projectSuspendUnapproved());
         stateActions.add(projectTerminateUnapproved());
         stateActions.add(projectViewEditUnapproved());
         stateActions.add(projectWithdraw());

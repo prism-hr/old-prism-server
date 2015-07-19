@@ -17,6 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflow
 import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
 import static org.joda.time.DateTimeConstants.MONDAY;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -422,7 +423,7 @@ public class ApplicationService {
     public boolean isCanViewEqualOpportunitiesData(Application application, User user) {
         List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(application, user);
         if (actionEnhancements.size() > 0) {
-            actionEnhancements.retainAll(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements());
+            actionEnhancements.retainAll(Arrays.asList(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements()));
             return actionEnhancements.size() > 0;
         }
         return false;

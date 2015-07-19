@@ -12,8 +12,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_APPROVER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
@@ -322,6 +326,32 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionType(DELETE) //
                     .withTransitionRole(PROGRAM_VIEWER)),
 
+    DEPARTMENT_MANAGE_USERS_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_ADMINISTRATOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(DEPARTMENT_ADMINISTRATOR), //
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_ADMINISTRATOR) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(DEPARTMENT_ADMINISTRATOR), //
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_APPROVER) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(DEPARTMENT_APPROVER), //
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_APPROVER) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(DEPARTMENT_APPROVER),
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_VIEWER) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(DEPARTMENT_VIEWER),
+            new PrismRoleTransition() //
+                    .withRole(DEPARTMENT_VIEWER) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(DEPARTMENT_VIEWER)),
+
     INSTITUTION_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //
                     .withRole(INSTITUTION_ADMINISTRATOR) //
@@ -347,13 +377,21 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionType(DELETE) //
                     .withTransitionRole(INSTITUTION_ADMINISTRATOR), //
             new PrismRoleTransition() //
-                    .withRole(INSTITUTION_ADMITTER) //
+                    .withRole(INSTITUTION_APPROVER) //
                     .withTransitionType(CREATE) //
-                    .withTransitionRole(INSTITUTION_ADMITTER),
+                    .withTransitionRole(INSTITUTION_APPROVER),
             new PrismRoleTransition() //
-                    .withRole(INSTITUTION_ADMITTER) //
+                    .withRole(INSTITUTION_APPROVER) //
                     .withTransitionType(DELETE) //
-                    .withTransitionRole(INSTITUTION_ADMITTER)),
+                    .withTransitionRole(INSTITUTION_APPROVER),
+            new PrismRoleTransition() //
+                    .withRole(INSTITUTION_VIEWER) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(INSTITUTION_VIEWER),
+            new PrismRoleTransition() //
+                    .withRole(INSTITUTION_VIEWER) //
+                    .withTransitionType(DELETE) //
+                    .withTransitionRole(INSTITUTION_VIEWER)),
 
     SYSTEM_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //

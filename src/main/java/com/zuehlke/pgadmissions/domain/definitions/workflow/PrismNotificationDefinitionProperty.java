@@ -7,12 +7,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_MARKETING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_DEPARTMENT_SYNDICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_INSTITUTION_SYNDICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROGRAM_SYNDICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROJECT_SYNDICATED;
@@ -47,6 +49,9 @@ import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationReject
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentContentBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentDateTimeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentTransitionOutcomeBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.DepartmentCodeBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.DepartmentTitleBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.DepartmentUserContactBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionCodeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionDataImportErrorBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionHomepageBuilder;
@@ -61,6 +66,7 @@ import com.zuehlke.pgadmissions.workflow.notification.property.ProjectTitleBuild
 import com.zuehlke.pgadmissions.workflow.notification.property.ProjectUserContactBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemApplicationHomepageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemApplicationRecommendationBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.SystemDepartmentHomepageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemInstitutionHomepageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemProgramHomepageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemProjectHomepageBuilder;
@@ -122,6 +128,9 @@ public enum PrismNotificationDefinitionProperty {
     PROGRAM_TITLE(PROGRAM_GLOBAL, true, ProgramTitleBuilder.class), //
     PROGRAM_CODE(PROGRAM_GLOBAL, true, ProgramCodeBuilder.class), //
     PROGRAM_USER_CONTACT(PROGRAM_GLOBAL, true, ProgramUserContactBuilder.class), //
+    DEPARTMENT_TITLE(DEPARTMENT_GLOBAL, true, DepartmentTitleBuilder.class), //
+    DEPARTMENT_CODE(DEPARTMENT_GLOBAL, true, DepartmentCodeBuilder.class), //
+    DEPARTMENT_USER_CONTACT(DEPARTMENT_GLOBAL, true, DepartmentUserContactBuilder.class), //
     INSTITUTION_TITLE(INSTITUTION_GLOBAL, true, InstitutionTitleBuilder.class), //
     INSTITUTION_CODE(INSTITUTION_GLOBAL, true, InstitutionCodeBuilder.class), //
     INSTITUTION_USER_CONTACT(INSTITUTION_GLOBAL, true, InstitutionUserContactBuilder.class), //
@@ -131,6 +140,7 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_APPLICATION_RECOMMENDATION(SYSTEM_APPLICATION_MARKETING, false, SystemApplicationRecommendationBuilder.class), //
     SYSTEM_PROJECT_HOMEPAGE(SYSTEM_PROJECT_SYNDICATED, false, SystemProjectHomepageBuilder.class), //
     SYSTEM_PROGRAM_HOMEPAGE(SYSTEM_PROGRAM_SYNDICATED, false, SystemProgramHomepageBuilder.class), //
+    SYSTEM_DEPARTMENT_HOMEPAGE(SYSTEM_DEPARTMENT_SYNDICATED, false, SystemDepartmentHomepageBuilder.class), //
     SYSTEM_INSTITUTION_HOMEPAGE(SYSTEM_INSTITUTION_SYNDICATED, false, SystemInstitutionHomepageBuilder.class), //
     SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
     SYSTEM_USER_ACCOUNT_MANAGEMENT(SYSTEM_USER_ACCOUNT, false, SystemUserAccountManagementBuilder.class), //

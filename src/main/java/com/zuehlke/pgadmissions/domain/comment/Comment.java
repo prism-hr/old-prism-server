@@ -10,8 +10,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
@@ -22,9 +22,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 
@@ -611,21 +608,12 @@ public class Comment extends WorkflowResourceExecution {
         return delegateUser == null ? user : delegateUser;
     }
 
-    public boolean isInstitutionApproveComment() {
-        return !INSTITUTION_APPROVED.equals(state.getId()) && INSTITUTION_APPROVED.equals(transitionState.getId());
-    }
-
-    public boolean isProgramApproveComment() {
-        return !PROGRAM_APPROVED.equals(state.getId()) && PROGRAM_APPROVED.equals(transitionState.getId());
-    }
-
     public boolean isProgramViewEditComment() {
         return action.getId() == PROGRAM_VIEW_EDIT;
     }
 
     public boolean isProgramRestoreComment() {
-        return action.getId() == INSTITUTION_IMPORT_PROGRAM && state.getId() == PROGRAM_DISABLED_PENDING_REACTIVATION
-                && transitionState.getId() == PROGRAM_APPROVED;
+        return action.getId() == PROGRAM_RESTORE;
     }
 
     public boolean isProjectCreateApplicationComment() {

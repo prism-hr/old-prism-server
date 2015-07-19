@@ -1,23 +1,24 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationSimple;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 @Service
 @Transactional
 public class InstitutionMapper {
 
     @Inject
-    private AddressMapper addressMapper;
+    private AdvertMapper advertMapper;
 
-    @Inject DocumentMapper documentMapper;
+    @Inject
+    DocumentMapper documentMapper;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -27,10 +28,9 @@ public class InstitutionMapper {
     }
 
     public InstitutionRepresentationSimple getInstitutionRepresentationSimple(Institution institution) {
-        return new InstitutionRepresentationSimple().withId(institution.getId()).withTitle(institution.getTitle())
-                .withAddress(addressMapper.transform(institution.getAdvert().getAddress(), AddressAdvertRepresentation.class))
-                .withCode(institution.getCode()).withLogoImage(documentMapper.getDocumentRepresentation(institution.getLogoImage()))
-                .withScope(institution.getResourceScope());
+        InstitutionRepresentationSimple representation = resourceMapper.getResourceRepresentation(institution, InstitutionRepresentationSimple.class);
+        representation.setAddress(advertMapper.getAdvertAddressRepresentation(institution.getAdvert()));
+        return representation;
     }
 
     public InstitutionRepresentationClient getInstitutionRepresentationClient(Institution institution) {
@@ -48,6 +48,5 @@ public class InstitutionMapper {
 
         return representation;
     }
-
 
 }

@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import java.util.List;
+
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 public interface ImportedEntityExtractor<T extends ImportedEntityRequest> {
 

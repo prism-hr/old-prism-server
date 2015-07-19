@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.resource.Department;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -11,12 +14,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Inject;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class DepartmentDAO {
 
     @Inject
@@ -35,7 +38,7 @@ public class DepartmentDAO {
     public List<Department> getDepartments(String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Department.class);
         if (searchTerm != null) {
-            criteria.add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE));
+            criteria.add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE));
         }
         return criteria
                 .add(Restrictions.eq("state.id", DEPARTMENT_APPROVED))

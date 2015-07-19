@@ -57,7 +57,7 @@ public abstract class Resource implements UniqueEntity {
     public abstract Application getApplication();
 
     public abstract String getName();
-    
+
     public abstract void setName(String name);
 
     public abstract State getState();
@@ -122,18 +122,21 @@ public abstract class Resource implements UniqueEntity {
         getResourcePreviousStates().add(resourcePreviousState);
     }
 
+    @SuppressWarnings("unchecked")
     public Resource getParentResource() {
         switch (PrismScope.getByResourceClass(this.getClass())) {
         case SYSTEM:
             return this;
         case INSTITUTION:
             return getSystem();
-        case PROGRAM:
+        case DEPARTMENT:
             return getInstitution();
+        case PROGRAM:
+            return ObjectUtils.firstNonNull(getDepartment(), getInstitution());
         case PROJECT:
-            return ObjectUtils.firstNonNull(getProgram(), getInstitution());
+            return ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
         case APPLICATION:
-            return ObjectUtils.firstNonNull(getProject(), getProgram(), getInstitution());
+            return ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
         default:
             throw new UnsupportedOperationException();
         }

@@ -1,5 +1,23 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -15,16 +33,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.institution.Institu
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -50,7 +58,8 @@ public class InstitutionController {
     private InstitutionMapper institutionMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    public List<InstitutionRepresentationSimple> getInstitutions(@RequestParam(required = false) String query, @RequestParam(required = false) String[] googleIds) {
+    public List<InstitutionRepresentationSimple> getInstitutions(@RequestParam(required = false) String query,
+            @RequestParam(required = false) String[] googleIds) {
         return institutionService.getInstitutions(query, googleIds).stream()
                 .map(institutionMapper::getInstitutionRepresentationSimple)
                 .collect(Collectors.toList());
@@ -94,7 +103,7 @@ public class InstitutionController {
 
     @RequestMapping(value = "/{institutionId}/importedData/{type}", method = RequestMethod.POST)
     public <T extends ImportedEntityRequest> void importData(@PathVariable Integer institutionId, @PathVariable PrismImportedEntity type,
-                                                             HttpServletRequest request) throws IOException {
+            HttpServletRequest request) throws IOException {
         List<T> representations = importedEntityMapper.getImportedEntityRepresentations(type, request.getInputStream());
         importedEntityService.mergeImportedEntities(institutionService.getById(institutionId), type, representations);
     }
@@ -107,7 +116,7 @@ public class InstitutionController {
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
                 opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
             }
-            return new ResourceChildCreationRepresentation().withId(resource.getId()).withTitle(resource.getTitle())
+            return new ResourceChildCreationRepresentation().withId(resource.getId()).withName(resource.getName())
                     .withPartnerMode(input.getPartnerMode()).withOpportunityType(opportunityType);
         }
     }

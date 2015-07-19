@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import com.google.common.collect.Sets;
-import org.hibernate.annotations.OrderBy;
+import java.util.Set;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import java.util.Set;
+
+import org.hibernate.annotations.OrderBy;
+
+import com.google.common.collect.Sets;
 
 @Embeddable
 public class AdvertTargets implements AdvertAttributes {

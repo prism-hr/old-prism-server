@@ -145,6 +145,27 @@ public class AdvertMapper {
         return representations;
     }
 
+    public AddressAdvertRepresentation getAdvertAddressRepresentation(Advert advert) {
+        AddressAdvert address = advert.getAddress();
+        if (address != null) {
+            AddressAdvertRepresentation representation = addressMapper.transform(address, AddressAdvertRepresentation.class);
+
+            representation.setDomicile(getAdvertDomicileRepresentation(address.getDomicile()));
+            representation.setGoogleId(address.getGoogleId());
+
+            GeographicLocation location = address.getLocation();
+            if (location != null) {
+                representation.setLocationX(location.getLocationX());
+                representation.setLocationY(location.getLocationY());
+            }
+
+            representation.setLocationString(address.getLocationString());
+            return representation;
+        }
+
+        return null;
+    }
+
     private AdvertFinancialDetailsRepresentation getAdvertFinancialDetailsRepresentation(Advert advert) {
         AdvertFinancialDetail fee = advert.getFee();
         AdvertFinancialDetail pay = advert.getPay();
@@ -217,27 +238,6 @@ public class AdvertMapper {
         return targets.stream()
                 .<AdvertTargetRepresentation> map(target -> new AdvertTargetRepresentation().withId(target.getValueId()).withName(target.getName()))
                 .collect(Collectors.toList());
-    }
-
-    private AddressAdvertRepresentation getAdvertAddressRepresentation(Advert advert) {
-        AddressAdvert address = advert.getAddress();
-        if (address != null) {
-            AddressAdvertRepresentation representation = addressMapper.transform(address, AddressAdvertRepresentation.class);
-
-            representation.setDomicile(getAdvertDomicileRepresentation(address.getDomicile()));
-            representation.setGoogleId(address.getGoogleId());
-
-            GeographicLocation location = address.getLocation();
-            if (location != null) {
-                representation.setLocationX(location.getLocationX());
-                representation.setLocationY(location.getLocationY());
-            }
-
-            representation.setLocationString(address.getLocationString());
-            return representation;
-        }
-
-        return null;
     }
 
     private ImportedAdvertDomicileResponse getAdvertDomicileRepresentation(ImportedAdvertDomicile domicile) {

@@ -1,8 +1,15 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 
 @Entity
 @Table(name = "advert_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "imported_program_id" }) })

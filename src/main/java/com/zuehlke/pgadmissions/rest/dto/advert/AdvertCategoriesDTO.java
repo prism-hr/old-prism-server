@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-
-import java.util.List;
-import java.util.Map;
 
 public class AdvertCategoriesDTO {
 

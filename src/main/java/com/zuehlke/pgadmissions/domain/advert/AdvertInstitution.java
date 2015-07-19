@@ -20,6 +20,9 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution value;
 
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
+
     @Override
     public Integer getId() {
         return id;
@@ -60,4 +63,11 @@ public class AdvertInstitution extends AdvertTarget<Institution> {
         return value.getName();
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 }

@@ -178,7 +178,7 @@ public class AdvertMapper {
     }
 
     private AdvertClosingDateRepresentation getAdvertClosingDateRepresentation(AdvertClosingDate closingDate) {
-        return new AdvertClosingDateRepresentation().withId(closingDate.getId()).withClosingDate(closingDate.getClosingDate());
+        return new AdvertClosingDateRepresentation().withId(closingDate.getId()).withClosingDate(closingDate.getValue());
     }
 
     private List<AdvertClosingDateRepresentation> getAdvertClosingDateRepresentations(Advert advert) {

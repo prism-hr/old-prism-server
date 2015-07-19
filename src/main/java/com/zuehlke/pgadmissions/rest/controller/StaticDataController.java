@@ -1,22 +1,15 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.services.StaticDataService;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.services.StaticDataService;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/static")
@@ -40,6 +33,7 @@ public class StaticDataController {
         staticData.putAll(staticDataService.getConfigurations());
         staticData.putAll(staticDataService.getProgramCategories());
         staticData.putAll(staticDataService.getActionConditions());
+        staticData.putAll(staticDataService.getAdvertCompetences());
         return staticData;
     }
 

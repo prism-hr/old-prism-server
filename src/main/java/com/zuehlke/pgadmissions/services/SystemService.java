@@ -178,7 +178,7 @@ public class SystemService {
 
     @Transactional
     public System getSystem() {
-        return entityService.getByProperty(System.class, "title", systemName);
+        return entityService.getByProperty(System.class, "name", systemName);
     }
 
     @Transactional
@@ -655,7 +655,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-                                       List<? extends WorkflowConfigurationDTO> configurationDTO) {
+            List<? extends WorkflowConfigurationDTO> configurationDTO) {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope,
                     prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null, configurationDTO);

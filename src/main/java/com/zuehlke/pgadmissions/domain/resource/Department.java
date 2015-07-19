@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
-@Table(name = "department", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "title"})})
+@Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "name" }) })
 public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Id
@@ -86,7 +86,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
-
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")

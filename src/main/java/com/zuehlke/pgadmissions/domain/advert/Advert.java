@@ -1,40 +1,21 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.resource.Department;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunityAttribute;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "ADVERT")
+@Table(name = "advert")
 public class Advert extends ResourceOpportunityAttribute {
 
     @Id
@@ -250,11 +231,11 @@ public class Advert extends ResourceOpportunityAttribute {
     public Institution getInstitution() {
         return institution;
     }
-    
+
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     public Department getDepartment() {
         return department;
     }

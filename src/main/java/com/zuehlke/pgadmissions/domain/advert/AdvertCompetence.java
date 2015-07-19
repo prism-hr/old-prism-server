@@ -1,20 +1,11 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.Competence;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "ADVERT_COMPETENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "competence_id" }) })
+@Table(name = "advert_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "competence_id" }) })
 public class AdvertCompetence extends AdvertTarget<Competence> {
 
     @Id
@@ -28,9 +19,6 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
     @ManyToOne
     @JoinColumn(name = "competence_id", nullable = false)
     private Competence value;
-
-    @Column(name = "importance", nullable = false)
-    private BigDecimal importance;
 
     public Integer getId() {
         return id;
@@ -58,17 +46,14 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
         this.value = competence;
     }
 
-    public BigDecimal getImportance() {
-        return importance;
-    }
-
-    public void setImportance(BigDecimal importance) {
-        this.importance = importance;
+    @Override
+    public Integer getValueId() {
+        return value.getId();
     }
 
     @Override
     public String getTitle() {
-        return value.getTitle();
+        return value.getName();
     }
 
 }

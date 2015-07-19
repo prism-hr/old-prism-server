@@ -1,27 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-import java.math.BigDecimal;
-
 public class AdvertTargetDTO {
 
-    private Integer value;
-    
-    private BigDecimal importance;
+    private Integer id;
 
-    public Integer getValue() {
-        return value;
+    public Integer getId() {
+        return id;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
-    }
-
-    public BigDecimal getImportance() {
-        return importance;
-    }
-
-    public void setImportance(BigDecimal importance) {
-        this.importance = importance;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 }

@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.util.Set;
-
-import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.OrderBy;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Department;
+import org.hibernate.annotations.OrderBy;
+
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
+import java.util.Set;
 
 @Embeddable
 public class AdvertTargets extends AdvertAttributes {
@@ -95,13 +93,13 @@ public class AdvertTargets extends AdvertAttributes {
     @Override
     public void storeAttribute(AdvertAttribute<?> value) {
         Class<?> valueClass = value.getClass();
-        if (valueClass.equals(Competence.class)) {
+        if (valueClass.equals(AdvertCompetence.class)) {
             competences.add((AdvertCompetence) value);
-        } else if (valueClass.equals(ImportedInstitution.class)) {
+        } else if (valueClass.equals(AdvertInstitution.class)) {
             institutions.add((AdvertInstitution) value);
-        } else if (valueClass.equals(Department.class)) {
+        } else if (valueClass.equals(AdvertDepartment.class)) {
             departments.add((AdvertDepartment) value);
-        } else if (valueClass.equals(ImportedProgram.class)) {
+        } else if (valueClass.equals(AdvertProgram.class)) {
             programs.add((AdvertProgram) value);
         } else {
             subjectAreas.add((AdvertSubjectArea) value);

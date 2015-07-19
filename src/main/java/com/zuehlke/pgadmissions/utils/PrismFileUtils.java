@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
+
+import java.io.IOException;
 
 public class PrismFileUtils {
 
@@ -15,10 +14,6 @@ public class PrismFileUtils {
         } catch (IOException e) {
             throw new Error(e);
         }
-    }
-    
-    public static InputStream getContentStream(String filePath) throws Exception {
-        return Resources.getResource(filePath).openStream();
     }
 
 }

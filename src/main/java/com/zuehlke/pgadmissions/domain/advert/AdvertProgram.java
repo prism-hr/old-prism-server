@@ -20,6 +20,9 @@ public class AdvertProgram extends AdvertTarget<ImportedProgram> {
     @JoinColumn(name = "imported_program_id", nullable = false)
     private ImportedProgram value;
 
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
+
     @Override
     public Integer getId() {
         return id;
@@ -60,4 +63,11 @@ public class AdvertProgram extends AdvertTarget<ImportedProgram> {
         return value.getName();
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 }

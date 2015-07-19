@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.resource.Department;
 import org.hibernate.annotations.OrderBy;
 
 import javax.persistence.Embeddable;
@@ -12,7 +8,7 @@ import javax.persistence.OneToMany;
 import java.util.Set;
 
 @Embeddable
-public class AdvertTargets extends AdvertAttributes {
+public class AdvertTargets implements AdvertAttributes {
 
     @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
@@ -72,22 +68,6 @@ public class AdvertTargets extends AdvertAttributes {
 
     public void setSubjectAreas(Set<AdvertSubjectArea> subjectAreas) {
         this.subjectAreas = subjectAreas;
-    }
-
-    @Override
-    public void clearAttributes(Object value) {
-        Class<?> valueClass = value.getClass();
-        if (valueClass.equals(Competence.class)) {
-            competences.clear();
-        } else if (valueClass.equals(ImportedInstitution.class)) {
-            institutions.clear();
-        } else if (valueClass.equals(Department.class)) {
-            departments.clear();
-        } else if (valueClass.equals(ImportedProgram.class)) {
-            programs.clear();
-        } else {
-            subjectAreas.clear();
-        }
     }
 
     @Override

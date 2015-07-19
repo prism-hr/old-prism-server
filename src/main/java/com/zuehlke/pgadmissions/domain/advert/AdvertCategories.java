@@ -1,18 +1,16 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.util.Set;
-
-import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.OrderBy;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import org.hibernate.annotations.OrderBy;
+
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
+import java.util.Set;
 
 @Embeddable
-public class AdvertCategories extends AdvertAttributes {
+public class AdvertCategories implements AdvertAttributes {
 
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "value")
@@ -48,18 +46,6 @@ public class AdvertCategories extends AdvertAttributes {
 
     public void setThemes(Set<AdvertTheme> themes) {
         this.themes = themes;
-    }
-
-    @Override
-    public void clearAttributes(Object value) {
-        Class<?> valueClass = value.getClass();
-        if (valueClass.equals(PrismAdvertIndustry.class)) {
-            industries.clear();
-        } else if (valueClass.equals(PrismAdvertFunction.class)) {
-            functions.clear();
-        } else {
-            themes.clear();
-        }
     }
 
     @Override

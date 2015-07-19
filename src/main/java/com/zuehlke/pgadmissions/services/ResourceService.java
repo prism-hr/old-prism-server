@@ -405,7 +405,7 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) throws Exception {
+    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) {
         if (resource.getResourceScope().equals(PrismScope.APPLICATION)) {
             return applicationService.getWorkflowPropertyConfigurations((Application) resource);
         }

@@ -242,7 +242,7 @@ public class AdvertService {
             PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
             Class<? extends AdvertAttribute<?>> categoryClass = advertAttribute.getAttributeClass();
             Class<?> valueClass = advertAttribute.getValueClass();
-            clearAdvertAttributes(categories, valueClass);
+            clearAdvertAttributes(categories, propertyName);
 
             for (Object dtoValue : dtoValues) {
                 Class<?> newValueClass = dtoValue.getClass();
@@ -278,7 +278,7 @@ public class AdvertService {
             Class<? extends AdvertAttribute<?>> targetClass = advertAttribute.getAttributeClass();
             Class<?> valueClass = advertAttribute.getValueClass();
 
-            clearAdvertAttributes(targets, valueClass);
+            clearAdvertAttributes(targets, propertyName);
             for (AdvertTargetDTO dtoValue : dtoValues) {
                 TargetEntity value;
                 Integer valueId = dtoValue.getId();
@@ -325,7 +325,7 @@ public class AdvertService {
             if (!duplicateAdvertClosingDate.getId().equals(persistentAdvertClosingDate.getId())) {
                 entityService.delete(persistentAdvertClosingDate);
             } else {
-                persistentAdvertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
+                persistentAdvertClosingDate.setValue(advertClosingDateDTO.getClosingDate());
             }
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
@@ -719,7 +719,7 @@ public class AdvertService {
     private AdvertClosingDate createAdvertClosingDate(Advert advert, AdvertClosingDateDTO advertClosingDateDTO) {
         AdvertClosingDate advertClosingDate = new AdvertClosingDate();
         advertClosingDate.setAdvert(advert);
-        advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
+        advertClosingDate.setValue(advertClosingDateDTO.getClosingDate());
         return advertClosingDate;
     }
 
@@ -734,9 +734,14 @@ public class AdvertService {
         }
     }
 
-    private void clearAdvertAttributes(AdvertAttributes attributes, Class<?> valueClass) {
-        attributes.clearAttributes(valueClass);
-        entityService.flush();
+    private void clearAdvertAttributes(AdvertAttributes attributes, String propertyName) {
+        try {
+            Set<?> collection = (Set<?>) PropertyUtils.getSimpleProperty(attributes, propertyName);
+            collection.forEach(entityService::delete);
+            entityService.flush();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

@@ -10,19 +10,22 @@ import com.zuehlke.pgadmissions.domain.user.User;
 public class WorkflowDAOUtils {
 
     public static Junction getUserRoleConstraint(Resource resource, String targetEntity) {
-        Junction constraint = Restrictions.disjunction() //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                                .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                                .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                        .add(Restrictions.eq(targetEntity + ".partnerMode", false))); //
-        
+        Junction constraint = Restrictions.conjunction() //
+                .add(getUserRoleConstraint(resource)) //
+                .add(Restrictions.eq(targetEntity + ".partnerMode", false)); //
+
         // FIXME: Add constraints for partner access
 
         return constraint;
+    }
+
+    public static Junction getUserRoleConstraint(Resource resource) {
+        return Restrictions.disjunction() //
+                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                .add(Restrictions.eq("userRole.system", resource.getSystem()));
     }
 
     public static Junction getUserRoleConstraint(Resource resource, User user, String targetEntity) {

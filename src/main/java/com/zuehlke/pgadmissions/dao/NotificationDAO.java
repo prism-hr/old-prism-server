@@ -109,7 +109,7 @@ public class NotificationDAO {
         }
 
         return (List<UserNotificationDefinitionDTO>) criteria //
-                .add(getUserRoleConstraint(resource, "stateActionNotification")) //
+                .add(getUserRoleConstraint(resource)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -191,7 +191,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.user", resource.getUser())) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.eq("comment." + resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, "stateActionNotification")) //
+                .add(getUserRoleConstraint(resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
                         .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //

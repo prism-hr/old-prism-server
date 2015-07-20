@@ -8,25 +8,21 @@ import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
- * Created by felipe on 02/06/2015.
- * <p/>
  * This controller is in charge of talking to search.ucas.com
-
  */
 @RestController
-@RequestMapping("api/scrapper")
+@RequestMapping("api/scraper")
 public class ScraperController {
+    private static Logger log = LoggerFactory.getLogger(ScraperController.class);
     @Autowired
     private ScraperService scraperService;
 
-    private static Logger log = LoggerFactory.getLogger(ScraperController.class);
-
-
-//   The response is an array of JSON as follows
+    //   The response is an array of JSON as follows
 //         [
 //             "{"id": "41","label":"The University of Aberdeen "}",
 //             "{"id": "1","label":"Abertay University "}",
@@ -40,26 +36,28 @@ public class ScraperController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/programs", method = RequestMethod.POST)
-    public void getPrograms(@RequestParam String yearOfInterest) throws IOException, ParserConfigurationException, TransformerException {
+    @RequestMapping(value = "/programs", method = RequestMethod.GET)
+    public void getPrograms(@RequestParam String yearOfInterest) throws IOException {
         log.debug("getPrograms() - start method");
-        scraperService.getProgramsForImportedInstitutions(yearOfInterest);
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("C:\\Users\\Pojebe\\prism\\repo\\dupa.json"))) {
+            scraperService.scrapePrograms(yearOfInterest, writer);
+        }
     }
 
     //manual importer for programs
     @ResponseBody
-    @RequestMapping(value= "/importPrograms", method = RequestMethod.POST)
+    @RequestMapping(value = "/importPrograms", method = RequestMethod.GET)
     public void importPrograms() throws IOException {
     }
 
     @ResponseBody
-    @RequestMapping(value= "/createScoring", method = RequestMethod.GET)
+    @RequestMapping(value = "/createScoring", method = RequestMethod.GET)
     public void generateScoringForProgramsAndSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
         scraperService.generateScoringForProgramsAndSubjectAreas();
     }
 
     @ResponseBody
-    @RequestMapping(value= "/importSubjectAreas", method = RequestMethod.POST)
+    @RequestMapping(value = "/importSubjectAreas", method = RequestMethod.GET)
     public void importSubjectAreas() throws IOException {
         scraperService.importSubjectAreas();
     }

@@ -26,6 +26,8 @@ public class ScraperLauncher {
             case "institutions":
                 scraperService.scrapeInstitutionsByIteratingIds(new OutputStreamWriter(new FileOutputStream(args[1])));
                 break;
+            case "programs":
+                scraperService.scrapePrograms("2015", new OutputStreamWriter(new FileOutputStream(args[1])));
         }
     }
 

@@ -25,8 +25,12 @@ update state_action_notification
 set role_id = replace(role_id, "ADMITTER", "APPROVER")
 ;
 
-
 set foreign_key_checks = 1
+;
+
+delete
+from action_redaction
+where role_id like "%ADMITTER"
 ;
 
 delete
@@ -40,7 +44,7 @@ where comment_id in (
 	select id
 	from comment
 	where action_id like "%SUSPEND")
-; 
+;
 
 
 delete
@@ -74,7 +78,7 @@ where state_transition_id in (
 delete
 from state_action
 where action_id like "%SUSPEND"
-;  
+;
 
 delete
 from comment
@@ -88,18 +92,22 @@ where id like "%SUSPEND"
 
 delete
 from comment_state
-where state_id in (
-	select id
-	from state 
-	where id like "%REACTIVATION")
+where comment_id in (
+  select id
+  from comment
+  where state_id like "%REACTIVATION"
+        or transition_state_id like "%REACTIVATION")
+      or state_id like "%REACTIVATION"
 ;
 
 delete
 from comment_transition_state
-where state_id in (
-	select id
-	from state 
-	where id like "%REACTIVATION")
+where comment_id in (
+  select id
+  from comment
+  where state_id like "%REACTIVATION"
+        or transition_state_id like "%REACTIVATION")
+      or state_id like "%REACTIVATION"
 ;
 
 delete

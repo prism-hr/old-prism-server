@@ -282,8 +282,9 @@ public class ImportedEntityDAO {
     }
 
     public List<ImportedInstitution> getInstitutionsWithUcasId() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.isNotNull("ucasId")) //
+        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
+                .add(Restrictions.isNotNull("ucasId"))
+                .addOrder(Order.asc("ucasId"))
                 .list();
     }
 

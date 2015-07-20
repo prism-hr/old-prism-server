@@ -239,6 +239,7 @@ public class StateService {
         return stateDAO.getActiveResourceStates(resourceScope);
     }
 
+    // FIXME generalize this shit to make other parts of the app work for department
     public List<PrismState> getActiveInstitutionStates() {
         return stateDAO.getActiveResourceStates(INSTITUTION);
     }

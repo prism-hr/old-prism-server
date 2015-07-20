@@ -11,6 +11,7 @@
     <security:http pattern="/api/mail" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/sitemap" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/robots" security="none" disable-url-rewriting="true" create-session="stateless"/>
+    <security:http pattern="/api/scraper/**" security="none" disable-url-rewriting="true" create-session="stateless"/>
 
     <security:global-method-security pre-post-annotations="enabled"/>
     <security:http realm="Prism API" use-expressions="true" auto-config="false" create-session="stateless"

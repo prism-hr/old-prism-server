@@ -1,0 +1,36 @@
+[
+    {
+        "name": "0-18",
+        "lowerBound": "0",
+        "upperBound": "18"
+    },
+    {
+        "name": "19-24",
+        "lowerBound": "19",
+        "upperBound": "24"
+    },
+    {
+        "name": "25-29",
+        "lowerBound": "25",
+        "upperBound": "29"
+    },
+    {
+        "name": "30-39",
+        "lowerBound": "30",
+        "upperBound": "39"
+    },
+    {
+        "name": "40-49",
+        "lowerBound": "40",
+        "upperBound": "49"
+    },
+    {
+        "name": "50-59",
+        "lowerBound": "50",
+        "upperBound": "59"
+    },
+    {
+        "name": "60+",
+        "lowerBound": "60"
+    }
+]

@@ -29,6 +29,11 @@ set foreign_key_checks = 1
 ;
 
 delete
+from action_redaction
+where role_id like "%ADMITTER"
+;
+
+delete
 from role
 where id like "%ADMITTER"
 ;
@@ -40,6 +45,7 @@ where comment_id in (
 	from comment
 	where action_id like "%SUSPEND")
 ;
+
 
 delete
 from comment_state
@@ -72,7 +78,7 @@ where state_transition_id in (
 delete
 from state_action
 where action_id like "%SUSPEND"
-;  
+;
 
 delete
 from comment
@@ -87,21 +93,21 @@ where id like "%SUSPEND"
 delete
 from comment_state
 where comment_id in (
-	select id
-	from comment	
-	where state_id like "%REACTIVATION"
-		or transition_state_id like "%REACTIVATION")
-	or state_id like "%REACTIVATION"
+  select id
+  from comment
+  where state_id like "%REACTIVATION"
+        or transition_state_id like "%REACTIVATION")
+      or state_id like "%REACTIVATION"
 ;
 
 delete
 from comment_transition_state
 where comment_id in (
-	select id
-	from comment	
-	where state_id like "%REACTIVATION"
-		or transition_state_id like "%REACTIVATION")
-	or state_id like "%REACTIVATION"
+  select id
+  from comment
+  where state_id like "%REACTIVATION"
+        or transition_state_id like "%REACTIVATION")
+      or state_id like "%REACTIVATION"
 ;
 
 delete

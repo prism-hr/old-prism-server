@@ -1,23 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+import au.com.bytecode.opencsv.CSVReader;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.services.scoring.ImportedProgram;
+import com.zuehlke.pgadmissions.services.scoring.ScoringManager;
+import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectAreaScraping;
+import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,16 +24,22 @@ import org.springframework.util.Assert;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
 
-import au.com.bytecode.opencsv.CSVReader;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.services.scoring.ImportedProgram;
-import com.zuehlke.pgadmissions.services.scoring.ScoringManager;
-import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectAreaScraping;
-import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
 
 /**
  * Created by felipe on 02/06/2015. This class will query
@@ -51,9 +51,7 @@ import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
 @Service
 public class ScraperService {
     private static Logger log = LoggerFactory.getLogger(ScraperService.class);
-    // static URL with a parameter at the end indicating which page.
-    // We know for UK we've got 16 pages of institutions
-    private static int NUMBER_OF_PAGES = 17;
+
     // search host
     private static String HOST = "http://search.ucas.com";
     // for institutions
@@ -71,29 +69,73 @@ public class ScraperService {
     @Inject
     private ImportedEntityService importedEntityService;
 
-    // initial method to import institutions. This was a one off exercise to
-    // enrich our current Institution list in the system
-    // the output generated here is then used to populate imported_institutions
-    // MYSQL table.
-    public List<Object> getInstitutionIdsBasedInUK() throws IOException {
-        log.debug("getInstitutionIdsBasedInUK() - start method");
-        ArrayList<Object> jsonResult = new ArrayList<Object>();
-        int counter = 1;
-        for (int i = counter; i < NUMBER_OF_PAGES; i++) {
+    public void scrapeInstitutionsByIteratingIds(Writer writer) throws IOException {
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jg = jsonFactory.createGenerator(writer);
+        jg.setCodec(new ObjectMapper());
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+        jg.writeStartArray();
+
+        for(int ucasId = 1 ; ucasId < 3000 ; ucasId++) {
+            Document html = getHtml("http://search.ucas.com/provider/" + ucasId);
+            Element nameElement = html.getElementsByClass("shortname").first();
+            String name;
+            if(nameElement != null) {
+                name = nameElement.text();
+                ImportedInstitutionRequest institution = new ImportedInstitutionRequest(name).withUcasId("" + ucasId);
+                jg.writeObject(institution);
+            } else {
+                Element noFoundElement = html.getElementsByClass("details_notfound").first();
+                if(noFoundElement == null) {
+                    throw new RuntimeException("Unexpected page for ID: " + ucasId);
+                }
+                name = "Empty";
+            }
+            System.out.println("" + ucasId + ": " + name);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        jg.writeEndArray();
+    }
+
+    public void scrapeInstitutions(Writer writer) throws IOException {
+        log.debug("scrapeInstitutions() - start method");
+
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jg = jsonFactory.createGenerator(writer);
+        jg.setCodec(new ObjectMapper());
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+        jg.writeStartArray();
+
+        Set<String> processedIds = new HashSet<>();
+        for (int i = 0; i <= 20; i++) {
             String url = URL_INSTITUTIONS_TEMPLATE + i;
             Document doc = getHtml(url);
-            Elements e = doc.getElementsByTag("li");
-            Iterator<Element> it = e.iterator();
-            String jsonElement = "";
-            while (it.hasNext()) {
-                Element element = it.next();
+
+            ArrayList<Element> elementsList = Lists.newArrayList(doc.getElementsByTag("li").iterator());
+            if(elementsList.isEmpty()) {
+                log.info("Finished parsing institution at page " + i);
+                break;
+            }
+            for (Element element : elementsList) {
                 if (element.id().startsWith("result-")) {
-                    jsonResult.add(jsonElement);
+                    String ucasId = element.id().replace("result-", "");
+                    if(!processedIds.add(ucasId)) {
+                        break;
+                    }
+                    String name = element.getElementsByTag("h3").first().text();
+
+                    ImportedInstitutionRequest institution = new ImportedInstitutionRequest(name).withUcasId(ucasId);
+                    jg.writeObject(institution);
                 }
             }
         }
-        log.debug("getInstitutionIdsBasedInUK() - finish method");
-        return jsonResult;
+        jg.writeEndArray();
+        log.debug("scrapeInstitutions() - finish method");
     }
 
     // this method is to scrap from UCAS website all programs for each
@@ -139,7 +181,7 @@ public class ScraperService {
         }
         if (page > 50) {
             log.info("BREAK - more than 50 pages!"); // bug at UCAS website
-                                                     // leading to infinite loop
+            // leading to infinite loop
             return;
         }
         int programCounter = 0;
@@ -190,14 +232,14 @@ public class ScraperService {
                     rootElement.appendChild(program);
                     // add the program to the cache
                     cache.put(hasKey, null); // key matters but not value in the
-                                             // cache
+                    // cache
                 } else {
                     log.info("Skipping program ID[" + element.getElementsByTag("a").attr("href") + "] on institution ID[" + currentInstitution + "]");
                 }
             }
         }
         page++;
-        log.info("***["+currentInstitution+"] => ["+ programCounter+"]***");
+        log.info("***[" + currentInstitution + "] => [" + programCounter + "]***");
         iterateProgramResultSet(rootElement, doc, page, filterUrl, currentInstitution);
     }
 
@@ -214,7 +256,7 @@ public class ScraperService {
 
     // helper method
     private void getProgramsForAnInstitution(org.w3c.dom.Element rootElement, ImportedInstitution currentInstitution, String yearOfInterest,
-            org.w3c.dom.Document doc) throws IOException {
+                                             org.w3c.dom.Document doc) throws IOException {
         String url = buildProperUrlForAnInstitution(currentInstitution.getUcasId(), yearOfInterest);
         Document htmlDoc = getHtml(url);
 
@@ -326,7 +368,7 @@ public class ScraperService {
                 org.w3c.dom.Element eElement = (org.w3c.dom.Element) nNode;
                 String importedInstitutionId = eElement.getElementsByTagName("importedInstitutionId").item(0).getTextContent();
                 String title = eElement.getElementsByTagName("title").item(0).getTextContent();
-                ImportedProgram ii = new ImportedProgram(substractSubjectId(title), importedInstitutionId);
+                ImportedProgram ii = new ImportedProgram(subtractSubjectId(title), importedInstitutionId);
                 result.add(ii);
             }
         }
@@ -334,7 +376,7 @@ public class ScraperService {
         return result;
     }
 
-    private String substractSubjectId(String title) {
+    private String subtractSubjectId(String title) {
         int start = title.lastIndexOf("(") + 1;
         int finish = title.lastIndexOf(")");
         return title.substring(start, finish);
@@ -359,7 +401,7 @@ public class ScraperService {
 
     }
 
-//FIXME Scrapping Manager class is not there
+    //FIXME Scrapping Manager class is not there
     public void importSubjectAreas() throws IOException {
         ScrappingManager scrappingManager = new ScrappingManager();
         Document html = getHtml(URL_SUBJECT_AREAS);

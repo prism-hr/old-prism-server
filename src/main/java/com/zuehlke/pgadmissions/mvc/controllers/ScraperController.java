@@ -1,22 +1,15 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
+import com.zuehlke.pgadmissions.services.ScraperService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
 
-import com.zuehlke.pgadmissions.services.ScraperService;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 
 /**
  * Created by felipe on 02/06/2015.
@@ -41,9 +34,9 @@ public class ScraperController {
 //         ]
     @ResponseBody
     @RequestMapping(value = "/institutions", method = RequestMethod.GET, produces = "application/json")
-    public List<Object> getInstitutionIds() throws IOException {
+    public void getInstitutionIds() throws IOException {
         log.debug("getInstitutionIds() - start method");
-        return scraperService.getInstitutionIdsBasedInUK();
+        scraperService.scrapeInstitutions(null);
     }
 
     @ResponseBody
@@ -56,7 +49,7 @@ public class ScraperController {
     //manual importer for programs
     @ResponseBody
     @RequestMapping(value= "/importPrograms", method = RequestMethod.POST)
-    public void importPrograms() throws IOException, SAXException, ParserConfigurationException {
+    public void importPrograms() throws IOException {
     }
 
     @ResponseBody
@@ -67,7 +60,7 @@ public class ScraperController {
 
     @ResponseBody
     @RequestMapping(value= "/importSubjectAreas", method = RequestMethod.POST)
-    public void importSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
+    public void importSubjectAreas() throws IOException {
         scraperService.importSubjectAreas();
     }
 

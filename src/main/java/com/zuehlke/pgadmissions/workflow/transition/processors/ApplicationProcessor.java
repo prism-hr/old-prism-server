@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -19,7 +18,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
-public class ApplicationProcessor implements ResourceProcessor {
+public class ApplicationProcessor implements ResourceProcessor<Application> {
 
     @Inject
     private ApplicationService applicationService;
@@ -31,23 +30,22 @@ public class ApplicationProcessor implements ResourceProcessor {
     private ApplicationContext applicationContext;
 
     @Override
-    public void process(Resource resource, Comment comment) throws Exception {
-        Application application = (Application) resource;
+    public void process(Application resource, Comment comment) throws Exception {
         if (comment.isApplicationAutomatedRejectionComment()) {
             setRejectionReasonSystem(resource, comment);
         }
 
         if (comment.isApplicationAssignRefereesComment()) {
-            appendApplicationReferees(application, comment);
+            appendApplicationReferees(resource, comment);
         }
 
         if (comment.isApplicationUpdateRefereesComment()) {
-            appendApplicationReferees(application, comment);
+            appendApplicationReferees(resource, comment);
         }
     }
 
-    private void setRejectionReasonSystem(Resource resource, Comment comment) {
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+    private void setRejectionReasonSystem(Application application, Comment comment) {
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
         comment.setRejectionReasonSystem(propertyLoader.load(APPLICATION_COMMENT_REJECTION_SYSTEM));
     }
 

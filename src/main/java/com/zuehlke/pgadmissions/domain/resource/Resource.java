@@ -123,20 +123,20 @@ public abstract class Resource implements UniqueEntity {
     }
 
     @SuppressWarnings("unchecked")
-    public Resource getParentResource() {
+    public <T extends Resource> T getParentResource() {
         switch (PrismScope.getByResourceClass(this.getClass())) {
         case SYSTEM:
-            return this;
+            return (T) this;
         case INSTITUTION:
-            return getSystem();
+            return (T) getSystem();
         case DEPARTMENT:
-            return getInstitution();
+            return (T) getInstitution();
         case PROGRAM:
-            return ObjectUtils.firstNonNull(getDepartment(), getInstitution());
+            return (T) ObjectUtils.firstNonNull(getDepartment(), getInstitution());
         case PROJECT:
-            return ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
+            return (T) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
         case APPLICATION:
-            return ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
+            return (T) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
         default:
             throw new UnsupportedOperationException();
         }

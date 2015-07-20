@@ -94,10 +94,11 @@ import com.zuehlke.pgadmissions.services.helpers.concurrency.ResourceServiceHelp
 import com.zuehlke.pgadmissions.services.helpers.concurrency.StateServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.StateDurationResolver;
 import com.zuehlke.pgadmissions.workflow.resource.seo.search.SearchRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.resource.seo.social.SocialRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
-import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
+import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Service
@@ -201,7 +202,8 @@ public class ResourceService {
         throw new UnsupportedOperationException();
     }
 
-    public void persistResource(Resource resource, Comment comment) {
+    @SuppressWarnings("unchecked")
+    public <T extends Resource> void persistResource(T resource, Comment comment) {
         if (comment.isCreateComment()) {
             DateTime baseline = new DateTime();
             resource.setCreatedTimestamp(baseline);
@@ -212,12 +214,10 @@ public class ResourceService {
                 parent.setUpdatedTimestampSitemap(baseline);
             }
 
-            Class<? extends ResourcePersister> resourcePersister = resource.getResourceScope().getResourcePersister();
-            if (resourcePersister == null) {
-                throw new UnsupportedOperationException();
+            Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();
+            if (populator != null) {
+                applicationContext.getBean(populator).populate(resource);
             }
-
-            applicationContext.getBean(resourcePersister).persist(resource);
 
             resource.setCode(generateResourceCode(resource));
             entityService.save(resource);
@@ -242,8 +242,9 @@ public class ResourceService {
         throw new UnsupportedOperationException();
     }
 
-    public void preProcessResource(Resource resource, Comment comment) throws Exception {
-        Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourcePreprocessor();
+    @SuppressWarnings("unchecked")
+    public <T extends Resource> void preProcessResource(T resource, Comment comment) throws Exception {
+        Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourcePreprocessor();
         if (processor != null) {
             applicationContext.getBean(processor).process(resource, comment);
         }
@@ -268,8 +269,9 @@ public class ResourceService {
         entityService.flush();
     }
 
-    public void processResource(Resource resource, Comment comment) throws Exception {
-        Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourceProcessor();
+    @SuppressWarnings("unchecked")
+    public <T extends Resource> void processResource(T resource, Comment comment) throws Exception {
+        Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourceProcessor();
         if (processor != null) {
             applicationContext.getBean(processor).process(resource, comment);
         }
@@ -281,7 +283,8 @@ public class ResourceService {
 
             PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
             if (stateDurationEvaluation != null) {
-                baselineCustom = applicationContext.getBean(stateDurationEvaluation.getResolver()).resolve(resource, comment);
+                StateDurationResolver<T> resolver = (StateDurationResolver<T>) applicationContext.getBean(stateDurationEvaluation.getResolver());
+                baselineCustom = resolver.resolve(resource, comment);
             }
 
             baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
@@ -294,7 +297,8 @@ public class ResourceService {
         }
     }
 
-    public void postProcessResource(Resource resource, Comment comment) throws Exception {
+    @SuppressWarnings("unchecked")
+    public <T extends Resource> void postProcessResource(T resource, Comment comment) throws Exception {
         DateTime baselineTime = new DateTime();
 
         if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
@@ -302,7 +306,7 @@ public class ResourceService {
             resource.setSequenceIdentifier(Long.toString(baselineTime.getMillis()) + String.format("%010d", resource.getId()));
         }
 
-        Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourcePostprocessor();
+        Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourcePostprocessor();
         if (processor != null) {
             entityService.flush();
             applicationContext.getBean(processor).process(resource, comment);
@@ -338,7 +342,7 @@ public class ResourceService {
         return comment;
     }
 
-    public Resource getOperativeResource(Resource resource, Action action) {
+    public <T extends Resource> T getOperativeResource(T resource, Action action) {
         return Arrays.asList(CREATE_RESOURCE, IMPORT_RESOURCE).contains(action.getActionCategory()) ? resource.getParentResource() : resource;
     }
 
@@ -395,12 +399,12 @@ public class ResourceService {
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
         return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
         return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
@@ -655,7 +659,7 @@ public class ResourceService {
             List<ImportedEntitySimple> studyOptions = resourceDTO.getStudyOptions().stream()
                     .map(studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId()))
                     .collect(Collectors.toList());
-            setStudyOptions(resource, studyOptions == null ? Lists.<ImportedEntitySimple>newArrayList() : studyOptions, new LocalDate());
+            setStudyOptions(resource, studyOptions == null ? Lists.<ImportedEntitySimple> newArrayList() : studyOptions, new LocalDate());
         }
     }
 

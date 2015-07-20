@@ -4,8 +4,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 
-public interface StateTransitionResolver {
+public interface StateTransitionResolver<T extends Resource> {
 
-	StateTransition resolve(Resource resource, Comment comment);
+	StateTransition resolve(T resource, Comment comment);
 
 }

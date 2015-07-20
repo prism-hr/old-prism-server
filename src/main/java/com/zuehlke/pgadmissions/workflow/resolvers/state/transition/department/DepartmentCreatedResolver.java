@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Component
-public class DepartmentCreatedResolver implements StateTransitionResolver {
+public class DepartmentCreatedResolver implements StateTransitionResolver<Department> {
 
     @Inject
     private RoleService roleService;
@@ -31,7 +31,7 @@ public class DepartmentCreatedResolver implements StateTransitionResolver {
     private StateService stateService;
 
     @Override
-    public StateTransition resolve(Resource resource, Comment comment) {
+    public StateTransition resolve(Department resource, Comment comment) {
         User user = comment.getUser();
         Institution institution = resource.getInstitution();
         List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();

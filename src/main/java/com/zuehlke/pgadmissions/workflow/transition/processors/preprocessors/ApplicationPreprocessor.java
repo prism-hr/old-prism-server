@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Component
-public class ApplicationPreprocessor implements ResourceProcessor {
+public class ApplicationPreprocessor implements ResourceProcessor<Application> {
 
     @Inject
     private ActionService actionService;
@@ -42,18 +42,17 @@ public class ApplicationPreprocessor implements ResourceProcessor {
     private UserService userService;
 
     @Override
-    public void process(Resource resource, Comment comment) throws Exception {
-        Application application = (Application) resource;
+    public void process(Application resource, Comment comment) throws Exception {
         if (comment.isApplicationCreatedComment()) {
-            setReportingPeriod(application);
+            setReportingPeriod(resource);
         }
 
         if (comment.isApplicationSubmittedComment()) {
-            setSubmissionData(application);
+            setSubmissionData(resource);
         }
 
         if (comment.isApplicationInterviewScheduledConfirmedComment()) {
-            appendInterviewScheduledConfirmedComments(application, comment);
+            appendInterviewScheduledConfirmedComments(resource, comment);
         }
     }
 

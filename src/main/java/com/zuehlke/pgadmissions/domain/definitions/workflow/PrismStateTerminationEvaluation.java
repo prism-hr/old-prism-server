@@ -7,13 +7,13 @@ public enum PrismStateTerminationEvaluation {
 
     APPLICATION_REFERENCED_TERMINATION(ApplicationProvidedReferenceTerminationResolver.class);
     
-    private Class<? extends StateTerminationResolver> resolver;
+    private Class<? extends StateTerminationResolver<?>> resolver;
 
-	private PrismStateTerminationEvaluation(Class<? extends StateTerminationResolver> resolver) {
+	private PrismStateTerminationEvaluation(Class<? extends StateTerminationResolver<?>> resolver) {
 	    this.resolver = resolver;
     }
 
-	public Class<? extends StateTerminationResolver> getResolver() {
+	public Class<? extends StateTerminationResolver<?>> getResolver() {
 		return resolver;
 	}
 

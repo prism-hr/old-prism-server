@@ -8,17 +8,17 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
 @Component
-public class ProjectEndDateResolver implements StateDurationResolver {
+public class ProjectEndDateResolver implements StateDurationResolver<Project> {
 
     @Inject
     private ResourceService resourceService;
 
     @Override
-    public LocalDate resolve(Resource resource, Comment comment) {
+    public LocalDate resolve(Project resource, Comment comment) {
         return comment.getTransitionState().getId() == PROJECT_DISABLED_COMPLETED ? null : resourceService.getResourceEndDate(resource.getProject());
     }
 

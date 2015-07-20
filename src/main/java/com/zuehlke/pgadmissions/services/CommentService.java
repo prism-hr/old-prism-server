@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -54,7 +56,9 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.validation.CommentValidator;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -81,6 +85,9 @@ public class CommentService {
     @Inject
     private CommentValidator commentValidator;
 
+    @Inject
+    private ApplicationContext applicationContext;
+
     public Comment getById(int id) {
         return entityService.getById(Comment.class, id);
     }
@@ -100,7 +107,7 @@ public class CommentService {
     public Comment getLatestComment(Resource resource, PrismAction actionId, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, baseline);
     }
-    
+
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
     }
@@ -309,6 +316,20 @@ public class CommentService {
 
     public List<String> getDeclinedSupervisors(Comment comment) {
         return commentDAO.getDeclinedSupervisors(comment);
+    }
+
+    public <T extends ResourceParent, U extends ResourceParentDTO> Comment prepareProcessResourceComment(T resource, User user, Action action,
+            U resourceParentDTO, CommentDTO commentDTO) throws Exception {
+        String resourceScopeReference = resource.getResourceScope().name();
+        String commentContent = action.getId().equals(PrismAction.valueOf(resourceScopeReference + "_VIEW_EDIT")) ? applicationContext
+                .getBean(PropertyLoader.class).localize(resource).load(PrismDisplayPropertyDefinition.valueOf(resourceScopeReference + "_COMMENT_UPDATED"))
+                : commentDTO.getContent();
+
+        Comment comment = new Comment().withUser(user).withResource(resource).withContent(commentContent).withAction(action)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        appendCommentProperties(comment, commentDTO);
+
+        return comment;
     }
 
     private void reassignCommentAssignedUsers(User oldUser, User newUser) {

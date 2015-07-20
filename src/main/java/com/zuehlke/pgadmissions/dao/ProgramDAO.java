@@ -33,9 +33,8 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
@@ -132,8 +131,8 @@ public class ProgramDAO {
                 .list();
     }
 
-    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId, List<PrismState> states) {
-        return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+    public ResourceRepresentationRobot getSearchEngineAdvert(Integer programId, List<PrismState> states) {
+        return (ResourceRepresentationRobot) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "programId") //
                         .add(Projections.property("advert.name"), "programName") //
@@ -149,21 +148,8 @@ public class ProgramDAO {
                 .add(Restrictions.eq("id", programId)) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(Restrictions.isNotEmpty("resourceConditions")) //
-                .setResultTransformer(Transformers.aliasToBean(SearchEngineAdvertDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationRobot.class)) //
                 .uniqueResult();
-    }
-
-    public List<ResourceSearchEngineDTO> getActiveProgramsByInstitution(Integer institutionId, List<PrismState> states) {
-        return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
-                        .add(Projections.property("name"), "name")) //
-                .add(Restrictions.eq("institution.id", institutionId)) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(Restrictions.isNotEmpty("resourceConditions")) //
-                .addOrder(Order.desc("updatedTimestampSitemap")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceSearchEngineDTO.class)) //
-                .list();
     }
 
     public List<Integer> getProjects(Integer program) {

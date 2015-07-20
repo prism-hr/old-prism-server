@@ -17,11 +17,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 
 @Service
 @Transactional
@@ -62,12 +60,8 @@ public class InstitutionService {
     }
 
     public void update(Institution institution, InstitutionDTO institutionDTO) throws Exception {
-        AdvertDTO advertDTO = institutionDTO.getAdvert();
-        Advert advert = institution.getAdvert();
-        advertService.updateAdvert(institution.getParentResource(), advert, advertDTO);
-        institution.setGoogleId(advert.getAddress().getGoogleId());
-
-        institution.setName(advert.getName());
+        resourceService.updateResource(institution, institutionDTO);
+        institution.setGoogleId(institution.getAdvert().getAddress().getGoogleId());
 
         String oldCurrency = institution.getCurrency();
         String newCurrency = institutionDTO.getCurrency();
@@ -82,8 +76,6 @@ public class InstitutionService {
         }
 
         institution.setMinimumWage(institutionDTO.getMinimumWage());
-
-        resourceService.setResourceConditions(institution, institutionDTO.getConditions());
     }
 
     public List<String> listAvailableCurrencies() {
@@ -111,13 +103,6 @@ public class InstitutionService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return institutionDAO.getSitemapEntries(activeInstitutionStates, activeProgramStates, activeProjectStates);
-    }
-
-    public List<ResourceSearchEngineDTO> getActiveInstitutions() {
-        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return institutionDAO.getRelatedInstitutions(activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
     public List<Institution> getInstitutions(String searchTerm, String[] googleIds) {
@@ -171,7 +156,7 @@ public class InstitutionService {
         return Lists.newLinkedList(institutions.values());
     }
 
-    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId, List<PrismState> activeInstitutionStates, List<PrismState> activeProgramStates,
+    public ResourceRepresentationRobot getSearchEngineAdvert(Integer institutionId, List<PrismState> activeInstitutionStates, List<PrismState> activeProgramStates,
             List<PrismState> activeProjectStates) {
         return institutionDAO.getSearchEngineAdvert(institutionId, activeInstitutionStates, activeProgramStates, activeProjectStates);
     }

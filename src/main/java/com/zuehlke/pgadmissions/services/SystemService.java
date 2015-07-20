@@ -6,10 +6,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STA
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_INSTITUTIONS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
 import java.io.IOException;
@@ -85,7 +88,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -97,6 +99,8 @@ import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDura
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismFileUtils;
@@ -290,12 +294,15 @@ public class SystemService {
     }
 
     @Transactional
-    public SocialMetadataDTO getSocialMetadata() throws Exception {
+    public ResourceRepresentationRobot getRobotsRepresentation() {
         System system = getSystem();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
-        return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getName())
-                .withDescription(loader.load(SYSTEM_DESCRIPTION))
-                .withThumbnailUrl(resourceService.getSocialThumbnailUrl(system)).withResourceUrl(resourceService.getSocialResourceUrl(system));
+        return new ResourceRepresentationRobot(loader.load(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl).withSystem(
+                new ResourceRepresentationRobotMetadata().withId(systemId).withAuthor(system.getUser().getFullName()).withName(systemName)
+                        .withSummmary(loader.load(SYSTEM_DESCRIPTION)).withThumbnailUrl(resourceService.getResourceThumbnailUrlRobot(system))
+                        .withResourceUrl(resourceService.getResourceUrlRobot(system)))
+                .withRelatedInstitutions(
+                        resourceService.getRobotRelatedResourceRepresentations(system, INSTITUTION, loader.load(SYSTEM_OPPORTUNITIES_RELATED_INSTITUTIONS)));
     }
 
     @Transactional
@@ -555,12 +562,12 @@ public class SystemService {
     private void initializeStateAction(State state, Action action, PrismStateAction prismStateAction, boolean notify) {
         StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
                 .withActionCondition(prismStateAction.getActionCondition()).withActionEnhancement(prismStateAction.getActionEnhancement());
-        
+
         if (notify) {
             NotificationDefinition notificationDefinition = notificationService.getById(prismStateAction.getNotification());
             stateAction.setNotificationDefinition(notificationDefinition);
         }
-        
+
         entityService.save(stateAction);
         state.getStateActions().add(stateAction);
 

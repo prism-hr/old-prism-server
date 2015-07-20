@@ -290,8 +290,7 @@ public class ActionService {
                     if (redirectAction == null) {
                         throw new WorkflowEngineException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
                     }
-                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
-                            .withTransitionAction(redirectAction);
+                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(redirectAction);
                 } else if (!Objects.equal(resource.getId(), duplicate.getId())) {
                     throw new WorkflowPermissionException(resource, action);
                 }

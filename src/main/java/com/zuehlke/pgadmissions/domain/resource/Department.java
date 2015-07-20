@@ -38,29 +38,30 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "system_id", nullable = false)
-    private System system;
-
-    @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
-
-    @ManyToOne
-    @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @Column(name = "code", unique = true)
     private String code;
 
     @Column(name = "imported_code")
     private String importedCode;
 
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "system_id", nullable = false)
+    private System system;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Institution institution;
+
     @OneToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
 
     @Column(name = "name", nullable = false)
@@ -133,6 +134,9 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @OneToMany(mappedBy = "department")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "department")
+    private Set<Advert> adverts = Sets.newHashSet();
+
     @Override
     public Integer getId() {
         return id;
@@ -181,16 +185,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
         this.name = name;
     }
 
-    public Department withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public Department withName(String name) {
-        this.name = name;
-        return this;
-    }
-
     @Override
     public System getSystem() {
         return system;
@@ -218,20 +212,17 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public void setDepartment(Department department) {
-        // TODO Auto-generated method stub
-
+        return;
     }
 
     @Override
     public Program getProgram() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void setProgram(Program program) {
-        // TODO Auto-generated method stub
-
+        return;
     }
 
     @Override
@@ -241,8 +232,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public void setProject(Project project) {
-        // TODO Auto-generated method stub
-
+        return;
     }
 
     @Override
@@ -257,7 +247,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Override
     public Application getApplication() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -387,6 +376,11 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     }
 
     @Override
+    public Set<Advert> getAdverts() {
+        return adverts;
+    }
+
+    @Override
     public DateTime getUpdatedTimestampSitemap() {
         return updatedTimestampSitemap;
     }
@@ -425,7 +419,32 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
+    
+    public Department withImportedCode(String importedCode) {
+        this.importedCode = importedCode;
+        return this;
+    }
 
+    public Department withUser(User user) {
+        this.user = user;
+        return this;
+    }
+    
+    public Department withParentResource(Resource parentResource) {
+        setParentResource(parentResource);
+        return this;
+    }
+    
+    public Department withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+    
+    public Department withName(String name) {
+        this.name = name;
+        return this;
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("institution", institution);

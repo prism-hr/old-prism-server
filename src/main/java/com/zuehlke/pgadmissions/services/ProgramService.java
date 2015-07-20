@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -11,15 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Service
@@ -34,9 +29,6 @@ public class ProgramService {
 
     @Inject
     private InstitutionService institutionService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Inject
     private UserService userService;
@@ -88,11 +80,6 @@ public class ProgramService {
         return programDAO.getSitemapEntries(activeProgramStates);
     }
 
-    public List<ResourceSearchEngineDTO> getActiveProgramsByInstitution(Integer institutionId) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
-    }
-
     public List<Integer> getProjects(Integer program) {
         return programDAO.getProjects(program);
     }
@@ -107,11 +94,7 @@ public class ProgramService {
         return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);
     }
 
-    public void update(Integer programId, ResourceOpportunityDTO resourceOpportunityDTO, Comment comment) throws Exception {
-        resourceService.updateResource(PROGRAM, programId, resourceOpportunityDTO);
-    }
-
-    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId, List<PrismState> activeProgramStates) {
+    public ResourceRepresentationRobot getSearchEngineAdvert(Integer programId, List<PrismState> activeProgramStates) {
         return programDAO.getSearchEngineAdvert(programId, activeProgramStates);
     }
 

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 
@@ -25,6 +26,8 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
     public abstract BigDecimal getApplicationRatingAverage();
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
+    
+    public abstract Set<Advert> getAdverts();
 
     public void addResourceCondition(ResourceCondition resourceCondition) {
         getResourceConditions().add(resourceCondition);

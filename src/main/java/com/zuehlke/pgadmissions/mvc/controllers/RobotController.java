@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
@@ -41,7 +42,7 @@ public class RobotController {
 
     @Inject
     private ResourceService resourceService;
-    
+
     @Inject
     private SystemService systemService;
 
@@ -61,10 +62,7 @@ public class RobotController {
         }
 
         Map<String, Object> model = Maps.newHashMap();
-
-        model.put("metadata", resourceService.getSocialMetadata(resourceScope, resourceId));
-        model.put("advert", resourceService.getSearchEngineAdvert(resourceScope, resourceId));
-        model.put("applicationUrl", applicationUrl);
+        model.put("metadata", resourceService.getRobotRepresentation(resourceScope, resourceId));
 
         String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
         Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());
@@ -93,6 +91,8 @@ public class RobotController {
     private PrismScope getQueryResourceScope(Map<String, String> queryMap) {
         if (queryMap.containsKey("institution")) {
             return INSTITUTION;
+        } else if (queryMap.containsKey("department")) {
+            return DEPARTMENT;
         } else if (queryMap.containsKey("program")) {
             return PROGRAM;
         } else if (queryMap.containsKey("project")) {
@@ -104,6 +104,7 @@ public class RobotController {
     private Integer getQueryResourceId(PrismScope resourceScope, Map<String, String> queryMap) {
         switch (resourceScope) {
         case INSTITUTION:
+        case DEPARTMENT:
         case PROGRAM:
         case PROJECT:
             return Integer.parseInt(queryMap.get(resourceScope.getLowerCamelName()));

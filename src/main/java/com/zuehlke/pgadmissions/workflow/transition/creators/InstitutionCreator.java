@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.workflow.transition.creators;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -47,8 +46,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName())
                 .withCurrency(newResource.getCurrency()).withBusinessYearStartMonth(newResource.getBusinessYearStartMonth())
                 .withMinimumWage(newResource.getMinimumWage()).withGoogleId(advert.getAddress().getGoogleId()).withUclInstitution(false)
-                .withCreatedTimestamp(new DateTime()).withLogoImage(logoImage);
-        advert.setInstitution(institution);
+                .withLogoImage(logoImage);
 
         resourceService.setResourceAttributes(institution, newResource);
         return institution;

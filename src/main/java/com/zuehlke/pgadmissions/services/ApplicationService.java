@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -74,6 +75,8 @@ import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
@@ -146,6 +149,13 @@ public class ApplicationService {
 
     public Application getByCodeLegacy(String codeLegacy) {
         return entityService.getByProperty(Application.class, "codeLegacy", codeLegacy);
+    }
+
+    public Resource createApplication(User user, ApplicationDTO newResource) {
+        ResourceDTO parentResourceDTO = newResource.getParentResource();
+        ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
+        return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert()).withRetain(false)
+                .withCreatedTimestamp(new DateTime());
     }
 
     public ApplicationStartDateRepresentation getStartDateRepresentation(Integer applicationId, Integer studyOptionId) {

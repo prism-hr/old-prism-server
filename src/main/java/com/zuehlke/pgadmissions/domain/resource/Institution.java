@@ -46,7 +46,7 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @OneToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
 
     @Column(name = "code", unique = true)
@@ -154,6 +154,9 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "institution")
+    private Set<Advert> adverts = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -294,6 +297,11 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    @Override
+    public Set<Advert> getAdverts() {
+        return adverts;
     }
 
     public Institution withParentResource(Resource parentResource) {

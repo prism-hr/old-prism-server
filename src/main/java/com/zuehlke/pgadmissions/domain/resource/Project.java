@@ -75,7 +75,7 @@ public class Project extends ResourceOpportunity {
 
     @OneToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
 
     @ManyToOne
@@ -172,6 +172,9 @@ public class Project extends ResourceOpportunity {
 
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "project")
+    private Set<Advert> adverts = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -365,6 +368,11 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
+    public Set<Advert> getAdverts() {
+        return adverts;
+    }
+
+    @Override
     public Project getProject() {
         return this;
     }
@@ -511,6 +519,11 @@ public class Project extends ResourceOpportunity {
         return this;
     }
 
+    public Project withImportedCode(String importedCode) {
+        this.importedCode = importedCode;
+        return this;
+    }
+    
     public Project withUser(User user) {
         this.user = user;
         return this;

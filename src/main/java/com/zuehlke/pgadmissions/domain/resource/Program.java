@@ -71,7 +71,7 @@ public class Program extends ResourceOpportunity implements TargetEntity {
 
     @OneToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
 
     @ManyToOne
@@ -171,6 +171,9 @@ public class Program extends ResourceOpportunity implements TargetEntity {
 
     @OneToMany(mappedBy = "program")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "program")
+    private Set<Advert> adverts = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -506,6 +509,11 @@ public class Program extends ResourceOpportunity implements TargetEntity {
         return userRoles;
     }
 
+    @Override
+    public Set<Advert> getAdverts() {
+        return adverts;
+    }
+
     public Program withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
@@ -525,7 +533,7 @@ public class Program extends ResourceOpportunity implements TargetEntity {
         this.state = state;
         return this;
     }
-
+    
     public Program withUser(User user) {
         this.user = user;
         return this;
@@ -557,7 +565,7 @@ public class Program extends ResourceOpportunity implements TargetEntity {
     }
 
     public Program withName(String name) {
-        setName(name);
+        this.name = name;
         return this;
     }
 

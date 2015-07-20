@@ -24,18 +24,12 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
+import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
-import com.zuehlke.pgadmissions.workflow.resource.seo.search.InstitutionSearchRepresentationBuilder;
-import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProgramSearchRepresentationBuilder;
-import com.zuehlke.pgadmissions.workflow.resource.seo.search.ProjectSearchRepresentationBuilder;
-import com.zuehlke.pgadmissions.workflow.resource.seo.search.SearchRepresentationBuilder;
-import com.zuehlke.pgadmissions.workflow.resource.seo.search.SystemSearchRepresentationBuilder;
-import com.zuehlke.pgadmissions.workflow.resource.seo.social.ResourceParentSocialRepresentationBuilder;
-import com.zuehlke.pgadmissions.workflow.resource.seo.social.SocialRepresentationBuilder;
-import com.zuehlke.pgadmissions.workflow.resource.seo.social.SystemSocialRepresentationBuilder;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ApplicationCreator;
+import com.zuehlke.pgadmissions.workflow.transition.creators.DepartmentCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.InstitutionCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ProgramCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ProjectCreator;
@@ -45,6 +39,7 @@ import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.DepartmentPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
@@ -53,9 +48,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     SYSTEM(new PrismScopeDefinition() //
             .withResourceClass(System.class) //
-            .withResourceShortCode("SM") //
-            .withSearchRepresentationBuilder(SystemSearchRepresentationBuilder.class) //
-            .withSocialRepresentationBuilder(SystemSocialRepresentationBuilder.class)),
+            .withResourceShortCode("SM")),
     INSTITUTION(new PrismScopeDefinition() //
             .withResourceClass(Institution.class) //
             .withResourceDTOClass(InstitutionDTO.class) //
@@ -64,17 +57,18 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id")) //
             .withActionExecutor(InstitutionExecutor.class) //
-            .withResourceCreator(InstitutionCreator.class) //
-            .withSearchRepresentationBuilder(InstitutionSearchRepresentationBuilder.class) //
-            .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
+            .withResourceCreator(InstitutionCreator.class)), //
     DEPARTMENT(new PrismScopeDefinition() //
             .withResourceClass(Department.class) //
-            .withResourceDTOClass(ResourceParentDivisionDTO.class)
+            .withResourceDTOClass(ResourceParentDivisionDTO.class) //
             .withResourceShortCode("DT") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("department", "name"))), // T
+                    .withColumn("department", "name")) //
+            .withActionExecutor(DepartmentExecutor.class) //
+            .withResourceCreator(DepartmentCreator.class) //
+            .withResourcePostprocessor(DepartmentPostprocessor.class)), //
     PROGRAM(new PrismScopeDefinition() //
             .withResourceClass(Program.class) //
             .withResourceDTOClass(ResourceOpportunityDTO.class) //
@@ -86,9 +80,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("program", "name")) //
             .withActionExecutor(ProgramExecutor.class) //
             .withResourceCreator(ProgramCreator.class) //
-            .withResourcePostprocessor(ProgramPostprocessor.class) //
-            .withSearchRepresentationBuilder(ProgramSearchRepresentationBuilder.class) //
-            .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
+            .withResourcePostprocessor(ProgramPostprocessor.class)), //
     PROJECT(new PrismScopeDefinition() //
             .withResourceClass(Project.class) //
             .withResourceDTOClass(ProjectDTO.class) //
@@ -101,9 +93,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("project", "name")) //
             .withActionExecutor(ProjectExecutor.class) //
             .withResourceCreator(ProjectCreator.class) //
-            .withResourcePostprocessor(ProjectPostprocessor.class) //
-            .withSearchRepresentationBuilder(ProjectSearchRepresentationBuilder.class) //
-            .withSocialRepresentationBuilder(ResourceParentSocialRepresentationBuilder.class)), //
+            .withResourcePostprocessor(ProjectPostprocessor.class)), //
     APPLICATION(new PrismScopeDefinition() //
             .withResourceClass(Application.class) //
             .withResourceDTOClass(ApplicationDTO.class) //
@@ -192,14 +182,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return definition.getResourcePostprocessor();
     }
 
-    public Class<? extends SearchRepresentationBuilder> getSearchRepresentationBuilder() {
-        return definition.getSearchRepresentationBuilder();
-    }
-
-    public Class<? extends SocialRepresentationBuilder> getSocialRepresentationBuilder() {
-        return definition.getSocialRepresentationBuilder();
-    }
-
     public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {
         return byResourceClass.get(resourceClass);
     }
@@ -237,10 +219,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         private Class<? extends ResourceProcessor<?>> resourceProcessor;
 
         private Class<? extends ResourceProcessor<?>> resourcePostprocessor;
-
-        private Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder;
-
-        private Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder;
 
         public Class<? extends Resource> getResourceClass() {
             return resourceClass;
@@ -280,14 +258,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public Class<? extends ResourceProcessor<?>> getResourcePostprocessor() {
             return resourcePostprocessor;
-        }
-
-        public Class<? extends SearchRepresentationBuilder> getSearchRepresentationBuilder() {
-            return searchRepresentationBuilder;
-        }
-
-        public Class<? extends SocialRepresentationBuilder> getSocialRepresentationBuilder() {
-            return socialRepresentationBuilder;
         }
 
         public PrismScopeDefinition withResourceClass(Class<? extends Resource> resourceClass) {
@@ -337,16 +307,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public PrismScopeDefinition withResourcePostprocessor(Class<? extends ResourceProcessor<?>> resourcePostprocessor) {
             this.resourcePostprocessor = resourcePostprocessor;
-            return this;
-        }
-
-        public PrismScopeDefinition withSearchRepresentationBuilder(Class<? extends SearchRepresentationBuilder> searchRepresentationBuilder) {
-            this.searchRepresentationBuilder = searchRepresentationBuilder;
-            return this;
-        }
-
-        public PrismScopeDefinition withSocialRepresentationBuilder(Class<? extends SocialRepresentationBuilder> socialRepresentationBuilder) {
-            this.socialRepresentationBuilder = socialRepresentationBuilder;
             return this;
         }
 

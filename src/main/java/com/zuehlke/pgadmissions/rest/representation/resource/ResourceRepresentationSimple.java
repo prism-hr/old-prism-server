@@ -1,40 +1,17 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 
-public class ResourceRepresentationSimple {
-
-    private PrismScope scope;
-
-    private Integer id;
+public class ResourceRepresentationSimple extends ResourceRepresentationIdentity {
 
     private String code;
 
     private String importedCode;
 
-    private String name;
-
     private StateRepresentationSimple state;
 
     private DocumentRepresentation logoImage;
-
-    public PrismScope getScope() {
-        return scope;
-    }
-
-    public void setScope(PrismScope scope) {
-        this.scope = scope;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getCode() {
         return code;
@@ -50,14 +27,6 @@ public class ResourceRepresentationSimple {
 
     public void setImportedCode(String importedCode) {
         this.importedCode = importedCode;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public StateRepresentationSimple getState() {
@@ -76,13 +45,13 @@ public class ResourceRepresentationSimple {
         this.logoImage = logoImage;
     }
 
-    public ResourceRepresentationSimple withId(Integer resourceId) {
-        this.id = resourceId;
+    public ResourceRepresentationSimple withId(Integer id) {
+        setId(id);
         return this;
     }
 
     public ResourceRepresentationSimple withName(String name) {
-        this.name = name;
+        setName(name);
         return this;
     }
 

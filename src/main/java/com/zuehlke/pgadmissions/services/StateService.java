@@ -239,14 +239,10 @@ public class StateService {
         return stateDAO.getActiveResourceStates(resourceScope);
     }
 
-    public List<PrismState> getInstitutionStates() {
-        return stateDAO.getResourceStates(INSTITUTION);
-    }
-
     public List<PrismState> getActiveInstitutionStates() {
         return stateDAO.getActiveResourceStates(INSTITUTION);
     }
-
+    
     public List<PrismState> getProgramStates() {
         return stateDAO.getResourceStates(PROGRAM);
     }

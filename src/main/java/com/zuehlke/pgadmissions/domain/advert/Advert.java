@@ -11,16 +11,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -29,17 +34,37 @@ import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunityAttribute;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 
 @Entity
-@Table(name = "advert")
-public class Advert extends ResourceOpportunityAttribute {
+@Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
+public class Advert implements UniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "program_id")
+    private Program program;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -109,18 +134,6 @@ public class Advert extends ResourceOpportunityAttribute {
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
-    @OneToOne(mappedBy = "advert")
-    private Institution institution;
-
-    @OneToOne(mappedBy = "advert")
-    private Department department;
-
-    @OneToOne(mappedBy = "advert")
-    private Program program;
-
-    @OneToOne(mappedBy = "advert")
-    private Project project;
-
     @Embedded
     private AdvertCategories categories;
 
@@ -141,6 +154,38 @@ public class Advert extends ResourceOpportunityAttribute {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public String getName() {
@@ -247,42 +292,6 @@ public class Advert extends ResourceOpportunityAttribute {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    @Override
-    public Program getProgram() {
-        return program;
-    }
-
-    @Override
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    @Override
-    public Project getProject() {
-        return project;
-    }
-
-    @Override
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
     public AdvertCategories getCategories() {
         return categories;
     }
@@ -321,6 +330,13 @@ public class Advert extends ResourceOpportunityAttribute {
         return ObjectUtils.firstNonNull(program, project);
     }
 
+    public void setResource(Resource resource) {
+        this.institution = resource.getInstitution();
+        this.department = resource.getDepartment();
+        this.program = resource.getProgram();
+        this.project = resource.getProject();
+    }
+
     public boolean isAdvertOfScope(PrismScope scope) {
         return getResource().getResourceScope().equals(scope);
     }
@@ -335,6 +351,12 @@ public class Advert extends ResourceOpportunityAttribute {
 
     public void addClosingDate(AdvertClosingDate closingDate) {
         closingDates.add(closingDate);
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program)
+                .addProperty("project", project);
     }
 
 }

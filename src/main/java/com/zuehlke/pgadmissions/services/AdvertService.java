@@ -77,7 +77,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 @Transactional
 public class AdvertService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdvertService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdvertService.class);
 
     private final HashMap<LocalDate, HashMap<String, BigDecimal>> exchangeRates = Maps.newHashMap();
 
@@ -186,7 +186,6 @@ public class AdvertService {
         if (targetsDTO != null) {
             updateTargets(advert, targetsDTO);
         }
-
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
@@ -518,7 +517,7 @@ public class AdvertService {
             setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                     minimumGenerated, maximumGenerated, rate);
         } catch (Exception e) {
-            LOGGER.error("Unable to perform currency conversion", e);
+            logger.error("Unable to perform currency conversion", e);
         }
     }
 
@@ -626,7 +625,7 @@ public class AdvertService {
                 setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                         minimumGenerated, maximumGenerated, rate);
             } catch (Exception e) {
-                LOGGER.error("Problem performing currency conversion", e);
+                logger.error("Problem performing currency conversion", e);
             }
         }
     }
@@ -729,9 +728,8 @@ public class AdvertService {
         if (persistentCompetence == null) {
             entityService.save(transientCompetence);
             return transientCompetence;
-        } else {
-            return persistentCompetence;
         }
+        return persistentCompetence;
     }
 
     private void clearAdvertAttributes(AdvertAttributes attributes, String propertyName) {

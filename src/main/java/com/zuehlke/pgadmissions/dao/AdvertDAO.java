@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 
+// FIXME adverts for applying to institution and/or department directly
 @Repository
 @SuppressWarnings("unchecked")
 public class AdvertDAO {

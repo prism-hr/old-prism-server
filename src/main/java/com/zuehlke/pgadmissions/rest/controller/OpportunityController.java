@@ -46,7 +46,6 @@ public class OpportunityController {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
-
         return adverts.stream().map(advertMapper::getAdvertRepresentationExtended).collect(Collectors.toList());
     }
 

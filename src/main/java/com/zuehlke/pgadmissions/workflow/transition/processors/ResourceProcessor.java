@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.workflow.transition.processors;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 
-public interface ResourceProcessor {
+public interface ResourceProcessor<T extends Resource> {
 
-    void process(Resource resource, Comment comment) throws Exception;
+    void process(T resource, Comment comment) throws Exception;
 
 }

@@ -45,7 +45,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Component
-public class ApplicationPostprocessor implements ResourceProcessor {
+public class ApplicationPostprocessor implements ResourceProcessor<Application> {
 
     @Inject
     private ActionService actionService;
@@ -66,19 +66,17 @@ public class ApplicationPostprocessor implements ResourceProcessor {
     private UserService userService;
 
     @Override
-    public void process(Resource resource, Comment comment) throws Exception {
-        Application application = (Application) resource;
-
+    public void process(Application resource, Comment comment) throws Exception {
         if (comment.isProjectCreateApplicationComment()) {
-            synchronizeProjectSupervisors(application);
+            synchronizeProjectSupervisors(resource);
         }
 
         if (comment.isApplicationProvideReferenceComment()) {
-            synchronizeApplicationReferees(application, comment);
+            synchronizeApplicationReferees(resource, comment);
         }
 
         if (comment.isApplicationRatingComment()) {
-            synchronizeApplicationRating(application, comment);
+            synchronizeApplicationRating(resource, comment);
         }
 
         if (comment.isInterviewScheduledExpeditedComment()) {
@@ -86,15 +84,15 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         }
 
         if (comment.isApplicationConfirmOfferRecommendationComment()) {
-            synchronizeOfferRecommendation(application, comment);
+            synchronizeOfferRecommendation(resource, comment);
         }
 
         if (comment.isApplicationReserveStatusComment()) {
-            application.setApplicationReserveStatus(comment.getApplicationReserveStatus());
+            resource.setApplicationReserveStatus(comment.getApplicationReserveStatus());
         }
 
         if (comment.isApplicationCompletionComment()) {
-            application.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
+            resource.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
 
     }

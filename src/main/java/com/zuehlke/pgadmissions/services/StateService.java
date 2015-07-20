@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 import java.util.List;
 import java.util.Set;
@@ -47,6 +50,7 @@ import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.termination.StateTerminationResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Service
@@ -227,28 +231,36 @@ public class StateService {
         return stateDAO.getStatesByStateGroup(stateGroupId);
     }
 
+    public List<PrismState> getResourceStates(PrismScope resourceScope) {
+        return stateDAO.getResourceStates(resourceScope);
+    }
+
+    public List<PrismState> getActiveResourceStates(PrismScope resourceScope) {
+        return stateDAO.getActiveResourceStates(resourceScope);
+    }
+
     public List<PrismState> getInstitutionStates() {
-        return stateDAO.getInstitutionStates();
+        return stateDAO.getResourceStates(INSTITUTION);
     }
 
     public List<PrismState> getActiveInstitutionStates() {
-        return stateDAO.getActiveInstitutionStates();
+        return stateDAO.getActiveResourceStates(INSTITUTION);
     }
 
     public List<PrismState> getProgramStates() {
-        return stateDAO.getProgramStates();
+        return stateDAO.getResourceStates(PROGRAM);
     }
 
     public List<PrismState> getActiveProgramStates() {
-        return stateDAO.getActiveProgramStates();
+        return stateDAO.getActiveResourceStates(PROGRAM);
     }
 
     public List<PrismState> getProjectStates() {
-        return stateDAO.getProjectStates();
+        return stateDAO.getResourceStates(PROJECT);
     }
 
     public List<PrismState> getActiveProjectStates() {
-        return stateDAO.getActiveProjectStates();
+        return stateDAO.getActiveResourceStates(PROJECT);
     }
 
     public List<State> getCurrentStates(Resource resource) {
@@ -339,22 +351,30 @@ public class StateService {
         return stateTransitions;
     }
 
-    private StateTransition resolveStateTransition(Resource resource, Comment comment, List<StateTransition> potentialStateTransitions) {
+    @SuppressWarnings("unchecked")
+    private <T extends Resource> StateTransition resolveStateTransition(T resource, Comment comment, List<StateTransition> potentialStateTransitions) {
         if (potentialStateTransitions.size() > 1) {
-            Class<? extends StateTransitionResolver> resolver = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver();
-            return applicationContext.getBean(resolver).resolve(resource, comment);
+            StateTransitionResolver<T> resolver = (StateTransitionResolver<T>) applicationContext.getBean(potentialStateTransitions.get(0)
+                    .getStateTransitionEvaluation().getId().getResolver());
+            return resolver.resolve(resource, comment);
         }
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
     }
 
-    private Set<State> getStateTerminations(Resource resource, Action action, StateTransition stateTransition) {
-        Resource operative = resourceService.getOperativeResource(resource, action);
+    @SuppressWarnings("unchecked")
+    private <T extends Resource> Set<State> getStateTerminations(T resource, Action action, StateTransition stateTransition) {
+        T operative = resourceService.getOperativeResource(resource, action);
         Set<State> stateTerminations = Sets.newHashSet();
         Set<StateTermination> potentialStateTerminations = stateTransition.getStateTerminations();
         for (StateTermination potentialStateTermination : potentialStateTerminations) {
             PrismStateTerminationEvaluation evaluation = potentialStateTermination.getStateTerminationEvaluation();
-            if (evaluation == null || applicationContext.getBean(evaluation.getResolver()).resolve(operative)) {
+            if (evaluation == null) {
                 stateTerminations.add(potentialStateTermination.getTerminationState());
+            } else {
+                StateTerminationResolver<T> resolver = (StateTerminationResolver<T>) applicationContext.getBean(evaluation.getResolver());
+                if (resolver.resolve(operative)) {
+                    stateTerminations.add(potentialStateTermination.getTerminationState());
+                }
             }
         }
         return stateTerminations;

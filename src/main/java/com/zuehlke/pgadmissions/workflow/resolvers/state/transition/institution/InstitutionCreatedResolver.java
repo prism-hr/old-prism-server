@@ -9,14 +9,14 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Component
-public class InstitutionCreatedResolver implements StateTransitionResolver {
+public class InstitutionCreatedResolver implements StateTransitionResolver<Institution> {
 
 	@Inject
 	private RoleService roleService;
@@ -25,7 +25,7 @@ public class InstitutionCreatedResolver implements StateTransitionResolver {
 	private StateService stateService;
 
 	@Override
-	public StateTransition resolve(Resource resource, Comment comment) {
+	public StateTransition resolve(Institution resource, Comment comment) {
 		if (roleService.hasUserRole(resource, comment.getUser(), SYSTEM_ADMINISTRATOR)) {
 			return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), INSTITUTION_APPROVED);
 		}

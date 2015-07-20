@@ -6,18 +6,18 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Component
-public class ApplicationProvidedReferenceTerminationResolver implements StateTerminationResolver {
+public class ApplicationProvidedReferenceTerminationResolver implements StateTerminationResolver<Application> {
 
-	@Inject
-	private RoleService roleService;
-	
-	@Override
-    public boolean resolve(Resource resource) {
-		return roleService.getRoleUsers(resource, APPLICATION_REFEREE).size() == 1;
+    @Inject
+    private RoleService roleService;
+
+    @Override
+    public boolean resolve(Application resource) {
+        return roleService.getRoleUsers(resource, APPLICATION_REFEREE).size() == 1;
     }
-	
+
 }

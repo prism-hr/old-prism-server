@@ -9,15 +9,15 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Component
-public class ApplicationConfirmedSupervisionResolver implements StateTransitionResolver {
+public class ApplicationConfirmedSupervisionResolver implements StateTransitionResolver<Application> {
 
 	@Inject
 	private RoleService roleService;
@@ -26,7 +26,7 @@ public class ApplicationConfirmedSupervisionResolver implements StateTransitionR
 	private StateService stateService;
 
 	@Override
-	public StateTransition resolve(Resource resource, Comment comment) {
+	public StateTransition resolve(Application resource, Comment comment) {
 		if (roleService.getRoleUsers(resource, APPLICATION_PRIMARY_SUPERVISOR, APPLICATION_SECONDARY_SUPERVISOR).size() == 1) {
 			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVAL_PENDING_COMPLETION);
 		}

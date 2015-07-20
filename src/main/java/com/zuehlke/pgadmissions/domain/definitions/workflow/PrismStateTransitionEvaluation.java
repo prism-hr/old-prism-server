@@ -87,9 +87,9 @@ public enum PrismStateTransitionEvaluation {
 
     private PrismScope scope;
 
-    private Class<? extends StateTransitionResolver> resolver;
+    private Class<? extends StateTransitionResolver<?>> resolver;
 
-    private PrismStateTransitionEvaluation(boolean nextStateSelection, PrismScope scope, Class<? extends StateTransitionResolver> resolver) {
+    private PrismStateTransitionEvaluation(boolean nextStateSelection, PrismScope scope, Class<? extends StateTransitionResolver<?>> resolver) {
         this.nextStateSelection = nextStateSelection;
         this.scope = scope;
         this.resolver = resolver;
@@ -103,7 +103,7 @@ public enum PrismStateTransitionEvaluation {
         return scope;
     }
 
-    public Class<? extends StateTransitionResolver> getResolver() {
+    public Class<? extends StateTransitionResolver<?>> getResolver() {
         return resolver;
     }
 

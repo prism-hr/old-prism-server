@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -373,6 +374,35 @@ public class ResourceDAO {
                 .addOrder(Order.desc("applicationCloseDate")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public DateTime getLatestUpdatedTimestampSitemap(PrismScope resourceScope, List<PrismState> scopeStates,
+            HashMultimap<PrismScope, PrismState> enclosedScopes) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.property("updatedTimestampSitemap"));
+
+        Junction enclosedScopeExclusion = getResourceActiveEnclosedScopeRestriction(criteria, enclosedScopes);
+
+        return (DateTime) criteria.add(getResourceActiveScopeExclusion(scopeStates, enclosedScopeExclusion)) //
+                .addOrder(Order.desc("updatedTimestampSitemap")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public List<ResourceRepresentationSitemap> getResourceSitemapRepresentations(PrismScope resourceScope, List<PrismState> scopeStates,
+            HashMultimap<PrismScope, PrismState> enclosedScopes) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id"), "id") //
+                        .add(Projections.property("updatedTimestampSitemap"), "updatedTimestampSitemap"));
+
+        Junction enclosedScopeExclusion = getResourceActiveEnclosedScopeRestriction(criteria, enclosedScopes);
+
+        return (List<ResourceRepresentationSitemap>) criteria.add(getResourceActiveScopeExclusion(scopeStates, enclosedScopeExclusion)) //
+                .addOrder(Order.desc("updatedTimestampSitemap")) //
+                .setMaxResults(50000) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSitemap.class)) //
+                .list();
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,

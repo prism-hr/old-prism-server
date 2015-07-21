@@ -88,6 +88,7 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelperConcurrency;
@@ -662,6 +663,16 @@ public class ResourceService {
 
     public List<PrismStateGroup> getResourceStateGroups(Resource resource) {
         return resourceDAO.getResourceStateGroups(resource);
+    }
+
+    public DateTime getLatestUpdatedTimestampSitemap(PrismScope resourceScope) {
+        return resourceDAO.getLatestUpdatedTimestampSitemap(resourceScope, stateService.getActiveResourceStates(resourceScope),
+                scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
+    }
+
+    public List<ResourceRepresentationSitemap> getResourceSitemapRepresentations(PrismScope resourceScope) {
+        return resourceDAO.getResourceSitemapRepresentations(resourceScope, stateService.getActiveResourceStates(resourceScope),
+                scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,

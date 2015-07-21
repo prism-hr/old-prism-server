@@ -21,7 +21,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -33,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
@@ -105,29 +103,6 @@ public class ProgramDAO {
                 .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceStudyLocation.class) //
                         .setProjection(Projections.property("studyLocation")) //
                         .add(Restrictions.eq("program", program)))) //
-                .list();
-    }
-
-    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
-        return (DateTime) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.property("updatedTimestampSitemap")) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(Restrictions.isNotEmpty("resourceConditions")) //
-                .addOrder(Order.desc("updatedTimestampSitemap")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public List<SitemapEntryDTO> getSitemapEntries(List<PrismState> states) {
-        return (List<SitemapEntryDTO>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "resourceId") //
-                        .add(Projections.property("updatedTimestampSitemap"), "lastModifiedTimestamp")) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(Restrictions.isNotEmpty("resourceConditions")) //
-                .addOrder(Order.desc("updatedTimestampSitemap")) //
-                .setMaxResults(50000) //
-                .setResultTransformer(Transformers.aliasToBean(SitemapEntryDTO.class)) //
                 .list();
     }
 

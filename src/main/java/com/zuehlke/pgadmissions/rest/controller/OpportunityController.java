@@ -15,14 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.StateService;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -38,14 +36,9 @@ public class OpportunityController {
     @Inject
     private ApplicationService applicationService;
 
-    @Inject
-    private StateService stateService;
-
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentationExtended> getAdverts(OpportunitiesQueryDTO query) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
+        List<Advert> adverts = advertService.getAdverts(query);
         return adverts.stream().map(advertMapper::getAdvertRepresentationExtended).collect(Collectors.toList());
     }
 

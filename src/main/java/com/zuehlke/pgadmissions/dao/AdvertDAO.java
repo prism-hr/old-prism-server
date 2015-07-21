@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -23,6 +25,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
@@ -61,7 +64,7 @@ public class AdvertDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getAdverts(List<PrismState> programStates, List<PrismState> projectStates, OpportunitiesQueryDTO queryDTO) {
+    public List<Integer> getAdverts(HashMultimap<PrismScope, PrismState> scopes, OpportunitiesQueryDTO queryDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
@@ -94,11 +97,11 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.state.id", programStates))) //
+                                .add(Restrictions.in("programState.state.id", scopes.get(PROGRAM)))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project.id")) //
                                 .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.state.id", projectStates))));
+                                .add(Restrictions.in("projectState.state.id", scopes.get(PROJECT)))));
 
         appendLocationConstraint(criteria, queryDTO);
         appendKeywordConstraint(queryDTO, criteria);
@@ -146,8 +149,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertRecommendationDTO> getRecommendedAdverts(User user, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates,
-            List<Integer> advertsRecentlyAppliedFor) {
+    public List<AdvertRecommendationDTO> getRecommendedAdverts(User user, HashMultimap<PrismScope, PrismState> scopes, List<Integer> advertsRecentlyAppliedFor) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("otherUserApplication.advert"), "advert") //
@@ -171,11 +173,11 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.state.id", activeProgramStates))) //
+                                .add(Restrictions.in("programState.state.id", scopes.get(PROGRAM)))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project.id")) //
                                 .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.state.id", activeProjectStates))));
+                                .add(Restrictions.in("projectState.state.id", scopes.get(PROJECT)))));
 
         if (!advertsRecentlyAppliedFor.isEmpty()) {
             criteria.add(Restrictions.not( //
@@ -208,7 +210,7 @@ public class AdvertDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates) {
+    public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline, HashMultimap<PrismScope, PrismState> scopes) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.property("id")) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
@@ -221,11 +223,11 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.state.id", activeProgramStates))) //
+                                .add(Restrictions.in("programState.state.id", scopes.get(PROGRAM)))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project.id")) //
                                 .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.state.id", activeProjectStates)))) //
+                                .add(Restrictions.in("projectState.state.id", scopes.get(PROJECT))))) //
                 .add(Restrictions.lt("lastCurrencyConversionDate", baseline)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //

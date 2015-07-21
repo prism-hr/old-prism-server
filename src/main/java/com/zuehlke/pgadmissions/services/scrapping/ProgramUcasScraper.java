@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.exceptions.ScrapingException;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +29,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class ProgramUcasScraper {
+public class ProgramUcasScraper implements ImportedDataScraper {
 
     private static Logger log = LoggerFactory.getLogger(ProgramUcasScraper.class);
 
@@ -41,27 +43,31 @@ public class ProgramUcasScraper {
     @Inject
     private ImportedEntityService importedEntityService;
 
-    public void scrapePrograms(String yearOfInterest, Writer writer) throws IOException {
-        log.debug("scrapePrograms() - start method");
+    @Override
+    public void scrape(Writer writer) throws ScrapingException {
+        try {
+            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
 
-        List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
+            JsonFactory jsonFactory = new JsonFactory();
+            JsonGenerator jg = jsonFactory.createGenerator(writer);
+            jg.setCodec(new ObjectMapper());
+            jg.setPrettyPrinter(new DefaultPrettyPrinter());
+            jg.writeStartArray();
 
-        JsonFactory jsonFactory = new JsonFactory();
-        JsonGenerator jg = jsonFactory.createGenerator(writer);
-        jg.setCodec(new ObjectMapper());
-        jg.setPrettyPrinter(new DefaultPrettyPrinter());
-        jg.writeStartArray();
-
-        for (ImportedInstitution institution : institutions) {
-            log.info("Scraping institution " + institution.getUcasId() + ": " + institution.getName());
-            try {
-                scrapeProgramsForInstitution(jg, institution, yearOfInterest);
-            } catch (URISyntaxException e) {
-                throw new Error(e);
+            for (ImportedInstitution institution : institutions) {
+                log.info("Scraping institution " + institution.getUcasId() + ": " + institution.getName());
+                try {
+                    scrapeProgramsForInstitution(jg, institution, Integer.toString(LocalDate.now().getYear()));
+                } catch (URISyntaxException e) {
+                    throw new Error(e);
+                }
             }
-        }
 
-        jg.writeEndArray();
+            jg.writeEndArray();
+            jg.close();
+        } catch (IOException e) {
+            throw new ScrapingException(e);
+        }
     }
 
     private void scrapeProgramsForInstitution(JsonGenerator jsonGenerator, ImportedInstitution institution, String yearOfInterest) throws IOException, URISyntaxException {
@@ -133,9 +139,6 @@ public class ProgramUcasScraper {
                 ImportedProgramRequest program = new ImportedProgramRequest().withInstitution(institution.getId())
                         .withLevel(level).withName(programName).withQualification(qualification);
                 jsonGenerator.writeObject(program);
-                log.info("Adding new program: " + programName);
-            } else {
-                log.info("Skipping program: " + programName);
             }
         }
         return false;

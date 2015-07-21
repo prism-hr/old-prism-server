@@ -23,15 +23,15 @@ public class ScraperMainLauncher {
                 break;
             case "subjectAreas":
                 SubjectAreaHesaScraper subjectAreaScraper = new SubjectAreaHesaScraper();
-                subjectAreaScraper.scrapeSubjectAreas(new OutputStreamWriter(new FileOutputStream(args[1])));
+                subjectAreaScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
                 break;
             case "institutions":
                 InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
-                institutionScraper.scrapeInstitutions(new OutputStreamWriter(new FileOutputStream(args[1])));
+                institutionScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
                 break;
             case "programs":
                 ProgramUcasScraper programScraper = new ProgramUcasScraper();
-                programScraper.scrapePrograms("2015", new OutputStreamWriter(new FileOutputStream(args[1])));
+                programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
         }
     }
 

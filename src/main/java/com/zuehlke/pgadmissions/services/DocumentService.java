@@ -1,35 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.Part;
-
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.util.io.Streams;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -38,6 +13,7 @@ import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory.PrismImageCategory;
+import com.zuehlke.pgadmissions.domain.imported.EntityImport;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -45,6 +21,24 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcessor;
+import com.zuehlke.pgadmissions.services.scrapping.ImportedDataScraper;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.util.io.Streams;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.Part;
+import java.io.*;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 
 @Service
 @Transactional
@@ -138,8 +132,8 @@ public class DocumentService {
 
     public byte[] getDocumentContent(Integer document) throws IntegrationException {
         return getDocumentContent(getById(document));
-    }    
-    
+    }
+
     public byte[] getDocumentContent(Document document) throws IntegrationException {
         if (document.getExported()) {
             AmazonS3 amazonClient = getAmazonClient();
@@ -223,6 +217,40 @@ public class DocumentService {
 
     public void reassignDocuments(User oldUser, User newUser) {
         documentDAO.reassignDocuments(oldUser, newUser);
+    }
+
+    /**
+     * @return InputStream object of the file to import, or <code>null</code> if source has not changed since last import
+     */
+    public InputStream getImportedDataSource(EntityImport entityImport) throws IOException {
+        AmazonS3 amazonClient = getAmazonClient();
+        String bucketName = "prism-import-data";
+        String fileName = StringUtils.uncapitalize(entityImport.getImportedEntityType().getUpperCamelName().replace("Imported", "")) + ".json";
+
+        DateTime lastModified;
+        try {
+            ObjectMetadata importDataObjectMetadata = amazonClient.getObjectMetadata(bucketName, fileName);
+            lastModified = new DateTime(importDataObjectMetadata.getLastModified());
+        } catch (AmazonServiceException e) {
+            lastModified = null;
+        }
+        Class<? extends ImportedDataScraper> scraperClass = entityImport.getImportedEntityType().getScraperClass();
+        if (scraperClass != null && lastModified == null || lastModified.isBefore(DateTime.now().minusYears(1))) {
+            // need to re-scrape
+            ImportedDataScraper scraper = applicationContext.getBean(scraperClass);
+            File file = File.createTempFile(fileName, null);
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
+                scraper.scrape(writer);
+            }
+            amazonClient.putObject(bucketName, fileName, file);
+        }
+
+        S3Object importDataObject = amazonClient.getObject(bucketName, fileName);
+        lastModified = new DateTime(importDataObject.getObjectMetadata().getLastModified());
+        if (entityImport.getLastImportedTimestamp() == null || lastModified.isAfter(entityImport.getLastImportedTimestamp())) {
+            return importDataObject.getObjectContent();
+        }
+        return null;
     }
 
     private void validatePdfDocument(byte[] content) {

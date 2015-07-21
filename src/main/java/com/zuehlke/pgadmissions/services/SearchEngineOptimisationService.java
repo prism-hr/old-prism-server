@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
@@ -29,8 +30,7 @@ import org.w3c.dom.Text;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
@@ -38,8 +38,6 @@ import com.zuehlke.pgadmissions.utils.PrismConstants;
 public class SearchEngineOptimisationService {
 
     private static final String XML_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
-
-    private static final PrismScope[] SCOPES = { INSTITUTION, PROGRAM, PROJECT };
 
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
@@ -52,16 +50,7 @@ public class SearchEngineOptimisationService {
     private String applicationApiUrl;
 
     @Inject
-    private InstitutionService institutionService;
-
-    @Inject
-    private ProgramService programService;
-
-    @Inject
-    private ProjectService projectService;
-
-    @Inject
-    private StateService stateService;
+    private ResourceService resourceService;
 
     public String getSitemapIndex() throws ParserConfigurationException, TransformerException {
         Document document = createXmlDocument();
@@ -73,14 +62,12 @@ public class SearchEngineOptimisationService {
         DateTime baseline = new DateTime();
         Map<PrismScope, DateTime> latestUpdateTimestamps = Maps.newHashMap();
 
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        latestUpdateTimestamps.put(PROJECT, resourceService.getLatestUpdatedTimestampSitemap(PROJECT));
+        latestUpdateTimestamps.put(PROGRAM, resourceService.getLatestUpdatedTimestampSitemap(PROGRAM));
+        latestUpdateTimestamps.put(DEPARTMENT, resourceService.getLatestUpdatedTimestampSitemap(DEPARTMENT));
+        latestUpdateTimestamps.put(INSTITUTION, resourceService.getLatestUpdatedTimestampSitemap(INSTITUTION));
 
-        latestUpdateTimestamps.put(PROJECT, projectService.getLatestUpdatedTimestampSitemap(activeProjectStates));
-        latestUpdateTimestamps.put(PROGRAM, programService.getLatestUpdatedTimestampSitemap(activeProgramStates));
-        latestUpdateTimestamps.put(INSTITUTION, institutionService.getLatestUpdatedTimestampSitemap(activeProgramStates, activeProjectStates));
-
-        for (PrismScope scope : SCOPES) {
+        for (PrismScope scope : latestUpdateTimestamps.keySet()) {
             Element sitemap = document.createElement("sitemap");
             sitemapIndex.appendChild(sitemap);
 
@@ -103,23 +90,27 @@ public class SearchEngineOptimisationService {
         return getStringFromXmlDocument(document);
     }
 
-    public String getProjectSitemap() throws UnsupportedEncodingException, TransformerException, ParserConfigurationException {
-        List<SitemapEntryDTO> sitemapEntries = projectService.getSitemapEntries();
+    public String getProjectSitemap() throws Exception {
+        List<ResourceRepresentationSitemap> sitemapEntries = resourceService.getResourceSitemapRepresentations(PROJECT);
         return buildSitemap(PROJECT, sitemapEntries);
     }
 
-    public String getProgramSitemap() throws UnsupportedEncodingException, TransformerException, ParserConfigurationException {
-        List<SitemapEntryDTO> sitemapEntries = programService.getSitemapEntries();
+    public String getProgramSitemap() throws Exception {
+        List<ResourceRepresentationSitemap> sitemapEntries = resourceService.getResourceSitemapRepresentations(PROGRAM);
         return buildSitemap(PROGRAM, sitemapEntries);
     }
 
-    public String getInstitutionSitemap() throws UnsupportedEncodingException, TransformerException, ParserConfigurationException {
-        List<SitemapEntryDTO> sitemapEntries = institutionService.getSitemapEntries();
+    public String getDepartmentSitemap() throws Exception {
+        List<ResourceRepresentationSitemap> sitemapEntries = resourceService.getResourceSitemapRepresentations(DEPARTMENT);
         return buildSitemap(INSTITUTION, sitemapEntries);
     }
 
-    private String buildSitemap(PrismScope scope, List<SitemapEntryDTO> sitemapEntries) throws ParserConfigurationException, TransformerException,
-            UnsupportedEncodingException {
+    public String getInstitutionSitemap() throws Exception {
+        List<ResourceRepresentationSitemap> sitemapEntries = resourceService.getResourceSitemapRepresentations(INSTITUTION);
+        return buildSitemap(INSTITUTION, sitemapEntries);
+    }
+
+    private String buildSitemap(PrismScope scope, List<ResourceRepresentationSitemap> sitemapEntries) throws Exception {
         Document document = createXmlDocument();
 
         Element sitemap = document.createElement("urlset");
@@ -127,7 +118,7 @@ public class SearchEngineOptimisationService {
         document.appendChild(sitemap);
 
         Integer urlNodeByteLength = null;
-        for (SitemapEntryDTO sitemapEntryDTO : sitemapEntries) {
+        for (ResourceRepresentationSitemap sitemapEntryDTO : sitemapEntries) {
             String xmlDocumentContent = getStringFromXmlDocument(document);
 
             if (urlNodeByteLength != null && getUtf8ByteLength(xmlDocumentContent) + urlNodeByteLength > 10485760) {
@@ -141,13 +132,13 @@ public class SearchEngineOptimisationService {
             url.appendChild(location);
 
             Text locationString = document.createTextNode(applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + scope.getLowerCamelName() + "="
-                    + sitemapEntryDTO.getResourceId());
+                    + sitemapEntryDTO.getId());
             location.appendChild(locationString);
 
             Element lastModifiedTimestamp = document.createElement("lastmod");
             url.appendChild(lastModifiedTimestamp);
 
-            Text lastModifiedTimestampString = document.createTextNode(sitemapEntryDTO.getLastModifiedTimestamp().toString(XML_DATE_FORMAT));
+            Text lastModifiedTimestampString = document.createTextNode(sitemapEntryDTO.getUpdatedTimestampSitemap().toString(XML_DATE_FORMAT));
             lastModifiedTimestamp.appendChild(lastModifiedTimestampString);
 
             if (urlNodeByteLength == null) {

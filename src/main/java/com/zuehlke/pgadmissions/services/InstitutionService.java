@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +19,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 
 @Service
 @Transactional
@@ -94,17 +94,6 @@ public class InstitutionService {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
-    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
-        return institutionDAO.getLatestUpdatedTimestampSitemap(programStates, projectStates);
-    }
-
-    public List<SitemapEntryDTO> getSitemapEntries() {
-        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return institutionDAO.getSitemapEntries(activeInstitutionStates, activeProgramStates, activeProjectStates);
-    }
-
     public List<Institution> getInstitutions(String searchTerm, String[] googleIds) {
         return institutionDAO.getInstitutions(searchTerm, googleIds);
     }
@@ -119,8 +108,9 @@ public class InstitutionService {
         return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + new Integer(businessYear + 1).toString());
     }
 
+    // FIXME: generalise for department
     public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProgram() {
-        List<PrismState> states = stateService.getActiveInstitutionStates();
+        List<PrismState> states = stateService.getActiveResourceStates(INSTITUTION);
         boolean userLoggedIn = userService.getCurrentUser() != null;
         return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(states, userLoggedIn);
     }
@@ -129,7 +119,7 @@ public class InstitutionService {
         Map<Integer, ResourceChildCreationDTO> index = Maps.newHashMap();
         Map<String, ResourceChildCreationDTO> institutions = Maps.newTreeMap();
 
-        List<PrismState> institutionStates = stateService.getActiveInstitutionStates();
+        List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
         boolean userLoggedIn = userService.getCurrentUser() != null;
 
         List<ResourceChildCreationDTO> institutionProjectParents = institutionDAO
@@ -141,7 +131,7 @@ public class InstitutionService {
             institutions.put(institutionProjectParent.getResource().getName(), institution);
         }
 
-        List<PrismState> programStates = stateService.getActiveProgramStates();
+        List<PrismState> programStates = stateService.getActiveResourceStates(PROGRAM);
 
         List<ResourceChildCreationDTO> institutionProgramProjectParents = institutionDAO
                 .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(programStates, userLoggedIn);
@@ -154,11 +144,6 @@ public class InstitutionService {
         }
 
         return Lists.newLinkedList(institutions.values());
-    }
-
-    public ResourceRepresentationRobot getSearchEngineAdvert(Integer institutionId, List<PrismState> activeInstitutionStates, List<PrismState> activeProgramStates,
-            List<PrismState> activeProjectStates) {
-        return institutionDAO.getSearchEngineAdvert(institutionId, activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
     private void changeInstitutionCurrency(Institution institution, String oldCurrency, String newCurrency) throws Exception {

@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
@@ -31,10 +31,10 @@ public class ProgramService {
     private InstitutionService institutionService;
 
     @Inject
-    private UserService userService;
+    private StateService stateService;
 
     @Inject
-    private StateService stateService;
+    private UserService userService;
 
     public Program getById(Integer id) {
         return entityService.getById(Program.class, id);
@@ -71,15 +71,6 @@ public class ProgramService {
         return programDAO.getSuggestedStudyAreas(program, location, division);
     }
 
-    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
-        return programDAO.getLatestUpdatedTimestampSitemap(states);
-    }
-
-    public List<SitemapEntryDTO> getSitemapEntries() {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        return programDAO.getSitemapEntries(activeProgramStates);
-    }
-
     public List<Integer> getProjects(Integer program) {
         return programDAO.getProjects(program);
     }
@@ -89,7 +80,7 @@ public class ProgramService {
     }
 
     public List<ResourceChildCreationDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId) {
-        List<PrismState> states = stateService.getActiveProgramStates();
+        List<PrismState> states = stateService.getActiveResourceStates(PROGRAM);
         boolean userLoggedIn = userService.getCurrentUser() != null;
         return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);
     }

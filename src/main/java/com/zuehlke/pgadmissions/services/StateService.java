@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 import java.util.List;
 import java.util.Set;
@@ -237,27 +234,6 @@ public class StateService {
 
     public List<PrismState> getActiveResourceStates(PrismScope resourceScope) {
         return stateDAO.getActiveResourceStates(resourceScope);
-    }
-
-    // FIXME generalize this shit to make other parts of the app work for department
-    public List<PrismState> getActiveInstitutionStates() {
-        return stateDAO.getActiveResourceStates(INSTITUTION);
-    }
-    
-    public List<PrismState> getProgramStates() {
-        return stateDAO.getResourceStates(PROGRAM);
-    }
-
-    public List<PrismState> getActiveProgramStates() {
-        return stateDAO.getActiveResourceStates(PROGRAM);
-    }
-
-    public List<PrismState> getProjectStates() {
-        return stateDAO.getResourceStates(PROJECT);
-    }
-
-    public List<PrismState> getActiveProjectStates() {
-        return stateDAO.getActiveResourceStates(PROJECT);
     }
 
     public List<State> getCurrentStates(Resource resource) {

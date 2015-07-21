@@ -4,11 +4,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.dao.ScopeDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 
@@ -21,9 +24,12 @@ public class ScopeService {
 
     @Inject
     private EntityService entityService;
+    
+    @Inject
+    private StateService stateService;
 
     public Scope getById(PrismScope id) {
-        return entityService.getByProperty(Scope.class, "id", id);
+        return entityService.getById(Scope.class, id);
     }
 
     public List<PrismScope> getScopesDescending() {
@@ -36,6 +42,16 @@ public class ScopeService {
 
     public <T extends Resource> List<PrismScope> getChildScopesAscending(PrismScope prismScope) {
         return scopeDAO.getChildScopesAscending(prismScope);
+    }
+    
+    public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope resourceScope, PrismScope... excludedScopes) {
+        HashMultimap<PrismScope, PrismState> childScopes = HashMultimap.create();
+        for (PrismScope childScope : getChildScopesAscending(resourceScope)) {
+            if (excludedScopes.length == 0 || !ArrayUtils.contains(excludedScopes, childScope)) {
+                childScopes.putAll(childScope, stateService.getActiveResourceStates(childScope));
+            }
+        }
+        return childScopes;
     }
 
 }

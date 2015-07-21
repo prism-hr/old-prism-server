@@ -3,6 +3,10 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByPropertyName;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
@@ -31,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -123,10 +128,7 @@ public class AdvertService {
         return advertDAO.getAdvert(resourceScope, resourceId);
     }
 
-    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> programStates, List<PrismState> projectStates) {
-        programStates = queryDTO.getPrograms() == null ? programStates : stateService.getProgramStates();
-        projectStates = queryDTO.getProjects() == null ? projectStates : stateService.getProjectStates();
-
+    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             if (resource.getInstitution() != null) {
@@ -134,7 +136,8 @@ public class AdvertService {
             }
         }
 
-        List<Integer> adverts = advertDAO.getAdverts(programStates, projectStates, queryDTO);
+        // FIXME case where resourceId is supplied
+        List<Integer> adverts = advertDAO.getAdverts(getAdvertScopes(), queryDTO);
 
         if (adverts.isEmpty()) {
             return Lists.newArrayList();
@@ -145,10 +148,8 @@ public class AdvertService {
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
-        return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
+        return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
     }
 
     public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) throws Exception {
@@ -376,9 +377,7 @@ public class AdvertService {
     }
 
     public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
+        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, getAdvertScopes());
     }
 
     public void setSequenceIdentifier(Advert advert, String prefix) {
@@ -742,4 +741,11 @@ public class AdvertService {
         }
     }
 
+    private HashMultimap<PrismScope, PrismState> getAdvertScopes() {
+        HashMultimap<PrismScope, PrismState> scopes = HashMultimap.create();
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
+            scopes.putAll(scope, stateService.getActiveResourceStates(scope));
+        }
+        return scopes;
+    }
 }

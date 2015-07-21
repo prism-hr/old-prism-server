@@ -40,15 +40,15 @@ public class ScraperController {
     @RequestMapping(value = "/institutions", method = RequestMethod.GET, produces = "application/json")
     public void getInstitutionIds() throws IOException {
         log.debug("getInstitutionIds() - start method");
-        institutionUcasScraper.scrapeInstitutions(null);
+        institutionUcasScraper.scrape(null);
     }
 
     @ResponseBody
     @RequestMapping(value = "/programs", method = RequestMethod.GET)
-    public void getPrograms(@RequestParam String yearOfInterest) throws IOException {
+    public void getPrograms() throws IOException {
         log.debug("getPrograms() - start method");
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dupa.json"))) {
-            programUcasScraper.scrapePrograms(yearOfInterest, writer);
+            programUcasScraper.scrape(writer);
         }
     }
 
@@ -68,7 +68,7 @@ public class ScraperController {
     @RequestMapping(value = "/importSubjectAreas", method = RequestMethod.GET)
     public void importSubjectAreas() throws IOException {
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dupa.json"))) {
-            subjectAreaHesaScraper.scrapeSubjectAreas(writer);
+            subjectAreaHesaScraper.scrape(writer);
         }
     }
 

@@ -375,7 +375,7 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public ResourceRepresentationRobotMetadata getSearchEngineMetadata(Resource resource, List<PrismState> scopeStates,
+    public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Resource.class) //
                 .setProjection(Projections.projectionList() //
@@ -396,7 +396,7 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public List<ResourceRepresentationIdentity> getSearchEngineRelatedResources(Resource resource, PrismScope relatedScope,
+    public List<ResourceRepresentationIdentity> getResourceRobotRelatedRepresentations(Resource resource, PrismScope relatedScope,
             List<PrismState> relatedScopeStates, HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(relatedScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //

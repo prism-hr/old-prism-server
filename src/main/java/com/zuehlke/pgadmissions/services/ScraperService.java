@@ -1,16 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
-import au.com.bytecode.opencsv.CSVReader;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.services.scoring.ImportedProgram;
-import com.zuehlke.pgadmissions.services.scoring.ScoringManager;
-import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectAreaScraping;
-import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.jsoup.Jsoup;
@@ -24,20 +32,21 @@ import org.springframework.util.Assert;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
+import au.com.bytecode.opencsv.CSVReader;
 
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.services.scoring.ImportedProgram;
+import com.zuehlke.pgadmissions.services.scoring.ScoringManager;
+import com.zuehlke.pgadmissions.services.scrapping.ImportedSubjectAreaScraping;
+import com.zuehlke.pgadmissions.services.scrapping.ScrappingManager;
 
 /**
  * Created by felipe on 02/06/2015. This class will query

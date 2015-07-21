@@ -1,19 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_USERS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +23,6 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +51,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -93,8 +86,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceCond
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationMetadataUserRelated;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
@@ -111,12 +102,6 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor
 @Service
 @Transactional
 public class ResourceService {
-
-    @Value("${application.url}")
-    private String applicationUrl;
-
-    @Value("${application.api.url}")
-    private String applicationApiUrl;
 
     @Inject
     private ResourceDAO resourceDAO;
@@ -150,9 +135,6 @@ public class ResourceService {
 
     @Inject
     private StateService stateService;
-
-    @Inject
-    private SystemService systemService;
 
     @Inject
     private UserService userService;
@@ -440,19 +422,6 @@ public class ResourceService {
         return properties;
     }
 
-    public String getResourceThumbnailUrlRobot(Resource resource) {
-        String defaultSocialThumbnail = applicationUrl + "/images/fbimg.jpg";
-        if (resource.getResourceScope() == SYSTEM) {
-            return defaultSocialThumbnail;
-        }
-        Document logoImage = resource.getInstitution().getLogoImage();
-        return logoImage == null ? defaultSocialThumbnail : applicationApiUrl + "/images/" + logoImage.getId().toString();
-    }
-
-    public String getResourceUrlRobot(Resource resource) {
-        return applicationUrl + "/" + ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
-    }
-
     @SuppressWarnings("unchecked")
     public <T extends Resource> HashMultimap<PrismScope, T> getUserAdministratorResources(User user) {
         HashMultimap<PrismScope, T> userAdministratorResources = HashMultimap.create();
@@ -695,51 +664,14 @@ public class ResourceService {
         return resourceDAO.getResourceStateGroups(resource);
     }
 
-    public ResourceRepresentationRobot getRobotRepresentation(PrismScope resourceScope, Integer resourceId) {
-        if (resourceScope.equals(SYSTEM)) {
-            return systemService.getRobotsRepresentation();
-        }
-
-        Resource resource = getById(resourceScope, resourceId);
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
-
-        ResourceRepresentationRobot representation = new ResourceRepresentationRobot(loader.load(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl);
-        setRobotResourceRepresentation(representation, resource);
-
-        for (PrismScope parentScope : scopeService.getParentScopesDescending(resourceScope)) {
-            if (!parentScope.equals(SYSTEM)) {
-                Resource parentResource = resource.getEnclosingResource(parentScope);
-                if (parentResource != null) {
-                    setRobotResourceRepresentation(representation, parentResource);
-                }
-            }
-        }
-
-        for (PrismScope childScope : scopeService.getChildScopesAscending(resourceScope)) {
-            if (!childScope.equals(APPLICATION)) {
-                String childScopeReference = "related" + childScope.getUpperCamelName() + "s";
-                setProperty(representation, childScopeReference, getRobotRelatedResourceRepresentations(resource, childScope,
-                        loader.load(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITIES_RELATED_" + childScope.name() + "S"))));
-            }
-        }
-
-        List<String> relatedUsers = Lists.newArrayList();
-        List<User> users = userService.getUsersForResourceAndRoles(resource, PROJECT_SUPERVISOR_GROUP.getRoles());
-        for (User user : users) {
-            relatedUsers.add(user.getSearchEngineRepresentation());
-        }
-
-        if (!relatedUsers.isEmpty()) {
-            representation.setRelatedUsers(new ResourceRepresentationMetadataUserRelated().withLabel(loader.load(SYSTEM_OPPORTUNITIES_RELATED_USERS))
-                    .withUsers(relatedUsers));
-        }
-
-        return representation;
+    public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
+            HashMultimap<PrismScope, PrismState> enclosedScopes) {
+        return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
-    public ResourceRepresentationRobotMetadataRelated getRobotRelatedResourceRepresentations(Resource resource, PrismScope relatedScope, String label) {
-        HashMultimap<PrismScope, PrismState> childScopes = getRobotChildScopes(relatedScope);
-        List<ResourceRepresentationIdentity> childResources = resourceDAO.getSearchEngineRelatedResources(resource, relatedScope,
+    public ResourceRepresentationRobotMetadataRelated getResourceRobotRelatedRepresentations(Resource resource, PrismScope relatedScope, String label) {
+        HashMultimap<PrismScope, PrismState> childScopes = scopeService.getChildScopesWithActiveStates(relatedScope, APPLICATION);
+        List<ResourceRepresentationIdentity> childResources = resourceDAO.getResourceRobotRelatedRepresentations(resource, relatedScope,
                 stateService.getActiveResourceStates(relatedScope), childScopes);
         return childResources.isEmpty() ? null : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
@@ -795,22 +727,4 @@ public class ResourceService {
         }
     }
 
-    private HashMultimap<PrismScope, PrismState> getRobotChildScopes(PrismScope relatedScope) {
-        HashMultimap<PrismScope, PrismState> childScopes = HashMultimap.create();
-        for (PrismScope enclosedScope : scopeService.getChildScopesAscending(relatedScope)) {
-            if (!enclosedScope.equals(APPLICATION)) {
-                childScopes.putAll(enclosedScope, stateService.getActiveResourceStates(enclosedScope));
-            }
-        }
-        return childScopes;
-    }
-
-    private void setRobotResourceRepresentation(ResourceRepresentationRobot representation, Resource resource) {
-        PrismScope resourceScope = resource.getResourceScope();
-        ResourceRepresentationRobotMetadata resourceRepresentation = resourceDAO.getSearchEngineMetadata(resource,
-                stateService.getActiveResourceStates(resourceScope), getRobotChildScopes(resourceScope));
-        resourceRepresentation.setThumbnailUrl(getResourceThumbnailUrlRobot(resource));
-        resourceRepresentation.setResourceUrl(getResourceUrlRobot(resource));
-        setProperty(representation, resourceScope.getLowerCamelName(), resourceRepresentation);
-    }
 }

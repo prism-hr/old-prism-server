@@ -27,7 +27,10 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.mapping.SystemMapper;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -47,6 +50,12 @@ public class RobotController {
     private SystemService systemService;
 
     @Inject
+    private ResourceMapper resourceMapper;
+
+    @Inject
+    private SystemMapper systemMapper;
+
+    @Inject
     private FreeMarkerConfig freemarkerConfig;
 
     @ResponseBody
@@ -62,7 +71,10 @@ public class RobotController {
         }
 
         Map<String, Object> model = Maps.newHashMap();
-        model.put("metadata", resourceService.getRobotRepresentation(resourceScope, resourceId));
+        model.put(
+                "metadata",
+                resourceScope.equals(SYSTEM) ? systemMapper.getRobotsRepresentation() : resourceMapper
+                        .getResourceRepresentationRobot((ResourceParent) resourceService.getById(resourceScope, resourceId)));
 
         String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
         Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());

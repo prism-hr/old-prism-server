@@ -1,10 +1,16 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_USERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 import java.util.List;
 
@@ -14,6 +20,8 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
@@ -22,8 +30,10 @@ import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -47,6 +57,9 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepre
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationMetadataUserRelated;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
@@ -61,17 +74,28 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
+import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
 public class ResourceMapper {
+
+    @Value("${application.url}")
+    private String applicationUrl;
+
+    @Value("${application.api.url}")
+    private String applicationApiUrl;
 
     @Inject
     private ActionService actionService;
 
     @Inject
     private ApplicationService applicationService;
+
+    @Inject
+    private StateService stateService;
 
     @Inject
     private ActionMapper actionMapper;
@@ -111,6 +135,9 @@ public class ResourceMapper {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public List<ResourceListRowRepresentation> getResourceListRowRepresentations(PrismScope resourceScope, List<ResourceListRowDTO> rows) {
         DateTime baseline = new DateTime();
@@ -445,6 +472,58 @@ public class ResourceMapper {
         return representations;
     }
 
+    public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+
+        ResourceRepresentationRobot representation = new ResourceRepresentationRobot(loader.load(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl);
+        setRobotResourceRepresentation(representation, resource);
+
+        PrismScope resourceScope = resource.getResourceScope();
+
+        for (PrismScope parentScope : scopeService.getParentScopesDescending(resourceScope)) {
+            if (!parentScope.equals(SYSTEM)) {
+                Resource parentResource = resource.getEnclosingResource(parentScope);
+                if (parentResource != null) {
+                    setRobotResourceRepresentation(representation, parentResource);
+                }
+            }
+        }
+
+        for (PrismScope childScope : scopeService.getChildScopesAscending(resourceScope)) {
+            if (!childScope.equals(APPLICATION)) {
+                String childScopeReference = "related" + childScope.getUpperCamelName() + "s";
+                setProperty(representation, childScopeReference, resourceService.getResourceRobotRelatedRepresentations(resource, childScope,
+                        loader.load(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITIES_RELATED_" + childScope.name() + "S"))));
+            }
+        }
+
+        List<String> relatedUsers = Lists.newArrayList();
+        List<User> users = userService.getUsersForResourceAndRoles(resource, PROJECT_SUPERVISOR_GROUP.getRoles());
+        for (User user : users) {
+            relatedUsers.add(user.getSearchEngineRepresentation());
+        }
+
+        if (!relatedUsers.isEmpty()) {
+            representation.setRelatedUsers(new ResourceRepresentationMetadataUserRelated().withLabel(loader.load(SYSTEM_OPPORTUNITIES_RELATED_USERS))
+                    .withUsers(relatedUsers));
+        }
+
+        return representation;
+    }
+
+    public String getResourceThumbnailUrlRobot(Resource resource) {
+        String defaultSocialThumbnail = applicationUrl + "/images/fbimg.jpg";
+        if (resource.getResourceScope() == SYSTEM) {
+            return defaultSocialThumbnail;
+        }
+        Document logoImage = resource.getInstitution().getLogoImage();
+        return logoImage == null ? defaultSocialThumbnail : applicationApiUrl + "/images/" + logoImage.getId().toString();
+    }
+
+    public String getResourceUrlRobot(Resource resource) {
+        return applicationUrl + "/" + ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
+    }
+    
     private List<ResourceSummaryPlotConstraintRepresentation> getResourceSummaryPlotConstraintRepresentation(ResourceReportFilterDTO filterDTO) {
         List<ResourceSummaryPlotConstraintRepresentation> constraint = Lists.newLinkedList();
         for (ResourceReportFilterPropertyDTO propertyDTO : filterDTO.getProperties()) {
@@ -509,6 +588,15 @@ public class ResourceMapper {
             return Objects.equal(year, other.getYear()) && Objects.equal(month, other.getMonth());
         }
 
+    }
+
+    private void setRobotResourceRepresentation(ResourceRepresentationRobot representation, Resource resource) {
+        PrismScope resourceScope = resource.getResourceScope();
+        ResourceRepresentationRobotMetadata resourceRepresentation = resourceService.getResourceRobotMetadataRepresentation(resource,
+                stateService.getActiveResourceStates(resourceScope), scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
+        resourceRepresentation.setThumbnailUrl(getResourceThumbnailUrlRobot(resource));
+        resourceRepresentation.setResourceUrl(getResourceUrlRobot(resource));
+        setProperty(representation, resourceScope.getLowerCamelName(), resourceRepresentation);
     }
 
 }

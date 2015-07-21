@@ -20,7 +20,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
@@ -33,8 +32,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 
 import freemarker.template.Template;
 
@@ -87,82 +84,6 @@ public class InstitutionDAO {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("googleId", googleId)) //
                 .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
-                .uniqueResult();
-    }
-
-    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
-        return (DateTime) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .setProjection(Projections.property("updatedTimestampSitemap")) //
-                .createAlias("programs", "program", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.isNotEmpty("program.resourceStates")) //
-                .createAlias("projects", "project", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.isNotEmpty("project.resourceStates")) //
-                .add(Restrictions.in("program.state.id", programStates)) //
-                .add(Restrictions.in("project.state.id", projectStates)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNotNull("program.id")) //
-                        .add(Restrictions.isNotNull("project.id"))) //
-                .addOrder(Order.desc("updatedTimestampSitemap")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public List<SitemapEntryDTO> getSitemapEntries(List<PrismState> institutionStates, List<PrismState> programStates, List<PrismState> projectStates) {
-        return (List<SitemapEntryDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class, "institution") //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id"), "resourceId") //
-                        .add(Projections.property("updatedTimestampSitemap"), "lastModifiedTimestamp")) //
-                .createAlias("programs", "program", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.in("program.state.id", programStates)) //
-                                .add(Restrictions.isNotEmpty("program.resourceConditions"))) //
-                .createAlias("projects", "project", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.in("project.state.id", projectStates)) //
-                                .add(Restrictions.isNotEmpty("project.resourceConditions"))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.in("state.id", institutionStates)) //
-                                .add(Restrictions.isNotEmpty("resourceConditions"))) //
-                        .add(Restrictions.not( //
-                                Restrictions.conjunction() //
-                                        .add(Restrictions.isNull("program.id")) //
-                                        .add(Restrictions.isNull("project.id"))))) //
-                .addOrder(Order.desc("updatedTimestampSitemap")) //
-                .setMaxResults(50000) //
-                .setResultTransformer(Transformers.aliasToBean(SitemapEntryDTO.class)) //
-                .list();
-    }
-
-    public ResourceRepresentationRobot getSearchEngineAdvert(Integer institutionId, List<PrismState> institutionStates, List<PrismState> programStates,
-            List<PrismState> projectStates) {
-        return (ResourceRepresentationRobot) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id"), "id") //
-                        .add(Projections.property("advert.name"), "name") //
-                        .add(Projections.property("advert.summary"), "summary") //
-                        .add(Projections.property("advert.homepage"), "description") //
-                        .add(Projections.property("advert.homepage"), "homepage")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("programs", "program", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.in("program.state.id", programStates)) //
-                                .add(Restrictions.isNotEmpty("program.resourceConditions"))) //
-                .createAlias("projects", "project", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.in("project.state.id", projectStates)) //
-                                .add(Restrictions.isNotEmpty("project.resourceConditions"))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.in("state.id", institutionStates)) //
-                                .add(Restrictions.isNotEmpty("resourceConditions"))) //
-                        .add(Restrictions.not( //
-                                Restrictions.conjunction() //
-                                        .add(Restrictions.isNull("program.id")) //
-                                        .add(Restrictions.isNull("project.id"))))) //
-                .addOrder(Order.desc("updatedTimestampSitemap")) //
-                .add(Restrictions.eq("id", institutionId)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationRobot.class)) //
                 .uniqueResult();
     }
 

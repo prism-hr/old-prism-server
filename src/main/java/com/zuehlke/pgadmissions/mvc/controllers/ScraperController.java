@@ -1,22 +1,16 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
+import com.zuehlke.pgadmissions.services.scrapping.InstitutionUcasScraper;
+import com.zuehlke.pgadmissions.services.scrapping.ProgramUcasScraper;
+import com.zuehlke.pgadmissions.services.scrapping.SubjectAreaHesaScraper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.xml.sax.SAXException;
-
-import com.zuehlke.pgadmissions.services.ScraperService;
 
 /**
  * This controller is in charge of talking to search.ucas.com
@@ -24,9 +18,17 @@ import com.zuehlke.pgadmissions.services.ScraperService;
 @RestController
 @RequestMapping("api/scraper")
 public class ScraperController {
+
     private static Logger log = LoggerFactory.getLogger(ScraperController.class);
-    @Autowired
-    private ScraperService scraperService;
+
+    @Inject
+    private ProgramUcasScraper programUcasScraper;
+
+    @Inject
+    private InstitutionUcasScraper institutionUcasScraper;
+
+    @Inject
+    private SubjectAreaHesaScraper subjectAreaHesaScraper;
 
     //   The response is an array of JSON as follows
 //         [
@@ -38,15 +40,15 @@ public class ScraperController {
     @RequestMapping(value = "/institutions", method = RequestMethod.GET, produces = "application/json")
     public void getInstitutionIds() throws IOException {
         log.debug("getInstitutionIds() - start method");
-        scraperService.scrapeInstitutions(null);
+        institutionUcasScraper.scrapeInstitutions(null);
     }
 
     @ResponseBody
     @RequestMapping(value = "/programs", method = RequestMethod.GET)
     public void getPrograms(@RequestParam String yearOfInterest) throws IOException {
         log.debug("getPrograms() - start method");
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("C:\\Users\\Pojebe\\prism\\repo\\dupa.json"))) {
-            scraperService.scrapePrograms(yearOfInterest, writer);
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dupa.json"))) {
+            programUcasScraper.scrapePrograms(yearOfInterest, writer);
         }
     }
 
@@ -56,16 +58,18 @@ public class ScraperController {
     public void importPrograms() throws IOException {
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/createScoring", method = RequestMethod.GET)
-    public void generateScoringForProgramsAndSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
-        scraperService.generateScoringForProgramsAndSubjectAreas();
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/createScoring", method = RequestMethod.GET)
+//    public void generateScoringForProgramsAndSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
+//        subjectAreaHesaScraper.generateScoringForProgramsAndSubjectAreas();
+//    }
 
     @ResponseBody
     @RequestMapping(value = "/importSubjectAreas", method = RequestMethod.GET)
     public void importSubjectAreas() throws IOException {
-        scraperService.importSubjectAreas();
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dupa.json"))) {
+            subjectAreaHesaScraper.scrapeSubjectAreas(writer);
+        }
     }
 
 }

@@ -1,14 +1,13 @@
-package com.zuehlke.pgadmissions.scripts;
+package com.zuehlke.pgadmissions.services.scrapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zuehlke.pgadmissions.services.ScraperService;
 
 import java.io.*;
 import java.net.URL;
 import java.text.MessageFormat;
 
-public class ScraperLauncher {
+public class ScraperMainLauncher {
 
     private static String urlPattern = "https://graph.facebook.com/{0}?access_token={1}";
 
@@ -18,16 +17,21 @@ public class ScraperLauncher {
             System.exit(1);
         }
 
-        ScraperService scraperService = new ScraperService();
         switch (args[0]) {
             case "facebookDefinitions":
                 getFacebookDefinitions();
                 break;
+            case "subjectAreas":
+                SubjectAreaHesaScraper subjectAreaScraper = new SubjectAreaHesaScraper();
+                subjectAreaScraper.scrapeSubjectAreas(new OutputStreamWriter(new FileOutputStream(args[1])));
+                break;
             case "institutions":
-                scraperService.scrapeInstitutionsByIteratingIds(new OutputStreamWriter(new FileOutputStream(args[1])));
+                InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
+                institutionScraper.scrapeInstitutions(new OutputStreamWriter(new FileOutputStream(args[1])));
                 break;
             case "programs":
-                scraperService.scrapePrograms("2015", new OutputStreamWriter(new FileOutputStream(args[1])));
+                ProgramUcasScraper programScraper = new ProgramUcasScraper();
+                programScraper.scrapePrograms("2015", new OutputStreamWriter(new FileOutputStream(args[1])));
         }
     }
 

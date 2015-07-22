@@ -84,7 +84,7 @@ public class AdvertService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdvertService.class);
 
-    private final HashMap<LocalDate, HashMap<String, BigDecimal>> exchangeRates = Maps.newHashMap();
+    private final Map<LocalDate, Map<String, BigDecimal>> exchangeRates = Maps.newHashMap();
 
     @Value("${integration.yahoo.exchange.rate.api.uri}")
     private String yahooExchangeRateApiUri;
@@ -524,7 +524,7 @@ public class AdvertService {
         removeExpiredExchangeRates(baseline);
 
         String pair = currencySpecified + currencyConverted;
-        HashMap<String, BigDecimal> todaysRates = exchangeRates.get(baseline);
+        Map<String, BigDecimal> todaysRates = exchangeRates.get(baseline);
 
         if (todaysRates != null) {
             BigDecimal todaysRate = todaysRates.get(pair);

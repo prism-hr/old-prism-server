@@ -172,10 +172,8 @@ public class ImportedEntityMapper {
     }
 
     public ImportedSubjectAreaResponse getImportedSubjectAreaRepresentation(ImportedSubjectArea subjectArea, Institution institution) {
-        ImportedSubjectArea parentSubjectArea = subjectArea.getParentSubjectArea();
         ImportedSubjectAreaResponse representation = getImportedEntitySimpleRepresentation(subjectArea, institution,
                 ImportedSubjectAreaResponse.class);
-        representation.setParentSubjectArea(parentSubjectArea == null ? null : parentSubjectArea.getId());
         return representation;
     }
 

@@ -1,11 +1,19 @@
 package com.zuehlke.pgadmissions.services.scrapping;
 
+import au.com.bytecode.opencsv.CSVReader;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 
 import java.io.*;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.TreeMap;
 
 public class ScraperMainLauncher {
 
@@ -22,8 +30,7 @@ public class ScraperMainLauncher {
                 getFacebookDefinitions();
                 break;
             case "subjectAreas":
-                SubjectAreaHesaScraper subjectAreaScraper = new SubjectAreaHesaScraper();
-                subjectAreaScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
+                mergeSubjectAreas(args);
                 break;
             case "institutions":
                 InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
@@ -33,6 +40,37 @@ public class ScraperMainLauncher {
                 ProgramUcasScraper programScraper = new ProgramUcasScraper();
                 programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
         }
+    }
+
+    private static void mergeSubjectAreas(String[] args) throws IOException {
+        TreeMap<String, ImportedSubjectAreaRequest> subjectAreas = new TreeMap<>();
+
+        for (String fileName : Arrays.copyOfRange(args, 1, args.length) ) {
+            CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(fileName), Charsets.UTF_8));
+            String[] line = reader.readNext();
+            while(line != null) {
+                String code = line[0];
+                String name = line[1];
+                String description = line[2];
+                subjectAreas.put(code, new ImportedSubjectAreaRequest(name).withJacsCode(code).withDescription(description));
+                line = reader.readNext();
+            }
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jg = jsonFactory.createGenerator(System.out);
+        jg.setCodec(objectMapper);
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+        jg.writeStartArray();
+
+        for (String code : subjectAreas.keySet()) {
+            ImportedSubjectAreaRequest subjectAreaRequest = subjectAreas.get(code);
+            jg.writeObject(subjectAreaRequest);
+        }
+
+        jg.writeEndArray();
+        jg.close();
     }
 
     private static void getFacebookDefinitions() throws IOException {

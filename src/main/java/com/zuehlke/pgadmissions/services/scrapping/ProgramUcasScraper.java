@@ -42,7 +42,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 
     private static String URL_PROGRAMS_TEMPLATE = HOST + "/search/results?";
 
-    private static Pattern programNamePattern = Pattern.compile("(.+)\\s+\\(([A-Z0-9]+)\\)");
+    private static Pattern programNamePattern = Pattern.compile("(.+)\\s+\\(([A-Z0-9]{4})\\)( : Taught at \\d+ locations)?");
 
     private HashSet<Integer> programCache = new HashSet<>();
 
@@ -53,7 +53,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
     public void scrape(Writer writer) throws ScrapingException {
         try {
 //            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
-            List<ImportedInstitution> institutions = Lists.newArrayList(new ImportedInstitution().withId(1).withUcasId("1"));
+            List<ImportedInstitution> institutions = Lists.newArrayList(new ImportedInstitution().withId(1421).withUcasId("1421"));
 
             JsonFactory jsonFactory = new JsonFactory();
             JsonGenerator jg = jsonFactory.createGenerator(writer);
@@ -90,16 +90,8 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         if (resultsCount.contains("Showing 1000 of")) { // to many results, need to use filter
             Element subjectFilterElement = htmlDoc.getElementById("filtercategory-9");
             urlsToScrape = subjectFilterElement.getElementsByTag("a").stream()
-                    .map(aElement -> aElement.attr("href"))
+                    .map(aElement -> HOST + aElement.attr("href"))
                     .filter(href -> href.contains("flt9"))
-                    .map(href -> href.replace(".+flt9=", ""))
-                    .map(filterValue -> {
-                        try {
-                            return new URIBuilder(initialURL).addParameter("flt9", filterValue).toString();
-                        } catch (URISyntaxException e) {
-                            throw new Error(e);
-                        }
-                    })
                     .collect(Collectors.toList());
 
         }
@@ -123,7 +115,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             throw new RuntimeException("To many pages for url " + url);
         }
 
-        url = new URIBuilder(url).addParameter("page", Integer.toString(page)).toString();
+        url = new URIBuilder(url).setParameter("Page", Integer.toString(page)).toString();
         Document htmlDoc = getHtml(url);
         Element resultsContainerElement = htmlDoc.getElementsByClass("resultscontainer").first();
         if (resultsContainerElement == null) {

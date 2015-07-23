@@ -33,7 +33,7 @@ public class ScraperMainLauncher {
                 getFacebookDefinitions();
                 break;
             case "subjectAreas":
-                importSubjectAreas(args);
+                importSubjectAreas(args[1]);
                 break;
             case "institutions":
                 InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
@@ -44,14 +44,14 @@ public class ScraperMainLauncher {
                 programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
                 break;
             case "applyCodeMappings":
-                applyCodeMapping(args[2]);
+                applyCodeMapping(args[1]);
         }
     }
 
-    private static void importSubjectAreas(String[] args) throws IOException {
+    private static void importSubjectAreas(String filename) throws IOException {
         TreeMap<String, ImportedSubjectAreaRequest> subjectAreas = new TreeMap<>();
 
-        try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8))) {
+        try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), Charsets.UTF_8))) {
             String[] line = reader.readNext();
             while (line != null) {
                 String jacsCode = line[0];

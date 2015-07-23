@@ -1,42 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.Part;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.util.io.Streams;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -55,6 +22,23 @@ import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcessor;
 import com.zuehlke.pgadmissions.services.scrapping.ImportedDataScraper;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.util.io.Streams;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.Part;
+import java.io.*;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 
 @Service
 @Transactional
@@ -248,7 +232,7 @@ public class DocumentService {
             lastModified = null;
         }
         Class<? extends ImportedDataScraper> scraperClass = importedEntityType.getId().getScraperClass();
-        if (scraperClass != null && lastModified == null || lastModified.isBefore(DateTime.now().minusYears(1))) {
+        if (scraperClass != null && (lastModified == null || lastModified.isBefore(DateTime.now().minusYears(1)))) {
             ImportedDataScraper scraper = applicationContext.getBean(scraperClass);
             File file = File.createTempFile(fileName, null);
             try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {

@@ -2,10 +2,12 @@ package com.zuehlke.pgadmissions.mvc.controllers;
 
 import com.zuehlke.pgadmissions.services.scrapping.InstitutionUcasScraper;
 import com.zuehlke.pgadmissions.services.scrapping.ProgramUcasScraper;
-import com.zuehlke.pgadmissions.services.scrapping.SubjectAreaHesaScraper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.io.FileOutputStream;
@@ -26,9 +28,6 @@ public class ScraperController {
 
     @Inject
     private InstitutionUcasScraper institutionUcasScraper;
-
-    @Inject
-    private SubjectAreaHesaScraper subjectAreaHesaScraper;
 
     //   The response is an array of JSON as follows
 //         [
@@ -63,13 +62,5 @@ public class ScraperController {
 //    public void generateScoringForProgramsAndSubjectAreas() throws IOException, SAXException, ParserConfigurationException {
 //        subjectAreaHesaScraper.generateScoringForProgramsAndSubjectAreas();
 //    }
-
-    @ResponseBody
-    @RequestMapping(value = "/importSubjectAreas", method = RequestMethod.GET)
-    public void importSubjectAreas() throws IOException {
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dupa.json"))) {
-            subjectAreaHesaScraper.scrape(writer);
-        }
-    }
 
 }

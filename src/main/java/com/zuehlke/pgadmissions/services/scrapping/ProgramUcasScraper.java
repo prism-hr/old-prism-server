@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.exceptions.ScrapingException;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -26,6 +28,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +42,8 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 
     private static String URL_PROGRAMS_TEMPLATE = HOST + "/search/results?";
 
+    private static Pattern programNamePattern = Pattern.compile("(.+)\\s+\\(([A-Z0-9]+)\\)");
+
     private HashSet<Integer> programCache = new HashSet<>();
 
     @Inject
@@ -46,7 +52,8 @@ public class ProgramUcasScraper implements ImportedDataScraper {
     @Override
     public void scrape(Writer writer) throws ScrapingException {
         try {
-            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
+//            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
+            List<ImportedInstitution> institutions = Lists.newArrayList(new ImportedInstitution().withId(1).withUcasId("1"));
 
             JsonFactory jsonFactory = new JsonFactory();
             JsonGenerator jg = jsonFactory.createGenerator(writer);
@@ -129,6 +136,15 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                 continue;
             }
             String programName = StringEscapeUtils.unescapeHtml(element.select(".coursenamearea").select("h4").text());
+            Matcher programNameMatcher = programNamePattern.matcher(programName);
+            if(!programNameMatcher.matches()){
+                log.error("Could not match program name: " + programName);
+                continue;
+            }
+            programName = programNameMatcher.group(1);
+
+            String subjectArea = programNameMatcher.group(2);
+
             Integer programHash = Objects.hash(element.getElementsByTag("a").attr("href"), institution.getId());
             if (!programCache.contains(programHash)) {
                 programCache.add(programHash);
@@ -137,7 +153,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                 String level = extractProgramLevelFromRawHTML(element.select(".resultbottomarea").select(".coursequalarea").html());
 
                 ImportedProgramRequest program = new ImportedProgramRequest().withInstitution(institution.getId())
-                        .withLevel(level).withName(programName).withQualification(qualification);
+                        .withLevel(level).withName(programName).withQualification(qualification).withSubjectAreas(ImmutableSet.of(subjectArea));
                 jsonGenerator.writeObject(program);
             }
         }

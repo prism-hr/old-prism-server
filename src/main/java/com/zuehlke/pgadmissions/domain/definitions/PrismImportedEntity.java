@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.*;
 import com.zuehlke.pgadmissions.services.scrapping.ImportedDataScraper;
 import com.zuehlke.pgadmissions.services.scrapping.InstitutionUcasScraper;
 import com.zuehlke.pgadmissions.services.scrapping.ProgramUcasScraper;
-import com.zuehlke.pgadmissions.services.scrapping.SubjectAreaHesaScraper;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
@@ -49,23 +48,23 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             new PrismImportedEntityMappingInsertDefinition()
                     .withMappingClass(ImportedAgeRangeMapping.class)
                     .withTable("imported_age_range_mapping"),
-            new String[] { "application_personal_detail.age_range_id" }, true),
+            new String[]{"application_personal_detail.age_range_id"}, true),
     IMPORTED_COUNTRY(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_personal_detail.country_id" }, true),
+            new String[]{"application_personal_detail.country_id"}, true),
     IMPORTED_DISABILITY(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_personal_detail.disability_id" }, true),
+            new String[]{"application_personal_detail.disability_id"}, true),
     IMPORTED_DOMICILE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_personal_detail.domicile_id" }, true),
+            new String[]{"application_personal_detail.domicile_id"}, true),
     IMPORTED_ETHNICITY(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_personal_detail.ethnicity_id" }, true),
+            new String[]{"application_personal_detail.ethnicity_id"}, true),
     IMPORTED_FUNDING_SOURCE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
@@ -73,7 +72,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     IMPORTED_GENDER(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_personal_detail.gender_id" }, true),
+            new String[]{"application_personal_detail.gender_id"}, true),
     // TODO: add as chart filter
     IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedInstitution.class)
@@ -90,7 +89,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             new PrismImportedEntityMappingInsertDefinition()
                     .withMappingClass(ImportedInstitutionMapping.class)
                     .withTable("imported_institution_mapping"),
-            new String[] { "application_qualification.institution_id" }, false),
+            new String[]{"application_qualification.institution_id"}, false),
     IMPORTED_LANGUAGE_QUALIFICATION_TYPE(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedLanguageQualificationType.class)
             .withTransformerClass(ImportedLanguageQualificationTypeTransformer.class),
@@ -116,17 +115,16 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     IMPORTED_NATIONALITY(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, true),
+            new String[]{"application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2"}, true),
     IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition() //
             .withEntityNameClass(PrismOpportunityType.class),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_program_detail.opportunity_type_id" }, true),
+            new String[]{"application_program_detail.opportunity_type_id"}, true),
     // TODO: add as chart filter
     IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedSubjectArea.class)
-            .withTransformerClass(ImportedSubjectAreaTransformer.class)
-            .withScraperClass(SubjectAreaHesaScraper.class),
+            .withTransformerClass(ImportedSubjectAreaTransformer.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_subject_area")
                     .withPivotColumn("name")
@@ -164,7 +162,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     IMPORTED_REFERRAL_SOURCE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_program_detail.referral_source_id" }, true),
+            new String[]{"application_program_detail.referral_source_id"}, true),
     IMPORTED_REJECTION_REASON(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
@@ -173,7 +171,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             .withEntityNameClass(PrismStudyOption.class), //
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
-            new String[] { "application_program_detail.study_option_id" }, true),
+            new String[]{"application_program_detail.study_option_id"}, true),
     IMPORTED_TITLE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
@@ -205,7 +203,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     private boolean prefetchImport;
 
     PrismImportedEntity(PrismImportedEntityImportDefinition importDefinition, PrismImportedEntityImportInsertDefinition importInsertDefinition,
-            PrismImportedEntityMappingInsertDefinition mappingInsertDefinition, String[] reportDefinition, boolean prefetchImport) {
+                        PrismImportedEntityMappingInsertDefinition mappingInsertDefinition, String[] reportDefinition, boolean prefetchImport) {
         this.importDefinition = importDefinition;
         this.importInsertDefinition = importInsertDefinition;
         this.mappingInsertDefinition = mappingInsertDefinition;

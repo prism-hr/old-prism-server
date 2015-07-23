@@ -60,7 +60,7 @@ public class SearchEngineOptimisationService {
         document.appendChild(sitemapIndex);
 
         DateTime baseline = new DateTime();
-        Map<PrismScope, DateTime> latestUpdateTimestamps = Maps.newHashMap();
+        Map<PrismScope, DateTime> latestUpdateTimestamps = Maps.newLinkedHashMap();
 
         latestUpdateTimestamps.put(PROJECT, resourceService.getLatestUpdatedTimestampSitemap(PROJECT));
         latestUpdateTimestamps.put(PROGRAM, resourceService.getLatestUpdatedTimestampSitemap(PROGRAM));
@@ -102,7 +102,7 @@ public class SearchEngineOptimisationService {
 
     public String getDepartmentSitemap() throws Exception {
         List<ResourceRepresentationSitemap> sitemapEntries = resourceService.getResourceSitemapRepresentations(DEPARTMENT);
-        return buildSitemap(INSTITUTION, sitemapEntries);
+        return buildSitemap(DEPARTMENT, sitemapEntries);
     }
 
     public String getInstitutionSitemap() throws Exception {

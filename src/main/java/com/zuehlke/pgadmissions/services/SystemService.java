@@ -11,7 +11,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -62,7 +61,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.imported.EntityImport;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntityType;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -272,18 +271,14 @@ public class SystemService {
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
             logger.info("Initializing system data for: " + prismImportedEntity.name());
 
-            EntityImport entityImport = entityService.getById(EntityImport.class, prismImportedEntity);
-            if (entityImport == null) {
-                entityImport = new EntityImport().withImportedEntityType(prismImportedEntity);
-                entityService.save(entityImport);
-            }
+            ImportedEntityType importedEntityType = entityService.getOrCreate(new ImportedEntityType().withId(prismImportedEntity));
 
-            try (InputStream inputStream = documentService.getImportedDataSource(entityImport)) {
+            try (InputStream inputStream = documentService.getImportedDataSource(importedEntityType)) {
                 if (inputStream != null) {
                     List<T> representations = importedEntityMapper.getImportedEntityRepresentations(prismImportedEntity, inputStream);
                     importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Unable to open content stream for " + prismImportedEntity.name(), e);
             }
         }
@@ -654,7 +649,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-                                       List<? extends WorkflowConfigurationDTO> configurationDTO) {
+            List<? extends WorkflowConfigurationDTO> configurationDTO) {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope,
                     prismScope.ordinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null, configurationDTO);

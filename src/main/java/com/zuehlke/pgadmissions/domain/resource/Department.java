@@ -129,6 +129,12 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
     @OneToMany(mappedBy = "department")
+    private Set<Program> programs = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "department")
+    private Set<Project> projects = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "department")
     private Set<Comment> comments = Sets.newHashSet();
 
     @OneToMany(mappedBy = "department")
@@ -349,6 +355,11 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
+    
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+        return resourceConditions;
+    }
 
     @Override
     public Set<ResourceState> getResourceStates() {
@@ -360,9 +371,12 @@ public class Department extends ResourceParentDivision implements TargetEntity {
         return resourcePreviousStates;
     }
 
-    @Override
-    public Set<ResourceCondition> getResourceConditions() {
-        return resourceConditions;
+    public Set<Program> getPrograms() {
+        return programs;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
     }
 
     @Override
@@ -419,7 +433,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
-    
+
     public Department withImportedCode(String importedCode) {
         this.importedCode = importedCode;
         return this;
@@ -429,22 +443,22 @@ public class Department extends ResourceParentDivision implements TargetEntity {
         this.user = user;
         return this;
     }
-    
+
     public Department withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
     }
-    
+
     public Department withAdvert(Advert advert) {
         this.advert = advert;
         return this;
     }
-    
+
     public Department withName(String name) {
         this.name = name;
         return this;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("institution", institution);

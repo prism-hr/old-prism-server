@@ -31,7 +31,7 @@ public class SearchEngineOptimisationController {
 
     @RequestMapping(value = "/department_sitemap.xml", method = RequestMethod.GET)
     public String getDepartmentSitemap() throws Exception {
-        return searchEngineOptimisationService.getInstitutionSitemap();
+        return searchEngineOptimisationService.getDepartmentSitemap();
     }
     
     @RequestMapping(value = "/institution_sitemap.xml", method = RequestMethod.GET)

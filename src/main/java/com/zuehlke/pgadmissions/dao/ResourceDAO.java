@@ -407,12 +407,12 @@ public class ResourceDAO {
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Resource.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id"), "id") //
                         .add(Projections.property("advert.name"), "name") //
                         .add(Projections.property("advert.summary"), "summary") //
-                        .add(Projections.property("advert.homepage"), "description") //
+                        .add(Projections.property("advert.description"), "description") //
                         .add(Projections.property("advert.homepage"), "homepage")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN);
 
@@ -520,9 +520,7 @@ public class ResourceDAO {
     private Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates, Junction enclosedScopeExclusion) {
         return Restrictions.disjunction() //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.in("state.id", relatedScopeStates)) //
-                                .add(Restrictions.isNotEmpty("resourceConditions")))
+                        .add(Restrictions.in("state.id", relatedScopeStates)) //
                         .add(Restrictions.not(enclosedScopeExclusion)));
     }
 
@@ -531,9 +529,7 @@ public class ResourceDAO {
         for (PrismScope enclosedScope : enclosedScopes.keySet()) {
             String enclosedScopeReference = enclosedScope.getLowerCamelName();
             criteria.createAlias(enclosedScopeReference + "s", enclosedScopeReference, JoinType.LEFT_OUTER_JOIN, //
-                    Restrictions.conjunction() //
-                            .add(Restrictions.in(enclosedScopeReference + ".state.id", enclosedScopes.get(enclosedScope))) //
-                            .add(Restrictions.isNotEmpty(enclosedScopeReference + ".resourceConditions")));
+                    Restrictions.in(enclosedScopeReference + ".state.id", enclosedScopes.get(enclosedScope)));
 
             enclosedScopeExclusion.add(Restrictions.isNull(enclosedScopeReference + ".id"));
         }

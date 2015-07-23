@@ -138,7 +138,7 @@ public class ResourceRepresentationRobot {
         return this;
     }
 
-    private ResourceRepresentationRobotMetadata getResource() {
+    public ResourceRepresentationRobotMetadata getResource() {
         return ObjectUtils.firstNonNull(project, program, department, institution, system);
     }
 
@@ -146,7 +146,7 @@ public class ResourceRepresentationRobot {
         return getResource().getName();
     }
 
-    public String getDescription(String homepageLabel) {
+    public String getDescription() {
         return getResource().getDescriptionDisplay(homepageLabel);
     }
 

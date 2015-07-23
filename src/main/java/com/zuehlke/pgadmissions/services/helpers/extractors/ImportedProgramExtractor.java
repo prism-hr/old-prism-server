@@ -23,10 +23,12 @@ public class ImportedProgramExtractor implements ImportedEntityExtractor<Importe
         for (ImportedProgramRequest definition : definitions) {
             List<String> cells = Lists.newLinkedList();
             cells.add(prepareIntegerForSqlInsert(definition.getInstitution()));
+            cells.add(prepareIntegerForSqlInsert(definition.getQualificationType())); // TODO: map to PRiSM qualification types
             cells.add(prepareStringForSqlInsert(definition.getLevel()));
             String qualification = definition.getQualification();
             cells.add(prepareStringForSqlInsert(qualification));
             cells.add(prepareStringForSqlInsert(qualification + " " + definition.getName()));
+            cells.add("null"); // TODO: implement JACS code as derived from UCAS
             cells.add(prepareBooleanForSqlInsert(enable));
             rows.add(prepareCellsForSqlInsert(cells));
         }

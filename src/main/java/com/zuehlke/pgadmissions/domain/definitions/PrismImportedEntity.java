@@ -150,6 +150,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumn("level")
                     .withColumn("qualification")
                     .withPivotColumn("name")
+                    .withColumn("code")
                     .withColumn("homepage")
                     .withColumn("enabled")
                     .withExtractor(ImportedProgramExtractor.class),

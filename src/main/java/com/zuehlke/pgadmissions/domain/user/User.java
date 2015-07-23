@@ -261,8 +261,8 @@ public class User implements UserDetails, UniqueEntity {
         return this;
     }
 
-    public String getSearchEngineRepresentation() {
-        return fullName + " " + email.replace("@", " ").replace(".", " ");
+    public String getRobotRepresentation() {
+        return fullName + ": " + email.replace("@", "-").replace(".", "-");
     }
 
     @Override

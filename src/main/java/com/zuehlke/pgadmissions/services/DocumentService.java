@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory.PrismImageCategory;
-import com.zuehlke.pgadmissions.domain.imported.EntityImport;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntityType;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -235,10 +235,10 @@ public class DocumentService {
         documentDAO.reassignDocuments(oldUser, newUser);
     }
 
-    public InputStream getImportedDataSource(EntityImport entityImport) throws IOException {
+    public InputStream getImportedDataSource(ImportedEntityType importedEntityType) throws Exception {
         AmazonS3 amazonClient = getAmazonClient();
         String bucketName = "prism-import-data";
-        String fileName = StringUtils.uncapitalize(entityImport.getImportedEntityType().getUpperCamelName().replace("Imported", "")) + ".json";
+        String fileName = StringUtils.uncapitalize(importedEntityType.getId().getUpperCamelName().replace("Imported", "")) + ".json";
 
         DateTime lastModified;
         try {
@@ -247,7 +247,7 @@ public class DocumentService {
         } catch (AmazonServiceException e) {
             lastModified = null;
         }
-        Class<? extends ImportedDataScraper> scraperClass = entityImport.getImportedEntityType().getScraperClass();
+        Class<? extends ImportedDataScraper> scraperClass = importedEntityType.getId().getScraperClass();
         if (scraperClass != null && lastModified == null || lastModified.isBefore(DateTime.now().minusYears(1))) {
             ImportedDataScraper scraper = applicationContext.getBean(scraperClass);
             File file = File.createTempFile(fileName, null);
@@ -259,7 +259,7 @@ public class DocumentService {
 
         S3Object importDataObject = amazonClient.getObject(bucketName, fileName);
         lastModified = new DateTime(importDataObject.getObjectMetadata().getLastModified());
-        if (entityImport.getLastImportedTimestamp() == null || lastModified.isAfter(entityImport.getLastImportedTimestamp())) {
+        if (importedEntityType.getLastImportedTimestamp() == null || lastModified.isAfter(importedEntityType.getLastImportedTimestamp())) {
             return importDataObject.getObjectContent();
         }
         return null;

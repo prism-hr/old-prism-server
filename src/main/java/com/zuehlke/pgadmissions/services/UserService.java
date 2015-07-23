@@ -218,6 +218,10 @@ public class UserService {
     public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
         return userDAO.getUsersForResourceAndRoles(resource, roleIds);
     }
+    
+    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
+        return userDAO.getUsersForResourcesAndRoles(resources, roleIds);
+    }
 
     public String getUserInstitutionIdentity(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
         return userDAO.getUserInstitutionId(user, institution, identityType);

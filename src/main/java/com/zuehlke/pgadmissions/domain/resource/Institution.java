@@ -140,13 +140,16 @@ public class Institution extends ResourceParent implements TargetEntity {
     @OneToMany(mappedBy = "institution")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
+    @OneToMany(mappedBy = "institution")
+    private Set<Department> departments = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "institution")
     private Set<Program> programs = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
+    @OneToMany(mappedBy = "institution")
     private Set<Project> projects = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
+    @OneToMany(mappedBy = "institution")
     private Set<Application> applications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "institution")
@@ -273,6 +276,11 @@ public class Institution extends ResourceParent implements TargetEntity {
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
+    
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+        return resourceConditions;
+    }
 
     @Override
     public Set<ResourceState> getResourceStates() {
@@ -283,10 +291,21 @@ public class Institution extends ResourceParent implements TargetEntity {
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
+    
+    public Set<Department> getDepartments() {
+        return departments;
+    }
 
-    @Override
-    public Set<ResourceCondition> getResourceConditions() {
-        return resourceConditions;
+    public Set<Program> getPrograms() {
+        return programs;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public Set<Application> getApplications() {
+        return applications;
     }
 
     @Override
@@ -542,18 +561,6 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
-    }
-
-    public Set<Program> getPrograms() {
-        return programs;
-    }
-
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
-    public Set<Application> getApplications() {
-        return applications;
     }
 
     @Override

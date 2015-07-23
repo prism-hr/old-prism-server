@@ -50,7 +50,7 @@
 		            <p>${metadata.relatedDepartments.label}:</p>
 		            <ul>
 		                <#list metadata.relatedDepartments.resources as relatedDepartment>
-		                    <li><a href="${metadata.applicationUrl}/#!/?department=${departmentDepartment.id?c}">${relatedDepartment.name}</a></li>
+		                    <li><a href="${metadata.applicationUrl}/#!/?department=${relatedDepartment.id?c}">${relatedDepartment.name}</a></li>
 		                </#list>
 		            </ul>
 		        </div>

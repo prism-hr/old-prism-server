@@ -105,7 +105,7 @@ public class ResourceRepresentationRobotMetadata extends ResourceRepresentationI
     }
 
     private String buildHyperLink(String url, String title) {
-        return url == null ? null : "<a href=\"" + url + "\">" + title + "</a>";
+        return url == null ? null : "<p><a href=\"" + url + "\">" + title + "</a></p>";
     }
 
 }

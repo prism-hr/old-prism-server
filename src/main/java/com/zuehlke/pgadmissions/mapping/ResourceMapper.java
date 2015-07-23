@@ -13,6 +13,7 @@ import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -29,6 +30,7 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -77,6 +79,7 @@ import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -472,6 +475,7 @@ public class ResourceMapper {
         return representations;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
 
@@ -498,9 +502,10 @@ public class ResourceMapper {
         }
 
         List<String> relatedUsers = Lists.newArrayList();
-        List<User> users = userService.getUsersForResourceAndRoles(resource, PROJECT_SUPERVISOR_GROUP.getRoles());
+        List<User> users = userService.getUsersForResourcesAndRoles((Set<Resource>) (resourceScope.equals(PROJECT) ? Sets.newHashSet(resource)
+                : PrismReflectionUtils.getProperty(resource, "projects")), PROJECT_SUPERVISOR_GROUP.getRoles());
         for (User user : users) {
-            relatedUsers.add(user.getSearchEngineRepresentation());
+            relatedUsers.add(user.getRobotRepresentation());
         }
 
         if (!relatedUsers.isEmpty()) {
@@ -523,7 +528,7 @@ public class ResourceMapper {
     public String getResourceUrlRobot(Resource resource) {
         return applicationUrl + "/" + ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
     }
-    
+
     private List<ResourceSummaryPlotConstraintRepresentation> getResourceSummaryPlotConstraintRepresentation(ResourceReportFilterDTO filterDTO) {
         List<ResourceSummaryPlotConstraintRepresentation> constraint = Lists.newLinkedList();
         for (ResourceReportFilterPropertyDTO propertyDTO : filterDTO.getProperties()) {
@@ -594,6 +599,7 @@ public class ResourceMapper {
         PrismScope resourceScope = resource.getResourceScope();
         ResourceRepresentationRobotMetadata resourceRepresentation = resourceService.getResourceRobotMetadataRepresentation(resource,
                 stateService.getActiveResourceStates(resourceScope), scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
+        resourceRepresentation.setAuthor(resource.getUser().getRobotRepresentation());
         resourceRepresentation.setThumbnailUrl(getResourceThumbnailUrlRobot(resource));
         resourceRepresentation.setResourceUrl(getResourceUrlRobot(resource));
         setProperty(representation, resourceScope.getLowerCamelName(), resourceRepresentation);

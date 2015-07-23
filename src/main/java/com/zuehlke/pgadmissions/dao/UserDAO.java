@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -74,6 +75,16 @@ public class UserDAO {
                         .add(Restrictions.eq("program", resource.getProgram())) //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("system", resource.getSystem()))) //
+                .add(Restrictions.in("role.id", roleIds)) //
+                .list();
+    }
+
+    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(roleIds[0].getScope().getLowerCamelName(), resources)) //
                 .add(Restrictions.in("role.id", roleIds)) //
                 .list();
     }

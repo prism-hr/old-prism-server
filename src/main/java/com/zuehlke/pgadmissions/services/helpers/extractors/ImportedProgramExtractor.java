@@ -1,18 +1,13 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import org.springframework.stereotype.Component;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
-
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
 
 @Component
 public class ImportedProgramExtractor implements ImportedEntityExtractor<ImportedProgramRequest> {

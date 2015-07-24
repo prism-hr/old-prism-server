@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramInternalRequest;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -17,7 +17,6 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -25,9 +24,7 @@ import java.io.Writer;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -44,7 +41,8 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 
     private static Pattern programNamePattern = Pattern.compile("(.+)\\s+\\(([A-Z0-9]{4})\\)( : Taught at \\d+ locations)?");
 
-    private HashSet<Integer> programCache = new HashSet<>();
+    private TreeMultiset<ImportedProgramInternalRequest> programSet = TreeMultiset.create(
+            (o1, o2) -> ComparisonChain.start().compare(o1.getInstitution(), o2.getInstitution()).compare(o1.getName(), o2.getName()).compare(o1.getLevel(), o2.getLevel()).result());
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -55,19 +53,27 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 //            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
             List<ImportedInstitution> institutions = Lists.newArrayList(new ImportedInstitution().withId(1421).withUcasId("1421"));
 
+
+            programSet.clear();
+            for (ImportedInstitution institution : institutions) {
+                log.info("Scraping institution " + institution.getUcasId() + ": " + institution.getName());
+                try {
+                    scrapeProgramsForInstitution(institution, Integer.toString(LocalDate.now().getYear()));
+                } catch (URISyntaxException e) {
+                    throw new Error(e);
+                }
+            }
+
             JsonFactory jsonFactory = new JsonFactory();
             JsonGenerator jg = jsonFactory.createGenerator(writer);
             jg.setCodec(new ObjectMapper());
             jg.setPrettyPrinter(new DefaultPrettyPrinter());
             jg.writeStartArray();
 
-            for (ImportedInstitution institution : institutions) {
-                log.info("Scraping institution " + institution.getUcasId() + ": " + institution.getName());
-                try {
-                    scrapeProgramsForInstitution(jg, institution, Integer.toString(LocalDate.now().getYear()));
-                } catch (URISyntaxException e) {
-                    throw new Error(e);
-                }
+            for (Multiset.Entry<ImportedProgramInternalRequest> programEntry : programSet.entrySet()) {
+                ImportedProgramInternalRequest program = programEntry.getElement();
+                program.setWeight(programEntry.getCount());
+                jg.writeObject(program);
             }
 
             jg.writeEndArray();
@@ -77,7 +83,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         }
     }
 
-    private void scrapeProgramsForInstitution(JsonGenerator jsonGenerator, ImportedInstitution institution, String yearOfInterest) throws IOException, URISyntaxException {
+    private void scrapeProgramsForInstitution(ImportedInstitution institution, String yearOfInterest) throws IOException, URISyntaxException {
         String initialURL = new URIBuilder(URL_PROGRAMS_TEMPLATE).addParameter("Vac", "1").addParameter("AvailableIn", yearOfInterest).addParameter("providerids", institution.getUcasId()).toString();
         Document htmlDoc = getHtml(initialURL);
         Element resultsCountElement = htmlDoc.getElementsByClass("resultsCount").first();
@@ -93,22 +99,20 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                     .map(aElement -> HOST + aElement.attr("href"))
                     .filter(href -> href.contains("flt9"))
                     .collect(Collectors.toList());
-
         }
 
         for (String url : urlsToScrape) {
             int page = 1;
-            while (!scrapeProgramPages(jsonGenerator, url, institution, page)) {
+            while (!scrapeProgramPages(url, institution, page)) {
                 page++;
             }
         }
-
     }
 
     /**
      * return <code>true</code> when there are no more pages
      */
-    private boolean scrapeProgramPages(JsonGenerator jsonGenerator, String url, ImportedInstitution institution, int page)
+    private boolean scrapeProgramPages(String url, ImportedInstitution institution, int page)
             throws IOException, URISyntaxException {
 
         if (page > 50) {
@@ -129,25 +133,19 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             }
             String programName = StringEscapeUtils.unescapeHtml(element.select(".coursenamearea").select("h4").text());
             Matcher programNameMatcher = programNamePattern.matcher(programName);
-            if(!programNameMatcher.matches()){
+            if (!programNameMatcher.matches()) {
                 log.error("Could not match program name: " + programName);
                 continue;
             }
             programName = programNameMatcher.group(1);
 
             String subjectArea = programNameMatcher.group(2);
+            String qualification = element.select(".courseinfooutcome").text();
+            String level = extractProgramLevelFromRawHTML(element.select(".resultbottomarea").select(".coursequalarea").html());
 
-            Integer programHash = Objects.hash(element.getElementsByTag("a").attr("href"), institution.getId());
-            if (!programCache.contains(programHash)) {
-                programCache.add(programHash);
-
-                String qualification = element.select(".courseinfooutcome").text();
-                String level = extractProgramLevelFromRawHTML(element.select(".resultbottomarea").select(".coursequalarea").html());
-
-                ImportedProgramRequest program = new ImportedProgramRequest().withInstitution(institution.getId())
-                        .withLevel(level).withName(programName).withQualification(qualification).withSubjectAreas(ImmutableSet.of(subjectArea));
-                jsonGenerator.writeObject(program);
-            }
+            ImportedProgramInternalRequest program = new ImportedProgramInternalRequest(programName).withInstitution(institution.getId())
+                    .withLevel(level).withQualification(qualification).withSubjectAreas(ImmutableSet.of(subjectArea));
+            programSet.add(program);
         }
         return false;
     }

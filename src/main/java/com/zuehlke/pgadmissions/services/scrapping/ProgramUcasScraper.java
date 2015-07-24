@@ -50,9 +50,8 @@ public class ProgramUcasScraper implements ImportedDataScraper {
     @Override
     public void scrape(Writer writer) throws ScrapingException {
         try {
-//            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
-            List<ImportedInstitution> institutions = Lists.newArrayList(new ImportedInstitution().withId(1421).withUcasId("1421"));
-
+            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
+//            List<ImportedInstitution> institutions = Lists.newArrayList(new ImportedInstitution().withId(1421).withUcasId("1421"));
 
             programSet.clear();
             for (ImportedInstitution institution : institutions) {
@@ -64,20 +63,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                 }
             }
 
-            JsonFactory jsonFactory = new JsonFactory();
-            JsonGenerator jg = jsonFactory.createGenerator(writer);
-            jg.setCodec(new ObjectMapper());
-            jg.setPrettyPrinter(new DefaultPrettyPrinter());
-            jg.writeStartArray();
-
-            for (Multiset.Entry<ImportedProgramInternalRequest> programEntry : programSet.entrySet()) {
-                ImportedProgramInternalRequest program = programEntry.getElement();
-                program.setWeight(programEntry.getCount());
-                jg.writeObject(program);
-            }
-
-            jg.writeEndArray();
-            jg.close();
+            writePrograms(writer, programSet);
         } catch (IOException e) {
             throw new ScrapingException(e);
         }
@@ -85,7 +71,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 
     private void scrapeProgramsForInstitution(ImportedInstitution institution, String yearOfInterest) throws IOException, URISyntaxException {
         String initialURL = new URIBuilder(URL_PROGRAMS_TEMPLATE).addParameter("Vac", "1").addParameter("AvailableIn", yearOfInterest).addParameter("providerids", institution.getUcasId()).toString();
-        Document htmlDoc = getHtml(initialURL);
+        Document htmlDoc = Jsoup.connect(initialURL).get();
         Element resultsCountElement = htmlDoc.getElementsByClass("resultsCount").first();
         if (resultsCountElement == null) {
             return; // no programs
@@ -120,7 +106,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         }
 
         url = new URIBuilder(url).setParameter("Page", Integer.toString(page)).toString();
-        Document htmlDoc = getHtml(url);
+        Document htmlDoc = Jsoup.connect(url).get();
         Element resultsContainerElement = htmlDoc.getElementsByClass("resultscontainer").first();
         if (resultsContainerElement == null) {
             return true;
@@ -157,9 +143,21 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         return html.substring(start + 6, html.length()).trim();
     }
 
-    // helper method
-    private Document getHtml(String givenUrl) throws IOException {
-        return Jsoup.connect(givenUrl).get();
+    private void writePrograms(Writer writer, TreeMultiset<ImportedProgramInternalRequest> programSet) throws IOException {
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jg = jsonFactory.createGenerator(writer);
+        jg.setCodec(new ObjectMapper());
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+        jg.writeStartArray();
+
+        for (Multiset.Entry<ImportedProgramInternalRequest> programEntry : programSet.entrySet()) {
+            ImportedProgramInternalRequest program = programEntry.getElement();
+            program.setWeight(programEntry.getCount());
+            jg.writeObject(program);
+        }
+
+        jg.writeEndArray();
+        jg.close();
     }
 
 }

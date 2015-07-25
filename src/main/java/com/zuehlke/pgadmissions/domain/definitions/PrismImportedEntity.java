@@ -9,9 +9,6 @@ import com.zuehlke.pgadmissions.mapping.helpers.*;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.*;
-import com.zuehlke.pgadmissions.services.scraping.ImportedDataScraper;
-import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
-import com.zuehlke.pgadmissions.services.scraping.ProgramUcasScraper;
 import org.apache.commons.lang3.ObjectUtils;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
@@ -79,8 +76,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     // TODO: add as chart filter
     IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedInstitution.class)
-            .withTransformerClass(ImportedInstitutionTransformer.class)
-            .withScraperClass(InstitutionUcasScraper.class),
+            .withTransformerClass(ImportedInstitutionTransformer.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_institution")
                     .withPivotColumn("imported_domicile_id")
@@ -148,8 +144,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedProgram.class)
             .withSystemRequestClass(ImportedProgramImportDTO.class)
-            .withTransformerClass(ImportedProgramTransformer.class)
-            .withScraperClass(ProgramUcasScraper.class),
+            .withTransformerClass(ImportedProgramTransformer.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_program")
                     .withPivotColumn("imported_institution_id")
@@ -278,10 +273,6 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
         return this.importDefinition.getTransformerClass();
     }
 
-    public Class<? extends ImportedDataScraper> getScraperClass() {
-        return importDefinition.getScraperClass();
-    }
-
     public String getImportInsertTable() {
         return importInsertDefinition.getTable();
     }
@@ -340,8 +331,6 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
         private Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> transformerClass;
 
-        private Class<? extends ImportedDataScraper> scraperClass;
-
         public Class<? extends ImportedEntity<?, ?>> getEntityClass() {
             return entityClass;
         }
@@ -356,10 +345,6 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
         public Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> getTransformerClass() {
             return transformerClass;
-        }
-
-        public Class<? extends ImportedDataScraper> getScraperClass() {
-            return scraperClass;
         }
 
         public PrismImportedEntityImportDefinition withEntityClass(Class<? extends ImportedEntity<?, ?>> entityClass) {
@@ -380,11 +365,6 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
         public PrismImportedEntityImportDefinition withTransformerClass(
                 Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> transformerClass) {
             this.transformerClass = transformerClass;
-            return this;
-        }
-
-        public PrismImportedEntityImportDefinition withScraperClass(final Class<? extends ImportedDataScraper> scraperClass) {
-            this.scraperClass = scraperClass;
             return this;
         }
 

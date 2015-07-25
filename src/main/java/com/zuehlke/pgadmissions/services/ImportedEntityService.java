@@ -174,7 +174,7 @@ public class ImportedEntityService {
                     rows.add(prepareCellsForSqlInsert(cells));
                 }
             }
-            
+
             importedEntityDAO.mergeImportedEntityMappings(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
                     prepareRowsForSqlInsert(rows), prismImportedEntity.getMappingInsertOnDuplicateKeyUpdate());
             entityService.flush();
@@ -360,7 +360,7 @@ public class ImportedEntityService {
     private ImportedProgram createImportedProgram(Institution institution, ImportedInstitution importedInstitution, ImportedProgramDTO importedProgramDTO) {
         ImportedEntitySimple qualificationType = getById(ImportedEntitySimple.class, importedProgramDTO.getQualificationType().getId());
         ImportedProgram program = new ImportedProgram().withInstitution(importedInstitution).withQualificationType(qualificationType)
-                .withName(importedProgramDTO.getName()).withHomepage(importedProgramDTO.getHomepage()).withEnabled(false);
+                .withName(importedProgramDTO.getName()).withEnabled(false);
         entityService.save(program);
         createImportedProgramMapping(institution, program);
         return program;

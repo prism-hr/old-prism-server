@@ -49,10 +49,6 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Lob
-    @Column(name = "homepage")
-    private String homepage;
-
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -135,16 +131,6 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     }
 
     @Override
-    public String getHomepage() {
-        return homepage;
-    }
-
-    @Override
-    public void setHomepage(String homepage) {
-        this.homepage = homepage;
-    }
-
-    @Override
     public Boolean getEnabled() {
         return enabled;
     }
@@ -171,11 +157,6 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     public ImportedProgram withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public ImportedProgram withHomepage(final String homepage) {
-        this.homepage = homepage;
         return this;
     }
 

@@ -40,7 +40,7 @@ public class PrismStateTransition {
         return propagatedActions;
     }
 
-    public final List<PrismStateTermination> getStateTerminations() {
+    public List<PrismStateTermination> getStateTerminations() {
         return stateTerminations;
     }
 
@@ -94,10 +94,10 @@ public class PrismStateTransition {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateTransition other = (PrismStateTransition) object;
-        final List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
-        final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
-        final List<PrismStateTermination> otherStateTerminations = other.getStateTerminations();
+        PrismStateTransition other = (PrismStateTransition) object;
+        List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
+        List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
+        List<PrismStateTermination> otherStateTerminations = other.getStateTerminations();
         return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
                 && Objects.equal(transitionEvaluation, other.getTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
                 && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()

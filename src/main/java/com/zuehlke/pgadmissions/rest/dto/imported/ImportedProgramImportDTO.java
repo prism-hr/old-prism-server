@@ -55,11 +55,4 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
         return this;
     }
 
-    public ImportedProgramImportDTO withHomepage(final String homepage) {
-        setHomepage(homepage);
-        return this;
-    }
-
-
-
 }

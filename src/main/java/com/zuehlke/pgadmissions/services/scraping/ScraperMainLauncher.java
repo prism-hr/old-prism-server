@@ -36,22 +36,22 @@ public class ScraperMainLauncher {
         }
 
         switch (args[0]) {
-            case "facebookDefinitions":
-                getFacebookDefinitions();
-                break;
-            case "subjectAreas":
-                importSubjectAreas(args[1]);
-                break;
-            case "institutions":
-                InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
-                institutionScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
-                break;
-            case "programs":
-                ProgramUcasScraper programScraper = new ProgramUcasScraper();
-                programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
-                break;
-            case "applyCodeMappings":
-                applyCodeMapping(args[1]);
+        case "facebookDefinitions":
+            getFacebookDefinitions();
+            break;
+        case "subjectAreas":
+            importSubjectAreas(args[1]);
+            break;
+        case "institutions":
+            InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
+            institutionScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
+            break;
+        case "programs":
+            ProgramUcasScraper programScraper = new ProgramUcasScraper();
+            programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
+            break;
+        case "applyCodeMappings":
+            applyCodeMapping(args[1]);
         }
     }
 
@@ -68,8 +68,8 @@ public class ScraperMainLauncher {
                 String description = line[4];
                 Integer ucasSubject = Integer.parseInt(line[5]);
                 Integer parent = Integer.parseInt(Strings.emptyToNull(line[6]));
-                
-                subjectAreas.put(jacsCode, new ImportedSubjectAreaImportDTO().withJacsCode(jacsCode).withJacsCodeOld(jacsCodeOld).withName(name)
+
+                subjectAreas.put(jacsCode, new ImportedSubjectAreaImportDTO().withId(id).withJacsCode(jacsCode).withJacsCodeOld(jacsCodeOld).withName(name)
                         .withDescription(description).withUcasSubject(ucasSubject).withParent(parent));
                 line = reader.readNext();
             }
@@ -113,7 +113,8 @@ public class ScraperMainLauncher {
     private static void applyCodeMapping(String filename) throws IOException {
         TreeMap<String, ImportedSubjectAreaRequest> subjectAreas = new TreeMap<>();
         Map<String, String> codeMap = new HashMap<>();
-        try (BufferedReader mapReader = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Pojebe\\prism\\repo\\prism-server\\docs\\JACS\\JACS_3_to_2_aliases.txt"), Charsets.UTF_8))) {
+        try (BufferedReader mapReader = new BufferedReader(new InputStreamReader(new FileInputStream(
+                "C:\\Users\\Pojebe\\prism\\repo\\prism-server\\docs\\JACS\\JACS_3_to_2_aliases.txt"), Charsets.UTF_8))) {
             String line = mapReader.readLine();
             while (line != null) {
                 String[] split = line.split(" -> ");
@@ -129,7 +130,7 @@ public class ScraperMainLauncher {
                 String code = line[0];
                 String name = line[1];
                 String description = line[2];
-                subjectAreas.put(code, new ImportedSubjectAreaRequest(name).withJacsCode(code).withDescription(description));
+                subjectAreas.put(code, new ImportedSubjectAreaRequest().withName(name).withJacsCode(code).withDescription(description));
                 line = reader.readNext();
             }
         }
@@ -137,7 +138,7 @@ public class ScraperMainLauncher {
         try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), Charsets.UTF_8))) {
             for (String code : subjectAreas.keySet()) {
                 ImportedSubjectAreaRequest area = subjectAreas.get(code);
-                writer.writeNext(new String[]{code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code))});
+                writer.writeNext(new String[] { code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code)) });
             }
         }
     }

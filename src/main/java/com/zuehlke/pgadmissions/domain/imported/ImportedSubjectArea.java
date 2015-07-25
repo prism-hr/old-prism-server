@@ -85,11 +85,11 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         this.description = description;
     }
 
-    public ImportedSubjectArea getParentSubjectArea() {
+    public ImportedSubjectArea getParent() {
         return parentSubjectArea;
     }
 
-    public void setParentSubjectArea(ImportedSubjectArea parentSubjectArea) {
+    public void setParent(ImportedSubjectArea parentSubjectArea) {
         this.parentSubjectArea = parentSubjectArea;
     }
 

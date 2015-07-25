@@ -1,162 +1,280 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.http.client.utils.URIBuilder;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.TreeMultiset;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.exceptions.ScrapingException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ProgramUcasScraper implements ImportedDataScraper {
 
     private static Logger log = LoggerFactory.getLogger(ProgramUcasScraper.class);
 
+    // search host
     private static String HOST = "http://search.ucas.com";
 
-    private static String URL_PROGRAMS_TEMPLATE = HOST + "/search/results?";
-
     private static Pattern programNamePattern = Pattern.compile("(.+)\\s+\\(([A-Z0-9]{4})\\)( : Taught at \\d+ locations)?");
-
-    private TreeMultiset<ImportedProgramImportDTO> programSet = TreeMultiset.create(
-            (o1, o2) -> ComparisonChain.start().compare(o1.getInstitution(), o2.getInstitution()).compare(o1.getName(), o2.getName())
-                    .compare(o1.getLevel(), o2.getLevel()).result());
 
     @Inject
     private ImportedEntityService importedEntityService;
 
+    private static URIBuilder newURIBuilder(String string) {
+        try {
+            return new URIBuilder(string);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void scrape(Writer writer) throws ScrapingException {
         try {
-            List<ImportedInstitution> institutions = importedEntityService.getInstitutionsWithUcasId();
+            TreeMap<Pair, ImportedProgramScrapeDescriptor> programs = new TreeMap<>();
 
-            programSet.clear();
-            for (ImportedInstitution institution : institutions) {
-                log.info("Scraping institution " + institution.getUcasId() + ": " + institution.getName());
-                try {
-                    scrapeProgramsForInstitution(institution, Integer.toString(LocalDate.now().getYear()));
-                } catch (URISyntaxException e) {
-                    throw new Error(e);
+            List<String> topCategoryUrls = getTopCategoryUrls();
+//            topCategoryUrls = topCategoryUrls.subList(0, 1); // FIXME remove, just for tests
+            List<String> subjectUrls = getSubjectUrls(topCategoryUrls);
+//            subjectUrls = subjectUrls.subList(4, 5); // FIXME remove, just for tests
+
+            for (String subjectUrl : subjectUrls) {
+                List<Document> documents = loadAllPages(subjectUrl);
+                for (Document document : documents) {
+                    scrapeUniversitySections(document, programs);
                 }
             }
 
-            writePrograms(writer, programSet);
-        } catch (IOException e) {
+            writePrograms(writer, programs);
+        } catch (Exception e) {
             throw new ScrapingException(e);
         }
     }
 
-    private void scrapeProgramsForInstitution(ImportedInstitution institution, String yearOfInterest) throws IOException, URISyntaxException {
-        String initialURL = new URIBuilder(URL_PROGRAMS_TEMPLATE).addParameter("Vac", "1").addParameter("AvailableIn", yearOfInterest)
-                .addParameter("providerids", institution.getUcasId()).toString();
-        Document htmlDoc = Jsoup.connect(initialURL).get();
-        Element resultsCountElement = htmlDoc.getElementsByClass("resultsCount").first();
-        if (resultsCountElement == null) {
-            return;
-        }
-        String resultsCount = resultsCountElement.text();
-
-        List<String> urlsToScrape = Collections.singletonList(initialURL);
-        if (resultsCount.contains("Showing 1000 of")) {
-            Element subjectFilterElement = htmlDoc.getElementById("filtercategory-9");
-            urlsToScrape = subjectFilterElement.getElementsByTag("a").stream()
-                    .map(aElement -> HOST + aElement.attr("href"))
-                    .filter(href -> href.contains("flt9"))
-                    .collect(Collectors.toList());
-        }
-
-        for (String url : urlsToScrape) {
-            int page = 1;
-            while (!scrapeProgramPages(url, institution, page)) {
-                page++;
-            }
-        }
+    private List<String> getTopCategoryUrls() throws IOException {
+        return Jsoup.connect(HOST + "/subject").get().getElementById("subjectareas")
+                .getElementsByTag("a").stream()
+                .map(a -> HOST + a.attr("href"))
+                .collect(Collectors.toList());
     }
 
-    private boolean scrapeProgramPages(String url, ImportedInstitution institution, int page)
+    private List<String> getSubjectUrls(List<String> topCategoryUrls) throws IOException, URISyntaxException {
+        Integer toyear = LocalDate.now().getYear();
+        List<String> years = Lists.newArrayList(toyear.toString(), new Integer(toyear + 1).toString());
+
+        List<String> subjectUrls = Lists.newLinkedList();
+
+        for (String topCategoryUrl : topCategoryUrls) {
+            Document document = Jsoup.connect(topCategoryUrl).get();
+            String subjectCode = document.getElementById("SubjectCode").attr("value");
+            String uriBase = new URIBuilder(HOST + "/search/providers").addParameter("Vac", "1").addParameter("SubjectCode", subjectCode).toString();
+            List<String> urls = document.select("li.subjectsearchsteparea").stream()
+                    .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
+                    .flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
+                    .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value")).addParameter("AvailableIn", pair.getRight()).toString())
+                    .collect(Collectors.toList());
+            subjectUrls.addAll(urls);
+        }
+        return subjectUrls;
+    }
+
+    /**
+     * return <code>true</code> when there are no more pages
+     */
+    private boolean scrapeUniversitySections(Document document, TreeMap<Pair, ImportedProgramScrapeDescriptor> programs)
             throws IOException, URISyntaxException {
+        Element resultsContainerElement = document.getElementsByClass("resultscontainer").first();
 
-        if (page > 50) {
-            throw new RuntimeException("To many pages for url " + url);
-        }
-
-        url = new URIBuilder(url).setParameter("Page", Integer.toString(page)).toString();
-        Document htmlDoc = Jsoup.connect(url).get();
-        Element resultsContainerElement = htmlDoc.getElementsByClass("resultscontainer").first();
-        if (resultsContainerElement == null) {
-            return true;
-        }
-
+//        // iterate over institutions
         for (Element element : resultsContainerElement.getElementsByTag("li")) {
             if (!element.id().startsWith("result-")) {
                 continue;
             }
-            String programName = StringEscapeUtils.unescapeHtml(element.select(".coursenamearea").select("h4").text());
+            String ucasInstitutionId = element.id().replace("result-", "");
+            Element moreCoursesLink = element.select("div.morecourseslink").first();
+            if (moreCoursesLink != null) {
+                String baseUniversityUrl = HOST + moreCoursesLink.getElementsByTag("a").first().attr("href");
+                List<Document> programDocuments = loadAllPages(baseUniversityUrl);
+                for (Document programDocument : programDocuments) {
+                    Elements resultsElements = programDocument.select("ol.resultscontainer");
+                    for (Element resultsElement : resultsElements) {
+                        scrapePrograms(resultsElement, ucasInstitutionId, programs);
+                    }
+                }
+            } else {
+                Element resultsElement = element.select("ol").first();
+                scrapePrograms(resultsElement, ucasInstitutionId, programs);
+            }
+        }
+        return false;
+    }
+
+    private void scrapePrograms(Element element, String ucasInstitutionId, TreeMap<Pair, ImportedProgramScrapeDescriptor> programs) {
+        Elements courseResults = element.select("li");
+        for (Element courseResult : courseResults) {
+            String programName = StringEscapeUtils.unescapeHtml(courseResult.select(".coursenamearea").select("h4").text()).replace("\u00a0"," ");
             Matcher programNameMatcher = programNamePattern.matcher(programName);
             if (!programNameMatcher.matches()) {
                 log.error("Could not match program name: " + programName);
                 continue;
             }
             programName = programNameMatcher.group(1);
+            String courseCode = programNameMatcher.group(2);
 
-            String subjectArea = programNameMatcher.group(2);
-            String qualification = element.select(".courseinfooutcome").text();
-            String level = extractProgramLevelFromRawHTML(element.select(".resultbottomarea").select(".coursequalarea").html());
+            Integer ucasProgramId = Integer.parseInt(courseResult.id().replace("result-", "").replace("course-", ""));
 
-            ImportedProgramImportDTO program = new ImportedProgramImportDTO(programName).withInstitution(institution.getId())
-                    .withLevel(level).withQualification(qualification).withSubjectAreas(ImmutableSet.of(subjectArea));
-            programSet.add(program);
+            String qualification = courseResult.select(".courseinfooutcome").text();
+            String level = extractProgramLevelFromQualificationElement(courseResult.select(".resultbottomarea .coursequalarea").first());
+            String programUrl = courseResult.select("div.coursenamearea a").first().attr("href");
+            Integer subjectId = Integer.parseInt(URLEncodedUtils.parse(programUrl, Charsets.UTF_8).stream().filter(param -> param.getName().equals("flt99")).collect(Collectors.toList()).get(0).getValue());
+
+
+            Pair programMapKey = new ImmutablePair<> (ucasInstitutionId, new ImmutablePair<>(programName, new ImmutablePair<>(courseCode, level)));
+            if (!programs.containsKey(programMapKey)) {
+                ImportedProgramImportDTO program = new ImportedProgramImportDTO(programName).withInstitution(Integer.parseInt(ucasInstitutionId))
+                        .withLevel(level).withQualification(qualification).withSubjectAreas(Sets.newHashSet(subjectId.toString())).withWeight(1);
+                ImportedProgramScrapeDescriptor programDescriptor = new ImportedProgramScrapeDescriptor(program, courseCode, subjectId, ucasProgramId);
+                programs.put(programMapKey, programDescriptor);
+            } else {
+                ImportedProgramScrapeDescriptor programDescriptor = programs.get(programMapKey);
+                if (!programDescriptor.getUcasProgramIds().contains(ucasProgramId)) {
+                    Integer weight = programDescriptor.getProgram().getWeight();
+                    programDescriptor.getProgram().setWeight(weight + 1);
+                    programDescriptor.addUcasProgramid(ucasProgramId);
+                }
+                programDescriptor.getProgram().getSubjectAreas().add(subjectId.toString());
+            }
+
         }
-        return false;
     }
 
-    private String extractProgramLevelFromRawHTML(String html) {
-        int start = html.lastIndexOf("</div>");
-        return html.substring(start + 6, html.length()).trim();
+    private List<Document> loadAllPages(String baseUrl) throws URISyntaxException, IOException {
+        List<Document> documents = Lists.newLinkedList();
+        int page = 1;
+        while (true) {
+            if (page >= 50) {
+                throw new RuntimeException("To many pages for url " + baseUrl);
+            }
+
+            String pageUrl = new URIBuilder(baseUrl).setParameter("Page", Integer.toString(page)).toString();
+            Document document = Jsoup.connect(pageUrl).get();
+            Element resultsContainerElement = document.getElementsByClass("resultscontainer").first();
+            if (resultsContainerElement == null || resultsContainerElement.children().isEmpty()) {
+                if (documents.isEmpty()) {
+                    log.warn("No results for " + baseUrl);
+                }
+                return documents;
+            }
+            documents.add(document);
+            page++;
+        }
     }
 
-    private void writePrograms(Writer writer, TreeMultiset<ImportedProgramImportDTO> programSet) throws IOException {
+
+    private String extractProgramLevelFromQualificationElement(Element qualificationElement) {
+        // get whatever is after </div>
+        Element qualificationLevelElement = qualificationElement.select("span.qualificationLevel").first();
+        if(qualificationLevelElement != null) {
+            return qualificationLevelElement.text();
+        }
+        Element venueElement = qualificationElement.select("div.courseinfovenue").first();
+        if(venueElement == null) {
+            return qualificationElement.text().trim();
+        }
+        TextNode levelTextNode = (TextNode) venueElement.nextSibling();
+        return levelTextNode.getWholeText().trim();
+    }
+
+    private void writePrograms(Writer writer, TreeMap<Pair, ImportedProgramScrapeDescriptor> programSet) throws IOException {
         JsonFactory jsonFactory = new JsonFactory();
-        JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
-        jsonGenerator.setCodec(new ObjectMapper());
-        jsonGenerator.setPrettyPrinter(new DefaultPrettyPrinter());
-        jsonGenerator.writeStartArray();
+        JsonGenerator jg = jsonFactory.createGenerator(writer);
+        jg.setCodec(new ObjectMapper());
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+        jg.writeStartArray();
 
-        for (Multiset.Entry<ImportedProgramImportDTO> programEntry : programSet.entrySet()) {
-            ImportedProgramImportDTO program = programEntry.getElement();
-            program.setWeight(programEntry.getCount());
-            jsonGenerator.writeObject(program);
+        for (Map.Entry<Pair, ImportedProgramScrapeDescriptor> programEntry : programSet.entrySet()) {
+            ImportedProgramScrapeDescriptor programDescriptor = programEntry.getValue();
+            jg.writeObject(programDescriptor);
         }
 
-        jsonGenerator.writeEndArray();
-        jsonGenerator.close();
+        jg.writeEndArray();
+        jg.close();
+    }
+
+    public static class ImportedProgramScrapeDescriptor {
+
+        private ImportedProgramImportDTO program;
+
+        private String courseCode;
+
+        private Set<Integer> ucasProgramIds;
+
+        public ImportedProgramScrapeDescriptor() {
+        }
+
+        public ImportedProgramScrapeDescriptor(ImportedProgramImportDTO program, String courseCode, Integer subjectIds, Integer ucasProgramId) {
+            this.program = program;
+            this.courseCode = courseCode;
+            this.ucasProgramIds = Sets.newHashSet(ucasProgramId);
+        }
+
+        public void addUcasProgramid(Integer ucasProgramId) {
+            this.ucasProgramIds.add(ucasProgramId);
+        }
+
+        public ImportedProgramImportDTO getProgram() {
+            return program;
+        }
+
+        public void setProgram(ImportedProgramImportDTO program) {
+            this.program = program;
+        }
+
+        public String getCourseCode() {
+            return courseCode;
+        }
+
+        public void setCourseCode(String courseCode) {
+            this.courseCode = courseCode;
+        }
+
+        public Set<Integer> getUcasProgramIds() {
+            return ucasProgramIds;
+        }
+
+        public void setUcasProgramIds(Set<Integer> ucasProgramIds) {
+            this.ucasProgramIds = ucasProgramIds;
+        }
     }
 
 }

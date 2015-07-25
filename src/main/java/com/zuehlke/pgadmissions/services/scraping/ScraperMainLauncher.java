@@ -30,7 +30,7 @@ public class ScraperMainLauncher {
     private static String urlPattern = "https://graph.facebook.com/{0}?access_token={1}";
 
     public static void main(String[] args) throws IOException {
-        if (args.length < 2) {
+        if (args.length < 1) {
             System.err.println("Missing args");
             System.exit(1);
         }

@@ -1,38 +1,51 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
+
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
+
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
-
-import javax.persistence.*;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 
 @Entity
 @Table(name = "imported_subject_area")
 public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubjectAreaMapping> implements TargetEntity,
-        ImportedSubjectAreaDefinition<ImportedSubjectArea>, ImportedEntityResponseDefinition<Integer> {
+        ImportedSubjectAreaDefinition, ImportedEntityResponseDefinition<Integer> {
 
     @Id
-    @GeneratedValue
     private Integer id;
 
     @Column(name = "jacs_code", nullable = false, unique = true)
     private String jacsCode;
+
+    @Column(name = "jacs_code_old")
+    private String jacsCodeOld;
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "description", nullable = false)
     private String description;
+    
+    @Column(name = "ucas_subject", nullable = false)
+    private Integer ucasSubject;
 
     @ManyToOne
     @JoinColumn(name = "parent_imported_subject_area_id")
-    private ImportedSubjectArea parentSubjectArea;
+    private ImportedSubjectArea parent;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -65,6 +78,14 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         this.jacsCode = jacsCode;
     }
 
+    public String getJacsCodeOld() {
+        return jacsCodeOld;
+    }
+
+    public void setJacsCodeOld(String jacsCodeOld) {
+        this.jacsCodeOld = jacsCodeOld;
+    }
+
     @Override
     public String getName() {
         return name;
@@ -85,12 +106,20 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         this.description = description;
     }
 
-    public ImportedSubjectArea getParent() {
-        return parentSubjectArea;
+    public Integer getUcasSubject() {
+        return ucasSubject;
     }
 
-    public void setParent(ImportedSubjectArea parentSubjectArea) {
-        this.parentSubjectArea = parentSubjectArea;
+    public void setUcasSubject(Integer ucasSubject) {
+        this.ucasSubject = ucasSubject;
+    }
+
+    public ImportedSubjectArea getParent() {
+        return parent;
+    }
+
+    public void setParent(ImportedSubjectArea parent) {
+        this.parent = parent;
     }
 
     @Override

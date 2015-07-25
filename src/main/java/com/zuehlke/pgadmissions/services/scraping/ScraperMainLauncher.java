@@ -1,7 +1,21 @@
-package com.zuehlke.pgadmissions.services.scrapping;
+package com.zuehlke.pgadmissions.services.scraping;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -9,14 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
-
-import java.io.*;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
 
 public class ScraperMainLauncher {
 
@@ -49,39 +56,39 @@ public class ScraperMainLauncher {
     }
 
     private static void importSubjectAreas(String filename) throws IOException {
-        TreeMap<String, ImportedSubjectAreaRequest> subjectAreas = new TreeMap<>();
+        TreeMap<String, ImportedSubjectAreaImportDTO> subjectAreas = new TreeMap<>();
 
         try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), Charsets.UTF_8))) {
             String[] line = reader.readNext();
             while (line != null) {
-                String jacsCode = line[0];
-                String name = line[1];
-                String description = line[2];
-                String oldJacsCode = Strings.emptyToNull(line[3]);
-                Integer ucasId = null;
-                if(line.length > 4) {
-                    ucasId = Integer.parseInt(Strings.emptyToNull(line[4]));
-                }
-                subjectAreas.put(jacsCode, new ImportedSubjectAreaRequest(name).withJacsCode(jacsCode)
-                        .withDescription(description).withOldJacsCode(oldJacsCode).withUcasId(ucasId));
+                Integer id = Integer.parseInt(line[0]);
+                String jacsCode = line[1];
+                String jacsCodeOld = Strings.emptyToNull(line[2]);
+                String name = line[3];
+                String description = line[4];
+                Integer ucasSubject = Integer.parseInt(line[5]);
+                Integer parent = Integer.parseInt(Strings.emptyToNull(line[6]));
+                
+                subjectAreas.put(jacsCode, new ImportedSubjectAreaImportDTO().withJacsCode(jacsCode).withJacsCodeOld(jacsCodeOld).withName(name)
+                        .withDescription(description).withUcasSubject(ucasSubject).withParent(parent));
                 line = reader.readNext();
             }
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonFactory jsonFactory = new JsonFactory();
-        JsonGenerator jg = jsonFactory.createGenerator(System.out);
-        jg.setCodec(objectMapper);
-        jg.setPrettyPrinter(new DefaultPrettyPrinter());
-        jg.writeStartArray();
+        JsonGenerator jsonGenerator = jsonFactory.createGenerator(System.out);
+        jsonGenerator.setCodec(objectMapper);
+        jsonGenerator.setPrettyPrinter(new DefaultPrettyPrinter());
+        jsonGenerator.writeStartArray();
 
         for (String code : subjectAreas.keySet()) {
             ImportedSubjectAreaRequest subjectAreaRequest = subjectAreas.get(code);
-            jg.writeObject(subjectAreaRequest);
+            jsonGenerator.writeObject(subjectAreaRequest);
         }
 
-        jg.writeEndArray();
-        jg.close();
+        jsonGenerator.writeEndArray();
+        jsonGenerator.close();
     }
 
     private static void getFacebookDefinitions() throws IOException {

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.scrapping;
+package com.zuehlke.pgadmissions.services.scraping;
 
 import java.util.ArrayList;
 

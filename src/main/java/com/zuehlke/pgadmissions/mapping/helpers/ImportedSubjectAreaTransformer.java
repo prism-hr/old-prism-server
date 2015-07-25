@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.mapping.helpers;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 
 @Component
 public class ImportedSubjectAreaTransformer implements

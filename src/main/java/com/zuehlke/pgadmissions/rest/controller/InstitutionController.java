@@ -101,10 +101,12 @@ public class InstitutionController {
         return programService.getSimilarPrograms(institutionId, searchTerm);
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{institutionId}/importedData/{type}", method = RequestMethod.POST)
     public <T extends ImportedEntityRequest> void importData(@PathVariable Integer institutionId, @PathVariable PrismImportedEntity type,
             HttpServletRequest request) throws IOException {
-        List<T> representations = importedEntityMapper.getImportedEntityRepresentations(type, request.getInputStream());
+        Class<T> requestClass = (Class<T>) type.getRequestClass();
+        List<T> representations = importedEntityMapper.getImportedEntityRepresentations(requestClass, request.getInputStream());
         importedEntityService.mergeImportedEntities(institutionService.getById(institutionId), type, representations);
     }
 

@@ -267,6 +267,7 @@ public class SystemService {
     }
 
     @Transactional
+    @SuppressWarnings("unchecked")
     public <T extends ImportedEntityRequest> void initializeSystemData() {
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
             logger.info("Initializing system data for: " + prismImportedEntity.name());
@@ -275,11 +276,12 @@ public class SystemService {
 
             try (InputStream inputStream = documentService.getImportedDataSource(importedEntityType)) {
                 if (inputStream != null) {
-                    List<T> representations = importedEntityMapper.getImportedEntityRepresentations(prismImportedEntity, inputStream);
+                    Class<T> requestClass = (Class<T>) prismImportedEntity.getSystemRequestClass();
+                    List<T> representations = (List<T>) importedEntityMapper.getImportedEntityRepresentations(requestClass, inputStream);
                     importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
                 }
             } catch (Exception e) {
-                logger.error("Unable to open content stream for " + prismImportedEntity.name(), e);
+                logger.error("Unable to import " + prismImportedEntity.name(), e);
             }
         }
     }

@@ -1,18 +1,12 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
-import com.zuehlke.pgadmissions.domain.imported.*;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
@@ -21,15 +15,34 @@ import org.springframework.stereotype.Service;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityMappingDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-import uk.co.alumeni.prism.api.model.imported.response.*;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaResponse;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -192,8 +205,8 @@ public class ImportedEntityMapper {
         return target;
     }
 
-    public <T extends ImportedEntityRequest> List<T> getImportedEntityRepresentations(PrismImportedEntity type, InputStream data) throws IOException {
-        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, type.getRequestClass());
+    public <T extends ImportedEntityRequest> List<T> getImportedEntityRepresentations(Class<T> requestClass, InputStream data) throws IOException {
+        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, requestClass);
         return objectMapper.readValue(data, collectionType);
     }
 

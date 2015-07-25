@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional
@@ -132,8 +134,8 @@ public class ImportedEntityService {
 
     @SuppressWarnings("unchecked")
     public <T extends ImportedEntity<?, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityRequest> void mergeImportedEntities(
-            Institution institution, PrismImportedEntity prismImportedEntity, List<V> importDefinitions) {
-        insertImportedEntities(prismImportedEntity, importDefinitions, false);
+            Institution institution, PrismImportedEntity prismImportedEntity, List<V> definitions) {
+        insertImportedEntities(prismImportedEntity, definitions, false);
 
         importedEntityDAO.disableImportedEntityMappings(institution, prismImportedEntity);
         entityService.flush();
@@ -151,29 +153,32 @@ public class ImportedEntityService {
             }
         }
 
-        List<String> rows = Lists.newLinkedList();
-        for (V mappingDefinition : importDefinitions) {
-            List<String> cells = Lists.newLinkedList();
-            T entity = currentMappingsLookup.get(mappingDefinition.index());
-            if (entity != null) {
-                cells.add(prepareIntegerForSqlInsert(institution.getId()));
+        List<List<V>> definitionBatches = Lists.partition(definitions, MAX_BATCH_INSERT_SIZE);
+        for (List<V> definitionBatch : definitionBatches) {
+            List<String> rows = Lists.newLinkedList();
+            for (V mappingDefinition : definitionBatch) {
+                List<String> cells = Lists.newLinkedList();
+                T entity = currentMappingsLookup.get(mappingDefinition.index());
+                if (entity != null) {
+                    cells.add(prepareIntegerForSqlInsert(institution.getId()));
 
-                Object entityId = entity.getId();
-                if (entityId.getClass().equals(Integer.class)) {
-                    cells.add(prepareIntegerForSqlInsert((Integer) entity.getId()));
-                } else {
-                    cells.add(prepareStringForSqlInsert((String) entity.getId()));
+                    Object entityId = entity.getId();
+                    if (entityId.getClass().equals(Integer.class)) {
+                        cells.add(prepareIntegerForSqlInsert((Integer) entity.getId()));
+                    } else {
+                        cells.add(prepareStringForSqlInsert((String) entity.getId()));
+                    }
+
+                    cells.add(prepareStringForSqlInsert(mappingDefinition.getCode()));
+                    cells.add(prepareBooleanForSqlInsert(true));
+                    rows.add(prepareCellsForSqlInsert(cells));
                 }
-
-                cells.add(prepareStringForSqlInsert(mappingDefinition.getCode()));
-                cells.add(prepareBooleanForSqlInsert(true));
-                rows.add(prepareCellsForSqlInsert(cells));
             }
+            
+            importedEntityDAO.mergeImportedEntityMappings(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
+                    prepareRowsForSqlInsert(rows), prismImportedEntity.getMappingInsertOnDuplicateKeyUpdate());
+            entityService.flush();
         }
-
-        importedEntityDAO.mergeImportedEntityMappings(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
-                prepareRowsForSqlInsert(rows), prismImportedEntity.getMappingInsertOnDuplicateKeyUpdate());
-        entityService.flush();
     }
 
     public <T extends ImportedEntityRequest> void mergeImportedEntities(PrismImportedEntity prismImportedEntity, List<T> representations) {
@@ -420,11 +425,14 @@ public class ImportedEntityService {
 
     @SuppressWarnings("unchecked")
     private <T extends ImportedEntityRequest> void insertImportedEntities(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable) {
-        ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
-        List<String> rows = extractor.extract(prismImportedEntity, definitions, enable);
-        importedEntityDAO.mergeImportedEntities(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
-                prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
-        entityService.flush();
+        List<List<T>> definitionBatches = Lists.partition(definitions, MAX_BATCH_INSERT_SIZE);
+        for (List<T> definitionBatch : definitionBatches) {
+            ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
+            List<String> rows = extractor.extract(prismImportedEntity, definitionBatch, enable);
+            importedEntityDAO.mergeImportedEntities(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
+                    prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
+            entityService.flush();
+        }
     }
 
     public List<ImportedProgram> getImportedPrograms(String searchTerm) {

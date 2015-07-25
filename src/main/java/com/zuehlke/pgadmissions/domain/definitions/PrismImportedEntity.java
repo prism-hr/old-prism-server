@@ -1,23 +1,57 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.imported.*;
-import com.zuehlke.pgadmissions.domain.imported.mapping.*;
-import com.zuehlke.pgadmissions.mapping.helpers.*;
-import com.zuehlke.pgadmissions.services.helpers.extractors.*;
-import com.zuehlke.pgadmissions.services.scrapping.ImportedDataScraper;
-import com.zuehlke.pgadmissions.services.scrapping.InstitutionUcasScraper;
-import com.zuehlke.pgadmissions.services.scrapping.ProgramUcasScraper;
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.CaseFormat.*;
+import org.apache.commons.lang3.ObjectUtils;
+
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAdvertDomicileMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedAdvertDomicileTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedAgeRangeTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedInstitutionTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedLanguageQualificationTypeTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedProgramTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedSubjectAreaTransformer;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAdvertDomicileExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimpleExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedInstitutionExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedSubjectAreaExtractor;
+import com.zuehlke.pgadmissions.services.scraping.ImportedDataScraper;
+import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
+import com.zuehlke.pgadmissions.services.scraping.ProgramUcasScraper;
 
 public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.enums.PrismImportedEntity> {
 
@@ -116,7 +150,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new String[] { "application_personal_detail.nationality_id1", "application_personal_detail.nationality_id2" }, true),
-    IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition() //
+    IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition()
             .withEntityNameClass(PrismOpportunityType.class),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
@@ -124,6 +158,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     // TODO: add as chart filter
     IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedSubjectArea.class)
+            .withSystemRequestClass(ImportedSubjectAreaImportDTO.class)
             .withTransformerClass(ImportedSubjectAreaTransformer.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_subject_area")
@@ -132,7 +167,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumn("jacs_code_old")
                     .withPivotColumn("name")
                     .withColumn("description")
-                    .withColumn("parent_id")
+                    .withColumn("ucas_subject")
+                    .withColumn("parent_imported_subject_area_id")
                     .withColumn("enabled")
                     .withExtractor(ImportedSubjectAreaExtractor.class),
             new PrismImportedEntityMappingInsertDefinition()
@@ -142,6 +178,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     // TODO: add as chart filter
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedProgram.class)
+            .withSystemRequestClass(ImportedProgramImportDTO.class)
             .withTransformerClass(ImportedProgramTransformer.class)
             .withScraperClass(ProgramUcasScraper.class),
             new PrismImportedEntityImportInsertDefinition()
@@ -170,8 +207,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             null, true),
-    IMPORTED_STUDY_OPTION(getImportedEntitySimpleImportDefinition() //
-            .withEntityNameClass(PrismStudyOption.class), //
+    IMPORTED_STUDY_OPTION(getImportedEntitySimpleImportDefinition()
+            .withEntityNameClass(PrismStudyOption.class),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new String[] { "application_program_detail.study_option_id" }, true),
@@ -251,6 +288,11 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
         return getDefinition().getRequestClass();
     }
 
+    @SuppressWarnings("unchecked")
+    public Class<? extends ImportedEntityRequest> getSystemRequestClass() {
+        return ObjectUtils.firstNonNull(importDefinition.getSystemRequestClass(), getRequestClass());
+    }
+
     public Class<? extends ImportedEntity<?, ?>> getEntityClass() {
         return importDefinition.getEntityClass();
     }
@@ -325,6 +367,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
         private Class<? extends PrismLocalizableDefinition> entityNameClass;
 
+        private Class<? extends ImportedEntityRequest> systemRequestClass;
+
         private Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> transformerClass;
 
         private Class<? extends ImportedDataScraper> scraperClass;
@@ -335,6 +379,10 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
         public Class<? extends PrismLocalizableDefinition> getEntityNameClass() {
             return entityNameClass;
+        }
+
+        public Class<? extends ImportedEntityRequest> getSystemRequestClass() {
+            return systemRequestClass;
         }
 
         public Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> getTransformerClass() {
@@ -352,6 +400,11 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
         public PrismImportedEntityImportDefinition withEntityNameClass(Class<? extends PrismLocalizableDefinition> entityNameClass) {
             this.entityNameClass = entityNameClass;
+            return this;
+        }
+
+        public PrismImportedEntityImportDefinition withSystemRequestClass(Class<? extends ImportedEntityRequest> systemRequestClass) {
+            this.systemRequestClass = systemRequestClass;
             return this;
         }
 

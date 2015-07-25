@@ -1,8 +1,8 @@
-package com.zuehlke.pgadmissions.services.scrapping;
-
-import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+package com.zuehlke.pgadmissions.services.scraping;
 
 import java.io.Writer;
+
+import com.zuehlke.pgadmissions.exceptions.ScrapingException;
 
 public interface ImportedDataScraper {
 

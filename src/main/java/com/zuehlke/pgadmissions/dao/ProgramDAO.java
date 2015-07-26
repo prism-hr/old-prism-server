@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
@@ -104,27 +103,6 @@ public class ProgramDAO {
                         .setProjection(Projections.property("studyLocation")) //
                         .add(Restrictions.eq("program", program)))) //
                 .list();
-    }
-
-    public ResourceRepresentationRobot getSearchEngineAdvert(Integer programId, List<PrismState> states) {
-        return (ResourceRepresentationRobot) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "programId") //
-                        .add(Projections.property("advert.name"), "programName") //
-                        .add(Projections.property("advert.summary"), "programSummary") //
-                        .add(Projections.property("advert.description"), "programDescription") //
-                        .add(Projections.property("institution.id"), "institutionId") //
-                        .add(Projections.property("institutionAdvert.name"), "institutionName") //
-                        .add(Projections.property("institutionAdvert.summary"), "institutionSummary") //
-                        .add(Projections.property("institutionAdvert.homepage"), "institutionHomepage")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.advert", "institutionAdvert", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("id", programId)) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(Restrictions.isNotEmpty("resourceConditions")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationRobot.class)) //
-                .uniqueResult();
     }
 
     public List<Integer> getProjects(Integer program) {

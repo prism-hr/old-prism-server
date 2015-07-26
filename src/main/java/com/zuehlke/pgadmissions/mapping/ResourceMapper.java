@@ -157,29 +157,29 @@ public class ResourceMapper {
             Integer projectId = row.getProjectId();
 
             if (resourceScope.equals(INSTITUTION)) {
-                representation.setName(row.getInstitutionTitle());
+                representation.setName(row.getInstitutionName());
                 setInstitutionLogoImage(row, representation);
             } else {
-                representation.setInstitution(new ResourceRepresentationSimple().withId(institutionId).withName(row.getInstitutionTitle())
+                representation.setInstitution(new ResourceRepresentationSimple().withId(institutionId).withName(row.getInstitutionName())
                         .withLogoImage(documentMapper.getDocumentRepresentation(row.getInstitutionLogoImageId())));
             }
 
             if (resourceScope.equals(DEPARTMENT)) {
-                representation.setName(row.getDepartmentTitle());
+                representation.setName(row.getDepartmentName());
             } else if (departmentId != null) {
-                representation.setDepartment(new ResourceRepresentationSimple().withId(departmentId).withName(row.getDepartmentTitle()));
+                representation.setDepartment(new ResourceRepresentationSimple().withId(departmentId).withName(row.getDepartmentName()));
             }
 
             if (resourceScope.equals(PROGRAM)) {
-                representation.setName(row.getProgramTitle());
+                representation.setName(row.getProgramName());
             } else if (programId != null) {
-                representation.setProgram(new ResourceRepresentationSimple().withId(programId).withName(row.getProgramTitle()));
+                representation.setProgram(new ResourceRepresentationSimple().withId(programId).withName(row.getProgramName()));
             }
 
             if (resourceScope.equals(PROJECT)) {
-                representation.setName(row.getProjectTitle());
+                representation.setName(row.getProjectName());
             } else if (projectId != null) {
-                representation.setProject(new ResourceRepresentationSimple().withId(projectId).withName(row.getProjectTitle()));
+                representation.setProject(new ResourceRepresentationSimple().withId(projectId).withName(row.getProjectName()));
             }
 
             representation.setCode(row.getCode());

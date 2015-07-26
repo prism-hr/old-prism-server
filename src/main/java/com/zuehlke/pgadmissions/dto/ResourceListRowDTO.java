@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 
 public class ResourceListRowDTO {
 
@@ -15,19 +14,19 @@ public class ResourceListRowDTO {
 
     private Integer institutionId;
 
-    private String institutionTitle;
+    private String institutionName;
 
     private Integer institutionLogoImageId;
 
     private Integer departmentId;
 
-    private String departmentTitle;
+    private String departmentName;
 
     private Integer programId;
 
-    private String programTitle;
+    private String programName;
 
-    private String projectTitle;
+    private String projectName;
 
     private Integer projectId;
 
@@ -79,12 +78,12 @@ public class ResourceListRowDTO {
         this.institutionId = institutionId;
     }
 
-    public String getInstitutionTitle() {
-        return institutionTitle;
+    public String getInstitutionName() {
+        return institutionName;
     }
 
-    public void setInstitutionTitle(String institutionTitle) {
-        this.institutionTitle = institutionTitle;
+    public void setInstitutionName(String institutionName) {
+        this.institutionName = institutionName;
     }
 
     public Integer getInstitutionLogoImageId() {
@@ -103,12 +102,12 @@ public class ResourceListRowDTO {
         this.departmentId = departmentId;
     }
 
-    public String getDepartmentTitle() {
-        return departmentTitle;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setDepartmentTitle(String departmentTitle) {
-        this.departmentTitle = departmentTitle;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public Integer getProgramId() {
@@ -119,20 +118,20 @@ public class ResourceListRowDTO {
         this.programId = programId;
     }
 
-    public String getProgramTitle() {
-        return programTitle;
+    public String getProgramName() {
+        return programName;
     }
 
-    public void setProgramTitle(String programTitle) {
-        this.programTitle = programTitle;
+    public void setProgramName(String programName) {
+        this.programName = programName;
     }
 
-    public String getProjectTitle() {
-        return projectTitle;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setProjectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public Integer getProjectId() {

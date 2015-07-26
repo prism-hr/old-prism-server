@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.mapping.helpers;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class ImportedProgramTransformer implements
@@ -25,7 +24,6 @@ public class ImportedProgramTransformer implements
 
         concreteTarget.setLevel(concreteSource.getLevel());
         concreteTarget.setQualification(concreteSource.getQualification());
-        concreteTarget.setHomepage(concreteSource.getHomepage());
     }
 
 }

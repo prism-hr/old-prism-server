@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Service
@@ -83,10 +82,6 @@ public class ProgramService {
         List<PrismState> states = stateService.getActiveResourceStates(PROGRAM);
         boolean userLoggedIn = userService.getCurrentUser() != null;
         return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);
-    }
-
-    public ResourceRepresentationRobot getSearchEngineAdvert(Integer programId, List<PrismState> activeProgramStates) {
-        return programDAO.getSearchEngineAdvert(programId, activeProgramStates);
     }
 
 }

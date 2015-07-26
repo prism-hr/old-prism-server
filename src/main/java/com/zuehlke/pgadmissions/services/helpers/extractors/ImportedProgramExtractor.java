@@ -22,13 +22,13 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
-public class ImportedProgramExtractor <T extends ImportedProgramRequest> implements ImportedEntityExtractor<T> {
+public class ImportedProgramExtractor<T extends ImportedProgramRequest> implements ImportedEntityExtractor<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportedProgramExtractor.class);
-    
+
     @Inject
     private ImportedEntityService importedEntityService;
-    
+
     @Override
     public List<String> extract(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable) {
         List<String> rows = Lists.newLinkedList();
@@ -38,10 +38,10 @@ public class ImportedProgramExtractor <T extends ImportedProgramRequest> impleme
             if (systemImport) {
                 importedInstitutionsByUcasId = importedEntityService.getImportedInstitutionsByUcasId();
             }
-            
+
             for (ImportedProgramRequest definition : definitions) {
                 List<String> cells = Lists.newLinkedList();
-                
+
                 if (systemImport) {
                     Integer ucasId = definition.getInstitution();
                     Integer institution = importedInstitutionsByUcasId.get(ucasId);
@@ -53,15 +53,19 @@ public class ImportedProgramExtractor <T extends ImportedProgramRequest> impleme
                 } else {
                     cells.add(prepareIntegerForSqlInsert(definition.getInstitution()));
                 }
-                
-                cells.add(prepareIntegerForSqlInsert(definition.getQualificationType())); // TODO: map to PRiSM qualification types
+
+                cells.add(prepareIntegerForSqlInsert(definition.getQualificationType()));
+                // TODO: map to PRiSM qualification types
                 cells.add(prepareStringForSqlInsert(definition.getLevel()));
                 String qualification = definition.getQualification();
                 cells.add(prepareStringForSqlInsert(qualification));
                 cells.add(prepareStringForSqlInsert(qualification + " " + definition.getName()));
-                cells.add(prepareStringForSqlInsert(definition.getCode())); // TODO: implement JACS code as derived from UCAS
+                cells.add(prepareStringForSqlInsert(definition.getCode()));
                 cells.add(prepareBooleanForSqlInsert(enable));
-                rows.add(prepareCellsForSqlInsert(cells));
+
+                if (!cells.isEmpty()) {
+                    rows.add(prepareCellsForSqlInsert(cells));
+                }
             }
         }
         return rows;

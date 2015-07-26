@@ -1,23 +1,54 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.imported.*;
-import com.zuehlke.pgadmissions.domain.imported.mapping.*;
-import com.zuehlke.pgadmissions.mapping.helpers.*;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
-import com.zuehlke.pgadmissions.services.helpers.extractors.*;
-import org.apache.commons.lang3.ObjectUtils;
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.CaseFormat.*;
+import org.apache.commons.lang3.ObjectUtils;
+
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAdvertDomicileMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedAdvertDomicileTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedAgeRangeTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedInstitutionTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedLanguageQualificationTypeTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedProgramTransformer;
+import com.zuehlke.pgadmissions.mapping.helpers.ImportedSubjectAreaTransformer;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAdvertDomicileExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimpleExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedInstitutionExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedSubjectAreaExtractor;
 
 public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.enums.PrismImportedEntity> {
 
@@ -120,8 +151,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new String[] { "application_program_detail.opportunity_type_id" }, true),
-    @SuppressWarnings("unchecked")
     // TODO: add as chart filter
+    @SuppressWarnings("unchecked")
     IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedSubjectArea.class)
             .withSystemRequestClass(ImportedSubjectAreaImportDTO.class)
@@ -142,6 +173,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withTable("imported_subject_area_mapping"),
             null, true),
     // TODO: add as chart filter
+    @SuppressWarnings("unchecked")
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedProgram.class)
             .withSystemRequestClass(ImportedProgramImportDTO.class)
@@ -155,7 +187,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withPivotColumn("name")
                     .withColumn("code")
                     .withColumn("enabled")
-                    .withExtractor(ImportedProgramExtractor.class),
+                    .withExtractor((Class<? extends ImportedEntityExtractor<?>>) ImportedProgramExtractor.class),
             new PrismImportedEntityMappingInsertDefinition()
                     .withMappingClass(ImportedProgramMapping.class)
                     .withTable("imported_program_mapping"),
@@ -183,6 +215,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             null, true);
 
     private static final List<PrismImportedEntity> prefetchEntities = Lists.newLinkedList();
+
     private static final List<PrismImportedEntity> resourceReportFilterProperties = Lists.newLinkedList();
 
     static {

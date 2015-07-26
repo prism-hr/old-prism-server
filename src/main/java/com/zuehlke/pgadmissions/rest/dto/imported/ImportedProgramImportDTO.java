@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.dto.imported;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
 
 public class ImportedProgramImportDTO extends ImportedProgramRequest {
-
+    
     private Integer weight;
 
     public Integer getWeight() {

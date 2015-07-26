@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActi
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;

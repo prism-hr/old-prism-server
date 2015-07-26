@@ -8,28 +8,41 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
 import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
 
 @Component
-public class ImportedSubjectAreaExtractor implements ImportedEntityExtractor<ImportedSubjectAreaImportDTO> {
+public class ImportedSubjectAreaExtractor<T extends ImportedSubjectAreaRequest> implements ImportedEntityExtractor<T> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedSubjectAreaImportDTO> definitions, boolean enable) {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable) {
         List<String> rows = Lists.newLinkedList();
-        for (ImportedSubjectAreaImportDTO definition : definitions) {
-            List<String> cells = Lists.newLinkedList();
-            cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(definition.getId()));
-            cells.add(prepareStringForSqlInsert(definition.getJacsCode()));
-            cells.add(prepareStringForSqlInsert(definition.getJacsCodeOld()));
-            cells.add(prepareStringForSqlInsert(definition.getName()));
-            cells.add(prepareStringForSqlInsert(definition.getDescription()));
-            cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(definition.getUcasSubject()));
-            cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(definition.getParent()));
-            cells.add(prepareBooleanForSqlInsert(enable));
-            rows.add(prepareCellsForSqlInsert(cells));
+        if (!definitions.isEmpty()) {
+            boolean systemImport = definitions.get(0).getClass().equals(ImportedSubjectAreaImportDTO.class);
+            for (T definition : definitions) {
+                List<String> cells = Lists.newLinkedList();
+                cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(definition.getId()));
+                cells.add(prepareStringForSqlInsert(definition.getJacsCode()));
+                
+                if (systemImport) {
+                    cells.add(prepareStringForSqlInsert(((ImportedSubjectAreaImportDTO) definition).getJacsCodeOld()));
+                }
+                
+                cells.add(prepareStringForSqlInsert(definition.getName()));
+                cells.add(prepareStringForSqlInsert(definition.getDescription()));
+                
+                if (systemImport) {
+                    cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(((ImportedSubjectAreaImportDTO) definition).getUcasSubject()));
+                    cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(((ImportedSubjectAreaImportDTO) definition).getParent()));
+                }
+
+                cells.add(prepareBooleanForSqlInsert(enable));
+                rows.add(prepareCellsForSqlInsert(cells));
+            }
         }
         return rows;
     }

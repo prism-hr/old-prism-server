@@ -155,6 +155,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new String[] { "application_program_detail.opportunity_type_id" }, true),
+    @SuppressWarnings("unchecked")
     // TODO: add as chart filter
     IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedSubjectArea.class)
@@ -170,7 +171,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumn("ucas_subject")
                     .withColumn("parent_imported_subject_area_id")
                     .withColumn("enabled")
-                    .withExtractor(ImportedSubjectAreaExtractor.class),
+                    .withExtractor((Class<? extends ImportedEntityExtractor<?>>) ImportedSubjectAreaExtractor.class),
             new PrismImportedEntityMappingInsertDefinition()
                     .withMappingClass(ImportedSubjectAreaMapping.class)
                     .withTable("imported_subject_area_mapping"),

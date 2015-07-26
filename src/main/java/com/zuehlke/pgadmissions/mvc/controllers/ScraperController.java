@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
+import com.zuehlke.pgadmissions.services.scraping.ProgramUcasScraper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
-import com.zuehlke.pgadmissions.services.scraping.ProgramUcasScraper;
+import javax.inject.Inject;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * This controller is in charge of talking to search.ucas.com

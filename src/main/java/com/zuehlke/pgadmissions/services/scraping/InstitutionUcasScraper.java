@@ -50,7 +50,7 @@ public class InstitutionUcasScraper implements ImportedDataScraper {
                 Element nameElement = html.getElementsByClass("shortname").first();
                 if (nameElement != null) {
                     String name = nameElement.text();
-                    ImportedInstitutionRequest institution = new ImportedInstitutionRequest(name).withUcasId("" + ucasId);
+                    ImportedInstitutionRequest institution = new ImportedInstitutionRequest(name).withUcasId(ucasId);
                     jg.writeObject(institution);
                     log.info("Scraped institution " + ucasId + ": " + name);
                 } else {

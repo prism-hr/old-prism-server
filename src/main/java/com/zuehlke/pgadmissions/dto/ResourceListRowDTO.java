@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import org.apache.commons.lang3.ObjectUtils;
-import org.joda.time.DateTime;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.joda.time.DateTime;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ResourceListRowDTO {
 

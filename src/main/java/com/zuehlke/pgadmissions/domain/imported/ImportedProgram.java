@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -48,6 +47,9 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     @Column(name = "name", nullable = false)
     private String name;
+    
+    @Column(name = "code")
+    private String code;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -128,6 +130,14 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override

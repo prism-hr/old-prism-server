@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,8 +39,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedSubjectAreaExtractor;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional
@@ -103,6 +99,15 @@ public class ImportedEntityService {
             programs = importedEntityDAO.getEnabledImportedPrograms(importedInstitution);
         }
         return programs;
+    }
+
+    public Map<Integer, Integer> getImportedInstitutionsByUcasId() {
+        Map<Integer, Integer> references = Maps.newHashMap();
+        List<ImportedInstitution> institutions = importedEntityDAO.getInstitutionsWithUcasId();
+        for (ImportedInstitution institution : institutions) {
+            references.put(institution.getUcasId(), institution.getId());
+        }
+        return references;
     }
 
     public <T extends ImportedEntity<?, U>, U extends ImportedEntityMapping<T>> U getEnabledImportedEntityMapping(Institution institution, T importedEntity) {
@@ -432,13 +437,12 @@ public class ImportedEntityService {
         for (List<T> definitionBatch : definitionBatches) {
             ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
             List<String> rows = extractor.extract(prismImportedEntity, definitionBatch, enable);
-            importedEntityDAO.mergeImportedEntities(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
-                    prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
-            entityService.flush();
+            if (!rows.isEmpty()) {
+                importedEntityDAO.mergeImportedEntities(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
+                        prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
+                entityService.flush();
+            }
         }
-        
-        ImportedSubjectAreaExtractor testExtractor = new ImportedSubjectAreaExtractor();
-        testExtractor.extract(IMPORTED_SUBJECT_AREA, Lists.<ImportedSubjectAreaRequest>newArrayList(), true);
     }
 
     public List<ImportedProgram> getImportedPrograms(String searchTerm) {

@@ -24,7 +24,7 @@ public class ImportedInstitutionExtractor implements ImportedEntityExtractor<Imp
             List<String> cells = Lists.newLinkedList();
             cells.add(prepareIntegerForSqlInsert(definition.getDomicile()));
             cells.add(prepareStringForSqlInsert(definition.getName()));
-            cells.add(prepareStringForSqlInsert(definition.getUcasId()));
+            cells.add(prepareIntegerForSqlInsert(definition.getUcasId()));
             cells.add(prepareStringForSqlInsert(definition.getFacebookId()));
             cells.add(prepareBooleanForSqlInsert(enable));
             rows.add(prepareCellsForSqlInsert(cells));

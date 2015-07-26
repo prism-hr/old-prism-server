@@ -39,7 +39,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     private String name;
 
     @Column(name = "ucas_id", unique = true)
-    private String ucasId;
+    private Integer ucasId;
 
     @Column(name = "facebook_id", unique = true)
     private String facebookId;
@@ -86,12 +86,12 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     }
 
     @Override
-    public String getUcasId() {
+    public Integer getUcasId() {
         return ucasId;
     }
 
     @Override
-    public void setUcasId(String ucasId) {
+    public void setUcasId(Integer ucasId) {
         this.ucasId = ucasId;
     }
 
@@ -135,7 +135,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
         return this;
     }
 
-    public ImportedInstitution withUcasId(String ucasId) {
+    public ImportedInstitution withUcasId(Integer ucasId) {
         this.ucasId = ucasId;
         return this;
     }

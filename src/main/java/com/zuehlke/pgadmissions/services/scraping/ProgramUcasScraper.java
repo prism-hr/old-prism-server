@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.exceptions.ScrapingException;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,31 +26,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 
 @Service
+@SuppressWarnings("rawtypes")
 public class ProgramUcasScraper implements ImportedDataScraper {
 
     private static Logger log = LoggerFactory.getLogger(ProgramUcasScraper.class);
 
-    // search host
     private static String HOST = "http://search.ucas.com";
 
     private static Pattern programNamePattern = Pattern.compile("(.+)\\s+\\(([A-Z0-9]{4})\\)( : Taught at \\d+ locations)?");
-
-    @Inject
-    private ImportedEntityService importedEntityService;
 
     private static URIBuilder newURIBuilder(String string) {
         try {
@@ -64,9 +60,11 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             TreeMap<Pair, ImportedProgramScrapeDescriptor> programs = new TreeMap<>();
 
             List<String> topCategoryUrls = getTopCategoryUrls();
-//            topCategoryUrls = topCategoryUrls.subList(0, 1); // FIXME remove, just for tests
+            // topCategoryUrls = topCategoryUrls.subList(0, 1); // FIXME remove,
+            // just for tests
             List<String> subjectUrls = getSubjectUrls(topCategoryUrls);
-//            subjectUrls = subjectUrls.subList(4, 5); // FIXME remove, just for tests
+            // subjectUrls = subjectUrls.subList(4, 5); // FIXME remove, just
+            // for tests
 
             for (String subjectUrl : subjectUrls) {
                 List<Document> documents = loadAllPages(subjectUrl);
@@ -101,21 +99,21 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             List<String> urls = document.select("li.subjectsearchsteparea").stream()
                     .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
                     .flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
-                    .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value")).addParameter("AvailableIn", pair.getRight()).toString())
+                    .map(pair -> (String) newURIBuilder(uriBase)
+                            .addParameter(((Element) ((Pair) pair).getLeft()).attr("name"), 
+                                    ((Element) ((Pair) pair).getLeft()).attr("value"))
+                             .addParameter("AvailableIn", ((Pair)pair).getRight().toString())
+                            .toString())
                     .collect(Collectors.toList());
             subjectUrls.addAll(urls);
         }
         return subjectUrls;
     }
 
-    /**
-     * return <code>true</code> when there are no more pages
-     */
     private boolean scrapeUniversitySections(Document document, TreeMap<Pair, ImportedProgramScrapeDescriptor> programs)
             throws IOException, URISyntaxException {
         Element resultsContainerElement = document.getElementsByClass("resultscontainer").first();
 
-//        // iterate over institutions
         for (Element element : resultsContainerElement.getElementsByTag("li")) {
             if (!element.id().startsWith("result-")) {
                 continue;
@@ -142,7 +140,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
     private void scrapePrograms(Element element, String ucasInstitutionId, TreeMap<Pair, ImportedProgramScrapeDescriptor> programs) {
         Elements courseResults = element.select("li");
         for (Element courseResult : courseResults) {
-            String programName = StringEscapeUtils.unescapeHtml(courseResult.select(".coursenamearea").select("h4").text()).replace("\u00a0"," ");
+            String programName = StringEscapeUtils.unescapeHtml(courseResult.select(".coursenamearea").select("h4").text()).replace("\u00a0", " ");
             Matcher programNameMatcher = programNamePattern.matcher(programName);
             if (!programNameMatcher.matches()) {
                 log.error("Could not match program name: " + programName);
@@ -156,10 +154,10 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             String qualification = courseResult.select(".courseinfooutcome").text();
             String level = extractProgramLevelFromQualificationElement(courseResult.select(".resultbottomarea .coursequalarea").first());
             String programUrl = courseResult.select("div.coursenamearea a").first().attr("href");
-            Integer subjectId = Integer.parseInt(URLEncodedUtils.parse(programUrl, Charsets.UTF_8).stream().filter(param -> param.getName().equals("flt99")).collect(Collectors.toList()).get(0).getValue());
+            Integer subjectId = Integer.parseInt(URLEncodedUtils.parse(programUrl, Charsets.UTF_8).stream().filter(param -> param.getName().equals("flt99"))
+                    .collect(Collectors.toList()).get(0).getValue());
 
-
-            Pair programMapKey = new ImmutablePair<> (ucasInstitutionId, new ImmutablePair<>(programName, new ImmutablePair<>(courseCode, level)));
+            Pair programMapKey = new ImmutablePair<>(ucasInstitutionId, new ImmutablePair<>(programName, new ImmutablePair<>(courseCode, level)));
             if (!programs.containsKey(programMapKey)) {
                 ImportedProgramImportDTO program = new ImportedProgramImportDTO(programName).withInstitution(Integer.parseInt(ucasInstitutionId))
                         .withLevel(level).withQualification(qualification).withSubjectAreas(Sets.newHashSet(subjectId.toString())).withWeight(1);
@@ -200,15 +198,13 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         }
     }
 
-
     private String extractProgramLevelFromQualificationElement(Element qualificationElement) {
-        // get whatever is after </div>
         Element qualificationLevelElement = qualificationElement.select("span.qualificationLevel").first();
-        if(qualificationLevelElement != null) {
+        if (qualificationLevelElement != null) {
             return qualificationLevelElement.text();
         }
         Element venueElement = qualificationElement.select("div.courseinfovenue").first();
-        if(venueElement == null) {
+        if (venueElement == null) {
             return qualificationElement.text().trim();
         }
         TextNode levelTextNode = (TextNode) venueElement.nextSibling();

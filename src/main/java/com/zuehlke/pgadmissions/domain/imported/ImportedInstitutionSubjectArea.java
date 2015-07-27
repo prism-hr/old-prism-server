@@ -22,11 +22,11 @@ public class ImportedInstitutionSubjectArea extends WeightedRelationImported imp
 
     @ManyToOne
     @JoinColumn(name = "imported_institution_id", nullable = false)
-    private ImportedInstitution importedInstitution;
+    private ImportedInstitution institution;
 
     @ManyToOne
     @JoinColumn(name = "imported_subject_area_id", nullable = false)
-    private ImportedSubjectArea importedSubjectArea;
+    private ImportedSubjectArea subjectArea;
 
     @Column(name = "relation_strength", nullable = false)
     private Integer relationStrength;
@@ -44,20 +44,20 @@ public class ImportedInstitutionSubjectArea extends WeightedRelationImported imp
         this.id = id;
     }
 
-    public ImportedInstitution getImportedInstitution() {
-        return importedInstitution;
+    public ImportedInstitution getInstitution() {
+        return institution;
     }
 
-    public void setImportedInstitution(ImportedInstitution importedInstitution) {
-        this.importedInstitution = importedInstitution;
+    public void setInstitution(ImportedInstitution institution) {
+        this.institution = institution;
     }
 
-    public ImportedSubjectArea getImportedSubjectArea() {
-        return importedSubjectArea;
+    public ImportedSubjectArea getSubjectArea() {
+        return subjectArea;
     }
 
-    public void setImportedSubjectArea(ImportedSubjectArea importedSubjectArea) {
-        this.importedSubjectArea = importedSubjectArea;
+    public void setSubjectArea(ImportedSubjectArea subjectArea) {
+        this.subjectArea = subjectArea;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ImportedInstitutionSubjectArea extends WeightedRelationImported imp
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("importedInstitution", importedInstitution).addProperty("importedSubjectArea", importedSubjectArea);
+        return new ResourceSignature().addProperty("institution", institution).addProperty("subjectArea", subjectArea);
     }
 
 }

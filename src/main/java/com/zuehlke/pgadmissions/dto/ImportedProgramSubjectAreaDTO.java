@@ -25,7 +25,7 @@ public class ImportedProgramSubjectAreaDTO {
     }
 
     public Integer getSpecificity() {
-        int specificity = 0;
+        int specificity = 1;
         for (int i = 0; i < code.length() - 1; i++) {
             Character character = code.charAt(i);
             if (Character.isDigit(character) && !character.toString().equals("0")) {

@@ -44,11 +44,6 @@ public abstract class ImportedEntity<T, U extends ImportedEntityMapping<?>> impl
     }
 
     @Override
-    public int index() {
-        return Objects.hashCode(getName());
-    }
-
-    @Override
     public String toString() {
         return getId().toString() + "-" + getType() + "-" + getName();
     }

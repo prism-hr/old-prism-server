@@ -50,7 +50,6 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional
@@ -284,8 +283,22 @@ public class ImportedEntityService {
                         "imported_program_id, imported_subject_area_id, relation_strength, enabled",
                         Joiner.on(", ").join(values), "enabled = 1");
             }
+        }
+    }
 
-            mergeImportedInstitutionSubjectAreas();
+    public void mergeImportedInstitutionSubjectAreas() {
+        importedEntityDAO.disableImportedEntityRelations(ImportedInstitutionSubjectArea.class);
+        entityService.flush();
+        List<List<ImportedInstitutionSubjectAreaDTO>> importedInstitutionSubjectAreaInsertDefinitions = Lists.partition(
+                importedEntityDAO.getImportedInstitutionSubjectAreas(), MAX_BATCH_INSERT_SIZE);
+        for (List<ImportedInstitutionSubjectAreaDTO> importedInstitutionSubjectAreaInserts : importedInstitutionSubjectAreaInsertDefinitions) {
+            List<String> importedInstitutionSubjectAreaValues = Lists.newArrayListWithExpectedSize(importedInstitutionSubjectAreaInsertDefinitions.size());
+            for (ImportedInstitutionSubjectAreaDTO importedInstitutionSubjectAreaInsert : importedInstitutionSubjectAreaInserts) {
+                importedInstitutionSubjectAreaValues.add(importedInstitutionSubjectAreaInsert.getInsertDefinition());
+            }
+            importedEntityDAO.executeBulkMerge("imported_institution_subject_area",
+                    "imported_institution_id, imported_subject_area_id, relation_strength, enabled",
+                    Joiner.on(", ").join(importedInstitutionSubjectAreaValues), "enabled = 1");
         }
     }
 
@@ -473,22 +486,6 @@ public class ImportedEntityService {
                         prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
                 entityService.flush();
             }
-        }
-    }
-
-    private void mergeImportedInstitutionSubjectAreas() {
-        importedEntityDAO.disableImportedEntityRelations(ImportedInstitutionSubjectArea.class);
-        entityService.flush();
-        List<List<ImportedInstitutionSubjectAreaDTO>> importedInstitutionSubjectAreaInsertDefinitions = Lists.partition(
-                importedEntityDAO.getImportedInstitutionSubjectAreas(), PrismConstants.MAX_BATCH_INSERT_SIZE);
-        for (List<ImportedInstitutionSubjectAreaDTO> importedInstitutionSubjectAreaInserts : importedInstitutionSubjectAreaInsertDefinitions) {
-            List<String> importedInstitutionSubjectAreaValues = Lists.newArrayListWithExpectedSize(importedInstitutionSubjectAreaInsertDefinitions.size());
-            for (ImportedInstitutionSubjectAreaDTO importedInstitutionSubjectAreaInsert : importedInstitutionSubjectAreaInserts) {
-                importedInstitutionSubjectAreaValues.add(importedInstitutionSubjectAreaInsert.getInsertDefinition());
-            }
-            importedEntityDAO.executeBulkMerge("imported_institution_subject_area",
-                    "imported_institution_id, imported_subject_area_id, relation_strength, enabled",
-                    Joiner.on(", ").join(importedInstitutionSubjectAreaValues), "enabled = 1");
         }
     }
 

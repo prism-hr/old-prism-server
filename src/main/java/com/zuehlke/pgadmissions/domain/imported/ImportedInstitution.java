@@ -151,6 +151,11 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     }
 
     @Override
+    public String index() {
+        return domicile.getId().toString() + super.index();
+    }
+    
+    @Override
     public int hashCode() {
         return Objects.hashCode(domicile.getId(), name);
     }

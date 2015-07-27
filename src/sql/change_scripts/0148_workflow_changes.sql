@@ -116,6 +116,14 @@ where state_id like "%REACTIVATION"
 	or transition_state_id like "%REACTIVATION"
 ;
 
+update program inner join resource_state
+    on program.id = resource_state.program_id
+set program.state_id = 'PROGRAM_DISABLED_COMPLETED',
+  resource_state.state_id = 'PROGRAM_DISABLED_COMPLETED'
+where program.state_id = 'PROGRAM_DISABLED_PENDING_REACTIVATION'
+      and resource_state.state_id = 'PROGRAM_DISABLED_PENDING_REACTIVATION'
+;
+
 update program inner join resource_previous_state
 	on program.id = resource_previous_state.program_id
 set program.previous_state_id = program.state_id,

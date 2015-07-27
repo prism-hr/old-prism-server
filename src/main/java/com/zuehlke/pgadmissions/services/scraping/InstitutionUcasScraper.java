@@ -1,19 +1,5 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.List;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -21,13 +7,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.List;
 
 @Service
-public class InstitutionUcasScraper implements ImportedDataScraper {
+public class InstitutionUcasScraper {
 
     private static Logger log = LoggerFactory.getLogger(InstitutionUcasScraper.class);
 
-    @Override
     public void scrape(Writer writer) throws ScrapingException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

@@ -1,21 +1,7 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -24,6 +10,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
+
+import java.io.*;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ScraperMainLauncher {
 
@@ -35,23 +29,27 @@ public class ScraperMainLauncher {
             System.exit(1);
         }
 
+        ProgramUcasScraper programScraper = new ProgramUcasScraper();
         switch (args[0]) {
-        case "facebookDefinitions":
-            getFacebookDefinitions();
-            break;
-        case "subjectAreas":
-            importSubjectAreas(args[1]);
-            break;
-        case "institutions":
-            InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
-            institutionScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
-            break;
-        case "programs":
-            ProgramUcasScraper programScraper = new ProgramUcasScraper();
-            programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
-            break;
-        case "applyCodeMappings":
-            applyCodeMapping(args[1]);
+            case "facebookDefinitions":
+                getFacebookDefinitions();
+                break;
+            case "subjectAreas":
+                importSubjectAreas(args[1]);
+                break;
+            case "institutions":
+                InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
+                institutionScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
+                break;
+            case "programs":
+                programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
+                break;
+            case "processPrograms":
+                programScraper.processProgramDescriptors(new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8),
+                        new OutputStreamWriter(new FileOutputStream(args[2])));
+                break;
+            case "applyCodeMappings":
+                applyCodeMapping(args[1]);
         }
     }
 
@@ -138,7 +136,7 @@ public class ScraperMainLauncher {
         try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), Charsets.UTF_8))) {
             for (String code : subjectAreas.keySet()) {
                 ImportedSubjectAreaRequest area = subjectAreas.get(code);
-                writer.writeNext(new String[] { code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code)) });
+                writer.writeNext(new String[]{code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code))});
             }
         }
     }

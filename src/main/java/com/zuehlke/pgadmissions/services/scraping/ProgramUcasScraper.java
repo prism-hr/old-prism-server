@@ -1,18 +1,15 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,18 +24,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.exceptions.ScrapingException;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
-public class ProgramUcasScraper implements ImportedDataScraper {
+public class ProgramUcasScraper {
 
     private static Logger log = LoggerFactory.getLogger(ProgramUcasScraper.class);
 
@@ -54,7 +52,6 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         }
     }
 
-    @Override
     @SuppressWarnings("rawtypes")
     public void scrape(Writer writer) throws ScrapingException {
         try {
@@ -80,6 +77,45 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         }
     }
 
+    public void processProgramDescriptors(Reader reader, Writer writer) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CollectionType oldProgramType = objectMapper.getTypeFactory().constructCollectionType(List.class, ImportedProgramImportDTO.class);
+        List<ImportedProgramImportDTO> oldPrograms = objectMapper.readValue(reader, oldProgramType);
+
+        List<ImportedProgramImportDTO> programs = new LinkedList<>();
+
+        for (ImportedProgramImportDTO program : oldPrograms) {
+            Set<String> jacsCodes = deriveJacsCodes(program.getCode());
+            program.setJacsCodes(jacsCodes);
+            programs.add(program);
+        }
+
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jg = jsonFactory.createGenerator(writer);
+        jg.setCodec(new ObjectMapper());
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+
+        jg.writeObject(programs);
+
+        jg.close();
+    }
+
+    private Set<String> deriveJacsCodes(String courseCode) {
+        char[] c = courseCode.toCharArray();
+        if(Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
+            return Collections.singleton(courseCode);
+        } else if(Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isLetter(c[2]) && Character.isDigit(c[3])) {
+            return Sets.newHashSet("" + c[0] + c[1] + "00", "" + c[2] + c[3] + "00");
+        } else if(Character.isLetter(c[0]) && Character.isLetter(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
+            return Sets.newHashSet("" + c[0] + c[2] + "00", "" + c[1] + c[3] + "00");
+        } else if(Character.isLetter(c[0]) && Character.isDigit(c[1])) {
+            return Sets.newHashSet("" + c[0] + c[1] + "00");
+        } else {
+            return null;
+        }
+
+    }
+
     private List<String> getTopCategoryUrls() throws IOException {
         return loadPage(HOST + "/subject").getElementById("subjectareas")
                 .getElementsByTag("a").stream()
@@ -101,7 +137,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                     .select("li.subjectsearchsteparea")
                     .stream()
                     .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
-                    .<Pair<Element, String>> flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
+                    .<Pair<Element, String>>flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
                     .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value"))
                             .addParameter("AvailableIn", pair.getRight()).toString())
                     .collect(Collectors.toList());
@@ -165,9 +201,11 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 
             Pair programMapKey = new ImmutablePair<>(ucasInstitutionId, new ImmutablePair<>(programName, new ImmutablePair<>(courseCode, level)));
             if (!programs.containsKey(programMapKey)) {
+                Set<String> jacsCodes = deriveJacsCodes(courseCode);
                 ImportedProgramImportDTO program = new ImportedProgramImportDTO(programName).withInstitution(Integer.parseInt(ucasInstitutionId))
-                        .withLevel(level).withQualification(qualification).withUcasSubjects(Sets.newHashSet(subjectId)).withWeight(1);
-                ImportedProgramScrapeDescriptor programDescriptor = new ImportedProgramScrapeDescriptor(program, courseCode, subjectId, ucasProgramId);
+                        .withLevel(level).withQualification(qualification).withUcasSubjects(Sets.newHashSet(subjectId)).withWeight(1)
+                        .withCode(courseCode).withJacsCodes(jacsCodes);
+                ImportedProgramScrapeDescriptor programDescriptor = new ImportedProgramScrapeDescriptor(program, ucasProgramId);
                 programs.put(programMapKey, programDescriptor);
             } else {
                 ImportedProgramScrapeDescriptor programDescriptor = programs.get(programMapKey);
@@ -261,17 +299,14 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 
         private ImportedProgramImportDTO program;
 
-        private String courseCode;
-
         private Set<Integer> ucasProgramIds;
 
         public ImportedProgramScrapeDescriptor() {
             return;
         }
 
-        public ImportedProgramScrapeDescriptor(ImportedProgramImportDTO program, String courseCode, Integer subjectIds, Integer ucasProgramId) {
+        public ImportedProgramScrapeDescriptor(ImportedProgramImportDTO program, Integer ucasProgramId) {
             this.program = program;
-            this.courseCode = courseCode;
             this.ucasProgramIds = Sets.newHashSet(ucasProgramId);
         }
 
@@ -285,14 +320,6 @@ public class ProgramUcasScraper implements ImportedDataScraper {
 
         public void setProgram(ImportedProgramImportDTO program) {
             this.program = program;
-        }
-
-        public String getCourseCode() {
-            return courseCode;
-        }
-
-        public void setCourseCode(String courseCode) {
-            this.courseCode = courseCode;
         }
 
         public Set<Integer> getUcasProgramIds() {

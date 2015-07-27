@@ -204,6 +204,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedEntities(prismImportedEntity);
         entityService.flush();
         insertImportedEntities(prismImportedEntity, representations, true);
+        entityService.flush();
     }
 
     public void disableImportedPrograms(Integer institutionId, List<Integer> updates, LocalDate baseline) {

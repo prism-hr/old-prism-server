@@ -15,10 +15,18 @@ public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
     @Size(max = 20)
     private String facebookId;
 
+    public ImportedInstitutionImportDTO() {
+        return;
+    }
+
     public ImportedInstitutionImportDTO(String name) {
         super(name);
     }
-    
+
+    public ImportedInstitutionImportDTO(String name, String code) {
+        super(name, code);
+    }
+
     public Integer getUcasId() {
         return ucasId;
     }
@@ -34,10 +42,10 @@ public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
     }
-    
+
     public ImportedInstitutionImportDTO withUcasId(Integer ucasId) {
         this.ucasId = ucasId;
         return this;
     }
-    
+
 }

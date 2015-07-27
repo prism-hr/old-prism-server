@@ -100,9 +100,9 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                     .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
                     .flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
                     .map(pair -> (String) newURIBuilder(uriBase)
-                            .addParameter(((Element) ((Pair) pair).getLeft()).attr("name"), 
+                            .addParameter(((Element) ((Pair) pair).getLeft()).attr("name"),
                                     ((Element) ((Pair) pair).getLeft()).attr("value"))
-                             .addParameter("AvailableIn", ((Pair)pair).getRight().toString())
+                            .addParameter("AvailableIn", ((Pair) pair).getRight().toString())
                             .toString())
                     .collect(Collectors.toList());
             subjectUrls.addAll(urls);
@@ -160,7 +160,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             Pair programMapKey = new ImmutablePair<>(ucasInstitutionId, new ImmutablePair<>(programName, new ImmutablePair<>(courseCode, level)));
             if (!programs.containsKey(programMapKey)) {
                 ImportedProgramImportDTO program = new ImportedProgramImportDTO(programName).withInstitution(Integer.parseInt(ucasInstitutionId))
-                        .withLevel(level).withQualification(qualification).withSubjectAreas(Sets.newHashSet(subjectId.toString())).withWeight(1);
+                        .withLevel(level).withQualification(qualification).withSubjectAreas(Sets.newHashSet(subjectId)).withWeight(1);
                 ImportedProgramScrapeDescriptor programDescriptor = new ImportedProgramScrapeDescriptor(program, courseCode, subjectId, ucasProgramId);
                 programs.put(programMapKey, programDescriptor);
             } else {
@@ -170,7 +170,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                     programDescriptor.getProgram().setWeight(weight + 1);
                     programDescriptor.addUcasProgramid(ucasProgramId);
                 }
-                programDescriptor.getProgram().getSubjectAreas().add(subjectId.toString());
+                programDescriptor.getProgram().getUcasSubjects().add(subjectId);
             }
 
         }

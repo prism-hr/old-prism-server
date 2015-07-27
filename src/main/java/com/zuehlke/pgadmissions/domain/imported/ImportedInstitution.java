@@ -169,11 +169,6 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     }
 
     @Override
-    public int index() {
-        return Objects.hashCode(domicile.getId(), name);
-    }
-
-    @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("domicile", getDomicile());
     }

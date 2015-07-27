@@ -26,7 +26,9 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgramSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.WeightedRelationImported;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
@@ -183,10 +185,6 @@ public class ImportedEntityDAO {
         query.executeUpdate();
     }
 
-    public void mergeImportedEntities(String table, String columns, String inserts, String updates) {
-        executeBulkMerge(table, columns, inserts, updates);
-    }
-
     public <T extends ImportedEntityMapping<?>> void disableImportedEntityMappings(Institution institution, PrismImportedEntity prismImportedEntity) {
         String queryString = "update " + prismImportedEntity.getMappingClass().getSimpleName() + " " //
                 + "set enabled = false " //
@@ -207,10 +205,6 @@ public class ImportedEntityDAO {
         }
 
         query.executeUpdate();
-    }
-
-    public void mergeImportedEntityMappings(String table, String columns, String inserts, String updates) {
-        executeBulkMerge(table, columns, inserts, updates);
     }
 
     public void disableImportedPrograms(Institution institution, List<Integer> updates, LocalDate baseline) {
@@ -324,6 +318,25 @@ public class ImportedEntityDAO {
                 .add(Restrictions.isNotNull("parent")) //
                 .list();
     }
+    
+    public void executeBulkMerge(String table, String columns, String inserts, String updates) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "insert into " + table + " (" + columns + ") "
+                        + "values " + inserts + " "
+                        + "on duplicate key update " + updates)
+                .executeUpdate();
+    }
+    
+    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas() {
+        return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedProgramSubjectArea.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("importedProgram.importedInstitution"), "importedInstitution") //
+                        .add(Projections.groupProperty("importedSubjectArea"), "importedSubjectArea") //
+                        .add(Projections.sum("relationStrength"))) //
+                .createAlias("importedProgram", "importedProgram", JoinType.INNER_JOIN) //
+                .setResultTransformer(Transformers.aliasToBean(ImportedInstitutionSubjectAreaDTO.class)) //
+                .list();
+    }
 
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
             Boolean enabled) {
@@ -361,14 +374,6 @@ public class ImportedEntityDAO {
         return (List<T>) criteria.addOrder(Order.desc("importedTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .list();
-    }
-
-    private void executeBulkMerge(String table, String columns, String inserts, String updates) {
-        sessionFactory.getCurrentSession().createSQLQuery(
-                "insert into " + table + " (" + columns + ") "
-                        + "values " + inserts + " "
-                        + "on duplicate key update " + updates)
-                .executeUpdate();
     }
 
     private Criteria getEntityMappingSelectStatement(PrismImportedEntity prismImportedEntity) {

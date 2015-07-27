@@ -294,7 +294,11 @@ public class SystemService {
             }
         }
 
+        logger.info("Initializing imported program subject areas");
         importedEntityService.mergeImportedProgramSubjectAreas((List<ImportedProgramImportDTO>) definitions.get(IMPORTED_PROGRAM));
+
+        logger.info("Initializing imported institution subject areas");
+        importedEntityService.mergeImportedInstitutionSubjectAreas();
     }
 
     @Transactional

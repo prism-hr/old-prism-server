@@ -41,7 +41,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Column(name = "ucas_id", unique = true)
     private Integer ucasId;
 
-    @Column(name = "facebook_id", unique = true)
+    @Column(name = "facebook_id")
     private String facebookId;
 
     @Column(name = "enabled", nullable = false)

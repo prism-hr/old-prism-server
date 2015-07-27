@@ -475,7 +475,7 @@ public class ImportedEntityService {
             }
         }
     }
-    
+
     private void mergeImportedInstitutionSubjectAreas() {
         importedEntityDAO.disableImportedEntityRelations(ImportedInstitutionSubjectArea.class);
         entityService.flush();

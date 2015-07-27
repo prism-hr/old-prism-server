@@ -31,9 +31,5 @@ public class ImportedInstitutionSubjectAreaDTO {
     public void setRelationStrength(Long relationStrength) {
         this.relationStrength = relationStrength;
     }
-    
-    public String getInsertDefinition() {
-        return "(" + importedInstitution + ", " + importedSubjectArea + ", " + relationStrength.toString() + ", " + "1)";
-    }
 
 }

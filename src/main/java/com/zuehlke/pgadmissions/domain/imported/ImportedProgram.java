@@ -169,7 +169,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     public int hashCode() {
         return Objects.hashCode(institution.getId(), qualification, name);
     }
-
+    
     @Override
     public boolean equals(Object object) {
         if (!super.equals(object)) {

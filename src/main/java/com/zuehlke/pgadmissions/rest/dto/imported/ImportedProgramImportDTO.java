@@ -63,11 +63,6 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
         return this;
     }
 
-    public ImportedProgramImportDTO withSubjectAreas(Set<Integer> ucasSubjects) {
-        this.ucasSubjects = ucasSubjects;
-        return this;
-    }
-
     public ImportedProgramImportDTO withLevel(String level) {
         setLevel(level);
         return this;
@@ -75,6 +70,11 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
 
     public ImportedProgramImportDTO withQualification(String qualification) {
         setQualification(qualification);
+        return this;
+    }
+    
+    public ImportedProgramImportDTO withUcasSubjects(Set<Integer> ucasSubjects) {
+        this.ucasSubjects = ucasSubjects;
         return this;
     }
 

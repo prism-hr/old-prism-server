@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.List;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 
 @Service
 public class InstitutionUcasScraper {
@@ -47,7 +48,7 @@ public class InstitutionUcasScraper {
                 Element nameElement = html.getElementsByClass("shortname").first();
                 if (nameElement != null) {
                     String name = nameElement.text();
-                    ImportedInstitutionRequest institution = new ImportedInstitutionRequest(name).withUcasId(ucasId);
+                    ImportedInstitutionRequest institution = new ImportedInstitutionImportDTO(name).withUcasId(ucasId);
                     jg.writeObject(institution);
                     log.info("Scraped institution " + ucasId + ": " + name);
                 } else {

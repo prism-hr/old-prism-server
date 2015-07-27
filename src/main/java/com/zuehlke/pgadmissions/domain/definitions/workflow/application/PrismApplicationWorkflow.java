@@ -204,7 +204,7 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_VIEW_EDIT) // //
                 .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_APPROVER) //
-                .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_EDIT_AS_APPROVER) //
                 .withAssignments(INSTITUTION_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(DEPARTMENT_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
@@ -224,7 +224,7 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_VIEW_EDIT) //
                 .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_APPROVER) //
-                .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_EDIT_AS_APPROVER) //
                 .withAssignments(INSTITUTION_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(DEPARTMENT_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //

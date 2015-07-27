@@ -13,21 +13,29 @@ import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 
 @Component
-public class ImportedInstitutionExtractor implements ImportedEntityExtractor<ImportedInstitutionRequest> {
+public class ImportedInstitutionExtractor<T extends ImportedInstitutionRequest> implements ImportedEntityExtractor<T> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedInstitutionRequest> definitions, boolean enable) {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<T> definitions, boolean enable) {
         List<String> rows = Lists.newLinkedList();
-        for (ImportedInstitutionRequest definition : definitions) {
-            List<String> cells = Lists.newLinkedList();
-            cells.add(prepareIntegerForSqlInsert(definition.getDomicile()));
-            cells.add(prepareStringForSqlInsert(definition.getName()));
-            cells.add(prepareIntegerForSqlInsert(definition.getUcasId()));
-            cells.add(prepareStringForSqlInsert(definition.getFacebookId()));
-            cells.add(prepareBooleanForSqlInsert(enable));
-            rows.add(prepareCellsForSqlInsert(cells));
+        if (!definitions.isEmpty()) {
+            boolean systemImport = definitions.get(0).getClass().equals(ImportedInstitutionImportDTO.class);
+            for (ImportedInstitutionRequest definition : definitions) {
+                List<String> cells = Lists.newLinkedList();
+                cells.add(prepareIntegerForSqlInsert(definition.getDomicile()));
+                cells.add(prepareStringForSqlInsert(definition.getName()));
+
+                if (systemImport) {
+                    cells.add(prepareIntegerForSqlInsert(((ImportedInstitutionImportDTO) definition).getUcasId()));
+                    cells.add(prepareStringForSqlInsert(((ImportedInstitutionImportDTO) definition).getFacebookId()));
+                }
+
+                cells.add(prepareBooleanForSqlInsert(enable));
+                rows.add(prepareCellsForSqlInsert(cells));
+            }
         }
         return rows;
     }

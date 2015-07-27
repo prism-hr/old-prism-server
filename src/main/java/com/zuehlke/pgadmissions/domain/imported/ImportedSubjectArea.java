@@ -54,6 +54,9 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedSubjectAreaMapping> mappings = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "parent")
+    private Set<ImportedSubjectArea> children = Sets.newHashSet();
+
     @Override
     public Integer getId() {
         return id;
@@ -137,12 +140,16 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     public Set<ImportedSubjectAreaMapping> getMappings() {
         return mappings;
     }
+    
+    public Set<ImportedSubjectArea> getChildren() {
+        return children;
+    }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addExclusion("id", id);

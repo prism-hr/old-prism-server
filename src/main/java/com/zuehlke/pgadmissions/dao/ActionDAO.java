@@ -277,7 +277,6 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
-                .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
                 .list();

@@ -293,6 +293,7 @@ public class ImportedEntityDAO {
                         .add(Projections.property("qualification"), "qualification") //
                         .add(Projections.property("name"), "name")) //
                 .add(Restrictions.isNotNull("code")) //
+                .setResultTransformer(Transformers.aliasToBean(ImportedProgramDTO.class)) //
                 .list();
     }
 
@@ -303,6 +304,7 @@ public class ImportedEntityDAO {
                         .add(Projections.property("jacsCode"), "jacsCode") //
                         .add(Projections.property("jacsCodeOld"), "jacsCodeOld") //
                         .add(Projections.property("ucasSubject"), "ucasSubject")) //
+                .setResultTransformer(Transformers.aliasToBean(ImportedSubjectAreaDTO.class))
                 .list();
     }
 
@@ -318,7 +320,7 @@ public class ImportedEntityDAO {
                 .add(Restrictions.isNotNull("parent")) //
                 .list();
     }
-    
+
     public void executeBulkMerge(String table, String columns, String inserts, String updates) {
         sessionFactory.getCurrentSession().createSQLQuery(
                 "insert into " + table + " (" + columns + ") "
@@ -326,7 +328,7 @@ public class ImportedEntityDAO {
                         + "on duplicate key update " + updates)
                 .executeUpdate();
     }
-    
+
     public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas() {
         return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedProgramSubjectArea.class) //
                 .setProjection(Projections.projectionList() //

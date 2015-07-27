@@ -1,14 +1,18 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.exceptions.ScrapingException;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,18 +27,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 
 @Service
 public class ProgramUcasScraper implements ImportedDataScraper {
@@ -54,14 +55,17 @@ public class ProgramUcasScraper implements ImportedDataScraper {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public void scrape(Writer writer) throws ScrapingException {
         try {
             TreeMap<Pair, ImportedProgramScrapeDescriptor> programs = new TreeMap<>();
 
             List<String> topCategoryUrls = getTopCategoryUrls();
-//            topCategoryUrls = topCategoryUrls.subList(0, 1); // FIXME remove, just for tests
+            // topCategoryUrls = topCategoryUrls.subList(0, 1); // FIXME remove,
+            // just for tests
             List<String> subjectUrls = getSubjectUrls(topCategoryUrls);
-//            subjectUrls = subjectUrls.subList(4, 5); // FIXME remove, just for tests
+            // subjectUrls = subjectUrls.subList(4, 5); // FIXME remove, just
+            // for tests
 
             for (String subjectUrl : subjectUrls) {
                 List<Document> documents = loadAllPages(subjectUrl);
@@ -93,10 +97,13 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             Document document = loadPage(topCategoryUrl);
             String subjectCode = document.getElementById("SubjectCode").attr("value");
             String uriBase = new URIBuilder(HOST + "/search/providers").addParameter("Vac", "1").addParameter("SubjectCode", subjectCode).toString();
-            List<String> urls = document.select("li.subjectsearchsteparea").stream()
+            List<String> urls = document
+                    .select("li.subjectsearchsteparea")
+                    .stream()
                     .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
-                    .<Pair<Element, String>>flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
-                    .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value")).addParameter("AvailableIn", pair.getRight()).toString())
+                    .<Pair<Element, String>> flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
+                    .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value"))
+                            .addParameter("AvailableIn", pair.getRight()).toString())
                     .collect(Collectors.toList());
             subjectUrls.addAll(urls);
         }
@@ -106,6 +113,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
     /**
      * return <code>true</code> when there are no more pages
      */
+    @SuppressWarnings("rawtypes")
     private boolean scrapeUniversitySections(Document document, TreeMap<Pair, ImportedProgramScrapeDescriptor> programs)
             throws IOException, URISyntaxException {
         Element resultsContainerElement = document.getElementsByClass("resultscontainer").first();
@@ -134,6 +142,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         return false;
     }
 
+    @SuppressWarnings("rawtypes")
     private void scrapePrograms(Element element, String ucasInstitutionId, TreeMap<Pair, ImportedProgramScrapeDescriptor> programs) {
         Elements courseResults = element.select("li");
         for (Element courseResult : courseResults) {
@@ -151,13 +160,13 @@ public class ProgramUcasScraper implements ImportedDataScraper {
             String qualification = courseResult.select(".courseinfooutcome").text();
             String level = extractProgramLevelFromQualificationElement(courseResult.select(".resultbottomarea .coursequalarea").first());
             String programUrl = courseResult.select("div.coursenamearea a").first().attr("href");
-            Integer subjectId = Integer.parseInt(URLEncodedUtils.parse(programUrl, Charsets.UTF_8).stream().filter(param -> param.getName().equals("flt99")).collect(Collectors.toList()).get(0).getValue());
-
+            Integer subjectId = Integer.parseInt(URLEncodedUtils.parse(programUrl, Charsets.UTF_8).stream().filter(param -> param.getName().equals("flt99"))
+                    .collect(Collectors.toList()).get(0).getValue());
 
             Pair programMapKey = new ImmutablePair<>(ucasInstitutionId, new ImmutablePair<>(programName, new ImmutablePair<>(courseCode, level)));
             if (!programs.containsKey(programMapKey)) {
                 ImportedProgramImportDTO program = new ImportedProgramImportDTO(programName).withInstitution(Integer.parseInt(ucasInstitutionId))
-                        .withLevel(level).withQualification(qualification).withSubjectAreas(Sets.newHashSet(subjectId.toString())).withWeight(1);
+                        .withLevel(level).withQualification(qualification).withUcasSubjects(Sets.newHashSet(subjectId)).withWeight(1);
                 ImportedProgramScrapeDescriptor programDescriptor = new ImportedProgramScrapeDescriptor(program, courseCode, subjectId, ucasProgramId);
                 programs.put(programMapKey, programDescriptor);
             } else {
@@ -167,7 +176,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
                     programDescriptor.getProgram().setWeight(weight + 1);
                     programDescriptor.addUcasProgramId(ucasProgramId);
                 }
-                programDescriptor.getProgram().getSubjectAreas().add(subjectId.toString());
+                programDescriptor.getProgram().getUcasSubjects().add(subjectId);
             }
 
         }
@@ -217,7 +226,6 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         }
     }
 
-
     private String extractProgramLevelFromQualificationElement(Element qualificationElement) {
         // get whatever is after </div>
         Element qualificationLevelElement = qualificationElement.select("span.qualificationLevel").first();
@@ -232,6 +240,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         return levelTextNode.getWholeText().trim();
     }
 
+    @SuppressWarnings("rawtypes")
     private void writePrograms(Writer writer, TreeMap<Pair, ImportedProgramScrapeDescriptor> programSet) throws IOException {
         JsonFactory jsonFactory = new JsonFactory();
         JsonGenerator jg = jsonFactory.createGenerator(writer);
@@ -257,6 +266,7 @@ public class ProgramUcasScraper implements ImportedDataScraper {
         private Set<Integer> ucasProgramIds;
 
         public ImportedProgramScrapeDescriptor() {
+            return;
         }
 
         public ImportedProgramScrapeDescriptor(ImportedProgramImportDTO program, String courseCode, Integer subjectIds, Integer ucasProgramId) {

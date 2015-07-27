@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -140,14 +139,14 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     public Set<ImportedSubjectAreaMapping> getMappings() {
         return mappings;
     }
-    
+
     public Set<ImportedSubjectArea> getChildren() {
         return children;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
+    public String index() {
+        return id.toString();
     }
 
     @Override

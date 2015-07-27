@@ -106,6 +106,11 @@ public class ImportedAdvertDomicile extends ImportedEntity<String, ImportedAdver
         this.enabled = enabled;
         return this;
     }
+    
+    @Override
+    public String index() {
+        return id.toString();
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

@@ -166,6 +166,12 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     }
 
     @Override
+    public String index() {
+        Integer ucasId = institution.getUcasId();
+        return (ucasId == null ? "" : ucasId.toString()) + qualification + super.index();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(institution.getId(), qualification, name);
     }

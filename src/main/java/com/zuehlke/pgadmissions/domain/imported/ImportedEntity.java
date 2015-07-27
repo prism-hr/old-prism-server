@@ -49,6 +49,11 @@ public abstract class ImportedEntity<T, U extends ImportedEntityMapping<?>> impl
     }
 
     @Override
+    public String index() {
+        return getName().toString();
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("name", getName());
     }

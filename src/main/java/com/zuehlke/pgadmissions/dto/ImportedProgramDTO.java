@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.google.common.base.Objects;
 
 public class ImportedProgramDTO {
 
@@ -54,9 +53,8 @@ public class ImportedProgramDTO {
         this.ucasId = ucasId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(ucasId, qualification, name);
+    public String index() {
+        return ucasId.toString() + qualification + name;
     }
 
 }

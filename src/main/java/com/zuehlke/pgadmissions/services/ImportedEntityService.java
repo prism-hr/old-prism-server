@@ -165,16 +165,16 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedEntityMappings(institution, prismImportedEntity);
         entityService.flush();
 
-        Map<Integer, T> currentMappingsLookup = Maps.newHashMap();
+        Map<String, T> currentMappingsLookup = Maps.newHashMap();
         List<U> currentMappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
         if (currentMappings.isEmpty()) {
             for (ImportedEntity<?, ?> entity : importedEntityDAO.getImportedEntities(prismImportedEntity)) {
-                currentMappingsLookup.put(entity.hashCode(), (T) entity);
+                currentMappingsLookup.put(entity.index(), (T) entity);
             }
         } else {
             for (U currentMapping : currentMappings) {
                 T entity = currentMapping.getImportedEntity();
-                currentMappingsLookup.put(entity.hashCode(), entity);
+                currentMappingsLookup.put(entity.index(), entity);
             }
         }
 
@@ -183,7 +183,7 @@ public class ImportedEntityService {
             List<String> rows = Lists.newLinkedList();
             for (V mappingDefinition : definitionBatch) {
                 List<String> cells = Lists.newLinkedList();
-                T entity = currentMappingsLookup.get(mappingDefinition.hashCode());
+                T entity = currentMappingsLookup.get(mappingDefinition.index());
                 if (entity != null) {
                     cells.add(prepareIntegerForSqlInsert(institution.getId()));
 
@@ -504,11 +504,11 @@ public class ImportedEntityService {
         HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitions = HashMultimap.create();
         HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitionsParent = HashMultimap.create();
 
-        Map<Integer, Integer> programIndex = getImportedUcasPrograms();
+        Map<String, Integer> programIndex = getImportedUcasPrograms();
         ImportedSubjectAreaIndexDTO subjectAreaIndex = getImportedSubjectAreas();
         HashMultimap<Integer, ImportedSubjectAreaDTO> parentImportedSubjectAreaIndex = getParentImportedSubjectAreas();
         for (ImportedProgramImportDTO programDefinition : programDefinitions) {
-            Integer program = programIndex.get(programDefinition.hashCode());
+            Integer program = programIndex.get(programDefinition.index());
 
             if (program == null) {
                 logger.error("Imported program not found: " + programDefinition.toString());
@@ -558,11 +558,11 @@ public class ImportedEntityService {
         return inserts;
     }
 
-    private Map<Integer, Integer> getImportedUcasPrograms() {
-        Map<Integer, Integer> index = Maps.newHashMap();
+    private Map<String, Integer> getImportedUcasPrograms() {
+        Map<String, Integer> index = Maps.newHashMap();
         List<com.zuehlke.pgadmissions.dto.ImportedProgramDTO> programs = importedEntityDAO.getImportedUcasPrograms();
         for (com.zuehlke.pgadmissions.dto.ImportedProgramDTO program : programs) {
-            index.put(program.hashCode(), program.getId());
+            index.put(program.index(), program.getId());
         }
         return index;
     }

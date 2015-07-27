@@ -342,6 +342,12 @@ public class ImportedEntityDAO {
                 .list();
     }
 
+    public void deleteImportedEntityTypes() {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ImportedEntityType") //
+                .executeUpdate();
+    }
+
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
             Boolean enabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //

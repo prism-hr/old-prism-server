@@ -159,10 +159,10 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             .withTransformerClass(ImportedSubjectAreaTransformer.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_subject_area")
-                    .withColumn("id")
+                    .withPivotColumn("id")
                     .withColumn("jacs_code")
                     .withColumn("jacs_code_old")
-                    .withPivotColumn("name")
+                    .withColumn("name")
                     .withColumn("description")
                     .withColumn("ucas_subject")
                     .withColumn("parent_imported_subject_area_id")

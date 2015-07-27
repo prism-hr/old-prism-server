@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.utils;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
 import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
@@ -22,26 +23,26 @@ public class PrismQueryUtils {
     }
 
     public static String prepareStringForSqlInsert(String value) {
-        return value == null ? "null" : "'" + escapeSql(prepareStringForInsert(value)) + "'";
+        return value == null ? NULL : "'" + escapeSql(cleanStringForSqlInsert(value)) + "'";
     }
 
     public static String prepareIntegerForSqlInsert(Integer value) {
-        return value == null ? "null" : "'" + escapeSql(value.toString()) + "'";
+        return value == null ? NULL : "'" + escapeSql(value.toString()) + "'";
     }
 
     public static String prepareIntegerForSqlInsert(BigInteger value) {
-        return value == null ? "null" : "'" + escapeSql(value.toString()) + "'";
+        return value == null ? NULL : "'" + escapeSql(value.toString()) + "'";
     }
 
     public static String prepareDecimalForSqlInsert(BigDecimal value) {
-        return value == null ? "null" : "'" + escapeSql(value.setScale(2, HALF_UP).toPlainString()) + "'";
+        return value == null ? NULL : "'" + escapeSql(value.setScale(2, HALF_UP).toPlainString()) + "'";
     }
 
     public static String prepareBooleanForSqlInsert(boolean value) {
-        return prepareStringForInsert(new Integer(BooleanUtils.toInteger(value)).toString());
+        return cleanStringForSqlInsert(new Integer(BooleanUtils.toInteger(value)).toString());
     }
 
-    public static String prepareStringForInsert(String string) {
+    public static String cleanStringForSqlInsert(String string) {
         return string.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ").trim();
     }
 

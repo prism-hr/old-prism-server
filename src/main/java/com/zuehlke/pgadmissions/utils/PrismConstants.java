@@ -17,5 +17,7 @@ public class PrismConstants {
     public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
     
     public static final int MAX_BATCH_INSERT_SIZE = 5000;
+    
+    public static final String NULL = "null";
 
 }

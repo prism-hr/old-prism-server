@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
@@ -30,6 +31,8 @@ public class ImportedSubjectAreaExtractor<T extends ImportedSubjectAreaRequest> 
                 
                 if (systemImport) {
                     cells.add(prepareStringForSqlInsert(((ImportedSubjectAreaImportDTO) definition).getJacsCodeOld()));
+                } else {
+                    cells.add(NULL);
                 }
                 
                 cells.add(prepareStringForSqlInsert(definition.getName()));
@@ -38,6 +41,9 @@ public class ImportedSubjectAreaExtractor<T extends ImportedSubjectAreaRequest> 
                 if (systemImport) {
                     cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(((ImportedSubjectAreaImportDTO) definition).getUcasSubject()));
                     cells.add(PrismQueryUtils.prepareIntegerForSqlInsert(((ImportedSubjectAreaImportDTO) definition).getParent()));
+                } else {
+                    cells.add(NULL);
+                    cells.add(NULL);
                 }
 
                 cells.add(prepareBooleanForSqlInsert(enable));

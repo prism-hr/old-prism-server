@@ -39,7 +39,7 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
 
     @Column(name = "description", nullable = false)
     private String description;
-    
+
     @Column(name = "ucas_subject", nullable = false)
     private Integer ucasSubject;
 
@@ -135,6 +135,11 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     @Override
     public Set<ImportedSubjectAreaMapping> getMappings() {
         return mappings;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addExclusion("id", id);
     }
 
 }

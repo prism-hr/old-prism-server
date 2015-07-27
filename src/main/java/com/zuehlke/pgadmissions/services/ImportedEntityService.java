@@ -31,6 +31,8 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgramSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
@@ -48,6 +50,7 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional
@@ -192,7 +195,7 @@ public class ImportedEntityService {
                 }
             }
 
-            importedEntityDAO.mergeImportedEntityMappings(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
+            importedEntityDAO.executeBulkMerge(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
                     prepareRowsForSqlInsert(rows), prismImportedEntity.getMappingInsertOnDuplicateKeyUpdate());
             entityService.flush();
         }
@@ -277,8 +280,23 @@ public class ImportedEntityService {
             importedEntityDAO.disableImportedEntityRelations(ImportedProgramSubjectArea.class);
             entityService.flush();
             for (List<String> values : Lists.partition(inserts, MAX_BATCH_INSERT_SIZE)) {
-                importedEntityDAO.mergeImportedEntities("imported_program_subject_area", "imported_program_id, imported_subject_area_id, weight, enabled",
+                importedEntityDAO.executeBulkMerge("imported_program_subject_area",
+                        "imported_program_id, imported_subject_area_id, relation_strength, enabled",
                         Joiner.on(", ").join(values), "enabled = 1");
+            }
+
+            importedEntityDAO.disableImportedEntityRelations(ImportedInstitutionSubjectArea.class);
+
+            List<List<ImportedInstitutionSubjectAreaDTO>> importedInstitutionSubjectAreaInsertDefinitions = Lists.partition(
+                    importedEntityDAO.getImportedInstitutionSubjectAreas(), PrismConstants.MAX_BATCH_INSERT_SIZE);
+            for (List<ImportedInstitutionSubjectAreaDTO> importedInstitutionSubjectAreaInserts : importedInstitutionSubjectAreaInsertDefinitions) {
+                List<String> importedInstitutionSubjectAreaValues = Lists.newArrayListWithExpectedSize(importedInstitutionSubjectAreaInsertDefinitions.size());
+                for (ImportedInstitutionSubjectAreaDTO importedInstitutionSubjectAreaInsert : importedInstitutionSubjectAreaInserts) {
+                    importedInstitutionSubjectAreaValues.add(importedInstitutionSubjectAreaInsert.getInsertDefinition());
+                }
+                importedEntityDAO.executeBulkMerge("imported_institution_subject_area",
+                        "imported_institution_id, imported_subject_area_id, relation_strength, enabled",
+                        Joiner.on(", ").join(importedInstitutionSubjectAreaValues), "enabled = 1");
             }
         }
     }
@@ -463,7 +481,7 @@ public class ImportedEntityService {
             ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
             List<String> rows = extractor.extract(prismImportedEntity, definitionBatch, enable);
             if (!rows.isEmpty()) {
-                importedEntityDAO.mergeImportedEntities(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
+                importedEntityDAO.executeBulkMerge(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
                         prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
                 entityService.flush();
             }

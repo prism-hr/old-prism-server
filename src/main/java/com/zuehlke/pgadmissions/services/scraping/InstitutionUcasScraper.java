@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 
 @Service
 public class InstitutionUcasScraper implements ImportedDataScraper {
@@ -50,7 +51,7 @@ public class InstitutionUcasScraper implements ImportedDataScraper {
                 Element nameElement = html.getElementsByClass("shortname").first();
                 if (nameElement != null) {
                     String name = nameElement.text();
-                    ImportedInstitutionRequest institution = new ImportedInstitutionRequest(name).withUcasId(ucasId);
+                    ImportedInstitutionRequest institution = new ImportedInstitutionImportDTO(name).withUcasId(ucasId);
                     jg.writeObject(institution);
                     log.info("Scraped institution " + ucasId + ": " + name);
                 } else {

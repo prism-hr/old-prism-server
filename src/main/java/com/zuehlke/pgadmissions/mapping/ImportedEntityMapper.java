@@ -137,11 +137,9 @@ public class ImportedEntityMapper {
 
     public ImportedInstitutionResponse getImportedInstitutionRepresentation(ImportedInstitution importedInstitution, Institution institution) {
         ImportedInstitutionResponse representation = getImportedEntitySimpleRepresentation(importedInstitution, institution, ImportedInstitutionResponse.class);
-
+        
         representation.setDomicile(getImportedEntitySimpleRepresentation(importedInstitution.getDomicile(), institution, ImportedEntityResponse.class));
-        representation.setUcasId(importedInstitution.getUcasId());
-        representation.setFacebookId(importedInstitution.getFacebookId());
-
+        
         return representation;
     }
 

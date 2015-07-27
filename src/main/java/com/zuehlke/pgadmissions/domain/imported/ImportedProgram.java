@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 
 @Entity
-@Table(name = "imported_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "name" }) })
+@Table(name = "imported_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "qualification", "name" }) })
 public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapping>
         implements ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer> {
 
@@ -169,7 +169,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     public int hashCode() {
         return Objects.hashCode(institution.getId(), qualification, name);
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (!super.equals(object)) {
@@ -181,7 +181,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("institution", institution);
+        return super.getResourceSignature().addProperty("institution", institution).addProperty("qualification", qualification);
     }
 
 }

@@ -162,7 +162,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withPivotColumn("id")
                     .withColumn("jacs_code")
                     .withColumn("jacs_code_old")
-                    .withColumn("name")
+                    .withPivotColumn("name")
                     .withColumn("description")
                     .withColumn("ucas_subject")
                     .withColumn("parent_imported_subject_area_id")

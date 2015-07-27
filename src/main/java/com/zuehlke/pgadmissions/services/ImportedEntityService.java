@@ -492,6 +492,7 @@ public class ImportedEntityService {
 
     private <T extends ImportedEntityRequest> List<String> getImportedSubjectAreaInserts(List<ImportedProgramImportDTO> programDefinitions) {
         HashMultimap<Integer, ImportedSubjectAreaWithWeightingDTO> insertDefinitions = HashMultimap.create();
+        HashMultimap<Integer, ImportedSubjectAreaWithWeightingDTO> insertDefinitionsParent = HashMultimap.create();
 
         Map<Integer, Integer> programIndex = getImportedUcasPrograms();
         ImportedSubjectAreaIndexDTO subjectAreaIndex = getImportedSubjectAreas();
@@ -515,12 +516,14 @@ public class ImportedEntityService {
             }
 
             for (ImportedSubjectAreaWithWeightingDTO subjectArea : insertDefinitions.get(program)) {
-                for (ImportedSubjectAreaDTO parentSubjectArea : parentImportedSubjectAreaIndex.get(subjectArea.getId())) {
-                    insertDefinitions.put(program, new ImportedSubjectAreaWithWeightingDTO(parentSubjectArea.getId(), parentSubjectArea.getJacsCode(), weight));
+                for (ImportedSubjectAreaDTO parent : parentImportedSubjectAreaIndex.get(subjectArea.getId())) {
+                    insertDefinitionsParent.put(program, new ImportedSubjectAreaWithWeightingDTO(parent.getId(), parent.getJacsCode(), weight));
                 }
             }
         }
 
+        insertDefinitions.putAll(insertDefinitionsParent);
+        
         Integer maxProgramSubjectAreaConnectionCount = 0;
         for (Integer program : insertDefinitions.keySet()) {
             Integer programSubjectAreaConnectionCount = insertDefinitions.get(program).size();

@@ -48,7 +48,7 @@ public class ImportedSubjectAreaWithWeightingDTO {
         if (getClass() != object.getClass()) {
             return false;
         }
-        ImportedSubjectAreaDTO other = (ImportedSubjectAreaDTO) object;
+        ImportedSubjectAreaWithWeightingDTO other = (ImportedSubjectAreaWithWeightingDTO) object;
         return Objects.equal(id, other.getId());
     }
 

@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.dto.ImportedProgramDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -83,8 +84,7 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution,
-                                                                                           PrismImportedEntity prismImportedEntity) {
+    public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntitiesWithMappings(Institution institution, PrismImportedEntity prismImportedEntity) {
         Criteria criteria = getEntityMappingSelectStatement(prismImportedEntity) //
                 .createAlias("importedEntity", "importedEntity", JoinType.INNER_JOIN); //
 
@@ -148,17 +148,17 @@ public class ImportedEntityDAO {
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-                                                                                  PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, null);
     }
 
     public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getEnabledImportedEntityMapping(Institution institution,
-                                                                                                                        T importedEntity) {
+            T importedEntity) {
         return getImportedEntityMapping(institution, importedEntity, true);
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getEnabledImportedEntityMappings(Institution institution,
-                                                                                         PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, true);
     }
 
@@ -288,8 +288,19 @@ public class ImportedEntityDAO {
                 .list();
     }
 
+    public List<ImportedProgramDTO> getImportedUcasPrograms() {
+        return (List<ImportedProgramDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
+                        .add(Projections.property("institution.id"), "institution") //
+                        .add(Projections.property("qualification"), "qualification") //
+                        .add(Projections.property("name"), "name")) //
+                .add(Restrictions.isNotNull("code")) //
+                .list();
+    }
+
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
-                                                                                                                  Boolean enabled) {
+            Boolean enabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //
                 .createAlias("importedEntity", "importedEntity", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("importedEntity", importedEntity)) //
@@ -305,7 +316,7 @@ public class ImportedEntityDAO {
     }
 
     private <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-                                                                                   PrismImportedEntity importedEntity, Boolean enabled) {
+            PrismImportedEntity importedEntity, Boolean enabled) {
         Class<T> mappingClass = (Class<T>) importedEntity.getMappingClass();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(mappingClass) //
@@ -344,6 +355,5 @@ public class ImportedEntityDAO {
                 .add(Restrictions.isNotNull("code")) //
                 .add(Restrictions.eq("enabled", true)); //
     }
-
 
 }

@@ -34,12 +34,15 @@ public class LifeCycleService {
     @Value("${startup.workflow.initialize}")
     private Boolean initializeWorkflow;
 
+    @Value("${startup.display.initialize.drop}")
+    private Boolean destroyDisplayProperties;
+    
     @Value("${startup.display.initialize}")
     private Boolean initializeDisplayProperties;
 
-    @Value("${startup.display.initialize.drop}")
-    private Boolean destroyDisplayProperties;
-
+    @Value("${startup.import.system.data.overwrite}")
+    private Boolean overwriteData;
+    
     @Value("${startup.import.system.data}")
     private Boolean initializeData;
 
@@ -70,6 +73,10 @@ public class LifeCycleService {
 
         if (doInitializeWorkflow) {
             systemService.initializeSystemUser();
+        }
+        
+        if (BooleanUtils.isTrue(overwriteData)) {
+            systemService.overwriteSystemData();
         }
 
         if (BooleanUtils.isTrue(initializeData)) {

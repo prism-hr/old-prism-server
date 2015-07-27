@@ -269,6 +269,11 @@ public class SystemService {
             notificationService.sendRegistrationNotification(user, outcome, comment);
         }
     }
+    
+    @Transactional
+    public void overwriteSystemData() {
+        importedEntityService.deleteImportedEntityTypes();
+    }
 
     @Transactional(timeout = 600)
     @SuppressWarnings("unchecked")

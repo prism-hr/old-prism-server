@@ -58,7 +58,9 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtrac
 public class ImportedEntityService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportedEntityService.class);
-    
+
+    private static final String IMPORTED_ENTITY_RELATION_UPDATE = "relation_strength = values(relation_strength), enabled = values(enabled)";
+
     @Inject
     private ImportedEntityDAO importedEntityDAO;
 
@@ -279,14 +281,14 @@ public class ImportedEntityService {
     }
 
     public void mergeImportedProgramSubjectAreas(List<ImportedProgramImportDTO> programDefinitions) {
-        List<String> inserts = getImportedSubjectAreaInserts(programDefinitions);
+        List<String> inserts = getImportedProgramSubjectAreaInserts(programDefinitions);
         if (!inserts.isEmpty()) {
             importedEntityDAO.disableImportedEntityRelations(ImportedProgramSubjectArea.class);
             entityService.flush();
             for (List<String> values : Lists.partition(inserts, MAX_BATCH_INSERT_SIZE)) {
                 importedEntityDAO.executeBulkMerge("imported_program_subject_area",
                         "imported_program_id, imported_subject_area_id, relation_strength, enabled",
-                        Joiner.on(", ").join(values), "enabled = 1");
+                        Joiner.on(", ").join(values), IMPORTED_ENTITY_RELATION_UPDATE);
             }
         }
     }
@@ -303,8 +305,12 @@ public class ImportedEntityService {
             }
             importedEntityDAO.executeBulkMerge("imported_institution_subject_area",
                     "imported_institution_id, imported_subject_area_id, relation_strength, enabled",
-                    Joiner.on(", ").join(importedInstitutionSubjectAreaValues), "enabled = 1");
+                    Joiner.on(", ").join(importedInstitutionSubjectAreaValues), IMPORTED_ENTITY_RELATION_UPDATE);
         }
+    }
+
+    public void deleteImportedEntityTypes() {
+        importedEntityDAO.deleteImportedEntityTypes();
     }
 
     // private Program mergeProgram(Institution institution, Programme
@@ -494,7 +500,7 @@ public class ImportedEntityService {
         }
     }
 
-    private <T extends ImportedEntityRequest> List<String> getImportedSubjectAreaInserts(List<ImportedProgramImportDTO> programDefinitions) {
+    private <T extends ImportedEntityRequest> List<String> getImportedProgramSubjectAreaInserts(List<ImportedProgramImportDTO> programDefinitions) {
         HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitions = HashMultimap.create();
         HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitionsParent = HashMultimap.create();
 
@@ -503,12 +509,12 @@ public class ImportedEntityService {
         HashMultimap<Integer, ImportedSubjectAreaDTO> parentImportedSubjectAreaIndex = getParentImportedSubjectAreas();
         for (ImportedProgramImportDTO programDefinition : programDefinitions) {
             Integer program = programIndex.get(programDefinition.hashCode());
-            
+
             if (program == null) {
                 logger.error("Imported program not found: " + programDefinition.toString());
                 continue;
             }
-            
+
             Integer weight = programDefinition.getWeight();
 
             Set<String> jacsCodes = programDefinition.getJacsCodes();

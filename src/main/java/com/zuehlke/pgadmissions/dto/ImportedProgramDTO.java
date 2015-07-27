@@ -12,6 +12,8 @@ public class ImportedProgramDTO {
 
     private String name;
 
+    private Integer ucasId;
+
     public Integer getId() {
         return id;
     }
@@ -44,9 +46,17 @@ public class ImportedProgramDTO {
         this.name = name;
     }
 
+    public Integer getUcasId() {
+        return ucasId;
+    }
+
+    public void setUcasId(Integer ucasId) {
+        this.ucasId = ucasId;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(institution, qualification, name);
+        return Objects.hashCode(ucasId, qualification, name);
     }
 
 }

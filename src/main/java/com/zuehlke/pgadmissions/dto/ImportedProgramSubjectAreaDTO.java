@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import jersey.repackaged.com.google.common.base.Objects;
 
-public class ImportedSubjectAreaWithWeightingDTO {
+public class ImportedProgramSubjectAreaDTO {
 
     private Integer id;
 
@@ -10,7 +10,7 @@ public class ImportedSubjectAreaWithWeightingDTO {
 
     private Integer weight;
 
-    public ImportedSubjectAreaWithWeightingDTO(Integer id, String code, Integer weight) {
+    public ImportedProgramSubjectAreaDTO(Integer id, String code, Integer weight) {
         this.id = id;
         this.code = code;
         this.weight = weight;
@@ -48,7 +48,7 @@ public class ImportedSubjectAreaWithWeightingDTO {
         if (getClass() != object.getClass()) {
             return false;
         }
-        ImportedSubjectAreaWithWeightingDTO other = (ImportedSubjectAreaWithWeightingDTO) object;
+        ImportedProgramSubjectAreaDTO other = (ImportedProgramSubjectAreaDTO) object;
         return Objects.equal(id, other.getId());
     }
 

@@ -291,8 +291,10 @@ public class ImportedEntityDAO {
                         .add(Projections.property("id"), "id") //
                         .add(Projections.property("institution.id"), "institution") //
                         .add(Projections.property("qualification"), "qualification") //
-                        .add(Projections.property("name"), "name")) //
-                .add(Restrictions.isNotNull("code")) //
+                        .add(Projections.property("name"), "name") //
+                        .add(Projections.property("importedInstitution.ucasId"), "ucasId")) //
+                .createAlias("importedInstitution", "importedInstitution", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNotNull("importedInstitution.ucasId")) //
                 .setResultTransformer(Transformers.aliasToBean(ImportedProgramDTO.class)) //
                 .list();
     }

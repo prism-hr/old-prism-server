@@ -2,26 +2,26 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 public class ImportedInstitutionSubjectAreaDTO {
 
-    private Integer importedInstitution;
+    private Integer institution;
 
-    private Integer importedSubjectArea;
+    private Integer subjectArea;
 
     private Long relationStrength;
 
-    public Integer getImportedInstitution() {
-        return importedInstitution;
+    public Integer getInstitution() {
+        return institution;
     }
 
-    public void setImportedInstitution(Integer importedInstitution) {
-        this.importedInstitution = importedInstitution;
+    public void setInstitution(Integer institution) {
+        this.institution = institution;
     }
 
-    public Integer getImportedSubjectArea() {
-        return importedSubjectArea;
+    public Integer getSubjectArea() {
+        return subjectArea;
     }
 
-    public void setImportedSubjectArea(Integer importedSubjectArea) {
-        this.importedSubjectArea = importedSubjectArea;
+    public void setSubjectArea(Integer subjectArea) {
+        this.subjectArea = subjectArea;
     }
 
     public Long getRelationStrength() {

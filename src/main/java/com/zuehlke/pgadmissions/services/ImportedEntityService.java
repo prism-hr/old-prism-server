@@ -15,6 +15,8 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,8 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtrac
 @Transactional
 public class ImportedEntityService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ImportedEntityService.class);
+    
     @Inject
     private ImportedEntityDAO importedEntityDAO;
 
@@ -499,6 +503,12 @@ public class ImportedEntityService {
         HashMultimap<Integer, ImportedSubjectAreaDTO> parentImportedSubjectAreaIndex = getParentImportedSubjectAreas();
         for (ImportedProgramImportDTO programDefinition : programDefinitions) {
             Integer program = programIndex.get(programDefinition.hashCode());
+            
+            if (program == null) {
+                logger.error("Imported program not found: " + programDefinition.toString());
+                continue;
+            }
+            
             Integer weight = programDefinition.getWeight();
 
             Set<String> jacsCodes = programDefinition.getJacsCodes();
@@ -601,8 +611,8 @@ public class ImportedEntityService {
     }
 
     public String getImportedInstitutionSubjectAreaRowDefinition(ImportedInstitutionSubjectAreaDTO importedInstitutionSubjectArea) {
-        return "(" + importedInstitutionSubjectArea.getImportedInstitution().toString() + ", "
-                + importedInstitutionSubjectArea.getImportedSubjectArea().toString() + ", " + importedInstitutionSubjectArea.getRelationStrength().toString()
+        return "(" + importedInstitutionSubjectArea.getInstitution().toString() + ", "
+                + importedInstitutionSubjectArea.getSubjectArea().toString() + ", " + importedInstitutionSubjectArea.getRelationStrength().toString()
                 + ", " + "1)";
     }
 

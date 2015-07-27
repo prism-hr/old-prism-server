@@ -58,9 +58,9 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public ImportedProgram getImportedProgramByName(ImportedInstitution importedInstitution, String name) {
+    public ImportedProgram getImportedProgramByName(ImportedInstitution institution, String name) {
         return (ImportedProgram) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
-                .add(Restrictions.eq("institution", importedInstitution)) //
+                .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("name", name)) //
                 .uniqueResult();
     }
@@ -292,9 +292,9 @@ public class ImportedEntityDAO {
                         .add(Projections.property("institution.id"), "institution") //
                         .add(Projections.property("qualification"), "qualification") //
                         .add(Projections.property("name"), "name") //
-                        .add(Projections.property("importedInstitution.ucasId"), "ucasId")) //
-                .createAlias("importedInstitution", "importedInstitution", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull("importedInstitution.ucasId")) //
+                        .add(Projections.property("institution.ucasId"), "ucasId")) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNotNull("institution.ucasId")) //
                 .setResultTransformer(Transformers.aliasToBean(ImportedProgramDTO.class)) //
                 .list();
     }
@@ -334,10 +334,10 @@ public class ImportedEntityDAO {
     public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas() {
         return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedProgramSubjectArea.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("importedProgram.importedInstitution"), "importedInstitution") //
-                        .add(Projections.groupProperty("importedSubjectArea"), "importedSubjectArea") //
-                        .add(Projections.sum("relationStrength"))) //
-                .createAlias("importedProgram", "importedProgram", JoinType.INNER_JOIN) //
+                        .add(Projections.groupProperty("program.institution.id"), "institution") //
+                        .add(Projections.groupProperty("subjectArea.id"), "subjectArea") //
+                        .add(Projections.sum("relationStrength"), "relationStrength")) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .setResultTransformer(Transformers.aliasToBean(ImportedInstitutionSubjectAreaDTO.class)) //
                 .list();
     }

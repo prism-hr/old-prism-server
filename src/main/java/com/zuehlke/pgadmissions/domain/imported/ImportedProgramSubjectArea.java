@@ -21,11 +21,11 @@ public class ImportedProgramSubjectArea extends WeightedRelationImported impleme
 
     @ManyToOne
     @JoinColumn(name = "imported_program_id", nullable = false)
-    private ImportedProgram importedProgram;
+    private ImportedProgram program;
 
     @ManyToOne
     @JoinColumn(name = "imported_subject_area_id", nullable = false)
-    private ImportedSubjectArea importedSubjectArea;
+    private ImportedSubjectArea subjectArea;
 
     @Column(name = "relation_strength", nullable = false)
     private Integer relationStrength;
@@ -43,20 +43,20 @@ public class ImportedProgramSubjectArea extends WeightedRelationImported impleme
         this.id = id;
     }
 
-    public ImportedProgram getImportedProgram() {
-        return importedProgram;
+    public ImportedProgram getProgram() {
+        return program;
     }
 
-    public void setImportedProgram(ImportedProgram importedProgram) {
-        this.importedProgram = importedProgram;
+    public void setProgram(ImportedProgram program) {
+        this.program = program;
     }
 
-    public ImportedSubjectArea getImportedSubjectArea() {
-        return importedSubjectArea;
+    public ImportedSubjectArea getSubjectArea() {
+        return subjectArea;
     }
 
-    public void setImportedSubjectArea(ImportedSubjectArea importedSubjectArea) {
-        this.importedSubjectArea = importedSubjectArea;
+    public void setSubjectArea(ImportedSubjectArea subjectArea) {
+        this.subjectArea = subjectArea;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class ImportedProgramSubjectArea extends WeightedRelationImported impleme
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("importedProgram", importedProgram).addProperty("importedSubjectArea", importedSubjectArea);
+        return new ResourceSignature().addProperty("program", program).addProperty("subjectArea", subjectArea);
     }
 
 }

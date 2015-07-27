@@ -88,5 +88,9 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return getInstitution().toString() + " " + getQualification() + " " + getName();
+    }
 
 }

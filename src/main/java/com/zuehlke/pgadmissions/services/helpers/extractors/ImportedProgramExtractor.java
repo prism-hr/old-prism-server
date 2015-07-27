@@ -57,15 +57,12 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
                 cells.add(prepareIntegerForSqlInsert(definition.getQualificationType()));
                 // TODO: map to PRiSM qualification types
                 cells.add(prepareStringForSqlInsert(definition.getLevel()));
-                String qualification = definition.getQualification();
-                cells.add(prepareStringForSqlInsert(qualification));
-                cells.add(prepareStringForSqlInsert(qualification + " " + definition.getName()));
+                cells.add(prepareStringForSqlInsert(definition.getQualification()));
+                cells.add(prepareStringForSqlInsert(definition.getName()));
                 cells.add(prepareStringForSqlInsert(definition.getCode()));
                 cells.add(prepareBooleanForSqlInsert(enable));
-
-                if (!cells.isEmpty()) {
-                    rows.add(prepareCellsForSqlInsert(cells));
-                }
+                
+                rows.add(prepareCellsForSqlInsert(cells));
             }
         }
         return rows;

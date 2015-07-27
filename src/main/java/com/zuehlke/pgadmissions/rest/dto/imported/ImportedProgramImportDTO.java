@@ -78,12 +78,12 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
         return this;
     }
 
-    public ImportedProgramImportDTO withCode(final String code) {
+    public ImportedProgramImportDTO withCode(String code) {
         setCode(code);
         return this;
     }
 
-    public ImportedProgramImportDTO withJacsCodes(final Set<String> jacsCodes) {
+    public ImportedProgramImportDTO withJacsCodes(Set<String> jacsCodes) {
         setJacsCodes(jacsCodes);
         return this;
     }

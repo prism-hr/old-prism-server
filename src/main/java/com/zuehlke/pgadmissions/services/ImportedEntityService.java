@@ -501,11 +501,14 @@ public class ImportedEntityService {
             Integer program = programIndex.get(programDefinition.hashCode());
             Integer weight = programDefinition.getWeight();
 
-            for (String jacsCode : programDefinition.getJacsCodes()) {
-                ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getByJacsCode(jacsCode);
-                subjectArea = subjectArea == null ? subjectAreaIndex.getByJacsCodeOld(jacsCode) : subjectArea;
-                if (subjectArea != null) {
-                    insertDefinitions.put(program, new ImportedSubjectAreaWithWeightingDTO(subjectArea.getId(), jacsCode, weight));
+            Set<String> jacsCodes = programDefinition.getJacsCodes();
+            if (jacsCodes != null) {
+                for (String jacsCode : jacsCodes) {
+                    ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getByJacsCode(jacsCode);
+                    subjectArea = subjectArea == null ? subjectAreaIndex.getByJacsCodeOld(jacsCode) : subjectArea;
+                    if (subjectArea != null) {
+                        insertDefinitions.put(program, new ImportedSubjectAreaWithWeightingDTO(subjectArea.getId(), jacsCode, weight));
+                    }
                 }
             }
 

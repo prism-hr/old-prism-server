@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.mapping.helpers.ImportedInstitutionTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedLanguageQualificationTypeTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedProgramTransformer;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedSubjectAreaTransformer;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAdvertDomicileExtractor;
@@ -108,6 +109,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     @SuppressWarnings({ "unchecked", "rawtypes" })
     IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedInstitution.class)
+            .withSystemRequestClass(ImportedInstitutionImportDTO.class)
             .withTransformerClass((Class) ImportedInstitutionTransformer.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_institution")

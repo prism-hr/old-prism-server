@@ -54,6 +54,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @FetchMode()
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedProgramMapping> mappings = Sets.newHashSet();
 

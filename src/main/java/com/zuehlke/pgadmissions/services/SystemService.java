@@ -36,7 +36,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -87,7 +86,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreaDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -278,7 +276,7 @@ public class SystemService {
         Map<PrismImportedEntity, List<T>> definitions = Maps.newHashMap();
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
             ImportedEntityType importedEntityType = entityService.getOrCreate(new ImportedEntityType().withId(prismImportedEntity));
-            
+
             S3Object importedDataSource = documentService.getImportedDataSource(importedEntityType);
             if (importedDataSource != null) {
                 logger.info("Initializing system data for: " + prismImportedEntity.name());
@@ -295,13 +293,8 @@ public class SystemService {
                 logger.info("Skipped initializing system data for: " + prismImportedEntity.name());
             }
         }
-        
-        List<ImportedProgramSubjectAreaDTO> relations = Lists.newArrayList();
-        Map<Integer, Integer> programIndex = importedEntityService.getImportedUcasPrograms();
-        List<ImportedProgramImportDTO> programs = (List<ImportedProgramImportDTO>) definitions.get(IMPORTED_PROGRAM);
-        for (ImportedProgramImportDTO program : programs) {
-            relations.add(new ImportedProgramSubjectAreaDTO(programIndex.get(program.hashCode()), null, program.getWeight()));
-        }
+
+        importedEntityService.mergeImportedProgramSubjectAreas((List<ImportedProgramImportDTO>) definitions.get(IMPORTED_PROGRAM));
     }
 
     @Transactional
@@ -669,7 +662,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-                                       List<? extends WorkflowConfigurationDTO> configurationDTO) {
+            List<? extends WorkflowConfigurationDTO> configurationDTO) {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope,
                     prismScope.ordinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null, configurationDTO);

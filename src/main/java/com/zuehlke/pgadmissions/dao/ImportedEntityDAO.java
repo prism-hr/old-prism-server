@@ -27,11 +27,14 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.WeightedRelationImported;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedProgramDTO;
+import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -296,6 +299,29 @@ public class ImportedEntityDAO {
                         .add(Projections.property("qualification"), "qualification") //
                         .add(Projections.property("name"), "name")) //
                 .add(Restrictions.isNotNull("code")) //
+                .list();
+    }
+
+    public List<ImportedSubjectAreaDTO> getImportedSubjectAreas() {
+        return (List<ImportedSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
+                        .add(Projections.property("jacsCode"), "jacsCode") //
+                        .add(Projections.property("jacsCodeOld"), "jacsCodeOld") //
+                        .add(Projections.property("ucasSubject"), "ucasSubject")) //
+                .list();
+    }
+
+    public <T extends WeightedRelationImported> void disableImportedEntityRelations(Class<T> entityClass) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + entityClass.getSimpleName() + " " //
+                        + "set enabled = false") //
+                .executeUpdate();
+    }
+
+    public List<ImportedSubjectArea> getChildImportedSubjectAreas() {
+        return (List<ImportedSubjectArea>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+                .add(Restrictions.isNotNull("parent")) //
                 .list();
     }
 

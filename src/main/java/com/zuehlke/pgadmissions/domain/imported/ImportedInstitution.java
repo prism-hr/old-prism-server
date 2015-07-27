@@ -85,22 +85,18 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
         this.name = name;
     }
 
-    @Override
     public Integer getUcasId() {
         return ucasId;
     }
 
-    @Override
     public void setUcasId(Integer ucasId) {
         this.ucasId = ucasId;
     }
 
-    @Override
     public String getFacebookId() {
         return facebookId;
     }
 
-    @Override
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
     }

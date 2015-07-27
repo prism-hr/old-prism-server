@@ -9,7 +9,9 @@ import com.zuehlke.pgadmissions.mapping.helpers.*;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.*;
+
 import org.apache.commons.lang3.ObjectUtils;
+
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
@@ -74,6 +76,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleMappingInsertDefinition(),
             new String[] { "application_personal_detail.gender_id" }, true),
     // TODO: add as chart filter
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedInstitution.class)
             .withTransformerClass(ImportedInstitutionTransformer.class),
@@ -84,7 +87,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumn("ucas_id")
                     .withColumn("facebook_id")
                     .withColumn("enabled")
-                    .withExtractor(ImportedInstitutionExtractor.class),
+                    .withExtractor((Class) ImportedInstitutionExtractor.class),
             new PrismImportedEntityMappingInsertDefinition()
                     .withMappingClass(ImportedInstitutionMapping.class)
                     .withTable("imported_institution_mapping"),
@@ -121,7 +124,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleMappingInsertDefinition(),
             new String[] { "application_program_detail.opportunity_type_id" }, true),
     // TODO: add as chart filter
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     IMPORTED_SUBJECT_AREA(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedSubjectArea.class)
             .withSystemRequestClass(ImportedSubjectAreaImportDTO.class)
@@ -142,7 +145,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withTable("imported_subject_area_mapping"),
             null, true),
     // TODO: add as chart filter
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedProgram.class)
             .withSystemRequestClass(ImportedProgramImportDTO.class)

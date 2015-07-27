@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 @Entity
 @Table(name = "imported_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "name" }) })
 public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapping>
-        implements ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple, ImportedProgramSubjectArea>, ImportedEntityResponseDefinition<Integer> {
+        implements ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
@@ -47,7 +47,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     @Column(name = "name", nullable = false)
     private String name;
-    
+
     @Column(name = "code")
     private String code;
 
@@ -90,16 +90,6 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Override
     public void setQualificationType(ImportedEntitySimple qualificationType) {
         this.qualificationType = qualificationType;
-    }
-
-    @Override
-    public Set<ImportedProgramSubjectArea> getSubjectAreas() {
-        return null;
-    }
-
-    @Override
-    public void setSubjectAreas(Set<ImportedProgramSubjectArea> subjectAreas) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -177,7 +167,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(institution.getId(), name);
+        return Objects.hashCode(institution.getId(), qualification, name);
     }
 
     @Override
@@ -186,12 +176,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
             return false;
         }
         ImportedProgram other = (ImportedProgram) object;
-        return Objects.equal(institution, other.getInstitution());
-    }
-
-    @Override
-    public int index() {
-        return Objects.hashCode(institution.getId(), name);
+        return Objects.equal(institution, other.getInstitution()) && Objects.equal(qualification, other.getQualification());
     }
 
     @Override

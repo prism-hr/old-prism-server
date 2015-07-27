@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOT
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -35,6 +36,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -85,6 +87,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreaDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -96,6 +99,7 @@ import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDura
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismFileUtils;
@@ -292,7 +296,12 @@ public class SystemService {
             }
         }
         
-        //TODO: implement the post-processing to associate subject with program etc
+        List<ImportedProgramSubjectAreaDTO> relations = Lists.newArrayList();
+        Map<Integer, Integer> programIndex = importedEntityService.getImportedUcasPrograms();
+        List<ImportedProgramImportDTO> programs = (List<ImportedProgramImportDTO>) definitions.get(IMPORTED_PROGRAM);
+        for (ImportedProgramImportDTO program : programs) {
+            relations.add(new ImportedProgramSubjectAreaDTO(programIndex.get(program.hashCode()), null, program.getWeight()));
+        }
     }
 
     @Transactional

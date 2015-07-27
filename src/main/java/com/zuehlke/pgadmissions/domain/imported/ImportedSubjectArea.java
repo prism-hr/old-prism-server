@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -137,6 +138,11 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         return mappings;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addExclusion("id", id);

@@ -152,12 +152,12 @@ public class ImportedEntityService {
         List<U> currentMappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
         if (currentMappings.isEmpty()) {
             for (ImportedEntity<?, ?> entity : importedEntityDAO.getImportedEntities(prismImportedEntity)) {
-                currentMappingsLookup.put(entity.index(), (T) entity);
+                currentMappingsLookup.put(entity.hashCode(), (T) entity);
             }
         } else {
             for (U currentMapping : currentMappings) {
                 T entity = currentMapping.getImportedEntity();
-                currentMappingsLookup.put(new Integer(entity.index()), entity);
+                currentMappingsLookup.put(entity.hashCode(), entity);
             }
         }
 
@@ -166,7 +166,7 @@ public class ImportedEntityService {
             List<String> rows = Lists.newLinkedList();
             for (V mappingDefinition : definitionBatch) {
                 List<String> cells = Lists.newLinkedList();
-                T entity = currentMappingsLookup.get(mappingDefinition.index());
+                T entity = currentMappingsLookup.get(mappingDefinition.hashCode());
                 if (entity != null) {
                     cells.add(prepareIntegerForSqlInsert(institution.getId()));
 
@@ -256,6 +256,15 @@ public class ImportedEntityService {
 
     public List<ImportedInstitution> getInstitutionsWithUcasId() {
         return importedEntityDAO.getInstitutionsWithUcasId();
+    }
+
+    public Map<Integer, Integer> getImportedUcasPrograms() {
+        Map<Integer, Integer> index = Maps.newHashMap();
+        List<com.zuehlke.pgadmissions.dto.ImportedProgramDTO> programs = importedEntityDAO.getImportedUcasPrograms();
+        for (com.zuehlke.pgadmissions.dto.ImportedProgramDTO program : programs) {
+            index.put(program.hashCode(), program.getId());
+        }
+        return index;
     }
 
     // private Program mergeProgram(Institution institution, Programme

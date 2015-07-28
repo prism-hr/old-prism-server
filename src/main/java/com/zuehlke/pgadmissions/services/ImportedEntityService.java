@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -515,17 +516,23 @@ public class ImportedEntityService {
             Set<String> jacsCodes = programDefinition.getJacsCodes();
             if (jacsCodes != null) {
                 for (String jacsCode : jacsCodes) {
-                    ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getByJacsCode(jacsCode);
-                    subjectArea = subjectArea == null ? subjectAreaIndex.getByJacsCodeOld(jacsCode) : subjectArea;
-                    if (subjectArea != null) {
-                        insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), jacsCode, weight));
+                    assignImportedSubjectArea(insertDefinitions, subjectAreaIndex, program, jacsCode, weight);
+                    if (Character.isUpperCase(jacsCode.charAt(0)) && !jacsCode.endsWith("000")) {
+                        for (int i = 3; i > 0; i--) {
+                            String jacsCodeParent = StringUtils.rightPad(jacsCode.substring(0, i), 4, "0");
+                            if (!jacsCodeParent.equals(jacsCode)) {
+                                assignImportedSubjectArea(insertDefinitions, subjectAreaIndex, program, jacsCodeParent, weight);
+                            }
+                        }
                     }
                 }
             }
 
-            for (Integer ucasSubject : programDefinition.getUcasSubjects()) {
-                for (ImportedSubjectAreaDTO subjectArea : subjectAreaIndex.getByUcasSubject(ucasSubject)) {
-                    insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), subjectArea.getJacsCode(), weight));
+            if (insertDefinitions.get(program).isEmpty()) {
+                for (Integer ucasSubject : programDefinition.getUcasSubjects()) {
+                    for (ImportedSubjectAreaDTO subjectArea : subjectAreaIndex.getByUcasSubject(ucasSubject)) {
+                        insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), subjectArea.getJacsCode(), weight));
+                    }
                 }
             }
 
@@ -581,6 +588,16 @@ public class ImportedEntityService {
             index.addUcasSubject(subjectArea.getUcasSubject(), subjectArea);
         }
         return index;
+    }
+
+    private ImportedSubjectAreaDTO assignImportedSubjectArea(HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitions,
+            ImportedSubjectAreaIndexDTO subjectAreaIndex, Integer program, String jacsCode, Integer weight) {
+        ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getByJacsCode(jacsCode);
+        subjectArea = subjectArea == null ? subjectAreaIndex.getByJacsCodeOld(jacsCode) : subjectArea;
+        if (subjectArea != null) {
+            insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), jacsCode, weight));
+        }
+        return subjectArea;
     }
 
     private HashMultimap<Integer, ImportedSubjectAreaDTO> getParentImportedSubjectAreas() {

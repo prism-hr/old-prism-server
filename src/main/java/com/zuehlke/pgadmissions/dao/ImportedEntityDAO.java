@@ -317,18 +317,18 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public List<ImportedSubjectArea> getChildImportedSubjectAreas() {
-        return (List<ImportedSubjectArea>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
-                .add(Restrictions.isNotNull("parent")) //
-                .list();
-    }
-
     public void executeBulkMerge(String table, String columns, String inserts, String updates) {
         sessionFactory.getCurrentSession().createSQLQuery(
                 "insert into " + table + " (" + columns + ") "
                         + "values " + inserts + " "
                         + "on duplicate key update " + updates)
                 .executeUpdate();
+    }
+    
+    public List<ImportedSubjectArea> getChildImportedSubjectAreas() {
+        return (List<ImportedSubjectArea>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+                .add(Restrictions.isNotNull("parent")) //
+                .list();
     }
 
     public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas() {

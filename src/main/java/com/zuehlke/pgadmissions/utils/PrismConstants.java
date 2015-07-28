@@ -4,6 +4,8 @@ public class PrismConstants {
 
     public static final String OK = "OK";
 
+    public static final String SPACE = " ";
+
     public static final String ANGULAR_HASH = "#!";
 
     public static final String DOT = ".";
@@ -15,9 +17,9 @@ public class PrismConstants {
     public static final Integer LIST_PAGE_ROW_COUNT = 50;
 
     public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
-    
+
     public static final int MAX_BATCH_INSERT_SIZE = 5000;
-    
+
     public static final String NULL = "null";
 
 }

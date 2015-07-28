@@ -10,10 +10,17 @@ public class ImportedProgramSubjectAreaDTO {
 
     private Integer weight;
 
+    private Integer confidence;
+
     public ImportedProgramSubjectAreaDTO(Integer id, String code, Integer weight) {
         this.id = id;
         this.code = code;
         this.weight = weight;
+    }
+
+    public ImportedProgramSubjectAreaDTO(Integer id, String code, Integer weight, Integer confidence) {
+        this(id, code, weight);
+        this.confidence = confidence;
     }
 
     public Integer getId() {
@@ -22,6 +29,10 @@ public class ImportedProgramSubjectAreaDTO {
 
     public Integer getWeight() {
         return weight;
+    }
+
+    public Integer getConfidence() {
+        return confidence;
     }
 
     public Integer getSpecificity() {

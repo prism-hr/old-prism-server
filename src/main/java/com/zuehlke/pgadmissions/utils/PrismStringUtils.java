@@ -14,4 +14,12 @@ public class PrismStringUtils {
         return importedEntity == null ? null : importedEntity.getName();
     }
 
+    public static String cleanString(String string) {
+        return string.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ").trim();
+    }
+
+    public static String cleanStringToLowerCase(String string) {
+        return cleanString(string).toLowerCase();
+    }
+
 }

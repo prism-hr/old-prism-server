@@ -1,22 +1,12 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -24,22 +14,11 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.resource.Department;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
+@Table(name = "advert", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "department_id", "program_id", "project_id"})})
 public class Advert implements UniqueEntity {
 
     @Id
@@ -94,7 +73,7 @@ public class Advert implements UniqueEntity {
     private AddressAdvert address;
 
     @Embedded
-    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
+    @AttributeOverrides({@AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
             @AttributeOverride(name = "currencySpecified", column = @Column(name = "fee_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "fee_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_fee_minimum_specified")),
@@ -105,11 +84,11 @@ public class Advert implements UniqueEntity {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted")) })
+            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted"))})
     private AdvertFinancialDetail fee;
 
     @Embedded
-    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
+    @AttributeOverrides({@AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
             @AttributeOverride(name = "currencySpecified", column = @Column(name = "pay_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "pay_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_pay_minimum_specified")),
@@ -120,7 +99,7 @@ public class Advert implements UniqueEntity {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")) })
+            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted"))})
     private AdvertFinancialDetail pay;
 
     @OneToOne
@@ -220,11 +199,11 @@ public class Advert implements UniqueEntity {
         this.backgroundImage = backgroundImage;
     }
 
-    public final String getHomepage() {
+    public String getHomepage() {
         return homepage;
     }
 
-    public final void setHomepage(String homepage) {
+    public void setHomepage(String homepage) {
         this.homepage = homepage;
     }
 
@@ -268,11 +247,11 @@ public class Advert implements UniqueEntity {
         this.pay = pay;
     }
 
-    public final LocalDate getLastCurrencyConversionDate() {
+    public LocalDate getLastCurrencyConversionDate() {
         return lastCurrencyConversionDate;
     }
 
-    public final void setLastCurrencyConversionDate(LocalDate lastCurrencyConversionDate) {
+    public void setLastCurrencyConversionDate(LocalDate lastCurrencyConversionDate) {
         this.lastCurrencyConversionDate = lastCurrencyConversionDate;
     }
 
@@ -323,11 +302,7 @@ public class Advert implements UniqueEntity {
     }
 
     public ResourceParent getResource() {
-        return ObjectUtils.firstNonNull(institution, department, getResourceOpportunity());
-    }
-
-    public ResourceOpportunity getResourceOpportunity() {
-        return ObjectUtils.firstNonNull(program, project);
+        return ObjectUtils.firstNonNull(getResourceOpportunity(), department, institution);
     }
 
     public void setResource(Resource resource) {
@@ -335,6 +310,10 @@ public class Advert implements UniqueEntity {
         this.department = resource.getDepartment();
         this.program = resource.getProgram();
         this.project = resource.getProject();
+    }
+
+    public ResourceOpportunity getResourceOpportunity() {
+        return ObjectUtils.firstNonNull(project, program);
     }
 
     public boolean isAdvertOfScope(PrismScope scope) {
@@ -347,10 +326,6 @@ public class Advert implements UniqueEntity {
 
     public boolean hasConvertedPay() {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
-    }
-
-    public void addClosingDate(AdvertClosingDate closingDate) {
-        closingDates.add(closingDate);
     }
 
     @Override

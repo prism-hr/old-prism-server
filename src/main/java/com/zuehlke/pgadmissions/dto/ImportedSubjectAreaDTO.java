@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.dto;
 public class ImportedSubjectAreaDTO {
 
     private Integer id;
+    
+    private String name;
 
     private String jacsCode;
 
@@ -16,6 +18,14 @@ public class ImportedSubjectAreaDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getJacsCode() {

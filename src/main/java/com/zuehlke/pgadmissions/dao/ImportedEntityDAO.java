@@ -303,26 +303,12 @@ public class ImportedEntityDAO {
         return (List<ImportedSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
+                        .add(Projections.property("name"), "name") //
                         .add(Projections.property("jacsCode"), "jacsCode") //
                         .add(Projections.property("jacsCodeOld"), "jacsCodeOld") //
                         .add(Projections.property("ucasSubject"), "ucasSubject")) //
                 .setResultTransformer(Transformers.aliasToBean(ImportedSubjectAreaDTO.class))
                 .list();
-    }
-
-    public <T extends WeightedRelationImported> void disableImportedEntityRelations(Class<T> entityClass) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + entityClass.getSimpleName() + " " //
-                        + "set enabled = false") //
-                .executeUpdate();
-    }
-
-    public void executeBulkMerge(String table, String columns, String inserts, String updates) {
-        sessionFactory.getCurrentSession().createSQLQuery(
-                "insert into " + table + " (" + columns + ") "
-                        + "values " + inserts + " "
-                        + "on duplicate key update " + updates)
-                .executeUpdate();
     }
     
     public List<ImportedSubjectArea> getChildImportedSubjectAreas() {
@@ -347,7 +333,22 @@ public class ImportedEntityDAO {
                 "delete ImportedEntityType") //
                 .executeUpdate();
     }
-
+    
+    public <T extends WeightedRelationImported> void disableImportedEntityRelations(Class<T> entityClass) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + entityClass.getSimpleName() + " " //
+                        + "set enabled = false") //
+                .executeUpdate();
+    }
+    
+    public void executeBulkMerge(String table, String columns, String inserts, String updates) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "insert into " + table + " (" + columns + ") "
+                        + "values " + inserts + " "
+                        + "on duplicate key update " + updates)
+                .executeUpdate();
+    }
+    
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
             Boolean enabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //

@@ -172,6 +172,9 @@ public class SystemService {
     private ImportedEntityService importedEntityService;
 
     @Inject
+    private TargetingService targetingService;
+
+    @Inject
     private ImportedEntityMapper importedEntityMapper;
 
     @Inject
@@ -269,7 +272,7 @@ public class SystemService {
             notificationService.sendRegistrationNotification(user, outcome, comment);
         }
     }
-    
+
     @Transactional
     public void overwriteSystemData() {
         importedEntityService.deleteImportedEntityTypes();
@@ -300,10 +303,10 @@ public class SystemService {
         }
 
         logger.info("Initializing imported program subject areas");
-        importedEntityService.mergeImportedProgramSubjectAreas((List<ImportedProgramImportDTO>) definitions.get(IMPORTED_PROGRAM));
+        targetingService.mergeImportedProgramSubjectAreas((List<ImportedProgramImportDTO>) definitions.get(IMPORTED_PROGRAM));
 
         logger.info("Initializing imported institution subject areas");
-        importedEntityService.mergeImportedInstitutionSubjectAreas();
+        targetingService.mergeImportedInstitutionSubjectAreas();
     }
 
     @Transactional

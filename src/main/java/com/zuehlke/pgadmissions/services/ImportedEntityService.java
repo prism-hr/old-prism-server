@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlI
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
 
 import java.util.List;
 import java.util.Map;
@@ -169,12 +170,12 @@ public class ImportedEntityService {
         List<U> currentMappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
         if (currentMappings.isEmpty()) {
             for (ImportedEntity<?, ?> entity : importedEntityDAO.getImportedEntities(prismImportedEntity)) {
-                currentMappingsLookup.put(entity.index(), (T) entity);
+                currentMappingsLookup.put(cleanStringToLowerCase(entity.index()), (T) entity);
             }
         } else {
             for (U currentMapping : currentMappings) {
                 T entity = currentMapping.getImportedEntity();
-                currentMappingsLookup.put(entity.index(), entity);
+                currentMappingsLookup.put(cleanStringToLowerCase(entity.index()), entity);
             }
         }
 
@@ -183,7 +184,7 @@ public class ImportedEntityService {
             List<String> rows = Lists.newLinkedList();
             for (V mappingDefinition : definitionBatch) {
                 List<String> cells = Lists.newLinkedList();
-                T entity = currentMappingsLookup.get(mappingDefinition.index());
+                T entity = currentMappingsLookup.get(cleanStringToLowerCase(mappingDefinition.index()));
                 if (entity != null) {
                     cells.add(prepareIntegerForSqlInsert(institution.getId()));
 
@@ -508,13 +509,7 @@ public class ImportedEntityService {
         ImportedSubjectAreaIndexDTO subjectAreaIndex = getImportedSubjectAreas();
         HashMultimap<Integer, ImportedSubjectAreaDTO> parentImportedSubjectAreaIndex = getParentImportedSubjectAreas();
         for (ImportedProgramImportDTO programDefinition : programDefinitions) {
-            Integer program = programIndex.get(programDefinition.index());
-
-            if (program == null) {
-                logger.error("Imported program not found: " + programDefinition.toString());
-                continue;
-            }
-
+            Integer program = programIndex.get(cleanStringToLowerCase(programDefinition.index()));
             Integer weight = programDefinition.getWeight();
 
             Set<String> jacsCodes = programDefinition.getJacsCodes();
@@ -562,7 +557,7 @@ public class ImportedEntityService {
         Map<String, Integer> index = Maps.newHashMap();
         List<com.zuehlke.pgadmissions.dto.ImportedProgramDTO> programs = importedEntityDAO.getImportedUcasPrograms();
         for (com.zuehlke.pgadmissions.dto.ImportedProgramDTO program : programs) {
-            index.put(program.index(), program.getId());
+            index.put(cleanStringToLowerCase(program.index()), program.getId());
         }
         return index;
     }
@@ -605,7 +600,7 @@ public class ImportedEntityService {
         }
     }
 
-    public String getImportedProgramSubjectAreaRowDefinitions(Integer program, Set<ImportedProgramSubjectAreaDTO> subjectAreas,
+    private String getImportedProgramSubjectAreaRowDefinitions(Integer program, Set<ImportedProgramSubjectAreaDTO> subjectAreas,
             Integer maxProgramSubjectAreaConnectionCount) {
         List<String> values = Lists.newArrayList();
         Integer weightModifier = (maxProgramSubjectAreaConnectionCount + 1 - subjectAreas.size());
@@ -616,7 +611,7 @@ public class ImportedEntityService {
         return Joiner.on(", ").join(values);
     }
 
-    public String getImportedInstitutionSubjectAreaRowDefinition(ImportedInstitutionSubjectAreaDTO importedInstitutionSubjectArea) {
+    private String getImportedInstitutionSubjectAreaRowDefinition(ImportedInstitutionSubjectAreaDTO importedInstitutionSubjectArea) {
         return "(" + importedInstitutionSubjectArea.getInstitution().toString() + ", "
                 + importedInstitutionSubjectArea.getSubjectArea().toString() + ", " + importedInstitutionSubjectArea.getRelationStrength().toString()
                 + ", " + "1)";

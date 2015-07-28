@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.utils;
 
 import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanString;
 import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
@@ -23,7 +24,7 @@ public class PrismQueryUtils {
     }
 
     public static String prepareStringForSqlInsert(String value) {
-        return value == null ? NULL : "'" + escapeSql(cleanStringForSqlInsert(value)) + "'";
+        return value == null ? NULL : "'" + escapeSql(cleanString(value)) + "'";
     }
 
     public static String prepareIntegerForSqlInsert(Integer value) {
@@ -39,11 +40,7 @@ public class PrismQueryUtils {
     }
 
     public static String prepareBooleanForSqlInsert(boolean value) {
-        return cleanStringForSqlInsert(new Integer(BooleanUtils.toInteger(value)).toString());
-    }
-
-    public static String cleanStringForSqlInsert(String string) {
-        return string.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ").trim();
+        return cleanString(new Integer(BooleanUtils.toInteger(value)).toString());
     }
 
 }

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dto;
 
-
 public class ImportedProgramDTO {
 
     private Integer id;

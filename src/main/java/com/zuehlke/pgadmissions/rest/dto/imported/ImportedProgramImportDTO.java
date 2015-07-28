@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
-
 import java.util.Set;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
 
 public class ImportedProgramImportDTO extends ImportedProgramRequest {
 
@@ -86,11 +86,6 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
     public ImportedProgramImportDTO withJacsCodes(Set<String> jacsCodes) {
         setJacsCodes(jacsCodes);
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return getInstitution().toString() + " " + getQualification() + " " + getName();
     }
 
 }

@@ -306,7 +306,8 @@ public class ImportedEntityDAO {
                         .add(Projections.property("name"), "name") //
                         .add(Projections.property("jacsCode"), "jacsCode") //
                         .add(Projections.property("jacsCodeOld"), "jacsCodeOld") //
-                        .add(Projections.property("ucasSubject"), "ucasSubject")) //
+                        .add(Projections.property("ucasSubject"), "ucasSubject") //
+                        .add(Projections.property("parent.id"), "parent")) //
                 .setResultTransformer(Transformers.aliasToBean(ImportedSubjectAreaDTO.class))
                 .list();
     }

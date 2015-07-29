@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.wrapInCharacterWildcard;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.wrapInWordBoundary;
+import static org.apache.commons.lang3.StringUtils.rightPad;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +12,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,6 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgramSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaIndexDTO;
@@ -75,10 +75,8 @@ public class TargetingService {
         HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitionsParent = HashMultimap.create();
 
         Map<String, Integer> programIndex = getImportedProgramsIndex();
-
         List<ImportedSubjectAreaDTO> subjectAreas = importedEntityService.getImportedSubjectAreas();
         ImportedSubjectAreaIndexDTO subjectAreaIndex = getImportedSubjectAreaIndex(subjectAreas);
-        HashMultimap<Integer, ImportedSubjectAreaDTO> parentSubjectAreaIndex = getParentImportedSubjectAreas();
 
         int maxConfidence = 0;
         for (ImportedProgramImportDTO programDefinition : programDefinitions) {
@@ -91,7 +89,7 @@ public class TargetingService {
                     assignImportedSubjectArea(insertDefinitions, subjectAreaIndex, program, jacsCode, weight);
                     if (Character.isUpperCase(jacsCode.charAt(0)) && !jacsCode.endsWith("000")) {
                         for (int i = 3; i > 0; i--) {
-                            String jacsCodeParent = StringUtils.rightPad(jacsCode.substring(0, i), 4, "0");
+                            String jacsCodeParent = rightPad(jacsCode.substring(0, i), 4, "0");
                             if (!jacsCodeParent.equals(jacsCode)) {
                                 assignImportedSubjectArea(insertDefinitions, subjectAreaIndex, program, jacsCodeParent, weight);
                             }
@@ -101,27 +99,18 @@ public class TargetingService {
             }
 
             if (insertDefinitions.get(program).isEmpty()) {
-                for (Integer ucasSubject : programDefinition.getUcasSubjects()) {
-                    for (ImportedSubjectAreaDTO subjectArea : subjectAreaIndex.getByUcasSubject(ucasSubject)) {
-                        insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), subjectArea.getJacsCode(), weight));
-                    }
-                }
-            }
-
-            if (insertDefinitions.get(program).isEmpty()) {
                 String programName = cleanStringToLowerCase(programDefinition.getName());
                 for (ImportedSubjectAreaDTO subjectArea : subjectAreas) {
                     Integer subjectAreaId = subjectArea.getId();
                     String subjectAreaName = subjectArea.getName();
-                    String jacsCode = subjectArea.getJacsCode();
 
-                    if (cleanStringToLowerCase(subjectAreaName).contains(programName)) {
-                        insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectAreaId, jacsCode, weight));
+                    if (cleanStringToLowerCase(programName).contains(subjectAreaName)) {
+                        insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectAreaId, weight));
                     } else {
                         int confidence = 0;
-                        for (Set<String> subjectAreaToken : tokenize(subjectAreaName)) {
+                        for (Set<String> subjectAreaToken : subjectArea.getTokens()) {
                             for (String word : subjectAreaToken) {
-                                if (programName.contains(word)) {
+                                if (programName.matches(wrapInCharacterWildcard(wrapInWordBoundary(word)))) {
                                     confidence++;
                                     break;
                                 }
@@ -129,17 +118,25 @@ public class TargetingService {
                         }
 
                         if (confidence > 0) {
-                            insertDefinitionsParent.put(program, new ImportedProgramSubjectAreaDTO(subjectAreaId, jacsCode, weight, confidence));
+                            insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectAreaId, weight, confidence));
                             maxConfidence = confidence > maxConfidence ? confidence : maxConfidence;
                         }
                     }
                 }
             }
 
-            for (ImportedProgramSubjectAreaDTO subjectArea : insertDefinitions.get(program)) {
-                for (ImportedSubjectAreaDTO parent : parentSubjectAreaIndex.get(subjectArea.getId())) {
-                    insertDefinitionsParent.put(program, new ImportedProgramSubjectAreaDTO(parent.getId(), parent.getJacsCode(), weight));
+            if (insertDefinitions.get(program).isEmpty()) {
+                for (Integer ucasSubject : programDefinition.getUcasSubjects()) {
+                    for (ImportedSubjectAreaDTO subjectArea : subjectAreaIndex.getByUcasSubject(ucasSubject)) {
+                        insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), weight));
+                    }
                 }
+            }
+
+            for (ImportedProgramSubjectAreaDTO programSubjectArea : insertDefinitions.get(program)) {
+                ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getById(programSubjectArea.getId());
+                assignImportedSubjectAreaParent(insertDefinitionsParent, subjectAreaIndex, program, subjectArea.getParent(), weight,
+                        programSubjectArea.getConfidence());
             }
         }
 
@@ -153,7 +150,7 @@ public class TargetingService {
 
         List<String> inserts = Lists.newArrayListWithExpectedSize(insertDefinitions.size());
         for (Integer program : insertDefinitions.keySet()) {
-            inserts.add(getImportedProgramSubjectAreaRowDefinitions(program, insertDefinitions.get(program), maxWeight, maxConfidence));
+            inserts.add(getImportedProgramSubjectAreaRowDefinitions(subjectAreaIndex, program, insertDefinitions.get(program), maxWeight, maxConfidence));
         }
 
         return inserts;
@@ -171,59 +168,55 @@ public class TargetingService {
     private ImportedSubjectAreaIndexDTO getImportedSubjectAreaIndex(List<ImportedSubjectAreaDTO> subjectAreas) {
         ImportedSubjectAreaIndexDTO index = new ImportedSubjectAreaIndexDTO();
         for (ImportedSubjectAreaDTO subjectArea : subjectAreas) {
+            subjectArea.prepare();
+            index.addById(subjectArea.getId(), subjectArea);
 
-            for (String jacsCode : subjectArea.getJacsCode().split("\\|")) {
-                index.addJacsCode(jacsCode, subjectArea);
+            for (String jacsCode : subjectArea.getJacsCodes()) {
+                index.addByJacsCode(jacsCode, subjectArea);
             }
 
-            String jacsCodesOld = subjectArea.getJacsCodeOld();
+            String[] jacsCodesOld = subjectArea.getJacsCodesOld();
             if (jacsCodesOld != null) {
-                for (String jacsCodeOld : jacsCodesOld.split("\\|")) {
-                    index.addJacsCodeOld(jacsCodeOld, subjectArea);
+                for (String jacsCodeOld : jacsCodesOld) {
+                    index.addByJacsCodeOld(jacsCodeOld, subjectArea);
                 }
             }
 
-            index.addUcasSubject(subjectArea.getUcasSubject(), subjectArea);
+            index.addByUcasSubject(subjectArea.getUcasSubject(), subjectArea);
         }
         return index;
     }
 
     private ImportedSubjectAreaDTO assignImportedSubjectArea(HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitions,
-            ImportedSubjectAreaIndexDTO subjectAreaIndex, Integer program, String jacsCode, Integer weight) {
-        ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getByJacsCode(jacsCode);
-        subjectArea = subjectArea == null ? subjectAreaIndex.getByJacsCodeOld(jacsCode) : subjectArea;
+            ImportedSubjectAreaIndexDTO subjectAreaIndex, Integer program, String programCode, Integer weight) {
+        ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getByJacsCode(programCode);
+        subjectArea = subjectArea == null ? subjectAreaIndex.getByJacsCodeOld(programCode) : subjectArea;
         if (subjectArea != null) {
-            insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), jacsCode, weight));
+            insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectArea.getId(), weight));
         }
         return subjectArea;
     }
 
-    private HashMultimap<Integer, ImportedSubjectAreaDTO> getParentImportedSubjectAreas() {
-        HashMultimap<Integer, ImportedSubjectAreaDTO> index = HashMultimap.create();
-        for (ImportedSubjectArea child : importedEntityService.getChildImportedSubjectAreas()) {
-            ImportedSubjectArea parent = child.getParent();
-            indexParentImportedSubjectArea(index, child.getId(), parent);
-        }
-        return index;
-    }
-
-    private void indexParentImportedSubjectArea(HashMultimap<Integer, ImportedSubjectAreaDTO> index, Integer child, ImportedSubjectArea parent) {
-        index.put(child, new ImportedSubjectAreaDTO().withId(parent.getId()).withJacsCode(parent.getJacsCode()));
-        ImportedSubjectArea grandParent = parent.getParent();
-        if (grandParent != null) {
-            indexParentImportedSubjectArea(index, child, grandParent);
+    private void assignImportedSubjectAreaParent(HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitions,
+            ImportedSubjectAreaIndexDTO subjectAreaIndex, Integer program, Integer subjectAreaParentId, Integer weight, Integer confidence) {
+        ImportedSubjectAreaDTO subjectAreaParent = subjectAreaIndex.getById(subjectAreaParentId);
+        if (subjectAreaParent != null) {
+            insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectAreaParentId, weight, confidence));
+            assignImportedSubjectAreaParent(insertDefinitions, subjectAreaIndex, program, subjectAreaParent.getParent(), weight, confidence);
         }
     }
 
-    private String getImportedProgramSubjectAreaRowDefinitions(Integer program, Set<ImportedProgramSubjectAreaDTO> subjectAreas,
-            Integer maxProgramSubjectAreaConnectionCount, Integer maxProgramSubjectAreaConnectionConfidence) {
+    private String getImportedProgramSubjectAreaRowDefinitions(ImportedSubjectAreaIndexDTO subjectAreaIndex, Integer program,
+            Set<ImportedProgramSubjectAreaDTO> programSubjectAreas, Integer maxWeight, Integer maxConfidence) {
         List<String> values = Lists.newArrayList();
-        Integer weightModifier = (maxProgramSubjectAreaConnectionCount + 1 - subjectAreas.size());
-        for (ImportedProgramSubjectAreaDTO subjectArea : subjectAreas) {
-            Integer confidence = subjectArea.getConfidence();
-            confidence = confidence == null ? maxProgramSubjectAreaConnectionConfidence : confidence;
-            values.add("(" + program + ", " + subjectArea.getId().toString() + ", "
-                    + new Integer(weightModifier * confidence * subjectArea.getSpecificity() * subjectArea.getWeight()).toString() + ", 1)");
+        Integer weightModifier = (maxWeight + 1 - programSubjectAreas.size());
+        for (ImportedProgramSubjectAreaDTO programSubjectArea : programSubjectAreas) {
+            Integer subjectAreaId = programSubjectArea.getId();
+            Integer confidence = programSubjectArea.getConfidence();
+            confidence = confidence == null ? maxConfidence : confidence;
+            ImportedSubjectAreaDTO subjectArea = subjectAreaIndex.getById(subjectAreaId);
+            values.add("(" + Joiner.on(", ").join(program.toString(), subjectAreaId.toString(), //
+                    new Integer(weightModifier * confidence * subjectArea.getSpecificity() * programSubjectArea.getWeight()).toString(), "1") + ")");
         }
         return Joiner.on(", ").join(values);
     }

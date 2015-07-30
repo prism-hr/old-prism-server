@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlIn
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -282,6 +283,10 @@ public class ImportedEntityService {
 
     public void executeBulkMerge(String table, String columns, String inserts, String updates) {
         importedEntityDAO.executeBulkMerge(table, columns, inserts, updates);
+    }
+    
+    public void setImportedProgramsIndexed(Collection<Integer> importedPrograms) {
+        importedEntityDAO.setImportedProgramsIndexed(importedPrograms);
     }
 
     public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas() {

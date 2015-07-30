@@ -1,12 +1,22 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.resource.*;
+import java.util.Set;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -14,8 +24,19 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import java.util.Set;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "department_id", "program_id", "project_id"})})

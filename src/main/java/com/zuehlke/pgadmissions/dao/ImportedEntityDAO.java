@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -311,7 +312,7 @@ public class ImportedEntityDAO {
                 .setResultTransformer(Transformers.aliasToBean(ImportedSubjectAreaDTO.class))
                 .list();
     }
-    
+
     public List<ImportedSubjectArea> getChildImportedSubjectAreas() {
         return (List<ImportedSubjectArea>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
                 .add(Restrictions.isNotNull("parent")) //
@@ -334,14 +335,14 @@ public class ImportedEntityDAO {
                 "delete ImportedEntityType") //
                 .executeUpdate();
     }
-    
+
     public <T extends WeightedRelationImported> void disableImportedEntityRelations(Class<T> entityClass) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //
                         + "set enabled = false") //
                 .executeUpdate();
     }
-    
+
     public void executeBulkMerge(String table, String columns, String inserts, String updates) {
         sessionFactory.getCurrentSession().createSQLQuery(
                 "insert into " + table + " (" + columns + ") "
@@ -349,7 +350,16 @@ public class ImportedEntityDAO {
                         + "on duplicate key update " + updates)
                 .executeUpdate();
     }
-    
+
+    public void setImportedProgramsIndexed(Collection<Integer> importedPrograms) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update ImportedProgram "
+                        + "set indexed = true "
+                        + "where id in (:importedPrograms)")
+                .setParameterList("importedPrograms", importedPrograms) //
+                .executeUpdate();
+    }
+
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
             Boolean enabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //

@@ -87,7 +87,7 @@ public class InstitutionController {
     @RequestMapping(method = RequestMethod.GET, params = "subjectAreas")
     @ResponseBody
     public List<InstitutionRepresentationSimple> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas) {
-        List<InstitutionRepresentationSimple> institutions = Stream.of(5243, 6856, 6876, 6873, 6871)
+        List<InstitutionRepresentationSimple> institutions = Stream.of(5243, 6874, 6856, 6876, 6873, 6871)
                 .map(id -> institutionService.getById(id))
                 .map(institutionMapper::getInstitutionRepresentationSimple)
                 .collect(Collectors.toList());

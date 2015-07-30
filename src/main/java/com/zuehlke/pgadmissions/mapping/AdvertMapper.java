@@ -1,35 +1,13 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
+import com.zuehlke.pgadmissions.domain.advert.*;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
+import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -38,16 +16,21 @@ import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.CoordinatesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.*;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 
 @Service
 @Transactional
@@ -153,10 +136,9 @@ public class AdvertMapper {
             representation.setDomicile(getAdvertDomicileRepresentation(address.getDomicile()));
             representation.setGoogleId(address.getGoogleId());
 
-            GeographicLocation location = address.getLocation();
-            if (location != null) {
-                representation.setLocationX(location.getLocationX());
-                representation.setLocationY(location.getLocationY());
+            Coordinates coordinates = address.getCoordinates();
+            if (coordinates != null) {
+                representation.setCoordinates(new CoordinatesRepresentation(coordinates.getLatitude(), coordinates.getLongitude()));
             }
 
             representation.setLocationString(address.getLocationString());

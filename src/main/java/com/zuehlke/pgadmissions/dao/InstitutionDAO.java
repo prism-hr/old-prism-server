@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
@@ -189,4 +190,7 @@ public class InstitutionDAO {
                 .list();
     }
 
+    public ResourceRepresentationSimple getInstitutionBySubjectAreas(List<Integer> subjectAreas) {
+        return null; // TODO implement
+    }
 }

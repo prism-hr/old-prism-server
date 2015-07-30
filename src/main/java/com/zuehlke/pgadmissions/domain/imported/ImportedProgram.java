@@ -51,6 +51,9 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Column(name = "code")
     private String code;
 
+    @Column(name = "indexed", nullable = false)
+    private Boolean indexed;
+    
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -128,6 +131,18 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Boolean getIndexed() {
+        return indexed;
+    }
+
+    public void setIndexed(Boolean indexed) {
+        this.indexed = indexed;
+    }
+
+    public void setMappings(Set<ImportedProgramMapping> mappings) {
+        this.mappings = mappings;
     }
 
     @Override

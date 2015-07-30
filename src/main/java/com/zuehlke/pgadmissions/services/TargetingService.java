@@ -44,14 +44,23 @@ public class TargetingService {
     private ImportedSubjectAreaIndex importedSubjectAreaIndex;
 
     public void mergeImportedProgramSubjectAreas(List<ImportedProgramImportDTO> programDefinitions) {
-        List<String> inserts = getImportedProgramSubjectAreaInserts(programDefinitions);
+        Map<Integer, String> inserts = getImportedProgramSubjectAreaInserts(programDefinitions);
         if (!inserts.isEmpty()) {
             importedEntityService.disableImportedEntityRelations(ImportedProgramSubjectArea.class);
             entityService.flush();
-            for (List<String> values : Lists.partition(inserts, MAX_BATCH_INSERT_SIZE)) {
-                importedEntityService.executeBulkMerge("imported_program_subject_area",
-                        "imported_program_id, imported_subject_area_id, relation_strength, enabled",
-                        Joiner.on(", ").join(values), IMPORTED_ENTITY_RELATION_UPDATE);
+
+            int counter = 0;
+            int insertCount = inserts.size();
+            Map<Integer, String> insertBatch = Maps.newHashMapWithExpectedSize(MAX_BATCH_INSERT_SIZE);
+            for (Map.Entry<Integer, String> insert : inserts.entrySet()) {
+                insertBatch.put(insert.getKey(), insert.getValue());
+                if (insertBatch.size() == MAX_BATCH_INSERT_SIZE || counter == (insertCount - 1)) {
+                    importedEntityService.executeBulkMerge("imported_program_subject_area", "imported_program_id, imported_subject_area_id, relation_strength",
+                            Joiner.on(", ").join(insertBatch.values()), IMPORTED_ENTITY_RELATION_UPDATE);
+                    importedEntityService.setImportedProgramsIndexed(insertBatch.keySet());
+                    insertBatch.clear();
+                }
+                counter++;
             }
         }
     }
@@ -67,12 +76,13 @@ public class TargetingService {
                 importedInstitutionSubjectAreaValues.add(getImportedInstitutionSubjectAreaRowDefinition(importedInstitutionSubjectAreaInsert));
             }
             importedEntityService.executeBulkMerge("imported_institution_subject_area",
-                    "imported_institution_id, imported_subject_area_id, relation_strength, enabled",
+                    "imported_institution_id, imported_subject_area_id, relation_strength",
                     Joiner.on(", ").join(importedInstitutionSubjectAreaValues), IMPORTED_ENTITY_RELATION_UPDATE);
         }
     }
 
-    private <T extends ImportedEntityRequest> List<String> getImportedProgramSubjectAreaInserts(List<ImportedProgramImportDTO> programDefinitions) {
+    private <T extends ImportedEntityRequest> Map<Integer, String> getImportedProgramSubjectAreaInserts(
+            List<ImportedProgramImportDTO> programDefinitions) {
         HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitions = HashMultimap.create();
         HashMultimap<Integer, ImportedProgramSubjectAreaDTO> insertDefinitionsParent = HashMultimap.create();
 
@@ -136,9 +146,9 @@ public class TargetingService {
             maxWeight = maxWeight < programWeight ? programWeight : maxWeight;
         }
 
-        List<String> inserts = Lists.newArrayListWithExpectedSize(insertDefinitions.size());
+        Map<Integer, String> inserts = Maps.newHashMapWithExpectedSize(insertDefinitions.size());
         for (Integer program : insertDefinitions.keySet()) {
-            inserts.add(getImportedProgramSubjectAreaRowDefinitions(program, insertDefinitions.get(program), maxWeight, maxConfidence));
+            inserts.put(program, getImportedProgramSubjectAreaRowDefinitions(program, insertDefinitions.get(program), maxWeight, maxConfidence));
         }
 
         return inserts;
@@ -182,15 +192,15 @@ public class TargetingService {
             confidence = confidence == null ? maxConfidence : confidence;
             ImportedSubjectAreaDTO subjectArea = importedSubjectAreaIndex.getById(subjectAreaId);
             values.add("(" + Joiner.on(", ").join(program.toString(), subjectAreaId.toString(), //
-                    new Integer(weightModifier * confidence * subjectArea.getSpecificity() * programSubjectArea.getWeight()).toString(), "1") + ")");
+                    new Integer(weightModifier * confidence * subjectArea.getSpecificity() * programSubjectArea.getWeight()).toString()) + ")");
         }
         return Joiner.on(", ").join(values);
     }
 
     private String getImportedInstitutionSubjectAreaRowDefinition(ImportedInstitutionSubjectAreaDTO importedInstitutionSubjectArea) {
-        return "(" + importedInstitutionSubjectArea.getInstitution().toString() + ", "
-                + importedInstitutionSubjectArea.getSubjectArea().toString() + ", " + importedInstitutionSubjectArea.getRelationStrength().toString()
-                + ", " + "1)";
+        return "(" + Joiner.on(", ").join(importedInstitutionSubjectArea.getInstitution().toString(), //
+                importedInstitutionSubjectArea.getSubjectArea().toString(), //
+                importedInstitutionSubjectArea.getRelationStrength().toString()) + ")";
     }
 
 }

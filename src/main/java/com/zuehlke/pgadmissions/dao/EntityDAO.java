@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.ResourceSignature;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.ResourceSignature;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -56,7 +55,13 @@ public class EntityDAO {
     }
 
     public <T> List<T> list(Class<T> klass) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass) //
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass)
+                .list();
+    }
+
+    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass)
+                .add(Restrictions.eq(propertyName, propertyValue))
                 .list();
     }
 
@@ -70,13 +75,13 @@ public class EntityDAO {
 
     public <T extends UniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         ResourceSignature resourceSignature = uniqueResource.getResourceSignature();
-        
+
         if (resourceSignature != null) {
             Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
-    
+
             HashMap<String, Object> properties = resourceSignature.getProperties();
-    
+
             for (Map.Entry<String, Object> property : properties.entrySet()) {
                 Object value = property.getValue();
                 if (value == null) {
@@ -85,15 +90,15 @@ public class EntityDAO {
                     criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
                 }
             }
-    
+
             HashMultimap<String, Object> exclusions = resourceSignature.getExclusions();
             for (String key : exclusions.keySet()) {
                 criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
             }
-    
+
             return (T) criteria.uniqueResult();
         }
-        
+
         return null;
     }
 

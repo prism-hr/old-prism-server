@@ -57,10 +57,9 @@ public class AdvertDAO {
     private SessionFactory sessionFactory;
 
     public Advert getAdvert(PrismScope resourceScope, Integer resourceId) {
-        String reference = resourceScope.getLowerCamelName();
-        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
-                .createAlias(reference, reference, JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.eq(reference + ".id", resourceId))
+        return (Advert) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass())
+                .setProjection(Projections.property("advert"))
+                .add(Restrictions.eq("id", resourceId))
                 .uniqueResult();
     }
 

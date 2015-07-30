@@ -6,10 +6,10 @@ import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,7 +159,7 @@ public class InstitutionService {
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
 
-    public ResourceRepresentationSimple getInstitutionBySubjectAreas(List<Integer> subjectAreas) {
-        return institutionDAO.getInstitutionBySubjectAreas(subjectAreas);
+    public List<Institution> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
+        return institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreas);
     }
 }

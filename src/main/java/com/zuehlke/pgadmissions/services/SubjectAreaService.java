@@ -3,8 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
+import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +11,6 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,27 +18,15 @@ import java.util.stream.Collectors;
 public class SubjectAreaService {
 
     @Inject
-    private EntityService entityService;
-
-    @Inject
     private ImportedEntityService importedEntityService;
 
     @Inject
-    private ApplicationContext applicationContext;
-
-    @Cacheable("importedSubjectAreas")
-    public Map<Integer, ImportedSubjectArea> getAllSubjectAreas() {
-        List<ImportedSubjectArea> subjectAreas = entityService.listByProperty(ImportedSubjectArea.class, "enabled", true);
-        return subjectAreas.stream().collect(Collectors.toMap(subjectArea -> subjectArea.getId(), Function.identity()));
-    }
+    private ImportedSubjectAreaIndex importedSubjectAreaIndex;
 
     public List<SubjectAreaRepresentation> searchSubjectAreas(String searchTerm) {
-        SubjectAreaService thisBean = applicationContext.getBean(SubjectAreaService.class);
-        Map<Integer, ImportedSubjectArea> allSubjectAreas = thisBean.getAllSubjectAreas();
-
         List<ImportedSubjectArea> importedSubjectAreas = importedEntityService.searchByName(ImportedSubjectArea.class, searchTerm);
         // use only detached, cached items
-        importedSubjectAreas = importedSubjectAreas.stream().map(sa -> allSubjectAreas.get(sa.getId())).collect(Collectors.toList());
+        importedSubjectAreas = importedSubjectAreas.stream().map(sa -> importedSubjectAreaIndex.getById(sa.getId())).collect(Collectors.toList());
 
         Map<Integer, SubjectAreaRepresentation> initialMap = new HashMap<>();
         initialMap.put(-1, new SubjectAreaRepresentation(-1, null));

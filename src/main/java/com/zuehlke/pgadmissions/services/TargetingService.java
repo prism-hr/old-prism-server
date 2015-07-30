@@ -20,9 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDTO;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgramSubjectArea;
 import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
@@ -32,7 +30,7 @@ import com.zuehlke.pgadmissions.services.indexers.ImportedSubjectAreaIndex;
 @Transactional
 public class TargetingService {
 
-    private static final String IMPORTED_ENTITY_RELATION_UPDATE = "relation_strength = values(relation_strength), enabled = values(enabled)";
+    private static final String IMPORTED_ENTITY_RELATION_UPDATE = "relation_strength = values(relation_strength)";
 
     @Inject
     private EntityService entityService;
@@ -46,9 +44,6 @@ public class TargetingService {
     public void mergeImportedProgramSubjectAreas(List<ImportedProgramImportDTO> programDefinitions) {
         Map<Integer, String> inserts = getImportedProgramSubjectAreaInserts(programDefinitions);
         if (!inserts.isEmpty()) {
-            importedEntityService.disableImportedEntityRelations(ImportedProgramSubjectArea.class);
-            entityService.flush();
-
             int counter = 0;
             int insertCount = inserts.size();
             Map<Integer, String> insertBatch = Maps.newHashMapWithExpectedSize(MAX_BATCH_INSERT_SIZE);
@@ -58,6 +53,7 @@ public class TargetingService {
                     importedEntityService.executeBulkMerge("imported_program_subject_area", "imported_program_id, imported_subject_area_id, relation_strength",
                             Joiner.on(", ").join(insertBatch.values()), IMPORTED_ENTITY_RELATION_UPDATE);
                     importedEntityService.setImportedProgramsIndexed(insertBatch.keySet());
+                    entityService.flush();
                     insertBatch.clear();
                 }
                 counter++;
@@ -66,8 +62,6 @@ public class TargetingService {
     }
 
     public void mergeImportedInstitutionSubjectAreas() {
-        importedEntityService.disableImportedEntityRelations(ImportedInstitutionSubjectArea.class);
-        entityService.flush();
         List<List<ImportedInstitutionSubjectAreaDTO>> importedInstitutionSubjectAreaInsertDefinitions = Lists.partition(
                 importedEntityService.getImportedInstitutionSubjectAreas(), MAX_BATCH_INSERT_SIZE);
         for (List<ImportedInstitutionSubjectAreaDTO> importedInstitutionSubjectAreaInserts : importedInstitutionSubjectAreaInsertDefinitions) {

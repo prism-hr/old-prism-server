@@ -1,40 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDTO;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.WeightedRelationImported;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
@@ -46,6 +16,22 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
 
 @Service
 @Transactional
@@ -83,6 +69,10 @@ public class ImportedEntityService {
 
     public <T extends ImportedEntity<?, ?>> T getByName(Class<T> entityClass, String name) {
         return importedEntityDAO.getByName(entityClass, name);
+    }
+
+    public <T extends ImportedEntity<?, ?>> List<T> searchByName(Class<T> entityClass, String searchTerm) {
+        return importedEntityDAO.searchByName(entityClass, searchTerm);
     }
 
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntities(Institution institution,

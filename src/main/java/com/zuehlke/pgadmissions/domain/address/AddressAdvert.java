@@ -1,17 +1,11 @@
 package com.zuehlke.pgadmissions.domain.address;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.location.Coordinates;
+import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
-import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "advert_address")
@@ -25,7 +19,7 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
     private String googleId;
 
     @Embedded
-    private GeographicLocation location;
+    private Coordinates coordinates;
 
     @Override
     public ImportedAdvertDomicile getDomicile() {
@@ -46,13 +40,13 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
     }
 
     @Override
-    public GeographicLocation getLocation() {
-        return location;
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 
     @Override
-    public void setLocation(GeographicLocation location) {
-        this.location = location;
+    public void setCoordinates(Coordinates location) {
+        this.coordinates = location;
     }
 
     public AddressAdvert withDomicile(ImportedAdvertDomicile domicile) {
@@ -65,8 +59,8 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
         return this;
     }
 
-    public AddressAdvert withLocation(GeographicLocation location) {
-        this.location = location;
+    public AddressAdvert withLocation(Coordinates location) {
+        this.coordinates = location;
         return this;
     }
 

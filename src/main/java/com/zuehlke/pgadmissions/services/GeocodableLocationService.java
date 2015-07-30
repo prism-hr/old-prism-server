@@ -1,13 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
-
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
+import com.zuehlke.pgadmissions.domain.location.Coordinates;
+import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
+import com.zuehlke.pgadmissions.dto.json.EstablishmentSearchResponseDTO;
+import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO;
+import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO;
+import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
+import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,16 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
-import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
-import com.zuehlke.pgadmissions.dto.json.EstablishmentSearchResponseDTO;
-import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO;
-import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO;
-import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
-import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
+import javax.inject.Inject;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
 
 @Service
 @Transactional
@@ -101,8 +99,8 @@ public class GeocodableLocationService {
 
     private void setLocation(String googleIdentifier, GeocodableLocation location, GoogleGeometryDTO geometry) {
         Location googleLocation = geometry.getLocation();
-        GeographicLocation geographicLocation = new GeographicLocation().withLocationX(googleLocation.getLat()).withLocationY(googleLocation.getLng());
-        location.setLocation(geographicLocation);
+        Coordinates coordinates = new Coordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
+        location.setCoordinates(coordinates);
     }
 
 }

@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.domain.location;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.Address;
 
+import java.util.List;
+
 public abstract class GeocodableLocation extends Address {
 
-    public abstract GeographicLocation getLocation();
+    public abstract Coordinates getCoordinates();
 
-    public abstract void setLocation(GeographicLocation location);
+    public abstract void setCoordinates(Coordinates coordinates);
 
     public List<String> getLocationTokens() {
         List<String> tokens = Lists.newLinkedList();

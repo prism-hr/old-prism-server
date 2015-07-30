@@ -1,38 +1,27 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
-@Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "name" }) })
+@Table(name = "institution", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "name"})})
 public class Institution extends ResourceParent implements TargetEntity {
 
     @Id
@@ -129,6 +118,10 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+
+    @OneToOne
+    @JoinColumn(name = "imported_institution_id", unique = true)
+    private ImportedInstitution importedInstitution;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "institution_id")
@@ -276,7 +269,7 @@ public class Institution extends ResourceParent implements TargetEntity {
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
-    
+
     @Override
     public Set<ResourceCondition> getResourceConditions() {
         return resourceConditions;
@@ -291,7 +284,7 @@ public class Institution extends ResourceParent implements TargetEntity {
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
-    
+
     public Set<Department> getDepartments() {
         return departments;
     }
@@ -321,6 +314,14 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public Set<Advert> getAdverts() {
         return adverts;
+    }
+
+    public ImportedInstitution getImportedInstitution() {
+        return importedInstitution;
+    }
+
+    public void setImportedInstitution(ImportedInstitution importedInstitution) {
+        this.importedInstitution = importedInstitution;
     }
 
     public Institution withParentResource(Resource parentResource) {

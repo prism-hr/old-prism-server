@@ -1,24 +1,6 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -31,9 +13,20 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationSimple;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -51,6 +44,9 @@ public class InstitutionController {
 
     @Inject
     private ImportedEntityMapper importedEntityMapper;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -92,16 +88,20 @@ public class InstitutionController {
         return institution == null ? null : resourceMapper.getResourceRepresentationSimple(institution);
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = "subjectAreas")
+    @RequestMapping(method = RequestMethod.GET, params = {"subjectAreas","advertId"})
     @ResponseBody
-    public List<InstitutionRepresentationSimple> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas) {
-        List<InstitutionRepresentationSimple> institutions = Stream.of(5243, 6874, 6856, 6876, 6873, 6871)
-                .map(id -> institutionService.getById(id))
-                .map(institutionMapper::getInstitutionRepresentationSimple)
-                .collect(Collectors.toList());
-        return institutions;
+    public List<InstitutionRepresentationSimple> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas, @RequestParam Integer advertId) {
+        Advert advert = advertService.getById(advertId);
+//        List<InstitutionRepresentationSimple> institutions = Stream.of(5243, 6874, 6856, 6876, 6873, 6871)
+//                .map(id -> institutionService.getById(id))
+//                .map(institutionMapper::getInstitutionRepresentationSimple)
+//                .collect(Collectors.toList());
+//        return institutions;
 
-//        return institutionService.getInstitutionBySubjectAreas(subjectAreas);
+        List<Institution> institutions = institutionService.getInstitutionBySubjectAreas(advert.getAddress().getCoordinates(), subjectAreas);
+        return institutions
+                .stream().map(institutionMapper::getInstitutionRepresentationSimple)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)

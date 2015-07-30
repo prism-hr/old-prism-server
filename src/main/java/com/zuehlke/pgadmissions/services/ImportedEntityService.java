@@ -126,7 +126,7 @@ public class ImportedEntityService {
     }
 
     public List<ImportedProgram> getUnindexedImportedNonUcasPrograms() {
-        return importedEntityDAO.getUnindexedImportedUcasPrograms();
+        return importedEntityDAO.getUnindexedImportedNonUcasPrograms();
     }
 
     public void setImportedProgramIndexed(Integer importedProgramId, boolean indexed) {

@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.domain.location;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.Address;
-
-import java.util.List;
 
 public abstract class GeocodableLocation extends Address {
 

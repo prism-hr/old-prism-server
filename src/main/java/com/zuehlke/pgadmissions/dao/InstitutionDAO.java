@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
@@ -33,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 import freemarker.template.Template;
 

@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.domain.location;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.math.BigDecimal;
 
 @Embeddable
 public class Coordinates {

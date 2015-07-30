@@ -1,19 +1,27 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import jersey.repackaged.com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.TargetEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 
-import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import jersey.repackaged.com.google.common.base.Objects;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
+
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.TargetEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
 
 @Entity
 @Table(name = "imported_subject_area")

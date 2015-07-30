@@ -139,10 +139,27 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         return children;
     }
 
+    public List<ImportedSubjectArea> getAncestorsPath() {
+        List<ImportedSubjectArea> ancestors = getParent() == null ? new LinkedList<>() : getParent().getAncestorsPath();
+        ancestors.add(this);
+        return ancestors;
+    }
+    
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
     }
+    
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ImportedProgramSubjectArea other = (ImportedProgramSubjectArea) object;
+        return Objects.equal(id, other.getId());
     }
 
     @Override

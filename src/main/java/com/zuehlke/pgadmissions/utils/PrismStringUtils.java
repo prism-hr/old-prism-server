@@ -11,14 +11,15 @@ import java.util.Set;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.dto.TokenizedStringDTO;
 
 public class PrismStringUtils {
 
-    private static final String[] STOP_CHARS = new String[] { "/", ",", ":", ";", ".", "|", "(", ")", "{", "}", "[", "]" };
+    public static final String[] STOP_CHARS = new String[] { ",", ":", ";", ".", "|", "(", ")", "{", "}", "[", "]" };
 
-    private static final String[] STOP_WORDS = new String[] { "and", "in", "of", "including", "as", "a", "or", "for", "in", "via", "its", "it's" };
+    public static final String[] STOP_WORDS = new String[] { "and", "in", "of", "including", "as", "a", "or", "for", "in", "via", "its", "it's", "with", "up" };
 
-    private static final String[] JOIN_CHARS = new String[] { "-", "'" };
+    public static final String[] JOIN_CHARS = new String[] { "-", "'", "/" };
 
     public static String getBigDecimalAsString(BigDecimal value) {
         return value == null ? null : value.toPlainString();
@@ -36,21 +37,28 @@ public class PrismStringUtils {
         return cleanString(string).toLowerCase();
     }
 
-    public static Set<String> tokenize(String string) {
-        String cleanString = cleanString(replaceEachWord(replaceEachChar(string.toLowerCase(), STOP_CHARS, SPACE), STOP_WORDS, SPACE));
+    public static TokenizedStringDTO tokenize(String string, String... optionalStopWords) {
+        String cleanString = cleanString(replaceEachChar(string.toLowerCase(), STOP_CHARS, SPACE));
+        cleanString = cleanString(replaceEachWord(cleanString, STOP_WORDS, SPACE));
 
+        if (optionalStopWords != null) {
+            cleanString = replaceEachWord(cleanString, optionalStopWords, SPACE);
+        }
+
+        int alternateWordCount = 0;
         Set<String> tokens = Sets.newLinkedHashSet();
         for (String word : cleanString.split(" ")) {
             if (isValidToken(word)) {
                 tokens.add(word);
                 String alternateWord = replaceEachChar(word, JOIN_CHARS, SPACE);
-                if (isValidToken(alternateWord)) {
+                if (isValidToken(alternateWord) && !tokens.contains(alternateWord)) {
                     tokens.add(alternateWord);
+                    alternateWordCount++;
                 }
             }
         }
 
-        return tokens;
+        return new TokenizedStringDTO(tokens, (tokens.size() - alternateWordCount));
     }
 
     public static String wrapInWordBoundary(String string) {

@@ -36,13 +36,13 @@ public class LifeCycleService {
 
     @Value("${startup.display.initialize.drop}")
     private Boolean destroyDisplayProperties;
-    
+
     @Value("${startup.display.initialize}")
     private Boolean initializeDisplayProperties;
 
     @Value("${startup.import.system.data.overwrite}")
     private Boolean overwriteData;
-    
+
     @Value("${startup.import.system.data}")
     private Boolean initializeData;
 
@@ -74,7 +74,7 @@ public class LifeCycleService {
         if (doInitializeWorkflow) {
             systemService.initializeSystemUser();
         }
-        
+
         if (BooleanUtils.isTrue(overwriteData)) {
             systemService.overwriteSystemData();
         }
@@ -84,7 +84,7 @@ public class LifeCycleService {
         }
 
         if (BooleanUtils.isTrue(maintain)) {
-            executorService = Executors.newFixedThreadPool(PrismMaintenanceTask.values().length);
+            executorService = Executors.newFixedThreadPool((PrismMaintenanceTask.values().length));
         }
     }
 
@@ -99,7 +99,7 @@ public class LifeCycleService {
         }
     }
 
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000)
     private void maintain() {
         if (BooleanUtils.isTrue(maintain)) {
             for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {

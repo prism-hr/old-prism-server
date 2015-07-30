@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
-public class AdvertServiceHelperClosingDate implements AbstractServiceHelper {
+public class AdvertServiceHelperClosingDate implements PrismServiceHelper {
 
 	@Inject
 	private AdvertService advertService;

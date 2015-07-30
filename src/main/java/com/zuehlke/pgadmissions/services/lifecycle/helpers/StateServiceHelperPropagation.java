@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 
 @Component
-public class StateServiceHelperPropagation implements AbstractServiceHelper {
+public class StateServiceHelperPropagation implements PrismServiceHelper {
 
     @Inject
     private ScopeService scopeService;

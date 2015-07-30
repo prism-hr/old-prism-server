@@ -1,22 +1,20 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.math.BigDecimal;
+
 import jersey.repackaged.com.google.common.base.Objects;
 
 public class ImportedProgramSubjectAreaDTO {
 
     private Integer id;
 
-    private Integer weight;
+    private BigDecimal weight;
 
-    private Integer confidence;
+    private BigDecimal confidence;
 
-    public ImportedProgramSubjectAreaDTO(Integer id, Integer weight) {
+    public ImportedProgramSubjectAreaDTO(Integer id, BigDecimal weight, BigDecimal confidence) {
         this.id = id;
         this.weight = weight;
-    }
-
-    public ImportedProgramSubjectAreaDTO(Integer id, Integer weight, Integer confidence) {
-        this(id, weight);
         this.confidence = confidence;
     }
 
@@ -24,11 +22,11 @@ public class ImportedProgramSubjectAreaDTO {
         return id;
     }
 
-    public Integer getWeight() {
+    public BigDecimal getWeight() {
         return weight;
     }
 
-    public Integer getConfidence() {
+    public BigDecimal getConfidence() {
         return confidence;
     }
 

@@ -117,6 +117,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withPivotColumn("name")
                     .withColumn("ucas_id")
                     .withColumn("facebook_id")
+                    .withColumn("indexed")
                     .withColumn("enabled")
                     .withExtractor((Class) ImportedInstitutionExtractor.class),
             new PrismImportedEntityMappingInsertDefinition()
@@ -188,7 +189,10 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumn("level")
                     .withPivotColumn("qualification")
                     .withPivotColumn("name")
-                    .withColumn("code")
+                    .withColumn("ucas_code")
+                    .withColumn("ucas_program_count")
+                    .withColumn("jacs_codes")
+                    .withColumn("ucas_subjects")
                     .withColumn("indexed")
                     .withColumn("enabled")
                     .withExtractor((Class) ImportedProgramExtractor.class),

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
@@ -7,6 +8,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSql
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
@@ -34,9 +37,9 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
         List<String> rows = Lists.newLinkedList();
         if (!definitions.isEmpty()) {
             boolean systemImport = definitions.get(0).getClass().equals(ImportedProgramImportDTO.class);
-            Map<Integer, Integer> importedInstitutionsByUcasId = importedEntityService.getImportedInstitutionsByUcasId();
+            Map<Integer, Integer> importedInstitutionsByUcasId = importedEntityService.getImportedUcasInstitutions();
             if (systemImport) {
-                importedInstitutionsByUcasId = importedEntityService.getImportedInstitutionsByUcasId();
+                importedInstitutionsByUcasId = importedEntityService.getImportedUcasInstitutions();
             }
 
             for (ImportedProgramRequest definition : definitions) {
@@ -59,8 +62,32 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
                 cells.add(prepareStringForSqlInsert(definition.getLevel()));
                 cells.add(prepareStringForSqlInsert(definition.getQualification()));
                 cells.add(prepareStringForSqlInsert(definition.getName()));
-                cells.add(prepareStringForSqlInsert(definition.getCode()));
-                cells.add(prepareBooleanForSqlInsert(false));                
+
+                if (systemImport) {
+                    cells.add(prepareStringForSqlInsert(definition.getCode()));
+                    cells.add(prepareIntegerForSqlInsert(((ImportedProgramImportDTO) definition).getWeight()));
+
+                    Set<String> jacsCodes = ((ImportedProgramImportDTO) definition).getJacsCodes();
+                    if (jacsCodes == null) {
+                        cells.add(NULL);
+                    } else {
+                        cells.add(prepareStringForSqlInsert(Joiner.on("|").join(((ImportedProgramImportDTO) definition).getJacsCodes())));
+                    }
+
+                    Set<Integer> ucasSubjects = ((ImportedProgramImportDTO) definition).getUcasSubjects();
+                    if (ucasSubjects == null) {
+                        cells.add(NULL);
+                    } else {
+                        cells.add(prepareStringForSqlInsert(Joiner.on("|").join(ucasSubjects)));
+                    }
+                } else {
+                    cells.add(NULL);
+                    cells.add(NULL);
+                    cells.add(NULL);
+                    cells.add(NULL);
+                }
+
+                cells.add(prepareBooleanForSqlInsert(false));
                 cells.add(prepareBooleanForSqlInsert(enable));
                 rows.add(prepareCellsForSqlInsert(cells));
             }

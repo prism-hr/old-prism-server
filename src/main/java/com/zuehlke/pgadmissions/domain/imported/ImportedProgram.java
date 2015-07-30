@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 @Entity
 @Table(name = "imported_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "qualification", "name" }) })
 public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapping>
-        implements ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer> {
+        implements ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer>, ImportedEntityIndexable {
 
     @Id
     @GeneratedValue
@@ -36,7 +36,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     private ImportedInstitution institution;
 
     @ManyToOne
-    @JoinColumn(name = "imported_qualification_type_id", nullable = false)
+    @JoinColumn(name = "imported_qualification_type_id")
     private ImportedEntitySimple qualificationType;
 
     @Column(name = "level")
@@ -48,12 +48,21 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "ucas_code", nullable = false)
+    private String ucasCode;
+    
+    @Column(name = "ucas_program_count")
+    private Integer ucasProgramCount;
+
+    @Column(name = "jacs_codes")
+    private String jacsCodes;
+
+    @Column(name = "ucas_subjects")
+    private String ucasSubjects;
 
     @Column(name = "indexed", nullable = false)
     private Boolean indexed;
-    
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -124,19 +133,45 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getCode() {
-        return code;
+    
+    public String getUcasCode() {
+        return ucasCode;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setUcasCode(String ucasCode) {
+        this.ucasCode = ucasCode;
     }
 
+    public Integer getUcasProgramCount() {
+        return ucasProgramCount;
+    }
+
+    public void setUcasProgramCount(Integer ucasProgramCount) {
+        this.ucasProgramCount = ucasProgramCount;
+    }
+
+    public String getJacsCodes() {
+        return jacsCodes;
+    }
+
+    public void setJacsCodes(String jacsCodes) {
+        this.jacsCodes = jacsCodes;
+    }
+
+    public String getUcasSubjects() {
+        return ucasSubjects;
+    }
+
+    public void setUcasSubjects(String ucasSubjects) {
+        this.ucasSubjects = ucasSubjects;
+    }
+
+    @Override
     public Boolean getIndexed() {
         return indexed;
     }
 
+    @Override
     public void setIndexed(Boolean indexed) {
         this.indexed = indexed;
     }

@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMappi
 @Entity
 @Table(name = "imported_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
 public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitutionMapping>
-        implements ImportedInstitutionDefinition<ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer> {
+        implements ImportedInstitutionDefinition<ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer>, ImportedEntityIndexable {
 
     @Id
     @GeneratedValue
@@ -44,6 +44,9 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Column(name = "facebook_id")
     private String facebookId;
 
+    @Column(name = "indexed", nullable = false)
+    private Boolean indexed;
+    
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -102,6 +105,16 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     }
 
     @Override
+    public Boolean getIndexed() {
+        return indexed;
+    }
+
+    @Override
+    public void setIndexed(Boolean indexed) {
+        this.indexed = indexed;
+    }
+    
+    @Override
     public Boolean getEnabled() {
         return enabled;
     }
@@ -154,7 +167,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     public String index() {
         return domicile.getId().toString() + super.index();
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(domicile.getId(), name);

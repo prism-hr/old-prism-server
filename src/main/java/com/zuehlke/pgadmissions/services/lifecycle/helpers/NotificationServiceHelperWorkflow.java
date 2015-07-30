@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 
 @Component
-public class NotificationServiceHelperWorkflow implements AbstractServiceHelper {
+public class NotificationServiceHelperWorkflow implements PrismServiceHelper {
 
     @Inject
     private CommentService commentService;

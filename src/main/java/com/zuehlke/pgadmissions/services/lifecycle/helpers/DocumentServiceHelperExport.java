@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class DocumentServiceHelperExport implements AbstractServiceHelper {
+public class DocumentServiceHelperExport implements PrismServiceHelper {
 
     @Value("${integration.amazon.on}")
     private Boolean amazonOn;

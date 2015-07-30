@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,7 +32,7 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
     private ImportedSubjectArea subjectArea;
 
     @Column(name = "relation_strength", nullable = false)
-    private Integer relationStrength;
+    private BigDecimal relationStrength;
 
     @Override
     public Integer getId() {
@@ -59,12 +61,12 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
     }
 
     @Override
-    public Integer getRelationStrength() {
+    public BigDecimal getRelationStrength() {
         return relationStrength;
     }
 
     @Override
-    public void setRelationStrength(Integer relationStrength) {
+    public void setRelationStrength(BigDecimal relationStrength) {
         this.relationStrength = relationStrength;
     }
 

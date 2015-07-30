@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -35,8 +34,6 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
-import com.zuehlke.pgadmissions.dto.ImportedProgramDTO;
-import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -278,53 +275,62 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public List<ImportedInstitution> getInstitutionsWithUcasId() {
+    public List<ImportedInstitution> getImportedUcasInstitutions() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
                 .add(Restrictions.isNotNull("ucasId"))
                 .addOrder(Order.asc("ucasId"))
                 .list();
     }
 
-    public List<ImportedProgramDTO> getImportedUcasPrograms() {
-        return (List<ImportedProgramDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
-                        .add(Projections.property("institution.id"), "institution") //
-                        .add(Projections.property("qualification"), "qualification") //
-                        .add(Projections.property("name"), "name") //
-                        .add(Projections.property("institution.ucasId"), "ucasId")) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull("institution.ucasId")) //
-                .setResultTransformer(Transformers.aliasToBean(ImportedProgramDTO.class)) //
-                .list();
-    }
-
-    public List<ImportedSubjectAreaDTO> getImportedSubjectAreas() {
-        return (List<ImportedSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
-                        .add(Projections.property("name"), "name") //
-                        .add(Projections.property("jacsCode"), "jacsCode") //
-                        .add(Projections.property("jacsCodeOld"), "jacsCodeOld") //
-                        .add(Projections.property("ucasSubject"), "ucasSubject") //
-                        .add(Projections.property("parent.id"), "parent")) //
-                .setResultTransformer(Transformers.aliasToBean(ImportedSubjectAreaDTO.class))
-                .list();
-    }
-
-    public List<ImportedSubjectArea> getChildImportedSubjectAreas() {
+    public List<ImportedSubjectArea> getImportedSubjectAreas() {
         return (List<ImportedSubjectArea>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
-                .add(Restrictions.isNotNull("parent")) //
                 .list();
     }
 
-    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas() {
+    public List<ImportedProgram> getUnindexedImportedUcasPrograms() {
+        return (List<ImportedProgram>) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
+                .add(Restrictions.isNotNull("ucasCode")) //
+                .add(Restrictions.eq("indexed", false)) //
+                .list();
+    }
+
+    public Double getAverageImportedProgramUcasProgramCount() {
+        return (Double) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
+                .setProjection(Projections.avg("ucasProgramCount"))
+                .add(Restrictions.isNotNull("ucasCode")) //
+                .uniqueResult();
+    }
+
+    public void fillImportedProgramUcasProgramCount(Integer ucasProgramCount) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update ImportedProgram " //
+                        + "set ucasProgramCount = :ucasProgramCount "
+                        + "where ucasProgramCount is null") //
+                .setParameter("ucasProgramCount", ucasProgramCount) //
+                .executeUpdate();
+    }
+
+    public List<ImportedProgram> getUnindexedImportedNonUcasPrograms() {
+        return (List<ImportedProgram>) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
+                .add(Restrictions.isNull("ucasCode")) //
+                .add(Restrictions.isNotNull("ucasProgramCount")) //
+                .add(Restrictions.eq("indexed", false)) //
+                .list();
+    }
+
+    public List<ImportedInstitution> getUnindexedImportedInstitutions() {
+        return (List<ImportedInstitution>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
+                .add(Restrictions.eq("indexed", false)) //
+                .list();
+    }
+
+    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(ImportedInstitution importedInstitution) {
         return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedProgramSubjectArea.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("program.institution.id"), "institution") //
                         .add(Projections.groupProperty("subjectArea.id"), "subjectArea") //
                         .add(Projections.sum("relationStrength"), "relationStrength")) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program.institution", importedInstitution))
                 .setResultTransformer(Transformers.aliasToBean(ImportedInstitutionSubjectAreaDTO.class)) //
                 .list();
     }
@@ -340,15 +346,6 @@ public class ImportedEntityDAO {
                 "insert into " + table + " (" + columns + ") "
                         + "values " + inserts + " "
                         + "on duplicate key update " + updates)
-                .executeUpdate();
-    }
-
-    public void setImportedProgramsIndexed(Collection<Integer> importedPrograms) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update ImportedProgram "
-                        + "set indexed = true "
-                        + "where id in (:importedPrograms)")
-                .setParameterList("importedPrograms", importedPrograms) //
                 .executeUpdate();
     }
 

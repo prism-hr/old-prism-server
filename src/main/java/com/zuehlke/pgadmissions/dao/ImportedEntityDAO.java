@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDT
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgramSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.WeightedRelationImported;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -333,13 +332,6 @@ public class ImportedEntityDAO {
     public void deleteImportedEntityTypes() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ImportedEntityType") //
-                .executeUpdate();
-    }
-
-    public <T extends WeightedRelationImported> void disableImportedEntityRelations(Class<T> entityClass) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + entityClass.getSimpleName() + " " //
-                        + "set enabled = false") //
                 .executeUpdate();
     }
 

@@ -10,10 +10,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.WeightedRelation;
 
 @Entity
 @Table(name = "imported_program_subject_area", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_program_id", "imported_subject_area_id" }) })
-public class ImportedProgramSubjectArea extends WeightedRelationImported implements UniqueEntity {
+public class ImportedProgramSubjectArea extends WeightedRelation implements UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -29,7 +30,7 @@ public class ImportedProgramSubjectArea extends WeightedRelationImported impleme
 
     @Column(name = "relation_strength", nullable = false)
     private Integer relationStrength;
-    
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -67,16 +68,6 @@ public class ImportedProgramSubjectArea extends WeightedRelationImported impleme
     @Override
     public void setRelationStrength(Integer relationStrength) {
         this.relationStrength = relationStrength;
-    }
-
-    @Override
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
     }
 
     @Override

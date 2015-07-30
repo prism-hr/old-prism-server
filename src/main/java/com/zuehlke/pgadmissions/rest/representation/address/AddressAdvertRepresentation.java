@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.address;
 
-import java.math.BigDecimal;
-
+import com.zuehlke.pgadmissions.domain.address.Address;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
-import com.zuehlke.pgadmissions.domain.address.Address;
 
 public class AddressAdvertRepresentation extends Address implements AddressDefinition<ImportedAdvertDomicileResponse> {
 
@@ -13,9 +10,7 @@ public class AddressAdvertRepresentation extends Address implements AddressDefin
 
     private String googleId;
 
-    private BigDecimal locationX;
-
-    private BigDecimal locationY;
+    private CoordinatesRepresentation coordinates;
 
     private String locationString;
 
@@ -37,20 +32,12 @@ public class AddressAdvertRepresentation extends Address implements AddressDefin
         this.googleId = googleId;
     }
 
-    public BigDecimal getLocationX() {
-        return locationX;
+    public CoordinatesRepresentation getCoordinates() {
+        return coordinates;
     }
 
-    public void setLocationX(BigDecimal locationX) {
-        this.locationX = locationX;
-    }
-
-    public BigDecimal getLocationY() {
-        return locationY;
-    }
-
-    public void setLocationY(BigDecimal locationY) {
-        this.locationY = locationY;
+    public void setCoordinates(CoordinatesRepresentation coordinates) {
+        this.coordinates = coordinates;
     }
 
     public String getLocationString() {

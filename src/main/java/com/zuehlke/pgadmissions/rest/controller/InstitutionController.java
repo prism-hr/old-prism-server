@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -33,6 +15,17 @@ import com.zuehlke.pgadmissions.rest.representation.resource.institution.Institu
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -59,7 +52,7 @@ public class InstitutionController {
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
     public List<InstitutionRepresentationSimple> getInstitutions(@RequestParam(required = false) String query,
-            @RequestParam(required = false) String[] googleIds) {
+                                                                 @RequestParam(required = false) String[] googleIds) {
         return institutionService.getInstitutions(query, googleIds).stream()
                 .map(institutionMapper::getInstitutionRepresentationSimple)
                 .collect(Collectors.toList());
@@ -91,6 +84,18 @@ public class InstitutionController {
         return institution == null ? null : resourceMapper.getResourceRepresentationSimple(institution);
     }
 
+    @RequestMapping(method = RequestMethod.GET, params = "subjectAreas")
+    @ResponseBody
+    public List<InstitutionRepresentationSimple> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas) {
+        List<InstitutionRepresentationSimple> institutions = Stream.of(5243, 6856, 6876, 6873, 6871)
+                .map(id -> institutionService.getById(id))
+                .map(institutionMapper::getInstitutionRepresentationSimple)
+                .collect(Collectors.toList());
+        return institutions;
+
+//        return institutionService.getInstitutionBySubjectAreas(subjectAreas);
+    }
+
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)
     public List<ResourceRepresentationSimple> getPrograms(@PathVariable Integer institutionId) {
         return programService.getApprovedPrograms(institutionId);
@@ -104,7 +109,7 @@ public class InstitutionController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{institutionId}/importedData/{type}", method = RequestMethod.POST)
     public <T extends ImportedEntityRequest> void importData(@PathVariable Integer institutionId, @PathVariable PrismImportedEntity type,
-            HttpServletRequest request) throws IOException {
+                                                             HttpServletRequest request) throws IOException {
         Class<T> requestClass = (Class<T>) type.getRequestClass();
         List<T> representations = importedEntityMapper.getImportedEntityRepresentations(requestClass, request.getInputStream());
         importedEntityService.mergeImportedEntities(institutionService.getById(institutionId), type, representations);

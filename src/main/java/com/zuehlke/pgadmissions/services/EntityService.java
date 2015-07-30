@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -34,6 +33,10 @@ public class EntityService {
 
     public <T> List<T> list(Class<T> klass) {
         return entityDAO.list(klass);
+    }
+
+    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
+        return entityDAO.listByProperty(klass, propertyName, propertyValue);
     }
 
     public <T extends UniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
@@ -80,7 +83,7 @@ public class EntityService {
     public void clear() {
         entityDAO.clear();
     }
-    
+
     public Object merge(Object entity) {
         return entityDAO.merge(entity);
     }

@@ -80,6 +80,22 @@ public class ImportedSubjectAreaDTO {
         return specificity;
     }
 
+    public void prepare() {
+        this.jacsCodes = jacsCode.split("\\|");
+        this.jacsCodesOld = jacsCodeOld == null ? null : jacsCodeOld.split("\\|");
+
+        int specificity = 1;
+        for (String code : jacsCodes) {
+            for (int i = 0; i < code.length() - 1; i++) {
+                Character character = code.charAt(i);
+                if (Character.isDigit(character) && !character.toString().equals("0")) {
+                    specificity++;
+                }
+            }
+            this.specificity = (this.specificity == null || specificity < this.specificity) ? specificity : this.specificity;
+        }
+    }
+
     public ImportedSubjectAreaDTO withId(Integer id) {
         this.id = id;
         return this;

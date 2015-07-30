@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOT
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -16,7 +15,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -97,7 +95,6 @@ import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDura
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismFileUtils;
@@ -170,9 +167,6 @@ public class SystemService {
 
     @Inject
     private ImportedEntityService importedEntityService;
-
-    @Inject
-    private TargetingService targetingService;
 
     @Inject
     private ImportedEntityMapper importedEntityMapper;
@@ -281,7 +275,6 @@ public class SystemService {
     @Transactional(timeout = 600)
     @SuppressWarnings("unchecked")
     public <T extends ImportedEntityRequest> void initializeSystemData() {
-        Map<PrismImportedEntity, List<T>> definitions = Maps.newHashMap();
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
             ImportedEntityType importedEntityType = entityService.getOrCreate(new ImportedEntityType().withId(prismImportedEntity));
 
@@ -293,7 +286,6 @@ public class SystemService {
                     List<T> representations = importedEntityMapper.getImportedEntityRepresentations(requestClass, inputStream);
                     importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
                     importedEntityType.setLastImportedTimestamp(new DateTime(importedDataSource.getObjectMetadata().getLastModified()));
-                    definitions.put(prismImportedEntity, representations);
                 } catch (Exception e) {
                     logger.error("Unable to initialize system data for: " + prismImportedEntity.name(), e);
                 }
@@ -301,12 +293,6 @@ public class SystemService {
                 logger.info("Skipped initializing system data for: " + prismImportedEntity.name());
             }
         }
-
-        logger.info("Initializing imported program subject areas");
-        targetingService.mergeImportedProgramSubjectAreas((List<ImportedProgramImportDTO>) definitions.get(IMPORTED_PROGRAM));
-
-        logger.info("Initializing imported institution subject areas");
-        targetingService.mergeImportedInstitutionSubjectAreas();
     }
 
     @Transactional

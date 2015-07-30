@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.StateService;
 
 @Component
-public class StateServiceHelperEscalation implements AbstractServiceHelper {
+public class StateServiceHelperEscalation implements PrismServiceHelper {
 
 	@Inject
 	private ActionService actionService;

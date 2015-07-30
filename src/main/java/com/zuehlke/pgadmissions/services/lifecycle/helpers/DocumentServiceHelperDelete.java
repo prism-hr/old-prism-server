@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class DocumentServiceHelperDelete implements AbstractServiceHelper {
+public class DocumentServiceHelperDelete implements PrismServiceHelper {
 
     @Value("${integration.amazon.on}")
     private Boolean amazonOn;

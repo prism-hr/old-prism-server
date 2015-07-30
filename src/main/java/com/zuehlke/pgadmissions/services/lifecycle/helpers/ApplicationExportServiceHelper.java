@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.services.ApplicationExportService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 
 @Component
-public class ApplicationExportServiceHelper implements AbstractServiceHelper {
+public class ApplicationExportServiceHelper implements PrismServiceHelper {
 
     @Inject
     private ApplicationService applicationService;

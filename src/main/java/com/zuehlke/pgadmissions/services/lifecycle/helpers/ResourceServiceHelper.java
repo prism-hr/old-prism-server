@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
 @Component
-public class ResourceServiceHelper implements AbstractServiceHelper {
+public class ResourceServiceHelper implements PrismServiceHelper {
 
 	@Inject
 	private ResourceService resourceService;

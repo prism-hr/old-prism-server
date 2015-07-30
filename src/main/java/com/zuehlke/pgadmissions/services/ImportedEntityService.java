@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlIn
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,14 +34,12 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.WeightedRelationImported;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
-import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
@@ -111,13 +108,35 @@ public class ImportedEntityService {
         return programs;
     }
 
-    public Map<Integer, Integer> getImportedInstitutionsByUcasId() {
+    public Map<Integer, Integer> getImportedUcasInstitutions() {
         Map<Integer, Integer> references = Maps.newHashMap();
-        List<ImportedInstitution> institutions = importedEntityDAO.getInstitutionsWithUcasId();
+        List<ImportedInstitution> institutions = importedEntityDAO.getImportedUcasInstitutions();
         for (ImportedInstitution institution : institutions) {
             references.put(institution.getUcasId(), institution.getId());
         }
         return references;
+    }
+
+    public List<ImportedProgram> getUnindexedImportedUcasPrograms() {
+        return importedEntityDAO.getUnindexedImportedUcasPrograms();
+    }
+
+    public List<ImportedProgram> getUnindexedImportedNonUcasPrograms() {
+        return importedEntityDAO.getUnindexedImportedUcasPrograms();
+    }
+
+    public void setImportedProgramIndexed(Integer importedProgramId, boolean indexed) {
+        ImportedProgram importedProgram = getById(ImportedProgram.class, importedProgramId);
+        importedProgram.setIndexed(indexed);
+    }
+
+    public List<ImportedInstitution> getUnindexedImportedInstitutions() {
+        return importedEntityDAO.getUnindexedImportedInstitutions();
+    }
+
+    public void setImportedInstitutionIndexed(Integer importedInstitutionId, boolean indexed) {
+        ImportedInstitution importedInstitution = getById(ImportedInstitution.class, importedInstitutionId);
+        importedInstitution.setIndexed(indexed);
     }
 
     public <T extends ImportedEntity<?, U>, U extends ImportedEntityMapping<T>> U getEnabledImportedEntityMapping(Institution institution, T importedEntity) {
@@ -266,7 +285,7 @@ public class ImportedEntityService {
     }
 
     public List<ImportedInstitution> getInstitutionsWithUcasId() {
-        return importedEntityDAO.getInstitutionsWithUcasId();
+        return importedEntityDAO.getImportedUcasInstitutions();
     }
 
     public List<ImportedProgram> getImportedPrograms(String searchTerm) {
@@ -277,32 +296,23 @@ public class ImportedEntityService {
         importedEntityDAO.deleteImportedEntityTypes();
     }
 
-    public <T extends WeightedRelationImported> void disableImportedEntityRelations(Class<T> entityClass) {
-        importedEntityDAO.disableImportedEntityRelations(entityClass);
-    }
-
     public void executeBulkMerge(String table, String columns, String inserts, String updates) {
         importedEntityDAO.executeBulkMerge(table, columns, inserts, updates);
     }
-    
-    public void setImportedProgramsIndexed(Collection<Integer> importedPrograms) {
-        importedEntityDAO.setImportedProgramsIndexed(importedPrograms);
+
+    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(ImportedInstitution importedInstitution) {
+        return importedEntityDAO.getImportedInstitutionSubjectAreas(importedInstitution);
     }
 
-    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas() {
-        return importedEntityDAO.getImportedInstitutionSubjectAreas();
-    }
-
-    public List<com.zuehlke.pgadmissions.dto.ImportedProgramDTO> getImportedUcasPrograms() {
-        return importedEntityDAO.getImportedUcasPrograms();
-    }
-
-    public List<ImportedSubjectAreaDTO> getImportedSubjectAreas() {
+    public List<ImportedSubjectArea> getImportedSubjectAreas() {
         return importedEntityDAO.getImportedSubjectAreas();
     }
 
-    public List<ImportedSubjectArea> getChildImportedSubjectAreas() {
-        return importedEntityDAO.getChildImportedSubjectAreas();
+    public void fillImportedUcasProgramCount() {
+        Double averageUcasProgramCount = importedEntityDAO.getAverageImportedProgramUcasProgramCount();
+        if (averageUcasProgramCount != null) {
+            importedEntityDAO.fillImportedProgramUcasProgramCount(averageUcasProgramCount.intValue());
+        }
     }
 
     // private Program mergeProgram(Institution institution, Programme

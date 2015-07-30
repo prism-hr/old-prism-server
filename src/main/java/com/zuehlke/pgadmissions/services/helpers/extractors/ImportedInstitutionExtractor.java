@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
@@ -31,8 +32,12 @@ public class ImportedInstitutionExtractor<T extends ImportedInstitutionRequest> 
                 if (systemImport) {
                     cells.add(prepareIntegerForSqlInsert(((ImportedInstitutionImportDTO) definition).getUcasId()));
                     cells.add(prepareStringForSqlInsert(((ImportedInstitutionImportDTO) definition).getFacebookId()));
+                } else {
+                    cells.add(NULL);
+                    cells.add(NULL);
                 }
 
+                cells.add(prepareBooleanForSqlInsert(false));
                 cells.add(prepareBooleanForSqlInsert(enable));
                 rows.add(prepareCellsForSqlInsert(cells));
             }

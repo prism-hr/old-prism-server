@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import jersey.repackaged.com.google.common.base.Objects;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
 
@@ -142,6 +143,23 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
 
     public Set<ImportedSubjectArea> getChildren() {
         return children;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ImportedProgramSubjectArea other = (ImportedProgramSubjectArea) object;
+        return Objects.equal(id, other.getId());
     }
 
     @Override

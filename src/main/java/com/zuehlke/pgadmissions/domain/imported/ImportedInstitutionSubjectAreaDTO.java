@@ -1,20 +1,12 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-public class ImportedInstitutionSubjectAreaDTO {
+import java.math.BigDecimal;
 
-    private Integer institution;
+public class ImportedInstitutionSubjectAreaDTO {
 
     private Integer subjectArea;
 
-    private Long relationStrength;
-
-    public Integer getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(Integer institution) {
-        this.institution = institution;
-    }
+    private BigDecimal relationStrength;
 
     public Integer getSubjectArea() {
         return subjectArea;
@@ -24,11 +16,11 @@ public class ImportedInstitutionSubjectAreaDTO {
         this.subjectArea = subjectArea;
     }
 
-    public Long getRelationStrength() {
+    public BigDecimal getRelationStrength() {
         return relationStrength;
     }
 
-    public void setRelationStrength(Long relationStrength) {
+    public void setRelationStrength(BigDecimal relationStrength) {
         this.relationStrength = relationStrength;
     }
 

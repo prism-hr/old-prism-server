@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class NotificationServiceHelperRecommendation implements AbstractServiceHelper {
+public class NotificationServiceHelperRecommendation implements PrismServiceHelper {
 
     @Inject
     private NotificationService notificationService;

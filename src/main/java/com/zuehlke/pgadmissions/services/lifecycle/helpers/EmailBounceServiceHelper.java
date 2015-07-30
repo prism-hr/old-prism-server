@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.zuehlke.pgadmissions.services.EmailBounceService;
 
 @Service
-public class EmailBounceServiceHelper implements AbstractServiceHelper {
+public class EmailBounceServiceHelper implements PrismServiceHelper {
 	
     @Inject
     private EmailBounceService emailBounceService;

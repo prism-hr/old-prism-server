@@ -189,6 +189,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withPivotColumn("qualification")
                     .withPivotColumn("name")
                     .withColumn("code")
+                    .withColumn("indexed")
                     .withColumn("enabled")
                     .withExtractor((Class) ImportedProgramExtractor.class),
             new PrismImportedEntityMappingInsertDefinition()

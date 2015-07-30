@@ -60,6 +60,7 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
                 cells.add(prepareStringForSqlInsert(definition.getQualification()));
                 cells.add(prepareStringForSqlInsert(definition.getName()));
                 cells.add(prepareStringForSqlInsert(definition.getCode()));
+                cells.add(prepareBooleanForSqlInsert(false));                
                 cells.add(prepareBooleanForSqlInsert(enable));
                 rows.add(prepareCellsForSqlInsert(cells));
             }

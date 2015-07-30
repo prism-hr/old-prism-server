@@ -2,8 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.wrapInCharacterWildcard;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.wrapInWordBoundary;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
 import static org.apache.commons.lang3.StringUtils.rightPad;
 
 import java.util.List;
@@ -28,6 +27,8 @@ import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.ImportedSubjectAreaIndexDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import com.zuehlke.pgadmissions.services.indexers.ImportedSubjectAreaIndex;
+import com.zuehlke.pgadmissions.utils.PrismStringUtils;
 
 @Service
 @Transactional
@@ -40,6 +41,9 @@ public class TargetingService {
 
     @Inject
     private ImportedEntityService importedEntityService;
+
+    @Inject
+    private ImportedSubjectAreaIndex importedSubjectAreaIndex;
 
     public void mergeImportedProgramSubjectAreas(List<ImportedProgramImportDTO> programDefinitions) {
         List<String> inserts = getImportedProgramSubjectAreaInserts(programDefinitions);
@@ -98,31 +102,20 @@ public class TargetingService {
                 }
             }
 
-            if (insertDefinitions.get(program).isEmpty()) {
-                String programName = cleanStringToLowerCase(programDefinition.getName());
-                for (ImportedSubjectAreaDTO subjectArea : subjectAreas) {
-                    Integer subjectAreaId = subjectArea.getId();
-                    String subjectAreaName = subjectArea.getName();
-
-                    if (cleanStringToLowerCase(programName).contains(subjectAreaName)) {
-                        insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectAreaId, weight));
-                    } else {
-                        int confidence = 0;
-                        for (Set<String> subjectAreaToken : subjectArea.getTokens()) {
-                            for (String word : subjectAreaToken) {
-                                if (programName.matches(wrapInCharacterWildcard(wrapInWordBoundary(word)))) {
-                                    confidence++;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (confidence > 0) {
-                            insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(subjectAreaId, weight, confidence));
-                            maxConfidence = confidence > maxConfidence ? confidence : maxConfidence;
-                        }
-                    }
+            Map<Integer, Integer> matches = Maps.newHashMap();
+            Set<String> programNameTokens = tokenize(programDefinition.getName());
+            for (String programNameToken : programNameTokens) {
+                Set<Integer> hits = importedSubjectAreaIndex.getMatchingSubjectAreas(programNameToken);
+                for (Integer hit : hits) {
+                    Integer confidence = matches.get(hit);
+                    matches.put(hit, confidence == null ? 1 : confidence + 1);
                 }
+            }
+
+            for (Map.Entry<Integer, Integer> match : matches.entrySet()) {
+                Integer confidence = match.getValue();
+                insertDefinitions.put(program, new ImportedProgramSubjectAreaDTO(match.getKey(), weight, confidence));
+                maxConfidence = confidence > maxConfidence ? confidence : maxConfidence;
             }
 
             if (insertDefinitions.get(program).isEmpty()) {

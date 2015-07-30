@@ -36,18 +36,17 @@ public class PrismStringUtils {
         return cleanString(string).toLowerCase();
     }
 
-    public static Set<Set<String>> tokenize(String string) {
+    public static Set<String> tokenize(String string) {
         String cleanString = cleanString(replaceEachWord(replaceEachChar(string.toLowerCase(), STOP_CHARS, SPACE), STOP_WORDS, SPACE));
 
-        Set<Set<String>> tokens = Sets.newLinkedHashSet();
+        Set<String> tokens = Sets.newLinkedHashSet();
         for (String word : cleanString.split(" ")) {
             if (isValidToken(word)) {
-                Set<String> token = Sets.newHashSet(word);
+                tokens.add(word);
                 String alternateWord = replaceEachChar(word, JOIN_CHARS, SPACE);
                 if (isValidToken(alternateWord)) {
-                    token.add(alternateWord);
+                    tokens.add(alternateWord);
                 }
-                tokens.add(token);
             }
         }
 
@@ -75,7 +74,7 @@ public class PrismStringUtils {
         }
         return string;
     }
-    
+
     private static boolean isValidToken(String word) {
         return !(isNumeric(word) || word.length() == 1);
     }

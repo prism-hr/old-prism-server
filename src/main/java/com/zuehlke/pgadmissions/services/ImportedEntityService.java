@@ -317,6 +317,7 @@ public class ImportedEntityService {
         if (averageUcasProgramCount != null) {
             importedEntityDAO.fillImportedProgramUcasProgramCount(averageUcasProgramCount.intValue());
         }
+        entityService.flush();
     }
 
     // private Program mergeProgram(Institution institution, Programme

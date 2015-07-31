@@ -151,7 +151,7 @@ public class TargetingService {
                 if (!insertDefinitions.contains(insertParentDefinition)) {
                     insertDefinitionsParent.add(insertParentDefinition);
                 } else {
-                    break;
+                    continue;
                 }
                 confidenceDivisor = confidenceDivisor * TARGETING_CONFIDENCE_DIVISOR;
             }

@@ -120,6 +120,10 @@ public class ImportedEntityService {
         }
         return references;
     }
+    
+    public Long getUnindexedProgramCount() {
+        return importedEntityDAO.getUnindexedProgramCount();
+    }
 
     public List<ImportedProgram> getUnindexedImportedUcasPrograms() {
         return importedEntityDAO.getUnindexedImportedUcasPrograms();

@@ -37,9 +37,11 @@ public class TargetingService {
 
     private static final Integer TARGETING_PRECISION = 9;
 
-    private static final BigDecimal TARGETING_KEYWORD_THRESHOLD = new BigDecimal(0.5);
+    private static final Integer TARGETING_CONFIDENCE_DIVISOR = 2;
 
-    private static final BigDecimal TARGETING_SUBJECT_THRESHOLD = new BigDecimal(0.1);
+    private static final BigDecimal TARGETING_KEYWORD_THRESHOLD = new BigDecimal(0.25);
+
+    private static final BigDecimal TARGETING_SUBJECT_THRESHOLD = new BigDecimal(0.05);
 
     private static final String IMPORTED_ENTITY_RELATION_UPDATE = "relation_strength = values(relation_strength)";
 
@@ -101,7 +103,7 @@ public class TargetingService {
                                 assignImportedSubjectArea(insertDefinitions, jacsCodeParent, weight,
                                         confidence.divide(new BigDecimal(confidenceDivisor), TARGETING_PRECISION, HALF_UP));
                             }
-                            confidenceDivisor++;
+                            confidenceDivisor = confidenceDivisor * TARGETING_CONFIDENCE_DIVISOR;
                         }
                     }
                 }
@@ -141,9 +143,17 @@ public class TargetingService {
         }
 
         for (ImportedProgramSubjectAreaDTO programSubjectArea : insertDefinitions) {
+            int confidenceDivisor = TARGETING_CONFIDENCE_DIVISOR;
             ImportedSubjectArea subjectArea = importedSubjectAreaIndex.getById(programSubjectArea.getId());
             for (ImportedSubjectArea subjectAreaParent : importedSubjectAreaIndex.getParents(subjectArea)) {
-                insertDefinitionsParent.add(new ImportedProgramSubjectAreaDTO(subjectAreaParent.getId(), weight, programSubjectArea.getConfidence()));
+                ImportedProgramSubjectAreaDTO insertParentDefinition = new ImportedProgramSubjectAreaDTO(subjectAreaParent.getId(), weight, programSubjectArea
+                        .getConfidence().divide(new BigDecimal(confidenceDivisor), TARGETING_PRECISION, HALF_UP));
+                if (!insertDefinitions.contains(insertParentDefinition)) {
+                    insertDefinitionsParent.add(insertParentDefinition);
+                    confidenceDivisor = confidenceDivisor * TARGETING_CONFIDENCE_DIVISOR;
+                } else {
+                    break;
+                }
             }
         }
 
@@ -167,10 +177,8 @@ public class TargetingService {
         BigDecimal fidelity = new BigDecimal(1).divide(new BigDecimal(relations.size()), TARGETING_PRECISION, HALF_UP);
         for (ImportedProgramSubjectAreaDTO programSubjectArea : relations) {
             Integer subjectAreaId = programSubjectArea.getId();
-            ImportedSubjectArea subjectArea = importedSubjectAreaIndex.getById(subjectAreaId);
             values.add("(" + Joiner.on(", ").join(program.getId().toString(), subjectAreaId.toString(), //
-                    fidelity.multiply(programSubjectArea.getWeight()).multiply(programSubjectArea.getConfidence()) //
-                            .multiply(new BigDecimal(importedSubjectAreaIndex.getSpecificity(subjectArea))).toPlainString()) + ")");
+                    fidelity.multiply(programSubjectArea.getWeight()).multiply(programSubjectArea.getConfidence()).toPlainString()) + ")");
         }
         return Joiner.on(", ").join(values);
     }

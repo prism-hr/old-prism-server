@@ -109,9 +109,4 @@ public class ImportedSubjectAreaIndex {
         setParents(subjectAreaParent, subjectAreaParent.getParent());
     }
 
-    public Integer getSpecificity(ImportedSubjectArea subjectArea) {
-        Set<ImportedSubjectArea> parents = getParents(subjectArea);
-        return parents == null ? 1 : (parents.size() + 1);
-    }
-
 }

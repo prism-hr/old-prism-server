@@ -150,10 +150,10 @@ public class TargetingService {
                         .getConfidence().divide(new BigDecimal(confidenceDivisor), TARGETING_PRECISION, HALF_UP));
                 if (!insertDefinitions.contains(insertParentDefinition)) {
                     insertDefinitionsParent.add(insertParentDefinition);
-                    confidenceDivisor = confidenceDivisor * TARGETING_CONFIDENCE_DIVISOR;
                 } else {
                     break;
                 }
+                confidenceDivisor = confidenceDivisor * TARGETING_CONFIDENCE_DIVISOR;
             }
         }
 

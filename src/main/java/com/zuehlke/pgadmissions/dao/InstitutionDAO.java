@@ -194,8 +194,9 @@ public class InstitutionDAO {
 
     public List<Institution> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
         List<Object[]> results = sessionFactory.getCurrentSession().createSQLQuery(
-                "select i.id, i.name, ((acos(sin(:baseLatitude * pi() / 180) * sin(aa.location_x * pi() / 180)" +
-                        " + cos(:baseLatitude * pi() / 180) * cos(aa.location_x * pi() / 180) * cos((:baseLongitude - aa.location_y)" +
+                "select institution.id, institution.name, sum(imported_institution_subject_area.relation_strength) as relevance," + 
+                        " ((acos(sin(:baseLatitude * pi() / 180) * sin(advert_address.location_x * pi() / 180)" +
+                        " + cos(:baseLatitude * pi() / 180) * cos(advert_address.location_x * pi() / 180) * cos((:baseLongitude - advert_address.location_y)" +
                         " * pi() / 180)) * 180 / pi()) * 60 * 1.1515) as distance" +
                         " from institution" +
                         " inner join imported_institution on institution.imported_institution_id = imported_institution.id" +
@@ -204,7 +205,8 @@ public class InstitutionDAO {
                         " inner join advert_address on advert.advert_address_id = advert_address.id" +
                         " where advert_address.location_x is not null" +
                         " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
-                        " order by distance asc" +
+                        " group by institution.id" +
+                        " order by relevance desc, distance asc" +
                         " limit 20")
                 .setParameter("baseLatitude", coordinates.getLatitude())
                 .setParameter("baseLongitude", coordinates.getLongitude())

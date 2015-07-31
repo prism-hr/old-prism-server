@@ -92,12 +92,6 @@ public class InstitutionController {
     @ResponseBody
     public List<InstitutionRepresentationSimple> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas, @RequestParam Integer advertId) {
         Advert advert = advertService.getById(advertId);
-//        List<InstitutionRepresentationSimple> institutions = Stream.of(5243, 6874, 6856, 6876, 6873, 6871)
-//                .map(id -> institutionService.getById(id))
-//                .map(institutionMapper::getInstitutionRepresentationSimple)
-//                .collect(Collectors.toList());
-//        return institutions;
-
         List<Institution> institutions = institutionService.getInstitutionBySubjectAreas(advert.getAddress().getCoordinates(), subjectAreas);
         return institutions
                 .stream().map(institutionMapper::getInstitutionRepresentationSimple)

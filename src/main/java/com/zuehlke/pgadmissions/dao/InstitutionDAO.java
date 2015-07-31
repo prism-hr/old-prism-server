@@ -1,5 +1,31 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.springframework.stereotype.Repository;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -9,29 +35,8 @@ import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+
 import freemarker.template.Template;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.springframework.stereotype.Repository;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -189,16 +194,16 @@ public class InstitutionDAO {
 
     public List<Institution> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
         List<Object[]> results = sessionFactory.getCurrentSession().createSQLQuery(
-                "SELECT i.id, i.name, ((ACOS(SIN(:baseLatitude * PI() / 180) * SIN(aa.location_x * PI() / 180)" +
-                        " + COS(:baseLatitude * PI() / 180) * COS(aa.location_x * PI() / 180) * COS((:baseLongitude - aa.location_y)" +
-                        " * PI() / 180)) * 180 / PI()) * 60 * 1.1515) as distance" +
-                        " from institution i" +
-                        " join imported_institution ii on i.imported_institution_id = ii.id" +
-                        " left join imported_institution_subject_area sa on sa.imported_institution_id = ii.id" +
-                        " join advert a on i.advert_id = a.id" +
-                        " join advert_address aa on a.advert_address_id = aa.id" +
-                        " where aa.location_x is not null" +
-                        " and sa.imported_subject_area_id in (:subjectAreas)" +
+                "select i.id, i.name, ((acos(sin(:baseLatitude * pi() / 180) * sin(aa.location_x * pi() / 180)" +
+                        " + cos(:baseLatitude * pi() / 180) * cos(aa.location_x * pi() / 180) * cos((:baseLongitude - aa.location_y)" +
+                        " * pi() / 180)) * 180 / pi()) * 60 * 1.1515) as distance" +
+                        " from institution" +
+                        " inner join imported_institution on institution.imported_institution_id = imported_institution.id" +
+                        " inner join imported_institution_subject_area on imported_institution_subject_area.imported_institution_id = imported_institution.id" +
+                        " inner join advert on institution.advert_id = advert.id" +
+                        " inner join advert_address on advert.advert_address_id = advert_address.id" +
+                        " where advert_address.location_x is not null" +
+                        " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
                         " order by distance asc" +
                         " limit 20")
                 .setParameter("baseLatitude", coordinates.getLatitude())
@@ -210,4 +215,5 @@ public class InstitutionDAO {
                 .add(Restrictions.in("id", institutionIds))
                 .list();
     }
+
 }

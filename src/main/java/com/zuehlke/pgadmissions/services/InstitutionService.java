@@ -20,7 +20,10 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionTargetingDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 
 @Service
 @Transactional
@@ -35,6 +38,9 @@ public class InstitutionService {
     @Inject
     private EntityService entityService;
 
+    @Inject
+    private InstitutionMapper institutionMapper;
+    
     @Inject
     private ResourceService resourceService;
 
@@ -161,7 +167,12 @@ public class InstitutionService {
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
 
-    public List<Institution> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
-        return institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreas);
+    public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
+        List<InstitutionRepresentationTargeting> representations = Lists.newLinkedList();
+        for (InstitutionTargetingDTO target : institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreas)) {
+            representations.add(institutionMapper.getInstitutionRepresentationTargeting(getById(target.getId()), target.getRelevance(), target.getDistance()));
+        }
+        return representations;
     }
+
 }

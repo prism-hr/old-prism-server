@@ -7,10 +7,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -22,6 +20,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.DoubleType;
+import org.hibernate.type.IntegerType;
 import org.springframework.stereotype.Repository;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionTargetingDTO;
 
 import freemarker.template.Template;
 
@@ -173,7 +174,7 @@ public class InstitutionDAO {
     }
 
     public List<ResourceChildCreationDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(List<PrismState> states,
-                                                                                                       boolean userLoggedIn) {
+            boolean userLoggedIn) {
         return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("program.institution"), "resource") //
@@ -192,12 +193,10 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<Institution> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
-        List<Object[]> results = sessionFactory.getCurrentSession().createSQLQuery(
-                "select institution.id, institution.name, sum(imported_institution_subject_area.relation_strength) as relevance," + 
-                        " ((acos(sin(:baseLatitude * pi() / 180) * sin(advert_address.location_x * pi() / 180)" +
-                        " + cos(:baseLatitude * pi() / 180) * cos(advert_address.location_x * pi() / 180) * cos((:baseLongitude - advert_address.location_y)" +
-                        " * pi() / 180)) * 180 / pi()) * 60 * 1.1515) as distance" +
+    public List<InstitutionTargetingDTO> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
+        return (List<InstitutionTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
+                "select institution.id as id, sum(imported_institution_subject_area.relation_strength) as relevance," +
+                        " haversine_distance(:baseLatitude, :baseLongitude, advert_address.location_x, advert_address.location_y) as distance" +
                         " from institution" +
                         " inner join imported_institution on institution.imported_institution_id = imported_institution.id" +
                         " inner join imported_institution_subject_area on imported_institution_subject_area.imported_institution_id = imported_institution.id" +
@@ -206,15 +205,14 @@ public class InstitutionDAO {
                         " where advert_address.location_x is not null" +
                         " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
                         " group by institution.id" +
-                        " order by relevance desc, distance asc" +
-                        " limit 20")
+                        " order by relevance desc, distance asc")
+                .addScalar("id", IntegerType.INSTANCE)
+                .addScalar("relevance", DoubleType.INSTANCE)
+                .addScalar("distance", DoubleType.INSTANCE)
                 .setParameter("baseLatitude", coordinates.getLatitude())
                 .setParameter("baseLongitude", coordinates.getLongitude())
                 .setParameterList("subjectAreas", subjectAreas)
-                .list();
-        List<Integer> institutionIds = results.stream().map(result -> (Integer) result[0]).collect(Collectors.toList());
-        return institutionIds.isEmpty() ? Collections.emptyList() : sessionFactory.getCurrentSession().createCriteria(Institution.class)
-                .add(Restrictions.in("id", institutionIds))
+                .setResultTransformer(Transformers.aliasToBean(InstitutionTargetingDTO.class))
                 .list();
     }
 

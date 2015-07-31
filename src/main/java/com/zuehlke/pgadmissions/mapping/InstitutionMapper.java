@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import java.math.BigDecimal;
+
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -9,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 
 @Service
 @Transactional
@@ -28,17 +31,28 @@ public class InstitutionMapper {
     }
 
     public InstitutionRepresentationSimple getInstitutionRepresentationSimple(Institution institution) {
-        InstitutionRepresentationSimple representation = resourceMapper.getResourceRepresentation(institution, InstitutionRepresentationSimple.class);
-        representation.setAddress(advertMapper.getAdvertAddressRepresentation(institution.getAdvert()));
-        return representation;
+        return getInstitutionRepresentationSimple(institution, InstitutionRepresentationSimple.class);
     }
 
+    public InstitutionRepresentationTargeting getInstitutionRepresentationTargeting(Institution institution, Double relevance, Double distance) {
+        InstitutionRepresentationTargeting representation = getInstitutionRepresentationSimple(institution, InstitutionRepresentationTargeting.class);
+        representation.setRelevance(BigDecimal.valueOf(relevance));
+        representation.setDistance(BigDecimal.valueOf(distance));
+        return representation;
+    }
+    
     public InstitutionRepresentationClient getInstitutionRepresentationClient(Institution institution) {
         InstitutionRepresentationClient representation = getInstitutionRepresentation(institution, InstitutionRepresentationClient.class);
         resourceMapper.appendResourceSummaryRepresentation(institution, representation);
         return representation;
     }
 
+    private <T extends InstitutionRepresentationSimple> T getInstitutionRepresentationSimple(Institution institution, Class<T> returnType) {
+        T representation = resourceMapper.getResourceRepresentation(institution, returnType);
+        representation.setAddress(advertMapper.getAdvertAddressRepresentation(institution.getAdvert()));
+        return representation;
+    }
+    
     private <T extends InstitutionRepresentation> T getInstitutionRepresentation(Institution institution, Class<T> returnType) {
         T representation = resourceMapper.getResourceParentRepresentation(institution, returnType);
 

@@ -48,7 +48,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "ucas_code", nullable = false)
+    @Column(name = "ucas_code")
     private String ucasCode;
     
     @Column(name = "ucas_program_count")

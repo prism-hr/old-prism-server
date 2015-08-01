@@ -1,76 +1,91 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.List;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.exceptions.ScrapingException;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class InstitutionUcasScraper {
 
-    private static Logger log = LoggerFactory.getLogger(InstitutionUcasScraper.class);
+    public void scrape(Reader initialDataReader, Writer writer) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    public void scrape(Writer writer) throws ScrapingException {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonFactory jsonFactory = new JsonFactory();
-            JsonGenerator jg = jsonFactory.createGenerator(writer);
-            jg.setCodec(objectMapper);
-            jg.setPrettyPrinter(new DefaultPrettyPrinter());
-            jg.writeStartArray();
+        CollectionType listType = objectMapper.getTypeFactory().constructCollectionType(List.class, ImportedInstitutionImportDTO.class);
+        List<ImportedInstitutionImportDTO> institutions = objectMapper.readValue(initialDataReader, listType);
+        List<ImportedInstitutionImportDTO> nonUcasInstitutions = institutions.stream().filter(i -> i.getUcasId() == null).collect(Collectors.toList());
+        TreeMap<Integer, ImportedInstitutionImportDTO> ucasInstitutions = new TreeMap<>(institutions.stream()
+                .filter(i -> i.getUcasId() != null)
+                .collect(Collectors.toMap(o -> o.getUcasId(), i -> i)));
 
-            try (InputStream iStream = Resources.getResource("import/institution.json").openStream()) {
-                CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, ImportedInstitutionRequest.class);
-                List<ImportedInstitutionRequest> referenceEntities = objectMapper.readValue(iStream, collectionType);
-                for (ImportedInstitutionRequest referenceEntity : referenceEntities) {
-                    jg.writeObject(referenceEntity);
-                }
+        TreeMap<Integer, ImportedInstitutionImportDTO> newInstitutionMap = new TreeMap<>();
+        Set<Integer> encounteredUcasIds = new HashSet<>();
+
+        for (int ucasId = 1; ucasId < 3500; ucasId++) {
+            if(ucasId % 100 == 0) {
+                System.out.println("Scraping " + ucasId);
             }
 
-            for (int ucasId = 1; ucasId < 3000; ucasId++) {
-                Document html = Jsoup.connect("http://search.ucas.com/provider/" + ucasId).get();
-                Element nameElement = html.getElementsByClass("shortname").first();
-                if (nameElement != null) {
-                    String name = nameElement.text();
-                    ImportedInstitutionRequest institution = new ImportedInstitutionImportDTO(name).withUcasId(ucasId);
-                    jg.writeObject(institution);
-                    log.info("Scraped institution " + ucasId + ": " + name);
+            Document html = Jsoup.connect("http://search.ucas.com/provider/" + ucasId).get();
+            Element nameElement = html.getElementsByClass("shortname").first();
+            if (nameElement != null) {
+                encounteredUcasIds.add(ucasId);
+                String name = nameElement.text();
+                ImportedInstitutionImportDTO institution = ucasInstitutions.get(ucasId);
+                if (institution == null) {
+                    institution = new ImportedInstitutionImportDTO(name).withUcasId(ucasId);
+                    newInstitutionMap.put(ucasId, institution);
+                }
+                Element numberOfStudentsElement = html.getElementsByClass("numberofstudents").first();
+                if(numberOfStudentsElement != null) {
+                    String numberOfStudentsText = numberOfStudentsElement.getElementsByTag("p").first().text();
+                    int studentsNumber = Integer.parseInt(numberOfStudentsText.replace("\u00a0", " ").trim());
+                    institution.setStudentsNumber(studentsNumber);
                 } else {
-                    Element noFoundElement = html.getElementsByClass("details_notfound").first();
-                    if (noFoundElement == null) {
-                        throw new RuntimeException("Unexpected page for ID: " + ucasId);
-                    }
+                    System.out.println("No students number for " + ucasId + ": " + name);
                 }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            } else {
+                Element noFoundElement = html.getElementsByClass("details_notfound").first();
+                if (noFoundElement == null) {
+                    throw new RuntimeException("Unexpected page for ID: " + ucasId);
                 }
             }
-
-            jg.writeEndArray();
-            jg.close();
-        } catch (IOException e) {
-            throw new ScrapingException(e);
         }
+
+        System.out.println("New institutions:");
+        newInstitutionMap.forEach((ucasId, institution) -> System.out.println("" + ucasId + ": " + institution.getName()));
+        System.out.println("Removed institutions (retained in resulted file): " + Sets.difference(ucasInstitutions.keySet(), encounteredUcasIds));
+
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jg = jsonFactory.createGenerator(writer);
+        jg.setCodec(objectMapper);
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+        jg.writeStartArray();
+
+        List<ImportedInstitutionImportDTO> finalInstitutions = nonUcasInstitutions;
+        finalInstitutions.addAll(ucasInstitutions.values());
+
+        for (ImportedInstitutionImportDTO importedInstitutionImportDTO : finalInstitutions) {
+            jg.writeObject(importedInstitutionImportDTO);
+        }
+
+        jg.writeEndArray();
+        jg.close();
     }
 
 }

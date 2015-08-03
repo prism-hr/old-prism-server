@@ -1,20 +1,22 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
-
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import java.util.List;
 
 public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDefinition<AdvertDTO> {
 
     private ResourceDTO parentResource;
 
     private Integer workflowPropertyConfigurationVersion;
+
+    @NotEmpty
+    private String name;
 
     @Valid
     @NotNull
@@ -40,6 +42,16 @@ public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDef
     @Override
     public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

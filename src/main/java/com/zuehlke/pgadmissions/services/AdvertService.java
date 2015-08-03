@@ -132,14 +132,15 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
     }
 
-    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO) throws Exception {
+    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO, String resourceName) throws Exception {
         Advert advert = new Advert();
-        updateAdvert(parentResource, advert, advertDTO);
+        updateAdvert(parentResource, advert, advertDTO, resourceName);
         entityService.save(advert);
         return advert;
     }
 
-    public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO) {
+    public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO, String resourceName) {
+        advert.setName(resourceName);
         advert.setSummary(advertDTO.getSummary());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
         advert.setTelephone(advertDTO.getTelephone());

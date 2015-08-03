@@ -128,10 +128,6 @@ public class ResourceService {
         ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
         Resource resource = resourceCreator.create(user, resourceDTO);
 
-        Integer workflowPropertyConfigurationVersion = resourceDTO.getWorkflowPropertyConfigurationVersion();
-        if (workflowPropertyConfigurationVersion == null) {
-            customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource, creationScope);
-        }
         resource.setWorkflowPropertyConfigurationVersion(resourceDTO.getWorkflowPropertyConfigurationVersion());
 
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
@@ -181,6 +177,13 @@ public class ResourceService {
             resource.setCode(generateResourceCode(resource));
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
                 resource.getAdvert().setResource(resource);
+            }
+
+            if(comment.isCreateComment()) {
+                Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
+                if (workflowPropertyConfigurationVersion == null) {
+                    customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
+                }
             }
 
             entityService.flush();
@@ -594,7 +597,8 @@ public class ResourceService {
     public <T extends ResourceParent, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) {
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();
-        advertService.updateAdvert(resource.getParentResource(), advert, advertDTO);
+        resource.setName(resourceDTO.getName());
+        advertService.updateAdvert(resource.getParentResource(), advert, advertDTO, resourceDTO.getName());
         resource.setName(advert.getName());
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();

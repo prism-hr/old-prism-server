@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.domain.resource.*;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -33,13 +34,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -453,6 +447,28 @@ public class ResourceDAO {
                         Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .uniqueResult();
+    }
+
+    public void disableImportedResourceStudyOptions(ResourceOpportunity resourceOpportunity) {
+        String propertyName = resourceOpportunity.getResourceScope().getLowerCamelName();
+        sessionFactory.getCurrentSession().createQuery(
+                "delete ResourceStudyOption "
+                        + "where " + propertyName + " = :resourceOpportunity")
+                .setParameter("resourceOpportunity", resourceOpportunity)
+                .executeUpdate();
+    }
+
+    public void disableImportedResourceStudyOptionInstances(ResourceOpportunity resourceOpportunity) {
+        String propertyName = resourceOpportunity.getResourceScope().getLowerCamelName();
+        sessionFactory.getCurrentSession().createQuery(
+                "delete ResourceStudyOptionInstance "
+                        + "where studyOption in ("
+                        + "select resourceStudyOption.id "
+                        + "from ResourceStudyOption as resourceStudyOption "
+                        + "join resourceStudyOption." + propertyName + " as program "
+                        + "where program = :resourceOpportunity)")
+                .setParameter("resourceOpportunity", resourceOpportunity)
+                .executeUpdate();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

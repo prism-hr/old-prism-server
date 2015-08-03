@@ -129,7 +129,6 @@ public class ResourceService {
         Resource resource = resourceCreator.create(user, resourceDTO);
 
         Integer workflowPropertyConfigurationVersion = resourceDTO.getWorkflowPropertyConfigurationVersion();
-        // TODO question from Kuba, what happens if I create new application without providing configuration version?
         if (workflowPropertyConfigurationVersion == null) {
             customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource, creationScope);
         }
@@ -177,12 +176,13 @@ public class ResourceService {
                 applicationContext.getBean(populator).populate(resource);
             }
 
+            entityService.save(resource);
+
             resource.setCode(generateResourceCode(resource));
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
                 resource.getAdvert().setResource(resource);
             }
 
-            entityService.save(resource);
             entityService.flush();
         }
     }
@@ -190,9 +190,9 @@ public class ResourceService {
     @SuppressWarnings("unchecked")
     public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, Integer resourceId, CommentDTO commentDTO) throws Exception {
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
-            T resourceDTO = (T) commentDTO.getNewResource().getResource();
+            T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
-            resourceDTO.setParentResource(commentDTO.getNewResource().getParentResource());
+            resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             return createResource(user, action, resourceDTO);
         }
 
@@ -361,12 +361,12 @@ public class ResourceService {
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
         return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
         return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
@@ -535,8 +535,9 @@ public class ResourceService {
     }
 
     public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
+        resourceDAO.disableImportedResourceStudyOptionInstances(resource);
+        resourceDAO.disableImportedResourceStudyOptions(resource);
         resource.getInstanceGroups().clear();
-        entityService.flush();
 
         LocalDate close = getResourceEndDate(resource);
         if (studyOptions == null) {
@@ -546,12 +547,12 @@ public class ResourceService {
                     .collect(Collectors.toList());
         }
 
-        for (ImportedEntitySimple studyOption : studyOptions) {
-            if (close == null || close.isAfter(baseline)) {
-                resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
-                        .withApplicationCloseDate(close));
-            }
-        }
+        List<ResourceStudyOption> resourceStudyOptions = studyOptions.stream()
+                .filter(studyOption -> close == null || close.isAfter(baseline))
+                .map(studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
+                        .withApplicationCloseDate(close))
+                .collect(Collectors.toList());
+        resource.getInstanceGroups().addAll(resourceStudyOptions);
     }
 
     public void setStudyLocations(ResourceOpportunity resource, List<String> studyLocations) {
@@ -581,16 +582,16 @@ public class ResourceService {
             List<ImportedEntitySimple> studyOptions = resourceDTO.getStudyOptions().stream()
                     .map(studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId()))
                     .collect(Collectors.toList());
-            setStudyOptions(resource, studyOptions == null ? Lists.<ImportedEntitySimple> newArrayList() : studyOptions, new LocalDate());
+            setStudyOptions(resource, studyOptions == null ? Lists.newArrayList() : studyOptions, new LocalDate());
         }
     }
 
     public <T extends ResourceParentDivision, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
         resource.setImportedCode(resourceDTO.getImportedCode());
-        updateResource(resource, resourceDTO);
+        updateResource(resource, (ResourceParentDTO) resourceDTO);
     }
 
-    public <T extends ResourceParent, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) throws Exception {
+    public <T extends ResourceParent, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) {
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();
         advertService.updateAdvert(resource.getParentResource(), advert, advertDTO);
@@ -641,7 +642,7 @@ public class ResourceService {
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
-            HashMultimap<PrismScope, PrismState> enclosedScopes) {
+                                                                                      HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 

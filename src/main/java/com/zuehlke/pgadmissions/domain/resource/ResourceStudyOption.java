@@ -1,25 +1,14 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "imported_study_option_id" }),
@@ -39,7 +28,7 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute implements
     @JoinColumn(name = "project_id", insertable = false, updatable = false)
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "imported_study_option_id", nullable = false)
     private ImportedEntitySimple studyOption;
 

@@ -1,11 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -14,11 +8,12 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 @Component
 public class ProgramExecutor implements ActionExecutor {
@@ -46,10 +41,10 @@ public class ProgramExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        ResourceOpportunityDTO programDTO = commentDTO.getResource().getProgram();
+        ResourceOpportunityDTO programDTO = (ResourceOpportunityDTO) commentDTO.getResource();
         Comment comment = commentService.prepareProcessResourceComment(program, user, action, programDTO, commentDTO);
         resourceService.updateResource(PROGRAM, resourceId, programDTO);
-        
+
         return actionService.executeUserAction(program, action, comment);
     }
 

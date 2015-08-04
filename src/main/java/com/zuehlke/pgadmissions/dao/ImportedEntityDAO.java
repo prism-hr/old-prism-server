@@ -248,10 +248,18 @@ public class ImportedEntityDAO {
                 .list();
     }
 
+    public List<Integer> getRootImportedSubjectAreas() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.isNull("parent")) //
+                .list();
+    }
+
     public List<Integer> getChildImportedSubjectAreas(Integer... subjectAreas) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.in("parent.id", subjectAreas)) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 

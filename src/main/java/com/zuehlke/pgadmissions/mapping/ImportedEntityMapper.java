@@ -175,7 +175,7 @@ public class ImportedEntityMapper {
         representation.setQualificationType(qualificationType == null ? null : getImportedEntitySimpleRepresentation(qualificationType, institution,
                 ImportedEntityResponse.class));
 
-        representation.setLevel(program.getLevel());
+        representation.setLevel(program.getLevel().getUcasLevel());
         representation.setQualification(program.getQualification());
 
         return representation;

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mapping.helpers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.valueOf;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
@@ -23,7 +25,7 @@ public class ImportedProgramTransformer implements
         Integer qualificationType = concreteSource.getQualificationType();
         concreteTarget.setQualificationType(qualificationType == null ? null : importedEntityService.getById(ImportedEntitySimple.class, qualificationType));
 
-        concreteTarget.setLevel(concreteSource.getLevel());
+        concreteTarget.setLevel(valueOf(concreteSource.getLevel()));
         concreteTarget.setQualification(concreteSource.getQualification());
     }
 

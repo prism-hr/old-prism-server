@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,6 +15,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.WeightedRelation;
+import com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType;
 
 @Entity
 @Table(name = "imported_program_subject_area", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_program_id", "imported_subject_area_id" }) })
@@ -30,11 +33,12 @@ public class ImportedProgramSubjectArea extends WeightedRelation implements Uniq
     @JoinColumn(name = "imported_subject_area_id", nullable = false)
     private ImportedSubjectArea subjectArea;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "match_type")
+    private PrismTargetingMatchType matchType;
+
     @Column(name = "relation_strength", nullable = false)
     private BigDecimal relationStrength;
-
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
 
     @Override
     public Integer getId() {
@@ -60,6 +64,14 @@ public class ImportedProgramSubjectArea extends WeightedRelation implements Uniq
 
     public void setSubjectArea(ImportedSubjectArea subjectArea) {
         this.subjectArea = subjectArea;
+    }
+
+    public PrismTargetingMatchType getMatchType() {
+        return matchType;
+    }
+
+    public void setMatchType(PrismTargetingMatchType matchType) {
+        this.matchType = matchType;
     }
 
     @Override

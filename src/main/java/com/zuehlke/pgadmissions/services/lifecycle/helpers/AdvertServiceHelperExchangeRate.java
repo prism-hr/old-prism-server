@@ -24,4 +24,9 @@ public class AdvertServiceHelperExchangeRate implements PrismServiceHelper {
         }
     }
 
+    @Override
+    public void shutdown() {
+        return;
+    }
+
 }

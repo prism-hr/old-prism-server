@@ -8,13 +8,18 @@ import com.zuehlke.pgadmissions.services.EmailBounceService;
 
 @Service
 public class EmailBounceServiceHelper implements PrismServiceHelper {
-	
+
     @Inject
     private EmailBounceService emailBounceService;
 
     @Override
-    public void execute() throws Exception {
+    public void execute() {
         emailBounceService.processEmailBounces();
+    }
+
+    @Override
+    public void shutdown() {
+        return;
     }
 
 }

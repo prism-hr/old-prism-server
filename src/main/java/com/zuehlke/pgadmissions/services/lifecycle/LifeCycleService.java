@@ -1,8 +1,15 @@
 package com.zuehlke.pgadmissions.services.lifecycle;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
-import com.zuehlke.pgadmissions.services.SystemService;
+import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +18,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
 public class LifeCycleService {
@@ -25,9 +29,9 @@ public class LifeCycleService {
 
     private Object lock = new Object();
 
-    private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
-
     private ExecutorService executorService;
+
+    private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
 
     @Value("${startup.workflow.initialize}")
     private Boolean initializeWorkflow;
@@ -82,22 +86,21 @@ public class LifeCycleService {
         }
 
         if (BooleanUtils.isTrue(maintain)) {
-            executorService = Executors.newFixedThreadPool((PrismMaintenanceTask.values().length));
+            executorService = newFixedThreadPool((PrismMaintenanceTask.values().length));
         }
     }
 
     @PreDestroy
-    public void shutdown() {
+    public void shutdown() throws Exception {
         if (BooleanUtils.isTrue(maintain)) {
-            try {
-                executorService.shutdownNow();
-            } catch (Exception e) {
-                logger.error("Error shutting down maintenance task executor", e);
+            for (PrismMaintenanceTask execution : executions) {
+                applicationContext.getBean(execution.getExecutor()).shutdown();
             }
+            shutdownExecutor(executorService);
         }
     }
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 10000)
     private void maintain() {
         if (BooleanUtils.isTrue(maintain)) {
             for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {

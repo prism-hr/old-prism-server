@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.indices;
 
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
+import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.STOP_WORDS;
 
 import java.util.List;
 import java.util.Map;
@@ -21,12 +22,6 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 @Service
 @Transactional
 public class ImportedSubjectAreaIndex {
-
-    private static final String[] STOP_WORDS = new String[] { "study", "studies", "science", "sciences", "theory", "theories", "experience", "experiences",
-            "student", "students", "development", "developments", "foundation", "foundations", "year", "years", "project", "projects", "abroad", "placement",
-            "placements", "main", "mains", "top", "tops", "beginner", "beginners", "only", "applicant", "applicants", "new", "news", "joint", "joints",
-            "extended", "integrated", "higher", "highers", "national", "diploma", "diplomas", "certificate", "certificates", "hnd", "hnc", "ba", "pathway",
-            "pathways", "combined", "honour", "honours" };
 
     private Map<Integer, ImportedSubjectArea> byId = Maps.newHashMap();
 

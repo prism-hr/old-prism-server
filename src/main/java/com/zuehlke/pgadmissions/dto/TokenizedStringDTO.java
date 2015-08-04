@@ -5,8 +5,8 @@ import java.util.Set;
 public class TokenizedStringDTO {
 
     private Set<String> tokens;
-
-    Integer uniqueTokenCount;
+    
+    private Integer uniqueTokenCount;
 
     public TokenizedStringDTO(Set<String> tokens, Integer uniqueTokenCount) {
         this.tokens = tokens;

@@ -38,4 +38,9 @@ public class NotificationServiceHelperRecommendation implements PrismServiceHelp
         }
     }
 
+    @Override
+    public void shutdown() {
+        return;
+    }
+
 }

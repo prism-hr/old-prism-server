@@ -45,4 +45,9 @@ public class StateServiceHelperPropagation implements PrismServiceHelper {
         }
     }
 
+    @Override
+    public void shutdown() {
+        return;
+    }
+
 }

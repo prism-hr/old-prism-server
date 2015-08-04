@@ -41,6 +41,11 @@ public class NotificationServiceHelperWorkflow implements PrismServiceHelper {
         }
     }
 
+    @Override
+    public void shutdown() {
+        return;
+    }
+
     private void sendIndividualRequestReminders(PrismScope resourceScope, LocalDate baseline) {
         List<Integer> resourceIds = resourceService.getResourcesRequiringIndividualReminders(resourceScope, baseline);
         for (Integer resourceId : resourceIds) {

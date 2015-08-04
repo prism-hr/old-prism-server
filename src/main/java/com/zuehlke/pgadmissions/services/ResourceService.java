@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
@@ -164,10 +163,6 @@ public class ResourceService {
         ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
         Resource resource = resourceCreator.create(user, resourceDTO);
 
-        Integer workflowPropertyConfigurationVersion = resourceDTO.getWorkflowPropertyConfigurationVersion();
-        if (workflowPropertyConfigurationVersion == null) {
-            customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource, creationScope);
-        }
         resource.setWorkflowPropertyConfigurationVersion(resourceDTO.getWorkflowPropertyConfigurationVersion());
 
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
@@ -216,7 +211,7 @@ public class ResourceService {
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
                 resource.getAdvert().setResource(resource);
             }
-
+            
             entityService.save(resource);
             entityService.flush();
         }

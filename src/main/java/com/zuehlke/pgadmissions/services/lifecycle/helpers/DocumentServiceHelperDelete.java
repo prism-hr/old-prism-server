@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -26,7 +22,7 @@ public class DocumentServiceHelperDelete implements PrismServiceHelper {
     private SystemService systemService;
 
     @Override
-    public void execute() throws DeduplicationException, IOException, IntegrationException {
+    public void execute() throws Exception {
         DateTime baselineTime = new DateTime();
         documentService.deleteOrphanDocuments(baselineTime);
         if (amazonOn && systemService.getSystem().isDocumentExportEnabled()) {
@@ -34,4 +30,9 @@ public class DocumentServiceHelperDelete implements PrismServiceHelper {
         }
     }
 
+    @Override
+    public void shutdown() {
+        return;
+    }
+    
 }

@@ -376,6 +376,10 @@ public class ImportedEntityService {
         importedEntityDAO.deleteImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreas);
     }
 
+    public List<Integer> getRootImportedSubjectAreas() {
+        return importedEntityDAO.getRootImportedSubjectAreas();
+    }
+    
     public Set<Integer> getImportedSubjectAreaFamily(Integer... parents) {
         return getImportedSubjectAreaFamily(null, parents);
     }

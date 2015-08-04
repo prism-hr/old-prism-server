@@ -252,6 +252,7 @@ public class ImportedEntityDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.isNull("parent")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 

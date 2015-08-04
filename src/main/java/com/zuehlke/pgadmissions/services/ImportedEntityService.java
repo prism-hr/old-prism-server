@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
@@ -390,7 +391,7 @@ public class ImportedEntityService {
 
     private Set<Integer> getImportedSubjectAreaFamily(Set<Integer> family, Integer... parents) {
         family = family == null ? Sets.newHashSet() : family;
-        family.addAll(Sets.newHashSet(parents));
+        family.addAll(newHashSet(parents));
 
         List<Integer> children = importedEntityDAO.getChildImportedSubjectAreas(parents);
         if (children.isEmpty()) {

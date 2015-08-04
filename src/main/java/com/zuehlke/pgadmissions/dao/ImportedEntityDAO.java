@@ -378,6 +378,15 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
+    public void deleteImportedInstitutionSubjectAreas(Integer... subjectAreas) {
+        sessionFactory.getCurrentSession().createQuery(
+                "delete ImportedInstitutionSubjectArea "
+                        + "where subjectArea.id in (:subjectAreas) "
+                        + "and enabled is true") //
+                .setParameterList("subjectAreas", subjectAreas) //
+                .executeUpdate();
+    }
+
     public void deleteImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor, Integer... subjectAreas) {
         sessionFactory.getCurrentSession().createQuery(
                 "delete ImportedInstitutionSubjectArea "

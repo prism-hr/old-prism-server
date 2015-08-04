@@ -295,8 +295,8 @@ public class TargetingService {
 
     private void setNewTopInstitutionSubjectAreaScore(Integer subjectArea, Integer[] subjectAreaFamily, Integer concentrationFactor,
             BigDecimal proliferationFactor, Map<Integer, BigDecimal> topScores, BigDecimal score) {
-        topScores.put(subjectArea, score);
         importedEntityService.enableImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
+        topScores.put(subjectArea, score);
     }
 
 }

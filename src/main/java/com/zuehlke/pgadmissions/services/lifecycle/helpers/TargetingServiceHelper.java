@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import static com.google.common.collect.Maps.newConcurrentMap;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTIONS;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_NON_UCAS_PROGRAMS;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_UCAS_PROGRAMS;
@@ -22,8 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
@@ -49,9 +49,9 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     private TargetingParameterDTO parameterSetToScore = null;
 
-    private Set<TargetingParameterDTO> parameterSets = Sets.newLinkedHashSet();
+    private Set<TargetingParameterDTO> parameterSets = newLinkedHashSet();
 
-    private Map<Integer, BigDecimal> topScoresBySubjectArea = Maps.newHashMap();
+    private Map<Integer, BigDecimal> topScores = newConcurrentMap();
 
     private ExecutorService executorService;
 
@@ -141,7 +141,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
         activeExecutions++;
         executorService.submit(() -> {
             try {
-                targetingService.scoreImportedInstitutionSubjectAreas(subjectArea, parameterSet, topScoresBySubjectArea);
+                targetingService.scoreImportedInstitutionSubjectAreas(subjectArea, parameterSet, topScores);
             } catch (Exception e) {
                 logger.error("Failed to score subject area: " + subjectArea.toString() + " with parameters (" + parameterSet.toString() + ")", e);
             } finally {

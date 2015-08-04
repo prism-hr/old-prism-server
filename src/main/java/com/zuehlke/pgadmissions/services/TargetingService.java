@@ -130,12 +130,14 @@ public class TargetingService {
         }
 
         BigDecimal topScore = topScores.get(subjectArea);
-        if (topScore == null || score.compareTo(topScore) > 0) {
+        if (topScore == null || score.compareTo(topScore) < 0) {
             topScores.put(subjectArea, topScore);
             importedEntityService.enableImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
         } else {
             importedEntityService.deleteImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
         }
+
+        entityService.flush();
     }
 
     private <T extends ImportedEntityRequest> String getImportedProgramSubjectAreaInserts(ImportedProgram program) {

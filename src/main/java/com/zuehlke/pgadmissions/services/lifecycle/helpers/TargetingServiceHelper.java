@@ -199,7 +199,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     }
 
-    public static enum PrismTargetingIndexationState {
+    protected static enum PrismTargetingIndexationState {
 
         INDEXING_UCAS_PROGRAMS,
         INDEXING_NON_UCAS_PROGRAMS,

@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.Maps;
-
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 public enum PrismQualificationLevel {
 

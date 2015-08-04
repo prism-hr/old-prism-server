@@ -1,5 +1,19 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -8,16 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class InstitutionUcasScraper {
@@ -31,13 +35,13 @@ public class InstitutionUcasScraper {
         List<ImportedInstitutionImportDTO> nonUcasInstitutions = institutions.stream().filter(i -> i.getUcasId() == null).collect(Collectors.toList());
         TreeMap<Integer, ImportedInstitutionImportDTO> ucasInstitutions = new TreeMap<>(institutions.stream()
                 .filter(i -> i.getUcasId() != null)
-                .collect(Collectors.toMap(o -> o.getUcasId(), i -> i)));
+                .collect(Collectors.toMap(o -> ((ImportedInstitutionImportDTO) o).getUcasId(), i -> i)));
 
         TreeMap<Integer, ImportedInstitutionImportDTO> newInstitutionMap = new TreeMap<>();
         Set<Integer> encounteredUcasIds = new HashSet<>();
 
         for (int ucasId = 1; ucasId < 3500; ucasId++) {
-            if(ucasId % 100 == 0) {
+            if (ucasId % 100 == 0) {
                 System.out.println("Scraping " + ucasId);
             }
 
@@ -52,7 +56,7 @@ public class InstitutionUcasScraper {
                     newInstitutionMap.put(ucasId, institution);
                 }
                 Element numberOfStudentsElement = html.getElementsByClass("numberofstudents").first();
-                if(numberOfStudentsElement != null) {
+                if (numberOfStudentsElement != null) {
                     String numberOfStudentsText = numberOfStudentsElement.getElementsByTag("p").first().text();
                     int studentsNumber = Integer.parseInt(numberOfStudentsText.replace("\u00a0", " ").trim());
                     institution.setStudentsNumber(studentsNumber);

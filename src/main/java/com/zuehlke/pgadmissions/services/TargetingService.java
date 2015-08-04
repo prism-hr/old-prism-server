@@ -130,9 +130,11 @@ public class TargetingService {
         }
 
         BigDecimal topScore = topScores.get(subjectArea);
-        if (topScore == null || score.compareTo(topScore) < 0) {
-            topScores.put(subjectArea, topScore);
-            importedEntityService.enableImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
+        if (topScore == null) {
+            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, topScores, score);
+        } else if (score.compareTo(topScore) < 0) {
+            importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily);
+            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, topScores, score);
         } else {
             importedEntityService.deleteImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
         }
@@ -289,6 +291,12 @@ public class TargetingService {
             return new BigDecimal(THRESHOLD_TOKEN).divide(new BigDecimal(threshold), PRECISION, HALF_UP);
         }
         return getTokenRequiredConfidence(tokenCount, (threshold * THRESHOLD_TOKEN));
+    }
+
+    private void setNewTopInstitutionSubjectAreaScore(Integer subjectArea, Integer[] subjectAreaFamily, Integer concentrationFactor,
+            BigDecimal proliferationFactor, Map<Integer, BigDecimal> topScores, BigDecimal score) {
+        topScores.put(subjectArea, score);
+        importedEntityService.enableImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
     }
 
 }

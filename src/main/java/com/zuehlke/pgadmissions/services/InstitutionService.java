@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -38,6 +39,9 @@ public class InstitutionService {
     @Inject
     private EntityService entityService;
 
+    @Inject
+    private ImportedEntityService importedEntityService;
+    
     @Inject
     private InstitutionMapper institutionMapper;
     
@@ -169,7 +173,8 @@ public class InstitutionService {
 
     public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
         List<InstitutionRepresentationTargeting> representations = Lists.newLinkedList();
-        for (InstitutionTargetingDTO target : institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreas)) {
+        Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily((Integer[]) subjectAreas.toArray());
+        for (InstitutionTargetingDTO target : institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreaFamily)) {
             representations.add(institutionMapper.getInstitutionRepresentationTargeting(getById(target.getId()), target.getRelevance(), target.getDistance()));
         }
         return representations;

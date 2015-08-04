@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -193,7 +194,7 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<InstitutionTargetingDTO> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
+    public List<InstitutionTargetingDTO> getInstitutionBySubjectAreas(Coordinates coordinates, Collection<Integer> subjectAreas) {
         return (List<InstitutionTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
                 "select institution.id as id, sum(imported_institution_subject_area.relation_strength) as relevance," +
                         " haversine_distance(:baseLatitude, :baseLongitude, advert_address.location_x, advert_address.location_y) as distance" +
@@ -204,6 +205,7 @@ public class InstitutionDAO {
                         " inner join advert_address on advert.advert_address_id = advert_address.id" +
                         " where advert_address.location_x is not null" +
                         " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
+                        " and imported_institution_subject_area.enabled is true " +
                         " group by institution.id" +
                         " order by relevance desc, distance asc")
                 .addScalar("id", IntegerType.INSTANCE)

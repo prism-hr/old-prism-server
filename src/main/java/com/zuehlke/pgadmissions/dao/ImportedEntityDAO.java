@@ -1,14 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.*;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -18,14 +16,25 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgramSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
 
 @Repository
@@ -41,10 +50,10 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public <T extends ImportedEntity<?, ?>> List<T> searchByName(Class<T> entityClass, String searchTerm) {
+    public <T extends ImportedEntity<?, ?>> List<T> getSimilarImportedEntities(Class<T> entityClass, String searchTerm) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(entityClass)
-                .add(Restrictions.eq("enabled", true))
                 .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))
+                .add(Restrictions.eq("enabled", true))
                 .list();
     }
 
@@ -150,17 +159,17 @@ public class ImportedEntityDAO {
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-                                                                                  PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, null);
     }
 
     public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getEnabledImportedEntityMapping(Institution institution,
-                                                                                                                        T importedEntity) {
+            T importedEntity) {
         return getImportedEntityMapping(institution, importedEntity, true);
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getEnabledImportedEntityMappings(Institution institution,
-                                                                                         PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, true);
     }
 
@@ -239,8 +248,18 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedSubjectArea> getImportedSubjectAreas() {
-        return (List<ImportedSubjectArea>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+    public List<Integer> getRootImportedSubjectAreas() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.isNull("parent")) //
+                .list();
+    }
+
+    public List<Integer> getChildImportedSubjectAreas(Integer... subjectAreas) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.in("parent.id", subjectAreas)) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 
@@ -297,12 +316,6 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedInstitution> getUnindexedImportedInstitutions() {
-        return (List<ImportedInstitution>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("indexed", false)) //
-                .list();
-    }
-
     public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(ImportedInstitution importedInstitution) {
         return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedProgramSubjectArea.class) //
                 .setProjection(Projections.projectionList() //
@@ -323,6 +336,60 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
+    public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Integer concentrationFactor, BigDecimal proliferationFactor,
+            Collection<Integer> institutions, Integer... subjectAreas) {
+        return (BigDecimal) sessionFactory.getCurrentSession().createCriteria(ImportedInstitutionSubjectArea.class) //
+                .setProjection(Projections.property("relationStrength")) //
+                .add(Restrictions.in("institution.id", institutions)) //
+                .add(Restrictions.in("subjectArea.id", subjectAreas)) //
+                .add(Restrictions.eq("concentrationFactor", concentrationFactor)) //
+                .add(Restrictions.eq("proliferationFactor", proliferationFactor)) //
+                .addOrder(Order.asc("relationStrength")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor,
+            BigDecimal minimumRelationStrength, Integer... subjectAreas) {
+        return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitutionSubjectArea.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("institution.id"), "id") //
+                        .add(Projections.sum("relationStrength").as("relationStrength"), "relationStrength")) //
+                .add(Restrictions.in("subjectArea.id", subjectAreas)) //
+                .add(Restrictions.eq("concentrationFactor", concentrationFactor)) //
+                .add(Restrictions.eq("proliferationFactor", proliferationFactor)) //
+                .add(Restrictions.ge("relationStrength", minimumRelationStrength)) //
+                .addOrder(Order.desc("relationStrength")) //
+                .addOrder(Order.asc("institution.id")) //
+                .setResultTransformer(Transformers.aliasToBean(ImportedInstitutionSubjectAreaDTO.class)) //
+                .list();
+    }
+
+    public void enableImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor, Integer... subjectAreas) {
+        sessionFactory.getCurrentSession().createQuery(
+                "update ImportedInstitutionSubjectArea "
+                        + "set enabled = true "
+                        + "where subjectArea.id in (:subjectAreas) "
+                        + "and concentrationFactor = :concentrationFactor "
+                        + "and proliferationFactor = :proliferationFactor") //
+                .setParameterList("subjectAreas", subjectAreas) //
+                .setParameter("concentrationFactor", concentrationFactor) //
+                .setParameter("proliferationFactor", proliferationFactor) //
+                .executeUpdate();
+    }
+
+    public void deleteImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor, Integer... subjectAreas) {
+        sessionFactory.getCurrentSession().createQuery(
+                "delete ImportedInstitutionSubjectArea "
+                        + "where subjectArea.id in (:subjectAreas) "
+                        + "and concentrationFactor = :concentrationFactor "
+                        + "and proliferationFactor = :proliferationFactor") //
+                .setParameterList("subjectAreas", subjectAreas) //
+                .setParameter("concentrationFactor", concentrationFactor) //
+                .setParameter("proliferationFactor", proliferationFactor) //
+                .executeUpdate();
+    }
+
     public void executeBulkMerge(String table, String columns, String inserts, String updates) {
         sessionFactory.getCurrentSession().createSQLQuery(
                 "insert into " + table + " (" + columns + ") "
@@ -332,7 +399,7 @@ public class ImportedEntityDAO {
     }
 
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
-                                                                                                                  Boolean enabled) {
+            Boolean enabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //
                 .createAlias("importedEntity", "importedEntity", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("importedEntity", importedEntity)) //
@@ -348,7 +415,7 @@ public class ImportedEntityDAO {
     }
 
     private <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-                                                                                   PrismImportedEntity importedEntity, Boolean enabled) {
+            PrismImportedEntity importedEntity, Boolean enabled) {
         Class<T> mappingClass = (Class<T>) importedEntity.getMappingClass();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(mappingClass) //

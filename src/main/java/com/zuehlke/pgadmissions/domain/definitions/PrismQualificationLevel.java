@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+
+import java.util.Map;
 
 public enum PrismQualificationLevel {
 
-    POSTGRADUATE("Postgraduate Degree"),
+    POSTGRADUATE("Postgraduate"),
     UNDERGRADUATE("Undergraduate Degree"),
     OTHER("Other"),
     HE_LEVEL_2("HE Level 2 (HND's DipHEs and Foundation Degrees)"),
@@ -23,7 +23,7 @@ public enum PrismQualificationLevel {
         }
     }
 
-    private PrismQualificationLevel(String ucasLevel) {
+    PrismQualificationLevel(String ucasLevel) {
         this.ucasLevel = ucasLevel;
     }
 

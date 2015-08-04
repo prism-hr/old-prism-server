@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
-import com.zuehlke.pgadmissions.services.SubjectAreaService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @RestController
 @RequestMapping("/api/subjectAreas")
@@ -18,11 +18,11 @@ import com.zuehlke.pgadmissions.services.SubjectAreaService;
 public class SubjectAreaController {
 
     @Inject
-    private SubjectAreaService subjectAreaService;
+    private ImportedEntityService importedEntityService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<SubjectAreaRepresentation> searchSubjectAreas(String searchTerm) {
-        return subjectAreaService.searchSubjectAreas(searchTerm);
+    public List<SubjectAreaRepresentation> getSimilarImportedSubjectAreas(String searchTerm) {
+        return importedEntityService.getSimilarImportedSubjectAreas(searchTerm);
     }
 
 }

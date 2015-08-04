@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchTyp
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.TOKEN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.UCAS;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
+import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.STOP_WORDS;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.isValidUcasCodeFormat;
 import static java.math.RoundingMode.HALF_UP;
@@ -47,8 +48,6 @@ public class TargetingService {
 
     private static final String IMPORTED_ENTITY_RELATION_UPDATE = "relation_strength = values(relation_strength)";
 
-    private static final Integer PRECISION = 9;
-
     private static final BigDecimal DIVISOR = new BigDecimal(2);
 
     private static final Integer THRESHOLD_TOKEN = 2;
@@ -56,10 +55,6 @@ public class TargetingService {
     private static final BigDecimal THRESHOLD_UCAS = new BigDecimal(0.05);
 
     private static final BigDecimal CONFIDENCE_UCAS = new BigDecimal(0.25);
-
-    private static final Integer CONCENTRATION_OPTIMUM = 5;
-
-    private static final BigDecimal PROLIFERATION_PENALTY = new BigDecimal(0.025);
 
     @Inject
     private EntityService entityService;
@@ -85,13 +80,14 @@ public class TargetingService {
         entityService.flush();
     }
 
-    public void indexImportedInstitution(ImportedInstitution institution) {
+    public void indexImportedInstitution(ImportedInstitution institution, Integer concentrationFactor, BigDecimal proliferationFactor) {
         Integer importedInstitutionId = institution.getId();
-        String inserts = getImportedInstitutionSubjectAreaInserts(institution);
+        String inserts = getImportedInstitutionSubjectAreaInserts(institution, concentrationFactor, proliferationFactor);
         if (inserts != null) {
-            logger.info("Indexing imported institution: " + importedInstitutionId.toString() + "-" + institution.getName());
+            logger.info("Indexing imported institution: " + importedInstitutionId.toString() + "-" + institution.getName() + " with parameters ("
+                    + concentrationFactor.toString() + ", " + proliferationFactor.toPlainString() + ")");
             importedEntityService.executeBulkMerge("imported_institution_subject_area", //
-                    "imported_institution_id, imported_subject_area_id, relation_strength", //
+                    "imported_institution_id, imported_subject_area_id, concentration_factor, proliferation_factor, relation_strength, enabled", //
                     inserts, IMPORTED_ENTITY_RELATION_UPDATE);
         }
         importedEntityService.setImportedInstitutionIndexed(importedInstitutionId, true);
@@ -110,12 +106,12 @@ public class TargetingService {
         return inserts.isEmpty() ? null : getImportedProgramSubjectAreaRowDefinitions(program, inserts);
     }
 
-    private String getImportedInstitutionSubjectAreaInserts(ImportedInstitution institution) {
-        ImportedInstitutionSubjectAreasDTO inserts = new ImportedInstitutionSubjectAreasDTO(CONCENTRATION_OPTIMUM);  
+    private String getImportedInstitutionSubjectAreaInserts(ImportedInstitution institution, Integer concentrationFactor, BigDecimal proliferationFactor) {
+        ImportedInstitutionSubjectAreasDTO inserts = new ImportedInstitutionSubjectAreasDTO(concentrationFactor);
         for (ImportedInstitutionSubjectAreaDTO relation : importedEntityService.getImportedInstitutionSubjectAreas(institution)) {
             inserts.add(relation);
         }
-        return inserts.isEmpty() ? null : getImportedInstitutionSubjectAreaRowDefinitions(institution, inserts);
+        return inserts.isEmpty() ? null : getImportedInstitutionSubjectAreaRowDefinitions(institution, inserts, concentrationFactor, proliferationFactor);
     }
 
     private void assignImportedSubjectAreasByJacsCode(ImportedProgramSubjectAreasDTO inserts, ImportedProgram program, BigDecimal weight) {
@@ -228,15 +224,16 @@ public class TargetingService {
         return Joiner.on(", ").join(values);
     }
 
-    private String getImportedInstitutionSubjectAreaRowDefinitions(ImportedInstitution institution, ImportedInstitutionSubjectAreasDTO inserts) {
+    private String getImportedInstitutionSubjectAreaRowDefinitions(ImportedInstitution institution, ImportedInstitutionSubjectAreasDTO inserts,
+            Integer concentrationFactor, BigDecimal proliferationFactor) {
         String institutionId = institution.getId().toString();
 
         List<String> values = Lists.newArrayListWithExpectedSize(inserts.size());
         for (ImportedInstitutionSubjectAreaDTO insert : inserts.values()) {
-            BigDecimal penalty = new BigDecimal(1).add(new BigDecimal(insert.getTailLength()).multiply(PROLIFERATION_PENALTY)).setScale(PRECISION, HALF_UP);
+            BigDecimal penalty = new BigDecimal(1).add(new BigDecimal(insert.getTailLength()).multiply(proliferationFactor)).setScale(PRECISION, HALF_UP);
 
-            values.add("(" + Joiner.on(", ").join(institutionId, insert.getId().toString(), //
-                    insert.getHead().divide(penalty, PRECISION, HALF_UP).toPlainString()) + ")");
+            values.add("(" + Joiner.on(", ").join(institutionId, insert.getId().toString(), concentrationFactor.toString(), //
+                    proliferationFactor.toPlainString(), insert.getHead().divide(penalty, PRECISION, HALF_UP).toPlainString(), new Integer(0).toString()) + ")");
         }
         return Joiner.on(", ").join(values);
     }

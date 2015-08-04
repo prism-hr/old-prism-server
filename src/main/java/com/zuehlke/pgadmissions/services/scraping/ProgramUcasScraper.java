@@ -1,23 +1,14 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.isValidUcasCodeFormat;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,16 +23,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.exceptions.ScrapingException;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ProgramUcasScraper {
@@ -61,8 +52,7 @@ public class ProgramUcasScraper {
     }
 
     @SuppressWarnings("rawtypes")
-    public void scrape(Writer writer) throws ScrapingException {
-        try {
+    public void scrape(Writer writer) throws IOException, URISyntaxException {
             TreeMap<Pair, ImportedProgramScrapeDescriptor> programs = new TreeMap<>();
 
             List<String> topCategoryUrls = getTopCategoryUrls();
@@ -80,9 +70,6 @@ public class ProgramUcasScraper {
             }
 
             writePrograms(writer, programs);
-        } catch (Exception e) {
-            throw new ScrapingException(e);
-        }
     }
 
     public void processProgramDescriptors(Reader reader, Writer writer) throws IOException {
@@ -109,18 +96,19 @@ public class ProgramUcasScraper {
     }
 
     private Set<String> deriveJacsCodes(String courseCode) {
-        if (isValidUcasCodeFormat(courseCode)) {
-            char[] c = courseCode.toCharArray();
-            if (Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
-                return Collections.singleton(courseCode);
-            } else if (Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isLetter(c[2]) && Character.isDigit(c[3])) {
-                return Sets.newHashSet("" + c[0] + c[1] + "00", "" + c[2] + c[3] + "00");
-            } else if (Character.isLetter(c[0]) && Character.isLetter(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
-                return Sets.newHashSet("" + c[0] + c[2] + "00", "" + c[1] + c[3] + "00");
-            }
+        char[] c = courseCode.toCharArray();
+        if(Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
+            return Collections.singleton(courseCode);
+        } else if(Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isLetter(c[2]) && Character.isDigit(c[3])) {
+            return Sets.newHashSet("" + c[0] + c[1] + "00", "" + c[2] + c[3] + "00");
+        } else if(Character.isLetter(c[0]) && Character.isLetter(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
+            return Sets.newHashSet("" + c[0] + c[2] + "00", "" + c[1] + c[3] + "00");
+        } else if(Character.isLetter(c[0]) && Character.isDigit(c[1])) {
+            return Sets.newHashSet("" + c[0] + c[1] + "00");
+        } else {
             return null;
         }
-        return null;
+
     }
 
     private List<String> getTopCategoryUrls() throws IOException {
@@ -144,7 +132,7 @@ public class ProgramUcasScraper {
                     .select("li.subjectsearchsteparea")
                     .stream()
                     .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
-                    .<Pair<Element, String>> flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
+                    .<Pair<Element, String>>flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
                     .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value"))
                             .addParameter("AvailableIn", pair.getRight()).toString())
                     .collect(Collectors.toList());

@@ -354,12 +354,12 @@ public class ImportedEntityDAO {
         return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitutionSubjectArea.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("institution.id"), "id") //
-                        .add(Projections.sum("relationStrength").as("relationStrength"), "relationStrength")) //
+                        .add(Projections.sum("relationStrength").as("cumulativeRelationStrength"), "relationStrength")) //
                 .add(Restrictions.in("subjectArea.id", subjectAreas)) //
                 .add(Restrictions.eq("concentrationFactor", concentrationFactor)) //
                 .add(Restrictions.eq("proliferationFactor", proliferationFactor)) //
                 .add(Restrictions.ge("relationStrength", minimumRelationStrength)) //
-                .addOrder(Order.desc("relationStrength")) //
+                .addOrder(Order.desc("cumulativeRelationStrength")) //
                 .addOrder(Order.asc("institution.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ImportedInstitutionSubjectAreaDTO.class)) //
                 .list();

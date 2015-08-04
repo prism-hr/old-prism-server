@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
+import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.isValidUcasCodeFormat;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -107,19 +109,18 @@ public class ProgramUcasScraper {
     }
 
     private Set<String> deriveJacsCodes(String courseCode) {
-        char[] c = courseCode.toCharArray();
-        if(Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
-            return Collections.singleton(courseCode);
-        } else if(Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isLetter(c[2]) && Character.isDigit(c[3])) {
-            return Sets.newHashSet("" + c[0] + c[1] + "00", "" + c[2] + c[3] + "00");
-        } else if(Character.isLetter(c[0]) && Character.isLetter(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
-            return Sets.newHashSet("" + c[0] + c[2] + "00", "" + c[1] + c[3] + "00");
-        } else if(Character.isLetter(c[0]) && Character.isDigit(c[1])) {
-            return Sets.newHashSet("" + c[0] + c[1] + "00");
-        } else {
+        if (isValidUcasCodeFormat(courseCode)) {
+            char[] c = courseCode.toCharArray();
+            if (Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
+                return Collections.singleton(courseCode);
+            } else if (Character.isLetter(c[0]) && Character.isDigit(c[1]) && Character.isLetter(c[2]) && Character.isDigit(c[3])) {
+                return Sets.newHashSet("" + c[0] + c[1] + "00", "" + c[2] + c[3] + "00");
+            } else if (Character.isLetter(c[0]) && Character.isLetter(c[1]) && Character.isDigit(c[2]) && Character.isDigit(c[3])) {
+                return Sets.newHashSet("" + c[0] + c[2] + "00", "" + c[1] + c[3] + "00");
+            }
             return null;
         }
-
+        return null;
     }
 
     private List<String> getTopCategoryUrls() throws IOException {
@@ -143,7 +144,7 @@ public class ProgramUcasScraper {
                     .select("li.subjectsearchsteparea")
                     .stream()
                     .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
-                    .<Pair<Element, String>>flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
+                    .<Pair<Element, String>> flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
                     .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value"))
                             .addParameter("AvailableIn", pair.getRight()).toString())
                     .collect(Collectors.toList());

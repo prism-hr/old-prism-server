@@ -9,12 +9,17 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 @Component
 public class ResourceServiceHelper implements PrismServiceHelper {
 
-	@Inject
-	private ResourceService resourceService;
+    @Inject
+    private ResourceService resourceService;
 
-	@Override
-	public void execute() {
-		resourceService.deleteElapsedStudyOptions();
-	}
+    @Override
+    public void execute() {
+        resourceService.deleteElapsedStudyOptions();
+    }
+
+    @Override
+    public void shutdown() {
+        return;
+    }
 
 }

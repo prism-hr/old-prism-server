@@ -45,20 +45,20 @@ public class PrismStringUtils {
             cleanString = replaceEachWord(cleanString, optionalStopWords, SPACE);
         }
 
-        int alternateWordCount = 0;
+        int alternateCount = 0;
         Set<String> tokens = Sets.newLinkedHashSet();
-        for (String word : cleanString.split(" ")) {
-            if (isValidToken(word)) {
-                tokens.add(word);
-                String alternateWord = replaceEachChar(word, JOIN_CHARS, SPACE);
+        for (String token : cleanString.split(" ")) {
+            if (isValidToken(token)) {
+                tokens.add(token);
+                String alternateWord = replaceEachChar(token, JOIN_CHARS, SPACE);
                 if (isValidToken(alternateWord) && !tokens.contains(alternateWord)) {
                     tokens.add(alternateWord);
-                    alternateWordCount++;
+                    alternateCount++;
                 }
             }
         }
 
-        return new TokenizedStringDTO(tokens, (tokens.size() - alternateWordCount));
+        return new TokenizedStringDTO(tokens, (tokens.size() - alternateCount));
     }
 
     public static String wrapInWordBoundary(String string) {

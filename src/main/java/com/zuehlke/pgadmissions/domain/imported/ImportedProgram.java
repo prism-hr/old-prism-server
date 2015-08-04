@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -20,12 +22,14 @@ import uk.co.alumeni.prism.api.model.imported.ImportedProgramDefinition;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 
 @Entity
 @Table(name = "imported_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "qualification", "name" }) })
-public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapping>
-        implements ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple>, ImportedEntityResponseDefinition<Integer>, ImportedEntityIndexable {
+public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapping> implements
+        ImportedProgramDefinition<ImportedInstitution, ImportedEntitySimple, PrismQualificationLevel>, ImportedEntityResponseDefinition<Integer>,
+        ImportedEntityIndexable {
 
     @Id
     @GeneratedValue
@@ -39,8 +43,9 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @JoinColumn(name = "imported_qualification_type_id")
     private ImportedEntitySimple qualificationType;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "level")
-    private String level;
+    private PrismQualificationLevel level;
 
     @Column(name = "qualification")
     private String qualification;
@@ -50,7 +55,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     @Column(name = "ucas_code")
     private String ucasCode;
-    
+
     @Column(name = "ucas_program_count")
     private Integer ucasProgramCount;
 
@@ -105,12 +110,12 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     }
 
     @Override
-    public String getLevel() {
+    public PrismQualificationLevel getLevel() {
         return level;
     }
 
     @Override
-    public void setLevel(String level) {
+    public void setLevel(PrismQualificationLevel level) {
         this.level = level;
     }
 
@@ -133,7 +138,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getUcasCode() {
         return ucasCode;
     }

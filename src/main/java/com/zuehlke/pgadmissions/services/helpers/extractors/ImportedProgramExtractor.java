@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.valueOf;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
@@ -53,14 +54,16 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
                         continue;
                     }
                     cells.add(prepareIntegerForSqlInsert(institution));
+                    cells.add(NULL);
+                    cells.add(prepareStringForSqlInsert(valueOf(definition.getLevel()).name()));
+                    cells.add(prepareStringForSqlInsert(definition.getQualification()));
                 } else {
                     cells.add(prepareIntegerForSqlInsert(definition.getInstitution()));
+                    cells.add(prepareIntegerForSqlInsert(definition.getQualificationType()));
+                    cells.add(NULL);
+                    cells.add(NULL);
                 }
 
-                cells.add(prepareIntegerForSqlInsert(definition.getQualificationType()));
-                // TODO: map to PRiSM qualification types
-                cells.add(prepareStringForSqlInsert(definition.getLevel()));
-                cells.add(prepareStringForSqlInsert(definition.getQualification()));
                 cells.add(prepareStringForSqlInsert(definition.getName()));
 
                 if (systemImport) {

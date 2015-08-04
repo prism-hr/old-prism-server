@@ -12,16 +12,21 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 @Component
 public class AdvertServiceHelperClosingDate implements PrismServiceHelper {
 
-	@Inject
-	private AdvertService advertService;
+    @Inject
+    private AdvertService advertService;
 
-	@Override
-	public void execute() {
-		LocalDate baseline = new LocalDate();
-		List<Integer> adverts = advertService.getAdvertsWithElapsedClosingDates(baseline);
-		for (Integer advert : adverts) {
-			advertService.refreshClosingDate(advert, baseline);
-		}
-	}
+    @Override
+    public void execute() {
+        LocalDate baseline = new LocalDate();
+        List<Integer> adverts = advertService.getAdvertsWithElapsedClosingDates(baseline);
+        for (Integer advert : adverts) {
+            advertService.refreshClosingDate(advert, baseline);
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        return;
+    }
 
 }

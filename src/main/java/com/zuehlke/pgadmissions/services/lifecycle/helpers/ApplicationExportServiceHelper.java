@@ -25,5 +25,10 @@ public class ApplicationExportServiceHelper implements PrismServiceHelper {
             applicationExportService.submitExportRequest(applicationId);
         }
     }
+    
+    @Override
+    public void shutdown() {
+        return;
+    }
 
 }

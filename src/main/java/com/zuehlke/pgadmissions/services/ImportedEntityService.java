@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
@@ -40,6 +39,8 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
+import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreasDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
@@ -120,9 +121,17 @@ public class ImportedEntityService {
         }
         return references;
     }
-    
+
     public Long getUnindexedProgramCount() {
         return importedEntityDAO.getUnindexedProgramCount();
+    }
+
+    public Long getUnindexedUcasProgramCount() {
+        return importedEntityDAO.getUnindexedUcasProgramCount();
+    }
+
+    public Long getUnindexedInstitutionCount() {
+        return importedEntityDAO.getUnindexedInstitutionCount();
     }
 
     public List<ImportedProgram> getUnindexedImportedUcasPrograms() {
@@ -308,10 +317,6 @@ public class ImportedEntityService {
         importedEntityDAO.executeBulkMerge(table, columns, inserts, updates);
     }
 
-    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(ImportedInstitution importedInstitution) {
-        return importedEntityDAO.getImportedInstitutionSubjectAreas(importedInstitution);
-    }
-
     public List<ImportedSubjectArea> getImportedSubjectAreas() {
         return importedEntityDAO.getImportedSubjectAreas();
     }
@@ -322,6 +327,10 @@ public class ImportedEntityService {
             importedEntityDAO.fillImportedProgramUcasProgramCount(averageUcasProgramCount.intValue());
         }
         entityService.flush();
+    }
+    
+    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(ImportedInstitution institution) {
+        return importedEntityDAO.getImportedInstitutionSubjectAreas(institution);
     }
 
     // private Program mergeProgram(Institution institution, Programme

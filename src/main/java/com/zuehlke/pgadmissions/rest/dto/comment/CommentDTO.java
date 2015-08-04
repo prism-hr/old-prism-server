@@ -1,19 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
-import org.joda.time.LocalDateTime;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDefinitionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import org.joda.time.LocalDateTime;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CommentDTO {
 
@@ -59,10 +57,7 @@ public class CommentDTO {
     private Integer rejectionReason;
 
     @Valid
-    private ResourceDefinitionDTO resource;
-
-    @Valid
-    private ResourceDefinitionDTO newResource;
+    private ResourceCreationDTO resource;
 
     @Valid
     private List<CommentAssignedUserDTO> assignedUsers;
@@ -226,20 +221,12 @@ public class CommentDTO {
         this.rejectionReason = rejectionReason;
     }
 
-    public ResourceDefinitionDTO getResource() {
+    public ResourceCreationDTO getResource() {
         return resource;
     }
 
-    public void setResource(ResourceDefinitionDTO resource) {
+    public void setResource(ResourceCreationDTO resource) {
         this.resource = resource;
-    }
-
-    public ResourceDefinitionDTO getNewResource() {
-        return newResource;
-    }
-
-    public void setNewResource(ResourceDefinitionDTO newResource) {
-        this.newResource = newResource;
     }
 
     public List<CommentAssignedUserDTO> getAssignedUsers() {

@@ -45,6 +45,11 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
         this.logoImage = logoImage;
     }
 
+    public ResourceRepresentationSimple withScope(final com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope scope) {
+        setScope(scope);
+        return this;
+    }
+
     public ResourceRepresentationSimple withId(Integer id) {
         setId(id);
         return this;

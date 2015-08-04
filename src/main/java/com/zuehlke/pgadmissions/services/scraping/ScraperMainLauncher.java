@@ -1,21 +1,7 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -24,12 +10,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ScraperMainLauncher {
 
     private static String urlPattern = "https://graph.facebook.com/{0}?access_token={1}";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         if (args.length < 1) {
             System.err.println("Missing args");
             System.exit(1);
@@ -45,14 +40,17 @@ public class ScraperMainLauncher {
                 break;
             case "institutions":
                 InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
-                institutionScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
+                try (InputStreamReader initialDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
+                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8)) {
+                    institutionScraper.scrape(initialDataReader, writer);
+                }
                 break;
             case "programs":
-                programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1])));
+                programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1]), Charsets.UTF_8));
                 break;
             case "processPrograms":
                 programScraper.processProgramDescriptors(new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8),
-                        new OutputStreamWriter(new FileOutputStream(args[2])));
+                        new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8));
                 break;
             case "applyCodeMappings":
                 applyCodeMapping(args[1]);

@@ -31,7 +31,7 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDivision
         ResourceParent parentResource = resourceCreatorUtils.getParentResource(user, newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();
-        Advert advert = advertService.createAdvert(parentResource, advertDTO);
+        Advert advert = advertService.createAdvert(parentResource, advertDTO, newResource.getName());
 
         Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(parentResource)
                 .withAdvert(advert).withName(advert.getName());

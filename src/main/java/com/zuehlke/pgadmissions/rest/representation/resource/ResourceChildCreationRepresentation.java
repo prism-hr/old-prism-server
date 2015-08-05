@@ -2,11 +2,15 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
+import java.util.List;
+
 public class ResourceChildCreationRepresentation extends ResourceRepresentationSimple {
 
     private PrismOpportunityType opportunityType;
 
     private Boolean partnerMode;
+
+    private List<ResourceChildCreationRepresentation> children;
 
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
@@ -22,6 +26,14 @@ public class ResourceChildCreationRepresentation extends ResourceRepresentationS
 
     public void setPartnerMode(Boolean partnerMode) {
         this.partnerMode = partnerMode;
+    }
+
+    public List<ResourceChildCreationRepresentation> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<ResourceChildCreationRepresentation> children) {
+        this.children = children;
     }
 
     public ResourceChildCreationRepresentation withId(Integer id) {

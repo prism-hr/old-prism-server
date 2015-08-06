@@ -1,84 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_ADVERT_DETAILS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CATEGORIES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CLOSING_DATES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_FEES_AND_PAYMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_TARGETS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_STATISTICS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -886,6 +814,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_REQUIRED(SYSTEM_VALIDATION_ERROR, "This field is required."),
     SYSTEM_VALIDATION_EMAIL(SYSTEM_VALIDATION_ERROR, "This field must be a valid email address."),
     SYSTEM_VALIDATION_NUMBER(SYSTEM_VALIDATION_ERROR, "This field must be a number."),
+    SYSTEM_VALIDATION_MIN(SYSTEM_VALIDATION_ERROR, "This field must be at least {1}."),
+    SYSTEM_VALIDATION_MAX(SYSTEM_VALIDATION_ERROR, "This field must be at most {1}."),
     SYSTEM_VALIDATION_MINLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be less than {1} character(s)."),
     SYSTEM_VALIDATION_ARRAY_MINLENGTH(SYSTEM_VALIDATION_ERROR, "You have to select at least {1} element(s)."),
@@ -1087,7 +1017,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER(SYSTEM_AUTHENTICATE_SECTION, "Connect to any of the follow social networks to obtain your profile picture"),
     SYSTEM_AUTHENTICATE_JUST_REGISTERED_ALMOST_THERE_MESSAGE(SYSTEM_AUTHENTICATE_SECTION, "Almost there..."),
     SYSTEM_AUTHENTICATE_JUST_REGISTERED_ACTIVATION_MESSAGE(SYSTEM_AUTHENTICATE_SECTION, "To activate your account click the activation link in our confirmation email."),
-    SYSTEM_AUTHENTICATE_APPLY_TO_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Apply to {{title}}"),
+    SYSTEM_AUTHENTICATE_APPLY_TO_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Apply to {{name}}"),
     SYSTEM_AUTHENTICATE_LOGIN_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Login"),
     SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Add profile picture"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_HEADER_MODAL(SYSTEM_AUTHENTICATE_SECTION, "You have warnings"),
@@ -1223,16 +1153,21 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_ASSIGNED_USERS_POTENTIALLY_INTERESTED(SYSTEM_RESOURCE_SECTION, "Users in Program"),
     SYSTEM_RESOURCE_NEXT_STATE_LABEL(SYSTEM_RESOURCE_SECTION, "What do you want to do next?"),
     SYSTEM_RESOURCE_NEXT_STATE_HINT(SYSTEM_RESOURCE_SECTION, "Please choose the next state."),
-    SYSTEM_RESOURCE_TIMELINE(SYSTEM_RESOURCE_SECTION, "Timeline"),
-    SYSTEM_RESOURCE_MANAGE_USERS(SYSTEM_RESOURCE_SECTION, "Manage Users"),
-    SYSTEM_RESOURCE_EMAIL_TEMPLATES(SYSTEM_RESOURCE_SECTION, "Email Templates"),
-    SYSTEM_RESOURCE_CUSTOM_FORMS(SYSTEM_RESOURCE_SECTION, "Custom Forms"),
-    SYSTEM_RESOURCE_RELATED_OPPORTUNITIES(SYSTEM_RESOURCE_SECTION, "Related Opportunities"),
-    SYSTEM_RESOURCE_CONFIGURATION(SYSTEM_RESOURCE_SECTION, "Configuration"),
-    SYSTEM_RESOURCE_STATISTICS(SYSTEM_RESOURCE_SECTION, "Statistics"),
-    SYSTEM_RESOURCE_USER_BOUNCES(SYSTEM_RESOURCE_SECTION, "User Bounces"),
-    SYSTEM_RESOURCE_UNREGISTERED_USERS(SYSTEM_RESOURCE_SECTION, "Unregistered Users"),
-    SYSTEM_RESOURCE_TRANSLATIONS(SYSTEM_RESOURCE_SECTION, "Customization"),
+    SYSTEM_RESOURCE_TIMELINE_HEADER(SYSTEM_RESOURCE_SECTION, "Timeline"),
+    SYSTEM_RESOURCE_MANAGE_USERS_HEADER(SYSTEM_RESOURCE_SECTION, "Manage Users"),
+    SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER(SYSTEM_RESOURCE_SECTION, "Email Templates"),
+    SYSTEM_RESOURCE_CUSTOM_FORMS_HEADER(SYSTEM_RESOURCE_SECTION, "Custom Forms"),
+    SYSTEM_RESOURCE_RELATED_OPPORTUNITIES_HEADER(SYSTEM_RESOURCE_SECTION, "Related Opportunities"),
+    SYSTEM_RESOURCE_CONFIGURATION_HEADER(SYSTEM_RESOURCE_SECTION, "Configuration"),
+    SYSTEM_RESOURCE_ADVERT_HEADER(SYSTEM_RESOURCE_SECTION, "Advert"),
+    SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(SYSTEM_RESOURCE_SECTION, "Categories"),
+    SYSTEM_RESOURCE_CLOSING_DATES_HEADER(SYSTEM_RESOURCE_SECTION, "Closing Dates"),
+    SYSTEM_RESOURCE_FEES_HEADER(SYSTEM_RESOURCE_SECTION, "Fees and Payments"),
+    SYSTEM_RESOURCE_TARGETS_HEADER(SYSTEM_RESOURCE_SECTION, "Targets"),
+    SYSTEM_RESOURCE_STATISTICS_HEADER(SYSTEM_RESOURCE_SECTION, "Statistics"),
+    SYSTEM_RESOURCE_USER_BOUNCES_HEADER(SYSTEM_RESOURCE_SECTION, "User Bounces"),
+    SYSTEM_RESOURCE_UNREGISTERED_USERS_HEADER(SYSTEM_RESOURCE_SECTION, "Unregistered Users"),
+    SYSTEM_RESOURCE_TRANSLATIONS_HEADER(SYSTEM_RESOURCE_SECTION, "Customization"),
     SYSTEM_RESOURCE_ACTIONS(SYSTEM_RESOURCE_SECTION, "Actions"),
     SYSTEM_RESOURCE_TIMELINE_MORE_ACTIONS(SYSTEM_RESOURCE_SECTION, "More Actions"),
     SYSTEM_RESOURCE_TIMELINE_NOW(SYSTEM_RESOURCE_SECTION, "Now"),
@@ -1399,10 +1334,50 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Restore Default"),
 
     /*
+     * *************** SYSTEM RESOURCE TARGETS *********************
+     */
+
+    SYSTEM_RESOURCE_TARGETS_COMPETENCES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Competences"),
+    SYSTEM_RESOURCE_TARGETS_COMPETENCES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Specify the competences that you are looking for in your applicants."),
+    SYSTEM_RESOURCE_TARGETS_INSTITUTIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Institutions"),
+    SYSTEM_RESOURCE_TARGETS_INSTITUTIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "???"),
+    SYSTEM_RESOURCE_TARGETS_DEPARTMENTS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Departments"),
+    SYSTEM_RESOURCE_TARGETS_DEPARTMENTS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "???"),
+    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREAS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Subject Areas"),
+    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREAS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
+
+    /*
+     * *************** SYSTEM RESOURCE ADVERT *********************
+     */
+
+    SYSTEM_ADVERT_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Description"),
+    SYSTEM_ADVERT_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Detailed description of your advert."),
+    SYSTEM_ADVERT_HOMEPAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Homepage URL"),
+    SYSTEM_ADVERT_HOMEPAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the web address at which further information about your opportunity can be found"),
+    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Use different address"),
+    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
+
+    /*
+     * *************** SYSTEM ADVERT CATEGORIES *********************
+     */
+
+    SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Industries"),
+    SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Specify the industries that your advert is relevant to."),
+    SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Functions"),
+    SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Specify the job functions that your advert is relevant to."),
+    SYSTEM_ADVERT_CATEGORIES_THEMES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Themes"),
+    SYSTEM_ADVERT_CATEGORIES_THEMES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "???"),
+
+    /*
+     * *************** PROGRAM ADVERT CLOSING DATES *********************
+     */
+
+    SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Closing Date"),
+    SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_HINT(PROGRAM_ADVERT_CLOSING_DATES, "The closing date for applications."),
+    /*
      * *************** SYSTEM HTML MANAGE USERS *********************
      */
 
-    SYSTEM_MANAGE_USERS_HEADER(SYSTEM_HTML_MANAGE_USERS, "Manage Users: {{title}}"),
     SYSTEM_MANAGE_USERS_ROLES_LABEL(SYSTEM_HTML_MANAGE_USERS, "Roles"),
     SYSTEM_MANAGE_USERS_ROLES_HINT(SYSTEM_HTML_MANAGE_USERS, "Select the roles that you wish to assign."),
     SYSTEM_MANAGE_USERS_ADD_USER_BUTTON(SYSTEM_HTML_MANAGE_USERS, "Add User"),
@@ -1412,7 +1387,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION *********************
      */
 
-    SYSTEM_EMAIL_CONFIGURATION_HEADER(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Manage Email Templates: {{title}}"),
     SYSTEM_EMAIL_CONFIGURATION_TEMPLATE_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Email Template"),
     SYSTEM_EMAIL_CONFIGURATION_TEMPLATE_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Select the template you wish to configure"),
     SYSTEM_EMAIL_CONFIGURATION_SUBJECT_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Subject"),
@@ -1426,7 +1400,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM HTML CUSTOM FORM CONFIGURATION **********************
      */
 
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_HEADER(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Manage Custom Forms: {{title}}"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_LABEL(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Comment Type"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_HINT(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "The type of comment that you wish to configure custom data entry fields for."),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_SUBHEADER(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Canvas"),
@@ -1448,21 +1421,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_WORKFLOW_CONFIGURATION_MAX(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Max"),
     SYSTEM_WORKFLOW_CONFIGURATION_DAYS(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Days"),
     SYSTEM_WORKFLOW_CONFIGURATION_REQUIRED(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Required"),
-    SYSTEM_WORKFLOW_CONFIGURATION_HEADER(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Configuration: {{title}}"),
 
     /*
      * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION *******************
      */
 
-    SYSTEM_TRANSLATIONS_CONFIGURATION_HEADER(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Customization: {{title}}"),
     SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_LABEL(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Category"),
     SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_HINT(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Select the category of property you wish to configure"),
-
-    /*
-     * *************** SYSTEM HTML STATISTICS *******************
-     */
-
-    SYSTEM_STATISTICS_HEADER(SYSTEM_HTML_STATISTICS, "Statistics: {{title}}"),
 
     /*
      * *************** SYSTEM PERFORMANCE INDICATORS *********************
@@ -1480,20 +1445,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PERFORMANCE_INDICATOR_AVERAGE_RATING(SYSTEM_PERFORMANCE_INDICATOR, "Average Applicant Rating (1 - 5)"),
     SYSTEM_PERFORMANCE_INDICATOR_AVERAGE_PROCESSING_TIME(SYSTEM_PERFORMANCE_INDICATOR, "Average Application Processing Time (Days)"),
 
-
-    /*
-     * *************** SYSTEM ADVERT TARGETS *********************
-     */
-
-    SYSTEM_ADVERT_TARGETS_HEADER(SYSTEM_ADVERT_TARGETS, "Targets"),
-    SYSTEM_ADVERT_TARGETS_COMPETENCES_LABEL(SYSTEM_ADVERT_TARGETS, "Competences"),
-    SYSTEM_ADVERT_TARGETS_COMPETENCES_HINT(SYSTEM_ADVERT_TARGETS, "Specify the competences that you are looking for in your applicants."),
-    SYSTEM_ADVERT_TARGETS_INSTITUTIONS_LABEL(SYSTEM_ADVERT_TARGETS, "Institutions"),
-    SYSTEM_ADVERT_TARGETS_INSTITUTIONS_HINT(SYSTEM_ADVERT_TARGETS, "???"),
-    SYSTEM_ADVERT_TARGETS_DEPARTMENTS_LABEL(SYSTEM_ADVERT_TARGETS, "Departments"),
-    SYSTEM_ADVERT_TARGETS_DEPARTMENTS_HINT(SYSTEM_ADVERT_TARGETS, "???"),
-    SYSTEM_ADVERT_TARGETS_SUBJECT_AREAS_LABEL(SYSTEM_ADVERT_TARGETS, "Subject Areas"),
-    SYSTEM_ADVERT_TARGETS_SUBJECT_AREAS_HINT(SYSTEM_ADVERT_TARGETS, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
 
     /*
      * *************** INSTITUTION COMMENT *********************
@@ -1526,23 +1477,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated institution closing dates"),
 
     /*
-     * *************** INSTITUTION FORM *********************
-     */
-
-    INSTITUTION_ADVERT_HOMEPAGE_LABEL(INSTITUTION_ADVERT_DETAILS, "Homepage URL"),
-    INSTITUTION_ADVERT_HOMEPAGE_HINT(INSTITUTION_ADVERT_DETAILS, "Specify the web address at which further information about your opportunity can be found"),
-    INSTITUTION_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(INSTITUTION_ADVERT_DETAILS, "Use different address"),
-    INSTITUTION_ADVERT_USE_DIFFERENT_ADDRESS_HINT(INSTITUTION_ADVERT_DETAILS, "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
-
-    /*
-     * *************** INSTITUTION ADVERT DETAILS *********************
-     */
-
-    INSTITUTION_ADVERT_HEADER(INSTITUTION_ADVERT_DETAILS, "Advert"),
-    INSTITUTION_ADVERT_DESCRIPTION_LABEL(INSTITUTION_ADVERT_DETAILS, "Description"),
-    INSTITUTION_ADVERT_DESCRIPTION_HINT(INSTITUTION_ADVERT_DETAILS, "Detailed description of your advert."),
-
-    /*
      * *************** PROGRAM COMMENT *********************
      */
 
@@ -1572,7 +1506,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** PROGRAM ADVERT FEES & PAYMENTS *********************
      */
 
-    PROGRAM_FEES_HEADER(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fees and Payments"),
     PROGRAM_FEES_SPECIFY_FEE_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify fees?"),
     PROGRAM_FEES_SPECIFY_FEE_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "If you are charging fees (e.g. for study) specify here"),
     PROGRAM_FEES_FEE_CURRENCY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee Currency"),
@@ -1593,28 +1526,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_FEES_PAY_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the minimum pay level"),
     PROGRAM_FEES_PAY_MAXIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay maximum"),
     PROGRAM_FEES_PAY_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the maximum pay level"),
-
-    /*
-     * *************** PROGRAM ADVERT CATEGORIES *********************
-     */
-
-    PROGRAM_CATEGORIES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Categories"),
-    PROGRAM_CATEGORIES_INDUSTRIES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Industries"),
-    PROGRAM_CATEGORIES_INDUSTRIES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the industries that your advert is relevant to."),
-    PROGRAM_CATEGORIES_FUNCTIONS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Functions"),
-    PROGRAM_CATEGORIES_FUNCTIONS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the job functions that your advert is relevant to."),
-    PROGRAM_CATEGORIES_THEMES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Themes"),
-    PROGRAM_CATEGORIES_THEMES_HINT(PROGRAM_ADVERT_CATEGORIES, "???"),
-
-    /*
-     * *************** PROGRAM ADVERT CLOSING DATES *********************
-     */
-
-    PROGRAM_CLOSING_DATES_HEADER(PROGRAM_ADVERT_CLOSING_DATES, "Closing Dates"),
-    PROGRAM_CLOSING_DATES_CLOSING_DATE_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Closing Date"),
-    PROGRAM_CLOSING_DATES_CLOSING_DATE_HINT(PROGRAM_ADVERT_CLOSING_DATES, "The closing date for applications."),
-    PROGRAM_CLOSING_DATES_STUDY_PLACES_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Study Places"),
-    PROGRAM_CLOSING_DATES_STUDY_PLACES_HINT(PROGRAM_ADVERT_CLOSING_DATES, "The number of study places on offer."),
 
     /*
      * *************** PROJECT COMMENT *********************

@@ -1,44 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
-import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
+import com.zuehlke.pgadmissions.domain.advert.*;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -47,6 +13,25 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 // FIXME adverts for applying to institution and/or department directly
 @Repository
@@ -203,8 +188,8 @@ public class AdvertDAO {
     public AdvertClosingDate getNextAdvertClosingDate(Advert advert, LocalDate baseline) {
         return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class) //
                 .add(Restrictions.eq("advert", advert)) //
-                .add(Restrictions.ge("closingDate", baseline)) //
-                .addOrder(Order.asc("closingDate")) //
+                .add(Restrictions.ge("value", baseline)) //
+                .addOrder(Order.asc("value")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }

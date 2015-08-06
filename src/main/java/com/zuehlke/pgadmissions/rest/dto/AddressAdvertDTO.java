@@ -1,25 +1,27 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
-import com.zuehlke.pgadmissions.domain.address.Address;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-public class AddressAdvertDTO extends Address implements AddressDefinition<String> {
+public class AddressAdvertDTO extends Address implements AddressDefinition<ImportedAdvertDomicileDTO> {
 
-    @NotEmpty
-    private String domicile;
+    @NotNull
+    @Valid
+    private ImportedAdvertDomicileDTO domicile;
 
     private String googleId;
 
     @Override
-    public String getDomicile() {
+    public ImportedAdvertDomicileDTO getDomicile() {
         return domicile;
     }
 
     @Override
-    public void setDomicile(String domicile) {
+    public void setDomicile(ImportedAdvertDomicileDTO domicile) {
         this.domicile = domicile;
     }
 

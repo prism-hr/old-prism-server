@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
+import javax.validation.constraints.NotNull;
+
 public class ImportedEntityDTO {
 
+    @NotNull
     private Integer id;
 
     private String name;

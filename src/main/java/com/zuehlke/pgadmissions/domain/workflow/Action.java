@@ -1,21 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "action")
@@ -91,51 +81,51 @@ public class Action extends WorkflowDefinition {
         this.actionCategory = actionCategory;
     }
 
-    public final Boolean getRatingAction() {
+    public Boolean getRatingAction() {
         return ratingAction;
     }
 
-    public final void setRatingAction(Boolean ratingAction) {
+    public void setRatingAction(Boolean ratingAction) {
         this.ratingAction = ratingAction;
     }
 
-    public final Boolean getTransitionAction() {
+    public Boolean getTransitionAction() {
         return transitionAction;
     }
 
-    public final void setTransitionAction(Boolean transitionAction) {
+    public void setTransitionAction(Boolean transitionAction) {
         this.transitionAction = transitionAction;
     }
 
-    public final Boolean getDeclinableAction() {
+    public Boolean getDeclinableAction() {
         return declinableAction;
     }
 
-    public final void setDeclinableAction(Boolean declinableAction) {
+    public void setDeclinableAction(Boolean declinableAction) {
         this.declinableAction = declinableAction;
     }
 
-    public final Boolean getVisibleAction() {
+    public Boolean getVisibleAction() {
         return visibleAction;
     }
 
-    public final void setVisibleAction(Boolean visibleAction) {
+    public void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
     }
 
-    public final ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
+    public ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
         return actionCustomQuestionDefinition;
     }
 
-    public final void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
+    public void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
         this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
     }
 
-    public final Action getFallbackAction() {
+    public Action getFallbackAction() {
         return fallbackAction;
     }
 
-    public final void setFallbackAction(Action fallbackAction) {
+    public void setFallbackAction(Action fallbackAction) {
         this.fallbackAction = fallbackAction;
     }
 
@@ -161,16 +151,16 @@ public class Action extends WorkflowDefinition {
         return redactions;
     }
 
-    public final Set<StateAction> getStateActions() {
+    public void setRedactions(Set<ActionRedaction> redactions) {
+        this.redactions = redactions;
+    }
+
+    public Set<StateAction> getStateActions() {
         return stateActions;
     }
 
-    public final void setStateActions(Set<StateAction> stateActions) {
+    public void setStateActions(Set<StateAction> stateActions) {
         this.stateActions = stateActions;
-    }
-
-    public final void setRedactions(Set<ActionRedaction> redactions) {
-        this.redactions = redactions;
     }
 
     public Action withId(PrismAction id) {

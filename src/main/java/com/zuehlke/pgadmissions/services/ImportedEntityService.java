@@ -373,6 +373,10 @@ public class ImportedEntityService {
         importedEntityDAO.enableImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor);
     }
 
+    public void deleteImportedInstitutionSubjectAreas(boolean enabled) {
+        importedEntityDAO.deleteImportedInstitutionSubjectAreas(enabled);
+    }
+
     public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas) {
         importedEntityDAO.deleteImportedInstitutionSubjectAreas(subjectAreas);
     }

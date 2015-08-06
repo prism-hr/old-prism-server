@@ -97,15 +97,15 @@ public class TargetingService {
         entityService.flush();
     }
 
-    public void scoreImportedInstitutionSubjectAreas(Integer subjectArea, TargetingParameterDTO parameterSet, Map<Integer, BigDecimal> topScores) {
-        logger.info("Scoring imported institution subject areas for subject area: " + subjectArea.toString() + //
+    public void indexInstitutionSubjectArea(Integer subjectAreaId, TargetingParameterDTO parameterSet) {
+        logger.info("Scoring imported institution subject areas for subject area: " + subjectAreaId.toString() + //
                 " with parameters (" + parameterSet.toString() + ")");
 
         Integer concentrationFactor = parameterSet.getConcentration();
         BigDecimal proliferationFactor = parameterSet.getProliferation();
 
-        Collection<Integer> institutions = getTopInstitutionsBySubjectArea(subjectArea);
-        Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectArea);
+        Collection<Integer> institutions = getTopInstitutionsBySubjectArea(subjectAreaId);
+        Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectAreaId);
         BigDecimal minimumRelationStrength = importedEntityService.getMinimumImportedInstitutionSubjectAreaRelationStrength(
                 institutions, subjectAreaFamily, concentrationFactor, proliferationFactor);
 
@@ -120,21 +120,22 @@ public class TargetingService {
                 proliferationFactor, minimumRelationStrength);
 
         int counter = 1;
-        BigDecimal score = new BigDecimal(0);
+        BigDecimal newIndexScore = new BigDecimal(0);
         for (Integer institutionRanking : institutionRankings) {
             Integer importance = institutionImportance.get(institutionRanking);
             if (importance != null) {
-                score = score.add(new BigDecimal(counter).divide(new BigDecimal(importance), PRECISION, HALF_UP));
+                newIndexScore = newIndexScore.add(new BigDecimal(counter).divide(new BigDecimal(importance), PRECISION, HALF_UP));
             }
             counter++;
         }
 
-        BigDecimal topScore = topScores.get(subjectArea);
-        if (topScore == null) {
-            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, topScores, score);
-        } else if (score.compareTo(topScore) < 0) {
+        ImportedSubjectArea subjectArea = importedEntityService.getById(ImportedSubjectArea.class, subjectAreaId);
+        BigDecimal topIndexScore = subjectArea.getTopIndexScore();
+        if (topIndexScore == null) {
+            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
+        } else if (newIndexScore.compareTo(topIndexScore) < 0) {
             importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily);
-            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, topScores, score);
+            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
         } else {
             importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
         }
@@ -293,10 +294,10 @@ public class TargetingService {
         return getTokenRequiredConfidence(tokenCount, (threshold * THRESHOLD_TOKEN));
     }
 
-    private void setNewTopInstitutionSubjectAreaScore(Integer subjectArea, Collection<Integer> subjectAreaFamily, Integer concentrationFactor,
-            BigDecimal proliferationFactor, Map<Integer, BigDecimal> topScores, BigDecimal score) {
+    private void setNewTopInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily, Integer concentrationFactor,
+            BigDecimal proliferationFactor, BigDecimal newIndexScore) {
         importedEntityService.enableImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
-        topScores.put(subjectArea, score);
+        subjectArea.setTopIndexScore(newIndexScore);
     }
 
 }

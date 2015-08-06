@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_SUBJECT_AREA;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,9 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     @ManyToOne
     @JoinColumn(name = "parent_imported_subject_area_id")
     private ImportedSubjectArea parent;
+
+    @Column(name = "top_index_score")
+    private BigDecimal topIndexScore;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -128,6 +132,14 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         this.parent = parent;
     }
 
+    public BigDecimal getTopIndexScore() {
+        return topIndexScore;
+    }
+
+    public void setTopIndexScore(BigDecimal topIndexScore) {
+        this.topIndexScore = topIndexScore;
+    }
+
     @Override
     public Boolean getEnabled() {
         return enabled;
@@ -152,12 +164,12 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         ancestors.add(this);
         return ancestors;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object == null) {

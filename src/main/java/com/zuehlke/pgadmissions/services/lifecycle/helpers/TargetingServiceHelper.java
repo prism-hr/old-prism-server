@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import static com.google.common.collect.Maps.newConcurrentMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTIONS;
-import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_NON_UCAS_PROGRAMS;
-import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_UCAS_PROGRAMS;
-import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.SCORING_INSTIUTTION_SUBJECT_AREAS;
+import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTIUTTION_SUBJECT_AREAS;
+import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_PROGRAMS;
 import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.PRECISION;
 import static java.math.RoundingMode.HALF_UP;
@@ -13,12 +11,10 @@ import static java.math.RoundingMode.HALF_UP;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -50,11 +46,9 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     private PrismTargetingIndexationState algorithmState;
 
-    private TargetingParameterDTO parameterSetToScore = null;
-
     private Set<TargetingParameterDTO> parameterSets = newLinkedHashSet();
 
-    private Map<Integer, BigDecimal> topScores = newConcurrentMap();
+    private TargetingParameterDTO parameterSetToScore = null;
 
     private ExecutorService executorService;
 
@@ -64,15 +58,6 @@ public class TargetingServiceHelper implements PrismServiceHelper {
     @Inject
     private TargetingService targetingService;
 
-    @PostConstruct
-    public void postConstruct() {
-        for (int i = concentration.getMinimum(); i <= concentration.getMaximum(); i = (i + concentration.getInterval())) {
-            for (BigDecimal j = proliferation.getMinimum(); j.compareTo(proliferation.getMaximum()) <= 0; j = j.add(proliferation.getInterval())) {
-                parameterSets.add(new TargetingParameterDTO(i, j));
-            }
-        }
-    }
-
     @Override
     public synchronized void execute() {
         if (activeExecutions == 0) {
@@ -80,11 +65,10 @@ public class TargetingServiceHelper implements PrismServiceHelper {
             if (unindexedPrograms || !parameterSets.isEmpty()) {
                 executorService = executorService == null ? Executors.newFixedThreadPool(threadCount) : executorService;
                 if (unindexedPrograms) {
-                    algorithmState = INDEXING_UCAS_PROGRAMS;
+                    algorithmState = INDEXING_PROGRAMS;
                     indexImportedPrograms(importedEntityService.getUnindexedImportedUcasPrograms());
 
                     if (importedEntityService.getUnindexedUcasProgramCount() == 0) {
-                        algorithmState = INDEXING_NON_UCAS_PROGRAMS;
                         importedEntityService.fillImportedUcasProgramCount();
                         indexImportedPrograms(importedEntityService.getUnindexedImportedNonUcasPrograms());
                     }
@@ -99,10 +83,8 @@ public class TargetingServiceHelper implements PrismServiceHelper {
                         break;
                     }
                 } else {
-                    algorithmState = SCORING_INSTIUTTION_SUBJECT_AREAS;
-                    for (Integer subjectArea : importedEntityService.getRootImportedSubjectAreas()) {
-                        scoreInstitutionSubjectAreas(subjectArea, parameterSetToScore);
-                    }
+                    algorithmState = INDEXING_INSTIUTTION_SUBJECT_AREAS;
+                    indexInstitutionSubjectAreas(importedEntityService.getRootImportedSubjectAreas(), parameterSetToScore);
                 }
             }
         }
@@ -139,13 +121,32 @@ public class TargetingServiceHelper implements PrismServiceHelper {
         }
     }
 
-    private void scoreInstitutionSubjectAreas(final Integer subjectArea, final TargetingParameterDTO parameterSet) {
+    private synchronized void indexInstitutionSubjectAreas(List<Integer> subjectAreas, final TargetingParameterDTO parameterSet) {
+        for (Integer subjectArea : subjectAreas) {
+            activeExecutions++;
+            executorService.submit(() -> {
+                indexInstitutionSubjectArea(subjectArea, parameterSet);
+            });
+        }
+    }
+
+    private void indexInstitutionSubjectArea(Integer subjectArea, final TargetingParameterDTO parameterSet) {
+        try {
+            targetingService.indexInstitutionSubjectArea(subjectArea, parameterSet);
+        } catch (Exception e) {
+            logger.error("Failed to score subject area: " + subjectArea.toString() + " with parameters (" + parameterSet.toString() + ")", e);
+        } finally {
+            decrementActiveExecutions();
+        }
+    }
+
+    private synchronized void cleanUpInstitutionSubjectArea() {
         activeExecutions++;
         executorService.submit(() -> {
             try {
-                targetingService.scoreImportedInstitutionSubjectAreas(subjectArea, parameterSet, topScores);
+                importedEntityService.deleteImportedInstitutionSubjectAreas(false);
             } catch (Exception e) {
-                logger.error("Failed to score subject area: " + subjectArea.toString() + " with parameters (" + parameterSet.toString() + ")", e);
+                logger.error("Failed to clean up imported subject areas", e);
             } finally {
                 decrementActiveExecutions();
             }
@@ -155,11 +156,22 @@ public class TargetingServiceHelper implements PrismServiceHelper {
     private synchronized void decrementActiveExecutions() {
         activeExecutions--;
         if (activeExecutions == 0) {
-            if (algorithmState.equals(SCORING_INSTIUTTION_SUBJECT_AREAS)) {
+            if (algorithmState.equals(INDEXING_INSTIUTTION_SUBJECT_AREAS)) {
                 algorithmState = null;
                 parameterSetToScore = null;
+                if (parameterSets.isEmpty()) {
+                    cleanUpInstitutionSubjectArea();
+                }
+            } else if (algorithmState.equals(INDEXING_PROGRAMS)) {
+                for (int i = concentration.getMinimum(); i <= concentration.getMaximum(); i = (i + concentration.getInterval())) {
+                    for (BigDecimal j = proliferation.getMinimum(); j.compareTo(proliferation.getMaximum()) <= 0; j = j.add(proliferation.getInterval())) {
+                        parameterSets.add(new TargetingParameterDTO(i, j));
+                    }
+                }
             }
-            execute();
+            if (activeExecutions == 0) {
+                execute();
+            }
         }
     }
 
@@ -203,10 +215,9 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     protected static enum PrismTargetingIndexationState {
 
-        INDEXING_UCAS_PROGRAMS,
-        INDEXING_NON_UCAS_PROGRAMS,
+        INDEXING_PROGRAMS,
         INDEXING_INSTITUTIONS,
-        SCORING_INSTIUTTION_SUBJECT_AREAS;
+        INDEXING_INSTIUTTION_SUBJECT_AREAS;
 
     }
 

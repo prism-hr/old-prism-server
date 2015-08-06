@@ -383,6 +383,14 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
+    public void deleteImportedInstitutionSubjectAreas(boolean enabled) {
+        sessionFactory.getCurrentSession().createQuery(
+                "delete ImportedInstitutionSubjectArea "
+                        + "where enabled = :enabled") //
+                .setParameter("enabled", enabled)
+                .executeUpdate();
+    }
+
     public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas) {
         sessionFactory.getCurrentSession().createQuery(
                 "delete ImportedInstitutionSubjectArea "

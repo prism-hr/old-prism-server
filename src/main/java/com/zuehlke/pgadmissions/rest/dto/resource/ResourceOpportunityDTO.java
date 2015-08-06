@@ -1,15 +1,18 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
-import org.apache.commons.lang3.ObjectUtils;
-import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
+import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Set;
+
+import org.apache.commons.lang3.ObjectUtils;
+
+import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 
 public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
         ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType, ResourceStudyOptionDTO> {
@@ -105,7 +108,7 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
 
     @Override
     public ResourceParentDTO getNewParentResource() {
-        return ObjectUtils.firstNonNull(newDepartment, super.getNewParentResource());
+        return ObjectUtils.firstNonNull(newDepartment, super.getNewInstitution());
     }
 
 }

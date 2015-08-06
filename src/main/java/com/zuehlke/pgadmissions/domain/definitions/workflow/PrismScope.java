@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
@@ -83,7 +82,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourcePostprocessor(ProgramPostprocessor.class)), //
     PROJECT(new PrismScopeDefinition() //
             .withResourceClass(Project.class) //
-            .withResourceDTOClass(ProjectDTO.class) //
+            .withResourceDTOClass(ResourceOpportunityDTO.class) //
             .withResourceShortCode("PT") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "name") //

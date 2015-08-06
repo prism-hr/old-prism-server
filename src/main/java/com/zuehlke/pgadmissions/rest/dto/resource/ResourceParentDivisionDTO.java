@@ -4,15 +4,12 @@ import java.util.List;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDivisionDefinition;
 
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 
 public class ResourceParentDivisionDTO extends ResourceParentDTO implements ResourceCreationDTO, ResourceParentDivisionDefinition<AdvertDTO> {
 
     private ResourceDTO parentResource;
-
-    private InstitutionDTO newInstitution;
 
     private String importedCode;
 
@@ -26,14 +23,6 @@ public class ResourceParentDivisionDTO extends ResourceParentDTO implements Reso
     @Override
     public void setParentResource(ResourceDTO parentResource) {
         this.parentResource = parentResource;
-    }
-
-    public InstitutionDTO getNewInstitution() {
-        return newInstitution;
-    }
-
-    public void setNewInstitution(InstitutionDTO newInstitution) {
-        this.newInstitution = newInstitution;
     }
 
     @Override

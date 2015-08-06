@@ -557,17 +557,17 @@ public class ResourceMapper {
             }
         }
 
+        int counter = 0;
         Map<Integer, ResourceChildCreationRepresentation> index = Maps.newHashMap();
         Set<ResourceChildCreationRepresentation> representations = Sets.newLinkedHashSet();
         for (Entry<PrismScope, TreeSet<ResourceChildCreationDTO>> resourceEntry : resources.entrySet()) {
-            int counter = 0;
             if (!(counter > 0 && parentScope.equals(SYSTEM))) {
                 for (ResourceChildCreationDTO resource : resourceEntry.getValue()) {
                     ResourceChildCreationRepresentation representation = getResourceChildCreationRepresentation(resource);
                     if (counter == 0) {
                         representations.add(representation);
                     } else {
-                        index.get(resource.getResource().getId()).addChildResource(representation);
+                        index.get(resource.getResource().getParentResource().getId()).addChildResource(representation);
                     }
                     index.put(resource.getResource().getId(), representation);
                 }

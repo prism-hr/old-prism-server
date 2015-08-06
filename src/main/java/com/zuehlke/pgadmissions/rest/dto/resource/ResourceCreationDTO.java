@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
         property = "scope")
 @JsonSubTypes({
         @Type(value = ApplicationDTO.class, name = "APPLICATION"),
-        @Type(value = ProjectDTO.class, name = "PROJECT"),
+        @Type(value = ResourceOpportunityDTO.class, name = "PROJECT"),
         @Type(value = ResourceOpportunityDTO.class, name = "PROGRAM"),
         @Type(value = ResourceParentDivisionDTO.class, name = "DEPARTMENT"),
         @Type(value = InstitutionDTO.class, name = "INSTITUTION")

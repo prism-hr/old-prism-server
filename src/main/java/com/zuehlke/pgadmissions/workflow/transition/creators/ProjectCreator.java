@@ -11,12 +11,12 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
 @Component
-public class ProjectCreator implements ResourceCreator<ProjectDTO> {
+public class ProjectCreator implements ResourceCreator<ResourceOpportunityDTO> {
 
     @Inject
     private AdvertService advertService;
@@ -28,7 +28,7 @@ public class ProjectCreator implements ResourceCreator<ProjectDTO> {
     private ResourceCreatorUtils resourceCreatorUtils;
 
     @Override
-    public Resource create(User user, ProjectDTO newResource) throws Exception {
+    public Resource create(User user, ResourceOpportunityDTO newResource) throws Exception {
         ResourceParent parentResource = resourceCreatorUtils.getParentResource(user, newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();

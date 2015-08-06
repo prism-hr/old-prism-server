@@ -11,6 +11,10 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 
 public abstract class ResourceParent extends Resource implements ResourceParentDefinition<Advert> {
 
+    public abstract String getName();
+
+    public abstract void setName(String name);
+
     public abstract DateTime getUpdatedTimestampSitemap();
 
     public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);
@@ -26,7 +30,7 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
     public abstract BigDecimal getApplicationRatingAverage();
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
-    
+
     public abstract Set<Advert> getAdverts();
 
     public void addResourceCondition(ResourceCondition resourceCondition) {

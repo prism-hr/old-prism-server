@@ -2,13 +2,13 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.resource.*;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -34,9 +34,17 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
@@ -456,6 +464,42 @@ public class ResourceDAO {
                         + "where " + propertyName + " = :resourceOpportunity")
                 .setParameter("resourceOpportunity", resourceOpportunity)
                 .executeUpdate();
+    }
+
+    public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope resourceScope, PrismScope parentScope, Integer parentId,
+            PrismScope targetScope, boolean userLoggedIn) {
+        String resourceReference = resourceScope.getLowerCamelName();
+
+        ProjectionList projections = Projections.projectionList() //
+                .add(Projections.groupProperty(resourceReference), "resource");
+
+        boolean isInstitution = resourceScope.equals(INSTITUTION);
+        if (!isInstitution) {
+            projections.add(Projections.property("resourceCondition.partnerMode"), "partnerMode");
+        }
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(projections) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN); //
+
+        if (!isInstitution) {
+            criteria.createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN,
+                    Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
+        }
+
+        criteria.createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReference + "." + parentScope.getLowerCamelName() + ".id", parentId)) //
+                .add(Restrictions.eq("action.creationScope.id", targetScope));
+
+        if (!userLoggedIn) {
+            criteria.add(Restrictions.eq("resourceCondition.partnerMode", true));
+        }
+
+        return (List<ResourceChildCreationDTO>) criteria.addOrder(Order.desc(resourceReference + ".name")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class))
+                .list();
     }
 
     public void disableImportedResourceStudyOptionInstances(ResourceOpportunity resourceOpportunity) {

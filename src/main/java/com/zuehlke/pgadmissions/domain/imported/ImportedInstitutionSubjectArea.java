@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.WeightedRelation;
 
 @Entity
 @Table(name = "imported_institution_subject_area", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id",
-        "imported_subject_area_id" }) })
+        "imported_subject_area_id", "concentration_factor", "proliferation_factor" }) })
 public class ImportedInstitutionSubjectArea extends WeightedRelation implements UniqueEntity {
 
     @Id
@@ -31,8 +31,17 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
     @JoinColumn(name = "imported_subject_area_id", nullable = false)
     private ImportedSubjectArea subjectArea;
 
+    @Column(name = "concentration_factor", nullable = false)
+    private Integer concentrationFactor;
+
+    @Column(name = "proliferation_factor", nullable = false)
+    private BigDecimal proliferationFactor;
+
     @Column(name = "relation_strength", nullable = false)
     private BigDecimal relationStrength;
+
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
 
     @Override
     public Integer getId() {
@@ -60,6 +69,22 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
         this.subjectArea = subjectArea;
     }
 
+    public Integer getConcentrationFactor() {
+        return concentrationFactor;
+    }
+
+    public void setConcentrationFactor(Integer concentrationFactor) {
+        this.concentrationFactor = concentrationFactor;
+    }
+
+    public BigDecimal getProliferationFactor() {
+        return proliferationFactor;
+    }
+
+    public void setProliferationFactor(BigDecimal proliferationFactor) {
+        this.proliferationFactor = proliferationFactor;
+    }
+
     @Override
     public BigDecimal getRelationStrength() {
         return relationStrength;
@@ -70,9 +95,18 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
         this.relationStrength = relationStrength;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", institution).addProperty("subjectArea", subjectArea);
+        return new ResourceSignature().addProperty("institution", institution).addProperty("subjectArea", subjectArea)
+                .addProperty("concentrationFactor", concentrationFactor).addProperty("proliferationFactor", proliferationFactor);
     }
 
 }

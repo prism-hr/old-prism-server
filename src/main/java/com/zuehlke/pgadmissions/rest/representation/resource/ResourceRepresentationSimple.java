@@ -11,8 +11,6 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
 
     private StateRepresentationSimple state;
 
-    private DocumentRepresentation logoImage;
-
     public String getCode() {
         return code;
     }
@@ -37,14 +35,6 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
         this.state = state;
     }
 
-    public DocumentRepresentation getLogoImage() {
-        return logoImage;
-    }
-
-    public void setLogoImage(DocumentRepresentation logoImage) {
-        this.logoImage = logoImage;
-    }
-
     public ResourceRepresentationSimple withScope(final com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope scope) {
         setScope(scope);
         return this;
@@ -61,7 +51,7 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
     }
 
     public ResourceRepresentationSimple withLogoImage(DocumentRepresentation logoImage) {
-        this.logoImage = logoImage;
+        setLogoImage(logoImage);
         return this;
     }
 

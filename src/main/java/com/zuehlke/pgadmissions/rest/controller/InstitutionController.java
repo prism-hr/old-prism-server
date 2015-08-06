@@ -1,12 +1,25 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
@@ -18,19 +31,6 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -68,21 +68,7 @@ public class InstitutionController {
 
     @RequestMapping(method = RequestMethod.GET, params = "accepting")
     public List<ResourceChildCreationRepresentation> getAcceptingInstitutions(@RequestParam PrismScope accepting) {
-        List<ResourceChildCreationDTO> institutions;
-        if (accepting == PROGRAM) {
-            institutions = institutionService.getInstitutionsForWhichUserCanCreateProgram();
-        } else if (accepting == PROJECT) {
-            institutions = institutionService.getInstitutionsForWhichUserCanCreateProject();
-        } else {
-            throw new Error();
-        }
-        return institutions.stream().map(new AcceptingResourceToRepresentationFunction()).collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "/{institutionId}/resources", method = RequestMethod.GET, params = "accepting")
-    public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer institutionId, @RequestParam PrismScope accepting) {
-        List<ResourceChildCreationDTO> programs = programService.getProgramsForWhichUserCanCreateProject(institutionId);
-        return programs.stream().map(new AcceptingResourceToRepresentationFunction()).collect(Collectors.toList());
+        return institutionMapper.getInstitutionChildCreationRepresentations(accepting);
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
@@ -115,19 +101,6 @@ public class InstitutionController {
         Class<T> requestClass = (Class<T>) type.getRequestClass();
         List<T> representations = importedEntityMapper.getImportedEntityRepresentations(requestClass, request.getInputStream());
         importedEntityService.mergeImportedEntities(institutionService.getById(institutionId), type, representations);
-    }
-
-    private static class AcceptingResourceToRepresentationFunction implements Function<ResourceChildCreationDTO, ResourceChildCreationRepresentation> {
-        @Override
-        public ResourceChildCreationRepresentation apply(ResourceChildCreationDTO input) {
-            PrismOpportunityType opportunityType = null;
-            ResourceParent resource = input.getResource();
-            if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-                opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
-            }
-            return new ResourceChildCreationRepresentation().withId(resource.getId()).withName(resource.getName())
-                    .withScope(resource.getResourceScope()).withPartnerMode(input.getPartnerMode()).withOpportunityType(opportunityType);
-        }
     }
 
 }

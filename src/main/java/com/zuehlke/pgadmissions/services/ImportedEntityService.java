@@ -1,22 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.*;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
-import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
-import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreasDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -24,15 +26,33 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-
-import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
+import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
 
 @Service
 @Transactional
@@ -62,6 +82,9 @@ public class ImportedEntityService {
     private StateService stateService;
 
     @Inject
+    private ImportedSubjectAreaIndex importedSubjectAreaIndex;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public <T extends ImportedEntity<?, ?>> T getById(Class<T> clazz, Integer id) {
@@ -72,8 +95,8 @@ public class ImportedEntityService {
         return importedEntityDAO.getByName(entityClass, name);
     }
 
-    public <T extends ImportedEntity<?, ?>> List<T> searchByName(Class<T> entityClass, String searchTerm) {
-        return importedEntityDAO.searchByName(entityClass, searchTerm);
+    public <T extends ImportedEntity<?, ?>> List<T> getSimilarImportedEntities(Class<T> entityClass, String searchTerm) {
+        return importedEntityDAO.getSimilarImportedEntities(entityClass, searchTerm);
     }
 
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntities(Institution institution,
@@ -135,8 +158,8 @@ public class ImportedEntityService {
         importedProgram.setIndexed(indexed);
     }
 
-    public List<ImportedInstitution> getUnindexedImportedInstitutions() {
-        return importedEntityDAO.getUnindexedImportedInstitutions();
+    public List<ImportedInstitution> getImportedInstitutions() {
+        return entityService.list(ImportedInstitution.class);
     }
 
     public void setImportedInstitutionIndexed(Integer importedInstitutionId, boolean indexed) {
@@ -299,7 +322,7 @@ public class ImportedEntityService {
     }
 
     public List<ImportedSubjectArea> getImportedSubjectAreas() {
-        return importedEntityDAO.getImportedSubjectAreas();
+        return entityService.list(ImportedSubjectArea.class);
     }
 
     public void fillImportedUcasProgramCount() {
@@ -309,9 +332,72 @@ public class ImportedEntityService {
         }
         entityService.flush();
     }
-    
+
     public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(ImportedInstitution institution) {
         return importedEntityDAO.getImportedInstitutionSubjectAreas(institution);
+    }
+
+    public List<SubjectAreaRepresentation> getSimilarImportedSubjectAreas(String searchTerm) {
+        List<ImportedSubjectArea> importedSubjectAreas = getSimilarImportedEntities(ImportedSubjectArea.class, searchTerm);
+        importedSubjectAreas = importedSubjectAreas.stream().map(sa -> importedSubjectAreaIndex.getById(sa.getId())).collect(Collectors.toList());
+
+        Map<Integer, SubjectAreaRepresentation> initialMap = new HashMap<>();
+        initialMap.put(-1, new SubjectAreaRepresentation(-1, null));
+
+        Map<Integer, SubjectAreaRepresentation> representations = importedSubjectAreas.stream()
+                .flatMap(subjectArea -> subjectArea.getAncestorsPath().stream())
+                .reduce(initialMap, (map, sa) -> {
+                    SubjectAreaRepresentation representation = new SubjectAreaRepresentation(sa.getId(), sa.getName());
+                    map.put(sa.getId(), representation);
+                    int parentId = sa.getParent() != null ? sa.getParent().getId() : -1;
+                    map.get(parentId).addChild(representation);
+                    return map;
+                }, (map1, map2) -> {
+                    throw new UnsupportedOperationException();
+                });
+
+        return Lists.newArrayList(representations.get(-1).getChildren());
+    }
+
+    public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Collection<Integer> institutions, Collection<Integer> subjectAreas,
+            Integer concentrationFactor, BigDecimal proliferationFactor) {
+        return importedEntityDAO.getMinimumImportedInstitutionSubjectAreaRelationStrength(institutions, subjectAreas, concentrationFactor, proliferationFactor);
+    }
+
+    public List<Integer> getImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor,
+            BigDecimal proliferationFactor, BigDecimal minimumRelationStrength) {
+        return importedEntityDAO.getImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor, minimumRelationStrength);
+    }
+
+    public void enableImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor, BigDecimal proliferationFactor) {
+        importedEntityDAO.enableImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor);
+    }
+
+    public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas) {
+        importedEntityDAO.deleteImportedInstitutionSubjectAreas(subjectAreas);
+    }
+
+    public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor, BigDecimal proliferationFactor) {
+        importedEntityDAO.deleteImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor);
+    }
+
+    public List<Integer> getRootImportedSubjectAreas() {
+        return importedEntityDAO.getRootImportedSubjectAreas();
+    }
+
+    public Set<Integer> getImportedSubjectAreaFamily(Integer... parents) {
+        return getImportedSubjectAreaFamily(null, parents);
+    }
+
+    private Set<Integer> getImportedSubjectAreaFamily(Set<Integer> family, Integer... parents) {
+        family = family == null ? Sets.newHashSet() : family;
+        family.addAll(newHashSet(parents));
+
+        List<Integer> children = importedEntityDAO.getChildImportedSubjectAreas(parents);
+        if (children.isEmpty()) {
+            return family;
+        }
+        return getImportedSubjectAreaFamily(family, children.toArray(new Integer[children.size()]));
     }
 
     // private Program mergeProgram(Institution institution, Programme

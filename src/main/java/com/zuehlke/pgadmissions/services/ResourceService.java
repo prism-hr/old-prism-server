@@ -173,25 +173,6 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceParentDTO, U extends ResourceParent> U createParentResource(User user, T parentDTO) throws Exception {
-        Class<?> parentDTOClass = parentDTO.getClass();
-        PrismScope creationScope = PrismScope.getByResourceDTOClass(parentDTOClass);
-
-        if (creationScope != null) {
-            boolean isInstitution = creationScope.equals(INSTITUTION);
-
-            if (isInstitution || ((ResourceParentDivisionDTO) parentDTO).getParentResource() != null) {
-                PrismScope scope = isInstitution ? SYSTEM : ((ResourceParentDivisionDTO) parentDTO).getParentResource().getScope();
-
-                Action action = actionService.getById(PrismAction.valueOf(scope.name() + "_CREATE_" + creationScope.name()));
-                return (U) createResource(user, action, parentDTO).getResource();
-            }
-        }
-
-        throw new UnsupportedOperationException();
-    }
-
-    @SuppressWarnings("unchecked")
     public <T extends Resource> void persistResource(T resource, Comment comment) {
         if (comment.isCreateComment()) {
             DateTime baseline = new DateTime();

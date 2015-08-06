@@ -114,8 +114,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private static Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
-    private static Map<Class<?>, PrismScope> byResourceDTOClass = Maps.newHashMap();
-
     static {
         for (PrismScope scope : values()) {
             Class<?> resourceClass = scope.getResourceClass();
@@ -123,12 +121,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                 throw new Error();
             }
             byResourceClass.put(scope.getResourceClass(), scope);
-
-            Class<?> resourceDTOClass = scope.getResourceDTOClass();
-            if (byResourceDTOClass.containsKey(resourceDTOClass)) {
-                throw new Error();
-            }
-            byResourceDTOClass.put(resourceDTOClass, scope);
         }
     }
 
@@ -183,10 +175,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {
         return byResourceClass.get(resourceClass);
-    }
-
-    public static PrismScope getByResourceDTOClass(Class<?> resourceDTOClass) {
-        return byResourceDTOClass.get(resourceDTOClass);
     }
 
     public String getLowerCamelName() {

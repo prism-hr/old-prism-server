@@ -265,14 +265,14 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public Long getUnindexedProgramCount() {
+    public Long getUnindexedImportedProgramCount() {
         return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
                 .setProjection(Projections.count("id")) //
                 .add(Restrictions.eq("indexed", false)) //
                 .uniqueResult();
     }
 
-    public Long getUnindexedUcasProgramCount() {
+    public Long getUnindexedImportedProgramCountUcas() {
         return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
                 .setProjection(Projections.count("id")) //
                 .add(Restrictions.isNotNull("ucasCode")) //
@@ -280,18 +280,18 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public Long getUnindexedInstitutionCount() {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .setProjection(Projections.count("id")) //
-                .add(Restrictions.eq("indexed", false)) //
-                .uniqueResult();
-    }
-
-    public List<ImportedProgram> getUnindexedImportedUcasPrograms() {
+    public List<ImportedProgram> getUnindexedImportedProgramsUcas() {
         return (List<ImportedProgram>) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
                 .add(Restrictions.isNotNull("ucasCode")) //
                 .add(Restrictions.eq("indexed", false)) //
                 .list();
+    }
+
+    public Long getUnindexedImportedInstitutionCount() {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
+                .setProjection(Projections.count("id")) //
+                .add(Restrictions.eq("indexed", false)) //
+                .uniqueResult();
     }
 
     public Double getAverageImportedProgramUcasProgramCount() {
@@ -310,7 +310,7 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public List<ImportedProgram> getUnindexedImportedNonUcasPrograms() {
+    public List<ImportedProgram> getUnindexedImportedProgramsNonUcas() {
         return (List<ImportedProgram>) sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class) //
                 .add(Restrictions.isNull("ucasCode")) //
                 .add(Restrictions.isNotNull("ucasProgramCount")) //
@@ -410,6 +410,14 @@ public class ImportedEntityDAO {
                 .setParameter("concentrationFactor", concentrationFactor) //
                 .setParameter("proliferationFactor", proliferationFactor) //
                 .executeUpdate();
+    }
+
+    public Long getUnindexedImportedSubjectAreaCount() {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedSubjectArea.class) //
+                .setProjection(Projections.count("id")) //
+                .add(Restrictions.isNull("parent")) //
+                .add(Restrictions.isNull("topIndexScore")) //
+                .uniqueResult();
     }
 
     public void executeBulkMerge(String table, String columns, String inserts, String updates) {

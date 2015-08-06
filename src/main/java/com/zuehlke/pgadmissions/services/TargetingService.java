@@ -74,7 +74,7 @@ public class TargetingService {
         if (inserts != null) {
             logger.info("Indexing imported program: " + importedProgramId.toString() + //
                     "-" + program.getInstitution().getName() + "-" + program.getName());
-            importedEntityService.executeBulkMerge("imported_program_subject_area", //
+            executeBulkMerge("imported_program_subject_area", //
                     "imported_program_id, imported_subject_area_id, match_type, relation_strength", //
                     inserts, IMPORTED_ENTITY_RELATION_UPDATE);
         }
@@ -89,7 +89,7 @@ public class TargetingService {
         if (inserts != null) {
             logger.info("Indexing imported institution: " + importedInstitutionId.toString() + //
                     "-" + institution.getName() + " with parameters (" + parameterSet.toString() + ")");
-            importedEntityService.executeBulkMerge("imported_institution_subject_area", //
+            executeBulkMerge("imported_institution_subject_area", //
                     "imported_institution_id, imported_subject_area_id, concentration_factor, proliferation_factor, relation_strength, enabled", //
                     inserts, IMPORTED_ENTITY_RELATION_UPDATE);
         }
@@ -134,10 +134,9 @@ public class TargetingService {
         if (topIndexScore == null) {
             setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
         } else if (newIndexScore.compareTo(topIndexScore) < 0) {
-            importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily);
-            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
+            deleteImportedInstitutionSubjectAreasAndSetNewScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
         } else {
-            importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
+            deleteImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
         }
 
         entityService.flush();
@@ -294,10 +293,29 @@ public class TargetingService {
         return getTokenRequiredConfidence(tokenCount, (threshold * THRESHOLD_TOKEN));
     }
 
-    private void setNewTopInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily, Integer concentrationFactor,
+    private synchronized void executeBulkMerge(String table, String columns, String inserts, String updates) {
+        importedEntityService.executeBulkMerge(table, columns, inserts, updates);
+        entityService.flush();
+    }
+
+    private synchronized void setNewTopInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,
+            Integer concentrationFactor,
             BigDecimal proliferationFactor, BigDecimal newIndexScore) {
         importedEntityService.enableImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
         subjectArea.setTopIndexScore(newIndexScore);
+        entityService.flush();
+    }
+
+    private synchronized void deleteImportedInstitutionSubjectAreasAndSetNewScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,
+            Integer concentrationFactor, BigDecimal proliferationFactor, BigDecimal newIndexScore) {
+        importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily);
+        setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
+    }
+
+    private synchronized void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreaFamily, Integer concentrationFactor,
+            BigDecimal proliferationFactor) {
+        importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
+        entityService.flush();
     }
 
 }

@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
 
 public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
 

@@ -1,12 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,12 +25,9 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionTargetingDTO;
 
 import freemarker.template.Template;
@@ -137,63 +130,7 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProgram(List<PrismState> states, boolean userLoggedIn) {
-        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("institution"), "resource") //
-                        .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(getResourceConditionConstraint(ACCEPT_PROGRAM, userLoggedIn)) //
-                .add(Restrictions.eq("action.creationScope.id", PROGRAM)) //
-                .addOrder(Order.asc("institution.name")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
-                .list();
-    }
-
-    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProject(List<PrismState> states, boolean userLoggedIn) {
-        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("institution"), "resource") //
-                        .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
-                .add(Restrictions.eq("action.creationScope.id", PROJECT)) //
-                .addOrder(Order.asc("institution.name")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
-                .list();
-    }
-
-    public List<ResourceChildCreationDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(List<PrismState> states,
-            boolean userLoggedIn) {
-        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("program.institution"), "resource") //
-                        .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .createAlias("program.institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("program.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
-                .add(Restrictions.eq("action.creationScope.id", PROJECT)) //
-                .addOrder(Order.asc("institution.name")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
-                .list();
-    }
-
-    public List<InstitutionTargetingDTO> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
+    public List<InstitutionTargetingDTO> getInstitutionBySubjectAreas(Coordinates coordinates, Collection<Integer> subjectAreas) {
         return (List<InstitutionTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
                 "select institution.id as id, sum(imported_institution_subject_area.relation_strength) as relevance," +
                         " haversine_distance(:baseLatitude, :baseLongitude, advert_address.location_x, advert_address.location_y) as distance" +
@@ -204,6 +141,7 @@ public class InstitutionDAO {
                         " inner join advert_address on advert.advert_address_id = advert_address.id" +
                         " where advert_address.location_x is not null" +
                         " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
+                        " and imported_institution_subject_area.enabled is true " +
                         " group by institution.id" +
                         " order by relevance desc, distance asc")
                 .addScalar("id", IntegerType.INSTANCE)

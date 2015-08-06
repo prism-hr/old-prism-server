@@ -22,11 +22,9 @@ public class NotificationDefinitionModelDTO {
     private PrismAction transitionAction;
 
     private String dataImportErrorMessage;
-    
-    private String applicationRecommendations;
 
     private String newPassword;
-    
+
     List<AdvertRecommendationDTO> advertRecommendations;
 
     public User getUser() {
@@ -49,7 +47,7 @@ public class NotificationDefinitionModelDTO {
         this.invoker = invoker;
     }
 
-	public Comment getComment() {
+    public Comment getComment() {
         return comment;
     }
 
@@ -63,10 +61,6 @@ public class NotificationDefinitionModelDTO {
 
     public String getDataImportErrorMessage() {
         return dataImportErrorMessage;
-    }
-
-    public String getApplicationRecommendations() {
-        return applicationRecommendations;
     }
 
     public String getNewPassword() {
@@ -91,7 +85,7 @@ public class NotificationDefinitionModelDTO {
         this.invoker = invoker;
         return this;
     }
-    
+
     public NotificationDefinitionModelDTO withResource(Resource resource) {
         this.resource = resource;
         return this;
@@ -111,17 +105,12 @@ public class NotificationDefinitionModelDTO {
         this.dataImportErrorMessage = dataImportErrorMessage;
         return this;
     }
-    
-    public NotificationDefinitionModelDTO withApplicationRecommendations(String applicationRecommendations) {
-        this.applicationRecommendations = applicationRecommendations;
-        return this;
-    }
 
     public NotificationDefinitionModelDTO withNewPassword(String newPassword) {
         this.newPassword = newPassword;
         return this;
     }
-    
+
     public NotificationDefinitionModelDTO withAdvertRecommendations(List<AdvertRecommendationDTO> advertRecommendations) {
         this.advertRecommendations = advertRecommendations;
         return this;

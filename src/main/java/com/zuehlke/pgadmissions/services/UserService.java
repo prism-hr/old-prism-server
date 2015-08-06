@@ -302,6 +302,10 @@ public class UserService {
         User currentUser = getCurrentUser();
         return !(user == null || currentUser == null) && Objects.equal(user.getId(), getCurrentUser().getId());
     }
+    
+    public boolean isLoggedInSession() {
+        return getCurrentUser() != null;
+    }
 
     public <T extends Resource> List<User> getBouncedOrUnverifiedUsers(UserListFilterDTO userListFilterDTO) {
         HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());

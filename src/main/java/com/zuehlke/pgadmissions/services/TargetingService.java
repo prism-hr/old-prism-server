@@ -105,9 +105,9 @@ public class TargetingService {
         BigDecimal proliferationFactor = parameterSet.getProliferation();
 
         Collection<Integer> institutions = getTopInstitutionsBySubjectArea(subjectArea);
-        Integer[] subjectAreaFamily = (Integer[]) importedEntityService.getImportedSubjectAreaFamily(subjectArea).toArray();
+        Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectArea);
         BigDecimal minimumRelationStrength = importedEntityService.getMinimumImportedInstitutionSubjectAreaRelationStrength(
-                institutions, concentrationFactor, proliferationFactor, subjectAreaFamily);
+                institutions, subjectAreaFamily, concentrationFactor, proliferationFactor);
 
         Map<Integer, Integer> institutionImportance = Maps.newHashMap();
         for (Integer institutution : institutions) {
@@ -116,13 +116,13 @@ public class TargetingService {
             institutionImportance.put(institutution, newImportance);
         }
 
-        List<ImportedInstitutionSubjectAreaDTO> relations = importedEntityService.getImportedInstitutionSubjectAreas(concentrationFactor,
-                proliferationFactor, minimumRelationStrength, subjectAreaFamily);
+        List<Integer> institutionRankings = importedEntityService.getImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor,
+                proliferationFactor, minimumRelationStrength);
 
         int counter = 1;
         BigDecimal score = new BigDecimal(0);
-        for (ImportedInstitutionSubjectAreaDTO relation : relations) {
-            Integer importance = institutionImportance.get(relation.getId());
+        for (Integer institutionRanking : institutionRankings) {
+            Integer importance = institutionImportance.get(institutionRanking);
             if (importance != null) {
                 score = score.add(new BigDecimal(counter).divide(new BigDecimal(importance), PRECISION, HALF_UP));
             }
@@ -136,7 +136,7 @@ public class TargetingService {
             importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily);
             setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, topScores, score);
         } else {
-            importedEntityService.deleteImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
+            importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
         }
 
         entityService.flush();
@@ -293,9 +293,9 @@ public class TargetingService {
         return getTokenRequiredConfidence(tokenCount, (threshold * THRESHOLD_TOKEN));
     }
 
-    private void setNewTopInstitutionSubjectAreaScore(Integer subjectArea, Integer[] subjectAreaFamily, Integer concentrationFactor,
+    private void setNewTopInstitutionSubjectAreaScore(Integer subjectArea, Collection<Integer> subjectAreaFamily, Integer concentrationFactor,
             BigDecimal proliferationFactor, Map<Integer, BigDecimal> topScores, BigDecimal score) {
-        importedEntityService.enableImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreaFamily);
+        importedEntityService.enableImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
         topScores.put(subjectArea, score);
     }
 

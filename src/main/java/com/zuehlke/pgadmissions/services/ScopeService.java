@@ -12,7 +12,6 @@ import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.dao.ScopeDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 
 @Service
@@ -35,13 +34,21 @@ public class ScopeService {
     public List<PrismScope> getScopesDescending() {
         return scopeDAO.getScopesDescending();
     }
-
-    public <T extends Resource> List<PrismScope> getParentScopesDescending(PrismScope prismScope) {
+    
+    public List<PrismScope> getParentScopesDescending(PrismScope prismScope) {
         return scopeDAO.getParentScopesDescending(prismScope);
     }
 
-    public <T extends Resource> List<PrismScope> getChildScopesAscending(PrismScope prismScope) {
+    public List<PrismScope> getParentScopesDescending(PrismScope prismScope, PrismScope finalScope) {
+        return scopeDAO.getParentScopesDescending(prismScope, finalScope);
+    }
+    
+    public List<PrismScope> getChildScopesAscending(PrismScope prismScope) {
         return scopeDAO.getChildScopesAscending(prismScope);
+    }
+
+    public List<PrismScope> getChildScopesAscending(PrismScope prismScope, PrismScope finalScope) {
+        return scopeDAO.getChildScopesAscending(prismScope, finalScope);
     }
     
     public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope resourceScope, PrismScope... excludedScopes) {

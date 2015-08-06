@@ -72,6 +72,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
@@ -213,8 +214,8 @@ public class ResourceService {
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
                 resource.getAdvert().setResource(resource);
             }
-            
-            if(comment.isCreateComment()) {
+
+            if (comment.isCreateComment()) {
                 Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
                 if (workflowPropertyConfigurationVersion == null) {
                     customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
@@ -399,12 +400,12 @@ public class ResourceService {
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
         return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
         return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
@@ -681,7 +682,7 @@ public class ResourceService {
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
-                                                                                      HashMultimap<PrismScope, PrismState> enclosedScopes) {
+            HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
@@ -690,6 +691,11 @@ public class ResourceService {
         List<ResourceRepresentationIdentity> childResources = resourceDAO.getResourceRobotRelatedRepresentations(resource, relatedScope,
                 stateService.getActiveResourceStates(relatedScope), childScopes);
         return childResources.isEmpty() ? null : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
+    }
+
+    public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope resourceScope, PrismScope parentScope, Integer parentId,
+            PrismScope targetScope) {
+        return resourceDAO.getResourcesWhichPermitChildResourceCreation(resourceScope, parentScope, parentId, targetScope, userService.isLoggedInSession());
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

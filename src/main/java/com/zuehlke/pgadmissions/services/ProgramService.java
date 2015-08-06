@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,10 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Service
@@ -28,12 +24,6 @@ public class ProgramService {
 
     @Inject
     private InstitutionService institutionService;
-
-    @Inject
-    private StateService stateService;
-
-    @Inject
-    private UserService userService;
 
     public Program getById(Integer id) {
         return entityService.getById(Program.class, id);
@@ -76,12 +66,6 @@ public class ProgramService {
 
     public List<Integer> getApplications(Integer program) {
         return programDAO.getApplications(program);
-    }
-
-    public List<ResourceChildCreationDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId) {
-        List<PrismState> states = stateService.getActiveResourceStates(PROGRAM);
-        boolean userLoggedIn = userService.getCurrentUser() != null;
-        return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, states, userLoggedIn);
     }
 
 }

@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceConditionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
@@ -25,13 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
@@ -116,25 +110,6 @@ public class ProgramDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq("program.id", program)) //
-                .list();
-    }
-
-    public List<ResourceChildCreationDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId, List<PrismState> states, boolean userLoggedIn) {
-        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("program"), "resource") //
-                        .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .createAlias("program.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("program.institution.id", institutionId)) //
-                .add(Restrictions.in("state.id", states)) //
-                .add(getResourceConditionConstraint(ACCEPT_PROJECT, userLoggedIn)) //
-                .add(Restrictions.eq("action.creationScope.id", PROJECT))
-                .addOrder(Order.asc("program.name")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
     }
 

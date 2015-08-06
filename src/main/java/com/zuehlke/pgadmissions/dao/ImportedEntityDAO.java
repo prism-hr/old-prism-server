@@ -16,6 +16,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -337,8 +338,8 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Integer concentrationFactor, BigDecimal proliferationFactor,
-            Collection<Integer> institutions, Integer... subjectAreas) {
+    public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Collection<Integer> institutions, Collection<Integer> subjectAreas,
+            Integer concentrationFactor, BigDecimal proliferationFactor) {
         return (BigDecimal) sessionFactory.getCurrentSession().createCriteria(ImportedInstitutionSubjectArea.class) //
                 .setProjection(Projections.property("relationStrength")) //
                 .add(Restrictions.in("institution.id", institutions)) //
@@ -350,23 +351,26 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor,
-            BigDecimal minimumRelationStrength, Integer... subjectAreas) {
-        return (List<ImportedInstitutionSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitutionSubjectArea.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("institution.id"), "id") //
-                        .add(Projections.sum("relationStrength").as("cumulativeRelationStrength"), "relationStrength")) //
-                .add(Restrictions.in("subjectArea.id", subjectAreas)) //
-                .add(Restrictions.eq("concentrationFactor", concentrationFactor)) //
-                .add(Restrictions.eq("proliferationFactor", proliferationFactor)) //
-                .add(Restrictions.ge("relationStrength", minimumRelationStrength)) //
-                .addOrder(Order.desc("cumulativeRelationStrength")) //
-                .addOrder(Order.asc("institution.id")) //
-                .setResultTransformer(Transformers.aliasToBean(ImportedInstitutionSubjectAreaDTO.class)) //
+    public List<Integer> getImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor,
+            BigDecimal proliferationFactor, BigDecimal minimumRelationStrength) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createSQLQuery(
+                "select imported_institution_id as institution "
+                        + "from imported_institution_subject_area "
+                        + "where imported_subject_area_id in (:subjectAreas) "
+                        + "and concentration_factor = :concentrationFactor "
+                        + "and proliferation_factor = :proliferationFactor "
+                        + "and relation_strength >= :minimumRelationStrength "
+                        + "group by imported_institution_id "
+                        + "order by sum(relation_strength) desc, imported_institution_id asc")
+                .addScalar("institution", IntegerType.INSTANCE)
+                .setParameterList("subjectAreas", subjectAreas)
+                .setParameter("concentrationFactor", concentrationFactor)
+                .setParameter("proliferationFactor", proliferationFactor)
+                .setParameter("minimumRelationStrength", minimumRelationStrength)
                 .list();
     }
 
-    public void enableImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor, Integer... subjectAreas) {
+    public void enableImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor, BigDecimal proliferationFactor) {
         sessionFactory.getCurrentSession().createQuery(
                 "update ImportedInstitutionSubjectArea "
                         + "set enabled = true "
@@ -379,7 +383,7 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void deleteImportedInstitutionSubjectAreas(Integer... subjectAreas) {
+    public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas) {
         sessionFactory.getCurrentSession().createQuery(
                 "delete ImportedInstitutionSubjectArea "
                         + "where subjectArea.id in (:subjectAreas) "
@@ -388,7 +392,7 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void deleteImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor, Integer... subjectAreas) {
+    public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor, BigDecimal proliferationFactor) {
         sessionFactory.getCurrentSession().createQuery(
                 "delete ImportedInstitutionSubjectArea "
                         + "where subjectArea.id in (:subjectAreas) "

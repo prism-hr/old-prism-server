@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -13,14 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionTargetingDTO;
@@ -41,18 +34,12 @@ public class InstitutionService {
 
     @Inject
     private ImportedEntityService importedEntityService;
-    
+
     @Inject
     private InstitutionMapper institutionMapper;
-    
+
     @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private StateService stateService;
-
-    @Inject
-    private UserService userService;
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
@@ -119,44 +106,6 @@ public class InstitutionService {
         return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + new Integer(businessYear + 1).toString());
     }
 
-    // FIXME: generalise for department
-    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProgram() {
-        List<PrismState> states = stateService.getActiveResourceStates(INSTITUTION);
-        boolean userLoggedIn = userService.getCurrentUser() != null;
-        return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(states, userLoggedIn);
-    }
-
-    public List<ResourceChildCreationDTO> getInstitutionsForWhichUserCanCreateProject() {
-        Map<Integer, ResourceChildCreationDTO> index = Maps.newHashMap();
-        Map<String, ResourceChildCreationDTO> institutions = Maps.newTreeMap();
-
-        List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
-        boolean userLoggedIn = userService.getCurrentUser() != null;
-
-        List<ResourceChildCreationDTO> institutionProjectParents = institutionDAO
-                .getInstitutionsForWhichUserCanCreateProject(institutionStates, userLoggedIn);
-        for (ResourceChildCreationDTO institutionProjectParent : institutionProjectParents) {
-            ResourceChildCreationDTO institution = new ResourceChildCreationDTO()
-                    .withResource(institutionProjectParent.getResource()).withPartnerMode(institutionProjectParent.getPartnerMode());
-            index.put(institutionProjectParent.getResource().getId(), institution);
-            institutions.put(institutionProjectParent.getResource().getName(), institution);
-        }
-
-        List<PrismState> programStates = stateService.getActiveResourceStates(PROGRAM);
-
-        List<ResourceChildCreationDTO> institutionProgramProjectParents = institutionDAO
-                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(programStates, userLoggedIn);
-        for (ResourceChildCreationDTO institutionProgramProjectParent : institutionProgramProjectParents) {
-            ResourceChildCreationDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
-            if (institution == null) {
-                institutions.put(institutionProgramProjectParent.getResource().getName(),
-                        new ResourceChildCreationDTO().withResource(institutionProgramProjectParent.getResource()));
-            }
-        }
-
-        return Lists.newLinkedList(institutions.values());
-    }
-
     private void changeInstitutionCurrency(Institution institution, String oldCurrency, String newCurrency) throws Exception {
         List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
         for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
@@ -173,7 +122,7 @@ public class InstitutionService {
 
     public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
         List<InstitutionRepresentationTargeting> representations = Lists.newLinkedList();
-        Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily((Integer[]) subjectAreas.toArray());
+        Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
         for (InstitutionTargetingDTO target : institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreaFamily)) {
             representations.add(institutionMapper.getInstitutionRepresentationTargeting(getById(target.getId()), target.getRelevance(), target.getDistance()));
         }

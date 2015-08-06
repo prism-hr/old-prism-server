@@ -48,7 +48,7 @@ public class InstitutionMapper {
     }
 
     private <T extends InstitutionRepresentationSimple> T getInstitutionRepresentationSimple(Institution institution, Class<T> returnType) {
-        T representation = resourceMapper.getResourceRepresentation(institution, returnType);
+        T representation = resourceMapper.getResourceRepresentationSimple(institution, returnType);
         representation.setAddress(advertMapper.getAdvertAddressRepresentation(institution.getAdvert()));
         return representation;
     }

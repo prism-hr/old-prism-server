@@ -389,16 +389,6 @@ public class Application extends Resource {
         return this;
     }
 
-    @Override
-    public String getName() {
-        return null;
-    }
-    
-    @Override
-    public void setName(String name) {
-        return;
-    }
-
     public ApplicationAddress getAddress() {
         return address;
     }

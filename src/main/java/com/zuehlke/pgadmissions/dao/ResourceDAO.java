@@ -473,25 +473,22 @@ public class ResourceDAO {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty(resourceReference), "resource");
 
-        boolean isInstitution = resourceScope.equals(INSTITUTION);
-        if (!isInstitution) {
+        if (!resourceScope.equals(INSTITUTION)) {
             projections.add(Projections.property("resourceCondition.partnerMode"), "partnerMode");
         }
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projections) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN); //
-
-        if (!isInstitution) {
-            criteria.createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN,
-                    Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
-        }
-
-        criteria.createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference + "." + parentScope.getLowerCamelName() + ".id", parentId)) //
-                .add(Restrictions.eq("action.creationScope.id", targetScope));
+                .add(Restrictions.eq("action.creationScope.id", targetScope)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("resourceCondition.id")) //
+                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")));
 
         if (!userLoggedIn) {
             criteria.add(Restrictions.eq("resourceCondition.partnerMode", true));

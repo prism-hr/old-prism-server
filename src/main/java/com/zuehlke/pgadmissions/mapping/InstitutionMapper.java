@@ -1,13 +1,19 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationSimple;
@@ -17,6 +23,9 @@ import com.zuehlke.pgadmissions.rest.representation.resource.institution.Institu
 @Transactional
 public class InstitutionMapper {
 
+    @Value("${system.id}")
+    private Integer systemId;
+    
     @Inject
     private AdvertMapper advertMapper;
 
@@ -45,6 +54,10 @@ public class InstitutionMapper {
         InstitutionRepresentationClient representation = getInstitutionRepresentation(institution, InstitutionRepresentationClient.class);
         resourceMapper.appendResourceSummaryRepresentation(institution, representation);
         return representation;
+    }
+    
+    public List<ResourceChildCreationRepresentation> getInstitutionChildCreationRepresentations(PrismScope targetScope) {
+        return resourceMapper.getResourceChildCreationRepresentations(SYSTEM, systemId, targetScope);
     }
 
     private <T extends InstitutionRepresentationSimple> T getInstitutionRepresentationSimple(Institution institution, Class<T> returnType) {

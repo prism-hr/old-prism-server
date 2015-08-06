@@ -532,7 +532,7 @@ public class ResourceMapper {
         return applicationUrl + "/" + ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
     }
 
-    public List<ResourceChildCreationRepresentation> getResourcesWhichPermitChildResourceCreation(PrismScope parentScope, Integer parentId,
+    public List<ResourceChildCreationRepresentation> getResourceChildCreationRepresentations(PrismScope parentScope, Integer parentId,
             PrismScope targetScope) {
         LinkedHashMap<PrismScope, TreeSet<ResourceChildCreationDTO>> resources = Maps.newLinkedHashMap();
 
@@ -560,16 +560,19 @@ public class ResourceMapper {
         Map<Integer, ResourceChildCreationRepresentation> index = Maps.newHashMap();
         Set<ResourceChildCreationRepresentation> representations = Sets.newLinkedHashSet();
         for (Entry<PrismScope, TreeSet<ResourceChildCreationDTO>> resourceEntry : resources.entrySet()) {
-            boolean isImmediateChildScope = resourceEntry.getKey().equals(immediateChildScope);
-            for (ResourceChildCreationDTO resource : resourceEntry.getValue()) {
-                ResourceChildCreationRepresentation representation = getResourceChildCreationRepresentation(resource);
-                if (isImmediateChildScope) {
-                    representations.add(representation);
-                } else {
-                    index.get(resource.getResource().getId()).addChildResource(representation);
+            int counter = 0;
+            if (!(counter > 0 && parentScope.equals(SYSTEM))) {
+                for (ResourceChildCreationDTO resource : resourceEntry.getValue()) {
+                    ResourceChildCreationRepresentation representation = getResourceChildCreationRepresentation(resource);
+                    if (counter == 0) {
+                        representations.add(representation);
+                    } else {
+                        index.get(resource.getResource().getId()).addChildResource(representation);
+                    }
+                    index.put(resource.getResource().getId(), representation);
                 }
-                index.put(resource.getResource().getId(), representation);
             }
+            counter++;
         }
 
         return Lists.newLinkedList(representations);

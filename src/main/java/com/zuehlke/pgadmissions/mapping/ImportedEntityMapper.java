@@ -107,7 +107,7 @@ public class ImportedEntityMapper {
             representation.setName(loader.load(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName())).getDisplayProperty()));
         }
 
-        if (institutionNull) {
+        if (!institutionNull) {
             U mapping = importedEntityService.getEnabledImportedEntityMapping(institution, entity);
             if (mapping != null) {
                 representation.setCode(mapping.getCode());

@@ -46,6 +46,11 @@ public class ResourceChildCreationRepresentation extends ResourceRepresentationS
         return this;
     }
 
+    public ResourceChildCreationRepresentation withScope(final com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope scope) {
+        setScope(scope);
+        return this;
+    }
+
     public ResourceChildCreationRepresentation withOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;

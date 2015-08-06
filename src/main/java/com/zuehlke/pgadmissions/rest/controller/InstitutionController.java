@@ -126,7 +126,7 @@ public class InstitutionController {
                 opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
             }
             return new ResourceChildCreationRepresentation().withId(resource.getId()).withName(resource.getName())
-                    .withPartnerMode(input.getPartnerMode()).withOpportunityType(opportunityType);
+                    .withScope(resource.getResourceScope()).withPartnerMode(input.getPartnerMode()).withOpportunityType(opportunityType);
         }
     }
 

@@ -178,8 +178,8 @@ public class ResourceService {
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
                 resource.getAdvert().setResource(resource);
             }
-            
-            if(comment.isCreateComment()) {
+
+            if (comment.isCreateComment()) {
                 Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
                 if (workflowPropertyConfigurationVersion == null) {
                     customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
@@ -538,9 +538,11 @@ public class ResourceService {
     }
 
     public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
-        resourceDAO.disableImportedResourceStudyOptionInstances(resource);
-        resourceDAO.disableImportedResourceStudyOptions(resource);
-        resource.getInstanceGroups().clear();
+        if (resource.getId() != null) {
+            resourceDAO.disableImportedResourceStudyOptionInstances(resource);
+            resourceDAO.disableImportedResourceStudyOptions(resource);
+            resource.getInstanceGroups().clear();
+        }
 
         LocalDate close = getResourceEndDate(resource);
         if (studyOptions == null) {

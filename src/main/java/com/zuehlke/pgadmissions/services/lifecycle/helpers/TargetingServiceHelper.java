@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.dto.ForDTO;
+import com.zuehlke.pgadmissions.dto.ParameterSearchDTO;
 import com.zuehlke.pgadmissions.dto.TargetingParameterDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.TargetingService;
@@ -37,9 +37,9 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     private static int threadCount = 10;
 
-    private static ForDTO<Integer> concentration = new ForDTO<Integer>(1, 1, 10);
+    private static ParameterSearchDTO<Integer> concentration = new ParameterSearchDTO<Integer>(1, 1, 10);
 
-    private static ForDTO<BigDecimal> proliferation = new ForDTO<BigDecimal>(new BigDecimal(0.01).setScale(PRECISION, HALF_UP), //
+    private static ParameterSearchDTO<BigDecimal> proliferation = new ParameterSearchDTO<BigDecimal>(new BigDecimal(0.01).setScale(PRECISION, HALF_UP), //
             new BigDecimal(0.01).setScale(PRECISION, HALF_UP), new BigDecimal(0.10).setScale(PRECISION, HALF_UP));
 
     private int activeExecutions = 0;

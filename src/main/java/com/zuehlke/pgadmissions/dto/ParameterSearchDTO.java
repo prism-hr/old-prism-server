@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-public class ForDTO<T> {
+public class ParameterSearchDTO<T> {
 
     private T minimum;
 
@@ -8,7 +8,7 @@ public class ForDTO<T> {
 
     private T maximum;
 
-    public ForDTO(T minimum, T interval, T maximum) {
+    public ParameterSearchDTO(T minimum, T interval, T maximum) {
         this.minimum = minimum;
         this.interval = interval;
         this.maximum = maximum;

@@ -130,16 +130,6 @@ public class TargetingServiceHelper implements PrismServiceHelper {
         }
     }
 
-    private void indexInstitutionSubjectArea(Integer subjectArea, final TargetingParameterDTO parameterSet) {
-        try {
-            targetingService.indexInstitutionSubjectArea(subjectArea, parameterSet);
-        } catch (Exception e) {
-            logger.error("Failed to score subject area: " + subjectArea.toString() + " with parameters (" + parameterSet.toString() + ")", e);
-        } finally {
-            decrementActiveExecutions();
-        }
-    }
-
     private synchronized void cleanUpInstitutionSubjectArea() {
         activeExecutions++;
         executorService.submit(() -> {
@@ -172,6 +162,16 @@ public class TargetingServiceHelper implements PrismServiceHelper {
             if (activeExecutions == 0) {
                 execute();
             }
+        }
+    }
+
+    private void indexInstitutionSubjectArea(Integer subjectArea, final TargetingParameterDTO parameterSet) {
+        try {
+            targetingService.indexInstitutionSubjectArea(subjectArea, parameterSet);
+        } catch (Exception e) {
+            logger.error("Failed to score subject area: " + subjectArea.toString() + " with parameters (" + parameterSet.toString() + ")", e);
+        } finally {
+            decrementActiveExecutions();
         }
     }
 

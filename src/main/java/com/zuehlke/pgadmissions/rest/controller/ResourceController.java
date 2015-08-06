@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
@@ -208,6 +209,12 @@ public class ResourceController {
     public Set<String> getAvailableThemes(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         return advertService.getAvailableAdvertThemes(resource.getAdvert(), null);
+    }
+
+    @RequestMapping(value = "/{resourceId}/resources", method = RequestMethod.GET, params = "accepting")
+    public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope accepting,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, accepting);
     }
 
     @ModelAttribute

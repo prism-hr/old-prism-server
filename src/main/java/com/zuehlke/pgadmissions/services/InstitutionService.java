@@ -109,7 +109,7 @@ public class InstitutionService {
     private void changeInstitutionCurrency(Institution institution, String oldCurrency, String newCurrency) throws Exception {
         List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
         for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
-            advertService.updateFeesAndPayments(advertWithFeesAndPays, newCurrency);
+            advertService.updateFinancialDetails(advertWithFeesAndPays, newCurrency);
         }
         institution.setCurrency(newCurrency);
     }

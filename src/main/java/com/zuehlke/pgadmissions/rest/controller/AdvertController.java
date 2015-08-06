@@ -1,25 +1,15 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestUtils;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.*;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|institutions}/{resourceId}")
@@ -35,10 +25,10 @@ public class AdvertController {
         advertService.updateDetail(resourceDescriptor.getResourceScope(), resourceId, advertDetailsDTO);
     }
 
-    @RequestMapping(value = "/feesAndPayments", method = RequestMethod.PUT)
+    @RequestMapping(value = "/financialDetails", method = RequestMethod.PUT)
     public void updateFeesAndPayments(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody AdvertFinancialDetailsDTO feesAndPaymentsDTO) throws Exception {
-        advertService.updateFeesAndPayments(resourceDescriptor.getResourceScope(), resourceId, feesAndPaymentsDTO);
+            @Valid @RequestBody AdvertFinancialDetailsDTO financialDetailsDTO) throws Exception {
+        advertService.updateFinancialDetails(resourceDescriptor.getResourceScope(), resourceId, financialDetailsDTO);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
@@ -58,12 +48,6 @@ public class AdvertController {
             @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
         AdvertClosingDate closingDate = advertService.createClosingDate(resourceDescriptor.getResourceScope(), resourceId, advertClosingDateDTO);
         return closingDate.getId();
-    }
-
-    @RequestMapping(value = "/closingDates/{closingDateId}", method = RequestMethod.PUT)
-    public void updateClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer closingDateId,
-            @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
-        advertService.updateClosingDate(resourceDescriptor.getResourceScope(), resourceId, closingDateId, advertClosingDateDTO);
     }
 
     @RequestMapping(value = "/closingDates/{closingDateId}", method = RequestMethod.DELETE)

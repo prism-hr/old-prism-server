@@ -1,29 +1,10 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
@@ -31,6 +12,15 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -64,11 +54,6 @@ public class InstitutionController {
         return institutionService.getInstitutions(query, googleIds).stream()
                 .map(institutionMapper::getInstitutionRepresentationSimple)
                 .collect(Collectors.toList());
-    }
-
-    @RequestMapping(method = RequestMethod.GET, params = "accepting")
-    public List<ResourceChildCreationRepresentation> getAcceptingInstitutions(@RequestParam PrismScope accepting) {
-        return institutionMapper.getInstitutionChildCreationRepresentations(accepting);
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")

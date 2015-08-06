@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,6 +27,9 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
     @JoinColumn(name = "competence_id", nullable = false)
     private Competence value;
 
+    @Column(name = "description")
+    private String description;
+
     public Integer getId() {
         return id;
     }
@@ -50,6 +54,14 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
     @Override
     public void setValue(Competence competence) {
         this.value = competence;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

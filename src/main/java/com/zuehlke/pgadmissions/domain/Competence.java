@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 @Entity
 @Table(name = "competence")
 public class Competence implements UniqueEntity, TargetEntity {
@@ -19,6 +22,17 @@ public class Competence implements UniqueEntity, TargetEntity {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    @Column(name = "adopted_count", nullable = false)
+    private Integer adoptedCount;
+
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+
+    @Column(name = "updated_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
 
     public Integer getId() {
         return id;
@@ -40,6 +54,30 @@ public class Competence implements UniqueEntity, TargetEntity {
         return description;
     }
 
+    public Integer getAdoptedCount() {
+        return adoptedCount;
+    }
+
+    public void setAdoptedCount(Integer adoptedCount) {
+        this.adoptedCount = adoptedCount;
+    }
+
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -54,6 +92,21 @@ public class Competence implements UniqueEntity, TargetEntity {
         return this;
     }
 
+    public Competence withAdoptedCount(Integer adoptedCount) {
+        this.adoptedCount = adoptedCount;
+        return this;
+    }
+
+    public Competence withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public Competence withUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+        return this;
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addExclusion("name", name);

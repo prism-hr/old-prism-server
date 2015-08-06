@@ -6,6 +6,7 @@ import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 public abstract class ResourceOpportunity extends ResourceParentDivision implements
         ResourceOpportunityDefinition<Advert, ImportedEntitySimple, ResourceStudyOption> {

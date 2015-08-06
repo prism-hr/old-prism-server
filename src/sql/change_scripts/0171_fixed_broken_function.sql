@@ -1,3 +1,6 @@
+drop function haversine_distance
+;
+
 create function haversine_distance(base_latitude float, base_longitude float, target_latitude float, target_longitude float)
 	returns float
 begin

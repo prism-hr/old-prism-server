@@ -12,8 +12,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -30,6 +34,7 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -45,11 +50,14 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO.ResourceChildCreationDTOComparator;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceCountRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
@@ -59,6 +67,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepre
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationMetadataUserRelated;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -221,27 +230,17 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
-        return getResourceRepresentation(resource, ResourceRepresentationSimple.class);
+        return getResourceRepresentationSimple(resource, ResourceRepresentationSimple.class);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Resource, V extends ResourceRepresentationSimple> V getResourceRepresentation(T resource, Class<V> returnType) {
-        V representation = BeanUtils.instantiate(returnType);
-
-        representation.setScope(resource.getResourceScope());
-        representation.setId(resource.getId());
+    public <T extends Resource, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(T resource, Class<V> returnType) {
+        V representation = getResourceRepresentation(resource, returnType);
         representation.setCode(resource.getCode());
-        representation.setName(resource.getName());
         representation.setState(stateMapper.getStateRepresentationSimple(resource.getState()));
 
-        Class<T> resourceClass = (Class<T>) resource.getClass();
-        if (Institution.class.equals(resourceClass)) {
-            representation.setLogoImage(documentMapper.getDocumentRepresentation(((Institution) resource).getLogoImage()));
-
-            if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
-                ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
-                representation.setImportedCode(resourceOpportunity.getImportedCode());
-            }
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
+            representation.setImportedCode(resourceOpportunity.getImportedCode());
         }
 
         return representation;
@@ -256,7 +255,7 @@ public class ResourceMapper {
         DateTime baseline = new DateTime();
         User currentUser = userService.getCurrentUser();
 
-        V representation = getResourceRepresentation(resource, returnType);
+        V representation = getResourceRepresentationSimple(resource, returnType);
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
 
         for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
@@ -531,6 +530,67 @@ public class ResourceMapper {
 
     public String getResourceUrlRobot(Resource resource) {
         return applicationUrl + "/" + ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
+    }
+
+    public List<ResourceChildCreationRepresentation> getResourcesWhichPermitChildResourceCreation(PrismScope parentScope, Integer parentId,
+            PrismScope targetScope) {
+        LinkedHashMap<PrismScope, TreeSet<ResourceChildCreationDTO>> resources = Maps.newLinkedHashMap();
+
+        PrismScope immediateChildScope = null;
+        for (PrismScope resourceScope : scopeService.getChildScopesAscending(parentScope, PROGRAM)) {
+            immediateChildScope = immediateChildScope == null ? resourceScope : immediateChildScope;
+            TreeSet<ResourceChildCreationDTO> sortedResources = Sets.newTreeSet(new ResourceChildCreationDTOComparator());
+            sortedResources.addAll(resourceService.getResourcesWhichPermitChildResourceCreation(resourceScope, parentScope, parentId, targetScope));
+            resources.put(resourceScope, sortedResources);
+        }
+
+        for (Entry<PrismScope, TreeSet<ResourceChildCreationDTO>> resourceEntries : Lists.reverse(Lists.newLinkedList(resources.entrySet()))) {
+            PrismScope resourceEntryScope = resourceEntries.getKey();
+            List<PrismScope> parentEntryScopes = scopeService.getParentScopesDescending(resourceEntryScope, immediateChildScope);
+            for (ResourceChildCreationDTO resourceEntry : resourceEntries.getValue()) {
+                for (PrismScope parentEntryScope : parentEntryScopes) {
+                    ResourceParent parentEntry = (ResourceParent) resourceEntry.getResource().getEnclosingResource(parentEntryScope);
+                    if (parentEntry != null) {
+                        resources.get(parentEntryScope).add(new ResourceChildCreationDTO().withResource(parentEntry).withPartnerMode(false));
+                    }
+                }
+            }
+        }
+
+        Map<Integer, ResourceChildCreationRepresentation> index = Maps.newHashMap();
+        Set<ResourceChildCreationRepresentation> representations = Sets.newLinkedHashSet();
+        for (Entry<PrismScope, TreeSet<ResourceChildCreationDTO>> resourceEntry : resources.entrySet()) {
+            boolean isImmediateChildScope = resourceEntry.getKey().equals(immediateChildScope);
+            for (ResourceChildCreationDTO resource : resourceEntry.getValue()) {
+                ResourceChildCreationRepresentation representation = getResourceChildCreationRepresentation(resource);
+                if (isImmediateChildScope) {
+                    representations.add(representation);
+                } else {
+                    index.get(resource.getResource().getId()).addChildResource(representation);
+                }
+                index.put(resource.getResource().getId(), representation);
+            }
+        }
+
+        return Lists.newLinkedList(representations);
+    }
+
+    private <T extends Resource> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(ResourceChildCreationDTO resource) {
+        return getResourceRepresentation(resource.getResource(), ResourceChildCreationRepresentation.class).withPartnerMode(resource.getPartnerMode());
+    }
+
+    private <T extends Resource, V extends ResourceRepresentationIdentity> V getResourceRepresentation(T resource, Class<V> returnType) {
+        V representation = BeanUtils.instantiate(returnType);
+
+        representation.setScope(resource.getResourceScope());
+        representation.setId(resource.getId());
+
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            representation.setName(((ResourceParent) resource).getName());
+            representation.setLogoImage(documentMapper.getDocumentRepresentation(resource.getInstitution().getLogoImage()));
+        }
+
+        return representation;
     }
 
     private List<ResourceSummaryPlotConstraintRepresentation> getResourceSummaryPlotConstraintRepresentation(ResourceReportFilterDTO filterDTO) {

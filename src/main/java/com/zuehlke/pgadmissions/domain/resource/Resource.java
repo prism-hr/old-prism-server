@@ -56,10 +56,6 @@ public abstract class Resource implements UniqueEntity {
 
     public abstract Application getApplication();
 
-    public abstract String getName();
-
-    public abstract void setName(String name);
-
     public abstract State getState();
 
     public abstract void setState(State state);

@@ -359,26 +359,26 @@ public class ImportedEntityService {
         return Lists.newArrayList(representations.get(-1).getChildren());
     }
 
-    public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Collection<Integer> institutions, Integer concentrationFactor,
-            BigDecimal proliferationFactor, Integer... subjectAreas) {
-        return importedEntityDAO.getMinimumImportedInstitutionSubjectAreaRelationStrength(concentrationFactor, proliferationFactor, institutions, subjectAreas);
+    public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Collection<Integer> institutions, Collection<Integer> subjectAreas,
+            Integer concentrationFactor, BigDecimal proliferationFactor) {
+        return importedEntityDAO.getMinimumImportedInstitutionSubjectAreaRelationStrength(institutions, subjectAreas, concentrationFactor, proliferationFactor);
     }
 
-    public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor,
-            BigDecimal minimumRelationStrength, Integer... subjectAreas) {
-        return importedEntityDAO.getImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, minimumRelationStrength, subjectAreas);
+    public List<Integer> getImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor,
+            BigDecimal proliferationFactor, BigDecimal minimumRelationStrength) {
+        return importedEntityDAO.getImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor, minimumRelationStrength);
     }
 
-    public void enableImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor, Integer... subjectAreas) {
-        importedEntityDAO.enableImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreas);
+    public void enableImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor, BigDecimal proliferationFactor) {
+        importedEntityDAO.enableImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor);
     }
 
-    public void deleteImportedInstitutionSubjectAreas(Integer... subjectAreas) {
+    public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas) {
         importedEntityDAO.deleteImportedInstitutionSubjectAreas(subjectAreas);
     }
 
-    public void deleteImportedInstitutionSubjectAreas(Integer concentrationFactor, BigDecimal proliferationFactor, Integer... subjectAreas) {
-        importedEntityDAO.deleteImportedInstitutionSubjectAreas(concentrationFactor, proliferationFactor, subjectAreas);
+    public void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor, BigDecimal proliferationFactor) {
+        importedEntityDAO.deleteImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor);
     }
 
     public List<Integer> getRootImportedSubjectAreas() {
@@ -397,7 +397,7 @@ public class ImportedEntityService {
         if (children.isEmpty()) {
             return family;
         }
-        return getImportedSubjectAreaFamily(family, (Integer[]) children.toArray());
+        return getImportedSubjectAreaFamily(family, children.toArray(new Integer[children.size()]));
     }
 
     // private Program mergeProgram(Institution institution, Programme

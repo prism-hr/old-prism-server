@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.dto;
 
-import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.PRECISION;
-import static java.math.RoundingMode.HALF_UP;
-
 import java.math.BigDecimal;
 
 import com.google.common.base.Joiner;
@@ -37,7 +34,7 @@ public class TargetingParameterDTO {
 
     @Override
     public String toString() {
-        return Joiner.on(", ").join(concentration.toString(), proliferation.setScale(PRECISION, HALF_UP).toPlainString());
+        return Joiner.on(", ").join(concentration.toString(), proliferation.toPlainString());
     }
 
     @Override

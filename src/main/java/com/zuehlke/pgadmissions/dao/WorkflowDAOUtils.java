@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -45,17 +44,6 @@ public class WorkflowDAOUtils {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("stateAction.actionCondition")) //
                 .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
-    }
-
-    public static Junction getResourceConditionConstraint(PrismActionCondition actionCondition, boolean userLoggedIn) {
-        Junction junction = Restrictions.conjunction() //
-                .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition));
-
-        if (!userLoggedIn) {
-            junction.add(Restrictions.eq("resourceCondition.partnerMode", true));
-        }
-
-        return junction;
     }
 
 }

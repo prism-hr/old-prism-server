@@ -133,24 +133,28 @@ public class ImportedEntityService {
         return references;
     }
 
-    public Long getUnindexedProgramCount() {
-        return importedEntityDAO.getUnindexedProgramCount();
+    public Long getUnindexedImportedProgramCount() {
+        return importedEntityDAO.getUnindexedImportedProgramCount();
     }
 
-    public Long getUnindexedUcasProgramCount() {
-        return importedEntityDAO.getUnindexedUcasProgramCount();
+    public Long getUnindexedImportedUcasCount() {
+        return importedEntityDAO.getUnindexedImportedProgramCountUcas();
     }
 
-    public Long getUnindexedInstitutionCount() {
-        return importedEntityDAO.getUnindexedInstitutionCount();
+    public Long getUnindexedImportedInstitutionCount() {
+        return importedEntityDAO.getUnindexedImportedInstitutionCount();
     }
 
-    public List<ImportedProgram> getUnindexedImportedUcasPrograms() {
-        return importedEntityDAO.getUnindexedImportedUcasPrograms();
+    public Long getUnindexedImportedSubjectAreaCount() {
+        return importedEntityDAO.getUnindexedImportedSubjectAreaCount();
     }
 
-    public List<ImportedProgram> getUnindexedImportedNonUcasPrograms() {
-        return importedEntityDAO.getUnindexedImportedNonUcasPrograms();
+    public List<ImportedProgram> getUnindexedImportedProgramsUcas() {
+        return importedEntityDAO.getUnindexedImportedProgramsUcas();
+    }
+
+    public List<ImportedProgram> getUnindexedImportedProgramsNonUcas() {
+        return importedEntityDAO.getUnindexedImportedProgramsNonUcas();
     }
 
     public void setImportedProgramIndexed(Integer importedProgramId, boolean indexed) {

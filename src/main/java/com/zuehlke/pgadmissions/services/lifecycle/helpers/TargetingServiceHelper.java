@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -58,19 +59,27 @@ public class TargetingServiceHelper implements PrismServiceHelper {
     @Inject
     private TargetingService targetingService;
 
+    @PostConstruct
+    public void postConstruct() {
+        if (importedEntityService.getUnindexedImportedSubjectAreaCount() > 0) {
+            queueParameterSets();
+        }
+    }
+
     @Override
     public synchronized void execute() {
         if (activeExecutions == 0) {
-            boolean unindexedPrograms = importedEntityService.getUnindexedProgramCount() > 0;
-            if (unindexedPrograms || !parameterSets.isEmpty()) {
+            boolean unindexedPrograms = importedEntityService.getUnindexedImportedProgramCount() > 0;
+            if (unindexedPrograms || importedEntityService.getUnindexedImportedSubjectAreaCount() > 0
+                    || !(parameterSets.isEmpty() && parameterSetToScore == null)) {
                 executorService = executorService == null ? Executors.newFixedThreadPool(threadCount) : executorService;
                 if (unindexedPrograms) {
                     algorithmState = INDEXING_PROGRAMS;
-                    indexImportedPrograms(importedEntityService.getUnindexedImportedUcasPrograms());
+                    indexImportedPrograms(importedEntityService.getUnindexedImportedProgramsUcas());
 
-                    if (importedEntityService.getUnindexedUcasProgramCount() == 0) {
+                    if (importedEntityService.getUnindexedImportedUcasCount() == 0) {
                         importedEntityService.fillImportedUcasProgramCount();
-                        indexImportedPrograms(importedEntityService.getUnindexedImportedNonUcasPrograms());
+                        indexImportedPrograms(importedEntityService.getUnindexedImportedProgramsNonUcas());
                     }
                 } else if (parameterSetToScore == null) {
                     Iterator<TargetingParameterDTO> iterator = parameterSets.iterator();
@@ -130,7 +139,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
         }
     }
 
-    private synchronized void cleanUpInstitutionSubjectArea() {
+    private synchronized void cleanUpInstitutionSubjectAreas() {
         activeExecutions++;
         executorService.submit(() -> {
             try {
@@ -150,17 +159,21 @@ public class TargetingServiceHelper implements PrismServiceHelper {
                 algorithmState = null;
                 parameterSetToScore = null;
                 if (parameterSets.isEmpty()) {
-                    cleanUpInstitutionSubjectArea();
+                    cleanUpInstitutionSubjectAreas();
                 }
             } else if (algorithmState.equals(INDEXING_PROGRAMS)) {
-                for (int i = concentration.getMinimum(); i <= concentration.getMaximum(); i = (i + concentration.getInterval())) {
-                    for (BigDecimal j = proliferation.getMinimum(); j.compareTo(proliferation.getMaximum()) <= 0; j = j.add(proliferation.getInterval())) {
-                        parameterSets.add(new TargetingParameterDTO(i, j));
-                    }
-                }
+                queueParameterSets();
             }
             if (activeExecutions == 0) {
                 execute();
+            }
+        }
+    }
+
+    private void queueParameterSets() {
+        for (int i = concentration.getMinimum(); i <= concentration.getMaximum(); i = (i + concentration.getInterval())) {
+            for (BigDecimal j = proliferation.getMinimum(); j.compareTo(proliferation.getMaximum()) <= 0; j = j.add(proliferation.getInterval())) {
+                parameterSets.add(new TargetingParameterDTO(i, j));
             }
         }
     }

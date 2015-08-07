@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -104,7 +105,8 @@ public class ImportedEntityMapper {
                 loaders.put(institution, loader);
             }
 
-            representation.setName(loader.load(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName())).getDisplayProperty()));
+            representation.setName(loader.load(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName()))
+                    .getDisplayProperty()));
         }
 
         if (!institutionNull) {
@@ -175,7 +177,8 @@ public class ImportedEntityMapper {
         representation.setQualificationType(qualificationType == null ? null : getImportedEntitySimpleRepresentation(qualificationType, institution,
                 ImportedEntityResponse.class));
 
-        representation.setLevel(program.getLevel().getUcasLevel());
+        PrismQualificationLevel level = program.getLevel();
+        representation.setLevel(level == null ? null : level.getUcasLevel());
         representation.setQualification(program.getQualification());
 
         return representation;

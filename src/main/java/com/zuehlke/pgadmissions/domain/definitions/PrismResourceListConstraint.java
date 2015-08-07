@@ -35,17 +35,17 @@ public enum PrismResourceListConstraint {
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
     CODE("code", STRING, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    TITLE("title", STRING, Arrays.asList(CONTAIN), //
+    NAME("name", STRING, Arrays.asList(CONTAIN), //
             Arrays.asList(PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    INSTITUTION_TITLE("institution.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
+    INSTITUTION_NAME("institution.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT)), //
-    DEPARTMENT_TITLE("department.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
+    DEPARTMENT_NAME("department.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM)), //
-    PROGRAM_TITLE("program.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
+    PROGRAM_NAME("program.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT)), //
-    PROJECT_TITLE("project.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
+    PROJECT_NAME("project.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
-    STATE_GROUP_TITLE("state.id", STATE_GROUP, StateByStateGroupSelector.class, Arrays.asList(EQUAL), //
+    STATE_GROUP_NAME("state.id", STATE_GROUP, StateByStateGroupSelector.class, Arrays.asList(EQUAL), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
     CREATED_TIMESTAMP("createdTimestamp", DATE_TIME, StateByStateGroupSelector.class, Arrays.asList(BETWEEN, GREATER, LESSER), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //

@@ -54,18 +54,18 @@ public class PrismDepartmentWorkflow {
                         .withTransitionAction(DEPARTMENT_TERMINATE));
     }
 
-    public static PrismStateAction departmentViewEditUnapproved() {
-        return departmentViewEditAbstract() //
-                .withActionEnhancement(DEPARTMENT_VIEW_AS_USER) //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
-    }
-
-    public static PrismStateAction departmentViewEditApproved() {
+    public static PrismStateAction departmentViewEditActive() {
         return departmentViewEditAbstract() //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
+    }
+    
+    public static PrismStateAction departmentViewEditInactive() {
+        return departmentViewEditAbstract() //
+                .withActionEnhancement(DEPARTMENT_VIEW_AS_USER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentWithdraw() {

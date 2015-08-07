@@ -30,18 +30,15 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationWithdrawnResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentCreatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentStartedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramCreatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramStartedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectStartedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
 
 public enum PrismStateTransitionEvaluation {
@@ -73,15 +70,12 @@ public enum PrismStateTransitionEvaluation {
     DEPARTMENT_APPROVED_OUTCOME(true, DEPARTMENT, DepartmentApprovedResolver.class), //
     DEPARTMENT_UPDATED_OUTCOME(true, DEPARTMENT, DepartmentUpdatedResolver.class), //
     DEPARTMENT_CREATED_OUTCOME(false, DEPARTMENT, DepartmentCreatedResolver.class), //
-    DEPARTMENT_STARTED_OUTCOME(false, DEPARTMENT, DepartmentStartedResolver.class), //
     PROGRAM_APPROVED_OUTCOME(true, PROGRAM, ProgramApprovedResolver.class), //
     PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
     PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //
-    PROGRAM_STARTED_OUTCOME(false, PROGRAM, ProgramStartedResolver.class), //
     PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
     PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
-    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class), //
-    PROJECT_STARTED_OUTCOME(false, PROJECT, ProjectStartedResolver.class);
+    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class);
 
     private boolean nextStateSelection;
 

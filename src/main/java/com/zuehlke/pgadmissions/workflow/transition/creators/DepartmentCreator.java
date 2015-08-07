@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
 @Component
@@ -21,12 +20,9 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDivision
 
     @Inject
     private AdvertService advertService;
-    
-    @Inject
-    private DepartmentService departmentService;
 
     @Inject
-    private ImportedEntityService importedEntityService;
+    private DepartmentService departmentService;
 
     @Inject
     private ResourceService resourceService;

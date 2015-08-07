@@ -60,19 +60,19 @@ public class PrismProgramWorkflow {
                         .withTransitionState(PROGRAM_DISABLED_COMPLETED) //
                         .withTransitionAction(PROGRAM_TERMINATE));
     }
-
-    public static PrismStateAction programViewEditUnapproved() {
-        return programViewEditAbstract() //
-                .withActionEnhancement(PROGRAM_VIEW_AS_USER) //
-                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP);
-    }
-
-    public static PrismStateAction programViewEditApproved() {
+    
+    public static PrismStateAction programViewEditActive() {
         return programViewEditAbstract() //
                 .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withTransitions(PROGRAM_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROGRAM_MANAGE_USERS_GROUP));
+    }
+    
+    public static PrismStateAction programViewEditInactive() {
+        return programViewEditAbstract() //
+                .withActionEnhancement(PROGRAM_VIEW_AS_USER) //
+                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction programWithdraw() {

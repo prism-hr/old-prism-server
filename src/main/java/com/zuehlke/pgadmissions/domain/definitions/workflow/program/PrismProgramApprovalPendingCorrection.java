@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programCompleteApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateUnapproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditActive;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -18,24 +18,24 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(programCompleteApproval());
+    @Override
+    protected void setStateActions() {
+        stateActions.add(programCompleteApproval());
 
-		stateActions.add(new PrismStateAction() //
-		        .withAction(PROGRAM_CORRECT) //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(PROGRAM_CORRECT_REQUEST) //
-		        .withAssignments(PROGRAM_ADMINISTRATOR) //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(PROGRAM_APPROVAL) //
-		                .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
-		                .withRoleTransitions(PROGRAM_REVIVE_ADMINISTRATOR_GROUP))); //
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROGRAM_CORRECT) //
+                .withRaisesUrgentFlag() //
+                .withNotification(PROGRAM_CORRECT_REQUEST) //
+                .withAssignments(PROGRAM_ADMINISTRATOR) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(PROGRAM_APPROVAL) //
+                        .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
+                        .withRoleTransitions(PROGRAM_REVIVE_ADMINISTRATOR_GROUP))); //
 
-		stateActions.add(programEmailCreatorUnnapproved()); //
-		stateActions.add(programEscalateUnapproved()); //
-		stateActions.add(programViewEditUnapproved()); //
-		stateActions.add(programWithdraw());
-	}
+        stateActions.add(programEmailCreatorUnnapproved()); //
+        stateActions.add(programEscalateUnapproved()); //
+        stateActions.add(programViewEditActive()); //
+        stateActions.add(programWithdraw());
+    }
 
 }

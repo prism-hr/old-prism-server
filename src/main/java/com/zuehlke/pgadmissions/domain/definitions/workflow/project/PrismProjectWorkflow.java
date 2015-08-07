@@ -61,18 +61,18 @@ public class PrismProjectWorkflow {
                         .withTransitionAction(PROJECT_TERMINATE));
     }
 
-    public static PrismStateAction projectViewEditUnapproved() {
-        return projectViewEditAbstract()
-                .withActionEnhancement(PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP);
-    }
-
-    public static PrismStateAction projectViewEditApproved() {
+    public static PrismStateAction projectViewEditActive() {
         return projectViewEditAbstract()
                 .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
                 .withTransitions(PROJECT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROJECT_MANAGE_USERS_GROUP));
+    }
+    
+    public static PrismStateAction projectViewEditInactive() {
+        return projectViewEditAbstract()
+                .withActionEnhancement(PROJECT_VIEW_AS_USER) //
+                .withAssignments(PROJECT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction projectWithdraw() {

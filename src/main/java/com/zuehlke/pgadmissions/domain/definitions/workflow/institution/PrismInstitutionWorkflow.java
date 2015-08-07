@@ -38,18 +38,18 @@ public class PrismInstitutionWorkflow {
                         .withTransitionAction(INSTITUTION_ESCALATE));
     }
 
-    public static PrismStateAction institutionViewEditUnapproved() {
-        return institutionViewEditAbstract() //
-                .withActionEnhancement(INSTITUTION_VIEW_AS_USER)
-                .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP);
-    }
-
-    public static PrismStateAction institutionViewEditApproved() {
+    public static PrismStateAction institutionViewEditActive() {
         return institutionViewEditAbstract()
                 .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withTransitions(INSTITUTION_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(INSTITUTION_MANAGE_USERS_GROUP));
+    }
+    
+    public static PrismStateAction institutionViewEditInactive() {
+        return institutionViewEditAbstract() //
+                .withActionEnhancement(INSTITUTION_VIEW_AS_USER)
+                .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction institutionWithdraw() {

@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -168,6 +169,7 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
                         .add(Restrictions.conjunction() //
+                                .add(Restrictions.ne("action.systemInvocationOnly", true))
                                 .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
                                 .add(Restrictions.neProperty("state", "transitionState"))) //
                         .add(Restrictions.isNotNull("action.creationScope"))) //

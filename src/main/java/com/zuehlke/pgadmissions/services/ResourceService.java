@@ -6,8 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 import java.util.Arrays;
@@ -65,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -115,6 +114,9 @@ public class ResourceService {
 
     @Inject
     private ApplicationService applicationService;
+
+    @Inject
+    private DepartmentService departmentService;
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -610,6 +612,11 @@ public class ResourceService {
 
     public <T extends ResourceParentDivision, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
         resource.setImportedCode(resourceDTO.getImportedCode());
+
+        if (resourceDTO.getClass().equals(ResourceParentDivisionDTO.class)) {
+            departmentService.setImportedPrograms((Department) resource, ((ResourceParentDivisionDTO) resourceDTO).getImportedPrograms());
+        }
+
         updateResource(resource, (ResourceParentDTO) resourceDTO);
     }
 

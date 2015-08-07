@@ -71,6 +71,7 @@ public class CommentMapper {
     @Inject
     private RoleService roleService;
 
+    // TODO: rewrite this shit so that it is maintainable
     public TimelineRepresentation getTimelineRepresentation(Resource resource, User user) {
         TimelineRepresentation timeline = new TimelineRepresentation();
         List<Comment> transitionComments = commentService.getStateGroupTransitionComments(resource);

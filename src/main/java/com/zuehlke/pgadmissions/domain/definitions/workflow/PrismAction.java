@@ -80,7 +80,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
     APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
 
-    PROJECT_STARTUP(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_UNENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
@@ -93,7 +92,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROJECT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROJECT)), //
 
-    PROGRAM_STARTUP(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_UNENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
@@ -108,7 +106,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROGRAM)), //
 
-    DEPARTMENT_STARTUP(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_ENDORSE(getDefaultProcessResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_UNENDORSE(getDefaultProcessResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //

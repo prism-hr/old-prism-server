@@ -10,7 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.Prism
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateUnapproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditActive;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -19,25 +19,25 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(projectCompleteApproval());
+    @Override
+    protected void setStateActions() {
+        stateActions.add(projectCompleteApproval());
 
-		stateActions.add(new PrismStateAction() //
-		        .withAction(PROJECT_CORRECT) //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(PROJECT_CORRECT_REQUEST) //
-		        .withAssignments(PROJECT_ADMINISTRATOR) //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(PROJECT_APPROVAL) //
-		                .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
-		                .withRoleTransitions(PROJECT_REVIVE_ADMINISTRATOR_GROUP))); //
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROJECT_CORRECT) //
+                .withRaisesUrgentFlag() //
+                .withNotification(PROJECT_CORRECT_REQUEST) //
+                .withAssignments(PROJECT_ADMINISTRATOR) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(PROJECT_APPROVAL) //
+                        .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
+                        .withRoleTransitions(PROJECT_REVIVE_ADMINISTRATOR_GROUP))); //
 
-		stateActions.add(projectEmailCreatorUnnapproved()); //
-		stateActions.add(projectEscalateUnapproved());
-		stateActions.add(projectTerminateUnapproved());
-		stateActions.add(projectViewEditUnapproved());
-		stateActions.add(projectWithdraw());
-	}
+        stateActions.add(projectEmailCreatorUnnapproved()); //
+        stateActions.add(projectEscalateUnapproved());
+        stateActions.add(projectTerminateUnapproved());
+        stateActions.add(projectViewEditActive());
+        stateActions.add(projectWithdraw());
+    }
 
 }

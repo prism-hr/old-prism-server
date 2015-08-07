@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -18,18 +19,19 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransit
 @Component
 public class InstitutionCreatedResolver implements StateTransitionResolver<Institution> {
 
-	@Inject
-	private RoleService roleService;
+    @Inject
+    private RoleService roleService;
 
-	@Inject
-	private StateService stateService;
+    @Inject
+    private StateService stateService;
 
-	@Override
-	public StateTransition resolve(Institution resource, Comment comment) {
-		if (roleService.hasUserRole(resource, comment.getUser(), SYSTEM_ADMINISTRATOR)) {
-			return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), INSTITUTION_APPROVED);
-		}
-		return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), INSTITUTION_APPROVAL);
-	}
+    @Override
+    public StateTransition resolve(Institution resource, Comment comment) {
+        Resource parentResource = resource.getParentResource();
+        if (roleService.hasUserRole(resource, comment.getUser(), SYSTEM_ADMINISTRATOR)) {
+            return stateService.getStateTransition(parentResource, comment.getAction(), INSTITUTION_APPROVED);
+        }
+        return stateService.getStateTransition(parentResource, comment.getAction(), INSTITUTION_APPROVAL);
+    }
 
 }

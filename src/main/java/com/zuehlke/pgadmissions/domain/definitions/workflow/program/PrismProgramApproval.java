@@ -12,7 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_APPROVE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateUnapproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditActive;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -21,29 +21,29 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProgramApproval extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(programCompleteApproval()
-		        .withRaisesUrgentFlag() //
-		        .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(PROGRAM_APPROVAL_PENDING_CORRECTION) //
-		                .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
-		                .withTransitionEvaluation(PROGRAM_APPROVED_OUTCOME))); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(programCompleteApproval()
+                .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(PROGRAM_APPROVAL_PENDING_CORRECTION) //
+                        .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
+                        .withTransitionEvaluation(PROGRAM_APPROVED_OUTCOME))); //
 
-		stateActions.add(programEmailCreatorUnnapproved()); //
-		stateActions.add(programEscalateUnapproved()); //
-		stateActions.add(programViewEditUnapproved()); //
-		stateActions.add(programWithdraw());
-	}
+        stateActions.add(programEmailCreatorUnnapproved()); //
+        stateActions.add(programEscalateUnapproved()); //
+        stateActions.add(programViewEditActive()); //
+        stateActions.add(programWithdraw());
+    }
 
-	public static PrismStateAction programCompleteApproval() {
-		return new PrismStateAction() //
-		        .withAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
-		        .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP) //
-		        .withNotifications(PROGRAM_PARENT_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
-		        .withNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
-		        .withTransitions(PROGRAM_APPROVE_TRANSITION);
-	}
+    public static PrismStateAction programCompleteApproval() {
+        return new PrismStateAction() //
+                .withAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
+                .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP) //
+                .withNotifications(PROGRAM_PARENT_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
+                .withNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
+                .withTransitions(PROGRAM_APPROVE_TRANSITION);
+    }
 
 }

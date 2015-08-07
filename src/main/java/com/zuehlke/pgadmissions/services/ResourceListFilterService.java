@@ -57,7 +57,7 @@ public class ResourceListFilterService {
 				        .withValueDateClose(constraintDTO.getValueDateClose()).withValueReserveStatus(constraintDTO.getValueReserveStatus())
 				        .withValueDecimalStart(constraintDTO.getValueDecimalStart()).withValueDecimalClose(constraintDTO.getValueDecimalClose());
 
-				if (filterProperty == PrismResourceListConstraint.STATE_GROUP_TITLE) {
+				if (filterProperty == PrismResourceListConstraint.STATE_GROUP_NAME) {
 					transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
 				}
 

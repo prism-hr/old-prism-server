@@ -119,7 +119,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_IMPORT_PROGRAM(getDefaultImportResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
-    DEPARTMENT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //    
+    DEPARTMENT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(DEPARTMENT)), //
 
     INSTITUTION_ENDORSE(getDefaultProcessResourceActionDefinition(INSTITUTION)), //
@@ -287,7 +287,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     }
 
     private static PrismActionDefinition getDefaultCreateResourceActionDefinition(PrismScope scope) {
-        return getDefaultResourceActionDefinition(CREATE_RESOURCE, scope);
+        return getDefaultResourceActionDefinitionVisible(CREATE_RESOURCE, scope);
     }
 
     private static PrismActionDefinition getDefaultViewEditResourceActionDefinition(PrismScope scope) {
@@ -295,7 +295,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
     }
 
     private static PrismActionDefinition getDefaultImportResourceActionDefinition(PrismScope scope) {
-        return getDefaultResourceActionDefinition(IMPORT_RESOURCE, scope);
+        return getDefaultResourceActionDefinition(IMPORT_RESOURCE, scope) //
+                .withSystemInvocationOnly();
     }
 
     private static PrismActionDefinition getDefaultWithdrawResourceActionDefinition(PrismScope scope) {

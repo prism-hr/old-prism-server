@@ -18,7 +18,7 @@ public class ResourceByParentResourceSelector implements PrismResourceListFilter
 
 	@Override
 	public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-		return resourceService.getResourcesByMatchingEnclosingResource(PrismScope.valueOf(constraint.getFilterProperty().name().replace("_TITLE", "")),
+		return resourceService.getResourcesByMatchingEnclosingResource(PrismScope.valueOf(constraint.getFilterProperty().name().replace("_NAME", "")),
 		        constraint.getValueString());
 	}
 

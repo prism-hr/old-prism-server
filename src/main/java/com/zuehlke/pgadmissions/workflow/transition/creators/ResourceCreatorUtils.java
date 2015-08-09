@@ -1,14 +1,13 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class ResourceCreatorUtils {
@@ -17,7 +16,7 @@ public class ResourceCreatorUtils {
     private ResourceService resourceService;
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceParentDivisionDTO, U extends ResourceParent> U getParentResource(User user, T newResource) throws Exception {
+    public <T extends ResourceParentDivisionDTO, U extends ResourceParent> U getParentResource(User user, T newResource) {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
         return (U) resourceService.getById(parentResourceDTO.getScope().getResourceClass(), parentResourceDTO.getId());
     }

@@ -1,10 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -14,6 +9,10 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
@@ -28,7 +27,7 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
     private ResourceCreatorUtils resourceCreatorUtils;
 
     @Override
-    public Resource create(User user, ResourceOpportunityDTO newResource) throws Exception {
+    public Resource create(User user, ResourceOpportunityDTO newResource) {
         ResourceParent parentResource = resourceCreatorUtils.getParentResource(user, newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();

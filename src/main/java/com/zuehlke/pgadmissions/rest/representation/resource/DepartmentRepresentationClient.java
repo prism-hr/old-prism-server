@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
-public class ResourceParentDivisionRepresentationClient extends ResourceParentDivisionRepresentation implements ResourceRepresentationClient {
+public class DepartmentRepresentationClient extends DepartmentRepresentation implements ResourceRepresentationClient {
 
     private List<ResourceCountRepresentation> counts;
 

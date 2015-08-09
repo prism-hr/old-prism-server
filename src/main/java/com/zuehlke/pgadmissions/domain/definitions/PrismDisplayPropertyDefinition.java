@@ -1486,23 +1486,24 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** DEPARTMENT COMMENT *********************
      */
 
-    DEPARTMENT_COMMENT_APPROVAL(DEPARTMENT_COMMENT, "We are pleased to tell you that your department has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
-    DEPARTMENT_COMMENT_APPROVED(DEPARTMENT_COMMENT, "We are pleased to tell you that your department has been approved. You may now login to create users and projects, and manage your recruitment"),
-    DEPARTMENT_COMMENT_CORRECTION(DEPARTMENT_COMMENT, "Further information is required to activate your department. Please login to address the reviewers comments"),
-    DEPARTMENT_COMMENT_REJECTED(DEPARTMENT_COMMENT, "We are sorry to inform you that your department has been rejected"),
-    DEPARTMENT_COMMENT_UPDATED(DEPARTMENT_COMMENT, "Updated department"),
-    DEPARTMENT_COMMENT_UPDATED_USER_ROLE(DEPARTMENT_COMMENT, "Updated department user roles"),
-    DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(DEPARTMENT_COMMENT, "Updated department notification configuration"),
+    DEPARTMENT_COMMENT_APPROVAL(DEPARTMENT_COMMENT, "We are pleased to tell you that your program has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
+    DEPARTMENT_COMMENT_APPROVED(DEPARTMENT_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
+    DEPARTMENT_COMMENT_CORRECTION(DEPARTMENT_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
+    DEPARTMENT_COMMENT_REJECTED(DEPARTMENT_COMMENT, "We are sorry to inform you that your program has been rejected"),
+    DEPARTMENT_COMMENT_UPDATED(DEPARTMENT_COMMENT, "Updated program"),
+    DEPARTMENT_COMMENT_UPDATED_USER_ROLE(DEPARTMENT_COMMENT, "Updated program user roles"),
+    DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(DEPARTMENT_COMMENT, "Updated program notification configuration"),
     DEPARTMENT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default notification configuration"),
-    DEPARTMENT_COMMENT_UPDATED_STATE_DURATION(DEPARTMENT_COMMENT, "Updated department state duration configuration"),
+    DEPARTMENT_COMMENT_UPDATED_STATE_DURATION(DEPARTMENT_COMMENT, "Updated program state duration configuration"),
     DEPARTMENT_COMMENT_RESTORED_STATE_DURATION_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default state duration configuration"),
-    DEPARTMENT_COMMENT_UPDATED_ACTION_PROPERTY(DEPARTMENT_COMMENT, "Updated department action property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_ACTION_PROPERTY(DEPARTMENT_COMMENT, "Updated program action property configuration"),
     DEPARTMENT_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default action property configuration"),
-    DEPARTMENT_COMMENT_UPDATED_WORKFLOW_PROPERTY(DEPARTMENT_COMMENT, "Updated department workflow property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_WORKFLOW_PROPERTY(DEPARTMENT_COMMENT, "Updated program workflow property configuration"),
     DEPARTMENT_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default workflow property configuration"),
-    DEPARTMENT_COMMENT_UPDATED_DISPLAY_PROPERTY(DEPARTMENT_COMMENT, "Updated department display property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_DISPLAY_PROPERTY(DEPARTMENT_COMMENT, "Updated program display property configuration"),
     DEPARTMENT_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default display property configuration"),
-    DEPARTMENT_COMMENT_UPDATED_ADVERT(DEPARTMENT_COMMENT, "Updated department advert"),
+    DEPARTMENT_COMMENT_UPDATED_ADVERT(DEPARTMENT_COMMENT, "Updated program advert"),
+    DEPARTMENT_COMMENT_UPDATED_CATEGORY(DEPARTMENT_COMMENT, "Updated program categories"),
 
     /*
      * *************** PROGRAM COMMENT *********************

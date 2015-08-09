@@ -5,6 +5,7 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDivisionDefinition;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class ResourceParentDivisionDTO extends ResourceParentDTO implements Reso
 
     @Size(min = 1)
     @Valid
+    @NotNull
     private List<ImportedEntityDTO> importedPrograms;
 
     @Override

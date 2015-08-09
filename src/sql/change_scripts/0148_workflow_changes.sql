@@ -110,6 +110,14 @@ where comment_id in (
       or state_id like "%REACTIVATION"
 ;
 
+delete from comment_assigned_user
+where comment_id in (
+	select id from comment
+	where state_id like "%REACTIVATION"
+				or transition_state_id like "%REACTIVATION"
+)
+;
+
 delete
 from comment
 where state_id like "%REACTIVATION"
@@ -122,6 +130,14 @@ set program.state_id = 'PROGRAM_DISABLED_COMPLETED',
   resource_state.state_id = 'PROGRAM_DISABLED_COMPLETED'
 where program.state_id = 'PROGRAM_DISABLED_PENDING_REACTIVATION'
       and resource_state.state_id = 'PROGRAM_DISABLED_PENDING_REACTIVATION'
+;
+
+update project inner join resource_state
+    on project.id = resource_state.project_id
+set project.state_id = 'PROJECT_DISABLED_COMPLETED',
+  resource_state.state_id = 'PROJECT_DISABLED_COMPLETED'
+where project.state_id = 'PROJECT_DISABLED_PENDING_REACTIVATION'
+      and resource_state.state_id = 'PROJECT_DISABLED_PENDING_REACTIVATION'
 ;
 
 update program inner join resource_previous_state

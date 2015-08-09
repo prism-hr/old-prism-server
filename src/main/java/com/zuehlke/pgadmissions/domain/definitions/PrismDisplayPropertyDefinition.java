@@ -1,80 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CLOSING_DATES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_FEES_AND_PAYMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -836,7 +768,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_PROGRAM_ADVERT_DETAILS(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Advert Details Section"),
     SYSTEM_DISPLAY_CATEGORY_PROGRAM_ADVERT_FEES_AND_PAYMENTS(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Fees and Payments Section"),
     SYSTEM_DISPLAY_CATEGORY_PROGRAM_ADVERT_CATEGORIES(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Advert Categories Section"),
-    SYSTEM_DISPLAY_CATEGORY_PROGRAM_ADVERT_CLOSING_DATES(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Closing Dates Section"),
+    SYSTEM_DISPLAY_CATEGORY_SYSTEM_RESOURCE_ADVERT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Closing Dates Section"),
     SYSTEM_DISPLAY_CATEGORY_PROJECT_COMMENT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Comment"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_GLOBAL(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Global"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_PROGRAM_DETAIL(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Program Detail Section"),
@@ -1412,30 +1344,42 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM RESOURCE ADVERT *********************
      */
 
-    SYSTEM_ADVERT_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Description"),
-    SYSTEM_ADVERT_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Detailed description of your advert."),
-    SYSTEM_ADVERT_HOMEPAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Homepage URL"),
-    SYSTEM_ADVERT_HOMEPAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the web address at which further information about your opportunity can be found"),
-    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Use different address"),
-    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
+    SYSTEM_ADVERT_DESCRIPTION_LABEL(SYSTEM_RESOURCE_ADVERT, "Description"),
+    SYSTEM_ADVERT_DESCRIPTION_HINT(SYSTEM_RESOURCE_ADVERT, "Detailed description of your advert."),
+    SYSTEM_ADVERT_HOMEPAGE_LABEL(SYSTEM_RESOURCE_ADVERT, "Homepage URL"),
+    SYSTEM_ADVERT_HOMEPAGE_HINT(SYSTEM_RESOURCE_ADVERT, "Specify the web address at which further information about your opportunity can be found"),
+    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(SYSTEM_RESOURCE_ADVERT, "Use different address"),
+    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(SYSTEM_RESOURCE_ADVERT, "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
+    SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_LABEL(SYSTEM_RESOURCE_ADVERT, "Industries"),
+    SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_HINT(SYSTEM_RESOURCE_ADVERT, "Specify the industries that your advert is relevant to."),
+    SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_LABEL(SYSTEM_RESOURCE_ADVERT, "Functions"),
+    SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_HINT(SYSTEM_RESOURCE_ADVERT, "Specify the job functions that your advert is relevant to."),
+    SYSTEM_ADVERT_CATEGORIES_THEMES_LABEL(SYSTEM_RESOURCE_ADVERT, "Themes"),
+    SYSTEM_ADVERT_CATEGORIES_THEMES_HINT(SYSTEM_RESOURCE_ADVERT, "???"),
+    SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_LABEL(SYSTEM_RESOURCE_ADVERT, "Closing Date"),
+    SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_HINT(SYSTEM_RESOURCE_ADVERT, "The closing date for applications."),
 
-    /*
-     * *************** SYSTEM ADVERT CATEGORIES *********************
-     */
+    SYSTEM_FINANCIAL_DETAILS_SPECIFY_FEE_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Would you like to specify fees?"),
+    SYSTEM_FINANCIAL_DETAILS_SPECIFY_FEE_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "If you are charging fees (e.g. for study) specify here"),
+    SYSTEM_FINANCIAL_DETAILS_FEE_CURRENCY_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Fee Currency"),
+    SYSTEM_FINANCIAL_DETAILS_FEE_CURRENCY_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify the default fee currency of your advert."),
+    SYSTEM_FINANCIAL_DETAILS_FEE_INTERVAL_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Fee Interval"),
+    SYSTEM_FINANCIAL_DETAILS_FEE_INTERVAL_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify how regularly you collect fees"),
+    SYSTEM_FINANCIAL_DETAILS_FEE_MINIMUM_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Fee minimum"),
+    SYSTEM_FINANCIAL_DETAILS_FEE_MINIMUM_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify the minimum fee level"),
+    SYSTEM_FINANCIAL_DETAILS_FEE_MAXIMUM_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Fee maximum"),
+    SYSTEM_FINANCIAL_DETAILS_FEE_MAXIMUM_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify the maximum fee level"),
+    SYSTEM_FINANCIAL_DETAILS_SPECIFY_PAY_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Would you like to specify pay?"),
+    SYSTEM_FINANCIAL_DETAILS_SPECIFY_PAY_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "If you are paying a salary or fee (e.g. for work) specify here"),
+    SYSTEM_FINANCIAL_DETAILS_PAY_CURRENCY_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Pay Currency"),
+    SYSTEM_FINANCIAL_DETAILS_PAY_CURRENCY_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify the default pay currency of your advert."),
+    SYSTEM_FINANCIAL_DETAILS_PAY_INTERVAL_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Pay Interval"),
+    SYSTEM_FINANCIAL_DETAILS_PAY_INTERVAL_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify how regularly you make payments"),
+    SYSTEM_FINANCIAL_DETAILS_PAY_MINIMUM_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Pay minimum"),
+    SYSTEM_FINANCIAL_DETAILS_PAY_MINIMUM_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify the minimum pay level"),
+    SYSTEM_FINANCIAL_DETAILS_PAY_MAXIMUM_LABEL(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Pay maximum"),
+    SYSTEM_FINANCIAL_DETAILS_PAY_MAXIMUM_HINT(SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Please specify the maximum pay level"),
 
-    SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Industries"),
-    SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Specify the industries that your advert is relevant to."),
-    SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Functions"),
-    SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Specify the job functions that your advert is relevant to."),
-    SYSTEM_ADVERT_CATEGORIES_THEMES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "Themes"),
-    SYSTEM_ADVERT_CATEGORIES_THEMES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT_CATEGORIES, "???"),
-
-    /*
-     * *************** PROGRAM ADVERT CLOSING DATES *********************
-     */
-
-    SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Closing Date"),
-    SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_HINT(PROGRAM_ADVERT_CLOSING_DATES, "The closing date for applications."),
     /*
      * *************** SYSTEM HTML MANAGE USERS *********************
      */
@@ -1568,27 +1512,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** PROGRAM ADVERT FEES & PAYMENTS *********************
      */
 
-    PROGRAM_FEES_SPECIFY_FEE_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify fees?"),
-    PROGRAM_FEES_SPECIFY_FEE_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "If you are charging fees (e.g. for study) specify here"),
-    PROGRAM_FEES_FEE_CURRENCY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee Currency"),
-    PROGRAM_FEES_FEE_CURRENCY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the default fee currency of your advert."),
-    PROGRAM_FEES_FEE_INTERVAL_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee Interval"),
-    PROGRAM_FEES_FEE_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify how regulary you collect fees"),
-    PROGRAM_FEES_FEE_MINIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee minimum"),
-    PROGRAM_FEES_FEE_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the minimum fee level"),
-    PROGRAM_FEES_FEE_MAXIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee maximum"),
-    PROGRAM_FEES_FEE_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the maximum fee level"),
-    PROGRAM_FEES_SPECIFY_PAY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify pay?"),
-    PROGRAM_FEES_SPECIFY_PAY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "If you are paying a salary or fee (e.g. for work) specify here"),
-    PROGRAM_FEES_PAY_CURRENCY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay Currency"),
-    PROGRAM_FEES_PAY_CURRENCY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the default pay currency of your advert."),
-    PROGRAM_FEES_PAY_INTERVAL_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay Interval"),
-    PROGRAM_FEES_PAY_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify how regularly you make payments"),
-    PROGRAM_FEES_PAY_MINIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay minimum"),
-    PROGRAM_FEES_PAY_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the minimum pay level"),
-    PROGRAM_FEES_PAY_MAXIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay maximum"),
-    PROGRAM_FEES_PAY_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the maximum pay level"),
-
     /*
      * *************** PROJECT COMMENT *********************
      */
@@ -1614,15 +1537,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_UPDATED_CATEGORY(PROJECT_COMMENT, "Updated project categories"),
     PROJECT_COMMENT_UPDATED_TARGET(PROJECT_COMMENT, "Updated project targets"),
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PROJECT_COMMENT, "Updated project closing dates"),
-
-    /*
-     * *************** PROJECT FORM *********************
-     */
-
-    PROJECT_FORM_DURATION_MINIMUM_LABEL(PROJECT_FORM, "Duration Minimum"),
-    PROJECT_FORM_DURATION_MINIMUM_HINT(PROJECT_FORM, "The minimum anticipated duration of study for your project."),
-    PROJECT_FORM_DURATION_MAXIMUM_LABEL(PROJECT_FORM, "Duration Maximum"),
-    PROJECT_FORM_DURATION_MAXIMUM_HINT(PROJECT_FORM, "The maximum anticipated duration of study for your project."),
 
     /*
      * *************** APPLICATION GLOBAL *********************

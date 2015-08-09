@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDivisionDefinition;
-
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDivisionDefinition;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 public class ResourceParentDivisionDTO extends ResourceParentDTO implements ResourceCreationDTO, ResourceParentDivisionDefinition<AdvertDTO> {
 
@@ -13,6 +14,8 @@ public class ResourceParentDivisionDTO extends ResourceParentDTO implements Reso
 
     private String importedCode;
 
+    @Size(min = 1)
+    @Valid
     private List<ImportedEntityDTO> importedPrograms;
 
     @Override

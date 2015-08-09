@@ -19,7 +19,7 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
         @JsonSubTypes.Type(value = ApplicationRepresentationClient.class, name = "APPLICATION"),
         @JsonSubTypes.Type(value = ResourceOpportunityRepresentationClient.class, name = "PROJECT"),
         @JsonSubTypes.Type(value = ResourceOpportunityRepresentationClient.class, name = "PROGRAM"),
-        @JsonSubTypes.Type(value = ResourceParentDivisionRepresentationClient.class, name = "DEPARTMENT"),
+        @JsonSubTypes.Type(value = DepartmentRepresentationClient.class, name = "DEPARTMENT"),
         @JsonSubTypes.Type(value = InstitutionRepresentationClient.class, name = "INSTITUTION")
 })
 public class ResourceRepresentationExtended extends ResourceRepresentationStandard {

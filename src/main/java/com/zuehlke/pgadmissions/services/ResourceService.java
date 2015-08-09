@@ -211,8 +211,8 @@ public class ResourceService {
         entityService.flush();
 
         LocalDate baseline = comment.getCreatedTimestamp().toLocalDate();
-        insertResourceStates(resource, resourcePreviousStates, commentStates, ResourcePreviousState.class, baseline);
-        insertResourceStates(resource, resourceStates, commentTransitionStates, ResourceState.class, baseline);
+        insertResourceStates(resource, commentStates, ResourcePreviousState.class, baseline);
+        insertResourceStates(resource, commentTransitionStates, ResourceState.class, baseline);
         entityService.flush();
     }
 
@@ -346,12 +346,12 @@ public class ResourceService {
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
         return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
         return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
@@ -407,12 +407,8 @@ public class ResourceService {
 
     public List<ImportedEntitySimple> getStudyOptions(ResourceOpportunity resource) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
-            List<ImportedEntitySimple> prismStudyOptions = Lists.newLinkedList();
             List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
-            for (ResourceStudyOption studyOption : studyOptions) {
-                prismStudyOptions.add(studyOption.getStudyOption());
-            }
-            return prismStudyOptions;
+            return studyOptions.stream().map(ResourceStudyOption::getStudyOption).collect(Collectors.toList());
         }
 
         List<ImportedEntitySimple> filteredStudyOptions = Lists.newLinkedList();
@@ -436,7 +432,7 @@ public class ResourceService {
     }
 
     public List<String> getStudyLocations(ResourceOpportunity resource) {
-        List<String> filteredStudylocations = Lists.newLinkedList();
+        List<String> filteredStudyLocations = Lists.newLinkedList();
         List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource, ResourceStudyLocation.class, "studyLocation", null);
 
         PrismScope lastResourceScope = null;
@@ -445,11 +441,11 @@ public class ResourceService {
             if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
                 break;
             }
-            filteredStudylocations.add(studyLocation.getStudyLocation());
+            filteredStudyLocations.add(studyLocation.getStudyLocation());
             lastResourceScope = thisResourceScope;
         }
 
-        return filteredStudylocations;
+        return filteredStudyLocations;
     }
 
     public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
@@ -553,7 +549,7 @@ public class ResourceService {
         }
     }
 
-    public <T extends ResourceParentDTO> void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) throws Exception {
+    public void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
         updateResource(resource, resourceDTO);
 
@@ -576,8 +572,8 @@ public class ResourceService {
     public <T extends ResourceParentDivision, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
         resource.setImportedCode(resourceDTO.getImportedCode());
 
-        if (resourceDTO.getClass().equals(ResourceParentDivisionDTO.class)) {
-            departmentService.setImportedPrograms((Department) resource, resourceDTO.getImportedPrograms());
+        if (resourceDTO.getClass().equals(DepartmentDTO.class)) {
+            departmentService.setImportedPrograms((Department) resource, ((DepartmentDTO) resourceDTO).getImportedPrograms());
         }
 
         updateResource(resource, (ResourceParentDTO) resourceDTO);
@@ -635,7 +631,7 @@ public class ResourceService {
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
-            HashMultimap<PrismScope, PrismState> enclosedScopes) {
+                                                                                      HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
@@ -647,7 +643,7 @@ public class ResourceService {
     }
 
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope resourceScope, PrismScope parentScope, Integer parentId,
-            PrismScope targetScope) {
+                                                                                       PrismScope targetScope) {
         return resourceDAO.getResourcesWhichPermitChildResourceCreation(resourceScope, parentScope, parentId, targetScope, userService.isLoggedInSession());
     }
 
@@ -678,10 +674,14 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(
-            Resource resource, Set<T> resourceStateDefinitions, Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline)
-            throws Exception {
+            Resource resource, Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) {
         for (U commentState : commentStateDefinitions) {
-            T transientResourceStateDefinition = resourceStateClass.newInstance();
+            T transientResourceStateDefinition;
+            try {
+                transientResourceStateDefinition = resourceStateClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new Error(e);
+            }
             transientResourceStateDefinition.setResource(resource);
             transientResourceStateDefinition.setState(commentState.getState());
 

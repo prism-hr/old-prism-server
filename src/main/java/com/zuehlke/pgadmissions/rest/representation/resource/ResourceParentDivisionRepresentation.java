@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-public class ResourceParentDivisionRepresentation extends ResourceParentRepresentation {
+public abstract class ResourceParentDivisionRepresentation extends ResourceParentRepresentation {
 
     private String importedCode;
 
@@ -13,4 +13,5 @@ public class ResourceParentDivisionRepresentation extends ResourceParentRepresen
     public void setImportedCode(String importedCode) {
         this.importedCode = importedCode;
     }
+
 }

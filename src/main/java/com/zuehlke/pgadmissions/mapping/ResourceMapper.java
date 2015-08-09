@@ -64,7 +64,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepr
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentDivisionRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
@@ -321,7 +321,7 @@ public class ResourceMapper {
 
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentationClient> V getResourceParentRepresentationClient(T resource, Class<V> returnType)
+    public <T extends ResourceParent, V extends ResourceParentDivisionRepresentationClient> V getResourceParentRepresentationClient(T resource, Class<V> returnType)
             throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
         appendResourceSummaryRepresentation(resource, representation);
@@ -344,7 +344,7 @@ public class ResourceMapper {
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
             return getResourceOpportunityRepresentationClient((ResourceOpportunity) resource, ResourceOpportunityRepresentationClient.class);
         } else if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return getResourceParentRepresentationClient((ResourceParent) resource, ResourceParentRepresentationClient.class);
+            return getResourceParentRepresentationClient((ResourceParent) resource, ResourceParentDivisionRepresentationClient.class);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
             return applicationMapper.getApplicationRepresentationClient((Application) resource);
         }
@@ -359,7 +359,7 @@ public class ResourceMapper {
         if (resourceClass.equals(Institution.class)) {
             return institutionMapper.getInstitutionRepresentation((Institution) resource);
         } else if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return getResourceParentRepresentation((ResourceParent) resource, ResourceParentRepresentationClient.class);
+            return getResourceParentRepresentation((ResourceParent) resource, ResourceParentDivisionRepresentationClient.class);
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
             return getResourceOpportunityRepresentation((ResourceOpportunity) resource, ResourceOpportunityRepresentationClient.class);
         } else if (Application.class.isAssignableFrom(resourceClass)) {

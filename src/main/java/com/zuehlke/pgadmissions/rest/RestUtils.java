@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentDivisionRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 
@@ -34,9 +34,9 @@ public class RestUtils {
         } else if ("programs".equals(resourceScope)) {
             return new ResourceDescriptor(Program.class, ResourceOpportunityRepresentationClient.class, PROGRAM);
         } else if ("departments".equals(resourceScope)) {
-            return new ResourceDescriptor(Department.class, ResourceParentRepresentationClient.class, DEPARTMENT);
+            return new ResourceDescriptor(Department.class, ResourceParentDivisionRepresentationClient.class, DEPARTMENT);
         } else if ("institutions".equals(resourceScope)) {
-            return new ResourceDescriptor(Institution.class, ResourceParentRepresentationClient.class, INSTITUTION);
+            return new ResourceDescriptor(Institution.class, ResourceParentDivisionRepresentationClient.class, INSTITUTION);
         } else if ("systems".equals(resourceScope)) {
             return new ResourceDescriptor(System.class, ResourceRepresentationSimple.class, SYSTEM);
         }

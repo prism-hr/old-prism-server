@@ -40,7 +40,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 @RestController
-@RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
+@RequestMapping("api/{resourceScope:applications|projects|programs|departments|institutions|systems}")
 public class ResourceController {
 
     @Inject

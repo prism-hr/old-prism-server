@@ -156,6 +156,27 @@ public class CommentDAO {
                 .list();
     }
 
+    public List<Comment> getComments(Resource resource) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .add(Restrictions.isNotNull("action.transitionAction")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
+                                .add(Restrictions.neProperty("state", "transitionState"))
+                                .add(Restrictions.ne("action.systemInvocationOnly", true))) //
+                        .add(Restrictions.isNotNull("action.creationScope"))) //
+                .addOrder(Order.asc("createdTimestamp")) //
+                .addOrder(Order.asc("id")) //
+                .list();
+    }
+
     public List<Comment> getStateGroupTransitionComments(Resource resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -168,9 +189,9 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.ne("action.systemInvocationOnly", true))
                                 .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
-                                .add(Restrictions.neProperty("state", "transitionState"))) //
+                                .add(Restrictions.neProperty("state", "transitionState"))
+                                .add(Restrictions.ne("action.systemInvocationOnly", true))) //
                         .add(Restrictions.isNotNull("action.creationScope"))) //
                 .addOrder(Order.asc("createdTimestamp")) //
                 .addOrder(Order.asc("id")) //

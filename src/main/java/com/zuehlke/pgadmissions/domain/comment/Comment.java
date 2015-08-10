@@ -183,6 +183,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    // FIX ME change the mappings so that we can save these separately
     @OrderBy(clause = "role_id, id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)

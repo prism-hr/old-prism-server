@@ -96,9 +96,12 @@ public class DocumentService {
         return create(DOCUMENT, getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType(), null, null);
     }
 
-    public Document createImage(Part uploadStream, Integer institutionId, PrismImageCategory imageCategory) throws Exception {
-        return create(IMAGE, getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType(), institutionId,
-                imageCategory);
+    public Document createImage(Part uploadStream, Integer institutionId, PrismImageCategory imageCategory) throws IOException {
+        return createImage(getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType(), institutionId, imageCategory);
+    }
+
+    public Document createImage(String fileName, byte[] content, String contentType, Integer institutionId, PrismImageCategory imageCategory) {
+        return create(IMAGE, fileName, content, contentType, institutionId, imageCategory);
     }
 
     public Document create(PrismFileCategory category, String fileName, byte[] content, String contentType, Integer entityId, PrismImageCategory imageCategory) {

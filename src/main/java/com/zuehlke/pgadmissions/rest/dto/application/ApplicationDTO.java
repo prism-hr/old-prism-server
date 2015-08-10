@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.Valid;
-
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
-public class ApplicationDTO implements ResourceCreationDTO {
+import javax.validation.Valid;
+
+public class ApplicationDTO extends ResourceCreationDTO {
 
     @Valid
     private ResourceDTO parentResource;

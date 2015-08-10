@@ -30,4 +30,9 @@ public class ImportedAdvertDomicileDTO {
         return this;
     }
 
+    public ImportedAdvertDomicileDTO withName(final String name) {
+        this.name = name;
+        return this;
+    }
+
 }

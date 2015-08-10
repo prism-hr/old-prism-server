@@ -1,26 +1,17 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
-
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
+
+import javax.persistence.*;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
 
 @Entity
 @Table(name = "imported_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
@@ -46,9 +37,12 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
 
     @Column(name = "indexed", nullable = false)
     private Boolean indexed;
-    
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @OneToOne(mappedBy = "importedInstitution")
+    private Institution institution;
 
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
@@ -113,7 +107,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     public void setIndexed(Boolean indexed) {
         this.indexed = indexed;
     }
-    
+
     @Override
     public Boolean getEnabled() {
         return enabled;
@@ -127,6 +121,14 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Override
     public Set<ImportedInstitutionMapping> getMappings() {
         return mappings;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
     public ImportedInstitution withId(final Integer id) {

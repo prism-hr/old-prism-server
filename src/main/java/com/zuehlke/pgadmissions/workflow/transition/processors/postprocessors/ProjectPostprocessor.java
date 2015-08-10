@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -20,6 +10,14 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
 @Component
 public class ProjectPostprocessor implements ResourceProcessor<Project> {
@@ -34,7 +32,7 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
     private UserService userService;
 
     @Override
-    public void process(Project resource, Comment comment) throws Exception {
+    public void process(Project resource, Comment comment) {
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         resource.setUpdatedTimestampSitemap(updatedTimestamp);
 

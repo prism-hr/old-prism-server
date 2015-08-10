@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URL;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.services.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -15,19 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.SystemService;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.util.Optional;
 
 @Component
 public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
@@ -38,10 +33,10 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
     private AdvertService advertService;
 
     @Inject
-    private DocumentService documentService;
+    private ResourceService resourceService;
 
     @Inject
-    private ResourceService resourceService;
+    private ImportedEntityService importedEntityService;
 
     @Inject
     private SystemService systemService;
@@ -49,19 +44,18 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
     private BigDecimal minimumWage;
 
     @Override
-    public Resource<?> create(User user, InstitutionDTO newResource) throws Exception {
+    public Resource<?> create(User user, InstitutionDTO newResource) {
         System system = systemService.getSystem();
 
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName());
 
-        FileDTO logoImageDTO = newResource.getLogoImage();
-        Document logoImage = logoImageDTO == null ? null : documentService.getById(logoImageDTO.getId());
+        ImportedInstitution importedInstitution = Optional.ofNullable(newResource.getImportedInstitutionId()).map(id -> importedEntityService.getById(ImportedInstitution.class, id)).orElse(null);
 
         Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName())
                 .withCurrency(newResource.getCurrency()).withBusinessYearStartMonth(newResource.getBusinessYearStartMonth())
                 .withMinimumWage(minimumWage).withGoogleId(advert.getAddress().getGoogleId()).withUclInstitution(false)
-                .withLogoImage(logoImage);
+                .withImportedInstitution(importedInstitution);
 
         resourceService.setResourceAttributes(institution, newResource);
         return institution;

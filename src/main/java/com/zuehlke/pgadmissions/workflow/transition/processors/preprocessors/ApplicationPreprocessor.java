@@ -1,17 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static org.joda.time.DateTimeConstants.MONDAY;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -24,6 +12,16 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static org.joda.time.DateTimeConstants.MONDAY;
 
 @Component
 public class ApplicationPreprocessor implements ResourceProcessor<Application> {
@@ -41,7 +39,7 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
     private UserService userService;
 
     @Override
-    public void process(Application resource, Comment comment) throws Exception {
+    public void process(Application resource, Comment comment) {
         if (comment.isApplicationCreatedComment()) {
             setReportingPeriod(resource);
         }
@@ -74,7 +72,7 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
         application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getValue());
     }
 
-    private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) throws Exception {
+    private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) {
         PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
         Action action = actionService.getById(prismAction);
         DateTime baseline = comment.getCreatedTimestamp().minusSeconds(1);

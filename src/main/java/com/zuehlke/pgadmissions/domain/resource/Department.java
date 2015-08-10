@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.resource.department;
+package com.zuehlke.pgadmissions.domain.resource;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -29,22 +29,14 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParentDivision;
-import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.workflow.user.DepartmentReassignmentProcessor;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "name" }) })
-public class Department extends ResourceParentDivision implements TargetEntity {
+public class Department extends ResourceParentDivision<DepartmentReassignmentProcessor> implements TargetEntity {
 
     @Id
     @GeneratedValue
@@ -464,7 +456,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
         return this;
     }
 
-    public Department withParentResource(Resource parentResource) {
+    public Department withParentResource(Institution parentResource) {
         setParentResource(parentResource);
         return this;
     }
@@ -480,8 +472,13 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("institution", institution);
+    public Class<DepartmentReassignmentProcessor> getUserReassignmentProcessor() {
+        return DepartmentReassignmentProcessor.class;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("institution", institution);
     }
 
 }

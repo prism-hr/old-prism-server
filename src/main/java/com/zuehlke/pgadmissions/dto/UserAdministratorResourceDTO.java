@@ -2,12 +2,13 @@ package com.zuehlke.pgadmissions.dto;
 
 import org.apache.commons.lang3.ObjectUtils;
 
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 public class UserAdministratorResourceDTO {
 
@@ -20,6 +21,8 @@ public class UserAdministratorResourceDTO {
     private Program program;
 
     private Project project;
+
+    private Application application;
 
     public System getSystem() {
         return system;
@@ -61,8 +64,17 @@ public class UserAdministratorResourceDTO {
         this.project = project;
     }
 
-    public Resource getResource() {
-        return (Resource) ObjectUtils.firstNonNull(system, institution, department, program, project);
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Resource<?> getResource() {
+        return ObjectUtils.firstNonNull(system, institution, department, program, project, application);
     }
 
 }

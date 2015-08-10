@@ -85,8 +85,8 @@ public class ImportedProgramSubjectArea extends WeightedRelation implements Uniq
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("program", program).addProperty("subjectArea", subjectArea);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("program", program).addProperty("subjectArea", subjectArea);
     }
 
 }

@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "competence")
 public class Competence implements UniqueEntity, TargetEntity {
@@ -106,10 +108,27 @@ public class Competence implements UniqueEntity, TargetEntity {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }
-    
+
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addExclusion("name", name);
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        Competence other = (Competence) object;
+        return Objects.equal(name, other.getName());
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addExclusion("name", name);
     }
 
 }

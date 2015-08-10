@@ -4,20 +4,22 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationUnsubmitted.applicationCompleteUnsubmitted;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateUnsubmitted;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawUnsubmitted;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(applicationCompleteUnsubmitted() //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(APPLICATION_COMPLETE_REQUEST)); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(applicationCompleteUnsubmitted() //
+                .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_COMPLETE_REQUEST)); //
 
-		stateActions.add(applicationEscalate(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)); //
-		stateActions.add(applicationWithdraw());
-	}
+        stateActions.add(applicationEscalate(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)); //
+        stateActions.add(applicationTerminateUnsubmitted());
+        stateActions.add(applicationWithdrawUnsubmitted());
+    }
 
 }

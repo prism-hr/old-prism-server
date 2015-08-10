@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationCompleteInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationProvideInterviewFeedback;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationTerminateInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
@@ -16,20 +17,21 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationCompleteInterviewScheduled(state)); //
-		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_COMPLETION)); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationCompleteInterviewScheduled(state)); //
+        stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_COMPLETION)); //
 
-		stateActions.add(applicationProvideInterviewFeedback() //
-		        .withTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_TRANSITION //
-		                .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP)));
+        stateActions.add(applicationProvideInterviewFeedback() //
+                .withTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_TRANSITION //
+                        .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP)));
 
+        stateActions.add(applicationTerminateInterviewScheduled());
         stateActions.add(applicationUploadReference(state));
-		stateActions.add(applicationViewEditInterviewScheduled(state)); //
-		stateActions.add(applicationWithdrawInterviewScheduled());
-	}
+        stateActions.add(applicationViewEditInterviewScheduled(state)); //
+        stateActions.add(applicationWithdrawInterviewScheduled());
+    }
 
 }

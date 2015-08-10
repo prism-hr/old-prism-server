@@ -132,7 +132,7 @@ public class AdvertService {
 
     public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.isResourceAction()) {
-            Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
+            Resource<?> resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             if (resource.getInstitution() != null) {
                 queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
             }
@@ -154,14 +154,14 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
     }
 
-    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO, String resourceName) throws Exception {
+    public Advert createAdvert(Resource<?> parentResource, AdvertDTO advertDTO, String resourceName) throws Exception {
         Advert advert = new Advert();
         updateAdvert(parentResource, advert, advertDTO, resourceName);
         entityService.save(advert);
         return advert;
     }
 
-    public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO, String resourceName) {
+    public void updateAdvert(Resource<?> parentResource, Advert advert, AdvertDTO advertDTO, String resourceName) {
         advert.setName(resourceName);
         advert.setSummary(advertDTO.getSummary());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
@@ -193,7 +193,7 @@ public class AdvertService {
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        ResourceParent<?> resource = (ResourceParent<?>) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         advert.setDescription(advertDetailsDTO.getDescription());
         advert.setHomepage(advertDetailsDTO.getHomepage());
@@ -202,7 +202,7 @@ public class AdvertService {
     }
 
     public void updateFinancialDetails(PrismScope resourceScope, Integer resourceId, AdvertFinancialDetailsDTO financialDetailsDTO) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        ResourceParent<?> resource = (ResourceParent<?>) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
         LocalDate baseline = new LocalDate();
@@ -219,14 +219,14 @@ public class AdvertService {
     }
 
     public void updateFinancialDetails(Advert advert, String newCurrency) throws Exception {
-        Resource resource = advert.getResource();
+        Resource<?> resource = advert.getResource();
         AdvertFinancialDetailDTO feeDTO = getFinancialDetailDTO(advert.getFee(), newCurrency);
         AdvertFinancialDetailDTO payDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
         updateFinancialDetails(resource.getResourceScope(), resource.getId(), new AdvertFinancialDetailsDTO().withFee(feeDTO).withPay(payDTO));
     }
 
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        ResourceParent<?> resource = (ResourceParent<?>) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateCategories(advert, categoriesDTO);
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
@@ -261,7 +261,7 @@ public class AdvertService {
     }
 
     public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        ResourceParent<?> resource = (ResourceParent<?>) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateTargets(advert, targetsDTO);
         executeUpdate(resource, "COMMENT_UPDATED_TARGET");
@@ -290,7 +290,7 @@ public class AdvertService {
                     AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) dtoValue;
                     value = getOrCreateCompetence(competenceDTO);
                     if (!((Competence) value).getDescription().equals(competenceDTO.getDescription())) {
-                        optionalArguments = new Object[] { competenceDTO.getDescription() };
+                        optionalArguments = new Object[] { competenceDTO.getDescription(), competenceDTO.getImportance() };
                     }
                 } else if (valueId != null) {
                     value = (TargetEntity) entityService.getById(valueClass, dtoValue.getId());
@@ -306,7 +306,7 @@ public class AdvertService {
     }
 
     public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        ResourceParent<?> resource = (ResourceParent<?>) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
         if (advert != null) {
@@ -321,7 +321,7 @@ public class AdvertService {
     }
 
     public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) throws Exception {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        ResourceParent<?> resource = (ResourceParent<?>) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
@@ -377,7 +377,7 @@ public class AdvertService {
     public AdvertCategories getAdvertCategories(Advert advert) {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {
-            Resource resourceParent = advert.getResource().getParentResource();
+            Resource<?> resourceParent = advert.getResource().getParentResource();
             if (ResourceParent.class.isAssignableFrom(resourceParent.getClass())) {
                 return getAdvertCategories(resourceParent.getAdvert());
             }
@@ -389,7 +389,7 @@ public class AdvertService {
     public AdvertTargets getAdvertTargets(Advert advert) {
         AdvertTargets targets = advert.getTargets();
         if (targets == null) {
-            Resource resourceParent = advert.getResource().getParentResource();
+            Resource<?> resourceParent = advert.getResource().getParentResource();
             if (ResourceParent.class.isAssignableFrom(resourceParent.getClass())) {
                 return getAdvertTargets(resourceParent.getAdvert());
             }
@@ -411,7 +411,7 @@ public class AdvertService {
         themes = themes == null ? Sets.newTreeSet() : themes;
         themes.addAll(getAdvertThemes(advert));
 
-        Resource parentResource = advert.getResource().getParentResource();
+        Resource<?> parentResource = advert.getResource().getParentResource();
         if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
             getAvailableAdvertThemes(parentResource.getAdvert(), themes);
         }
@@ -426,7 +426,7 @@ public class AdvertService {
     public Integer getBackgroundImage(Advert advert) {
         Document backgroundImage = advert.getBackgroundImage();
         if (backgroundImage == null) {
-            Resource parentResource = advert.getResource().getParentResource();
+            Resource<?> parentResource = advert.getResource().getParentResource();
             if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
                 return getBackgroundImage(parentResource.getAdvert());
             }
@@ -643,7 +643,7 @@ public class AdvertService {
         return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 
-    private Comment executeUpdate(ResourceParent resource, String message) throws Exception {
+    private Comment executeUpdate(ResourceParent<?> resource, String message) throws Exception {
         return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 
@@ -675,7 +675,7 @@ public class AdvertService {
         address.setGoogleId(addressDTO.getGoogleId());
     }
 
-    private AddressAdvert getResourceAddress(Resource resource) {
+    private AddressAdvert getResourceAddress(Resource<?> resource) {
         Advert advert = resource.getAdvert();
         if (advert == null) {
             return null;
@@ -683,7 +683,7 @@ public class AdvertService {
 
         AddressAdvert address = advert.getAddress();
         if (address == null) {
-            Resource parentResource = resource.getParentResource();
+            Resource<?> parentResource = resource.getParentResource();
             if (parentResource.sameAs(resource)) {
                 return null;
             }
@@ -700,6 +700,7 @@ public class AdvertService {
         setProperty(entityAttribute, "value", value);
         if (attributeClass.equals(AdvertCompetence.class)) {
             ((AdvertCompetence) entityAttribute).setDescription((String) optionalArguments[0]);
+            ((AdvertCompetence) entityAttribute).setImportance((Integer) optionalArguments[1]);
         }
         return entityAttribute;
     }

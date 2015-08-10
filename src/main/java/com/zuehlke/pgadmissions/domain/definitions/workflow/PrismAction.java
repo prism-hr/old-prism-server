@@ -13,10 +13,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_RESOURCE_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_COMPLETE_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_REFERENCE_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_REVIEW_CUSTOM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
@@ -70,14 +66,15 @@ public enum PrismAction implements PrismLocalizableDefinition {
             .withVisibleAction() //
             .withRedactions(getDefaultApplicationActionRedactions())),
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(getDefaultRateApplicationActionDefinition(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CUSTOM)), //
-    APPLICATION_PROVIDE_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable(APPLICATION_PROVIDE_REFERENCE_CUSTOM)), //
-    APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinition(APPLICATION_PROVIDE_REVIEW_CUSTOM)), //
+    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(getDefaultRateApplicationActionDefinition()), //
+    APPLICATION_PROVIDE_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
+    APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinition()), //
     APPLICATION_PURGE(getDefaultResourceActionDefinitionSystemInvocation(PURGE_RESOURCE, APPLICATION)), //
     APPLICATION_REVERSE_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable(APPLICATION_PROVIDE_REFERENCE_CUSTOM)), //
+    APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
     APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
+    APPLICATION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(APPLICATION)), //
     APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
 
     PROJECT_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
@@ -137,10 +134,12 @@ public enum PrismAction implements PrismLocalizableDefinition {
     INSTITUTION_IMPORT_PROGRAM(getDefaultImportResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_IMPORT_PROJECT(getDefaultImportResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_RESTORE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
+    INSTITUTION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(INSTITUTION)), //
 
     SYSTEM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(SYSTEM)), //
     SYSTEM_CREATE_INSTITUTION(getDefaultCreateResourceActionDefinition(SYSTEM)), //
+    SYSTEM_IMPORT_INSTITUTION(getDefaultImportResourceActionDefinition(SYSTEM)), //
     SYSTEM_STARTUP(getDefaultResourceActionDefinitionVisible(INITIALISE_RESOURCE, SYSTEM)), //
     SYSTEM_MANAGE_ACCOUNT(getDefaultResourceActionDefinition(MANAGE_ACCOUNT, SYSTEM)), //
     SYSTEM_VIEW_APPLICATION_LIST(getDefaultSystemViewResourceListActionDefinition()), //
@@ -175,10 +174,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return actionDefinition.isVisibleAction();
     }
 
-    public PrismActionCustomQuestionDefinition getActionCustomQuestion() {
-        return actionDefinition.getActionCustomQuestion();
-    }
-
     public PrismScope getScope() {
         return actionDefinition.getScope();
     }
@@ -198,8 +193,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
         private boolean declinableAction = false;
 
         private boolean visibleAction = false;
-
-        private PrismActionCustomQuestionDefinition actionCustomQuestion;
 
         private PrismScope scope;
 
@@ -223,10 +216,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         public boolean isVisibleAction() {
             return visibleAction;
-        }
-
-        public PrismActionCustomQuestionDefinition getActionCustomQuestion() {
-            return actionCustomQuestion;
         }
 
         public PrismScope getScope() {
@@ -262,11 +251,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
             return this;
         }
 
-        public PrismActionDefinition withActionCustomQuestion(PrismActionCustomQuestionDefinition actionCustomQuestion) {
-            this.actionCustomQuestion = actionCustomQuestion;
-            return this;
-        }
-
         public PrismActionDefinition withScope(PrismScope scope) {
             this.scope = scope;
             return this;
@@ -282,7 +266,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     private static PrismActionDefinition getDefaultViewEditApplicationActionDefinition() {
         return getDefaultViewEditResourceActionDefinition(APPLICATION) //
                 .withVisibleAction() //
-                .withActionCustomQuestion(APPLICATION_COMPLETE_CUSTOM) //
                 .withRedactions(getDefaultApplicationActionRedactions());
     }
 
@@ -307,14 +290,13 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return getDefaultResourceActionDefinition(VIEW_RESOURCE_LIST, SYSTEM);
     }
 
-    private static PrismActionDefinition getDefaultRateApplicationActionDefinition(PrismActionCustomQuestionDefinition actionCustomQuestion) {
+    private static PrismActionDefinition getDefaultRateApplicationActionDefinition() {
         return getDefaultProcessApplicationActionDefinitionWithRedactions() //
-                .withRatingAction() //
-                .withActionCustomQuestion(actionCustomQuestion);
+                .withRatingAction();
     }
 
-    private static PrismActionDefinition getDefaultRateApplicationActionDefinitionDeclinable(PrismActionCustomQuestionDefinition actionCustomQuestion) {
-        return getDefaultRateApplicationActionDefinition(actionCustomQuestion) //
+    private static PrismActionDefinition getDefaultRateApplicationActionDefinitionDeclinable() {
+        return getDefaultRateApplicationActionDefinition() //
                 .withDeclinableAction();
     }
 

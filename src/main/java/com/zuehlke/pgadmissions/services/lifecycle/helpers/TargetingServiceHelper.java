@@ -4,8 +4,8 @@ import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTIONS;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTIUTTION_SUBJECT_AREAS;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_PROGRAMS;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
-import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.PRECISION;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
@@ -40,8 +40,9 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     private static ParameterSearchDTO<Integer> concentration = new ParameterSearchDTO<Integer>(1, 1, 10);
 
-    private static ParameterSearchDTO<BigDecimal> proliferation = new ParameterSearchDTO<BigDecimal>(new BigDecimal(0.01).setScale(PRECISION, HALF_UP), //
-            new BigDecimal(0.01).setScale(PRECISION, HALF_UP), new BigDecimal(0.10).setScale(PRECISION, HALF_UP));
+    private static ParameterSearchDTO<BigDecimal> proliferation = new ParameterSearchDTO<BigDecimal>(
+            new BigDecimal(0.01).setScale(TARGETING_PRECISION, HALF_UP), //
+            new BigDecimal(0.01).setScale(TARGETING_PRECISION, HALF_UP), new BigDecimal(0.10).setScale(TARGETING_PRECISION, HALF_UP));
 
     private int activeExecutions = 0;
 

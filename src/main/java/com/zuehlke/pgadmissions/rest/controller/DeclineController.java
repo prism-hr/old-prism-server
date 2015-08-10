@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
@@ -44,8 +43,8 @@ public class DeclineController {
     public ResourceRepresentationExtended getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
             @RequestParam String activationCode) throws Exception {
         userService.getUserByActivationCode(activationCode);
-        Resource resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
-        if (actionId.getScope() != PrismScope.APPLICATION) {
+        Resource<?> resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
+        if (!actionId.isDeclinableAction()) {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");
         }
 

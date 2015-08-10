@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 
@@ -34,7 +34,7 @@ public class ImportedLanguageQualificationTypeExtractor implements ImportedEntit
             cells.add(prepareDecimalForSqlInsert(definition.getMinimumListeningScore()));
             cells.add(prepareDecimalForSqlInsert(definition.getMaximumListeningScore()));
             cells.add(prepareBooleanForSqlInsert(enable));
-            rows.add(prepareCellsForSqlInsert(cells));
+            rows.add(prepareColumnsForSqlInsert(cells));
         }
         return rows;
     }

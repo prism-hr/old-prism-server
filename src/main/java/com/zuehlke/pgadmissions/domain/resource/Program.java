@@ -26,19 +26,18 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.workflow.user.ProgramReassignmentProcessor;
 
 @Entity
 @Table(name = "program")
-public class Program extends ResourceOpportunity implements TargetEntity {
+public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -515,7 +514,7 @@ public class Program extends ResourceOpportunity implements TargetEntity {
         return adverts;
     }
 
-    public Program withParentResource(Resource parentResource) {
+    public Program withParentResource(Resource<?> parentResource) {
         setParentResource(parentResource);
         return this;
     }
@@ -534,7 +533,7 @@ public class Program extends ResourceOpportunity implements TargetEntity {
         this.state = state;
         return this;
     }
-    
+
     public Program withUser(User user) {
         this.user = user;
         return this;
@@ -601,8 +600,13 @@ public class Program extends ResourceOpportunity implements TargetEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addExclusion("state.id", PROGRAM_REJECTED).addExclusion("state.id", PROGRAM_WITHDRAWN)
+    public Class<ProgramReassignmentProcessor> getUserReassignmentProcessor() {
+        return ProgramReassignmentProcessor.class;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addExclusion("state.id", PROGRAM_REJECTED).addExclusion("state.id", PROGRAM_WITHDRAWN)
                 .addExclusion("state.id", PROGRAM_DISABLED_COMPLETED);
     }
 

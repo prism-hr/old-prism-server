@@ -12,7 +12,8 @@ public abstract class WorkflowResourceExecution extends WorkflowResource {
     public abstract void setApplication(Application application);
 
     @Override
-    public Resource getResource() {
+    @SuppressWarnings("unchecked")
+    public Resource<?> getResource() {
         return ObjectUtils.firstNonNull(super.getResource(), getApplication());
     }
 

@@ -67,6 +67,9 @@ public class CommentDTO {
     @Valid
     private List<PrismState> secondaryTransitionStates;
 
+    @Valid
+    private List<CommentCompetenceDTO> competences;
+
     @Size(max = 200)
     private List<LocalDateTime> appointmentTimeslots;
 
@@ -245,6 +248,14 @@ public class CommentDTO {
 
     public void setSecondaryTransitionStates(List<PrismState> secondaryTransitionStates) {
         this.secondaryTransitionStates = secondaryTransitionStates;
+    }
+
+    public List<CommentCompetenceDTO> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(List<CommentCompetenceDTO> competences) {
+        this.competences = competences;
     }
 
     public List<LocalDateTime> getAppointmentTimeslots() {

@@ -3,21 +3,15 @@ package com.zuehlke.pgadmissions.mapping;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
@@ -26,13 +20,11 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
-import com.zuehlke.pgadmissions.rest.representation.configuration.ActionCustomQuestionConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.StateDurationConfigurationRepresentation;
@@ -66,9 +58,7 @@ public class CustomizationMapper {
     public <T extends WorkflowConfigurationDTO, U extends WorkflowConfiguration<?>> U getWorkflowConfiguration(T configurationDTO) {
         Class<T> configurationClass = (Class<T>) configurationDTO.getClass();
 
-        if (ActionCustomQuestionConfigurationValueDTO.class.equals(configurationClass)) {
-            return (U) getActionCustomQuestionConfiguration((ActionCustomQuestionConfigurationValueDTO) configurationDTO);
-        } else if (DisplayPropertyConfigurationDTO.class.equals(configurationClass)) {
+        if (DisplayPropertyConfigurationDTO.class.equals(configurationClass)) {
             return (U) getDisplayPropertyConfiguration((DisplayPropertyConfigurationDTO) configurationDTO);
         } else if (NotificationConfigurationDTO.class.equals(configurationClass)) {
             return (U) getNotificationConfiguration((NotificationConfigurationDTO) configurationDTO);
@@ -83,9 +73,7 @@ public class CustomizationMapper {
     public <T extends WorkflowConfiguration<?>, U extends WorkflowConfigurationRepresentation> U getWorkflowConfigurationRepresentation(T configuration) {
         Class<T> configurationClass = (Class<T>) configuration.getClass();
 
-        if (ActionCustomQuestionConfiguration.class.equals(configurationClass)) {
-            return (U) getActionCustomQuestionConfigurationRepresentation((ActionCustomQuestionConfiguration) configuration);
-        } else if (DisplayPropertyConfiguration.class.equals(configurationClass)) {
+        if (DisplayPropertyConfiguration.class.equals(configurationClass)) {
             return (U) getDisplayPropertyConfigurationRepresentation((DisplayPropertyConfiguration) configuration);
         } else if (NotificationConfiguration.class.equals(configurationClass)) {
             return (U) getNotificationConfigurationRepresentation((NotificationConfiguration) configuration);
@@ -133,17 +121,6 @@ public class CustomizationMapper {
         return new WorkflowDefinitionRepresentation().withId(definition.getId());
     }
 
-    public ActionCustomQuestionConfiguration getActionCustomQuestionConfiguration(ActionCustomQuestionConfigurationValueDTO configurationDTO) {
-        String name = configurationDTO.getComponent();
-        List<String> options = configurationDTO.getOptions();
-        String validation = configurationDTO.getValidation();
-        return new ActionCustomQuestionConfiguration().withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name)
-                .withEditable(configurationDTO.getEditable()).withIndex(configurationDTO.getIndex()).withLabel(configurationDTO.getLabel())
-                .withDescription(configurationDTO.getDescription()).withOptions(options == null ? null : Joiner.on("|").join(options))
-                .withRequired(configurationDTO.getRequired()).withValidation(validation).withWeighting(configurationDTO.getWeighting())
-                .withPlaceholder(configurationDTO.getPlaceholder());
-    }
-
     public DisplayPropertyConfiguration getDisplayPropertyConfiguration(DisplayPropertyConfigurationDTO configurationDTO) {
         return new DisplayPropertyConfiguration().withValue(configurationDTO.getValue());
     }
@@ -167,15 +144,6 @@ public class CustomizationMapper {
 
         boolean required = defineRange ? configurationDTO.getMinimum() > 1 : definitionId.isCanBeOptional() ? true : configurationDTO.getRequired();
         return new WorkflowPropertyConfiguration().withEnabled(enabled).withMinimum(minimum).withMaximum(maximum).withRequired(required).withActive(true);
-    }
-
-    public ActionCustomQuestionConfigurationRepresentation getActionCustomQuestionConfigurationRepresentation(ActionCustomQuestionConfiguration configuration) {
-        return new ActionCustomQuestionConfigurationRepresentation().withProperty(configuration.getDefinition().getId())
-                .withId(configuration.getId()).withComponent(configuration.getComponent()).withEditable(configuration.getEditable())
-                .withIndex(configuration.getIndex()).withLabel(configuration.getLabel()).withDescription(configuration.getDescription())
-                .withPlaceholder(configuration.getPlaceholder()).withOptions(Arrays.asList(configuration.getOptions().split("|")))
-                .withRequired(configuration.getRequired()).withValidation(configuration.getValidation()).withWeighting(configuration.getWeighting())
-                .withVersion(configuration.getVersion());
     }
 
     public DisplayPropertyConfigurationRepresentation getDisplayPropertyConfigurationRepresentation(DisplayPropertyConfiguration configuration) {

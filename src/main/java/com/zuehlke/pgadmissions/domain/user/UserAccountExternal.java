@@ -116,8 +116,8 @@ public class UserAccountExternal implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("userAccount", userAccount).addProperty("accountType", accountType);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("userAccount", userAccount).addProperty("accountType", accountType);
     }
 
 }

@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 import java.util.Arrays;
@@ -31,13 +32,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
@@ -49,7 +48,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -63,7 +64,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -74,6 +74,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
@@ -113,7 +114,10 @@ public class ResourceService {
     private AdvertService advertService;
 
     @Inject
-    private ApplicationService applicationService;
+    private CommentService commentService;
+
+    @Inject
+    private DocumentService documentService;
 
     @Inject
     private DepartmentService departmentService;
@@ -140,6 +144,9 @@ public class ResourceService {
     private StateService stateService;
 
     @Inject
+    private SystemService systemService;
+
+    @Inject
     private UserService userService;
 
     @Inject
@@ -151,11 +158,11 @@ public class ResourceService {
     @Inject
     private ApplicationContext applicationContext;
 
-    public Resource getById(PrismScope resourceScope, Integer id) {
+    public Resource<?> getById(PrismScope resourceScope, Integer id) {
         return entityService.getById(resourceScope.getResourceClass(), id);
     }
 
-    public <T extends Resource> T getById(Class<T> resourceClass, Integer id) {
+    public <T extends Resource<?>> T getById(Class<T> resourceClass, Integer id) {
         return entityService.getById(resourceClass, id);
     }
 
@@ -164,7 +171,7 @@ public class ResourceService {
         PrismScope creationScope = action.getCreationScope().getId();
 
         ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
-        Resource resource = resourceCreator.create(user, resourceDTO);
+        Resource<?> resource = resourceCreator.create(user, resourceDTO);
 
         resource.setWorkflowPropertyConfigurationVersion(resourceDTO.getWorkflowPropertyConfigurationVersion());
 
@@ -175,14 +182,14 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> void persistResource(T resource, Comment comment) {
+    public <T extends Resource<?>> void persistResource(T resource, Comment comment) {
+        DateTime baseline = new DateTime();
         if (comment.isCreateComment()) {
-            DateTime baseline = new DateTime();
             resource.setCreatedTimestamp(baseline);
-            resource.setUpdatedTimestamp(baseline);
+            setResourceUpdated(resource, baseline);
 
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-                ResourceParent parent = (ResourceParent) resource;
+                ResourceParent<?> parent = (ResourceParent<?>) resource;
                 parent.setUpdatedTimestampSitemap(baseline);
             }
 
@@ -198,14 +205,14 @@ public class ResourceService {
                 resource.getAdvert().setResource(resource);
             }
 
-            if (comment.isCreateComment()) {
-                Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
-                if (workflowPropertyConfigurationVersion == null) {
-                    customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
-                }
+            Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
+            if (workflowPropertyConfigurationVersion == null) {
+                customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
             }
 
             entityService.flush();
+        } else if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
+            setResourceUpdated(resource, baseline);
         }
     }
 
@@ -227,14 +234,14 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> void preProcessResource(T resource, Comment comment) throws Exception {
+    public <T extends Resource<?>> void preProcessResource(T resource, Comment comment) throws Exception {
         Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourcePreprocessor();
         if (processor != null) {
             applicationContext.getBean(processor).process(resource, comment);
         }
     }
 
-    public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState) throws Exception {
+    public void recordStateTransition(Resource<?> resource, Comment comment, State state, State transitionState) throws Exception {
         resource.setPreviousState(state);
         resource.setState(transitionState);
 
@@ -254,7 +261,7 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> void processResource(T resource, Comment comment) throws Exception {
+    public <T extends Resource<?>> void processResource(T resource, Comment comment) throws Exception {
         Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourceProcessor();
         if (processor != null) {
             applicationContext.getBean(processor).process(resource, comment);
@@ -282,13 +289,8 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> void postProcessResource(T resource, Comment comment) throws Exception {
+    public <T extends Resource<?>> void postProcessResource(T resource, Comment comment) throws Exception {
         DateTime baselineTime = new DateTime();
-
-        if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
-            resource.setUpdatedTimestamp(baselineTime);
-            resource.setSequenceIdentifier(Long.toString(baselineTime.getMillis()) + String.format("%010d", resource.getId()));
-        }
 
         Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourcePostprocessor();
         if (processor != null) {
@@ -305,11 +307,7 @@ public class ResourceService {
         }
     }
 
-    public String generateResourceCode(Resource resource) {
-        return "PRiSM-" + PrismScope.getByResourceClass(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
-    }
-
-    public Comment executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
+    public Comment executeUpdate(Resource<?> resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 
@@ -326,7 +324,7 @@ public class ResourceService {
         return comment;
     }
 
-    public <T extends Resource> T getOperativeResource(T resource, Action action) {
+    public <T extends Resource<?>> T getOperativeResource(T resource, Action action) {
         return Arrays.asList(CREATE_RESOURCE, IMPORT_RESOURCE).contains(action.getActionCategory()) ? resource.getParentResource() : resource;
     }
 
@@ -393,15 +391,12 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) {
-        if (resource.getResourceScope().equals(PrismScope.APPLICATION)) {
-            return applicationService.getWorkflowPropertyConfigurations((Application) resource);
-        }
+    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource<?> resource) {
         return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
     }
 
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) throws Exception {
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource<?> resource, PrismScope propertiesScope) throws Exception {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
         Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
         for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.getProperties(propertiesScope)) {
@@ -410,21 +405,18 @@ public class ResourceService {
         return properties;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Resource> HashMultimap<PrismScope, T> getUserAdministratorResources(User user) {
-        HashMultimap<PrismScope, T> userAdministratorResources = HashMultimap.create();
-        for (UserAdministratorResourceDTO userAdministratorResource : resourceDAO.getUserAdministratorResources(user)) {
-            T resource = (T) userAdministratorResource.getResource();
-            userAdministratorResources.put(resource.getResourceScope(), resource);
+    public HashMultimap<PrismScope, Resource<?>> getUserAdministratorResources(Resource<?> resource, User user) {
+        HashMultimap<PrismScope, Integer> childResources = HashMultimap.create();
+        for (PrismScope childScope : scopeService.getChildScopesAscending(resource.getResourceScope())) {
+            childResources.putAll(childScope, resourceDAO.getChildResources(resource, childScope));
         }
-        userAdministratorResources.putAll(APPLICATION, (List<T>) applicationService.getUserAdministratorApplications(userAdministratorResources));
-        return userAdministratorResources;
-    }
 
-    public void reassignResources(User oldUser, User newUser) {
-        for (PrismScope prismScope : PrismScope.values()) {
-            resourceDAO.reassignResources(prismScope, oldUser, newUser);
+        HashMultimap<PrismScope, Resource<?>> userAdministratorResources = HashMultimap.create();
+        for (UserAdministratorResourceDTO userAdministratorResource : resourceDAO.getUserAdministratorResources(resource, childResources, user)) {
+            Resource<?> enclosedResource = userAdministratorResource.getResource();
+            userAdministratorResources.put(enclosedResource.getResourceScope(), enclosedResource);
         }
+        return userAdministratorResources;
     }
 
     public List<Integer> getResourcesByUserMatchingUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
@@ -435,14 +427,14 @@ public class ResourceService {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
     }
 
-    public ResourceStudyOption getStudyOption(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
+    public ResourceStudyOption getStudyOption(ResourceOpportunity<?> resource, ImportedEntitySimple studyOption) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
             return resourceDAO.getResourceAttributeStrict(resource, ResourceStudyOption.class, "studyOption", studyOption);
         }
         return resourceDAO.getResourceAttribute(resource, ResourceStudyOption.class, "studyOption", studyOption);
     }
 
-    public List<ImportedEntitySimple> getStudyOptions(ResourceOpportunity resource) {
+    public List<ImportedEntitySimple> getStudyOptions(ResourceOpportunity<?> resource) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
             List<ImportedEntitySimple> prismStudyOptions = Lists.newLinkedList();
             List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
@@ -468,11 +460,11 @@ public class ResourceService {
         return filteredStudyOptions;
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity<?> resource, ImportedEntitySimple studyOption) {
         return resourceDAO.getFirstStudyOptionInstance(resource, studyOption);
     }
 
-    public List<String> getStudyLocations(ResourceOpportunity resource) {
+    public List<String> getStudyLocations(ResourceOpportunity<?> resource) {
         List<String> filteredStudylocations = Lists.newLinkedList();
         List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource, ResourceStudyLocation.class, "studyLocation", null);
 
@@ -489,7 +481,7 @@ public class ResourceService {
         return filteredStudylocations;
     }
 
-    public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
+    public List<PrismActionCondition> getActionConditions(ResourceParent<?> resource) {
         List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
         List<ResourceCondition> actionConditions = resourceDAO.getResourceConditions(resource);
 
@@ -506,9 +498,9 @@ public class ResourceService {
         return filteredActionConditions;
     }
 
-    public <T extends ResourceParent, U extends ResourceParentDTO> void setResourceAttributes(T resource, U resourceDTO) {
+    public <T extends ResourceParent<?>, U extends ResourceParentDTO> void setResourceAttributes(T resource, U resourceDTO) {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
+            ResourceOpportunity<?> resourceOpportunity = (ResourceOpportunity<?>) resource;
             ResourceOpportunityDTO resourceOpportunityDTO = (ResourceOpportunityDTO) resourceDTO;
 
             Program program = resource.getProgram();
@@ -529,14 +521,14 @@ public class ResourceService {
         setResourceConditions(resource, resourceDTO.getConditions());
     }
 
-    public void setResourceConditions(ResourceParent resource, List<ResourceConditionDTO> resourceConditions) {
+    public void setResourceConditions(ResourceParent<?> resource, List<ResourceConditionDTO> resourceConditions) {
         resource.getResourceConditions().clear();
         entityService.flush();
 
         if (resourceConditions == null) {
             List<PrismResourceCondition> defaultResourceConditions;
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-                PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
+                PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity<?>) resource).getOpportunityType().getName());
                 defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope(), opportunityType);
             } else {
                 defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope());
@@ -556,7 +548,7 @@ public class ResourceService {
         }
     }
 
-    public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
+    public void setStudyOptions(ResourceOpportunity<?> resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
         if (resource.getId() != null) {
             resourceDAO.disableImportedResourceStudyOptionInstances(resource);
             resourceDAO.disableImportedResourceStudyOptions(resource);
@@ -579,7 +571,7 @@ public class ResourceService {
         resource.getInstanceGroups().addAll(resourceStudyOptions);
     }
 
-    public void setStudyLocations(ResourceOpportunity resource, List<String> studyLocations) {
+    public void setStudyLocations(ResourceOpportunity<?> resource, List<String> studyLocations) {
         resource.getStudyLocations().clear();
         entityService.flush();
 
@@ -591,7 +583,7 @@ public class ResourceService {
     }
 
     public <T extends ResourceParentDTO> void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) throws Exception {
-        ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
+        ResourceOpportunity<?> resource = (ResourceOpportunity<?>) getById(resourceScope, resourceId);
         updateResource(resource, resourceDTO);
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
@@ -610,7 +602,7 @@ public class ResourceService {
         }
     }
 
-    public <T extends ResourceParentDivision, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
+    public <T extends ResourceParentDivision<?>, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
         resource.setImportedCode(resourceDTO.getImportedCode());
 
         if (resourceDTO.getClass().equals(ResourceParentDivisionDTO.class)) {
@@ -620,7 +612,7 @@ public class ResourceService {
         updateResource(resource, (ResourceParentDTO) resourceDTO);
     }
 
-    public <T extends ResourceParent, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) {
+    public <T extends ResourceParent<?>, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) {
         AdvertDTO advertDTO = resourceDTO.getAdvert();
         Advert advert = resource.getAdvert();
         resource.setName(resourceDTO.getName());
@@ -648,16 +640,16 @@ public class ResourceService {
         return conditions;
     }
 
-    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
+    public LocalDate getResourceEndDate(ResourceOpportunity<?> resource) {
         return resourceDAO.getResourceEndDate(resource);
     }
 
-    public <T extends ResourceParent> Integer getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
+    public <T extends ResourceParent<?>> Integer getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
         Long count = resourceDAO.getActiveChildResourceCount(resource, childResourceScope);
         return count == null ? 0 : count.intValue();
     }
 
-    public List<PrismStateGroup> getResourceStateGroups(Resource resource) {
+    public List<PrismStateGroup> getResourceStateGroups(Resource<?> resource) {
         return resourceDAO.getResourceStateGroups(resource);
     }
 
@@ -671,12 +663,12 @@ public class ResourceService {
                 scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
     }
 
-    public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
+    public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource<?> resource, List<PrismState> scopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
-    public ResourceRepresentationRobotMetadataRelated getResourceRobotRelatedRepresentations(Resource resource, PrismScope relatedScope, String label) {
+    public ResourceRepresentationRobotMetadataRelated getResourceRobotRelatedRepresentations(Resource<?> resource, PrismScope relatedScope, String label) {
         HashMultimap<PrismScope, PrismState> childScopes = scopeService.getChildScopesWithActiveStates(relatedScope, APPLICATION);
         List<ResourceRepresentationIdentity> childResources = resourceDAO.getResourceRobotRelatedRepresentations(resource, relatedScope,
                 stateService.getActiveResourceStates(relatedScope), childScopes);
@@ -688,7 +680,44 @@ public class ResourceService {
         return resourceDAO.getResourcesWhichPermitChildResourceCreation(resourceScope, parentScope, parentId, targetScope, userService.isLoggedInSession());
     }
 
-    private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {
+    public String generateResourceCode(Resource<?> resource) {
+        return "PRiSM-" + resource.getResourceScope().getShortCode() + "-" + String.format("%010d", resource.getId());
+    }
+
+    public void reassignResource(Resource<?> resource, User newUser, String userProperty) throws Exception {
+        PrismScope resourceScope = resource.getResourceScope();
+        if (userService.mergeUserAssignment(resource, newUser, userProperty)) {
+            Set<String> commentUserProperties = userService.getUserProperties(Comment.class);
+            Set<String> commentAssignedUserUserProperties = userService.getUserProperties(CommentAssignedUser.class);
+            Set<String> documentUserProperties = userService.getUserProperties(Document.class);
+
+            for (Comment oldComment : commentService.getResourceOwnerComments(resource)) {
+                for (String commentUserProperty : commentUserProperties) {
+                    userService.mergeUserAssignment(oldComment, newUser, commentUserProperty);
+                }
+            }
+
+            for (CommentAssignedUser oldCommentAssignedUser : commentService.getResourceOwnerCommentAssignedUsers(resource)) {
+                for (String commentAssignedUserUserProperty : commentAssignedUserUserProperties) {
+                    userService.mergeUserAssignment(oldCommentAssignedUser, newUser, commentAssignedUserUserProperty);
+                }
+            }
+
+            for (Document oldDocument : documentService.getResourceOwnerDocuments(resource)) {
+                for (String documentUserProperty : documentUserProperties) {
+                    userService.mergeUserAssignment(oldDocument, newUser, documentUserProperty);
+                }
+            }
+        } else if (!resourceScope.equals(SYSTEM)) {
+            Action action = actionService.getById(PrismAction.valueOf(resourceScope.name() + "_TERMINATE"));
+            actionService.executeAction(resource, action, new Comment().withUser(systemService.getSystem().getUser()) //
+                    .withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime()));
+        } else {
+            throw new WorkflowEngineException("Cannot terminate system resource");
+        }
+    }
+
+    private void createOrUpdateStateTransitionSummary(Resource<?> resource, DateTime baselineTime) {
         String transitionStateSelection = Joiner.on("|").join(stateService.getCurrentStates(resource));
 
         ResourceStateTransitionSummary transientTransitionSummary = new ResourceStateTransitionSummary().withResource(resource.getParentResource())
@@ -715,7 +744,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(
-            Resource resource, Set<T> resourceStateDefinitions, Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline)
+            Resource<?> resource, Set<T> resourceStateDefinitions, Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline)
             throws Exception {
         for (U commentState : commentStateDefinitions) {
             T transientResourceStateDefinition = resourceStateClass.newInstance();
@@ -737,6 +766,11 @@ public class ResourceService {
                 persistentResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
             }
         }
+    }
+
+    private <T extends Resource<?>> void setResourceUpdated(T resource, DateTime baseline) {
+        resource.setUpdatedTimestamp(baseline);
+        resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
     }
 
 }

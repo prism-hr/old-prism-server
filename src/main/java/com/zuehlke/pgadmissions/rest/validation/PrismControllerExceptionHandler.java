@@ -54,7 +54,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         User currentUser = userService.getCurrentUser();
 
         log.error("Problem", ex);
-        Resource fallbackResource = ex.getFallbackResource();
+        Resource<?> fallbackResource = ex.getFallbackResource();
 
         Map<String, Object> body = Maps.newHashMap();
         body.put("fallbackAction", ex.getFallbackAction().getId());
@@ -67,7 +67,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
     }
 
     @ExceptionHandler(value = { PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class, PrismConflictException.class,
-            BadCredentialsException.class, PrismForbiddenException.class})
+            BadCredentialsException.class, PrismForbiddenException.class })
     public final ResponseEntity<Object> handleResourceNotFoundException(Exception ex, WebRequest request) {
         request.removeAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
         HttpHeaders headers = new HttpHeaders();

@@ -100,7 +100,7 @@ public class LifeCycleService {
         }
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 60000)
     private void maintain() {
         if (BooleanUtils.isTrue(maintain)) {
             for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {

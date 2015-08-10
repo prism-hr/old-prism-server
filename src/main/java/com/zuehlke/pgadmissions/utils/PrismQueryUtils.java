@@ -15,12 +15,12 @@ import com.google.common.base.Joiner;
 
 public class PrismQueryUtils {
 
-    public static String prepareRowsForSqlInsert(List<String> sequence) {
-        return Joiner.on(", ").join(sequence);
+    public static String prepareRowsForSqlInsert(List<String> rows) {
+        return Joiner.on(", ").join(rows);
     }
 
-    public static String prepareCellsForSqlInsert(List<String> cells) {
-        return "(" + prepareRowsForSqlInsert(cells) + ")";
+    public static String prepareColumnsForSqlInsert(List<String> columns) {
+        return "(" + prepareRowsForSqlInsert(columns) + ")";
     }
 
     public static String prepareStringForSqlInsert(String value) {

@@ -69,7 +69,7 @@ public class RoleService {
         return entityService.getByProperty(Role.class, "id", roleId);
     }
 
-    public UserRole getUserRole(Resource resource, User user, Role role) {
+    public UserRole getUserRole(Resource<?> resource, User user, Role role) {
         return roleDAO.getUserRole(resource, user, role);
     }
 
@@ -83,7 +83,7 @@ public class RoleService {
         return persistentUserRole;
     }
 
-    public void assignUserRoles(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws Exception {
+    public void assignUserRoles(Resource<?> resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws Exception {
         if (roles.length > 0) {
             User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
@@ -102,7 +102,7 @@ public class RoleService {
         }
     }
 
-    public void setResourceOwner(Resource resource, User user) throws Exception {
+    public void setResourceOwner(Resource<?> resource, User user) throws Exception {
         if (getRolesForResource(resource, user).isEmpty()) {
             throw new PrismForbiddenException("User has no role within given resource");
         }
@@ -110,11 +110,11 @@ public class RoleService {
         resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
     }
 
-    public boolean hasUserRole(Resource resource, User user, PrismRoleGroup prismRoles) {
+    public boolean hasUserRole(Resource<?> resource, User user, PrismRoleGroup prismRoles) {
         return hasUserRole(resource, user, prismRoles.getRoles());
     }
 
-    public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
+    public boolean hasUserRole(Resource<?> resource, User user, PrismRole... prismRoles) {
         for (PrismRole prismRole : prismRoles) {
             PrismScope roleScope = prismRole.getScope();
             if (roleScope.ordinal() <= resource.getResourceScope().ordinal()) {
@@ -134,27 +134,27 @@ public class RoleService {
         return roleDAO.getRolesOverridingRedactions(resourceScope, user);
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(Resource resource, User user) {
+    public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource, User user) {
         return roleDAO.getRolesOverridingRedactions(resource, user);
     }
 
-    public List<PrismRole> getRolesForResource(Resource resource, User user) {
+    public List<PrismRole> getRolesForResource(Resource<?> resource, User user) {
         return roleDAO.getRolesForResource(resource, user);
     }
 
-    public List<PrismRole> getRolesWithinResource(Resource resource, User user) {
+    public List<PrismRole> getRolesWithinResource(Resource<?> resource, User user) {
         return roleDAO.getRolesWithinResource(resource, user);
     }
 
-    public List<User> getRoleUsers(Resource resource, Role... roles) {
+    public List<User> getRoleUsers(Resource<?> resource, Role... roles) {
         return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, roles);
     }
 
-    public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
+    public List<User> getRoleUsers(Resource<?> resource, PrismRole... prismRoles) {
         return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
     }
 
-    public List<User> getRoleUsers(Resource resource, PrismRoleGroup prismRoleGroup) {
+    public List<User> getRoleUsers(Resource<?> resource, PrismRoleGroup prismRoleGroup) {
         return getRoleUsers(resource, prismRoleGroup.getRoles());
     }
 
@@ -166,11 +166,11 @@ public class RoleService {
         roleDAO.deleteObsoleteUserRoles();
     }
 
-    public Role getCreatorRole(Resource resource) {
+    public Role getCreatorRole(Resource<?> resource) {
         return roleDAO.getCreatorRole(resource);
     }
 
-    public void executeRoleTransitions(Resource resource, Comment comment, StateTransition stateTransition) throws DeduplicationException {
+    public void executeRoleTransitions(Resource<?> resource, Comment comment, StateTransition stateTransition) throws DeduplicationException {
         for (PrismRoleTransitionType roleTransitionType : PrismRoleTransitionType.values()) {
             List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(stateTransition, roleTransitionType);
             executeRoleTransitions(resource, comment, roleTransitions);
@@ -178,7 +178,7 @@ public class RoleService {
         entityService.flush();
     }
 
-    public void deleteUserRoles(Resource resource, User user) throws Exception {
+    public void deleteUserRoles(Resource<?> resource, User user) throws Exception {
         List<PrismRole> roles = roleDAO.getRolesForResource(resource, user);
         assignUserRoles(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
@@ -208,7 +208,7 @@ public class RoleService {
         }
     }
 
-    public void deleteUserRole(Resource resource, User user, Role role) {
+    public void deleteUserRole(Resource<?> resource, User user, Role role) {
         if (getRolesForResource(resource, user).size() < 2 && resource.getUser().getId() == user.getId()) {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
@@ -223,7 +223,7 @@ public class RoleService {
         return roleDAO.getRolesByScopes(prismScope);
     }
 
-    private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
+    private void executeRoleTransitions(Resource<?> resource, Comment comment, List<RoleTransition> roleTransitions) {
         for (RoleTransition roleTransition : roleTransitions) {
             List<User> users = getRoleTransitionUsers(resource, comment, roleTransition);
             for (User user : users) {
@@ -232,7 +232,7 @@ public class RoleService {
         }
     }
 
-    private List<User> getRoleTransitionUsers(Resource resource, Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
+    private List<User> getRoleTransitionUsers(Resource<?> resource, Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
         User restrictedToUser = roleTransition.getRestrictToActionOwner() ? comment.getActionOwner() : null;
 
         List<User> users;
@@ -290,9 +290,9 @@ public class RoleService {
         Role role = roleTransition.getRole();
         Role transitionRole = roleTransition.getTransitionRole();
 
-        Resource resource = resourceService.getOperativeResource(comment.getResource(), comment.getAction());
-        Resource commentResource = comment.getResource();
-        Resource transitionResource = commentResource.getEnclosingResource(transitionRole.getScope().getId());
+        Resource<?> resource = resourceService.getOperativeResource(comment.getResource(), comment.getAction());
+        Resource<?> commentResource = comment.getResource();
+        Resource<?> transitionResource = commentResource.getEnclosingResource(transitionRole.getScope().getId());
 
         if (transitionResource != null) {
             UserRole userRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);

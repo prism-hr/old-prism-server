@@ -14,14 +14,15 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
+import com.zuehlke.pgadmissions.workflow.user.UserNotificationReassignmentProcessor;
 
 @Entity
 @Table(name = "user_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "notification_definition_id" }),
@@ -30,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
         @UniqueConstraint(columnNames = { "program_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "application_id", "user_id", "notification_definition_id" }) })
-public class UserNotification extends WorkflowResourceExecution {
+public class UserNotification extends WorkflowResourceExecution implements UserAssignment<UserNotificationReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -43,7 +44,7 @@ public class UserNotification extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -99,12 +100,12 @@ public class UserNotification extends WorkflowResourceExecution {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
@@ -164,7 +165,7 @@ public class UserNotification extends WorkflowResourceExecution {
         this.lastNotifiedDate = lastNotifiedDate;
     }
 
-    public UserNotification withResource(Resource resource) {
+    public UserNotification withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }
@@ -185,8 +186,18 @@ public class UserNotification extends WorkflowResourceExecution {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("user", user).addProperty("notificationDefinition", notificationDefinition);
+    public Class<UserNotificationReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserNotificationReassignmentProcessor.class;
+    }
+    
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("user", user).addProperty("notificationDefinition", notificationDefinition);
     }
 
 }

@@ -16,11 +16,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -50,13 +48,10 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
@@ -239,23 +234,7 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("application")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNull("role.scopeCreator"));
-
-        Disjunction disjunction = Restrictions.disjunction();
-        for (PrismScope scope : userAdministratorResources.keySet()) {
-            disjunction.add(Restrictions.in("application." + scope.getLowerCamelName(), userAdministratorResources.get(scope)));
-        }
-
-        return (List<Application>) criteria.add(disjunction) //
-                .list();
-    }
-
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_year.ftl")
@@ -263,7 +242,7 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_month.ftl")
@@ -272,7 +251,7 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_week.ftl")
@@ -294,7 +273,7 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent<?> resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList() //
@@ -318,7 +297,7 @@ public class ApplicationDAO {
                 .list();
     }
 
-    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, String templateLocation) {
+    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent<?> resource, List<ResourceReportFilterPropertyDTO> constraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
         List<String> filterConstraintExpressions = Lists.newLinkedList();

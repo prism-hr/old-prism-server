@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
@@ -67,7 +66,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -206,10 +204,6 @@ public class SystemService {
         verifyDefinition(Role.class);
         initializeRoles();
 
-        logger.info("Initializing action custom question definitions");
-        verifyDefinition(ActionCustomQuestionDefinition.class);
-        initializeActionCustomQuestionDefinitions();
-
         logger.info("Initializing action definitions");
         verifyDefinition(Action.class);
         initializeActions();
@@ -326,26 +320,14 @@ public class SystemService {
         }
     }
 
-    private void initializeActionCustomQuestionDefinitions() {
-        for (PrismActionCustomQuestionDefinition prismActionCustomQuestion : PrismActionCustomQuestionDefinition.values()) {
-            Scope scope = scopeService.getById(prismActionCustomQuestion.getScope());
-            ActionCustomQuestionDefinition transientActionCustomQuestionDefinition = new ActionCustomQuestionDefinition().withId(prismActionCustomQuestion)
-                    .withScope(scope);
-            entityService.createOrUpdate(transientActionCustomQuestionDefinition);
-        }
-    }
-
     private void initializeActions() throws DeduplicationException {
         entityService.deleteAll(ActionRedaction.class);
 
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = scopeService.getById(prismAction.getScope());
-            ActionCustomQuestionDefinition actionCustomQuestionDefinition = actionService
-                    .getCustomQuestionDefinitionById(prismAction.getActionCustomQuestion());
             Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
-                    .withActionCustomQuestionDefinition(actionCustomQuestionDefinition).withScope(scope);
+                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction()).withScope(scope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 

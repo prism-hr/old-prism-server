@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROGRAM_VIEW_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
@@ -40,27 +39,20 @@ public class PrismProgramWorkflow {
                         .withTransitionAction(PROGRAM_ESCALATE));
     }
 
-    public static PrismStateAction programEscalateApproved() {
-        return programEscalateAbstract() //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(PROGRAM_DISABLED_COMPLETED) //
-                        .withTransitionAction(PROGRAM_ESCALATE));
-    }
-
-    public static PrismStateAction projectTerminateUnapproved() {
+    public static PrismStateAction programTerminateUnapproved() {
         return programTerminateAbstract()
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_REJECTED) //
                         .withTransitionAction(PROGRAM_TERMINATE));
     }
 
-    public static PrismStateAction projectTerminateApproved() {
+    public static PrismStateAction programTerminateApproved() {
         return programTerminateAbstract()
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_DISABLED_COMPLETED) //
                         .withTransitionAction(PROGRAM_TERMINATE));
     }
-    
+
     public static PrismStateAction programViewEditActive() {
         return programViewEditAbstract() //
                 .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
@@ -68,7 +60,7 @@ public class PrismProgramWorkflow {
                 .withTransitions(PROGRAM_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROGRAM_MANAGE_USERS_GROUP));
     }
-    
+
     public static PrismStateAction programViewEditInactive() {
         return programViewEditAbstract() //
                 .withActionEnhancement(PROGRAM_VIEW_AS_USER) //
@@ -97,8 +89,7 @@ public class PrismProgramWorkflow {
 
     private static PrismStateAction programTerminateAbstract() {
         return new PrismStateAction() //
-                .withAction(PROGRAM_TERMINATE) //
-                .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION);
+                .withAction(PROGRAM_TERMINATE);
     }
 
     private static PrismStateAction programViewEditAbstract() {

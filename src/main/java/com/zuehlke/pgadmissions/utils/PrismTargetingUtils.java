@@ -10,8 +10,6 @@ import com.zuehlke.pgadmissions.annotations.TargetingCalibrationSource;
 
 public class PrismTargetingUtils {
 
-    public static final Integer PRECISION = 9;
-
     public static final String[] STOP_WORDS = new String[] { "study", "studies", "theory", "theories", "experience", "experiences", "student", "students",
             "development", "developments", "foundation", "foundations", "year", "years", "project", "projects", "abroad", "placement", "placements", "main",
             "mains", "top", "tops", "beginner", "beginners", "only", "applicant", "applicants", "new", "news", "joint", "joints", "extended", "integrated",

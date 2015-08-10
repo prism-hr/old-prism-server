@@ -13,9 +13,9 @@ import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public interface UniqueEntity {
 
-    public ResourceSignature getResourceSignature();
+    public EntitySignature getEntitySignature();
 
-    public static class ResourceSignature {
+    public static class EntitySignature {
 
         private final HashMap<String, Object> properties = Maps.newHashMap();
 
@@ -29,17 +29,27 @@ public interface UniqueEntity {
             return exclusions;
         }
 
-        public ResourceSignature addProperty(String key, Object value) {
+        public EntitySignature addProperty(String key, Object value) {
             if (key != null) {
                 properties.put(key, value);
             }
             return this;
         }
 
-        public ResourceSignature addExclusion(String key, Object value) {
+        public EntitySignature addExclusion(String key, Object value) {
             if (!(key == null || value == null)) {
                 exclusions.put(key, value);
             }
+            return this;
+        }
+
+        public EntitySignature withProperties(HashMap<String, Object> properties) {
+            properties.putAll(properties);
+            return this;
+        }
+
+        public EntitySignature withExclusions(HashMultimap<String, Object> exclusions) {
+            exclusions.putAll(exclusions);
             return this;
         }
 
@@ -59,6 +69,11 @@ public interface UniqueEntity {
                 PrismReflectionUtils.getProperty(property, "id");
             }
             return property.toString();
+        }
+
+        @Override
+        public EntitySignature clone() throws CloneNotSupportedException {
+            return new EntitySignature().withProperties(getProperties()).withExclusions(getExclusions());
         }
 
     }

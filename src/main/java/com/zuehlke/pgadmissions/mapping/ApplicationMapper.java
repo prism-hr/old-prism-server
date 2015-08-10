@@ -139,9 +139,9 @@ public class ApplicationMapper {
 
         representation.setPossibleThemes(advertService.getAdvertThemes(application.getAdvert()));
 
-        Resource parent = application.getParentResource();
+        Resource<?> parent = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
-            ResourceOpportunity opportunity = (ResourceOpportunity) parent;
+            ResourceOpportunity<?> opportunity = (ResourceOpportunity<?>) parent;
             List<ImportedEntityResponse> studyOptions = resourceService.getStudyOptions(opportunity).stream()
                     .map(studyOption -> (ImportedEntityResponse) importedEntityMapper.getImportedEntityRepresentation(studyOption))
                     .collect(Collectors.toList());
@@ -163,7 +163,7 @@ public class ApplicationMapper {
 
         Long declinedReferenceCount = applicationService.getDeclinedReferenceCount(application);
         representation.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
-        
+
         List<ResourceRepresentationSimple> otherLiveApplications = Lists.newLinkedList();
         for (Application otherLiveApplication : applicationService.getOtherLiveApplications(application)) {
             otherLiveApplications.add(resourceMapper.getResourceRepresentationSimple(otherLiveApplication));
@@ -181,9 +181,9 @@ public class ApplicationMapper {
         representation.setUserInstitutionIdentity(userMapper.getUserInstitutionIdentityRepresentation(application.getUser(), application.getInstitution(),
                 STUDY_APPLICANT));
 
-        ResourceParent parentResource = (ResourceParent) application.getParentResource();
+        ResourceParent<?> parentResource = (ResourceParent<?>) application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            ResourceStudyOptionInstance resourceStudyOptionInstance = resourceService.getFirstStudyOptionInstance((ResourceOpportunity) parentResource,
+            ResourceStudyOptionInstance resourceStudyOptionInstance = resourceService.getFirstStudyOptionInstance((ResourceOpportunity<?>) parentResource,
                     application.getProgramDetail().getStudyOption());
             representation.setResourceStudyOptionInstance(resourceStudyOptionInstance == null ? null : resourceMapper
                     .getResourceStudyOptionInstanceRepresentation(resourceStudyOptionInstance));

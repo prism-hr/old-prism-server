@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.services.helpers.extractors;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.getByUcasLevel;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 
@@ -92,7 +92,7 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
 
                 cells.add(prepareBooleanForSqlInsert(false));
                 cells.add(prepareBooleanForSqlInsert(enable));
-                rows.add(prepareCellsForSqlInsert(cells));
+                rows.add(prepareColumnsForSqlInsert(cells));
             }
         }
         return rows;

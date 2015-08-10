@@ -19,14 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ValidationUtils;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
+import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
@@ -36,14 +38,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
@@ -92,28 +92,24 @@ public class CommentService {
         return entityService.getById(Comment.class, id);
     }
 
-    public Comment getLatestComment(Resource resource) {
+    public Comment getLatestComment(Resource<?> resource) {
         return commentDAO.getLatestComment(resource);
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource<?> resource, PrismAction... prismActions) {
         return prismActions.length > 0 ? commentDAO.getLatestComment(resource, prismActions) : null;
     }
 
-    public Comment getLatestComment(Resource resource, User user, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource<?> resource, User user, PrismAction... prismActions) {
         return prismActions.length > 0 ? commentDAO.getLatestComment(resource, user, prismActions) : null;
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction actionId, DateTime baseline) {
+    public Comment getLatestComment(Resource<?> resource, PrismAction actionId, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, baseline);
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
+    public Comment getLatestComment(Resource<?> resource, PrismAction actionId, User user, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
-    }
-
-    public <T extends Resource> Comment getEarliestComment(ResourceParent parentResource, Class<T> resourceClass, PrismAction actionId) {
-        return commentDAO.getEarliestComment(parentResource, resourceClass, actionId);
     }
 
     public boolean isCommentOwner(Comment comment, User user) {
@@ -122,7 +118,7 @@ public class CommentService {
         return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
     }
 
-    public void persistComment(Resource resource, Comment comment) {
+    public void persistComment(Resource<?> resource, Comment comment) {
         Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
@@ -139,9 +135,9 @@ public class CommentService {
         Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
         transientPreferences.clear();
 
-        Set<CommentCustomResponse> transientResponses = comment.getCustomResponses();
-        Set<CommentCustomResponse> persistentResponses = Sets.newHashSet(transientResponses);
-        transientResponses.clear();
+        Set<CommentCompetence> transientCompetences = comment.getCompetences();
+        Set<CommentCompetence> persistentCompetences = Sets.newHashSet(transientCompetences);
+        transientCompetences.clear();
 
         entityService.save(comment);
 
@@ -149,7 +145,7 @@ public class CommentService {
         comment.getCommentTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
-        comment.getCustomResponses().addAll(persistentResponses);
+        comment.getCompetences().addAll(persistentCompetences);
         resource.addComment(comment);
 
         validateComment(comment);
@@ -234,8 +230,8 @@ public class CommentService {
             appendDocuments(comment, commentDTO);
         }
 
-        if (commentDTO.getCustomResponses() != null) {
-            appendCustomResponses(comment, commentDTO);
+        if (commentDTO.getCompetences() != null) {
+            appendCompetences(comment, commentDTO);
         }
     }
 
@@ -247,13 +243,7 @@ public class CommentService {
         }
     }
 
-    public void reassignComments(User oldUser, User newUser) {
-        commentDAO.reassignComments(oldUser, newUser);
-        commentDAO.reassignDelegateComments(oldUser, newUser);
-        reassignCommentAssignedUsers(oldUser, newUser);
-    }
-
-    public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
+    public Comment createInterviewPreferenceComment(Resource<?> resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
             DateTime baseline) {
         Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
                 .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
@@ -279,7 +269,7 @@ public class CommentService {
         return commentDAO.getAssignedUsers(commentIds, roleIds);
     }
 
-    public Comment prepareResourceParentComment(ResourceParent resource, User user, Action action, CommentDTO commentDTO, PrismRole... roleAssignments)
+    public Comment prepareResourceParentComment(ResourceParent<?> resource, User user, Action action, CommentDTO commentDTO, PrismRole... roleAssignments)
             throws Exception {
         Comment comment = new Comment().withUser(user).withResource(resource).withContent(commentDTO.getContent()).withAction(action)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
@@ -291,11 +281,11 @@ public class CommentService {
         return comment;
     }
 
-    public List<Comment> getStateGroupTransitionComments(Resource resource) {
+    public List<Comment> getStateGroupTransitionComments(Resource<?> resource) {
         return commentDAO.getStateGroupTransitionComments(resource);
     }
 
-    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
+    public List<Comment> getStateComments(Resource<?> resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
         return commentDAO.getStateComments(resource, start, close, stateGroup, exclusions);
     }
 
@@ -318,7 +308,7 @@ public class CommentService {
         return commentDAO.getDeclinedSupervisors(comment);
     }
 
-    public <T extends ResourceParent, U extends ResourceParentDTO> Comment prepareProcessResourceComment(T resource, User user, Action action,
+    public <T extends ResourceParent<?>, U extends ResourceParentDTO> Comment prepareProcessResourceComment(T resource, User user, Action action,
             U resourceParentDTO, CommentDTO commentDTO) throws Exception {
         String resourceScopeReference = resource.getResourceScope().name();
         String commentContent = action.getId().equals(PrismAction.valueOf(resourceScopeReference + "_VIEW_EDIT")) ? applicationContext
@@ -332,16 +322,12 @@ public class CommentService {
         return comment;
     }
 
-    private void reassignCommentAssignedUsers(User oldUser, User newUser) {
-        List<CommentAssignedUser> commentAssignedUsers = commentDAO.getCommentAssignedUsers(oldUser);
-        for (CommentAssignedUser commentAssignedUser : commentAssignedUsers) {
-            commentAssignedUser.setUser(newUser);
-            CommentAssignedUser duplicateCommentAssignedUser = entityService.getDuplicateEntity(commentAssignedUser);
-            if (duplicateCommentAssignedUser != null) {
-                commentAssignedUser.setUser(oldUser);
-                entityService.delete(commentAssignedUser);
-            }
-        }
+    public List<Comment> getResourceOwnerComments(Resource<?> resource) {
+        return commentDAO.getResourceOwnerComments(resource);
+    }
+
+    public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource<?> resource) {
+        return commentDAO.getResourceOwnerCommentAssignedUsers(resource);
     }
 
     private void assignUsers(Comment comment, Set<CommentAssignedUser> assignees) {
@@ -376,20 +362,21 @@ public class CommentService {
         }
     }
 
-    private void appendCustomResponses(Comment comment, CommentDTO commentDTO) {
-        for (CommentCustomResponseDTO response : commentDTO.getCustomResponses()) {
-            if (response.getPropertyValue() != null) {
-                ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, response.getId());
-                comment.getCustomResponses().add(
-                        new CommentCustomResponse().withActionCustomQuestionConfiguration(configuration).withPropertyValue(response.getPropertyValue()));
+    private void appendDocuments(Comment comment, CommentDTO commentDTO) {
+        List<Integer> documentIds = Lists.newArrayList();
+        for (FileDTO fileDTO : commentDTO.getDocuments()) {
+            Integer documentId = fileDTO.getId();
+            if (!documentIds.contains(documentId)) {
+                comment.addDocument(documentService.getById(fileDTO.getId(), DOCUMENT));
             }
+            documentIds.add(documentId);
         }
     }
 
-    private void appendDocuments(Comment comment, CommentDTO commentDTO) {
-        for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = documentService.getById(fileDTO.getId(), DOCUMENT);
-            comment.getDocuments().add(document);
+    private void appendCompetences(Comment comment, CommentDTO commentDTO) {
+        for (CommentCompetenceDTO commentCompetenceDTO : commentDTO.getCompetences()) {
+            comment.addCompetence(entityService.getById(Competence.class, commentCompetenceDTO.getCompetence()), commentCompetenceDTO.getImportance(),
+                    commentCompetenceDTO.getRating(), commentCompetenceDTO.getRemark());
         }
     }
 

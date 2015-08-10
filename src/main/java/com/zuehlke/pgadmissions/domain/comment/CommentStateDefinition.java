@@ -23,7 +23,7 @@ public abstract class CommentStateDefinition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getComment(), getState());
+        return Objects.hashCode(getComment().getId(), getState());
     }
 
     @Override
@@ -35,7 +35,7 @@ public abstract class CommentStateDefinition {
             return false;
         }
         CommentStateDefinition other = (CommentStateDefinition) object;
-        return Objects.equal(getComment(), other.getComment()) && Objects.equal(getState(), other.getState());
+        return Objects.equal(getComment().getId(), other.getComment().getId()) && Objects.equal(getState(), other.getState());
     }
 
 }

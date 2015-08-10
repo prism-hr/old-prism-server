@@ -74,7 +74,7 @@ public class RobotController {
         model.put(
                 "metadata",
                 resourceScope.equals(SYSTEM) ? systemMapper.getRobotsRepresentation() : resourceMapper
-                        .getResourceRepresentationRobot((ResourceParent) resourceService.getById(resourceScope, resourceId)));
+                        .getResourceRepresentationRobot((ResourceParent<?>) resourceService.getById(resourceScope, resourceId)));
 
         String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
         Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());

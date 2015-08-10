@@ -98,8 +98,8 @@ public class ImportedAdvertDomicileMapping extends ImportedEntityMapping<Importe
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedEntitySimple", importedEntity);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("importedEntitySimple", importedEntity);
     }
 
 }

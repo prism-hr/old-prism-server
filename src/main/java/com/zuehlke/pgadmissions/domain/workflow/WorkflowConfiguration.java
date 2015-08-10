@@ -23,12 +23,12 @@ public abstract class WorkflowConfiguration<T> extends WorkflowResource {
     public abstract void setSystemDefault(Boolean systemDefault);
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        ResourceSignature resourceSignature = super.getResourceSignature();
+    public EntitySignature getEntitySignature() {
+        EntitySignature entitySignature = super.getEntitySignature();
         if (Arrays.asList(SYSTEM, INSTITUTION, DEPARTMENT).contains(getResource().getResourceScope())) {
-            resourceSignature.addProperty("opportunityType", getOpportunityType());
+            entitySignature.addProperty("opportunityType", getOpportunityType());
         }
-        return resourceSignature.addProperty("definition", getDefinition());
+        return entitySignature.addProperty("definition", getDefinition());
     }
 
 }

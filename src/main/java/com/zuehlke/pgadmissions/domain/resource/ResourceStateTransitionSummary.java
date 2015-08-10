@@ -14,7 +14,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
@@ -166,7 +165,7 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public ResourceStateTransitionSummary withResource(Resource resource) {
+    public ResourceStateTransitionSummary withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }
@@ -192,8 +191,8 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("stateGroup", stateGroup).addProperty("transitionStateSelection", transitionStateSelection);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("stateGroup", stateGroup).addProperty("transitionStateSelection", transitionStateSelection);
     }
 
 }

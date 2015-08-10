@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationCompleteApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationConfirmPrimarySupervision;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationConfirmSecondarySupervision;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationTerminateApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationViewEditApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationWithdrawApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
@@ -18,25 +19,25 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationCompleteApproval(state)); //
 
-		stateActions.add(applicationCompleteApproval(state)); //
+        stateActions.add(applicationConfirmPrimarySupervision() //
+                .withTransitions(APPLICATION_CONFIRM_SUPERVISION_TRANSITION //
+                        .withRoleTransitions(APPLICATION_CONFIRM_PRIMARY_SUPERVISION_GROUP)));
 
-		stateActions.add(applicationConfirmPrimarySupervision() //
-		        .withTransitions(APPLICATION_CONFIRM_SUPERVISION_TRANSITION //
-		                .withRoleTransitions(APPLICATION_CONFIRM_PRIMARY_SUPERVISION_GROUP)));
+        stateActions.add(applicationConfirmSecondarySupervision() //
+                .withTransitions(APPLICATION_CONFIRM_SUPERVISION_TRANSITION //
+                        .withRoleTransitions(APPLICATION_CONFIRM_SECONDARY_SUPERVISION_GROUP)));
 
-		stateActions.add(applicationConfirmSecondarySupervision() //
-		        .withTransitions(APPLICATION_CONFIRM_SUPERVISION_TRANSITION //
-		                .withRoleTransitions(APPLICATION_CONFIRM_SECONDARY_SUPERVISION_GROUP)));
-
-		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationEscalate(APPLICATION_APPROVAL_PENDING_COMPLETION)); //
+        stateActions.add(applicationTerminateApproval());
+        stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationEscalate(APPLICATION_APPROVAL_PENDING_COMPLETION)); //
         stateActions.add(applicationUploadReference(state));
-		stateActions.add(applicationViewEditApproval(state)); //
-		stateActions.add(applicationWithdrawApproval());
-	}
+        stateActions.add(applicationViewEditApproval(state)); //
+        stateActions.add(applicationWithdrawApproval());
+    }
 
 }

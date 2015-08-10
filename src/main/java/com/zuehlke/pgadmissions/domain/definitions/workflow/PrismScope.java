@@ -3,20 +3,16 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-
-import java.util.Map;
-
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
@@ -112,18 +108,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private PrismScopeDefinition definition;
 
-    private static Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
-
-    static {
-        for (PrismScope scope : values()) {
-            Class<?> resourceClass = scope.getResourceClass();
-            if (byResourceClass.containsKey(resourceClass)) {
-                throw new Error();
-            }
-            byResourceClass.put(scope.getResourceClass(), scope);
-        }
-    }
-
     private PrismScope(PrismScopeDefinition definition) {
         this.definition = definition;
     }
@@ -133,7 +117,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return uk.co.alumeni.prism.enums.PrismScope.valueOf(name());
     }
 
-    public Class<? extends Resource> getResourceClass() {
+    public Class<? extends Resource<?>> getResourceClass() {
         return definition.getResourceClass();
     }
 
@@ -173,10 +157,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return definition.getResourcePostprocessor();
     }
 
-    public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {
-        return byResourceClass.get(resourceClass);
-    }
-
     public String getLowerCamelName() {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
@@ -187,7 +167,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private static class PrismScopeDefinition {
 
-        private Class<? extends Resource> resourceClass;
+        private Class<? extends Resource<?>> resourceClass;
 
         private Class<?> resourceDTOClass;
 
@@ -207,7 +187,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         private Class<? extends ResourceProcessor<?>> resourcePostprocessor;
 
-        public Class<? extends Resource> getResourceClass() {
+        public Class<? extends Resource<?>> getResourceClass() {
             return resourceClass;
         }
 
@@ -247,7 +227,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             return resourcePostprocessor;
         }
 
-        public PrismScopeDefinition withResourceClass(Class<? extends Resource> resourceClass) {
+        public PrismScopeDefinition withResourceClass(Class<? extends Resource<?>> resourceClass) {
             this.resourceClass = resourceClass;
             return this;
         }

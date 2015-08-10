@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_FORGET_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PURGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
@@ -43,6 +44,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation.APPLICATION_REFERENCED_TERMINATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_STATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_TERMINATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_WITHDRAW_TRANSITION;
 
 import java.util.List;
@@ -55,6 +57,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionG
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup;
 
@@ -165,6 +168,24 @@ public class PrismApplicationWorkflow {
                 .withTransitions(stateTransitions);
     }
 
+    public static PrismStateAction applicationTerminateUnsubmitted() {
+        return applicationTerminateAbstract()
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
+                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
+    }
+
+    public static PrismStateAction applicationTerminateSubmitted() {
+        return applicationTerminateAbstract() //
+                .withTransitions(APPLICATION_TERMINATE_TRANSITION);
+    }
+
+    public static PrismStateAction applicationTerminateSubmitted(PrismStateTerminationGroup stateTerminations, PrismRoleTransitionGroup... roleTransitions) {
+        return applicationTerminateAbstract() //
+                .withTransitions(APPLICATION_TERMINATE_TRANSITION //
+                        .withStateTerminationsAndRoleTransitions(stateTerminations, roleTransitions));
+    }
+
     public static PrismStateAction applicationUploadReference(PrismState state) {
         return new PrismStateAction() //
                 .withAction(APPLICATION_UPLOAD_REFERENCE) //
@@ -253,18 +274,26 @@ public class PrismApplicationWorkflow {
                 .withAssignments(APPLICATION_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER);
     }
 
-    public static PrismStateAction applicationWithdraw() {
+    public static PrismStateAction applicationWithdrawUnsubmitted() {
         return applicationWithdrawAbstract()
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
     }
 
-    public static PrismStateAction applicationWithdraw(PrismRoleGroup notifications, PrismRoleTransitionGroup... roleTransitions) {
+    public static PrismStateAction applicationWithdrawSubmitted(PrismRoleGroup notifications, PrismRoleTransitionGroup... roleTransitions) {
         return applicationWithdrawAbstract() //
                 .withNotifications(notifications, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
                 .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
                         .withRoleTransitions(roleTransitions));
+    }
+
+    public static PrismStateAction applicationWithdrawSubmitted(PrismRoleGroup notifications, PrismStateTerminationGroup stateTerminations,
+            PrismRoleTransitionGroup... roleTransitions) {
+        return applicationWithdrawAbstract() //
+                .withNotifications(notifications, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+                .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
+                        .withStateTerminationsAndRoleTransitions(stateTerminations, roleTransitions));
     }
 
     private static PrismStateAction applicationCompleteStateAbstract(PrismAction action, PrismRoleGroup assignees) {
@@ -277,6 +306,11 @@ public class PrismApplicationWorkflow {
     private static PrismStateAction applicationEscalateAbstract() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_ESCALATE);
+    }
+
+    private static PrismStateAction applicationTerminateAbstract() {
+        return new PrismStateAction() //
+                .withAction(APPLICATION_TERMINATE);
     }
 
     private static PrismStateAction applicationWithdrawAbstract() {

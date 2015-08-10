@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
@@ -42,6 +43,10 @@ public class EntityService {
 
     public <T extends UniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         return entityDAO.getDuplicateEntity(uniqueResource);
+    }
+
+    public <T extends UniqueEntity> T getDuplicateEntity(Class<T> entityClass, EntitySignature entitySignature) throws DeduplicationException {
+        return entityDAO.getDuplicateEntity(entityClass, entitySignature);
     }
 
     public <T extends UniqueEntity> T getOrCreate(T transientResource) throws DeduplicationException {
@@ -95,6 +100,11 @@ public class EntityService {
 
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
+    }
+
+    public void executeBulkInsert(String table, String columns, String inserts, String updates) {
+        entityDAO.executeBulkInsert(table, columns, inserts, updates);
+        flush();
     }
 
     @SuppressWarnings("unchecked")

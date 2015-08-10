@@ -53,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -63,14 +64,14 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.workflow.user.ApplicationReassignmentProcessor;
 
 @Entity
 @Table(name = "application")
-public class Application extends Resource {
+public class Application extends Resource<ApplicationReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -768,7 +769,7 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withParentResource(Resource parentResource) {
+    public Application withParentResource(Resource<?> parentResource) {
         setParentResource(parentResource);
         return this;
     }
@@ -823,9 +824,9 @@ public class Application extends Resource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Set<ResourceParent> getParentResources() {
-        Set<ResourceParent> parentResources = Sets.newLinkedHashSet();
-        for (ResourceParent parentResource : new ResourceParent[] { project, program, department, institution }) {
+    public Set<ResourceParent<?>> getParentResources() {
+        Set<ResourceParent<?>> parentResources = Sets.newLinkedHashSet();
+        for (ResourceParent<?> parentResource : new ResourceParent[] { project, program, department, institution }) {
             if (parentResource != null) {
                 parentResources.add(parentResource);
             }
@@ -858,19 +859,19 @@ public class Application extends Resource {
     }
 
     public String getParentResourceTitleDisplay() {
-        ResourceParent parent = (ResourceParent) getParentResource();
+        ResourceParent<?> parent = (ResourceParent<?>) getParentResource();
         return parent.getName();
     }
 
     public String getParentResourceCodeDisplay() {
-        ResourceParent parent = (ResourceParent) getParentResource();
+        ResourceParent<?> parent = (ResourceParent<?>) getParentResource();
         return parent.getCode();
     }
 
     public PrismOpportunityType getOpportunityType() {
-        Resource resourceParent = getParentResource();
+        Resource<?> resourceParent = getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(resourceParent.getClass())) {
-            return PrismOpportunityType.valueOf(((ResourceOpportunity) resourceParent).getOpportunityType().getName());
+            return PrismOpportunityType.valueOf(((ResourceOpportunity<?>) resourceParent).getOpportunityType().getName());
         }
         return null;
     }
@@ -881,9 +882,14 @@ public class Application extends Resource {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        Resource parentResource = getParentResource();
-        return new ResourceSignature()
+    public Class<ApplicationReassignmentProcessor> getUserReassignmentProcessor() {
+        return ApplicationReassignmentProcessor.class;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        Resource<?> parentResource = getParentResource();
+        return new EntitySignature()
                 .addProperty("user", user)
                 .addProperty(parentResource.getResourceScope().getLowerCamelName(), parentResource)
                 .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED)

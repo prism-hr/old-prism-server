@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.valueOf;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,13 +28,12 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.Coordinates;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
@@ -74,7 +74,7 @@ public class AdvertMapper {
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
-        ResourceParent resource = advert.getResource();
+        ResourceParent<?> resource = advert.getResource();
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
         representation.setResource(resourceMapper.getResourceRepresentationSimple(resource));
 
@@ -89,7 +89,7 @@ public class AdvertMapper {
         }
 
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            representation.setOpportunityType(PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName()));
+            representation.setOpportunityType(valueOf(((ResourceOpportunity<?>) resource).getOpportunityType().getName()));
         }
 
         representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));

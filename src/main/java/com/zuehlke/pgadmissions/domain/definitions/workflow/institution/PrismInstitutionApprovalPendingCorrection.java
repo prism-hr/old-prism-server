@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionCompleteApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEscalateUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionTerminateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditActive;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionWithdraw;
 
@@ -18,24 +19,25 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(institutionCompleteApproval());
+    @Override
+    protected void setStateActions() {
+        stateActions.add(institutionCompleteApproval());
 
-		stateActions.add(new PrismStateAction() //
-		        .withAction(INSTITUTION_CORRECT) //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(INSTITUTION_CORRECT_REQUEST) //
-		        .withAssignments(INSTITUTION_ADMINISTRATOR) //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(INSTITUTION_APPROVAL) //
-		                .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST) //
-		                .withRoleTransitions(INSTITUTION_REVIVE_ADMINISTRATOR_GROUP))); //
+        stateActions.add(new PrismStateAction() //
+                .withAction(INSTITUTION_CORRECT) //
+                .withRaisesUrgentFlag() //
+                .withNotification(INSTITUTION_CORRECT_REQUEST) //
+                .withAssignments(INSTITUTION_ADMINISTRATOR) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(INSTITUTION_APPROVAL) //
+                        .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST) //
+                        .withRoleTransitions(INSTITUTION_REVIVE_ADMINISTRATOR_GROUP))); //
 
-		stateActions.add(institutionEmailCreatorUnnapproved()); //
-		stateActions.add(institutionEscalateUnapproved()); //
-		stateActions.add(institutionViewEditActive()); //
-		stateActions.add(institutionWithdraw());
-	}
+        stateActions.add(institutionEmailCreatorUnnapproved()); //
+        stateActions.add(institutionEscalateUnapproved()); //
+        stateActions.add(institutionTerminateUnapproved()); //
+        stateActions.add(institutionViewEditActive()); //
+        stateActions.add(institutionWithdraw());
+    }
 
 }

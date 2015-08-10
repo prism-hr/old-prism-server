@@ -13,10 +13,11 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.workflow.user.ApplicationSupervisorReassignmentProcessor;
 
 @Entity
 @Table(name = "application_supervisor", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
-public class ApplicationSupervisor extends ApplicationAssignmentSection {
+public class ApplicationSupervisor extends ApplicationAssignmentSection<ApplicationSupervisorReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -103,6 +104,11 @@ public class ApplicationSupervisor extends ApplicationAssignmentSection {
     public ApplicationSupervisor withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
         return this;
+    }
+
+    @Override
+    public Class<ApplicationSupervisorReassignmentProcessor> getUserReassignmentProcessor() {
+        return ApplicationSupervisorReassignmentProcessor.class;
     }
 
 }

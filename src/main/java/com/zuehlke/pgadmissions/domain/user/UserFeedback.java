@@ -16,18 +16,19 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
+import com.zuehlke.pgadmissions.workflow.user.UserFeedbackReassignmentProcessor;
 
 @Entity
 @Table(name = "user_feedback")
-public class UserFeedback extends WorkflowResourceExecution {
+public class UserFeedback extends WorkflowResourceExecution implements UserAssignment<UserFeedbackReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -241,7 +242,7 @@ public class UserFeedback extends WorkflowResourceExecution {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public UserFeedback withResource(Resource resource) {
+    public UserFeedback withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }
@@ -292,7 +293,17 @@ public class UserFeedback extends WorkflowResourceExecution {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
+    public Class<UserFeedbackReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserFeedbackReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
         return null;
     }
 

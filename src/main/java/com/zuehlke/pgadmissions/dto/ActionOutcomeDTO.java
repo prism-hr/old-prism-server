@@ -12,9 +12,9 @@ public class ActionOutcomeDTO {
 
     private User user;
 
-    private Resource resource;
+    private Resource<?> resource;
 
-    private Resource transitionResource;
+    private Resource<?> transitionResource;
 
     private Action transitionAction;
 
@@ -22,33 +22,33 @@ public class ActionOutcomeDTO {
         return user;
     }
 
-    public Resource getResource() {
+    public Resource<?> getResource() {
         return resource;
     }
 
-    public Resource getTransitionResource() {
+    public Resource<?> getTransitionResource() {
         return transitionResource;
     }
 
     public Action getTransitionAction() {
         return transitionAction;
     }
-    
+
     public ActionOutcomeDTO withUser(User user) {
         this.user = user;
         return this;
     }
-    
-    public ActionOutcomeDTO withResource(Resource resource) {
+
+    public ActionOutcomeDTO withResource(Resource<?> resource) {
         this.resource = resource;
         return this;
     }
-    
-    public ActionOutcomeDTO withTransitionResource(Resource transitionResource) {
+
+    public ActionOutcomeDTO withTransitionResource(Resource<?> transitionResource) {
         this.transitionResource = transitionResource;
         return this;
     }
-    
+
     public ActionOutcomeDTO withTransitionAction(Action transitionAction) {
         this.transitionAction = transitionAction;
         return this;

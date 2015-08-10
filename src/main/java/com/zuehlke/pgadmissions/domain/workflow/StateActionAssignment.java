@@ -98,8 +98,8 @@ public class StateActionAssignment implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role).addProperty("partnerMode", partnerMode);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("stateAction", stateAction).addProperty("role", role).addProperty("partnerMode", partnerMode);
     }
 
 }

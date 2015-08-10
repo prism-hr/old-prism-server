@@ -29,6 +29,9 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
 
     @Column(name = "description")
     private String description;
+    
+    @Column(name = "importance", nullable = false)
+    private Integer importance;
 
     public Integer getId() {
         return id;
@@ -62,6 +65,14 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getImportance() {
+        return importance;
+    }
+
+    public void setImportance(Integer importance) {
+        this.importance = importance;
     }
 
     @Override

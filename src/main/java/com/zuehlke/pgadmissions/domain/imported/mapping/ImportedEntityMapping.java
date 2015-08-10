@@ -35,8 +35,8 @@ public abstract class ImportedEntityMapping<T extends ImportedEntity<?, ?>> impl
     public abstract DateTime getImportedTimestamp();
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
     }
 
 }

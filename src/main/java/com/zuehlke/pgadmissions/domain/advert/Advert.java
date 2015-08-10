@@ -30,16 +30,16 @@ import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 @Entity
-@Table(name = "advert", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "department_id", "program_id", "project_id"})})
+@Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
 public class Advert implements UniqueEntity {
 
     @Id
@@ -94,7 +94,7 @@ public class Advert implements UniqueEntity {
     private AddressAdvert address;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
+    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
             @AttributeOverride(name = "currencySpecified", column = @Column(name = "fee_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "fee_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_fee_minimum_specified")),
@@ -105,11 +105,11 @@ public class Advert implements UniqueEntity {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted"))})
+            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted")) })
     private AdvertFinancialDetail fee;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
+    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
             @AttributeOverride(name = "currencySpecified", column = @Column(name = "pay_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "pay_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_pay_minimum_specified")),
@@ -120,7 +120,7 @@ public class Advert implements UniqueEntity {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted"))})
+            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")) })
     private AdvertFinancialDetail pay;
 
     @OneToOne
@@ -313,7 +313,7 @@ public class Advert implements UniqueEntity {
     }
 
     public boolean isImported() {
-        ResourceOpportunity resource = getResourceOpportunity();
+        ResourceOpportunity<?> resource = getResourceOpportunity();
         return resource == null ? false : resource.getImportedCode() != null;
     }
 
@@ -322,18 +322,20 @@ public class Advert implements UniqueEntity {
         return this;
     }
 
-    public ResourceParent getResource() {
+    @SuppressWarnings("unchecked")
+    public ResourceParent<?> getResource() {
         return ObjectUtils.firstNonNull(getResourceOpportunity(), department, institution);
     }
 
-    public void setResource(Resource resource) {
+    public void setResource(Resource<?> resource) {
         this.institution = resource.getInstitution();
         this.department = resource.getDepartment();
         this.program = resource.getProgram();
         this.project = resource.getProject();
     }
 
-    public ResourceOpportunity getResourceOpportunity() {
+    @SuppressWarnings("unchecked")
+    public ResourceOpportunity<?> getResourceOpportunity() {
         return ObjectUtils.firstNonNull(project, program);
     }
 
@@ -350,8 +352,8 @@ public class Advert implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program)
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program)
                 .addProperty("project", project);
     }
 

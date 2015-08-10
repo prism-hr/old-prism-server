@@ -113,8 +113,8 @@ public class ImportedAdvertDomicile extends ImportedEntity<String, ImportedAdver
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("id", id);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("id", id);
     }
 
 }

@@ -104,8 +104,8 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", institution).addProperty("subjectArea", subjectArea)
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("institution", institution).addProperty("subjectArea", subjectArea)
                 .addProperty("concentrationFactor", concentrationFactor).addProperty("proliferationFactor", proliferationFactor);
     }
 

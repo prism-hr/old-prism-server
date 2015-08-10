@@ -183,8 +183,8 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("domicile", getDomicile());
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("domicile", getDomicile());
     }
 
 }

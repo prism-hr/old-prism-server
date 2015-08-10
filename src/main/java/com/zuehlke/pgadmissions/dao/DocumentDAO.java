@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -64,14 +64,15 @@ public class DocumentDAO {
                 .executeUpdate();
     }
 
-    public void reassignDocuments(User oldUser, User newUser) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update Document " //
-                        + "set user = :newUser " //
-                        + "where user = :oldUser") //
-                .setParameter("newUser", newUser) //
-                .setParameter("oldUser", oldUser) //
-                .executeUpdate();
+    public List<Document> getResourceOwnerDocuments(Resource<?> resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        String resourceReferenceComment = "comment." + resourceReference;
+        return (List<Document>) sessionFactory.getCurrentSession().createCriteria(Document.class) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
+                .createAlias(resourceReferenceComment, resourceReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReferenceComment, resource)) //
+                .add(Restrictions.eqProperty("user", resourceReference + ".user")) //
+                .list();
     }
 
     private Criteria getDocumentCriteria() {

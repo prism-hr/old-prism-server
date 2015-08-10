@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.utils;
 
 import static com.zuehlke.pgadmissions.utils.PrismConstants.CHARACTER_WILDCARD;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SPACE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.WORD_BOUDARY;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.WORD_BOUNDARY;
 import static org.apache.commons.lang.StringUtils.isNumeric;
 
 import java.math.BigDecimal;
@@ -62,7 +62,7 @@ public class PrismStringUtils {
     }
 
     public static String wrapInWordBoundary(String string) {
-        return WORD_BOUDARY + string + WORD_BOUDARY;
+        return WORD_BOUNDARY + string + WORD_BOUNDARY;
     }
 
     public static String wrapInCharacterWildcard(String string) {

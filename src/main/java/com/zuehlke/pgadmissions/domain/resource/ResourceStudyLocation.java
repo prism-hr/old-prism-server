@@ -67,7 +67,7 @@ public class ResourceStudyLocation extends ResourceOpportunityAttribute {
         this.studyLocation = studyLocation;
     }
 
-    public ResourceStudyLocation withResource(ResourceParent resource) {
+    public ResourceStudyLocation withResource(ResourceParent<?> resource) {
         setResource(resource);
         return this;
     }
@@ -95,8 +95,8 @@ public class ResourceStudyLocation extends ResourceOpportunityAttribute {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("studyLocation", studyLocation);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("studyLocation", studyLocation);
     }
 
 }

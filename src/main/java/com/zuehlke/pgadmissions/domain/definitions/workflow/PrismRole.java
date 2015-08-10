@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
-    APPLICATION_ADMINISTRATOR(ADMINISTRATOR, APPLICATION), //
+    APPLICATION_ADMINISTRATOR(RECRUITER, APPLICATION), //
     APPLICATION_CREATOR(APPLICANT, APPLICATION), //
     APPLICATION_INTERVIEWEE(APPLICANT, APPLICATION), //
     APPLICATION_INTERVIEWER(RECRUITER, APPLICATION), //
@@ -65,7 +65,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ROLE_" + name());
     }
-    
+
     public enum PrismRoleCategory {
 
         ADMINISTRATOR, //

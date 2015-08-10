@@ -29,8 +29,8 @@ public abstract class WorkflowDefinition implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("id", getId());
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("id", getId());
     }
     
     @Override

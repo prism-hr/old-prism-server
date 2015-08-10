@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_APPROVE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEscalateUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionTerminateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditActive;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionWithdraw;
 
@@ -21,29 +22,30 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionApproval extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(institutionCompleteApproval() //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(SYSTEM_INSTITUTION_TASK_REQUEST) //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(INSTITUTION_APPROVAL_PENDING_CORRECTION) //
-		                .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST)
-		                .withTransitionEvaluation(INSTITUTION_APPROVED_OUTCOME))); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(institutionCompleteApproval() //
+                .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_INSTITUTION_TASK_REQUEST) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(INSTITUTION_APPROVAL_PENDING_CORRECTION) //
+                        .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST)
+                        .withTransitionEvaluation(INSTITUTION_APPROVED_OUTCOME))); //
 
-		stateActions.add(institutionEmailCreatorUnnapproved()); //
-		stateActions.add(institutionEscalateUnapproved()); //
-		stateActions.add(institutionViewEditActive()); //
-		stateActions.add(institutionWithdraw());
-	}
+        stateActions.add(institutionEmailCreatorUnnapproved()); //
+        stateActions.add(institutionEscalateUnapproved()); //
+        stateActions.add(institutionTerminateUnapproved()); //
+        stateActions.add(institutionViewEditActive()); //
+        stateActions.add(institutionWithdraw());
+    }
 
-	public static PrismStateAction institutionCompleteApproval() {
-		return new PrismStateAction() //
-		        .withAction(INSTITUTION_COMPLETE_APPROVAL_STAGE) //
-		        .withAssignments(SYSTEM_ADMINISTRATOR) //
-		        .withNotifications(SYSTEM_ADMINISTRATOR, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION)
-		        .withNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
-		        .withTransitions(INSTITUTION_APPROVE_TRANSITION);
-	}
+    public static PrismStateAction institutionCompleteApproval() {
+        return new PrismStateAction() //
+                .withAction(INSTITUTION_COMPLETE_APPROVAL_STAGE) //
+                .withAssignments(SYSTEM_ADMINISTRATOR) //
+                .withNotifications(SYSTEM_ADMINISTRATOR, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION)
+                .withNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
+                .withTransitions(INSTITUTION_APPROVE_TRANSITION);
+    }
 
 }

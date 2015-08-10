@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Transactional
 public class ImportedEntityMapper {
 
-    private Map<Resource, PropertyLoader> loaders = Maps.newHashMap();
+    private Map<Resource<?>, PropertyLoader> loaders = Maps.newHashMap();
 
     @Inject
     private ImportedEntityService importedEntityService;

@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
@@ -240,13 +240,12 @@ public class ImportedEntityService {
 
                     cells.add(prepareStringForSqlInsert(mappingDefinition.getCode()));
                     cells.add(prepareBooleanForSqlInsert(true));
-                    rows.add(prepareCellsForSqlInsert(cells));
+                    rows.add(prepareColumnsForSqlInsert(cells));
                 }
             }
 
-            importedEntityDAO.executeBulkMerge(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
+            entityService.executeBulkInsert(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
                     prepareRowsForSqlInsert(rows), prismImportedEntity.getMappingInsertOnDuplicateKeyUpdate());
-            entityService.flush();
         }
     }
 
@@ -313,16 +312,12 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedUcasInstitutions();
     }
 
-    public List<ImportedProgram> getImportedPrograms(String searchTerm) {
-        return importedEntityDAO.getImportedPrograms(searchTerm);
+    public List<ImportedProgram> getSimilarImportedPrograms(String searchTerm) {
+        return importedEntityDAO.getSimilarImportedPrograms(searchTerm);
     }
 
     public void deleteImportedEntityTypes() {
         importedEntityDAO.deleteImportedEntityTypes();
-    }
-
-    public void executeBulkMerge(String table, String columns, String inserts, String updates) {
-        importedEntityDAO.executeBulkMerge(table, columns, inserts, updates);
     }
 
     public List<ImportedSubjectArea> getImportedSubjectAreas() {
@@ -588,9 +583,8 @@ public class ImportedEntityService {
             ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
             List<String> rows = extractor.extract(prismImportedEntity, definitionBatch, enable);
             if (!rows.isEmpty()) {
-                importedEntityDAO.executeBulkMerge(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
+                entityService.executeBulkInsert(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
                         prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
-                entityService.flush();
             }
         }
     }

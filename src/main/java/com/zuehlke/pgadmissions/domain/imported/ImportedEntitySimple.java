@@ -101,8 +101,8 @@ public class ImportedEntitySimple extends ImportedEntity<Integer, ImportedEntity
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("type", type);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("type", type);
     }
 
 }

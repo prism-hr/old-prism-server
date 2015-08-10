@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -76,19 +75,18 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
     }
 
     private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) throws Exception {
-        Resource resource = comment.getResource();
         PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
         Action action = actionService.getById(prismAction);
         DateTime baseline = comment.getCreatedTimestamp().minusSeconds(1);
 
         User invoker = comment.getUser();
-        List<User> users = userService.getUsersWithAction(resource, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
+        List<User> users = userService.getUsersWithAction(application, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
         LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
         for (User user : users) {
             List<LocalDateTime> preferences = commentService.getAppointmentPreferences(application, user);
             if (!preferences.contains(interviewDateTime)) {
-                Comment newPreferenceComment = commentService.createInterviewPreferenceComment(resource, action, invoker, user, interviewDateTime, baseline);
-                actionService.executeActionSilent(resource, action, newPreferenceComment);
+                Comment newPreferenceComment = commentService.createInterviewPreferenceComment(application, action, invoker, user, interviewDateTime, baseline);
+                actionService.executeActionSilent(application, action, newPreferenceComment);
             }
         }
     }

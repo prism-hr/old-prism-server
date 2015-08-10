@@ -124,8 +124,8 @@ public class ResourceStudyOptionInstance implements UniqueEntity, ResourceInstan
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("studyOption", studyOption).addProperty("businessYear", businessYear);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("studyOption", studyOption).addProperty("businessYear", businessYear);
     }
 
 }

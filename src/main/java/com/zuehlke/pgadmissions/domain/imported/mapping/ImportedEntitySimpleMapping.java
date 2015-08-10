@@ -97,8 +97,8 @@ public class ImportedEntitySimpleMapping extends ImportedEntityMapping<ImportedE
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedEntitySimple", importedEntity);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("importedEntitySimple", importedEntity);
     }
 
 }

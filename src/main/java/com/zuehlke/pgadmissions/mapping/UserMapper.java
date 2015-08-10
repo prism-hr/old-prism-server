@@ -19,6 +19,7 @@ import com.google.gson.JsonPrimitive;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
@@ -76,11 +77,11 @@ public class UserMapper {
         return representation;
     }
 
-    public List<UserRepresentationUnverified> getUserUnverifiedRepresentations(UserListFilterDTO filterDTO) {
-        List<User> users = userService.getBouncedOrUnverifiedUsers(filterDTO);
-        List<UserRepresentationUnverified> representations = Lists.newArrayListWithCapacity(users.size());
+    public List<UserRepresentationUnverified> getUserUnverifiedRepresentations(Resource<?> resource, UserListFilterDTO filterDTO) {
         String noDiagnosis = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem()).load(SYSTEM_NO_DIAGNOSTIC_INFORMATION);
 
+        List<User> users = userService.getBouncedOrUnverifiedUsers(resource, filterDTO);
+        List<UserRepresentationUnverified> representations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
             representations.add(getUserRepresentationUnverified(user, noDiagnosis));
         }

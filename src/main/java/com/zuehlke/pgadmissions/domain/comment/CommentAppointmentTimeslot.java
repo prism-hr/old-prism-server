@@ -65,19 +65,19 @@ public class CommentAppointmentTimeslot {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment, dateTime);
+        return Objects.hashCode(comment.getId(), dateTime);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        CommentAppointmentTimeslot other = (CommentAppointmentTimeslot) obj;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(dateTime, other.getDateTime());
+        CommentAppointmentTimeslot other = (CommentAppointmentTimeslot) object;
+        return Objects.equal(comment.getId(), other.getComment().getId()) && Objects.equal(dateTime, other.getDateTime());
     }
 
 }

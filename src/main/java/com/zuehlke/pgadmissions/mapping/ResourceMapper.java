@@ -229,29 +229,29 @@ public class ResourceMapper {
         return representations;
     }
 
-    public <T extends Resource> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
+    public <T extends Resource<?>> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
         return getResourceRepresentationSimple(resource, ResourceRepresentationSimple.class);
     }
 
-    public <T extends Resource, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(T resource, Class<V> returnType) {
+    public <T extends Resource<?>, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(T resource, Class<V> returnType) {
         V representation = getResourceRepresentation(resource, returnType);
         representation.setCode(resource.getCode());
         representation.setState(stateMapper.getStateRepresentationSimple(resource.getState()));
 
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
+            ResourceOpportunity<?> resourceOpportunity = (ResourceOpportunity<?>) resource;
             representation.setImportedCode(resourceOpportunity.getImportedCode());
         }
 
         return representation;
     }
 
-    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExtended(T resource) throws Exception {
+    public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationExtended(T resource) throws Exception {
         return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType) {
+    public <T extends Resource<?>, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType) {
         DateTime baseline = new DateTime();
         User currentUser = userService.getCurrentUser();
 
@@ -260,7 +260,7 @@ public class ResourceMapper {
 
         for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
             if (!parentScope.equals(SYSTEM)) {
-                Resource parentResource = resource.getEnclosingResource(parentScope);
+                Resource<?> parentResource = resource.getEnclosingResource(parentScope);
                 if (parentResource != null) {
                     representation.setParentResource(getResourceRepresentationSimple(parentResource));
                 }
@@ -274,7 +274,7 @@ public class ResourceMapper {
         setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass()) && !actionService.hasRedactions(resource, userService.getCurrentUser())) {
-            representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
+            representation.setApplicationRatingAverage(((ResourceParent<?>) resource).getApplicationRatingAverage());
         }
 
         representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));
@@ -294,7 +294,7 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType) {
+    public <T extends ResourceParent<?>, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationExtended(resource, returnType);
 
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
@@ -303,7 +303,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource, Class<V> returnType)
+    public <T extends ResourceOpportunity<?>, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource,
+            Class<V> returnType)
             throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
 
@@ -321,14 +322,14 @@ public class ResourceMapper {
 
     }
 
-    public <T extends ResourceParent, V extends ResourceParentRepresentationClient> V getResourceParentRepresentationClient(T resource, Class<V> returnType)
+    public <T extends ResourceParent<?>, V extends ResourceParentRepresentationClient> V getResourceParentRepresentationClient(T resource, Class<V> returnType)
             throws Exception {
         V representation = getResourceParentRepresentation(resource, returnType);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource,
+    public <T extends ResourceOpportunity<?>, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource,
             Class<V> returnType) throws Exception {
         V representation = getResourceOpportunityRepresentation(resource, returnType);
         appendResourceSummaryRepresentation(resource, representation);
@@ -336,15 +337,15 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationClient(T resource) throws Exception {
+    public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationClient(T resource) throws Exception {
         Class<T> resourceClass = (Class<T>) resource.getClass();
 
         if (resourceClass.equals(Institution.class)) {
             return institutionMapper.getInstitutionRepresentationClient((Institution) resource);
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
-            return getResourceOpportunityRepresentationClient((ResourceOpportunity) resource, ResourceOpportunityRepresentationClient.class);
+            return getResourceOpportunityRepresentationClient((ResourceOpportunity<?>) resource, ResourceOpportunityRepresentationClient.class);
         } else if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return getResourceParentRepresentationClient((ResourceParent) resource, ResourceParentRepresentationClient.class);
+            return getResourceParentRepresentationClient((ResourceParent<?>) resource, ResourceParentRepresentationClient.class);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
             return applicationMapper.getApplicationRepresentationClient((Application) resource);
         }
@@ -353,15 +354,15 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
+    public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
         Class<T> resourceClass = (Class<T>) resource.getClass();
 
         if (resourceClass.equals(Institution.class)) {
             return institutionMapper.getInstitutionRepresentation((Institution) resource);
         } else if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return getResourceParentRepresentation((ResourceParent) resource, ResourceParentRepresentationClient.class);
+            return getResourceParentRepresentation((ResourceParent<?>) resource, ResourceParentRepresentationClient.class);
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
-            return getResourceOpportunityRepresentation((ResourceOpportunity) resource, ResourceOpportunityRepresentationClient.class);
+            return getResourceOpportunityRepresentation((ResourceOpportunity<?>) resource, ResourceOpportunityRepresentationClient.class);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
             return applicationMapper.getApplicationRepresentationExport((Application) resource);
         }
@@ -369,7 +370,7 @@ public class ResourceMapper {
         return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class);
     }
 
-    public <T extends ResourceParent, U extends ResourceRepresentationClient> void appendResourceSummaryRepresentation(T resource, U representation) {
+    public <T extends ResourceParent<?>, U extends ResourceRepresentationClient> void appendResourceSummaryRepresentation(T resource, U representation) {
         List<ResourceCountRepresentation> counts = Lists.newLinkedList();
         for (PrismScope childScope : scopeService.getChildScopesAscending(resource.getResourceScope())) {
             counts.add(new ResourceCountRepresentation().withResourceScope(childScope).withResourceCount(
@@ -383,7 +384,7 @@ public class ResourceMapper {
         representation.setPlot(getResourceSummaryPlotRepresentation(resource, null));
     }
 
-    public ResourceSummaryPlotRepresentation getResourceSummaryPlotRepresentation(ResourceParent resource, ResourceReportFilterDTO filterDTO) {
+    public ResourceSummaryPlotRepresentation getResourceSummaryPlotRepresentation(ResourceParent<?> resource, ResourceReportFilterDTO filterDTO) {
         if (filterDTO == null) {
             ResourceSummaryPlotDataRepresentation plotDataRepresentation = getResourceSummaryPlotDataRepresentation(resource, null);
             return new ResourceSummaryPlotRepresentation().withConstraints(null).withData(plotDataRepresentation);
@@ -394,7 +395,7 @@ public class ResourceMapper {
         }
     }
 
-    public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource,
+    public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
@@ -438,12 +439,12 @@ public class ResourceMapper {
         return summary;
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
-    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
@@ -453,7 +454,7 @@ public class ResourceMapper {
         return index;
     }
 
-    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
@@ -469,14 +470,14 @@ public class ResourceMapper {
                 .withBusinessYear(resourceStudyOptionInstance.getBusinessYear()).withIdentifier(resourceStudyOptionInstance.getIdentifier());
     }
 
-    public List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
+    public List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource<?> resource) {
         return resource.getResourceConditions().stream()
                 .map(condition -> new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
                         .withPartnerMode(condition.getPartnerMode())).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
+    public <T extends ResourceParent<?>> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
 
         ResourceRepresentationRobot representation = new ResourceRepresentationRobot(loader.load(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl);
@@ -486,7 +487,7 @@ public class ResourceMapper {
 
         for (PrismScope parentScope : scopeService.getParentScopesDescending(resourceScope)) {
             if (!parentScope.equals(SYSTEM)) {
-                Resource parentResource = resource.getEnclosingResource(parentScope);
+                Resource<?> parentResource = resource.getEnclosingResource(parentScope);
                 if (parentResource != null) {
                     setRobotResourceRepresentation(representation, parentResource);
                 }
@@ -501,7 +502,7 @@ public class ResourceMapper {
             }
         }
 
-        List<User> users = userService.getUsersForResourcesAndRoles((Set<Resource>) (resourceScope.equals(PROJECT) ? Sets.newHashSet(resource)
+        List<User> users = userService.getUsersForResourcesAndRoles((Set<Resource<?>>) (resourceScope.equals(PROJECT) ? Sets.newHashSet(resource)
                 : PrismReflectionUtils.getProperty(resource, "projects")), PROJECT_SUPERVISOR_GROUP.getRoles());
         List<String> relatedUsers = users.stream().map(User::getRobotRepresentation).collect(Collectors.toList());
 
@@ -513,7 +514,7 @@ public class ResourceMapper {
         return representation;
     }
 
-    public String getResourceThumbnailUrlRobot(Resource resource) {
+    public String getResourceThumbnailUrlRobot(Resource<?> resource) {
         String defaultSocialThumbnail = applicationUrl + "/images/fbimg.jpg";
         if (resource.getResourceScope() == SYSTEM) {
             return defaultSocialThumbnail;
@@ -522,7 +523,7 @@ public class ResourceMapper {
         return logoImage == null ? defaultSocialThumbnail : applicationApiUrl + "/images/" + logoImage.getId().toString();
     }
 
-    public String getResourceUrlRobot(Resource resource) {
+    public String getResourceUrlRobot(Resource<?> resource) {
         return applicationUrl + "/" + ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
     }
 
@@ -542,7 +543,7 @@ public class ResourceMapper {
             List<PrismScope> parentEntryScopes = scopeService.getParentScopesDescending(resourceEntryScope, immediateChildScope);
             for (ResourceChildCreationDTO resourceEntry : resourceEntries.getValue()) {
                 for (PrismScope parentEntryScope : parentEntryScopes) {
-                    ResourceParent parentEntry = (ResourceParent) resourceEntry.getResource().getEnclosingResource(parentEntryScope);
+                    ResourceParent<?> parentEntry = (ResourceParent<?>) resourceEntry.getResource().getEnclosingResource(parentEntryScope);
                     if (parentEntry != null) {
                         resources.get(parentEntryScope).add(new ResourceChildCreationDTO().withResource(parentEntry).withPartnerMode(false));
                     }
@@ -571,18 +572,18 @@ public class ResourceMapper {
         return Lists.newLinkedList(representations);
     }
 
-    private <T extends Resource> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(ResourceChildCreationDTO resource) {
+    private <T extends Resource<?>> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(ResourceChildCreationDTO resource) {
         return getResourceRepresentation(resource.getResource(), ResourceChildCreationRepresentation.class).withPartnerMode(resource.getPartnerMode());
     }
 
-    private <T extends Resource, V extends ResourceRepresentationIdentity> V getResourceRepresentation(T resource, Class<V> returnType) {
+    private <T extends Resource<?>, V extends ResourceRepresentationIdentity> V getResourceRepresentation(T resource, Class<V> returnType) {
         V representation = BeanUtils.instantiate(returnType);
 
         representation.setScope(resource.getResourceScope());
         representation.setId(resource.getId());
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            representation.setName(((ResourceParent) resource).getName());
+            representation.setName(((ResourceParent<?>) resource).getName());
             representation.setLogoImage(documentMapper.getDocumentRepresentation(resource.getInstitution().getLogoImage()));
         }
 
@@ -616,7 +617,7 @@ public class ResourceMapper {
         }
     }
 
-    private void setRobotResourceRepresentation(ResourceRepresentationRobot representation, Resource resource) {
+    private void setRobotResourceRepresentation(ResourceRepresentationRobot representation, Resource<?> resource) {
         PrismScope resourceScope = resource.getResourceScope();
         ResourceRepresentationRobotMetadata resourceRepresentation = resourceService.getResourceRobotMetadataRepresentation(resource,
                 stateService.getActiveResourceStates(resourceScope), scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));

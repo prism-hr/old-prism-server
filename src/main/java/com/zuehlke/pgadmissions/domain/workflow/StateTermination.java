@@ -82,8 +82,8 @@ public class StateTermination implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("stateTransition", stateTransition).addProperty("terminationState", terminationState);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("stateTransition", stateTransition).addProperty("terminationState", terminationState);
     }
 
 }

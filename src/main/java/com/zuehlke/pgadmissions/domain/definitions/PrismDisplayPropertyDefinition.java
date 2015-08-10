@@ -17,6 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.DEPARTMENT_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
@@ -1522,8 +1523,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_STATE_DURATION(INSTITUTION_COMMENT, "Updated institution notification configuration"),
     INSTITUTION_COMMENT_RESTORED_STATE_DURATION_DEFAULT(INSTITUTION_COMMENT, "Restored system default state duration configuration"),
     INSTITUTION_COMMENT_RESTORED_STATE_DURATION_GLOBAL(INSTITUTION_COMMENT, "Restored institution global state duration configuration"),
-    INSTITUTION_COMMENT_UPDATED_ACTION_PROPERTY(INSTITUTION_COMMENT, "Updated institution action property configuration"),
-    INSTITUTION_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(INSTITUTION_COMMENT, "Restored system default action property configuration"),
     INSTITUTION_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL(INSTITUTION_COMMENT, "Restored institution global action property configuration"),
     INSTITUTION_COMMENT_UPDATED_WORKFLOW_PROPERTY(INSTITUTION_COMMENT, "Updated institution workflow property configuration"),
     INSTITUTION_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(INSTITUTION_COMMENT, "Restored system default workflow property configuration"),
@@ -1541,30 +1540,28 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** DEPARTMENT COMMENT *********************
      */
 
-    DEPARTMENT_COMMENT_APPROVAL(DEPARTMENT_COMMENT, "We are pleased to tell you that your program has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
-    DEPARTMENT_COMMENT_APPROVED(DEPARTMENT_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
-    DEPARTMENT_COMMENT_CORRECTION(DEPARTMENT_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
-    DEPARTMENT_COMMENT_REJECTED(DEPARTMENT_COMMENT, "We are sorry to inform you that your program has been rejected"),
-    DEPARTMENT_COMMENT_UPDATED(DEPARTMENT_COMMENT, "Updated program"),
-    DEPARTMENT_COMMENT_UPDATED_USER_ROLE(DEPARTMENT_COMMENT, "Updated program user roles"),
-    DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(DEPARTMENT_COMMENT, "Updated program notification configuration"),
+    DEPARTMENT_COMMENT_APPROVAL(DEPARTMENT_COMMENT, "Your department has been submitted for approval. We will notify you when it is ready to use"),
+    DEPARTMENT_COMMENT_APPROVED(DEPARTMENT_COMMENT, "We are pleased to tell you that your department has been approved. You may now login to create users and projects, and manage your recruitment"),
+    DEPARTMENT_COMMENT_CORRECTION(DEPARTMENT_COMMENT, "Further information is required to activate your department. Please login to address the reviewers comments"),
+    DEPARTMENT_COMMENT_REJECTED(DEPARTMENT_COMMENT, "We are sorry to inform you that your department has been rejected"),
+    DEPARTMENT_COMMENT_UPDATED(DEPARTMENT_COMMENT, "Updated department"),
+    DEPARTMENT_COMMENT_UPDATED_USER_ROLE(DEPARTMENT_COMMENT, "Updated department user roles"),
+    DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(DEPARTMENT_COMMENT, "Updated department notification configuration"),
     DEPARTMENT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default notification configuration"),
-    DEPARTMENT_COMMENT_UPDATED_STATE_DURATION(DEPARTMENT_COMMENT, "Updated program state duration configuration"),
+    DEPARTMENT_COMMENT_UPDATED_STATE_DURATION(DEPARTMENT_COMMENT, "Updated department state duration configuration"),
     DEPARTMENT_COMMENT_RESTORED_STATE_DURATION_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default state duration configuration"),
-    DEPARTMENT_COMMENT_UPDATED_ACTION_PROPERTY(DEPARTMENT_COMMENT, "Updated program action property configuration"),
-    DEPARTMENT_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default action property configuration"),
-    DEPARTMENT_COMMENT_UPDATED_WORKFLOW_PROPERTY(DEPARTMENT_COMMENT, "Updated program workflow property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_WORKFLOW_PROPERTY(DEPARTMENT_COMMENT, "Updated department workflow property configuration"),
     DEPARTMENT_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default workflow property configuration"),
-    DEPARTMENT_COMMENT_UPDATED_DISPLAY_PROPERTY(DEPARTMENT_COMMENT, "Updated program display property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_DISPLAY_PROPERTY(DEPARTMENT_COMMENT, "Updated department display property configuration"),
     DEPARTMENT_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default display property configuration"),
-    DEPARTMENT_COMMENT_UPDATED_ADVERT(DEPARTMENT_COMMENT, "Updated program advert"),
-    DEPARTMENT_COMMENT_UPDATED_CATEGORY(DEPARTMENT_COMMENT, "Updated program categories"),
+    DEPARTMENT_COMMENT_UPDATED_ADVERT(DEPARTMENT_COMMENT, "Updated department advert"),
+    DEPARTMENT_COMMENT_UPDATED_CATEGORY(DEPARTMENT_COMMENT, "Updated department categories"),
 
     /*
      * *************** PROGRAM COMMENT *********************
      */
 
-    PROGRAM_COMMENT_APPROVAL(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
+    PROGRAM_COMMENT_APPROVAL(PROGRAM_COMMENT, "Your program has been submitted for approval. We will notify you when it is ready to use"),
     PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
     PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
@@ -1574,8 +1571,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PROGRAM_COMMENT, "Restored department default notification configuration"),
     PROGRAM_COMMENT_UPDATED_STATE_DURATION(PROGRAM_COMMENT, "Updated program state duration configuration"),
     PROGRAM_COMMENT_RESTORED_STATE_DURATION_DEFAULT(PROGRAM_COMMENT, "Restored department default state duration configuration"),
-    PROGRAM_COMMENT_UPDATED_ACTION_PROPERTY(PROGRAM_COMMENT, "Updated program action property configuration"),
-    PROGRAM_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored department default action property configuration"),
     PROGRAM_COMMENT_UPDATED_WORKFLOW_PROPERTY(PROGRAM_COMMENT, "Updated program workflow property configuration"),
     PROGRAM_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored department default workflow property configuration"),
     PROGRAM_COMMENT_UPDATED_DISPLAY_PROPERTY(PROGRAM_COMMENT, "Updated program display property configuration"),
@@ -1590,7 +1585,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** PROJECT COMMENT *********************
      */
 
-    PROJECT_COMMENT_APPROVAL(PROJECT_COMMENT, "We are pleased to tell you that your project has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
+    PROJECT_COMMENT_APPROVAL(PROJECT_COMMENT, "Your project has been submitted for approval. We will notify you when it is ready to use"),
     PROJECT_COMMENT_APPROVED(PROJECT_COMMENT, "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment"),
     PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments"),
     PROJECT_COMMENT_REJECTED(PROJECT_COMMENT, "We are sorry to inform you that your project has been rejected"),
@@ -1600,8 +1595,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PROGRAM_COMMENT, "Restored program default notification configuration"),
     PROJECT_COMMENT_UPDATED_STATE_DURATION(PROGRAM_COMMENT, "Updated project state duration configuration"),
     PROJECT_COMMENT_RESTORED_STATE_DURATION_DEFAULT(PROGRAM_COMMENT, "Restored program default state duration configuration"),
-    PROJECT_COMMENT_UPDATED_ACTION_PROPERTY(PROGRAM_COMMENT, "Updated project action property configuration"),
-    PROJECT_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored program default action property configuration"),
     PROJECT_COMMENT_UPDATED_WORKFLOW_PROPERTY(PROGRAM_COMMENT, "Updated project workflow property configuration"),
     PROJECT_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored program default workflow property configuration"),
     PROJECT_COMMENT_UPDATED_DISPLAY_PROPERTY(PROGRAM_COMMENT, "Updated project display property configuration"),

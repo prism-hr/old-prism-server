@@ -301,8 +301,7 @@ public class TargetingService {
     }
 
     private synchronized void setNewTopInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,
-            Integer concentrationFactor,
-            BigDecimal proliferationFactor, BigDecimal newIndexScore) {
+            Integer concentrationFactor, BigDecimal proliferationFactor, BigDecimal newIndexScore) {
         importedEntityService.enableImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
         subjectArea.setTopIndexScore(newIndexScore);
         entityService.flush();

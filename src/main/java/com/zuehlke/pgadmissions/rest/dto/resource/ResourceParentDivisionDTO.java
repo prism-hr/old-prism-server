@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDivisionDefinition;
+
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
 public class ResourceParentDivisionDTO extends ResourceParentDTO implements ResourceCreationDTO, ResourceParentDivisionDefinition<AdvertDTO> {
 

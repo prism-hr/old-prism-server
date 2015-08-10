@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -12,11 +18,6 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 @Component
 public class ProjectExecutor implements ActionExecutor {

@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -10,9 +14,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class DepartmentCreator implements ResourceCreator<DepartmentDTO> {
@@ -30,7 +31,7 @@ public class DepartmentCreator implements ResourceCreator<DepartmentDTO> {
     private ResourceCreatorUtils resourceCreatorUtils;
 
     @Override
-    public Resource<?> create(User user, ResourceParentDivisionDTO newResource) throws Exception {
+    public Resource<?> create(User user, DepartmentDTO newResource) throws Exception {
         Institution institution = resourceCreatorUtils.getParentResource(user, newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();

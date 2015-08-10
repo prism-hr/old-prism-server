@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
@@ -61,7 +62,7 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_RESOURCE_FINANCIAL_DETAILS(SYSTEM),
     INSTITUTION_COMMENT(INSTITUTION),
     INSTITUTION_FORM(INSTITUTION),
-    DEPARTMENT_COMMENT(PROGRAM),
+    DEPARTMENT_COMMENT(DEPARTMENT),
     PROGRAM_COMMENT(PROGRAM),
     PROJECT_COMMENT(PROJECT),
     APPLICATION_GLOBAL(APPLICATION),

@@ -1,11 +1,43 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
@@ -19,22 +51,6 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
 
 @Service
 @Transactional
@@ -205,13 +221,12 @@ public class ImportedEntityService {
 
                     cells.add(prepareStringForSqlInsert(mappingDefinition.getCode()));
                     cells.add(prepareBooleanForSqlInsert(true));
-                    rows.add(prepareCellsForSqlInsert(cells));
+                    rows.add(prepareColumnsForSqlInsert(cells));
                 }
             }
 
-            importedEntityDAO.executeBulkMerge(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
+            entityService.executeBulkInsert(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
                     prepareRowsForSqlInsert(rows), prismImportedEntity.getMappingInsertOnDuplicateKeyUpdate());
-            entityService.flush();
         }
     }
 
@@ -284,10 +299,6 @@ public class ImportedEntityService {
 
     public void deleteImportedEntityTypes() {
         importedEntityDAO.deleteImportedEntityTypes();
-    }
-
-    public void executeBulkMerge(String table, String columns, String inserts, String updates) {
-        importedEntityDAO.executeBulkMerge(table, columns, inserts, updates);
     }
 
     public List<ImportedSubjectArea> getImportedSubjectAreas() {
@@ -553,9 +564,8 @@ public class ImportedEntityService {
             ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
             List<String> rows = extractor.extract(prismImportedEntity, definitionBatch, enable);
             if (!rows.isEmpty()) {
-                importedEntityDAO.executeBulkMerge(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
+                entityService.executeBulkInsert(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
                         prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
-                entityService.flush();
             }
         }
     }

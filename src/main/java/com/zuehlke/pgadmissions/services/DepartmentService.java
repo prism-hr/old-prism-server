@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -36,8 +34,11 @@ public class DepartmentService {
 
     public void setImportedPrograms(Department department, List<ImportedEntityDTO> importedProgramDTOs) {
         Set<ImportedProgram> importedPrograms = department.getImportedPrograms();
-        for (ImportedEntityDTO importedProgramDTO : importedProgramDTOs) {
-            importedPrograms.add(importedEntityService.getById(ImportedProgram.class, importedProgramDTO.getId()));
+        importedPrograms.clear();
+        if (importedProgramDTOs != null) {
+            for (ImportedEntityDTO importedProgramDTO : importedProgramDTOs) {
+                importedPrograms.add(importedEntityService.getById(ImportedProgram.class, importedProgramDTO.getId()));
+            }
         }
     }
 

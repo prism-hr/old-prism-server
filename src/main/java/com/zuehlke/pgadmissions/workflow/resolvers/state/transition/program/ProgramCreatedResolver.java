@@ -29,7 +29,7 @@ public class ProgramCreatedResolver implements StateTransitionResolver<Program> 
     @Override
     public StateTransition resolve(Program resource, Comment comment) {
         User user = comment.getUser();
-        ResourceParent parentResource = (ResourceParent) resource.getParentResource();
+        ResourceParent<?> parentResource = (ResourceParent<?>) resource.getParentResource();
         if (roleService.hasUserRole(resource, user, DEPARTMENT_ADMINISTRATOR_GROUP)) {
             return stateService.getStateTransition(parentResource, comment.getAction(), PROGRAM_APPROVED);
         }

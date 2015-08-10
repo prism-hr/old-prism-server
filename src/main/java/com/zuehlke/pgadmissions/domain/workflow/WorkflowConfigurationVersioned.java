@@ -11,8 +11,8 @@ public abstract class WorkflowConfigurationVersioned<T> extends WorkflowConfigur
     public abstract void setVersion(Integer version);
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("version", getVersion());
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("version", getVersion());
     }
 
 }

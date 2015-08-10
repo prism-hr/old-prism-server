@@ -51,18 +51,18 @@ public class ActionMapper {
         return representations;
     }
 
-    // FIXME department
-    public List<ActionRepresentationExtended> getActionRepresentations(Resource resource, User user) {
+    public List<ActionRepresentationExtended> getActionRepresentations(Resource<?> resource, User user) {
         PrismScope scope = resource.getResourceScope();
         Integer resourceId = resource.getId();
         Integer systemId = resource.getSystem().getId();
         Integer institutionId = getResourceId(resource.getInstitution());
+        Integer departmentId = getResourceId(resource.getDepartment());
         Integer programId = getResourceId(resource.getProgram());
         Integer projectId = getResourceId(resource.getProject());
         Integer applicationId = getResourceId(resource.getApplication());
 
         Set<ActionRepresentationExtended> representations = Sets.newLinkedHashSet();
-        List<ActionDTO> actions = actionService.getPermittedActions(scope, resourceId, systemId, institutionId, programId, projectId,
+        List<ActionDTO> actions = actionService.getPermittedActions(scope, resourceId, systemId, institutionId, departmentId, programId, projectId,
                 applicationId, user);
         for (ActionDTO action : actions) {
             representations.add(getActionRepresentationExtended(resource, action, user));
@@ -81,8 +81,8 @@ public class ActionMapper {
                 resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(
                 actionOutcomeDTO.getTransitionAction().getId());
     }
-    
-    private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
+
+    private ActionRepresentationExtended getActionRepresentationExtended(Resource<?> resource, ActionDTO action, User user) {
         PrismAction prismAction = action.getActionId();
         ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class);
 
@@ -111,12 +111,11 @@ public class ActionMapper {
 
         representation.setId(action);
         representation.setCategory(action.getActionCategory());
-        representation.setCustomQuestion(action.getActionCustomQuestion());
 
         return representation;
     }
 
-    private <T extends Resource> Integer getResourceId(T resource) {
+    private <T extends Resource<?>> Integer getResourceId(T resource) {
         return resource == null ? null : resource.getId();
     }
 

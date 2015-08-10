@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.google.common.collect.Sets;
@@ -43,10 +42,6 @@ public class Action extends WorkflowDefinition {
 
     @Column(name = "visible_action", nullable = false)
     private Boolean visibleAction;
-
-    @OneToOne
-    @JoinColumn(name = "action_custom_question_definition_id")
-    private ActionCustomQuestionDefinition actionCustomQuestionDefinition;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -121,14 +116,6 @@ public class Action extends WorkflowDefinition {
 
     public void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
-    }
-
-    public ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
-        return actionCustomQuestionDefinition;
-    }
-
-    public void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
-        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
     }
 
     public Action getFallbackAction() {
@@ -208,11 +195,6 @@ public class Action extends WorkflowDefinition {
         return this;
     }
 
-    public Action withActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
-        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
-        return this;
-    }
-
     public Action withFallbackAction(Action fallbackAction) {
         this.fallbackAction = fallbackAction;
         return this;
@@ -226,10 +208,6 @@ public class Action extends WorkflowDefinition {
     public Action withCreationScope(Scope creationScope) {
         this.creationScope = creationScope;
         return this;
-    }
-
-    public boolean isCustomizableAction() {
-        return actionCustomQuestionDefinition != null;
     }
 
 }

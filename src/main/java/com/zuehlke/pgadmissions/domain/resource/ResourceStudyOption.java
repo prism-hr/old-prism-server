@@ -119,7 +119,7 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute implements
         this.instances = instances;
     }
 
-    public ResourceStudyOption withResource(ResourceParent resource) {
+    public ResourceStudyOption withResource(ResourceParent<?> resource) {
         setResource(resource);
         return this;
     }
@@ -157,8 +157,8 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute implements
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("studyOption", studyOption);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("studyOption", studyOption);
     }
 
 }

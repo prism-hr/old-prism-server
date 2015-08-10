@@ -10,12 +10,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 @Entity
 @Table(name = "state_transition_pending", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "action_id" }),
@@ -131,7 +131,7 @@ public class StateTransitionPending extends WorkflowResourceExecution {
         this.action = action;
     }
 
-    public StateTransitionPending withResource(Resource resource) {
+    public StateTransitionPending withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }
@@ -142,8 +142,8 @@ public class StateTransitionPending extends WorkflowResourceExecution {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("action", action);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("action", action);
     }
 
 }

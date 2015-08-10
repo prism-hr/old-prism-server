@@ -1,12 +1,78 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_FINANCIAL_DETAILS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
 
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -102,15 +168,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_COMMENT_RESTORED_NOTIFICATION_GLOBAL(SYSTEM_COMMENT, "Restored system global notification configuration"),
     SYSTEM_COMMENT_UPDATED_STATE_DURATION(SYSTEM_COMMENT, "Updated system state duration configuration"),
     SYSTEM_COMMENT_RESTORED_STATE_DURATION_GLOBAL(SYSTEM_COMMENT, "Restored system global state duration configuration"),
-    SYSTEM_COMMENT_UPDATED_ACTION_PROPERTY(SYSTEM_COMMENT, "Updated system action property configuration"),
     SYSTEM_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL(SYSTEM_COMMENT, "Restored system global action property configuration"),
     SYSTEM_COMMENT_UPDATED_WORKFLOW_PROPERTY(SYSTEM_COMMENT, "Updated system workflow property configuration"),
     SYSTEM_COMMENT_RESTORED_WORKFLOW_PROPERTY_GLOBAL(SYSTEM_COMMENT, "Restored system global workflow property configuration"),
     SYSTEM_COMMENT_UPDATED_DISPLAY_PROPERTY(SYSTEM_COMMENT, "Updated system display property configuration"),
     SYSTEM_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL(SYSTEM_COMMENT, "Restored system global display property configuration"),
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use"),
-    SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use"),
-    SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one"),
     SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_COMMENT, "No comment provided"),
 
     /*
@@ -758,7 +821,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_RESOURCE_CONFIGURATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Resource Configuration Section"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_MANAGE_USERS(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Manage Users Section"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Email Template Configuration"),
-    SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Custom Forms Configuration"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_WORKFLOW_CONFIGURATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Workflow Configuration"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_TRANSLATIONS_CONFIGURATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Customization"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_ERROR_MESSAGES(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Error Messages"),
@@ -1150,7 +1212,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TIMELINE_HEADER(SYSTEM_RESOURCE_SECTION, "Timeline"),
     SYSTEM_RESOURCE_MANAGE_USERS_HEADER(SYSTEM_RESOURCE_SECTION, "Manage Users"),
     SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER(SYSTEM_RESOURCE_SECTION, "Email Templates"),
-    SYSTEM_RESOURCE_CUSTOM_FORMS_HEADER(SYSTEM_RESOURCE_SECTION, "Custom Forms"),
     SYSTEM_RESOURCE_RELATED_OPPORTUNITIES_HEADER(SYSTEM_RESOURCE_SECTION, "Related Opportunities"),
     SYSTEM_RESOURCE_CONFIGURATION_HEADER(SYSTEM_RESOURCE_SECTION, "Configuration"),
     SYSTEM_RESOURCE_ADVERT_HEADER(SYSTEM_RESOURCE_SECTION, "Advert"),
@@ -1401,16 +1462,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_EMAIL_CONFIGURATION_CONTENT_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Edit to amend the email content"),
     SYSTEM_EMAIL_CONFIGURATION_REMINDER_INTERVAL_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Reminder Interval"),
     SYSTEM_EMAIL_CONFIGURATION_REMINDER_INTERVAL_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Increase or reduce the frequency of reminder messages"),
-
-    /*
-     * *************** SYSTEM HTML CUSTOM FORM CONFIGURATION **********************
-     */
-
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_LABEL(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Comment Type"),
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_HINT(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "The type of comment that you wish to configure custom data entry fields for."),
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_SUBHEADER(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Canvas"),
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "To edit the field just click on it"),
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMPONENTS_PANEL_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Drag and drop the fields below to the canvas panel on the left."),
 
     /*
      * *************** SYSTEM HTML WORKFLOW CONFIGURATION *********************

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class ImportedAdvertDomicileExtractor implements ImportedEntityExtractor<
             cells.add(prepareStringForSqlInsert(definition.getName()));
             cells.add(prepareStringForSqlInsert(definition.getCurrency()));
             cells.add(prepareBooleanForSqlInsert(enable));
-            rows.add(prepareCellsForSqlInsert(cells));
+            rows.add(prepareColumnsForSqlInsert(cells));
         }
         return rows;
     }

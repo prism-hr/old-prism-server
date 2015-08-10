@@ -121,8 +121,8 @@ public class ImportedInstitutionMapping extends ImportedEntityMapping<ImportedIn
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("institution", importedEntity);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("institution", importedEntity);
     }
 
 }

@@ -124,8 +124,8 @@ public class StateTransition implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("transitionState", transitionState);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("stateAction", stateAction).addProperty("transitionState", transitionState);
     }
 
 }

@@ -17,7 +17,7 @@ public class ResourceCreatorUtils {
     private ResourceService resourceService;
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceParentDivisionDTO, U extends ResourceParent> U getParentResource(User user, T newResource) throws Exception {
+    public <T extends ResourceParentDivisionDTO, U extends ResourceParent<?>> U getParentResource(User user, T newResource) throws Exception {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
         return (U) resourceService.getById(parentResourceDTO.getScope().getResourceClass(), parentResourceDTO.getId());
     }

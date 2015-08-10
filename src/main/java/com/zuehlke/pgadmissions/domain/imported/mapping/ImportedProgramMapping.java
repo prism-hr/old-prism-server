@@ -118,8 +118,8 @@ public class ImportedProgramMapping extends ImportedEntityMapping<ImportedProgra
 
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedEntity", importedEntity);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("importedEntity", importedEntity);
     }
 
 }

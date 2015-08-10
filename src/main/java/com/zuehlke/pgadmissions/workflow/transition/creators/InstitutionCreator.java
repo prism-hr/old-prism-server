@@ -49,7 +49,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
     private BigDecimal minimumWage;
 
     @Override
-    public Resource create(User user, InstitutionDTO newResource) throws Exception {
+    public Resource<?> create(User user, InstitutionDTO newResource) throws Exception {
         System system = systemService.getSystem();
 
         AdvertDTO advertDTO = newResource.getAdvert();
@@ -72,7 +72,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         InputStream inputStream = new URL("http://ec.europa.eu/eurostat/SDMX/diss-web/rest/data/earn_mw_cur/S.NAC.UK").openStream();
         org.jsoup.nodes.Document document = Jsoup.parse(inputStream, "UTF8", "http://ec.europa.eu");
         Elements series = document.getElementsByTag("generic:Series");
-        if(series.size() != 1) {
+        if (series.size() != 1) {
             minimumWage = new BigDecimal(1074.0);
             logger.error("Expected only one series, found: " + series.size() + ". Applying " + minimumWage + " (data as for 2015-B2)");
         }

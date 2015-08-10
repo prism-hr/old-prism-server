@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programCompleteApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programTerminateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditActive;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programWithdraw;
 
@@ -34,6 +35,7 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
 
         stateActions.add(programEmailCreatorUnnapproved()); //
         stateActions.add(programEscalateUnapproved()); //
+        stateActions.add(programTerminateUnapproved());
         stateActions.add(programViewEditActive()); //
         stateActions.add(programWithdraw());
     }

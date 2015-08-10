@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_EDIT_AS_USER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
@@ -37,13 +36,6 @@ public class PrismProjectWorkflow {
         return projectEscalateAbstract()
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_REJECTED) //
-                        .withTransitionAction(PROJECT_ESCALATE));
-    }
-
-    public static PrismStateAction projectEscalateApproved() {
-        return projectEscalateAbstract()
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(PROJECT_DISABLED_COMPLETED) //
                         .withTransitionAction(PROJECT_ESCALATE));
     }
 
@@ -97,8 +89,7 @@ public class PrismProjectWorkflow {
 
     private static PrismStateAction projectTerminateAbstract() {
         return new PrismStateAction() //
-                .withAction(PROJECT_TERMINATE) //
-                .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION);
+                .withAction(PROJECT_TERMINATE);
     }
 
     private static PrismStateAction projectViewEditAbstract() {

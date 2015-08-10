@@ -38,8 +38,8 @@ public abstract class ResourceStateDefinition extends WorkflowResourceExecution 
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("state", getState());
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("state", getState());
     }
 
 }

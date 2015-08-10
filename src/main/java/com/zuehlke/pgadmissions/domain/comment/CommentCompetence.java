@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,8 +28,11 @@ public class CommentCompetence {
     @JoinColumn(name = "competence_id", nullable = false)
     private Competence competence;
 
+    @Column(name = "importance", nullable = false)
+    private Integer importance;
+
     @Column(name = "rating", nullable = false)
-    private BigDecimal rating;
+    private Integer rating;
 
     @Column(name = "remark")
     private String remark;
@@ -60,11 +61,19 @@ public class CommentCompetence {
         this.competence = competence;
     }
 
-    public BigDecimal getRating() {
+    public Integer getImportance() {
+        return importance;
+    }
+
+    public void setImportance(Integer importance) {
+        this.importance = importance;
+    }
+
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(BigDecimal rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
@@ -76,9 +85,34 @@ public class CommentCompetence {
         this.remark = remark;
     }
 
+    public CommentCompetence withComment(Comment comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    public CommentCompetence withCompetence(Competence competence) {
+        this.competence = competence;
+        return this;
+    }
+
+    public CommentCompetence withImportance(Integer importance) {
+        this.importance = importance;
+        return this;
+    }
+
+    public CommentCompetence withRating(Integer rating) {
+        this.rating = rating;
+        return this;
+    }
+
+    public CommentCompetence withRemark(String remark) {
+        this.remark = remark;
+        return this;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment, competence);
+        return Objects.hashCode(comment.getId(), competence.getId());
     }
 
     @Override
@@ -90,7 +124,7 @@ public class CommentCompetence {
             return false;
         }
         CommentCompetence other = (CommentCompetence) object;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(competence, other.getCompetence());
+        return Objects.equal(comment.getId(), other.getComment().getId()) && Objects.equal(competence.getId(), other.getCompetence().getId());
     }
 
 }

@@ -97,8 +97,8 @@ public class ImportedSubjectAreaMapping extends ImportedEntityMapping<ImportedSu
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedSubjectArea", importedEntity);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("importedSubjectArea", importedEntity);
     }
 
 }

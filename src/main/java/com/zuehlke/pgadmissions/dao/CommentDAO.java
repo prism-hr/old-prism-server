@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
@@ -34,18 +33,18 @@ public class CommentDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Comment getLatestComment(Resource resource) {
+    public Comment getLatestComment(Resource<?> resource) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource<?> resource, PrismAction... prismActions) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("action.id", prismActions)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
@@ -53,9 +52,9 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource resource, User user, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource<?> resource, User user, PrismAction... prismActions) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("action.id", prismActions)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("user", user)) //
@@ -66,9 +65,9 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction prismAction, DateTime baseline) {
+    public Comment getLatestComment(Resource<?> resource, PrismAction prismAction, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("action.id", prismAction)) //
                 .add(Restrictions.ge("createdTimestamp", baseline)) //
                 .addOrder(Order.desc("createdTimestamp")) //
@@ -77,9 +76,9 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource resource, PrismAction prismAction, User user, DateTime baseline) {
+    public Comment getLatestComment(Resource<?> resource, PrismAction prismAction, User user, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("action.id", prismAction)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("user", user)) //
@@ -87,20 +86,6 @@ public class CommentDAO {
                 .add(Restrictions.ge("createdTimestamp", baseline)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public <T extends Resource> Comment getEarliestComment(ResourceParent parentResource, Class<T> resourceClass, PrismAction actionId) {
-        String resourceReference = PrismScope.getByResourceClass(resourceClass).getLowerCamelName();
-        String parentResourceReference = parentResource.getResourceScope().getLowerCamelName();
-        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + "." + parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.id", actionId)) //
-                .add(Restrictions.eq(parentResourceReference + ".id", parentResource.getId())) //
-                .addOrder(Order.asc("createdTimestamp")) //
-                .addOrder(Order.asc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -156,7 +141,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getComments(Resource resource) {
+    public List<Comment> getComments(Resource<?> resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -177,7 +162,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getStateGroupTransitionComments(Resource resource) {
+    public List<Comment> getStateGroupTransitionComments(Resource<?> resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -198,7 +183,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
+    public List<Comment> getStateComments(Resource<?> resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
@@ -241,29 +226,31 @@ public class CommentDAO {
                 .list();
     }
 
-    public void reassignComments(User oldUser, User newUser) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update Comment "
-                        + "set user = :newUser "
-                        + "where user = :oldUser") //
-                .setParameter("newUser", newUser) //
-                .setParameter("oldUser", oldUser) //
-                .executeUpdate();
-    }
-
-    public void reassignDelegateComments(User oldUser, User newUser) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update Comment "
-                        + "set delegateUser = :newUser "
-                        + "where delegateUser = :oldUser") //
-                .setParameter("newUser", newUser) //
-                .setParameter("oldUser", oldUser) //
-                .executeUpdate();
-    }
-
     public List<CommentAssignedUser> getCommentAssignedUsers(User user) {
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .add(Restrictions.eq("user", user)) //
+                .list();
+    }
+
+    public List<Comment> getResourceOwnerComments(Resource<?> resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqProperty("user", resourceReference + ".user")) //
+                        .add(Restrictions.eqProperty("delegateUser", resourceReference + ".user"))) //
+                .list();
+    }
+
+    public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource<?> resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        String resourceReferenceComment = "comment." + resourceReference;
+        return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
+                .createAlias(resourceReferenceComment, resourceReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReferenceComment, resource)) //
+                .add(Restrictions.eqProperty("user", resourceReference + ".user")) //
                 .list();
     }
 

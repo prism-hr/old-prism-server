@@ -3,15 +3,12 @@ package com.zuehlke.pgadmissions.rest.representation.action;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 
 public class ActionRepresentation {
 
     private PrismAction id;
 
     private PrismActionCategory category;
-
-    private PrismActionCustomQuestionDefinition customQuestion;
 
     public PrismAction getId() {
         return id;
@@ -27,14 +24,6 @@ public class ActionRepresentation {
 
     public void setCategory(PrismActionCategory category) {
         this.category = category;
-    }
-
-    public PrismActionCustomQuestionDefinition getCustomQuestion() {
-        return customQuestion;
-    }
-
-    public void setCustomQuestion(PrismActionCustomQuestionDefinition customQuestion) {
-        this.customQuestion = customQuestion;
     }
 
     @Override

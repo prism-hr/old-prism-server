@@ -28,14 +28,14 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.workflow.user.InstitutionReassignmentProcessor;
 
 @Entity
-@Table(name = "institution", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "name"})})
-public class Institution extends ResourceParent implements TargetEntity {
+@Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "name" }) })
+public class Institution extends ResourceParent<InstitutionReassignmentProcessor> implements TargetEntity {
 
     @Id
     @GeneratedValue
@@ -337,13 +337,8 @@ public class Institution extends ResourceParent implements TargetEntity {
         this.importedInstitution = importedInstitution;
     }
 
-    public Institution withParentResource(Resource parentResource) {
+    public Institution withParentResource(System parentResource) {
         setParentResource(parentResource);
-        return this;
-    }
-
-    public Institution withSystem(System system) {
-        this.system = system;
         return this;
     }
 
@@ -578,8 +573,13 @@ public class Institution extends ResourceParent implements TargetEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return googleId == null ? super.getResourceSignature().addProperty("user", user) : super.getResourceSignature().addProperty("googleId", googleId);
+    public Class<InstitutionReassignmentProcessor> getUserReassignmentProcessor() {
+        return InstitutionReassignmentProcessor.class;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return googleId == null ? super.getEntitySignature().addProperty("user", user) : super.getEntitySignature().addProperty("googleId", googleId);
     }
 
 }

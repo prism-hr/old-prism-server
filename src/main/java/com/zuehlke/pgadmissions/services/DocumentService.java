@@ -89,7 +89,7 @@ public class DocumentService {
     }
 
     public Document getById(Integer id, PrismFileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
     }
 
     public Document createDocument(Part uploadStream) throws Exception {
@@ -133,10 +133,14 @@ public class DocumentService {
             documentDAO.deleteOrphanDocuments(documentIds);
         }
     }
+    
+    public List<Document> getResourceOwnerDocuments(Resource<?> resource) {
+        return documentDAO.getResourceOwnerDocuments(resource);
+    }
 
     public void validateDownload(Document document) {
         User user = userService.getCurrentUser();
-        Resource resource = document.getResource();
+        Resource<?> resource = document.getResource();
         if (!user.getId().equals(document.getUser().getId())) {
             Action viewEditAction = actionService.getViewEditAction(resource);
             actionService.validateViewEditAction(resource, viewEditAction, user);
@@ -226,10 +230,6 @@ public class DocumentService {
         } catch (IOException e) {
             throw new Error(e);
         }
-    }
-
-    public void reassignDocuments(User oldUser, User newUser) {
-        documentDAO.reassignDocuments(oldUser, newUser);
     }
 
     public S3Object getImportedDataSource(ImportedEntityType importedEntityType) {

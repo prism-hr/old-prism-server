@@ -3,12 +3,12 @@ package com.zuehlke.pgadmissions.domain.workflow;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public abstract class WorkflowResource implements UniqueEntity {
@@ -37,18 +37,19 @@ public abstract class WorkflowResource implements UniqueEntity {
     
     public abstract void setProject(Project project);
 
-    public Resource getResource() {
+    @SuppressWarnings("unchecked")
+    public Resource<?> getResource() {
         return ObjectUtils.firstNonNull(getSystem(), getInstitution(), getDepartment(), getProgram(), getProject());
     }
 
-    public void setResource(Resource resource) {
+    public void setResource(Resource<?> resource) {
         PrismReflectionUtils.invokeMethod(this, "set" + resource.getResourceScope().getUpperCamelName(), resource);
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        Resource resource = getResource();
-        return new ResourceSignature().addProperty(resource.getResourceScope().getLowerCamelName(), resource);
+    public EntitySignature getEntitySignature() {
+        Resource<?> resource = getResource();
+        return new EntitySignature().addProperty(resource.getResourceScope().getLowerCamelName(), resource);
     }
 
 }

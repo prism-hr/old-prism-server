@@ -23,6 +23,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEmailCreatorApproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateApproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditActive;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -72,6 +73,7 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
                         .withTransitionState(PROJECT_APPROVED) //
                         .withTransitionAction(DEPARTMENT_IMPORT_PROJECT)));
 
+        stateActions.add(departmentTerminateApproved()); //
         stateActions.add(departmentViewEditActive()); //
     }
 

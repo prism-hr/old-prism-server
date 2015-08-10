@@ -8,12 +8,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_APPLICATION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.valueOf;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
 import static org.joda.time.DateTimeConstants.MONDAY;
 
@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -39,7 +38,6 @@ import org.springframework.validation.ValidationUtils;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
@@ -80,7 +78,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.ApplicationValidator;
@@ -151,9 +148,9 @@ public class ApplicationService {
         return entityService.getByProperty(Application.class, "codeLegacy", codeLegacy);
     }
 
-    public Resource createApplication(User user, ApplicationDTO newResource) {
+    public Resource<?> createApplication(User user, ApplicationDTO newResource) {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
-        ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
+        ResourceParent<?> parentResource = (ResourceParent<?>) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
         return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert()).withRetain(false)
                 .withCreatedTimestamp(new DateTime());
     }
@@ -165,9 +162,9 @@ public class ApplicationService {
         ImportedEntitySimple studyOption = importedEntityService.getById(ImportedEntitySimple.class, studyOptionId);
 
         ResourceStudyOption resourceStudyOption = null;
-        Resource parentResource = application.getParentResource();
+        Resource<?> parentResource = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
+            resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity<?>) application.getParentResource(), studyOption);
         }
 
         LocalDate earliestStartDate = getEarliestStartDate(resourceStudyOption, baseline);
@@ -201,8 +198,7 @@ public class ApplicationService {
 
             if (!(applicationStartDate == null || applicationCloseDate == null)) {
                 LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
-                        PrismOpportunityType.valueOf(((ResourceOpportunity) resourceStudyOption.getResource()).getOpportunityType().getName())
-                                .getDefaultStartBuffer());
+                        valueOf(((ResourceOpportunity<?>) resourceStudyOption.getResource()).getOpportunityType().getName()).getDefaultStartBuffer());
                 LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
                 return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
             }
@@ -250,12 +246,9 @@ public class ApplicationService {
                 ImportedEntityResponse domicileMock = importedEntityMapper.getImportedEntityRepresentation(domicileUseDTO.getDomicile(), institution);
 
                 for (int i = 0; i < referencesPending; i++) {
-                    representations.add(new ApplicationRefereeRepresentation()
-                            .withUser(userMapper.getUserRepresentationSimple(institution.getUser()))
-                            .withJobTitle(jobTitle)
-                            .withAddress(
-                                    new AddressApplicationRepresentation().withDomicile(domicileMock).withAddressLine1(addressLineMock)
-                                            .withAddressCode(addressLineMock).withAddressCode(addressCodeMock)).withPhone(phoneMock));
+                    representations.add(new ApplicationRefereeRepresentation().withUser(userMapper.getUserRepresentationSimple(institution.getUser()))
+                            .withJobTitle(jobTitle).withAddress(new AddressApplicationRepresentation().withDomicile(domicileMock)
+                                    .withAddressLine1(addressLineMock).withAddressCode(addressLineMock).withAddressCode(addressCodeMock)).withPhone(phoneMock));
                 }
             }
         }
@@ -330,31 +323,6 @@ public class ApplicationService {
         return dataTable;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) {
-        List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
-        customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, application, //
-                application.getWorkflowPropertyConfigurationVersion());
-        if (application.isSubmitted()) {
-            for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
-                PrismWorkflowPropertyDefinition property = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
-                if (property == APPLICATION_ASSIGN_REFEREE) {
-                    configuration.setMaximum(property.getMaximumPermitted());
-                } else if (property == APPLICATION_POSITION_DETAIL
-                        && BooleanUtils.isTrue(application.getProgram().getRequirePositionDefinition())) {
-                    configuration.setEnabled(true);
-                    configuration.setRequired(true);
-                }
-            }
-        }
-        return configurations;
-    }
-
-    public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
-        return userAdministratorResources.isEmpty() ? Lists.<Application> newArrayList() : applicationDAO
-                .getUserAdministratorApplications(userAdministratorResources);
-    }
-
     public void prepopulateApplication(Application application) {
         Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
         if (previousApplication != null) {
@@ -374,7 +342,7 @@ public class ApplicationService {
         return applicationDAO.getApplicationRatingSummary(application);
     }
 
-    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent<?> resource) {
         return applicationDAO.getApplicationRatingSummary(resource);
     }
 
@@ -404,17 +372,17 @@ public class ApplicationService {
         return applicationDAO.getOtherLiveApplications(application);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent<?> resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
     }
@@ -435,9 +403,9 @@ public class ApplicationService {
     }
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
-        ResourceParent parentResource = (ResourceParent) application.getParentResource();
+        ResourceParent<?> parentResource = (ResourceParent<?>) application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) parentResource).getOpportunityType().getName());
+            PrismOpportunityType opportunityType = valueOf(((ResourceOpportunity<?>) parentResource).getOpportunityType().getName());
             DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
 
             LocalDate immediate = defaults.getImmediate();

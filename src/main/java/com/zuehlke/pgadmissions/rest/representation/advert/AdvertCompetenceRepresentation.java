@@ -4,8 +4,14 @@ public class AdvertCompetenceRepresentation extends AdvertTargetRepresentation {
 
     private String description;
 
+    private Integer importance;
+
     public String getDescription() {
         return description;
+    }
+
+    public Integer getImportance() {
+        return importance;
     }
 
     public void setDescription(String description) {
@@ -23,7 +29,12 @@ public class AdvertCompetenceRepresentation extends AdvertTargetRepresentation {
     }
 
     public AdvertCompetenceRepresentation withDescription(String description) {
-        setDescription(description);
+        this.description = description;
+        return this;
+    }
+
+    public AdvertCompetenceRepresentation withImportance(Integer importance) {
+        this.importance = importance;
         return this;
     }
 

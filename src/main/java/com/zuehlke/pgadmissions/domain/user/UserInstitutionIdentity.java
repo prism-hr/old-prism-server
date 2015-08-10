@@ -14,10 +14,11 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.workflow.user.UserInstitutionIdentityReassignmentProcessor;
 
 @Entity
 @Table(name = "user_institution_identity", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "institution_id", "user_identity_type" }) })
-public class UserInstitutionIdentity implements UniqueEntity {
+public class UserInstitutionIdentity implements UniqueEntity, UserAssignment<UserInstitutionIdentityReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -99,8 +100,18 @@ public class UserInstitutionIdentity implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("user", user).addProperty("institution", institution).addProperty("identityType", identityType);
+    public Class<UserInstitutionIdentityReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserInstitutionIdentityReassignmentProcessor.class;
+    }
+    
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("user", user).addProperty("institution", institution).addProperty("identityType", identityType);
     }
 
 }

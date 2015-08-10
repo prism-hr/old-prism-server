@@ -97,8 +97,8 @@ public class ImportedLanguageQualificationTypeMapping extends ImportedEntityMapp
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedLanguageQualificationType", importedEntity);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("importedLanguageQualificationType", importedEntity);
     }
 
 }

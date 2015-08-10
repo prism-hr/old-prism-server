@@ -48,8 +48,8 @@ public class ImportedEntityType implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("id", id);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("id", id);
     }
 
 }

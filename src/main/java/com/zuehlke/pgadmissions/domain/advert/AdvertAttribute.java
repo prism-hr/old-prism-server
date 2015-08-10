@@ -17,8 +17,8 @@ public abstract class AdvertAttribute <T> implements UniqueEntity {
     public abstract void setValue(T value);
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("advert", getAdvert()).addProperty("value", getValue());
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("advert", getAdvert()).addProperty("value", getValue());
     }
 
 }

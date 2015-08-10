@@ -12,12 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 @Entity
 @Table(name = "workflow_property_configuration", uniqueConstraints = {
@@ -219,7 +219,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         this.systemDefault = systemDefault;
     }
 
-    public WorkflowPropertyConfiguration withResource(Resource resource) {
+    public WorkflowPropertyConfiguration withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }

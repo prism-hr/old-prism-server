@@ -61,19 +61,19 @@ public class CommentAppointmentPreference {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment, dateTime);
+        return Objects.hashCode(comment.getId(), dateTime);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        CommentAppointmentPreference other = (CommentAppointmentPreference) obj;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(dateTime, other.getDateTime());
+        CommentAppointmentPreference other = (CommentAppointmentPreference) object;
+        return Objects.equal(comment.getId(), other.getComment().getId()) && Objects.equal(dateTime, other.getDateTime());
     }
 
 }

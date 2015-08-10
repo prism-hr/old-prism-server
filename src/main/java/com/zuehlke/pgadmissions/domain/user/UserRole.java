@@ -14,14 +14,15 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
+import com.zuehlke.pgadmissions.workflow.user.UserRoleReassignmentProcessor;
 
 @Entity
 @Table(name = "user_role", uniqueConstraints = {
@@ -31,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
         @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
-public class UserRole extends WorkflowResourceExecution {
+public class UserRole extends WorkflowResourceExecution implements UserAssignment<UserRoleReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -44,7 +45,7 @@ public class UserRole extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -100,15 +101,15 @@ public class UserRole extends WorkflowResourceExecution {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
-        this.department = department;   
+        this.department = department;
     }
 
     @Override
@@ -165,7 +166,7 @@ public class UserRole extends WorkflowResourceExecution {
         this.assignedTimestamp = assignedTimestamp;
     }
 
-    public UserRole withResource(Resource resource) {
+    public UserRole withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }
@@ -186,8 +187,18 @@ public class UserRole extends WorkflowResourceExecution {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("user", user).addProperty("role", role);
+    public Class<UserRoleReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserRoleReassignmentProcessor.class;
+    }
+    
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("user", user).addProperty("role", role);
     }
 
 }

@@ -50,7 +50,7 @@ public class ActionDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public Action getUserRedirectAction(Resource resource, User user) {
+    public Action getUserRedirectAction(Resource<?> resource, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
@@ -71,7 +71,7 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
-    public Action getSystemRedirectAction(Resource resource) {
+    public Action getSystemRedirectAction(Resource<?> resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
@@ -88,7 +88,7 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
-    public Action getPermittedAction(Resource resource, Action action, User user) {
+    public Action getPermittedAction(Resource<?> resource, Action action, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
@@ -109,7 +109,7 @@ public class ActionDAO {
     }
 
     public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
-            Integer programId, Integer projectId, Integer applicationId, User user) {
+            Integer departmentId, Integer programId, Integer projectId, Integer applicationId, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -135,6 +135,7 @@ public class ActionDAO {
                                         .add(Restrictions.eq("userRole.application.id", applicationId)) //
                                         .add(Restrictions.eq("userRole.project.id", projectId)) //
                                         .add(Restrictions.eq("userRole.program.id", programId)) //
+                                        .add(Restrictions.eq("userRole.department.id", departmentId)) //
                                         .add(Restrictions.eq("userRole.institution.id", institutionId)) //
                                         .add(Restrictions.eq("userRole.system.id", systemId)))
                                 .add(Restrictions.eq("stateActionAssignment.partnerMode", false)))) //
@@ -180,7 +181,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public Action getPermittedUnsecuredAction(Resource resource, Action action, boolean userLoggedIn) {
+    public Action getPermittedUnsecuredAction(Resource<?> resource, Action action, boolean userLoggedIn) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action")) //
@@ -210,7 +211,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<ActionRedactionDTO> getRedactions(Resource resource, List<PrismRole> roleIds) {
+    public List<ActionRedactionDTO> getRedactions(Resource<?> resource, List<PrismRole> roleIds) {
         return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "actionId") //
@@ -233,7 +234,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, User user) {
+    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource<?> resource, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.actionEnhancement")) //
@@ -254,7 +255,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
+    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource<?> resource, PrismAction actionId, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.actionEnhancement")) //
@@ -275,7 +276,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, User user) {
+    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource<?> resource, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
@@ -295,7 +296,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, PrismAction actionId, User user) {
+    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource<?> resource, PrismAction actionId, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement")) //
@@ -316,7 +317,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public Action getViewEditAction(Resource resource) {
+    public Action getViewEditAction(Resource<?> resource) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -390,7 +391,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
+    public List<PrismAction> getPartnerActions(Resource<?> resource, List<PrismActionCondition> actionConditions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action.id")) //

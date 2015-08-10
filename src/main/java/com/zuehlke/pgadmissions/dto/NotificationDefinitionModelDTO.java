@@ -15,7 +15,7 @@ public class NotificationDefinitionModelDTO {
 
     private User invoker;
 
-    private Resource resource;
+    private Resource<?> resource;
 
     private Comment comment;
 
@@ -31,7 +31,7 @@ public class NotificationDefinitionModelDTO {
         return user;
     }
 
-    public Resource getResource() {
+    public Resource<?> getResource() {
         return resource;
     }
 
@@ -86,7 +86,7 @@ public class NotificationDefinitionModelDTO {
         return this;
     }
 
-    public NotificationDefinitionModelDTO withResource(Resource resource) {
+    public NotificationDefinitionModelDTO withResource(Resource<?> resource) {
         this.resource = resource;
         return this;
     }

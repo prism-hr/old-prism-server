@@ -7,26 +7,28 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_UNSUBMITTED_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateUnsubmitted;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawUnsubmitted;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationUnsubmitted extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(applicationCompleteUnsubmitted()); //
-		stateActions.add(applicationEscalate(APPLICATION_UNSUBMITTED_PENDING_COMPLETION)); //
-		stateActions.add(applicationWithdraw());
-	}
+    @Override
+    protected void setStateActions() {
+        stateActions.add(applicationCompleteUnsubmitted()); //
+        stateActions.add(applicationEscalate(APPLICATION_UNSUBMITTED_PENDING_COMPLETION)); //
+        stateActions.add(applicationTerminateUnsubmitted());
+        stateActions.add(applicationWithdrawUnsubmitted());
+    }
 
-	public static PrismStateAction applicationCompleteUnsubmitted() {
-		return new PrismStateAction() //
-		        .withAction(APPLICATION_COMPLETE) //
-		        .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
-		        .withNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION) //
-		        .withTransitions(APPLICATION_COMPLETE_TRANSITION);
-	}
+    public static PrismStateAction applicationCompleteUnsubmitted() {
+        return new PrismStateAction() //
+                .withAction(APPLICATION_COMPLETE) //
+                .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
+                .withNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION) //
+                .withTransitions(APPLICATION_COMPLETE_TRANSITION);
+    }
 
 }

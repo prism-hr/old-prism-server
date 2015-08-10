@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.D
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP;
@@ -61,7 +60,7 @@ public class PrismDepartmentWorkflow {
                 .withTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }
-    
+
     public static PrismStateAction departmentViewEditInactive() {
         return departmentViewEditAbstract() //
                 .withActionEnhancement(DEPARTMENT_VIEW_AS_USER) //
@@ -85,8 +84,7 @@ public class PrismDepartmentWorkflow {
 
     private static PrismStateAction departmentTerminateAbstract() {
         return new PrismStateAction() //
-                .withAction(DEPARTMENT_TERMINATE) //
-                .withNotifications(DEPARTMENT_ADMINISTRATOR_GROUP, SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION);
+                .withAction(DEPARTMENT_TERMINATE);
     }
 
     private static PrismStateAction departmentViewEditAbstract() {

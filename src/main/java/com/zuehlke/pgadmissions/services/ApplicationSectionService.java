@@ -19,7 +19,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
@@ -37,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAssignmentSection;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
@@ -129,7 +127,7 @@ public class ApplicationSectionService {
 
         PrismOpportunityType prismOpportunityType = programDetailDTO.getOpportunityType();
         if (prismOpportunityType == null) {
-            ResourceOpportunity parent = (ResourceOpportunity) application.getParentResource();
+            ResourceOpportunity<?> parent = (ResourceOpportunity<?>) application.getParentResource();
             programDetail.setOpportunityType(parent.getOpportunityType());
         } else {
             ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class, prismOpportunityType.name());
@@ -207,12 +205,16 @@ public class ApplicationSectionService {
 
         updateUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
 
-        ImportedEntitySimple title = personalDetailDTO.getTitle() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getTitle().getId()) : null;
+        ImportedEntitySimple title = personalDetailDTO.getTitle() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO
+                .getTitle().getId()) : null;
         ImportedEntitySimple gender = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getGender().getId());
-        ImportedEntitySimple country = personalDetailDTO.getCountry() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getCountry().getId()) : null;
+        ImportedEntitySimple country = personalDetailDTO.getCountry() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO
+                .getCountry().getId()) : null;
         ImportedEntitySimple firstNationality = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getFirstNationality().getId());
-        ImportedEntitySimple secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getSecondNationality().getId()) : null;
-        ImportedEntitySimple residenceCountry = personalDetailDTO.getDomicile() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getDomicile().getId()) : null;
+        ImportedEntitySimple secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.getById(ImportedEntitySimple.class,
+                personalDetailDTO.getSecondNationality().getId()) : null;
+        ImportedEntitySimple residenceCountry = personalDetailDTO.getDomicile() != null ? importedEntityService.getById(ImportedEntitySimple.class,
+                personalDetailDTO.getDomicile().getId()) : null;
 
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
@@ -236,8 +238,10 @@ public class ApplicationSectionService {
         ApplicationDemographicDTO demographicDTO = personalDetailDTO.getDemographic();
         ApplicationDemographic demographic = new ApplicationDemographic();
         if (demographicDTO != null) {
-            demographic.setEthnicity(demographicDTO.getEthnicity() != null ? importedEntityService.getById(ImportedEntitySimple.class, demographicDTO.getEthnicity().getId()) : null);
-            demographic.setDisability(demographicDTO.getDisability() != null ? importedEntityService.getById(ImportedEntitySimple.class, demographicDTO.getDisability().getId()) : null);
+            demographic.setEthnicity(demographicDTO.getEthnicity() != null ? importedEntityService.getById(ImportedEntitySimple.class, demographicDTO
+                    .getEthnicity().getId()) : null);
+            demographic.setDisability(demographicDTO.getDisability() != null ? importedEntityService.getById(ImportedEntitySimple.class, demographicDTO
+                    .getDisability().getId()) : null);
         }
         personalDetail.setDemographic(demographic);
 
@@ -329,7 +333,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-                                                                  ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
+            ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -536,29 +540,10 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
-    public void reassignApplicationSections(User oldUser, User newUser) {
-        for (Application application : oldUser.getApplications()) {
-            reassignApplicationSections(application.getSupervisors(), oldUser, newUser);
-            reassignApplicationSections(application.getReferees(), oldUser, newUser);
-        }
-    }
-
-    private <T extends ApplicationAssignmentSection> void reassignApplicationSections(Set<T> assignmentSections, User oldUser, User newUser) {
-        for (T assignmentSection : assignmentSections) {
-            assignmentSection.setUser(newUser);
-            ApplicationAssignmentSection duplicateAssignmentSection = entityService.getDuplicateEntity(assignmentSection);
-            if (duplicateAssignmentSection != null) {
-                assignmentSection.setUser(oldUser);
-                entityService.delete(assignmentSection);
-            }
-        }
-    }
-
     private void updateUserDetail(ApplicationPersonalDetailDTO personalDetailDTO, User userCurrent, Application application) {
         User userCreator = application.getUser();
         if (userCurrent.getId().equals(userCreator.getId())) {
             ApplicationPersonalDetailUserDTO userDTO = personalDetailDTO.getUser();
-
             userCurrent.setFirstName(userDTO.getFirstName());
             userCurrent.setLastName(userDTO.getLastName());
             userCurrent.setFullName(userCurrent.getFirstName() + " " + userCurrent.getLastName());

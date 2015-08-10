@@ -8,8 +8,9 @@ import org.joda.time.DateTime;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
-public abstract class ResourceParent extends Resource implements ResourceParentDefinition<Advert> {
+public abstract class ResourceParent<T extends PrismUserReassignmentProcessor> extends Resource<T> implements ResourceParentDefinition<Advert> {
 
     public abstract String getName();
 
@@ -38,8 +39,8 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("name", getName());
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("name", getName());
     }
 
 }

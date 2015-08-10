@@ -20,10 +20,11 @@ import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.workflow.user.ApplicationRefereeReassignmentProcessor;
 
 @Entity
 @Table(name = "application_referee", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
-public class ApplicationReferee extends ApplicationAssignmentSection {
+public class ApplicationReferee extends ApplicationAssignmentSection<ApplicationRefereeReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -174,6 +175,11 @@ public class ApplicationReferee extends ApplicationAssignmentSection {
     public ApplicationReferee withApplication(Application application) {
         this.application = application;
         return this;
+    }
+
+    @Override
+    public Class<ApplicationRefereeReassignmentProcessor> getUserReassignmentProcessor() {
+        return ApplicationRefereeReassignmentProcessor.class;
     }
 
 }

@@ -13,11 +13,12 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.workflow.user.UserConnectionReassignmentProcessor;
 
 @Entity
 @Table(name = "user_connection", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_requested_id", "user_connected_id" }),
         @UniqueConstraint(columnNames = { "user_connected_id", "user_requested_id" }) })
-public class UserConnection implements UniqueEntity {
+public class UserConnection implements UniqueEntity, UserAssignment<UserConnectionReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -99,8 +100,18 @@ public class UserConnection implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("userRequested", userRequested).addProperty("userConnected", userConnected);
+    public Class<UserConnectionReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserConnectionReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("userRequested", userRequested).addProperty("userConnected", userConnected);
     }
 
 }

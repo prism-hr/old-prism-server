@@ -26,7 +26,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -86,10 +85,6 @@ public class ApplicationDownloadReferenceBuilder {
 
             BigDecimal rating = referenceComment.getApplicationRating();
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), rating == null ? null : rating.toPlainString(), body);
-
-            for (CommentCustomResponseRepresentation customResponse : referenceComment.getCustomResponses()) {
-                applicationDownloadBuilderHelper.addContentRowMedium(customResponse.getLabel(), customResponse.getPropertyValue(), body);
-            }
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }

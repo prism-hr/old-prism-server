@@ -149,8 +149,8 @@ public class ResourceListFilter implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("userAccount", userAccount).addProperty("scope", scope);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("userAccount", userAccount).addProperty("scope", scope);
     }
 
 }

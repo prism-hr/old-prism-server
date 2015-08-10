@@ -15,11 +15,13 @@ import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.workflow.user.CommentAssignmentUserReassignmentProcessor;
 
 @Entity
 @Table(name = "comment_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })
-public class CommentAssignedUser implements UniqueEntity {
+public class CommentAssignedUser implements UniqueEntity, UserAssignment<CommentAssignmentUserReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -98,24 +100,34 @@ public class CommentAssignedUser implements UniqueEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment, user, role);
+        return Objects.hashCode(comment.getId(), user, role);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        CommentAssignedUser other = (CommentAssignedUser) obj;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole());
+        CommentAssignedUser other = (CommentAssignedUser) object;
+        return Objects.equal(comment.getId(), other.getComment().getId()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole());
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("comment", comment).addProperty("user", user).addProperty("role", role);
+    public Class<CommentAssignmentUserReassignmentProcessor> getUserReassignmentProcessor() {
+        return CommentAssignmentUserReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return comment.getResource().getUser().equals(user);
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("comment", comment).addProperty("user", user).addProperty("role", role);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareCellsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 
@@ -26,7 +26,7 @@ public class ImportedAgeRangeExtractor implements ImportedEntityExtractor<Import
             cells.add(prepareStringForSqlInsert(definition.getLowerBound().toString()));
             cells.add(prepareIntegerForSqlInsert(definition.getUpperBound()));
             cells.add(prepareBooleanForSqlInsert(enable));
-            rows.add(prepareCellsForSqlInsert(cells));
+            rows.add(prepareColumnsForSqlInsert(cells));
         }
         return rows;
     }

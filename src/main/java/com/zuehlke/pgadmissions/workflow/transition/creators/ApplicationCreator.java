@@ -19,9 +19,9 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
     private ResourceService resourceService;
 
     @Override
-    public Resource create(User user, ApplicationDTO newResource) throws Exception {
+    public Resource<?> create(User user, ApplicationDTO newResource) throws Exception {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
-        ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
+        ResourceParent<?> parentResource = (ResourceParent<?>) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
         return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert()).withRetain(false);
     }
 

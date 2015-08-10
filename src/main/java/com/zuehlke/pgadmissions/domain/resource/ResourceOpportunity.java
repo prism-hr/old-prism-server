@@ -6,9 +6,9 @@ import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
-public abstract class ResourceOpportunity extends ResourceParentDivision implements
+public abstract class ResourceOpportunity<T extends PrismUserReassignmentProcessor> extends ResourceParentDivision<T> implements
         ResourceOpportunityDefinition<Advert, ImportedEntitySimple, ResourceStudyOption> {
 
     public abstract Department getDepartment();
@@ -52,8 +52,8 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("institution", getInstitution()).addProperty("opportunityType", getOpportunityType());
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("institution", getInstitution()).addProperty("opportunityType", getOpportunityType());
     }
 
 }

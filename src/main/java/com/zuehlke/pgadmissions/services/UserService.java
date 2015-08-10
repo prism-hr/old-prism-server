@@ -2,16 +2,29 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static java.math.RoundingMode.HALF_UP;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +37,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -33,14 +49,17 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.user.UserProgram;
+import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
@@ -52,19 +71,19 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
+import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
 
 @Service
 @Transactional
 public class UserService {
+
+    private HashMultimap<Class<? extends UserAssignment<?>>, String> userAssignments = HashMultimap.create();
 
     @Inject
     private UserDAO userDAO;
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private ApplicationSectionService applicationSectionService;
 
     @Inject
     private ProgramService programService;
@@ -79,9 +98,6 @@ public class UserService {
     private EntityService entityService;
 
     @Inject
-    private CommentService commentService;
-
-    @Inject
     private DocumentService documentService;
 
     @Inject
@@ -92,6 +108,30 @@ public class UserService {
 
     @Inject
     private ApplicationContext applicationContext;
+
+    @Inject
+    private SessionFactory sessionFactory;
+
+    @PostConstruct
+    @SuppressWarnings("unchecked")
+    public void postConstruct() throws Exception {
+        Map<String, ClassMetadata> entities = sessionFactory.getAllClassMetadata();
+        for (ClassMetadata metadata : entities.values()) {
+            Class<?> entityClass = metadata.getMappedClass();
+            if (entityClass != null) {
+                Set<String> userProperties = getUserAssignments(entityClass);
+                boolean isUserAssignment = !userAssignments.isEmpty();
+                if (UserAssignment.class.isAssignableFrom(entityClass)) {
+                    if (!isUserAssignment) {
+                        throw new Exception(entityClass.getSimpleName() + " is not a user assignment. It must not have a user reassignment module");
+                    }
+                    userAssignments.putAll((Class<? extends UserAssignment<?>>) entityClass, userProperties);
+                } else if (isUserAssignment) {
+                    throw new Exception(entityClass.getSimpleName() + " is a user assignment. It must have a user reassignment module");
+                }
+            }
+        }
+    }
 
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
@@ -119,10 +159,18 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) throws Exception {
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource<?> resource, List<PrismRole> roles) throws Exception {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.assignUserRoles(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
+    }
+
+    public void createOrUpdateUserProgram(User user, ImportedProgram program) {
+        entityService.createOrUpdate(new UserProgram().withUser(user).withProgram(program));
+    }
+
+    public Set<String> getUserProperties(Class<? extends UserAssignment<?>> userAssignmentClass) {
+        return userAssignments.get(userAssignmentClass);
     }
 
     public boolean activateUser(Integer userId, PrismAction actionId, Integer resourceId) {
@@ -215,11 +263,11 @@ public class UserService {
         return userDAO.getLinkedUserAccounts(user);
     }
 
-    public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
+    public List<User> getUsersForResourceAndRoles(Resource<?> resource, PrismRole... roleIds) {
         return userDAO.getUsersForResourceAndRoles(resource, roleIds);
     }
-    
-    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
+
+    public List<User> getUsersForResourcesAndRoles(Set<Resource<?>> resources, PrismRole... roleIds) {
         return userDAO.getUsersForResourcesAndRoles(resources, roleIds);
     }
 
@@ -284,12 +332,8 @@ public class UserService {
         return Lists.newArrayList();
     }
 
-    public List<User> getResourceUsers(Resource resource) {
+    public List<User> getResourceUsers(Resource<?> resource) {
         return userDAO.getResourceUsers(resource);
-    }
-
-    public List<Integer> getMatchingUsers(String searchTerm) {
-        return userDAO.getMatchingUsers(searchTerm);
     }
 
     public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
@@ -302,19 +346,21 @@ public class UserService {
         User currentUser = getCurrentUser();
         return !(user == null || currentUser == null) && Objects.equal(user.getId(), getCurrentUser().getId());
     }
-    
+
     public boolean isLoggedInSession() {
         return getCurrentUser() != null;
     }
 
-    public <T extends Resource> List<User> getBouncedOrUnverifiedUsers(UserListFilterDTO userListFilterDTO) {
-        HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
-        return userAdministratorResources.isEmpty() ? Lists.<User> newArrayList() : userDAO.getBouncedOrUnverifiedUsers(userAdministratorResources,
-                userListFilterDTO);
+    public List<User> getBouncedOrUnverifiedUsers(Resource<?> resource, UserListFilterDTO userListFilterDTO) {
+        HashMultimap<PrismScope, Resource<?>> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
+        if (!userAdministratorResources.isEmpty()) {
+            return userDAO.getBouncedOrUnverifiedUsers(userAdministratorResources, userListFilterDTO);
+        }
+        return Lists.<User> newArrayList();
     }
 
-    public <T extends Resource> void correctBouncedOrUnverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) throws Exception {
-        HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+    public void correctBouncedOrUnverifiedUser(Resource<?> resource, Integer userId, UserCorrectionDTO userCorrectionDTO) throws Exception {
+        HashMultimap<PrismScope, Resource<?>> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userAdministratorResources, userId);
 
         String email = userCorrectionDTO.getEmail();
@@ -334,7 +380,7 @@ public class UserService {
         }
     }
 
-    public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
+    public List<User> getUsersWithAction(Resource<?> resource, PrismAction... actions) {
         return userDAO.getUsersWithAction(resource, actions);
     }
 
@@ -382,66 +428,71 @@ public class UserService {
 
     public List<UserConnection> getUserConnections(User user) {
         Map<String, UserConnection> connections = Maps.newTreeMap();
-        for (UserConnection connection : user.getRequestedUserConnections()) {
+        for (UserConnection connection : user.getRequestedConnections()) {
             connections.put(connection.getUserRequested().getFullName(), connection);
         }
 
-        for (UserConnection connection : user.getConnectedUserConnections()) {
+        for (UserConnection connection : user.getConnectedConnections()) {
             connections.put(connection.getUserConnected().getFullName(), connection);
         }
 
         return Lists.newLinkedList(connections.values());
     }
 
-    private void mergeUsers(User oldUser, User newUser) {
-        resourceService.reassignResources(oldUser, newUser);
-        applicationSectionService.reassignApplicationSections(oldUser, newUser);
-        commentService.reassignComments(oldUser, newUser);
-        documentService.reassignDocuments(oldUser, newUser);
-        reassignUserRoles(oldUser, newUser);
-        userDAO.reassignUsers(oldUser, newUser);
-        reassignUserInsitutionIdentities(oldUser, newUser);
-        reassignUserConnections(oldUser, newUser);
-        notificationService.reassignUserNotifications(oldUser, newUser);
+    public void updateUserCompetence(User user) {
+        List<String> rows = Lists.newArrayList();
+        for (UserCompetenceDTO userCompetence : userDAO.getUserCompetences(user)) {
+            List<String> columns = Lists.newLinkedList();
+            columns.add(prepareIntegerForSqlInsert(userCompetence.getUser()));
+            columns.add(prepareIntegerForSqlInsert(userCompetence.getCompetence()));
 
-        oldUser.setActivationCode(null);
-        UserAccount oldUserAccount = oldUser.getUserAccount();
-        if (oldUserAccount != null) {
-            oldUserAccount.setEnabled(false);
+            Integer ratingCount = userCompetence.getRatingCount().intValue();
+            columns.add(prepareIntegerForSqlInsert(ratingCount));
+            columns.add(prepareDecimalForSqlInsert(userCompetence.getRatingSum().divide(new BigDecimal(ratingCount), RATING_PRECISION, HALF_UP)));
+
+            rows.add("(" + prepareColumnsForSqlInsert(columns) + ")");
+        }
+
+        if (!rows.isEmpty()) {
+            entityService.executeBulkInsert("user_competence", "user_id, competence_id, rating_count, rating_average",
+                    PrismQueryUtils.prepareRowsForSqlInsert(rows), "rating_count = values(rating_count), rating_average = values(rating_average)");
         }
     }
 
-    private void reassignUserRoles(User oldUser, User newUser) {
-        for (UserRole userRole : oldUser.getUserRoles()) {
-            roleService.getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(newUser).withRole(userRole.getRole())
-                    .withAssignedTimestamp(new DateTime()));
-            entityService.delete(userRole);
+    @SuppressWarnings("unchecked")
+    public <T extends UserAssignment<?> & UniqueEntity> boolean mergeUserAssignment(T oldAssignment, User newUser, String userProperty) throws Exception {
+        EntitySignature newSignature = oldAssignment.getEntitySignature().clone();
+        newSignature.addProperty(userProperty, newUser);
+
+        T mergedAssignmentConflict = entityService.getDuplicateEntity((Class<T>) oldAssignment.getClass(), newSignature);
+        if (mergedAssignmentConflict == null) {
+            setProperty(oldAssignment, userProperty, newUser);
+            return true;
+        }
+        return false;
+    }
+
+    public <T extends UserAssignment<?> & UniqueEntity> void mergeUserAssignmentStrict(T oldAssignment, User newUser, String userProperty) throws Exception {
+        if (!mergeUserAssignment(oldAssignment, newUser, userProperty)) {
+            entityService.delete(oldAssignment);
         }
     }
 
-    private void reassignUserInsitutionIdentities(User oldUser, User newUser) {
-        for (UserInstitutionIdentity userInstitutionIdentity : oldUser.getInstitutionIdentities()) {
-            userInstitutionIdentity.setUser(newUser);
-            UserInstitutionIdentity duplicateUserInstitutionIdentity = entityService.getDuplicateEntity(userInstitutionIdentity);
-            if (duplicateUserInstitutionIdentity != null) {
-                userInstitutionIdentity.setUser(oldUser);
-                entityService.delete(userInstitutionIdentity);
+    private void mergeUsers(User oldUser, User newUser) throws Exception {
+        for (Entry<Class<? extends UserAssignment<?>>, String> userReassignmentProcessor : userAssignments.entries()) {
+            UserAssignment<?> userAssignment = BeanUtils.instantiate(userReassignmentProcessor.getKey());
+            applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userReassignmentProcessor.getValue());
+        }
+    }
+
+    private Set<String> getUserAssignments(Class<?> entityClass) {
+        Set<String> userAssignments = Sets.newHashSet();
+        for (Field entityProperty : entityClass.getDeclaredFields()) {
+            if (User.class.isAssignableFrom(entityProperty.getType())) {
+                userAssignments.add(entityProperty.getName());
             }
         }
-    }
-
-    private void reassignUserConnections(User oldUser, User newUser) {
-        Set<UserConnection> requestedUserConnections = newUser.getRequestedUserConnections();
-        for (UserConnection connection : oldUser.getRequestedUserConnections()) {
-            requestedUserConnections.add(connection);
-        }
-        oldUser.getRequestedUserConnections().clear();
-
-        Set<UserConnection> connectedUserConnections = newUser.getConnectedUserConnections();
-        for (UserConnection connection : oldUser.getConnectedUserConnections()) {
-            connectedUserConnections.add(connection);
-        }
-        oldUser.getConnectedUserConnections().clear();
+        return userAssignments;
     }
 
 }

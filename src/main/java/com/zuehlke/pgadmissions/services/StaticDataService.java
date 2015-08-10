@@ -302,7 +302,7 @@ public class StaticDataService {
 
     public List<ImportedProgramResponse> searchImportedPrograms(Integer institutionId, String searchQuery) {
         Institution institution = institutionService.getById(institutionId);
-        List<ImportedProgram> importedPrograms = importedEntityService.getImportedPrograms(searchQuery);
+        List<ImportedProgram> importedPrograms = importedEntityService.getSimilarImportedPrograms(searchQuery);
         return importedPrograms.stream().map(program -> importedEntityMapper.getImportedProgramRepresentation(program, institution)).collect(Collectors.toList());
     }
 

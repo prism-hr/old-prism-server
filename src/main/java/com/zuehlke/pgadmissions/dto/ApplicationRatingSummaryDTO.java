@@ -4,7 +4,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public class ApplicationRatingSummaryDTO {
 
-    private Resource resource;
+    private Resource<?> resource;
 
     private Long applicationRatingCount;
 
@@ -12,12 +12,12 @@ public class ApplicationRatingSummaryDTO {
 
     private Double applicationRatingAverage;
 
-    public Resource getResource() {
+    public Resource<?> getResource() {
         return resource;
     }
 
-    public void setParent(Resource resoure) {
-        this.resource = resoure;
+    public void setResource(Resource<?> resource) {
+        this.resource = resource;
     }
 
     public Long getApplicationRatingCount() {
@@ -44,7 +44,7 @@ public class ApplicationRatingSummaryDTO {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public ApplicationRatingSummaryDTO withInitialValues(Resource resource, Double applicationRatingAverage) {
+    public ApplicationRatingSummaryDTO withInitialValues(Resource<?> resource, Double applicationRatingAverage) {
         this.resource = resource;
         this.applicationRatingCount = new Long(1);
         this.applicationRatingApplications = new Long(1);

@@ -30,14 +30,14 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.workflow.user.ProjectReassignmentProcessor;
 
 @Entity
 @Table(name = "project")
-public class Project extends ResourceOpportunity {
+public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -515,7 +515,7 @@ public class Project extends ResourceOpportunity {
         return resourceConditions;
     }
 
-    public Project withParentResource(Resource parentResource) {
+    public Project withParentResource(Resource<?> parentResource) {
         setParentResource(parentResource);
         return this;
     }
@@ -524,7 +524,7 @@ public class Project extends ResourceOpportunity {
         this.importedCode = importedCode;
         return this;
     }
-    
+
     public Project withUser(User user) {
         this.user = user;
         return this;
@@ -586,8 +586,13 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("program", program).addExclusion("state.id", PROJECT_DISABLED_COMPLETED)
+    public Class<ProjectReassignmentProcessor> getUserReassignmentProcessor() {
+        return ProjectReassignmentProcessor.class;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("program", program).addExclusion("state.id", PROJECT_DISABLED_COMPLETED)
                 .addExclusion("state.id", PROJECT_REJECTED).addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 

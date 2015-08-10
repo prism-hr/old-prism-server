@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.valueOf;
+
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -11,13 +13,14 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
-public abstract class Resource implements UniqueEntity {
+public abstract class Resource<T extends PrismUserReassignmentProcessor> implements UniqueEntity, UserAssignment<T> {
 
     public abstract Integer getId();
 
@@ -120,26 +123,26 @@ public abstract class Resource implements UniqueEntity {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> T getParentResource() {
-        switch (PrismScope.getByResourceClass(this.getClass())) {
+    public <V extends Resource<?>> V getParentResource() {
+        switch (getResourceScope()) {
         case SYSTEM:
-            return (T) this;
+            return (V) this;
         case INSTITUTION:
-            return (T) getSystem();
+            return (V) getSystem();
         case DEPARTMENT:
-            return (T) getInstitution();
+            return (V) getInstitution();
         case PROGRAM:
-            return (T) ObjectUtils.firstNonNull(getDepartment(), getInstitution());
+            return (V) ObjectUtils.firstNonNull(getDepartment(), getInstitution());
         case PROJECT:
-            return (T) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
+            return (V) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
         case APPLICATION:
-            return (T) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
+            return (V) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
         default:
             throw new UnsupportedOperationException();
         }
     }
 
-    public void setParentResource(Resource parentResource) {
+    public void setParentResource(Resource<?> parentResource) {
         if (parentResource.getId() != null) {
             setProject(parentResource.getProject());
             setProgram(parentResource.getProgram());
@@ -150,16 +153,11 @@ public abstract class Resource implements UniqueEntity {
     }
 
     public PrismScope getResourceScope() {
-        return PrismScope.getByResourceClass(this.getClass());
+        return valueOf(getClass().getSimpleName().toUpperCase());
     }
 
-    public Resource getEnclosingResource(PrismScope resourceScope) {
-        return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
-    }
-
-    @Override
-    public String toString() {
-        return getResourceScope().name() + "#" + getId();
+    public Resource<?> getEnclosingResource(PrismScope resourceScope) {
+        return (Resource<?>) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
     }
 
     public boolean sameAs(Object object) {
@@ -169,10 +167,20 @@ public abstract class Resource implements UniqueEntity {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final Resource other = (Resource) object;
+        final Resource<?> other = (Resource<?>) object;
         Integer id = getId();
         Integer otherId = other.getId();
         return id != null && otherId != null && id.equals(otherId);
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return getResourceScope().name() + "#" + getId();
     }
 
 }

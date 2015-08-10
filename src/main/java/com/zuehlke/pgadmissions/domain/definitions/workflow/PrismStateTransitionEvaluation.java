@@ -56,6 +56,7 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_ESCALATED_OUTCOME(false, APPLICATION, ApplicationEscalatedResolver.class), //
     APPLICATION_APPROVED_OUTCOME(false, APPLICATION, ApplicationApprovedResolver.class), //
     APPLICATION_REJECTED_OUTCOME(false, APPLICATION, ApplicationRejectedResolver.class), //
+    APPLICATION_TERMINATED_OUTCOME(false, APPLICATION, ApplicationEscalatedResolver.class), //
     APPLICATION_WITHDRAWN_OUTCOME(false, APPLICATION, ApplicationWithdrawnResolver.class), //
     APPLICATION_CONFIRMED_ELIGIBILITY_OUTCOME(false, APPLICATION, ApplicationConfirmedEligibilityResolver.class), //
     APPLICATION_PROVIDED_REFERENCE_OUTCOME(false, APPLICATION, ApplicationProvidedReferenceResolver.class), //

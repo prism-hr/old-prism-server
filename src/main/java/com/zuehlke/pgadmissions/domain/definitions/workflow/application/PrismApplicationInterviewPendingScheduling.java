@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationCompleteInterviewScheduling;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationConfirmInterviewArrangements;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationProvideInterviewAvailability;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationTerminateInterviewScheduling;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationUpdateInterviewAvailability;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduling;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduling;
@@ -23,35 +24,38 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationCompleteInterviewScheduling(state)); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationCompleteInterviewScheduling(state)); //
 
-		stateActions.add(applicationConfirmInterviewArrangements() //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
+        stateActions.add(applicationConfirmInterviewArrangements() //
+                .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
 
-		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 
-		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,
-		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_RETIRE_INTERVIEWEE_GROUP, //
-		        APPLICATION_RETIRE_INTERVIEWER_GROUP));
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,
+                APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+                APPLICATION_RETIRE_INTERVIEWEE_GROUP, //
+                APPLICATION_RETIRE_INTERVIEWER_GROUP));
 
-		stateActions.add(applicationProvideInterviewAvailability() //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(state) //
-		                .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
-		                .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP)));
+        stateActions.add(applicationProvideInterviewAvailability() //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(state) //
+                        .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
+                        .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP)));
 
-		stateActions.add(applicationUpdateInterviewAvailability() //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(state) //
-		                .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)));
+        stateActions.add(applicationTerminateInterviewScheduling());
+
+        stateActions.add(applicationUpdateInterviewAvailability() //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(state) //
+                        .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)));
 
         stateActions.add(applicationUploadReference(state));
-		stateActions.add(applicationViewEditInterviewScheduling(state)); //
-		stateActions.add(applicationWithdrawInterviewScheduling());
-	}
+        stateActions.add(applicationViewEditInterviewScheduling(state)); //
+        stateActions.add(applicationWithdrawInterviewScheduling());
+    }
+
 }

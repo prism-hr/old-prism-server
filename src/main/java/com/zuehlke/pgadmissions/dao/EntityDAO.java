@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.ResourceSignature;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -74,14 +73,14 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
-    public <T extends UniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
-        ResourceSignature resourceSignature = uniqueResource.getResourceSignature();
+    public <T extends UniqueEntity> T getDuplicateEntity(T uniqueEntity) {
+        return (T) getDuplicateEntity(uniqueEntity.getClass(), uniqueEntity.getEntitySignature());
+    }
 
-        if (resourceSignature != null) {
-            Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
-            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
-
-            HashMap<String, Object> properties = resourceSignature.getProperties();
+    public <T extends UniqueEntity> T getDuplicateEntity(Class<T> entityClass, EntitySignature entitySignature) {
+        if (entitySignature != null) {
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass);
+            HashMap<String, Object> properties = entitySignature.getProperties();
 
             for (Map.Entry<String, Object> property : properties.entrySet()) {
                 Object value = property.getValue();
@@ -92,7 +91,7 @@ public class EntityDAO {
                 }
             }
 
-            HashMultimap<String, Object> exclusions = resourceSignature.getExclusions();
+            HashMultimap<String, Object> exclusions = entitySignature.getExclusions();
             for (String key : exclusions.keySet()) {
                 criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
             }
@@ -127,6 +126,14 @@ public class EntityDAO {
 
     public void evict(Object entity) {
         sessionFactory.getCurrentSession().evict(entity);
+    }
+
+    public void executeBulkInsert(String table, String columns, String inserts, String updates) {
+        sessionFactory.getCurrentSession().createSQLQuery(
+                "insert into " + table + " (" + columns + ") "
+                        + "values " + inserts + " "
+                        + "on duplicate key update " + updates)
+                .executeUpdate();
     }
 
 }

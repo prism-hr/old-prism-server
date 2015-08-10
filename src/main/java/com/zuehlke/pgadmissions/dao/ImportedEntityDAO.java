@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.google.common.base.CharMatcher.WHITESPACE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 
@@ -20,7 +21,6 @@ import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -147,8 +147,8 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedProgram> getImportedPrograms(String searchTerm) {
-        List<String> tokens = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().limit(10).splitToList(searchTerm);
+    public List<ImportedProgram> getSimilarImportedPrograms(String searchTerm) {
+        List<String> tokens = Splitter.on(WHITESPACE).omitEmptyStrings().limit(10).splitToList(searchTerm);
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class)
                 .createAlias("institution", "institution", JoinType.INNER_JOIN);
         for (String token : tokens) {
@@ -418,14 +418,6 @@ public class ImportedEntityDAO {
                 .add(Restrictions.isNull("parent")) //
                 .add(Restrictions.isNull("topIndexScore")) //
                 .uniqueResult();
-    }
-
-    public void executeBulkMerge(String table, String columns, String inserts, String updates) {
-        sessionFactory.getCurrentSession().createSQLQuery(
-                "insert into " + table + " (" + columns + ") "
-                        + "values " + inserts + " "
-                        + "on duplicate key update " + updates)
-                .executeUpdate();
     }
 
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,

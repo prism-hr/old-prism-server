@@ -82,8 +82,8 @@ public class ActionRedaction implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("action", action).addProperty("role", role);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("action", action).addProperty("role", role);
     }
 
 }

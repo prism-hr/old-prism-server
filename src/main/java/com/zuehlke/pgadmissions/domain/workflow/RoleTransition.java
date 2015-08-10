@@ -164,8 +164,8 @@ public class RoleTransition implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("stateTransition", stateTransition).addProperty("role", role)
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("stateTransition", stateTransition).addProperty("role", role)
                 .addProperty("roleTransitionType", roleTransitionType);
     }
 

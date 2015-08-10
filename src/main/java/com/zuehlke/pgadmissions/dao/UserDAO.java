@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
@@ -12,7 +13,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -64,7 +65,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
+    public List<User> getUsersForResourceAndRoles(Resource<?> resource, PrismRole... roleIds) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -79,7 +80,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
+    public List<User> getUsersForResourcesAndRoles(Set<Resource<?>> resources, PrismRole... roleIds) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -233,11 +234,7 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userRole.id")) //
                         .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.ilike("firstName", searchTerm, MatchMode.START)) //
-                        .add(Restrictions.ilike("lastName", searchTerm, MatchMode.START)) //
-                        .add(Restrictions.ilike("fullName", searchTerm, MatchMode.START)) //
-                        .add(Restrictions.ilike("email", searchTerm, MatchMode.START))) //
+                .add(getSimilarUserRestriction(searchTerm)) //
                 .addOrder(Order.desc("lastName")) //
                 .addOrder(Order.desc("firstName")) //
                 .setMaxResults(10) //
@@ -245,22 +242,13 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getResourceUsers(Resource resource) {
+    public List<User> getResourceUsers(Resource<?> resource) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.desc("user.lastName")) //
                 .addOrder(Order.desc("user.firstName")) //
-                .list();
-    }
-
-    public List<Integer> getMatchingUsers(String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.ilike("fullName", searchTerm, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.ilike("email", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
 
@@ -283,7 +271,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public <T extends Resource> List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, T> userAdministratorResources,
+    public <T extends Resource<?>> List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, T> userAdministratorResources,
             UserListFilterDTO userListFilterDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
@@ -310,11 +298,7 @@ public class UserDAO {
 
         String searchTerm = userListFilterDTO.getSearchTerm();
         if (searchTerm != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.ilike("user.firstName", searchTerm, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("user.lastName", searchTerm, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))); //
+            criteria.add(WorkflowDAOUtils.getSimilarUserRestriction("user", searchTerm)); //
         }
 
         Integer lastUserId = userListFilterDTO.getLastUserId();
@@ -327,7 +311,7 @@ public class UserDAO {
                 .list();
     }
 
-    public <T extends Resource> User getBouncedOrUnverifiedUser(HashMultimap<PrismScope, T> userAdministratorResources, Integer userId) {
+    public <T extends Resource<?>> User getBouncedOrUnverifiedUser(HashMultimap<PrismScope, T> userAdministratorResources, Integer userId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -343,17 +327,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public void reassignUsers(User oldUser, User newUser) {
-        sessionFactory.getCurrentSession().createQuery(
-                "update User " //
-                        + "set parentUser = :newUser " //
-                        + "where parentUser = :oldUser") //
-                .setParameter("newUser", newUser) //
-                .setParameter("oldUser", oldUser) //
-                .executeUpdate();
-    }
-
-    public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
+    public List<User> getUsersWithAction(Resource<?> resource, PrismAction... actions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(Projections.groupProperty("userRole.user")) //
@@ -393,6 +367,20 @@ public class UserDAO {
                 .add(Restrictions.eq("userRequested", userRequested)) //
                 .add(Restrictions.eq("userConnected", userConnected)) //
                 .uniqueResult();
+    }
+
+    public List<UserCompetenceDTO> getUserCompetences(User user) {
+        return (List<UserCompetenceDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("user.id"), "user") //
+                        .add(Projections.groupProperty("competence.competence.id"), "competence") //
+                        .add(Projections.countDistinct("competence.id"), "ratingCount") //
+                        .add(Projections.sum("competence.rating"), "ratingSum")) //
+                .createAlias("comments", "comment", JoinType.INNER_JOIN) //
+                .createAlias("comment.competences", "competence", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .setResultTransformer(Transformers.aliasToBean(UserCompetenceDTO.class)) //
+                .list();
     }
 
 }

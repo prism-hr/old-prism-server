@@ -15,7 +15,6 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
@@ -36,7 +35,7 @@ public class ResourceCondition extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", insertable = false, updatable = false)
     private Institution institution;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", insertable = false, updatable = false)
     private Department department;
@@ -94,12 +93,12 @@ public class ResourceCondition extends WorkflowResourceExecution {
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
     }
-    
+
     @Override
     public Program getProgram() {
         return program;
@@ -146,7 +145,7 @@ public class ResourceCondition extends WorkflowResourceExecution {
         this.partnerMode = partnerMode;
     }
 
-    public ResourceCondition withResource(Resource resource) {
+    public ResourceCondition withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }
@@ -179,8 +178,8 @@ public class ResourceCondition extends WorkflowResourceExecution {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("actionCondition", actionCondition);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("actionCondition", actionCondition);
     }
 
 }

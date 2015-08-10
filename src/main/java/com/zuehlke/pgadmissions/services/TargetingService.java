@@ -5,8 +5,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchTyp
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.PARENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.TOKEN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.UCAS;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
-import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.STOP_WORDS;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.getTopInstitutionsBySubjectArea;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.isValidUcasCodeFormat;
@@ -124,7 +124,7 @@ public class TargetingService {
         for (Integer institutionRanking : institutionRankings) {
             Integer importance = institutionImportance.get(institutionRanking);
             if (importance != null) {
-                newIndexScore = newIndexScore.add(new BigDecimal(counter).divide(new BigDecimal(importance), PRECISION, HALF_UP));
+                newIndexScore = newIndexScore.add(new BigDecimal(counter).divide(new BigDecimal(importance), TARGETING_PRECISION, HALF_UP));
             }
             counter++;
         }
@@ -144,7 +144,7 @@ public class TargetingService {
 
     private <T extends ImportedEntityRequest> String getImportedProgramSubjectAreaInserts(ImportedProgram program) {
         ImportedProgramSubjectAreasDTO inserts = new ImportedProgramSubjectAreasDTO();
-        BigDecimal weight = new BigDecimal(1).divide(new BigDecimal(program.getUcasProgramCount()), PRECISION, HALF_UP);
+        BigDecimal weight = new BigDecimal(1).divide(new BigDecimal(program.getUcasProgramCount()), TARGETING_PRECISION, HALF_UP);
 
         assignImportedSubjectAreasByJacsCode(inserts, program, weight);
         assignImportedSubjectAreasByKeyword(inserts, program, weight);
@@ -169,14 +169,15 @@ public class TargetingService {
             if (jacsCodes != null) {
                 String[] jacsCodesArray = jacsCodes.split("\\|");
                 for (String jacsCode : jacsCodesArray) {
-                    BigDecimal confidence = new BigDecimal(1).divide(new BigDecimal(jacsCodesArray.length), PRECISION, HALF_UP);
+                    BigDecimal confidence = new BigDecimal(1).divide(new BigDecimal(jacsCodesArray.length), TARGETING_PRECISION, HALF_UP);
                     if (!assignImportedSubjectAreaByJacsCode(inserts, jacsCode, weight, confidence)) {
                         if (Character.isUpperCase(jacsCode.charAt(0)) && !jacsCode.endsWith("000")) {
                             BigDecimal divisor = DIVISOR;
                             for (int i = 3; i > 0; i--) {
                                 String jacsCodeParent = rightPad(jacsCode.substring(0, i), 4, "0");
                                 if (!jacsCodeParent.equals(jacsCode)) {
-                                    assignImportedSubjectAreaByJacsCode(inserts, jacsCodeParent, weight, confidence.divide(divisor, PRECISION, HALF_UP));
+                                    assignImportedSubjectAreaByJacsCode(inserts, jacsCodeParent, weight,
+                                            confidence.divide(divisor, TARGETING_PRECISION, HALF_UP));
                                 }
                                 divisor = divisor.multiply(DIVISOR);
                             }
@@ -218,12 +219,12 @@ public class TargetingService {
             int matchCount = tokenMatch.getValue();
             int subjectTokenCount = importedSubjectAreaIndex.getUniqueTokenCount(token);
 
-            BigDecimal subjectConfidence = new BigDecimal(matchCount).divide(new BigDecimal(subjectTokenCount), PRECISION, HALF_UP);
+            BigDecimal subjectConfidence = new BigDecimal(matchCount).divide(new BigDecimal(subjectTokenCount), TARGETING_PRECISION, HALF_UP);
             BigDecimal subjectConfidenceRequired = getTokenRequiredConfidence(subjectTokenCount, THRESHOLD_TOKEN);
-            BigDecimal programConfidence = new BigDecimal(matchCount).divide(new BigDecimal(programTokenCount), PRECISION, HALF_UP);
+            BigDecimal programConfidence = new BigDecimal(matchCount).divide(new BigDecimal(programTokenCount), TARGETING_PRECISION, HALF_UP);
 
             if (programConfidence.compareTo(programConfidenceRequired) >= 0 && subjectConfidence.compareTo(subjectConfidenceRequired) >= 0) {
-                BigDecimal confidence = programConfidence.multiply(subjectConfidence).setScale(PRECISION, HALF_UP);
+                BigDecimal confidence = programConfidence.multiply(subjectConfidence).setScale(TARGETING_PRECISION, HALF_UP);
                 inserts.add(new ImportedProgramSubjectAreaDTO(token.getId(), TOKEN, weight, confidence));
             }
         }
@@ -233,9 +234,9 @@ public class TargetingService {
         String ucasSubjects = program.getUcasSubjects();
         if (ucasSubjects != null) {
             String[] ucasSubjectsSplit = ucasSubjects.split("\\|");
-            BigDecimal threshold = new BigDecimal(1).divide(new BigDecimal(ucasSubjectsSplit.length), PRECISION, HALF_UP);
+            BigDecimal threshold = new BigDecimal(1).divide(new BigDecimal(ucasSubjectsSplit.length), TARGETING_PRECISION, HALF_UP);
             if (threshold.compareTo(THRESHOLD_UCAS) >= 0) {
-                BigDecimal confidence = threshold.multiply(CONFIDENCE_UCAS).setScale(PRECISION, HALF_UP);
+                BigDecimal confidence = threshold.multiply(CONFIDENCE_UCAS).setScale(TARGETING_PRECISION, HALF_UP);
                 for (String ucasSubject : ucasSubjects.split("\\|")) {
                     for (ImportedSubjectArea subjectArea : importedSubjectAreaIndex.getByUcasSubject(Integer.parseInt(ucasSubject))) {
                         inserts.add(new ImportedProgramSubjectAreaDTO(subjectArea.getId(), UCAS, weight, confidence));
@@ -262,7 +263,7 @@ public class TargetingService {
 
         PrismQualificationLevel qualificationLevel = program.getLevel();
         Integer qualificationLevelFactor = qualificationLevel == null ? values().length : (qualificationLevel.ordinal() + 1);
-        BigDecimal difficulty = new BigDecimal(1).divide(new BigDecimal(qualificationLevelFactor).multiply(DIVISOR), PRECISION, HALF_UP);
+        BigDecimal difficulty = new BigDecimal(1).divide(new BigDecimal(qualificationLevelFactor).multiply(DIVISOR), TARGETING_PRECISION, HALF_UP);
 
         List<String> values = Lists.newArrayListWithExpectedSize(inserts.size());
         for (ImportedProgramSubjectAreaDTO insert : inserts.values()) {
@@ -278,24 +279,25 @@ public class TargetingService {
 
         List<String> values = Lists.newArrayListWithExpectedSize(inserts.size());
         for (ImportedInstitutionSubjectAreaDTO insert : inserts.values()) {
-            BigDecimal penalty = new BigDecimal(1).add(new BigDecimal(insert.getTailLength()).multiply(proliferationFactor)).setScale(PRECISION, HALF_UP);
+            BigDecimal penalty = new BigDecimal(1).add(new BigDecimal(insert.getTailLength()).multiply(proliferationFactor)) //
+                    .setScale(TARGETING_PRECISION, HALF_UP);
 
             values.add("(" + Joiner.on(", ").join(institutionId, insert.getId().toString(), concentrationFactor.toString(), //
-                    proliferationFactor.toPlainString(), insert.getHead().divide(penalty, PRECISION, HALF_UP).toPlainString(), new Integer(0).toString()) + ")");
+                    proliferationFactor.toPlainString(), insert.getHead().divide(penalty, TARGETING_PRECISION, HALF_UP).toPlainString(), //
+                    new Integer(0).toString()) + ")");
         }
         return Joiner.on(", ").join(values);
     }
 
     private BigDecimal getTokenRequiredConfidence(int tokenCount, int threshold) {
         if (tokenCount <= threshold) {
-            return new BigDecimal(THRESHOLD_TOKEN).divide(new BigDecimal(threshold), PRECISION, HALF_UP);
+            return new BigDecimal(THRESHOLD_TOKEN).divide(new BigDecimal(threshold), TARGETING_PRECISION, HALF_UP);
         }
         return getTokenRequiredConfidence(tokenCount, (threshold * THRESHOLD_TOKEN));
     }
 
     private synchronized void executeBulkMerge(String table, String columns, String inserts, String updates) {
-        importedEntityService.executeBulkMerge(table, columns, inserts, updates);
-        entityService.flush();
+        entityService.executeBulkInsert(table, columns, inserts, updates);
     }
 
     private synchronized void setNewTopInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,

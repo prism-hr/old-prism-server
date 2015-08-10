@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.comment;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
@@ -19,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
@@ -56,6 +58,7 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
@@ -63,22 +66,24 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
+import com.zuehlke.pgadmissions.workflow.user.CommentReassignmentProcessor;
 
 @Entity
 @Table(name = "comment")
-public class Comment extends WorkflowResourceExecution {
+public class Comment extends WorkflowResourceExecution implements UserAssignment<CommentReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -193,6 +198,11 @@ public class Comment extends WorkflowResourceExecution {
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentTransitionState> commentTransitionStates = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Set<CommentCompetence> competences = Sets.newHashSet();
+
     @OrderBy(clause = "timeslot_datetime")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
@@ -202,11 +212,6 @@ public class Comment extends WorkflowResourceExecution {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
-
-    @OrderBy(clause = "action_custom_question_configuration_id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentCustomResponse> customResponses = Sets.newHashSet();
 
     @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -438,6 +443,10 @@ public class Comment extends WorkflowResourceExecution {
         return commentTransitionStates;
     }
 
+    public Set<CommentCompetence> getCompetences() {
+        return competences;
+    }
+
     public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
@@ -448,10 +457,6 @@ public class Comment extends WorkflowResourceExecution {
 
     public Set<Document> getDocuments() {
         return documents;
-    }
-
-    public Set<CommentCustomResponse> getCustomResponses() {
-        return customResponses;
     }
 
     public DateTime getCreatedTimestamp() {
@@ -500,7 +505,7 @@ public class Comment extends WorkflowResourceExecution {
         return this;
     }
 
-    public Comment withResource(Resource resource) {
+    public Comment withResource(Resource<?> resource) {
         setResource(resource);
         return this;
     }
@@ -600,8 +605,18 @@ public class Comment extends WorkflowResourceExecution {
         return this;
     }
 
+    public Comment addDocument(Document document) {
+        documents.add(document);
+        return this;
+    }
+
+    public Comment addCompetence(Competence competence, Integer importance, Integer rating, String remark) {
+        competences.add(new CommentCompetence().withCompetence(competence).withImportance(importance).withRating(rating).withRemark(remark));
+        return this;
+    }
+
     public boolean isApplicationCreatorEligibilityUnsure() {
-        return getApplicationEligible() == UNSURE;
+        return getApplicationEligible().equals(UNSURE);
     }
 
     public User getActionOwner() {
@@ -609,31 +624,31 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     public boolean isProgramViewEditComment() {
-        return action.getId() == PROGRAM_VIEW_EDIT;
+        return action.getId().equals(PROGRAM_VIEW_EDIT);
     }
 
     public boolean isProgramRestoreComment() {
-        return action.getId() == PROGRAM_RESTORE;
+        return action.getId().equals(PROGRAM_RESTORE);
     }
 
     public boolean isProjectCreateApplicationComment() {
-        return action.getId() == PROJECT_CREATE_APPLICATION;
+        return action.getId().equals(PROJECT_CREATE_APPLICATION);
     }
 
     public boolean isProjectViewEditComment() {
-        return action.getId() == PROJECT_VIEW_EDIT;
+        return action.getId().equals(PROJECT_VIEW_EDIT);
     }
 
     public boolean isApplicationAssignReviewersComment() {
-        return action.getId() == APPLICATION_ASSIGN_REVIEWERS;
+        return action.getId().equals(APPLICATION_ASSIGN_REVIEWERS);
     }
 
     public boolean isApplicationProvideReferenceComment() {
-        return action.getId() == APPLICATION_PROVIDE_REFERENCE || action.getId() == APPLICATION_UPLOAD_REFERENCE;
+        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) || action.getId().equals(APPLICATION_UPLOAD_REFERENCE);
     }
 
     public boolean isApplicationConfirmOfferRecommendationComment() {
-        return action.getId() == APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+        return action.getId().equals(APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
     }
 
     public boolean isApplicationCreatedComment() {
@@ -641,7 +656,7 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     public boolean isApplicationSubmittedComment() {
-        return action.getId() == PrismAction.APPLICATION_COMPLETE;
+        return action.getId().equals(APPLICATION_COMPLETE);
     }
 
     public boolean isApplicationRatingComment() {
@@ -654,27 +669,27 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     public boolean isApplicationReferenceComment() {
-        return action.getId() == APPLICATION_PROVIDE_REFERENCE;
+        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE);
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return action.getId() == APPLICATION_ESCALATE && state.getStateGroup().getId() != APPLICATION_REJECTED
-                && transitionState.getStateGroup().getId() == APPLICATION_REJECTED;
+        return action.getId().equals(APPLICATION_ESCALATE) && state.getStateGroup().getId() != APPLICATION_REJECTED
+                && transitionState.getStateGroup().getId().equals(APPLICATION_REJECTED);
     }
 
     public boolean isApplicationAutomatedWithdrawalComment() {
-        return action.getId() == APPLICATION_ESCALATE && state.getStateGroup().getId() != APPLICATION_WITHDRAWN
-                && transitionState.getStateGroup().getId() == APPLICATION_WITHDRAWN;
+        return action.getId().equals(APPLICATION_ESCALATE) && state.getStateGroup().getId() != APPLICATION_WITHDRAWN
+                && transitionState.getStateGroup().getId().equals(APPLICATION_WITHDRAWN);
     }
 
     public boolean isApplicationAssignRefereesComment() {
-        return (isStateGroupTransitionComment() && transitionState.getId() == APPLICATION_REFERENCE) ||
+        return (isStateGroupTransitionComment() && transitionState.getId().equals(APPLICATION_REFERENCE)) ||
                 (isSecondaryStateGroupTransitionComment() && secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
     public boolean isApplicationUpdateRefereesComment() {
         return isApplicationViewEditComment()
-                && (transitionState.getId() == APPLICATION_REFERENCE || secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
+                && (transitionState.getId().equals(APPLICATION_REFERENCE) || secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
     public boolean isInterviewScheduledExpeditedComment() {
@@ -688,7 +703,7 @@ public class Comment extends WorkflowResourceExecution {
 
     public boolean isUserCreationComment() {
         for (CommentAssignedUser assignee : assignedUsers) {
-            if (assignee.getRoleTransitionType() == CREATE && assignee.getUser().getPassword() == null) {
+            if (assignee.getRoleTransitionType().equals(CREATE) && assignee.getUser().getPassword() == null) {
                 return true;
             }
         }
@@ -714,15 +729,19 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     public boolean isCreateComment() {
-        return action.getActionCategory() == CREATE_RESOURCE;
+        return action.getActionCategory().equals(CREATE_RESOURCE);
+    }
+
+    public boolean isCreateApplicationComment() {
+        return isCreateComment() && action.getCreationScope().getId().equals(APPLICATION);
     }
 
     public boolean isViewEditComment() {
-        return action.getActionCategory() == VIEW_EDIT_RESOURCE;
+        return action.getActionCategory().equals(VIEW_EDIT_RESOURCE);
     }
 
     public boolean isApplicationViewEditComment() {
-        return action.getId() == APPLICATION_VIEW_EDIT;
+        return action.getId().equals(APPLICATION_VIEW_EDIT);
     }
 
     public boolean isUserComment() {
@@ -738,12 +757,13 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     public boolean isApplicationProvideReferenceDelegateComment() {
-        return isDelegateComment() && action.getId() == APPLICATION_PROVIDE_REFERENCE;
+        return isDelegateComment() && action.getId().equals(APPLICATION_PROVIDE_REFERENCE);
     }
 
     public boolean isApplicationDelegateAdministrationComment() {
         CommentAssignedUser firstAssignee = assignedUsers.isEmpty() ? null : assignedUsers.iterator().next();
-        return firstAssignee != null && firstAssignee.getRole().getId() == APPLICATION_ADMINISTRATOR && firstAssignee.getRoleTransitionType() == CREATE;
+        return firstAssignee != null && firstAssignee.getRole().getId().equals(APPLICATION_ADMINISTRATOR)
+                && firstAssignee.getRoleTransitionType().equals(CREATE);
     }
 
     public boolean isApplicationInterviewScheduledComment(DateTime baseline) {
@@ -794,7 +814,18 @@ public class Comment extends WorkflowResourceExecution {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
+    public Class<CommentReassignmentProcessor> getUserReassignmentProcessor() {
+        return CommentReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        User resourceUser = getResource().getUser();
+        return resourceUser.equals(user) || resourceUser.equals(delegateUser);
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
         return null;
     }
 

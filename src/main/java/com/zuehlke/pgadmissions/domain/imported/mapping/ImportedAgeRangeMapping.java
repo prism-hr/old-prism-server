@@ -97,8 +97,8 @@ public class ImportedAgeRangeMapping extends ImportedEntityMapping<ImportedAgeRa
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("importedAgeRange", importedEntity);
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("importedAgeRange", importedEntity);
     }
 
 }

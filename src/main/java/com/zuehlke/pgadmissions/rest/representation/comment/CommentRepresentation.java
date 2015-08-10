@@ -65,8 +65,6 @@ public class CommentRepresentation {
 
     private List<DocumentRepresentation> documents;
 
-    private List<CommentCustomResponseRepresentation> customResponses;
-
     public Integer getId() {
         return id;
     }
@@ -267,14 +265,6 @@ public class CommentRepresentation {
         this.documents = documents;
     }
 
-    public List<CommentCustomResponseRepresentation> getCustomResponses() {
-        return customResponses;
-    }
-
-    public void setCustomResponses(List<CommentCustomResponseRepresentation> customResponses) {
-        this.customResponses = customResponses;
-    }
-
     public CommentRepresentation withId(Integer id) {
         this.id = id;
         return this;
@@ -392,11 +382,6 @@ public class CommentRepresentation {
 
     public CommentRepresentation withDocuments(List<DocumentRepresentation> documents) {
         this.documents = documents;
-        return this;
-    }
-
-    public CommentRepresentation withCustomResponses(List<CommentCustomResponseRepresentation> customResponses) {
-        this.customResponses = customResponses;
         return this;
     }
 

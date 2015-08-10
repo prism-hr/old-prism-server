@@ -188,8 +188,8 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addExclusion("id", id);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addExclusion("id", id);
     }
 
 }

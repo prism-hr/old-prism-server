@@ -24,10 +24,20 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.workflow.user.UserReassignmentProcessor;
 
 @Entity
 @Table(name = "user")
-public class User implements UserDetails, UniqueEntity {
+public class User implements UserDetails, UniqueEntity, UserAssignment<UserReassignmentProcessor> {
 
     private static final long serialVersionUID = 5910410212695389060L;
 
@@ -73,22 +83,61 @@ public class User implements UserDetails, UniqueEntity {
     private Set<User> childUsers = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
+    private Set<Application> applications = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Project> projects = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Program> programs = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Department> departments = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Institution> institutions = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<System> systems = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<ApplicationSupervisor> applicationSupervisors = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<ApplicationReferee> applicationReferees = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Comment> comments = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<CommentAssignedUser> commentAssignedUsers = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Document> documents = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
-    private Set<Application> applications = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
     private Set<UserInstitutionIdentity> institutionIdentities = Sets.newHashSet();
 
     @OneToMany(mappedBy = "userRequested")
-    private Set<UserConnection> requestedUserConnections = Sets.newHashSet();
+    private Set<UserConnection> requestedConnections = Sets.newHashSet();
 
     @OneToMany(mappedBy = "userConnected")
-    private Set<UserConnection> connectedUserConnections = Sets.newHashSet();
+    private Set<UserConnection> connectedConnections = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserCompetence> userCompetences = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserFeedback> userFeedbacks = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserProgram> userPrograms = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -186,24 +235,76 @@ public class User implements UserDetails, UniqueEntity {
         return userRoles;
     }
 
-    public Set<UserNotification> getUserNotifications() {
-        return userNotifications;
-    }
-
     public Set<Application> getApplications() {
         return applications;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public Set<Program> getPrograms() {
+        return programs;
+    }
+
+    public Set<Department> getDepartments() {
+        return departments;
+    }
+
+    public Set<Institution> getInstitutions() {
+        return institutions;
+    }
+
+    public Set<System> getSystems() {
+        return systems;
+    }
+
+    public Set<ApplicationSupervisor> getApplicationSupervisors() {
+        return applicationSupervisors;
+    }
+
+    public Set<ApplicationReferee> getApplicationReferees() {
+        return applicationReferees;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public Set<CommentAssignedUser> getCommentAssignedUsers() {
+        return commentAssignedUsers;
+    }
+
+    public Set<Document> getDocuments() {
+        return documents;
+    }
+
+    public Set<UserNotification> getUserNotifications() {
+        return userNotifications;
     }
 
     public Set<UserInstitutionIdentity> getInstitutionIdentities() {
         return institutionIdentities;
     }
 
-    public Set<UserConnection> getRequestedUserConnections() {
-        return requestedUserConnections;
+    public Set<UserConnection> getRequestedConnections() {
+        return requestedConnections;
     }
 
-    public Set<UserConnection> getConnectedUserConnections() {
-        return connectedUserConnections;
+    public Set<UserConnection> getConnectedConnections() {
+        return connectedConnections;
+    }
+
+    public Set<UserCompetence> getUserCompetences() {
+        return userCompetences;
+    }
+
+    public Set<UserFeedback> getUserFeedbacks() {
+        return userFeedbacks;
+    }
+
+    public Set<UserProgram> getUserPrograms() {
+        return userPrograms;
     }
 
     public User withId(Integer id) {
@@ -306,11 +407,6 @@ public class User implements UserDetails, UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("email", email);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hashCode(email);
     }
@@ -325,6 +421,21 @@ public class User implements UserDetails, UniqueEntity {
         }
         final User other = (User) object;
         return Objects.equal(email, other.getEmail());
+    }
+
+    @Override
+    public Class<UserReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("email", email);
     }
 
 }

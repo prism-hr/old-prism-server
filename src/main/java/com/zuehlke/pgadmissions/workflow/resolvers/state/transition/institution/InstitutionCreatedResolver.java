@@ -27,7 +27,7 @@ public class InstitutionCreatedResolver implements StateTransitionResolver<Insti
 
     @Override
     public StateTransition resolve(Institution resource, Comment comment) {
-        Resource parentResource = resource.getParentResource();
+        Resource<?> parentResource = resource.getParentResource();
         if (roleService.hasUserRole(resource, comment.getUser(), SYSTEM_ADMINISTRATOR)) {
             return stateService.getStateTransition(parentResource, comment.getAction(), INSTITUTION_APPROVED);
         }

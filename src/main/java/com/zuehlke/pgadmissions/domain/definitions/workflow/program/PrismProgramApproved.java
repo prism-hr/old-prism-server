@@ -18,7 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreatorApproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateApproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programTerminateApproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditActive;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -50,14 +50,13 @@ public class PrismProgramApproved extends PrismWorkflowState {
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION));
 
-        stateActions.add(programEscalateApproved());
-
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_IMPORT_PROJECT) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVED) //
                         .withTransitionAction(PROGRAM_IMPORT_PROJECT)));
 
+        stateActions.add(programTerminateApproved()); //
         stateActions.add(programViewEditActive()); //
     }
 

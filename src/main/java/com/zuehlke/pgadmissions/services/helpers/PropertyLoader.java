@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.services.CustomizationService;
 @Scope(SCOPE_PROTOTYPE)
 public class PropertyLoader {
 
-    private Resource resource;
+    private Resource<?> resource;
 
     private PrismOpportunityType opportunityType;
 
@@ -49,16 +49,16 @@ public class PropertyLoader {
         return evaluation ? load(trueIndex) : load(falseIndex);
     }
 
-    public PropertyLoader localize(Resource resource) {
+    public PropertyLoader localize(Resource<?> resource) {
         this.resource = resource;
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
+            ResourceOpportunity<?> resourceOpportunity = (ResourceOpportunity<?>) resource;
             this.opportunityType = PrismOpportunityType.valueOf(resourceOpportunity.getOpportunityType().getName());
         }
         return this;
     }
 
-    private HashMap<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope scope, PrismDisplayPropertyCategory category,
+    private HashMap<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource<?> resource, PrismScope scope, PrismDisplayPropertyCategory category,
             PrismOpportunityType opportunityType) {
         List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations( //
                 DISPLAY_PROPERTY, resource, scope, opportunityType, category);

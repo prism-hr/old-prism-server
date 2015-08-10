@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -25,11 +26,13 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
+import com.zuehlke.pgadmissions.workflow.user.DocumentReassignmentProcessor;
 
 @Entity
 @Table(name = "document")
-public class Document {
+public class Document implements UniqueEntity, UserAssignment<DocumentReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -243,7 +246,7 @@ public class Document {
         return this;
     }
 
-    public Resource getResource() {
+    public Resource<?> getResource() {
         if (comment != null) {
             return comment.getResource();
         } else if (applicationLanguageQualification != null) {
@@ -271,6 +274,32 @@ public class Document {
 
     public String getExportFilenameSits() {
         return getExportFilenameAmazon() + PrismConstants.DOT + PrismConstants.FILE_EXTENSION_PDF;
+    }
+
+    @Override
+    public Class<DocumentReassignmentProcessor> getUserReassignmentProcessor() {
+        return DocumentReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        if (comment == null) {
+            return false;
+        }
+
+        Resource<?> resource = getResource();
+        resource = resource == null ? comment.getResource() : resource;
+
+        if (resource == null) {
+            return false;
+        }
+
+        return resource.getUser().equals(user);
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return null;
     }
 
 }

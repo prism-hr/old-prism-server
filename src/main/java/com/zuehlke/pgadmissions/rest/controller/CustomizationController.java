@@ -8,8 +8,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,21 +24,18 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestUtils;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.ActionCustomQuestionValidator;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.PrismWordUtils;
@@ -55,27 +50,14 @@ public class CustomizationController {
     @Inject
     private CustomizationService customizationService;
 
-    @Inject
-    private ActionCustomQuestionValidator actionCustomQuestionValidator;
-
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.GET)
     public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismNotificationDefinition id) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         return customizationService.getConfigurationRepresentation(configurationType, resource, opportunityType, definition);
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.GET)
-    public List<WorkflowConfigurationRepresentation> getConfiguration(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
-        return customizationService.getConfigurationRepresentations(configurationType, resource, opportunityType, definition);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -89,7 +71,7 @@ public class CustomizationController {
             @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestParam(required = false) Boolean fetchReference) throws Exception {
 
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (BooleanUtils.isTrue(fetchReference)) {
             List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentations(configurationType, resource, scope,
                     opportunityType, category);
@@ -106,7 +88,7 @@ public class CustomizationController {
             @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
             @RequestParam(required = false) PrismOpportunityType opportunityType) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         return customizationService.getConfigurationRepresentations(configurationType, resource, scope, opportunityType);
     }
 
@@ -123,20 +105,7 @@ public class CustomizationController {
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismNotificationDefinition id) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        if (restoreType.equals("global")) {
-            customizationService.restoreGlobalConfiguration(configurationType, resource, opportunityType, id);
-        } else {
-            customizationService.restoreDefaultConfiguration(configurationType, resource, opportunityType, id);
-        }
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
-    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
-            @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
             customizationService.restoreGlobalConfiguration(configurationType, resource, opportunityType, id);
         } else {
@@ -149,7 +118,7 @@ public class CustomizationController {
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
             @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestHeader(value = "Restore-Type") String restoreType) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
             customizationService.restoreGlobalConfiguration(configurationType, resource, scope, opportunityType);
         } else {
@@ -164,18 +133,8 @@ public class CustomizationController {
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @PathVariable PrismNotificationDefinition id,
             @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         customizationService.createOrUpdateConfigurationUser(configurationType, resource, opportunityType, notificationConfigurationDTO);
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.PUT)
-    public void updateActionCustomQuestionConfiguration(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismActionCustomQuestionDefinition id,
-            @Valid @RequestBody ActionCustomQuestionConfigurationDTO actionCustomQuestionConfigurationDTO) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, opportunityType, id, actionCustomQuestionConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -184,7 +143,7 @@ public class CustomizationController {
             @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @Valid @RequestBody StateDurationConfigurationDTO stateDurationConfigurationDTO)
             throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, opportunityType, stateDurationConfigurationDTO);
     }
 
@@ -194,7 +153,7 @@ public class CustomizationController {
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @PathVariable PrismDisplayPropertyDefinition id,
             @Valid @RequestBody DisplayPropertyConfigurationDTO displayPropertyConfigurationDTO) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         displayPropertyConfigurationDTO.setDefinitionId(id);
         customizationService.createOrUpdateConfiguration(configurationType, resource, opportunityType, displayPropertyConfigurationDTO);
     }
@@ -206,7 +165,7 @@ public class CustomizationController {
             @RequestParam(required = false) PrismOpportunityType opportunityType,
             @Valid @RequestBody WorkflowPropertyConfigurationDTO workflowPropertyConfigurationDTO)
             throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, opportunityType, workflowPropertyConfigurationDTO);
     }
 
@@ -214,7 +173,7 @@ public class CustomizationController {
     @RequestMapping(value = "{configurationType:workflowProperties}/version", method = RequestMethod.GET)
     public Integer getWorkflowPropertyConfigurationVersion(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope targetScope) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         return customizationService.getActiveConfigurationVersion(configurationType, resource);
     }
 
@@ -228,11 +187,6 @@ public class CustomizationController {
         String singleForm = PrismWordUtils.singularize(configurationType);
         String typeName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, singleForm);
         return PrismConfiguration.valueOf(typeName);
-    }
-
-    @InitBinder(value = "actionCustomQuestionConfigurationDTO")
-    public void registerActionCustomQuestionConfigurationDTOValidator(WebDataBinder binder) {
-        binder.setValidator(actionCustomQuestionValidator);
     }
 
     private List<DisplayPropertyConfigurationRepresentation> sparsifyDisplayPropertyConfigurations(PrismDisplayPropertyCategory category,

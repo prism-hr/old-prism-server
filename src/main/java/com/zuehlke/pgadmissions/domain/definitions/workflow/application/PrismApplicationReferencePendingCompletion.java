@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReference.applicationCompleteReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReference.applicationProvideReference;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReference.applicationTerminateReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReference.applicationViewEditReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReference.applicationWithdrawReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
@@ -19,26 +20,27 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationReferencePendingCompletion extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(applicationCommentWithViewerRecruiter()); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(applicationCommentWithViewerRecruiter()); //
 
-		stateActions.add(applicationCompleteReference(state) //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST));
+        stateActions.add(applicationCompleteReference(state) //
+                .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST));
 
-		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
-		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
+        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
 
-		stateActions.add(applicationProvideReference()
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
-		                .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
-		                .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //
+        stateActions.add(applicationProvideReference()
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
+                        .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
+                        .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //
 
+        stateActions.add(applicationTerminateReference());
         stateActions.add(applicationUploadReference(state));
-		stateActions.add(applicationViewEditReference(state)); //
-		stateActions.add(applicationWithdrawReference());
-	}
+        stateActions.add(applicationViewEditReference(state)); //
+        stateActions.add(applicationWithdrawReference());
+    }
 
 }

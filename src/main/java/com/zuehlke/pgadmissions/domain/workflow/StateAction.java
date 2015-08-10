@@ -145,8 +145,8 @@ public class StateAction implements UniqueEntity {
     }
 
     @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("state", state).addProperty("action", action);
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("state", state).addProperty("action", action);
     }
 
 }

@@ -5,13 +5,13 @@ public class PrismConstants {
     public static final String OK = "OK";
 
     public static final String DOT = ".";
-    
+
     public static final String SPACE = " ";
-    
+
     public static final String ASTERIX = "*";
-    
-    public static final String WORD_BOUDARY = "\\b";
-    
+
+    public static final String WORD_BOUNDARY = "\\b";
+
     public static final String CHARACTER_WILDCARD = DOT + ASTERIX;
 
     public static final String ANGULAR_HASH = "#!";
@@ -27,5 +27,9 @@ public class PrismConstants {
     public static final int MAX_BATCH_INSERT_SIZE = 1000;
 
     public static final String NULL = "null";
+
+    public static final Integer RATING_PRECISION = 2;
+
+    public static final Integer TARGETING_PRECISION = 9;
 
 }

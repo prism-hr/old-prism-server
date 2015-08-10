@@ -1,5 +1,27 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
@@ -17,27 +39,25 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestUtils;
+import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.services.*;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -78,7 +98,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public ResourceRepresentationExtended getResource(
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
-        Resource resource = loadResource(resourceId, resourceDescriptor);
+        Resource<?> resource = loadResource(resourceId, resourceDescriptor);
         ResourceRepresentationExtended resourceRepresentationClient = resourceMapper.getResourceRepresentationClient(resource);
         return resourceRepresentationClient;
     }
@@ -89,7 +109,7 @@ public class ResourceController {
             @PathVariable Integer resourceId,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope propertiesScope) throws Exception {
-        Resource resource = loadResource(resourceId, resourceDescriptor);
+        Resource<?> resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getDisplayProperties(resource, propertiesScope);
     }
 
@@ -124,12 +144,12 @@ public class ResourceController {
     public ResourceSummaryPlotRepresentation getPlot(
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @RequestParam(required = false) String filter) throws Exception {
-        Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
+        Resource<?> resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
         if (!(resource instanceof ResourceParent)) {
             throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
         }
         ResourceReportFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceReportFilterDTO.class) : null;
-        return resourceMapper.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
+        return resourceMapper.getResourceSummaryPlotRepresentation((ResourceParent<?>) resource, filterDTO);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
@@ -137,7 +157,7 @@ public class ResourceController {
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.assignUserRoles(resource, user, CREATE, role);
     }
@@ -146,7 +166,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
             @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
-        Resource resource = loadResource(resourceId, resourceDescriptor);
+        Resource<?> resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
         roleService.assignUserRoles(resource, user, DELETE, role);
     }
@@ -155,7 +175,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
 
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
@@ -167,7 +187,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public void removeUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor)
             throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.deleteUserRoles(resource, user);
     }
@@ -176,7 +196,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public void setAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor)
             throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
     }
@@ -191,7 +211,7 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/availableThemes", method = RequestMethod.GET)
     public Set<String> getAvailableThemes(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         return advertService.getAvailableAdvertThemes(resource.getAdvert(), null);
     }
 
@@ -201,15 +221,29 @@ public class ResourceController {
         return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, targetScope);
     }
 
+    @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)
+    public List<UserRepresentationUnverified> getBouncedOrUnverifiedUsers(@PathVariable Integer resourceId, UserListFilterDTO filterDTO,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+        Resource<?> resource = loadResource(resourceId, resourceDescriptor);
+        return userMapper.getUserUnverifiedRepresentations(resource, filterDTO);
+    }
+
+    @RequestMapping(value = "/{resourceId}/bouncedUsers/{userId}", method = RequestMethod.PUT)
+    public void correctBouncedOrUnverifiedUser(@PathVariable Integer resourceId, @PathVariable Integer userId,
+            @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+        Resource<?> resource = loadResource(resourceId, resourceDescriptor);
+        userService.correctBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
+    }
+
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestUtils.getResourceDescriptor(resourceScope);
     }
 
-    private Resource loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+    private Resource<?> loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {
+        Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (resource == null) {
-            throw new ResourceNotFoundException("Resource not found");
+            throw new ResourceNotFoundException("Resource<?> not found");
         }
         return resource;
     }

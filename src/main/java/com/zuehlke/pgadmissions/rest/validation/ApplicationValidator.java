@@ -73,68 +73,68 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
         for (WorkflowPropertyConfiguration configuration : configurations) {
             switch (configuration.getDefinition().getId()) {
-                case APPLICATION_ASSIGN_REFEREE:
-                    validateRangeConstraint(application, "referees", configuration, errors);
-                    break;
-                case APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR:
-                    validateRangeConstraint(application, "supervisors", configuration, errors);
-                    break;
-                case APPLICATION_DEMOGRAPHIC:
-                    validateDemographicConstraint(application, configuration, errors);
-                    break;
-                case APPLICATION_CRIMINAL_CONVICTION:
-                    validateCriminalConvictionConstraint(application, configuration, errors);
-                    break;
-                case APPLICATION_DOCUMENT_COVERING_LETTER:
-                    validateDocumentConstraint(application, "coveringLetter", configuration, errors);
-                    break;
-                case APPLICATION_DOCUMENT_CV:
-                    validateDocumentConstraint(application, "cv", configuration, errors);
-                    break;
-                case APPLICATION_DOCUMENT_PERSONAL_STATEMENT:
-                    validateDocumentConstraint(application, "personalStatement", configuration, errors);
-                    break;
-                case APPLICATION_DOCUMENT_RESEARCH_STATEMENT:
-                    validateDocumentConstraint(application, "researchStatement", configuration, errors);
-                    break;
-                case APPLICATION_EMPLOYMENT_POSITION:
-                    validateRangeConstraint(application, "employmentPositions", configuration, errors);
-                    break;
-                case APPLICATION_FUNDING:
-                    validateRangeConstraint(application, "fundings", configuration, errors);
-                    break;
-                case APPLICATION_FUNDING_PROOF_OF_AWARD:
-                    validateDocumentConstraint(application, "fundings", "document", configuration, errors);
-                    break;
-                case APPLICATION_LANGUAGE:
-                    validateLanguageConstraint(application, configuration, errors);
-                    break;
-                case APPLICATION_LANGUAGE_PROOF_OF_AWARD:
-                    validateLanguageDocumentConstraint(application, configuration, errors);
-                    break;
-                case APPLICATION_PRIZE:
-                    validateRangeConstraint(application, "prizes", configuration, errors);
-                    break;
-                case APPLICATION_QUALIFICATION:
-                    validateRangeConstraint(application, "qualifications", configuration, errors);
-                    break;
-                case APPLICATION_QUALIFICATION_PROOF_OF_AWARD:
-                    validateDocumentConstraint(application, "qualifications", "document", configuration, errors);
-                    break;
-                case APPLICATION_RESIDENCE:
-                    validateResidenceConstraint(application, configuration, errors);
-                    break;
-                case APPLICATION_STUDY_DETAIL:
-                    validateStudyDetailConstraint(errors, application, configuration);
-                    break;
-                case APPLICATION_THEME_PRIMARY:
-                    validateImplodedRangeConstraint(application, "primaryTheme", configuration, errors);
-                    break;
-                case APPLICATION_THEME_SECONDARY:
-                    validateImplodedRangeConstraint(application, "secondaryTheme", configuration, errors);
-                    break;
-                default:
-                    break;
+            case APPLICATION_ASSIGN_REFEREE:
+                validateRangeConstraint(application, "referees", configuration, errors);
+                break;
+            case APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR:
+                validateRangeConstraint(application, "supervisors", configuration, errors);
+                break;
+            case APPLICATION_DEMOGRAPHIC:
+                validateDemographicConstraint(application, configuration, errors);
+                break;
+            case APPLICATION_CRIMINAL_CONVICTION:
+                validateCriminalConvictionConstraint(application, configuration, errors);
+                break;
+            case APPLICATION_DOCUMENT_COVERING_LETTER:
+                validateDocumentConstraint(application, "coveringLetter", configuration, errors);
+                break;
+            case APPLICATION_DOCUMENT_CV:
+                validateDocumentConstraint(application, "cv", configuration, errors);
+                break;
+            case APPLICATION_DOCUMENT_PERSONAL_STATEMENT:
+                validateDocumentConstraint(application, "personalStatement", configuration, errors);
+                break;
+            case APPLICATION_DOCUMENT_RESEARCH_STATEMENT:
+                validateDocumentConstraint(application, "researchStatement", configuration, errors);
+                break;
+            case APPLICATION_EMPLOYMENT_POSITION:
+                validateRangeConstraint(application, "employmentPositions", configuration, errors);
+                break;
+            case APPLICATION_FUNDING:
+                validateRangeConstraint(application, "fundings", configuration, errors);
+                break;
+            case APPLICATION_FUNDING_PROOF_OF_AWARD:
+                validateDocumentConstraint(application, "fundings", "document", configuration, errors);
+                break;
+            case APPLICATION_LANGUAGE:
+                validateLanguageConstraint(application, configuration, errors);
+                break;
+            case APPLICATION_LANGUAGE_PROOF_OF_AWARD:
+                validateLanguageDocumentConstraint(application, configuration, errors);
+                break;
+            case APPLICATION_PRIZE:
+                validateRangeConstraint(application, "prizes", configuration, errors);
+                break;
+            case APPLICATION_QUALIFICATION:
+                validateRangeConstraint(application, "qualifications", configuration, errors);
+                break;
+            case APPLICATION_QUALIFICATION_PROOF_OF_AWARD:
+                validateDocumentConstraint(application, "qualifications", "document", configuration, errors);
+                break;
+            case APPLICATION_RESIDENCE:
+                validateResidenceConstraint(application, configuration, errors);
+                break;
+            case APPLICATION_STUDY_DETAIL:
+                validateStudyDetailConstraint(errors, application, configuration);
+                break;
+            case APPLICATION_THEME_PRIMARY:
+                validateImplodedRangeConstraint(application, "primaryTheme", configuration, errors);
+                break;
+            case APPLICATION_THEME_SECONDARY:
+                validateImplodedRangeConstraint(application, "secondaryTheme", configuration, errors);
+                break;
+            default:
+                break;
             }
         }
 
@@ -145,7 +145,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             errors.pushNestedPath("programDetail");
             LocalDate startDate = programDetail.getStartDate();
 
-            ResourceOpportunity opportunity = (ResourceOpportunity) application.getParentResource();
+            ResourceOpportunity<?> opportunity = (ResourceOpportunity<?>) application.getParentResource();
             ResourceStudyOption studyOption = resourceService.getStudyOption(opportunity, programDetail.getStudyOption());
 
             if (studyOption == null) {
@@ -159,9 +159,9 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 LocalDate latestStartDate = applicationService.getLatestStartDate(application, studyOption);
 
                 if (startDate.isBefore(earliestStartDate)) {
-                    errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
+                    errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
                 } else if (startDate.isAfter(latestStartDate)) {
-                    errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
+                    errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
                 }
             }
 
@@ -184,7 +184,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     }
 
     private void validateDocumentConstraint(Application application, String property, String propertyDocument, WorkflowPropertyConfiguration configuration,
-                                            Errors errors) throws Error {
+            Errors errors) throws Error {
         int i = 0;
         Collection<?> instances = (Collection<?>) PrismReflectionUtils.getProperty(application, property);
         for (Object instance : instances) {
@@ -206,7 +206,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
         if (personalDetail != null) {
             ApplicationDemographic demographic = personalDetail.getDemographic();
-    
+
             validateRequiredConstraint(demographic.getEthnicity(), "personalDetail", "ethnicity", configuration, errors);
             validateRequiredConstraint(demographic.getDisability(), "personalDetail", "disability", configuration, errors);
         }

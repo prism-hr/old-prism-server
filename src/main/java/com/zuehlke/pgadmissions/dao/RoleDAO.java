@@ -173,10 +173,11 @@ public class RoleDAO {
     public void deleteUserRoles(Resource<?> resource, User user) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete UserRole " //
-                        + "where :resourceReference = :Resource<?> " //
+                        + "where :resourceReference = :resource " //
                         + "and user = :user") //
                 .setParameter("resourceReference", resource.getResourceScope().getLowerCamelName()) //
-                .setParameter("resource", resource).setParameter("user", user) //
+                .setParameter("resource", resource) //
+                .setParameter("user", user) //
                 .executeUpdate();
     }
 

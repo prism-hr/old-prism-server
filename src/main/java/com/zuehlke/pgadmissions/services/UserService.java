@@ -120,7 +120,7 @@ public class UserService {
             Class<?> entityClass = metadata.getMappedClass();
             if (entityClass != null) {
                 Set<String> userProperties = getUserAssignments(entityClass);
-                boolean isUserAssignment = !userAssignments.isEmpty();
+                boolean isUserAssignment = !userProperties.isEmpty();
                 if (UserAssignment.class.isAssignableFrom(entityClass)) {
                     if (!isUserAssignment) {
                         throw new Exception(entityClass.getSimpleName() + " is not a user assignment. It must not have a user reassignment module");

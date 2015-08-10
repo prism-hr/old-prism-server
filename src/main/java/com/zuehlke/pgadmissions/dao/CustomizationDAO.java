@@ -121,7 +121,7 @@ public class CustomizationDAO {
             Enum<?> definitionId) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
-                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :Resource<?> " //
+                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and definition.id" + " = :definitionId " //
                         + getOpportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //
@@ -134,7 +134,7 @@ public class CustomizationDAO {
             PrismOpportunityType opportunityType) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
-                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :Resource<?> " //
+                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and " + getScopeConstraint(configurationType) //
                         + getOpportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //

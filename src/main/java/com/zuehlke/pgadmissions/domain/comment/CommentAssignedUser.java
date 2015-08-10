@@ -100,7 +100,7 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment.getId(), user, role);
+        return Objects.hashCode(comment, user, role);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
             return false;
         }
         CommentAssignedUser other = (CommentAssignedUser) object;
-        return Objects.equal(comment.getId(), other.getComment().getId()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole());
+        return Objects.equal(comment, other.getComment()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole());
     }
 
     @Override

@@ -16,14 +16,14 @@ public abstract class CommentStateDefinition {
     public abstract State getState();
 
     public abstract void setState(State state);
-    
+
     public abstract Boolean getPrimaryState();
 
     public abstract void setPrimaryState(Boolean primaryState);
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getComment().getId(), getState());
+        return Objects.hashCode(getComment(), getState());
     }
 
     @Override
@@ -35,7 +35,7 @@ public abstract class CommentStateDefinition {
             return false;
         }
         CommentStateDefinition other = (CommentStateDefinition) object;
-        return Objects.equal(getComment().getId(), other.getComment().getId()) && Objects.equal(getState(), other.getState());
+        return Objects.equal(getComment(), other.getComment()) && Objects.equal(getState(), other.getState());
     }
 
 }

@@ -61,7 +61,7 @@ public class CommentAppointmentPreference {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment.getId(), dateTime);
+        return Objects.hashCode(comment, dateTime);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class CommentAppointmentPreference {
             return false;
         }
         CommentAppointmentPreference other = (CommentAppointmentPreference) object;
-        return Objects.equal(comment.getId(), other.getComment().getId()) && Objects.equal(dateTime, other.getDateTime());
+        return Objects.equal(comment, other.getComment()) && Objects.equal(dateTime, other.getDateTime());
     }
 
 }

@@ -112,7 +112,7 @@ public class CommentCompetence {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment.getId(), competence.getId());
+        return Objects.hashCode(comment, competence.getId());
     }
 
     @Override
@@ -124,7 +124,7 @@ public class CommentCompetence {
             return false;
         }
         CommentCompetence other = (CommentCompetence) object;
-        return Objects.equal(comment.getId(), other.getComment().getId()) && Objects.equal(competence.getId(), other.getCompetence().getId());
+        return Objects.equal(comment, other.getComment()) && Objects.equal(competence.getId(), other.getCompetence().getId());
     }
 
 }

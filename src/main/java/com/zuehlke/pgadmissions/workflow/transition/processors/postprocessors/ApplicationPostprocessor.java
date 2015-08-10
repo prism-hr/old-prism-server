@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -68,10 +67,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
     @Override
     public void process(Application resource, Comment comment) throws Exception {
-        if (comment.isCreateApplicationComment()) {
-            synchronizeImportedPrograms(resource);
-        }
-
         if (comment.isProjectCreateApplicationComment()) {
             synchronizeProjectSupervisors(resource);
         }
@@ -100,13 +95,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             resource.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
 
-    }
-
-    private void synchronizeImportedPrograms(Application resource) {
-        User user = resource.getUser();
-        for (ApplicationQualification qualification : ((Application) resource).getQualifications()) {
-            userService.createOrUpdateUserProgram(user, qualification.getProgram());
-        }
     }
 
     private void synchronizeProjectSupervisors(Application application) {

@@ -300,6 +300,7 @@ public class ApplicationSectionService {
         ImportedProgramDTO importedProgramDTO = qualificationDTO.getProgram();
         ImportedProgram importedProgram = importedEntityService.getOrCreateImportedProgram(institution, importedProgramDTO);
         qualification.setProgram(importedProgram);
+        userService.createOrUpdateUserProgram(application.getUser(), qualification.getProgram());
 
         qualification.setLanguage(qualificationDTO.getLanguage());
         qualification.setStartDate(qualificationDTO.getStartDate());
@@ -327,7 +328,15 @@ public class ApplicationSectionService {
 
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
                 ImmutableMap.of("application", application, "id", qualificationId));
+        ImportedProgram program = qualification.getProgram();
+
         application.getQualifications().remove(qualification);
+        entityService.flush();
+
+        User user = application.getUser();
+        if (userService.getUserProgramRelationCount(user, program).equals(0)) {
+            userService.deleteUserProgram(user, program);
+        }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }

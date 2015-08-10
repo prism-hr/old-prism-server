@@ -169,6 +169,14 @@ public class UserService {
         entityService.createOrUpdate(new UserProgram().withUser(user).withProgram(program));
     }
 
+    public Long getUserProgramRelationCount(User user, ImportedProgram program) {
+        return userDAO.getUserProgramRelationCount(user, program);
+    }
+    
+    public void deleteUserProgram(User user, ImportedProgram program) {
+        userDAO.deleteUserProgram(user, program);
+    }
+
     public Set<String> getUserProperties(Class<? extends UserAssignment<?>> userAssignmentClass) {
         return userAssignments.get(userAssignmentClass);
     }

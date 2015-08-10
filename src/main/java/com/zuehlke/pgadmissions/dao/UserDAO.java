@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -381,6 +382,26 @@ public class UserDAO {
                 .add(Restrictions.eq("user", user)) //
                 .setResultTransformer(Transformers.aliasToBean(UserCompetenceDTO.class)) //
                 .list();
+    }
+
+    public Long getUserProgramRelationCount(User user, ImportedProgram program) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.count("qualification.id")) //
+                .createAlias("qualification", "qualification", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("program", program)) //
+                .uniqueResult();
+
+    }
+
+    public void deleteUserProgram(User user, ImportedProgram program) {
+        sessionFactory.getCurrentSession().createSQLQuery( //
+                "delete UserProgram " //
+                        + "where user = :user " //
+                        + "and program = :program") //
+                .setParameter("user", user) //
+                .setParameter("program", program) //
+                .executeUpdate();
     }
 
 }

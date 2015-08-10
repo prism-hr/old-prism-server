@@ -41,3 +41,8 @@ alter table user_program
 
 drop table department_imported_subject_area
 ;
+
+update state
+set state_duration_evaluation = null
+where state_duration_evaluation like "%_END_DATE"
+;

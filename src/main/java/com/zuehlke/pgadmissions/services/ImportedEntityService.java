@@ -278,8 +278,8 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedUcasInstitutions();
     }
 
-    public List<ImportedProgram> getImportedPrograms(String searchTerm) {
-        return importedEntityDAO.getImportedPrograms(searchTerm);
+    public List<ImportedProgram> getImportedPrograms(ImportedInstitution importedInstitution, String searchTerm) {
+        return importedEntityDAO.getImportedPrograms(importedInstitution, searchTerm);
     }
 
     public void deleteImportedEntityTypes() {

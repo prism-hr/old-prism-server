@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -20,23 +23,12 @@ import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitutionSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgramSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
-import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_PROGRAM;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -147,30 +139,35 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedProgram> getImportedPrograms(String searchTerm) {
+    public List<ImportedProgram> getImportedPrograms(ImportedInstitution importedInstitution, String searchTerm) {
         List<String> tokens = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().limit(10).splitToList(searchTerm);
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class)
                 .createAlias("institution", "institution", JoinType.INNER_JOIN);
         for (String token : tokens) {
-            criteria.add(Restrictions.disjunction()
-                    .add(Restrictions.ilike("name", token, MatchMode.ANYWHERE))
-                    .add(Restrictions.ilike("institution.name", token, MatchMode.ANYWHERE)));
+            if (importedInstitution != null) {
+                criteria.add(Restrictions.ilike("name", token, MatchMode.ANYWHERE))
+                        .add(Restrictions.eq("institution", importedInstitution));
+            } else {
+                criteria.add(Restrictions.disjunction()
+                        .add(Restrictions.ilike("name", token, MatchMode.ANYWHERE))
+                        .add(Restrictions.ilike("institution.name", token, MatchMode.ANYWHERE)));
+            }
         }
-        return criteria.setMaxResults(10).list();
+        return criteria.addOrder(Order.asc("name")).setMaxResults(10).list();
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-            PrismImportedEntity prismImportedEntity) {
+                                                                                  PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, null);
     }
 
     public <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getEnabledImportedEntityMapping(Institution institution,
-            T importedEntity) {
+                                                                                                                        T importedEntity) {
         return getImportedEntityMapping(institution, importedEntity, true);
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getEnabledImportedEntityMappings(Institution institution,
-            PrismImportedEntity prismImportedEntity) {
+                                                                                         PrismImportedEntity prismImportedEntity) {
         return getImportedEntityMappings(institution, prismImportedEntity, true);
     }
 
@@ -339,7 +336,7 @@ public class ImportedEntityDAO {
     }
 
     public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Collection<Integer> institutions, Collection<Integer> subjectAreas,
-            Integer concentrationFactor, BigDecimal proliferationFactor) {
+                                                                               Integer concentrationFactor, BigDecimal proliferationFactor) {
         return (BigDecimal) sessionFactory.getCurrentSession().createCriteria(ImportedInstitutionSubjectArea.class) //
                 .setProjection(Projections.property("relationStrength")) //
                 .add(Restrictions.in("institution.id", institutions)) //
@@ -352,7 +349,7 @@ public class ImportedEntityDAO {
     }
 
     public List<Integer> getImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor,
-            BigDecimal proliferationFactor, BigDecimal minimumRelationStrength) {
+                                                            BigDecimal proliferationFactor, BigDecimal minimumRelationStrength) {
         return (List<Integer>) sessionFactory.getCurrentSession().createSQLQuery(
                 "select imported_institution_id as institution "
                         + "from imported_institution_subject_area "
@@ -429,7 +426,7 @@ public class ImportedEntityDAO {
     }
 
     private <T extends ImportedEntity<?, V>, V extends ImportedEntityMapping<T>> List<V> getImportedEntityMapping(Institution institution, T importedEntity,
-            Boolean enabled) {
+                                                                                                                  Boolean enabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(importedEntity.getType().getMappingClass()) //
                 .createAlias("importedEntity", "importedEntity", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("importedEntity", importedEntity)) //
@@ -445,7 +442,7 @@ public class ImportedEntityDAO {
     }
 
     private <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,
-            PrismImportedEntity importedEntity, Boolean enabled) {
+                                                                                   PrismImportedEntity importedEntity, Boolean enabled) {
         Class<T> mappingClass = (Class<T>) importedEntity.getMappingClass();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(mappingClass) //

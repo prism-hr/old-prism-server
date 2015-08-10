@@ -60,7 +60,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
+@RequestMapping("api/{resourceScope:applications|projects|programs|departments|institutions|systems}")
 public class ResourceController {
 
     @Inject

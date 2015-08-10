@@ -1,21 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -25,14 +10,22 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropert
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfigurationVersioned;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
@@ -287,25 +280,20 @@ public class CustomizationService {
         return resource.getResourceScope().ordinal() > PROJECT.ordinal() ? resource.getParentResource() : resource;
     }
 
-    private List<WorkflowConfigurationRepresentation> parseRepresentations(PrismConfiguration configurationType, List<WorkflowConfiguration<?>> configurations) {
-        List<WorkflowConfigurationRepresentation> representations = Lists.newLinkedList();
-
+    private  List<WorkflowConfigurationRepresentation> parseRepresentations(PrismConfiguration configurationType, List<WorkflowConfiguration<?>> configurations) {
         if (configurations.isEmpty()) {
-            return representations;
+            return Collections.emptyList();
         } else {
             WorkflowConfiguration<?> stereotype = configurations.get(0);
 
             Resource<?> stereotypeResource = stereotype.getResource();
             PrismOpportunityType stereotypeOpportunityType = stereotype.getOpportunityType();
 
-            for (WorkflowConfiguration<?> configuration : configurations) {
-                if (Objects.equal(configuration.getResource(), stereotypeResource)
-                        && Objects.equal(configuration.getOpportunityType(), stereotypeOpportunityType)) {
-                    representations.add(customizationMapper.getWorkflowConfigurationRepresentation(configuration));
-                }
-            }
-
-            return representations;
+            return configurations.stream()
+                    .filter(configuration -> Objects.equal(configuration.getResource(), stereotypeResource)
+                            && Objects.equal(configuration.getOpportunityType(), stereotypeOpportunityType))
+                    .map(customizationMapper::getWorkflowConfigurationRepresentation)
+                    .collect(Collectors.toList());
         }
     }
 

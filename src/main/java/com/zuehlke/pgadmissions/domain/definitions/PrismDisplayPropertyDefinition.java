@@ -1336,6 +1336,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The type of the opportunity"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Organization Name"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The Name or your Organization."),
+    SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Department Name"),
+    SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The Name or your Department."),
+    SYSTEM_RESOURCE_PARENT_DEPARTMENT_IMPORTED_PROGRAMS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Programs"),
+    SYSTEM_RESOURCE_PARENT_DEPARTMENT_IMPORTED_PROGRAMS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "???"),
     SYSTEM_RESOURCE_PARENT_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Title"),
     SYSTEM_RESOURCE_PARENT_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The title of your opportunity."),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_SUMMARY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Summary"),
@@ -1533,6 +1537,29 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated institution targets"),
     INSTITUTION_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated institution closing dates"),
 
+     /*
+     * *************** DEPARTMENT COMMENT *********************
+     */
+
+    DEPARTMENT_COMMENT_APPROVAL(DEPARTMENT_COMMENT, "We are pleased to tell you that your program has been approved by your partner organization. It will now pass to a second stage of review with the host organization"),
+    DEPARTMENT_COMMENT_APPROVED(DEPARTMENT_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
+    DEPARTMENT_COMMENT_CORRECTION(DEPARTMENT_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
+    DEPARTMENT_COMMENT_REJECTED(DEPARTMENT_COMMENT, "We are sorry to inform you that your program has been rejected"),
+    DEPARTMENT_COMMENT_UPDATED(DEPARTMENT_COMMENT, "Updated program"),
+    DEPARTMENT_COMMENT_UPDATED_USER_ROLE(DEPARTMENT_COMMENT, "Updated program user roles"),
+    DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(DEPARTMENT_COMMENT, "Updated program notification configuration"),
+    DEPARTMENT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default notification configuration"),
+    DEPARTMENT_COMMENT_UPDATED_STATE_DURATION(DEPARTMENT_COMMENT, "Updated program state duration configuration"),
+    DEPARTMENT_COMMENT_RESTORED_STATE_DURATION_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default state duration configuration"),
+    DEPARTMENT_COMMENT_UPDATED_ACTION_PROPERTY(DEPARTMENT_COMMENT, "Updated program action property configuration"),
+    DEPARTMENT_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default action property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_WORKFLOW_PROPERTY(DEPARTMENT_COMMENT, "Updated program workflow property configuration"),
+    DEPARTMENT_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default workflow property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_DISPLAY_PROPERTY(DEPARTMENT_COMMENT, "Updated program display property configuration"),
+    DEPARTMENT_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(DEPARTMENT_COMMENT, "Restored institution default display property configuration"),
+    DEPARTMENT_COMMENT_UPDATED_ADVERT(DEPARTMENT_COMMENT, "Updated program advert"),
+    DEPARTMENT_COMMENT_UPDATED_CATEGORY(DEPARTMENT_COMMENT, "Updated program categories"),
+
     /*
      * *************** PROGRAM COMMENT *********************
      */
@@ -1544,24 +1571,20 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_UPDATED(PROGRAM_COMMENT, "Updated program"),
     PROGRAM_COMMENT_UPDATED_USER_ROLE(PROGRAM_COMMENT, "Updated program user roles"),
     PROGRAM_COMMENT_UPDATED_NOTIFICATION(PROGRAM_COMMENT, "Updated program notification configuration"),
-    PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PROGRAM_COMMENT, "Restored institution default notification configuration"),
+    PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PROGRAM_COMMENT, "Restored department default notification configuration"),
     PROGRAM_COMMENT_UPDATED_STATE_DURATION(PROGRAM_COMMENT, "Updated program state duration configuration"),
-    PROGRAM_COMMENT_RESTORED_STATE_DURATION_DEFAULT(PROGRAM_COMMENT, "Restored institution default state duration configuration"),
+    PROGRAM_COMMENT_RESTORED_STATE_DURATION_DEFAULT(PROGRAM_COMMENT, "Restored department default state duration configuration"),
     PROGRAM_COMMENT_UPDATED_ACTION_PROPERTY(PROGRAM_COMMENT, "Updated program action property configuration"),
-    PROGRAM_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored institution default action property configuration"),
+    PROGRAM_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored department default action property configuration"),
     PROGRAM_COMMENT_UPDATED_WORKFLOW_PROPERTY(PROGRAM_COMMENT, "Updated program workflow property configuration"),
-    PROGRAM_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored institution default workflow property configuration"),
+    PROGRAM_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored department default workflow property configuration"),
     PROGRAM_COMMENT_UPDATED_DISPLAY_PROPERTY(PROGRAM_COMMENT, "Updated program display property configuration"),
-    PROGRAM_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored institution default display property configuration"),
+    PROGRAM_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored department default display property configuration"),
     PROGRAM_COMMENT_UPDATED_ADVERT(PROGRAM_COMMENT, "Updated program advert"),
     PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated program fees and payments"),
     PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated program categories"),
     PROGRAM_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated program targets"),
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"),
-
-    /*
-     * *************** PROGRAM ADVERT FEES & PAYMENTS *********************
-     */
 
     /*
      * *************** PROJECT COMMENT *********************

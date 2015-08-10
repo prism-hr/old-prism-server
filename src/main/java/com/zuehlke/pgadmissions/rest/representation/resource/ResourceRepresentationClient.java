@@ -4,12 +4,12 @@ import java.util.List;
 
 public interface ResourceRepresentationClient {
 
-    public List<ResourceCountRepresentation> getCounts();
+    List<ResourceCountRepresentation> getCounts();
 
-    public void setCounts(List<ResourceCountRepresentation> counts);
+    void setCounts(List<ResourceCountRepresentation> counts);
 
-    public ResourceSummaryPlotRepresentation getPlot();
+    ResourceSummaryPlotRepresentation getPlot();
 
-    public void setPlot(ResourceSummaryPlotRepresentation plot);
+    void setPlot(ResourceSummaryPlotRepresentation plot);
 
 }

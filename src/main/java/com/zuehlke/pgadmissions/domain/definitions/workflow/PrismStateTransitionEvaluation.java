@@ -1,33 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationApprovedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedInterviewerResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedReviewerResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedSupervisorResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedReferenceStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedVerificationStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedEligibilityResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedInterviewResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedSupervisionResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationEscalatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationExportedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewAvailabilityResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewFeedbackResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedReferenceResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedReviewResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationPurgedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationRejectedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationUpdateInterviewAvailabilityResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationWithdrawnResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.*;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentUpdatedResolver;
@@ -40,6 +14,8 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.Prog
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismStateTransitionEvaluation {
 
@@ -84,7 +60,7 @@ public enum PrismStateTransitionEvaluation {
 
     private Class<? extends StateTransitionResolver<?>> resolver;
 
-    private PrismStateTransitionEvaluation(boolean nextStateSelection, PrismScope scope, Class<? extends StateTransitionResolver<?>> resolver) {
+    PrismStateTransitionEvaluation(boolean nextStateSelection, PrismScope scope, Class<? extends StateTransitionResolver<?>> resolver) {
         this.nextStateSelection = nextStateSelection;
         this.scope = scope;
         this.resolver = resolver;

@@ -1,5 +1,15 @@
 package com.zuehlke.pgadmissions.rest;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -12,10 +22,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunity
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public class RestUtils {
 

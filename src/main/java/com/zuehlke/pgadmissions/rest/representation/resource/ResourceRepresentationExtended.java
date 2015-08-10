@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
@@ -7,10 +11,6 @@ import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentati
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
-
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,

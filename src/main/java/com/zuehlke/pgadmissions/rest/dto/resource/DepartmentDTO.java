@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import java.util.List;
 
 import javax.validation.Valid;
-import java.util.List;
+
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 
 public class DepartmentDTO extends ResourceParentDivisionDTO {
 

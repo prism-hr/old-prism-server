@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.services.helpers.persisters;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.services.ResourceService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class ProjectBackgroundPersister implements ImageDocumentPersister {

@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import java.util.List;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class DepartmentRepresentation extends ResourceParentDivisionRepresentation {
 

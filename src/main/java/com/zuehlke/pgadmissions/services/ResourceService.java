@@ -77,6 +77,7 @@ import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
@@ -605,8 +606,8 @@ public class ResourceService {
     public <T extends ResourceParentDivision<?>, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
         resource.setImportedCode(resourceDTO.getImportedCode());
 
-        if (resourceDTO.getClass().equals(ResourceParentDivisionDTO.class)) {
-            departmentService.setImportedPrograms((Department) resource, ((ResourceParentDivisionDTO) resourceDTO).getImportedPrograms());
+        if (resourceDTO.getClass().equals(DepartmentDTO.class)) {
+            departmentService.setImportedPrograms((Department) resource, ((DepartmentDTO) resourceDTO).getImportedPrograms());
         }
 
         updateResource(resource, (ResourceParentDTO) resourceDTO);

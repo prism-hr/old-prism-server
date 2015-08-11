@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.StateService;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 public class StateServiceHelperEscalation implements PrismServiceHelper {
@@ -40,7 +38,7 @@ public class StateServiceHelperEscalation implements PrismServiceHelper {
 
     @Override
     public void shutdown() {
-        return;
+
     }
 
 }

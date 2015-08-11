@@ -28,8 +28,8 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
     private ResourceCreatorUtils resourceCreatorUtils;
 
     @Override
-    public Resource<?> create(User user, ResourceOpportunityDTO newResource) throws Exception {
-        ResourceParent<?> parentResource = resourceCreatorUtils.getParentResource(user, newResource);
+    public Resource<?> create(User user, ResourceOpportunityDTO newResource) {
+        ResourceParent<?> parentResource = resourceCreatorUtils.getParentResource(newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(parentResource, advertDTO, newResource.getName());

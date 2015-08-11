@@ -31,8 +31,8 @@ public class DepartmentCreator implements ResourceCreator<DepartmentDTO> {
     private ResourceCreatorUtils resourceCreatorUtils;
 
     @Override
-    public Resource<?> create(User user, DepartmentDTO newResource) throws Exception {
-        Institution institution = resourceCreatorUtils.getParentResource(user, newResource);
+    public Resource<?> create(User user, DepartmentDTO newResource) {
+        Institution institution = resourceCreatorUtils.getParentResource(newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(institution, advertDTO, newResource.getName());

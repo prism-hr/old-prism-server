@@ -51,6 +51,12 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
+    public <T extends ImportedEntity<?, ?>> List<T> searchByName(Class<T> entityClass, String searchTerm) {
+        return sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
+                .list();
+    }
+
     public <T extends ImportedEntity<?, ?>> List<T> getSimilarImportedEntities(Class<T> entityClass, String searchTerm) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(entityClass)
                 .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))
@@ -474,4 +480,11 @@ public class ImportedEntityDAO {
                 .add(Restrictions.eq("enabled", true)); //
     }
 
+    public List<ImportedInstitution> getUnimportedUcasInstitutions() {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
+                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.isNotNull("ucasId"))
+                .add(Restrictions.isNull("institution.id"))
+                .list();
+    }
 }

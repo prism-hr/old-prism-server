@@ -36,13 +36,24 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
+import static java.math.RoundingMode.HALF_UP;
 
 @Component
 public class ApplicationPostprocessor implements ResourceProcessor<Application> {
@@ -66,7 +77,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     private UserService userService;
 
     @Override
-    public void process(Application resource, Comment comment) throws Exception {
+    public void process(Application resource, Comment comment) {
         if (comment.isProjectCreateApplicationComment()) {
             synchronizeProjectSupervisors(resource);
         }

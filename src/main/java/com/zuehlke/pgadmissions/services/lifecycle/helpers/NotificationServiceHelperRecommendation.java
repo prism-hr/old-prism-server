@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -12,13 +13,15 @@ import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class NotificationServiceHelperRecommendation implements PrismServiceHelper {
+public class NotificationServiceHelperRecommendation extends PrismServiceHelperAbstract {
 
     @Inject
     private NotificationService notificationService;
 
     @Inject
     private SystemService systemService;
+
+    private AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     @Override
     public void execute() {
@@ -31,16 +34,28 @@ public class NotificationServiceHelperRecommendation implements PrismServiceHelp
 
             List<Integer> users = notificationService.getRecommendationDefinitions(lastRecommendedBaseline);
             for (Integer user : users) {
-                notificationService.sendRecommendationNotification(user, baseline, lastRecommendedBaseline);
+                sendRecommendationNotification(user, baseline, lastRecommendedBaseline);
             }
 
-            systemService.setLastNotifiedRecommendationSyndicated(baseline);
+            setLastNotifiedRecommendationSyndicated(baseline);
         }
     }
 
     @Override
-    public void shutdown() {
-        return;
+    public AtomicBoolean getShuttingDown() {
+        return shuttingDown;
+    }
+
+    private void sendRecommendationNotification(Integer user, LocalDate baseline, LocalDate lastRecommendedBaseline) {
+        if (!isShuttingDown()) {
+            notificationService.sendRecommendationNotification(user, baseline, lastRecommendedBaseline);
+        }
+    }
+
+    private void setLastNotifiedRecommendationSyndicated(LocalDate baseline) {
+        if (!isShuttingDown()) {
+            systemService.setLastNotifiedRecommendationSyndicated(baseline);
+        }
     }
 
 }

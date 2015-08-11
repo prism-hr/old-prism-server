@@ -130,9 +130,9 @@ public class TargetingService {
         }
 
         ImportedSubjectArea subjectArea = importedEntityService.getById(ImportedSubjectArea.class, subjectAreaId);
-        BigDecimal topIndexScore = subjectArea.getTopIndexScore();
+        BigDecimal topIndexScore = subjectArea.getIndexScore();
         if (topIndexScore == null) {
-            setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
+            setNewInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
         } else if (newIndexScore.compareTo(topIndexScore) < 0) {
             deleteImportedInstitutionSubjectAreasAndSetNewScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
         } else {
@@ -300,17 +300,17 @@ public class TargetingService {
         entityService.executeBulkInsert(table, columns, inserts, updates);
     }
 
-    private synchronized void setNewTopInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,
+    private synchronized void setNewInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,
             Integer concentrationFactor, BigDecimal proliferationFactor, BigDecimal newIndexScore) {
         importedEntityService.enableImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor, proliferationFactor);
-        subjectArea.setTopIndexScore(newIndexScore);
+        subjectArea.setIndexScore(newIndexScore);
         entityService.flush();
     }
 
     private synchronized void deleteImportedInstitutionSubjectAreasAndSetNewScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,
             Integer concentrationFactor, BigDecimal proliferationFactor, BigDecimal newIndexScore) {
         importedEntityService.deleteImportedInstitutionSubjectAreas(subjectAreaFamily);
-        setNewTopInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
+        setNewInstitutionSubjectAreaScore(subjectArea, subjectAreaFamily, concentrationFactor, proliferationFactor, newIndexScore);
     }
 
     private synchronized void deleteImportedInstitutionSubjectAreas(Collection<Integer> subjectAreaFamily, Integer concentrationFactor,

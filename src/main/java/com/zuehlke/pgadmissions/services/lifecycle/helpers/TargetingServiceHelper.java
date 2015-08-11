@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -32,7 +33,7 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.TargetingService;
 
 @Component
-public class TargetingServiceHelper implements PrismServiceHelper {
+public class TargetingServiceHelper extends PrismServiceHelperAbstract {
 
     private static Logger logger = LoggerFactory.getLogger(TargetingServiceHelper.class);
 
@@ -59,6 +60,8 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     @Inject
     private TargetingService targetingService;
+
+    private AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     @PostConstruct
     public void postConstruct() {
@@ -102,7 +105,13 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     @Override
     public void shutdown() {
+        super.shutdown();
         shutdownExecutor(executorService);
+    }
+
+    @Override
+    public AtomicBoolean getShuttingDown() {
+        return shuttingDown;
     }
 
     private synchronized void indexImportedPrograms(List<ImportedProgram> programs) {
@@ -137,12 +146,14 @@ public class TargetingServiceHelper implements PrismServiceHelper {
     private synchronized void cleanUpInstitutionSubjectAreas() {
         activeExecutions++;
         executorService.submit(() -> {
-            try {
-                importedEntityService.deleteImportedInstitutionSubjectAreas(false);
-            } catch (Exception e) {
-                logger.error("Failed to clean up imported subject areas", e);
-            } finally {
-                decrementActiveExecutions();
+            if (!isShuttingDown()) {
+                try {
+                    importedEntityService.deleteImportedInstitutionSubjectAreas(false);
+                } catch (Exception e) {
+                    logger.error("Failed to clean up imported subject areas", e);
+                } finally {
+                    decrementActiveExecutions();
+                }
             }
         });
     }
@@ -174,12 +185,14 @@ public class TargetingServiceHelper implements PrismServiceHelper {
     }
 
     private void indexInstitutionSubjectArea(Integer subjectArea, final TargetingParameterDTO parameterSet) {
-        try {
-            targetingService.indexInstitutionSubjectArea(subjectArea, parameterSet);
-        } catch (Exception e) {
-            logger.error("Failed to score subject area: " + subjectArea.toString() + " with parameters (" + parameterSet.toString() + ")", e);
-        } finally {
-            decrementActiveExecutions();
+        if (!isShuttingDown()) {
+            try {
+                targetingService.indexInstitutionSubjectArea(subjectArea, parameterSet);
+            } catch (Exception e) {
+                logger.error("Failed to score subject area: " + subjectArea.toString() + " with parameters (" + parameterSet.toString() + ")", e);
+            } finally {
+                decrementActiveExecutions();
+            }
         }
     }
 
@@ -187,7 +200,15 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
         @Override
         protected void indexEntities(List<ImportedProgram> batch, Object... arguments) {
-            batch.forEach(targetingService::indexImportedProgram);
+            if (!isShuttingDown()) {
+                batch.forEach(this::indexImportedProgram);
+            }
+        }
+
+        private void indexImportedProgram(ImportedProgram program) {
+            if (!isShuttingDown()) {
+                targetingService.indexImportedProgram(program);
+            }
         }
 
     }
@@ -196,8 +217,14 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
         @Override
         protected void indexEntities(List<ImportedInstitution> batch, Object... arguments) {
-            for (ImportedInstitution institution : batch) {
-                targetingService.indexImportedInstitution(institution, (TargetingParameterDTO) arguments[0]);
+            if (!isShuttingDown()) {
+                batch.forEach(institution -> indexImportedInstitution(institution, (TargetingParameterDTO) arguments[0]));
+            }
+        }
+
+        private void indexImportedInstitution(ImportedInstitution institution, TargetingParameterDTO parameterSet) {
+            if (!isShuttingDown()) {
+                targetingService.indexImportedInstitution(institution, parameterSet);
             }
         }
 

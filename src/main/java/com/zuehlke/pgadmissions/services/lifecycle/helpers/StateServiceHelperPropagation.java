@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -14,7 +15,7 @@ import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 
 @Component
-public class StateServiceHelperPropagation implements PrismServiceHelper {
+public class StateServiceHelperPropagation extends PrismServiceHelperAbstract {
 
     @Inject
     private ScopeService scopeService;
@@ -25,6 +26,8 @@ public class StateServiceHelperPropagation implements PrismServiceHelper {
     @Inject
     private ResourceService resourceService;
 
+    private AtomicBoolean shuttingDown = new AtomicBoolean(false);
+
     @Override
     public void execute() throws Exception {
         List<PrismScope> resourceScopes = scopeService.getScopesDescending();
@@ -33,21 +36,33 @@ public class StateServiceHelperPropagation implements PrismServiceHelper {
             for (StateTransitionPendingDTO stateTransitionPending : stateTransitionsPending) {
                 PrismAction actionId = stateTransitionPending.getActionId();
                 PrismScope actionScope = actionId.getScope();
-                List<Integer> resourceIds = resourceService
-                        .getResourcesToPropagate(resourceScope, stateTransitionPending.getResourceId(), actionScope, actionId);
+                List<Integer> resourceIds = resourceService.getResourcesToPropagate(resourceScope, stateTransitionPending.getResourceId(), actionScope,
+                        actionId);
                 for (Integer resourceId : resourceIds) {
-                    stateService.executeDeferredStateTransition(actionScope, resourceId, actionId);
+                    executeDeferredStateTransition(actionScope, resourceId, actionId);
                 }
                 if (resourceIds.size() == 0) {
-                    stateService.deleteStateTransitionPending(stateTransitionPending.getId());
+                    deleteStateTransitionPending(stateTransitionPending);
                 }
             }
         }
     }
 
     @Override
-    public void shutdown() {
+    public AtomicBoolean getShuttingDown() {
+        return shuttingDown;
+    }
 
+    private void executeDeferredStateTransition(PrismScope actionScope, Integer resourceId, PrismAction actionId) throws Exception {
+        if (!isShuttingDown()) {
+            stateService.executeDeferredStateTransition(actionScope, resourceId, actionId);
+        }
+    }
+
+    private void deleteStateTransitionPending(StateTransitionPendingDTO stateTransitionPending) {
+        if (!isShuttingDown()) {
+            stateService.deleteStateTransitionPending(stateTransitionPending.getId());
+        }
     }
 
 }

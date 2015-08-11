@@ -35,6 +35,7 @@ public class PrismConstants {
     public static final String REINITIALIZE_SERVER_MESSAGE_FOR_JUAN = "Likely what's happened here is that there are "
             + "some values in your database that are out of sync with the Java source. Try retarting your server with "
             + "the following flags set to true: 'startup.workflow.initialize', 'startup.display.initialize', "
-            + "'startup.display.initialize.drop' ('environment.properties' file). Job's a good 'un!";
+            + "'startup.display.initialize.drop' ('environment.properties' file). You might need to check that you've "
+            + "run any new SQL change scripts on your database. Try it out and let us know. Job's a good 'un!";
 
 }

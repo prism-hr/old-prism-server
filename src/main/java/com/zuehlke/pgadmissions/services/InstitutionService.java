@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,15 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.io.ByteStreams;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.Coordinates;
+import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionTargetingDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 
 @Service
@@ -64,16 +64,11 @@ public class InstitutionService {
     @Inject
     private ResourceService resourceService;
 
+    @Inject
+    private StateService stateService;
+
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
-    }
-
-    public List<Integer> getApprovedInstitutions() {
-        return institutionDAO.getApprovedInstitutions();
-    }
-
-    public List<Institution> getApprovedInstitutionsByDomicile(ImportedAdvertDomicile domicile) {
-        return institutionDAO.getApprovedInstitutionsByDomicile(domicile);
     }
 
     public Institution getUclInstitution() {
@@ -115,8 +110,10 @@ public class InstitutionService {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
-    public List<Institution> getInstitutions(String searchTerm, String[] googleIds) {
-        return institutionDAO.getInstitutions(searchTerm, googleIds);
+    public List<InstitutionRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {
+        List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
+        return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream().map(institutionMapper::getInstitutionRepresentationLocation)
+                .collect(Collectors.toList());
     }
 
     public void disableInstitutionDomiciles(List<String> updates) {
@@ -143,18 +140,11 @@ public class InstitutionService {
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
 
-    public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
+    public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(AddressCoordinates addressCoordinates, List<Integer> subjectAreas) {
+        List<PrismState> activeStates = stateService.getActiveResourceStates(INSTITUTION);
         Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-        List<InstitutionTargetingDTO> targets = institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreaFamily);
-
-        List<Integer> institutionIds = targets.stream().map(target -> target.getId()).collect(Collectors.toList());
-        List<Institution> institutions = institutionDAO.getInstitutions(institutionIds);
-
-        Map<Integer, Institution> institutionsById = institutions.stream().collect(
-                Collectors.toMap(institution -> institution.getId(), institution -> institution));
-
-        return targets.stream().map(target -> institutionMapper.getInstitutionRepresentationTargeting(institutionsById.get(target.getId()), //
-                target.getRelevance(), target.getDistance())).collect(Collectors.toList());
+        return institutionDAO.getInstitutionBySubjectAreas(activeStates, subjectAreaFamily, addressCoordinates).stream()
+                .map(institutionMapper::getInstitutionRepresentationTargeting).collect(Collectors.toList());
     }
 
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {

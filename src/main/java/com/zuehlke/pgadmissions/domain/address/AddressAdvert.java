@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.Coordinates;
+import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 
 @Entity
@@ -25,7 +25,7 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
     private String googleId;
 
     @Embedded
-    private Coordinates coordinates;
+    private AddressCoordinates addressCoordinates;
 
     @Override
     public ImportedAdvertDomicile getDomicile() {
@@ -46,13 +46,13 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
     }
 
     @Override
-    public Coordinates getCoordinates() {
-        return coordinates;
+    public AddressCoordinates getCoordinates() {
+        return addressCoordinates;
     }
 
     @Override
-    public void setCoordinates(Coordinates location) {
-        this.coordinates = location;
+    public void setCoordinates(AddressCoordinates location) {
+        this.addressCoordinates = location;
     }
 
     public AddressAdvert withDomicile(ImportedAdvertDomicile domicile) {
@@ -65,8 +65,8 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
         return this;
     }
 
-    public AddressAdvert withLocation(Coordinates location) {
-        this.coordinates = location;
+    public AddressAdvert withLocation(AddressCoordinates location) {
+        this.addressCoordinates = location;
         return this;
     }
 

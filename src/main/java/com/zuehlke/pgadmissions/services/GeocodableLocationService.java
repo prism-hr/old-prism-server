@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.location.Coordinates;
+import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.dto.json.EstablishmentSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO;
@@ -101,8 +101,8 @@ public class GeocodableLocationService {
 
     private void setLocation(GeocodableLocation location, GoogleGeometryDTO geometry) {
         Location googleLocation = geometry.getLocation();
-        Coordinates coordinates = new Coordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
-        location.setCoordinates(coordinates);
+        AddressCoordinates addressCoordinates = new AddressCoordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
+        location.setCoordinates(addressCoordinates);
     }
 
 }

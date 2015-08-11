@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Coordinates {
+public class AddressCoordinates {
 
     @Column(name = "location_x")
     private BigDecimal latitude;
@@ -30,12 +30,12 @@ public class Coordinates {
         this.longitude = longitude;
     }
 
-    public Coordinates withLatitude(BigDecimal latitude) {
+    public AddressCoordinates withLatitude(BigDecimal latitude) {
         this.latitude = latitude;
         return this;
     }
 
-    public Coordinates withLongitude(BigDecimal longitude) {
+    public AddressCoordinates withLongitude(BigDecimal longitude) {
         this.longitude = longitude;
         return this;
     }

@@ -1,18 +1,10 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.WeightedRelation;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "imported_institution_subject_area", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id",
@@ -25,7 +17,7 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
 
     @ManyToOne
     @JoinColumn(name = "imported_institution_id", nullable = false)
-    private ImportedInstitution institution;
+    private ImportedInstitution importedInstitution;
 
     @ManyToOne
     @JoinColumn(name = "imported_subject_area_id", nullable = false)
@@ -53,12 +45,12 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
         this.id = id;
     }
 
-    public ImportedInstitution getInstitution() {
-        return institution;
+    public ImportedInstitution getImportedInstitution() {
+        return importedInstitution;
     }
 
-    public void setInstitution(ImportedInstitution institution) {
-        this.institution = institution;
+    public void setImportedInstitution(ImportedInstitution institution) {
+        this.importedInstitution = institution;
     }
 
     public ImportedSubjectArea getSubjectArea() {
@@ -105,7 +97,7 @@ public class ImportedInstitutionSubjectArea extends WeightedRelation implements 
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("institution", institution).addProperty("subjectArea", subjectArea)
+        return new EntitySignature().addProperty("importedInstitution", importedInstitution).addProperty("subjectArea", subjectArea)
                 .addProperty("concentrationFactor", concentrationFactor).addProperty("proliferationFactor", proliferationFactor);
     }
 

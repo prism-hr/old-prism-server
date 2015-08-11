@@ -353,7 +353,7 @@ public class ImportedEntityDAO {
             Integer concentrationFactor, BigDecimal proliferationFactor) {
         return (BigDecimal) sessionFactory.getCurrentSession().createCriteria(ImportedInstitutionSubjectArea.class) //
                 .setProjection(Projections.property("relationStrength")) //
-                .add(Restrictions.in("institution.id", institutions)) //
+                .add(Restrictions.in("importedInstitution.id", institutions)) //
                 .add(Restrictions.in("subjectArea.id", subjectAreas)) //
                 .add(Restrictions.eq("concentrationFactor", concentrationFactor)) //
                 .add(Restrictions.eq("proliferationFactor", proliferationFactor)) //

@@ -1,18 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
-
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-
-public class ResourceParentDTO implements ResourceCreationDTO, ResourceParentDefinition<AdvertDTO> {
+public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition<AdvertDTO> {
 
     private ResourceDTO parentResource;
 

@@ -35,13 +35,27 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
-import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreasDTO;
-import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreaDTO;
-import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreasDTO;
-import com.zuehlke.pgadmissions.dto.TargetingParameterDTO;
-import com.zuehlke.pgadmissions.dto.TokenizedStringDTO;
+import com.zuehlke.pgadmissions.dto.*;
 import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.values;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.*;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
+import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.*;
+import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.lang3.StringUtils.rightPad;
 
 @Service
 @Transactional
@@ -110,10 +124,10 @@ public class TargetingService {
                 institutions, subjectAreaFamily, concentrationFactor, proliferationFactor);
 
         Map<Integer, Integer> institutionImportance = Maps.newHashMap();
-        for (Integer institutution : institutions) {
-            Integer oldImportance = institutionImportance.get(institutution);
+        for (Integer institution : institutions) {
+            Integer oldImportance = institutionImportance.get(institution);
             Integer newImportance = oldImportance == null ? 1 : oldImportance + 1;
-            institutionImportance.put(institutution, newImportance);
+            institutionImportance.put(institution, newImportance);
         }
 
         List<Integer> institutionRankings = importedEntityService.getImportedInstitutionSubjectAreas(subjectAreaFamily, concentrationFactor,

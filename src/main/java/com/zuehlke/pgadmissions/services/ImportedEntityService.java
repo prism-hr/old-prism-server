@@ -68,12 +68,16 @@ public class ImportedEntityService {
     @Inject
     private ApplicationContext applicationContext;
 
-    public <T extends ImportedEntity<?, ?>> T getById(Class<T> clazz, Integer id) {
+    public <T extends ImportedEntity<?, ?>> T getById(Class<T> clazz, Object id) {
         return entityService.getById(clazz, id);
     }
 
     public <T extends ImportedEntity<?, ?>> T getByName(Class<T> entityClass, String name) {
         return importedEntityDAO.getByName(entityClass, name);
+    }
+
+    public <T extends ImportedEntity<?, ?>> List<T> searchByName(Class<T> entityClass, String searchTerm) {
+        return importedEntityDAO.searchByName(entityClass, searchTerm);
     }
 
     public <T extends ImportedEntity<?, ?>> List<T> getSimilarImportedEntities(Class<T> entityClass, String searchTerm) {
@@ -112,6 +116,10 @@ public class ImportedEntityService {
             references.put(institution.getUcasId(), institution.getId());
         }
         return references;
+    }
+
+    public List<ImportedInstitution> getUnimportedUcasInstitutions(){
+        return importedEntityDAO.getUnimportedUcasInstitutions();
     }
 
     public Long getUnindexedImportedProgramCount() {

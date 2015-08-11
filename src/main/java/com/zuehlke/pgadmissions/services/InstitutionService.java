@@ -1,14 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
@@ -16,8 +7,14 @@ import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionTargetingDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -64,7 +61,7 @@ public class InstitutionService {
         String oldCurrency = institution.getCurrency();
         String newCurrency = institutionDTO.getCurrency();
         if (!oldCurrency.equals(newCurrency)) {
-            changeInstitutionCurrency(institution, oldCurrency, newCurrency);
+            changeInstitutionCurrency(institution, newCurrency);
         }
 
         Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
@@ -103,10 +100,10 @@ public class InstitutionService {
     public String getBusinessYear(Institution institution, Integer year, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
-        return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + new Integer(businessYear + 1).toString());
+        return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
-    private void changeInstitutionCurrency(Institution institution, String oldCurrency, String newCurrency) throws Exception {
+    private void changeInstitutionCurrency(Institution institution, String newCurrency) throws Exception {
         List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
         for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
             advertService.updateFinancialDetails(advertWithFeesAndPays, newCurrency);
@@ -121,12 +118,10 @@ public class InstitutionService {
     }
 
     public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
-        List<InstitutionRepresentationTargeting> representations = Lists.newLinkedList();
         Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-        for (InstitutionTargetingDTO target : institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreaFamily)) {
-            representations.add(institutionMapper.getInstitutionRepresentationTargeting(getById(target.getId()), target.getRelevance(), target.getDistance()));
-        }
-        return representations;
+        return institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreaFamily).stream()
+                .map(target -> institutionMapper.getInstitutionRepresentationTargeting(getById(target.getId()), target.getRelevance(), target.getDistance()))
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
-
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
@@ -26,6 +10,20 @@ import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.inject.Inject;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
 
 @Service
 @Transactional
@@ -51,7 +49,7 @@ public class GeocodableLocationService {
     public void setLocation(String googleIdentifier, String establishment, AddressAdvert address) {
         try {
             if (googleIdentifier == null || !setEstablishmentLocation(googleIdentifier, address)) {
-                setGeocodeLocation(googleIdentifier, establishment, address);
+                setGeocodeLocation(establishment, address);
             }
         } catch (Exception e) {
             logger.error("Problem obtaining location for " + address.getLocationString(), e);
@@ -69,7 +67,7 @@ public class GeocodableLocationService {
         if (response.getStatus().equals(OK)) {
             GoogleResultDTO result = response.getResult();
             if (result != null) {
-                setLocation(googleIdentifier, address, result.getGeometry());
+                setLocation(address, result.getGeometry());
                 return true;
             }
         }
@@ -83,7 +81,7 @@ public class GeocodableLocationService {
         return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
     }
 
-    private void setGeocodeLocation(String googleIdentifier, String establishment, AddressAdvert address) throws Exception {
+    private void setGeocodeLocation(String establishment, AddressAdvert address) throws Exception {
         List<String> addressTokens = Lists.reverse(address.getLocationTokens());
         addressTokens.add(establishment);
         for (int i = addressTokens.size(); i >= 0; i--) {
@@ -92,14 +90,14 @@ public class GeocodableLocationService {
             if (response.getStatus().equals(OK)) {
                 List<GoogleResultDTO> results = response.getResults();
                 if (!results.isEmpty()) {
-                    setLocation(googleIdentifier, address, results.get(0).getGeometry());
+                    setLocation(address, results.get(0).getGeometry());
                     return;
                 }
             }
         }
     }
 
-    private void setLocation(String googleIdentifier, GeocodableLocation location, GoogleGeometryDTO geometry) {
+    private void setLocation(GeocodableLocation location, GoogleGeometryDTO geometry) {
         Location googleLocation = geometry.getLocation();
         Coordinates coordinates = new Coordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
         location.setCoordinates(coordinates);

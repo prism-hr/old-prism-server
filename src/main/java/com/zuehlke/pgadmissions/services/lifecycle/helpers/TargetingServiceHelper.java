@@ -1,27 +1,5 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTIONS;
-import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTIUTTION_SUBJECT_AREAS;
-import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_PROGRAMS;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
-import static java.math.RoundingMode.HALF_UP;
-
-import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
@@ -30,6 +8,24 @@ import com.zuehlke.pgadmissions.dto.ParameterSearchDTO;
 import com.zuehlke.pgadmissions.dto.TargetingParameterDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.TargetingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.*;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
+import static java.math.RoundingMode.HALF_UP;
 
 @Component
 public class TargetingServiceHelper implements PrismServiceHelper {
@@ -38,10 +34,10 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     private static int threadCount = 10;
 
-    private static ParameterSearchDTO<Integer> concentration = new ParameterSearchDTO<Integer>(1, 1, 10);
+    private static ParameterSearchDTO<Integer> concentration = new ParameterSearchDTO<>(1, 1, 10);
 
-    private static ParameterSearchDTO<BigDecimal> proliferation = new ParameterSearchDTO<BigDecimal>(
-            new BigDecimal(0.01).setScale(TARGETING_PRECISION, HALF_UP), //
+    private static ParameterSearchDTO<BigDecimal> proliferation = new ParameterSearchDTO<>(
+            new BigDecimal(0.01).setScale(TARGETING_PRECISION, HALF_UP),
             new BigDecimal(0.01).setScale(TARGETING_PRECISION, HALF_UP), new BigDecimal(0.10).setScale(TARGETING_PRECISION, HALF_UP));
 
     private int activeExecutions = 0;
@@ -93,7 +89,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
                         break;
                     }
                 } else {
-                    algorithmState = INDEXING_INSTIUTTION_SUBJECT_AREAS;
+                    algorithmState = INDEXING_INSTITUTION_SUBJECT_AREAS;
                     indexInstitutionSubjectAreas(importedEntityService.getRootImportedSubjectAreas(), parameterSetToScore);
                 }
             }
@@ -110,9 +106,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
         if (!programs.isEmpty()) {
             for (List<ImportedProgram> batch : Lists.partition(programs, batchSize)) {
                 activeExecutions++;
-                executorService.submit(() -> {
-                    new ProgramIndexer().index(batch);
-                });
+                executorService.submit(() -> new ProgramIndexer().index(batch));
             }
         }
     }
@@ -124,9 +118,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
             parameterSetToScore = parameterSet;
             for (List<ImportedInstitution> batch : batches) {
                 activeExecutions++;
-                executorService.submit(() -> {
-                    new InsitutionIndexer().index(batch, parameterSet);
-                });
+                executorService.submit(() -> new InstitutionIndexer().index(batch, parameterSet));
             }
         }
     }
@@ -134,9 +126,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
     private synchronized void indexInstitutionSubjectAreas(List<Integer> subjectAreas, final TargetingParameterDTO parameterSet) {
         for (Integer subjectArea : subjectAreas) {
             activeExecutions++;
-            executorService.submit(() -> {
-                indexInstitutionSubjectArea(subjectArea, parameterSet);
-            });
+            executorService.submit(() -> indexInstitutionSubjectArea(subjectArea, parameterSet));
         }
     }
 
@@ -156,7 +146,7 @@ public class TargetingServiceHelper implements PrismServiceHelper {
     private synchronized void decrementActiveExecutions() {
         activeExecutions--;
         if (activeExecutions == 0) {
-            if (algorithmState.equals(INDEXING_INSTIUTTION_SUBJECT_AREAS)) {
+            if (algorithmState.equals(INDEXING_INSTITUTION_SUBJECT_AREAS)) {
                 algorithmState = null;
                 parameterSetToScore = null;
                 if (parameterSets.isEmpty()) {
@@ -193,14 +183,12 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
         @Override
         protected void indexEntities(List<ImportedProgram> batch, Object... arguments) {
-            for (ImportedProgram program : batch) {
-                targetingService.indexImportedProgram(program);
-            }
+            batch.forEach(targetingService::indexImportedProgram);
         }
 
     }
 
-    private class InsitutionIndexer extends Indexer<ImportedInstitution> {
+    private class InstitutionIndexer extends Indexer<ImportedInstitution> {
 
         @Override
         protected void indexEntities(List<ImportedInstitution> batch, Object... arguments) {
@@ -227,11 +215,11 @@ public class TargetingServiceHelper implements PrismServiceHelper {
 
     }
 
-    protected static enum PrismTargetingIndexationState {
+    protected enum PrismTargetingIndexationState {
 
         INDEXING_PROGRAMS,
         INDEXING_INSTITUTIONS,
-        INDEXING_INSTIUTTION_SUBJECT_AREAS;
+        INDEXING_INSTITUTION_SUBJECT_AREAS
 
     }
 

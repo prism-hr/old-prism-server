@@ -150,7 +150,7 @@ public class StateService {
         return executeStateTransition(resource, action, comment, true);
     }
 
-    public StateTransition executeStateTransition(Resource<?> resource, Action action, Comment comment, boolean notify) throws Exception {
+    public StateTransition executeStateTransition(Resource<?> resource, Action action, Comment comment, boolean notify) {
         comment.setResource(resource);
         resourceService.persistResource(resource, comment);
         commentService.persistComment(resource, comment);

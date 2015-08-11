@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.location.Coordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionTargetingDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 
 @Service
@@ -121,9 +123,16 @@ public class InstitutionService {
 
     public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Coordinates coordinates, List<Integer> subjectAreas) {
         Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-        return institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreaFamily).stream()
-                .map(target -> institutionMapper.getInstitutionRepresentationTargeting(getById(target.getId()), target.getRelevance(), target.getDistance()))
-                .collect(Collectors.toList());
-    }
+        List<InstitutionTargetingDTO> targets = institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreas);
 
+        List<Integer> institutionIds = targets.stream().map(target -> target.getId()).collect(Collectors.toList());
+        List<Institution> institutions = institutionDAO.getInstitutions(institutionIds);
+
+        Map<Integer, Institution> institutionsById = institutions.stream().collect(
+                Collectors.toMap(institution -> institution.getId(), institution -> institution));
+
+        return institutionDAO.getInstitutionBySubjectAreas(coordinates, subjectAreaFamily)
+                .stream().map(target -> institutionMapper.getInstitutionRepresentationTargeting(institutionsById.get(target.getId()), //
+                        target.getRelevance(), target.getDistance())).collect(Collectors.toList());
+    }
 }

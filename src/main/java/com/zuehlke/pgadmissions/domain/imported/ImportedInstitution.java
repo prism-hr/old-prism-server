@@ -1,16 +1,28 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
+
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
-
-import javax.persistence.*;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_INSTITUTION;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
 @Table(name = "imported_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
@@ -39,6 +51,9 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @OneToOne(mappedBy = "importedInstitution")
+    private Institution institution;
 
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
@@ -115,6 +130,10 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Institution getInstitution() {
+        return institution;
     }
 
     @Override

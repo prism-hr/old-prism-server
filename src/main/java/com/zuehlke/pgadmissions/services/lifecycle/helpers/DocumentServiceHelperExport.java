@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -11,7 +13,7 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class DocumentServiceHelperExport implements PrismServiceHelper {
+public class DocumentServiceHelperExport extends PrismServiceHelperAbstract {
 
     @Value("${integration.amazon.on}")
     private Boolean amazonOn;
@@ -22,19 +24,27 @@ public class DocumentServiceHelperExport implements PrismServiceHelper {
     @Inject
     private SystemService systemService;
 
+    private AtomicBoolean shuttingDown = new AtomicBoolean(false);
+
     @Override
     public void execute() throws Exception {
         if (amazonOn && systemService.getSystem().isDocumentExportEnabled()) {
             List<Integer> documentIds = documentService.getExportDocuments();
             for (Integer documentId : documentIds) {
-                documentService.exportDocumentToAmazon(documentId);
+                exportDocumentToAmazon(documentId);
             }
         }
     }
 
     @Override
-    public void shutdown() {
-        return;
+    public AtomicBoolean getShuttingDown() {
+        return shuttingDown;
+    }
+
+    private void exportDocumentToAmazon(Integer documentId) throws IOException {
+        if (!isShuttingDown()) {
+            documentService.exportDocumentToAmazon(documentId);
+        }
     }
 
 }

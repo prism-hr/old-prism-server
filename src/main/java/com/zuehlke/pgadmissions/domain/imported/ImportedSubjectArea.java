@@ -51,8 +51,8 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
     @JoinColumn(name = "parent_imported_subject_area_id")
     private ImportedSubjectArea parent;
 
-    @Column(name = "top_index_score")
-    private BigDecimal topIndexScore;
+    @Column(name = "index_score")
+    private BigDecimal indexScore;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -132,12 +132,12 @@ public class ImportedSubjectArea extends ImportedEntity<Integer, ImportedSubject
         this.parent = parent;
     }
 
-    public BigDecimal getTopIndexScore() {
-        return topIndexScore;
+    public BigDecimal getIndexScore() {
+        return indexScore;
     }
 
-    public void setTopIndexScore(BigDecimal topIndexScore) {
-        this.topIndexScore = topIndexScore;
+    public void setIndexScore(BigDecimal indexScore) {
+        this.indexScore = indexScore;
     }
 
     @Override

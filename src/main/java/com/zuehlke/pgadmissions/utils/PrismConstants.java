@@ -32,4 +32,9 @@ public class PrismConstants {
 
     public static final Integer TARGETING_PRECISION = 9;
 
+    public static final String REINITIALIZE_SERVER_MESSAGE_FOR_JUAN = "Likely what's happened here is that there are "
+            + "some values in your database that are out of sync with the Java source. Try retarting your server with "
+            + "the following flags set to true: 'startup.workflow.initialize', 'startup.display.initialize', "
+            + "'startup.display.initialize.drop' ('environment.properties' file). Job's a good 'un!";
+
 }

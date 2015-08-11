@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.REINITIALIZE_SERVER_MESSAGE_FOR_JUAN;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +19,7 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.exceptions.PrismExceptionForJuan;
 import com.zuehlke.pgadmissions.services.StaticDataService;
 
 @RestController
@@ -28,21 +31,25 @@ public class StaticDataController {
 
     @Cacheable("staticData")
     @RequestMapping(method = RequestMethod.GET)
-    public Map<String, Object> getStaticData() {
-        Map<String, Object> staticData = Maps.newHashMap();
-        staticData.putAll(staticDataService.getActions());
-        staticData.putAll(staticDataService.getStates());
-        staticData.putAll(staticDataService.getStateGroups());
-        staticData.putAll(staticDataService.getRoles());
-        staticData.putAll(staticDataService.getInstitutionDomiciles());
-        staticData.putAll(staticDataService.getPerformanceIndicatorGroups());
-        staticData.putAll(staticDataService.getSimpleProperties());
-        staticData.putAll(staticDataService.getFilterProperties());
-        staticData.putAll(staticDataService.getConfigurations());
-        staticData.putAll(staticDataService.getProgramCategories());
-        staticData.putAll(staticDataService.getActionConditions());
-        staticData.putAll(staticDataService.getAdvertCompetences());
-        return staticData;
+    public Map<String, Object> getStaticData() throws PrismExceptionForJuan {
+        try {
+            Map<String, Object> staticData = Maps.newHashMap();
+            staticData.putAll(staticDataService.getActions());
+            staticData.putAll(staticDataService.getStates());
+            staticData.putAll(staticDataService.getStateGroups());
+            staticData.putAll(staticDataService.getRoles());
+            staticData.putAll(staticDataService.getInstitutionDomiciles());
+            staticData.putAll(staticDataService.getPerformanceIndicatorGroups());
+            staticData.putAll(staticDataService.getSimpleProperties());
+            staticData.putAll(staticDataService.getFilterProperties());
+            staticData.putAll(staticDataService.getConfigurations());
+            staticData.putAll(staticDataService.getProgramCategories());
+            staticData.putAll(staticDataService.getActionConditions());
+            staticData.putAll(staticDataService.getAdvertCompetences());
+            return staticData;
+        } catch (Exception e) {
+            throw new PrismExceptionForJuan(REINITIALIZE_SERVER_MESSAGE_FOR_JUAN, e);
+        }
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "institutionId")

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -16,7 +17,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 
 @Component
-public class NotificationServiceHelperWorkflow implements PrismServiceHelper {
+public class NotificationServiceHelperWorkflow extends PrismServiceHelperAbstract {
 
     @Inject
     private CommentService commentService;
@@ -30,6 +31,8 @@ public class NotificationServiceHelperWorkflow implements PrismServiceHelper {
     @Inject
     private ScopeService scopeService;
 
+    private AtomicBoolean shuttingDown = new AtomicBoolean(false);
+
     @Override
     public void execute() {
         LocalDate baseline = new LocalDate();
@@ -42,13 +45,19 @@ public class NotificationServiceHelperWorkflow implements PrismServiceHelper {
     }
 
     @Override
-    public void shutdown() {
-        return;
+    public AtomicBoolean getShuttingDown() {
+        return shuttingDown;
     }
 
     private void sendIndividualRequestReminders(PrismScope resourceScope, LocalDate baseline) {
         List<Integer> resourceIds = resourceService.getResourcesRequiringIndividualReminders(resourceScope, baseline);
         for (Integer resourceId : resourceIds) {
+            sendIndividualRequestReminders(resourceScope, resourceId, baseline);
+        }
+    }
+
+    private void sendIndividualRequestReminders(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {
+        if (!isShuttingDown()) {
             notificationService.sendIndividualRequestReminders(resourceScope, resourceId, baseline);
         }
     }
@@ -56,6 +65,12 @@ public class NotificationServiceHelperWorkflow implements PrismServiceHelper {
     private void sendSyndicatedRequestNotifications(PrismScope resourceScope, LocalDate baseline) {
         List<Integer> resourceIds = resourceService.getResourcesRequiringSyndicatedReminders(resourceScope, baseline);
         for (Integer resourceId : resourceIds) {
+            sendSyndicatedRequestNotifications(resourceScope, resourceId, baseline);
+        }
+    }
+
+    private void sendSyndicatedRequestNotifications(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {
+        if (!isShuttingDown()) {
             notificationService.sendSyndicatedRequestNotifications(resourceScope, resourceId, baseline);
         }
     }
@@ -67,8 +82,14 @@ public class NotificationServiceHelperWorkflow implements PrismServiceHelper {
         for (Integer resourceId : resourceIds) {
             List<Comment> comments = commentService.getRecentComments(resourceScope, resourceId, rangeStart, rangeClose);
             for (Comment comment : comments) {
-                notificationService.sendSyndicatedUpdateNotifications(resourceScope, resourceId, comment, baseline);
+                sendSyndicatedUpdateNotifications(resourceScope, resourceId, comment, baseline);
             }
+        }
+    }
+
+    private void sendSyndicatedUpdateNotifications(PrismScope resourceScope, Integer resourceId, Comment comment, LocalDate baseline) {
+        if (!isShuttingDown()) {
+            notificationService.sendSyndicatedUpdateNotifications(resourceScope, resourceId, comment, baseline);
         }
     }
 

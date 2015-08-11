@@ -46,12 +46,15 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
 
     @Column(name = "indexed", nullable = false)
     private Boolean indexed;
-    
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "importedInstitution")
+    private Set<ImportedInstitutionSubjectArea> institutionSubjectAreas = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -113,7 +116,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     public void setIndexed(Boolean indexed) {
         this.indexed = indexed;
     }
-    
+
     @Override
     public Boolean getEnabled() {
         return enabled;
@@ -127,6 +130,10 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Override
     public Set<ImportedInstitutionMapping> getMappings() {
         return mappings;
+    }
+
+    public Set<ImportedInstitutionSubjectArea> getInstitutionSubjectAreas() {
+        return institutionSubjectAreas;
     }
 
     public ImportedInstitution withId(final Integer id) {

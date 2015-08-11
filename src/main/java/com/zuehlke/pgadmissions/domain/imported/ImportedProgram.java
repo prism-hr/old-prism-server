@@ -74,6 +74,9 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedProgramMapping> mappings = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "program")
+    private Set<ImportedProgramSubjectArea> programSubjectAreas = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -199,6 +202,10 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     @Override
     public Set<ImportedProgramMapping> getMappings() {
         return mappings;
+    }
+
+    public Set<ImportedProgramSubjectArea> getProgramSubjectAreas() {
+        return programSubjectAreas;
     }
 
     public ImportedProgram withInstitution(ImportedInstitution institution) {

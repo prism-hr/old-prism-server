@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
 import com.zuehlke.pgadmissions.domain.comment.CommentExport;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
@@ -34,6 +36,7 @@ import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentCompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentExportRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
@@ -76,7 +79,7 @@ public class CommentMapper {
             StateGroup stateGroup = null;
             List<Comment> previousStateComments = Lists.newArrayList();
 
-            List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
+            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, user);
             List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
             HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
 
@@ -95,7 +98,7 @@ public class CommentMapper {
                     Set<PrismActionRedactionType> commentRedactions = redactions.get(comment.getAction().getId());
                     if (comment.isViewEditComment()) {
                         if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
-                            CommentRepresentation representation = getCommentRepresentationSecured(user, comment, rolesOverridingRedactions, commentRedactions,
+                            CommentRepresentation representation = getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
                                     creatableRoles);
                             commentGroup.addComment(representation);
                             batchedViewEditCommentIds = Lists.newArrayList(comment.getId());
@@ -113,7 +116,7 @@ public class CommentMapper {
                             lastViewEditComment.setAssignedUsers(getCommentAssignedUserRepresentations(batchedViewEditCommentIds, creatableRoles));
                         }
                     } else {
-                        CommentRepresentation representation = getCommentRepresentationSecured(user, comment, rolesOverridingRedactions, commentRedactions,
+                        CommentRepresentation representation = getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
                                 creatableRoles);
                         commentGroup.addComment(representation);
                     }
@@ -227,6 +230,7 @@ public class CommentMapper {
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withApplicationReserveStatus(comment.getApplicationReserveStatus())
                 .withRejectionReason(rejectionReason == null ? null : rejectionReason.getName()).withRejectionReasonSystem(comment.getRejectionReasonSystem())
                 .withApplicationRating(comment.getApplicationRating()).withExport(getCommentExportRepresentation(comment))
+                .withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }
@@ -257,6 +261,17 @@ public class CommentMapper {
     private UserRepresentationSimple getCommentDelegateUserRepresentation(Comment comment) {
         User delegate = comment.getDelegateUser();
         return delegate == null ? null : userMapper.getUserRepresentationSimple(delegate);
+    }
+
+    private List<CommentCompetenceRepresentation> getCommentCompetenceRepresentations(Set<CommentCompetence> commentCompetences) {
+        List<CommentCompetenceRepresentation> representations = Lists.newLinkedList();
+        for (CommentCompetence commentCompetence : commentCompetences) {
+            Competence competence = commentCompetence.getCompetence();
+            representations.add(new CommentCompetenceRepresentation().withCompetence(competence.getId()).withName(competence.getName())
+                    .withDescription(competence.getDescription()).withImportance(commentCompetence.getImportance()).withRating(commentCompetence.getRating())
+                    .withRemark(commentCompetence.getRemark()));
+        }
+        return representations;
     }
 
     private CommentPositionDetailRepresentation getCommentPositionDetailRepresentation(Comment comment) {

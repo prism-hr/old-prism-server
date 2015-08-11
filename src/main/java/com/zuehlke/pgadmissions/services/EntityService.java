@@ -102,6 +102,11 @@ public class EntityService {
         entityDAO.deleteAll(classReference);
     }
 
+    public void executeBulkInsert(String table, String columns, String inserts) {
+        entityDAO.executeBulkInsert(table, columns, inserts);
+        flush();
+    }
+
     public void executeBulkInsert(String table, String columns, String inserts, String updates) {
         entityDAO.executeBulkInsert(table, columns, inserts, updates);
         flush();

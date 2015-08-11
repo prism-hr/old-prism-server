@@ -59,6 +59,8 @@ public class CommentRepresentation {
 
     private List<CommentAssignedUserRepresentation> assignedUsers;
 
+    private List<CommentCompetenceRepresentation> competences;
+
     private List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots;
 
     private List<LocalDateTime> appointmentPreferences;
@@ -241,6 +243,14 @@ public class CommentRepresentation {
         this.assignedUsers = assignedUsers;
     }
 
+    public List<CommentCompetenceRepresentation> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(List<CommentCompetenceRepresentation> competences) {
+        this.competences = competences;
+    }
+
     public List<CommentAppointmentTimeslotRepresentation> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
@@ -370,6 +380,11 @@ public class CommentRepresentation {
         return this;
     }
 
+    public CommentRepresentation withCompetences(List<CommentCompetenceRepresentation> competences) {
+        this.competences = competences;
+        return this;
+    }
+    
     public CommentRepresentation withAppointmentTimeslots(List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
         return this;

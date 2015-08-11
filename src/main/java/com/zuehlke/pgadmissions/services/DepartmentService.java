@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
+import static java.math.RoundingMode.HALF_UP;
+
 import java.util.List;
 import java.util.Set;
 
@@ -8,9 +15,11 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.dto.DepartmentImportedSubjectAreaDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 
 @Service
@@ -42,6 +51,23 @@ public class DepartmentService {
                 importedPrograms.add(importedEntityService.getById(ImportedProgram.class, importedProgramDTO.getId()));
             }
         }
+    }
+
+    public void synchronizeImportedSubjectAreas(Department department) {
+        departmentDAO.deleteDepartmentImportedSubjectAreas(department);
+
+        List<String> rows = Lists.newArrayList();
+        for (DepartmentImportedSubjectAreaDTO subjectAreaDTO : departmentDAO.getImportedSubjectAreas(department)) {
+            List<String> columns = Lists.newLinkedList();
+            columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getDepartment()));
+            columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getSubjectArea()));
+            columns.add(prepareDecimalForSqlInsert(subjectAreaDTO.getProgramRelationStrength().multiply(
+                    subjectAreaDTO.getInstitutionRelationStrength()).setScale(RATING_PRECISION, HALF_UP)));
+            rows.add(prepareColumnsForSqlInsert(columns));
+        }
+
+        entityService.executeBulkInsert("department_imported_subject_area", "department_id, imported_subject_area_id",
+                prepareRowsForSqlInsert(null));
     }
 
 }

@@ -15,4 +15,5 @@ public class DepartmentRepresentation extends ResourceParentDivisionRepresentati
     public void setImportedPrograms(List<ImportedEntityResponse> importedPrograms) {
         this.importedPrograms = importedPrograms;
     }
+
 }

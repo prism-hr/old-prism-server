@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.institution;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
-public class InstitutionRepresentationSimple extends ResourceRepresentationSimple {
+public class InstitutionRepresentationLocation extends ResourceRepresentationSimple {
 
     private AddressAdvertRepresentation address;
 

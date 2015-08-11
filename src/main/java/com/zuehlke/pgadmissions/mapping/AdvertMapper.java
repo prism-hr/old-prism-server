@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.Coordinates;
+import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.address.CoordinatesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
@@ -155,12 +155,12 @@ public class AdvertMapper {
             representation.setDomicile(getAdvertDomicileRepresentation(address.getDomicile()));
             representation.setGoogleId(address.getGoogleId());
 
-            Coordinates coordinates = address.getCoordinates();
-            if (coordinates != null) {
-                representation.setCoordinates(new CoordinatesRepresentation(coordinates.getLatitude(), coordinates.getLongitude()));
+            AddressCoordinates addressCoordinates = address.getCoordinates();
+            if (addressCoordinates != null) {
+                representation.setCoordinates(new AddressCoordinatesRepresentation().withLatitude(addressCoordinates.getLatitude()).withLongitude(
+                        addressCoordinates.getLongitude()));
             }
 
-            representation.setLocationString(address.getLocationString());
             return representation;
         }
 

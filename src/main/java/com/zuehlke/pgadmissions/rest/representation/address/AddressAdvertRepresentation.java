@@ -11,9 +11,7 @@ public class AddressAdvertRepresentation extends Address implements AddressDefin
 
     private String googleId;
 
-    private CoordinatesRepresentation coordinates;
-
-    private String locationString;
+    private AddressCoordinatesRepresentation coordinates;
 
     @Override
     public ImportedAdvertDomicileResponse getDomicile() {
@@ -33,20 +31,52 @@ public class AddressAdvertRepresentation extends Address implements AddressDefin
         this.googleId = googleId;
     }
 
-    public CoordinatesRepresentation getCoordinates() {
+    public AddressCoordinatesRepresentation getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(CoordinatesRepresentation coordinates) {
+    public void setCoordinates(AddressCoordinatesRepresentation coordinates) {
         this.coordinates = coordinates;
     }
 
-    public String getLocationString() {
-        return locationString;
+    public AddressAdvertRepresentation withDomicile(ImportedAdvertDomicileResponse domicile) {
+        this.domicile = domicile;
+        return this;
     }
 
-    public void setLocationString(String locationString) {
-        this.locationString = locationString;
+    public AddressAdvertRepresentation withAddressLine1(String addressLine1) {
+        setAddressLine1(addressLine1);
+        return this;
+    }
+
+    public AddressAdvertRepresentation withAddressLine2(String addressLine2) {
+        setAddressLine2(addressLine2);
+        return this;
+    }
+
+    public AddressAdvertRepresentation withAddressTown(String addressTown) {
+        setAddressTown(addressTown);
+        return this;
+    }
+
+    public AddressAdvertRepresentation withAddressRegion(String addressRegion) {
+        setAddressRegion(addressRegion);
+        return this;
+    }
+
+    public AddressAdvertRepresentation withAddressCode(String addressCode) {
+        setAddressCode(addressCode);
+        return this;
+    }
+
+    public AddressAdvertRepresentation withGoogleId(String googleId) {
+        this.googleId = googleId;
+        return this;
+    }
+
+    public AddressAdvertRepresentation withCoordinates(AddressCoordinatesRepresentation coordinates) {
+        this.coordinates = coordinates;
+        return this;
     }
 
 }

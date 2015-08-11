@@ -7,9 +7,9 @@ import com.zuehlke.pgadmissions.domain.address.Address;
 
 public abstract class GeocodableLocation extends Address {
 
-    public abstract Coordinates getCoordinates();
+    public abstract AddressCoordinates getCoordinates();
 
-    public abstract void setCoordinates(Coordinates coordinates);
+    public abstract void setCoordinates(AddressCoordinates addressCoordinates);
 
     public List<String> getLocationTokens() {
         List<String> tokens = Lists.newLinkedList();

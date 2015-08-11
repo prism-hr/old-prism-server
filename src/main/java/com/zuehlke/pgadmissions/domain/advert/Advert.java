@@ -47,22 +47,18 @@ public class Advert implements UniqueEntity {
     private Integer id;
 
     @ManyToOne
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id")
     private Institution institution;
 
     @ManyToOne
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id")
     private Program program;
 
     @ManyToOne
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "department_id")
     private Department department;
 
     @ManyToOne
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "project_id")
     private Project project;
 
@@ -90,6 +86,7 @@ public class Advert implements UniqueEntity {
     private String telephone;
 
     @OneToOne
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "advert_address_id")
     private AddressAdvert address;
 

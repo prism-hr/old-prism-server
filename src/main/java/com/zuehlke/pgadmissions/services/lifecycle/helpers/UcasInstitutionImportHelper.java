@@ -1,21 +1,16 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import com.google.common.io.ByteStreams;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
-import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
-import com.zuehlke.pgadmissions.services.*;
-import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -34,15 +29,26 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
+import com.google.common.io.ByteStreams;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
+import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
 
 @Component
 public class UcasInstitutionImportHelper implements PrismServiceHelper {

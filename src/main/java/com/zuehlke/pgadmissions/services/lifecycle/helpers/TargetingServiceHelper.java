@@ -1,5 +1,27 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTIONS;
+import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTION_SUBJECT_AREAS;
+import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_PROGRAMS;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
+import static java.math.RoundingMode.HALF_UP;
+
+import java.math.BigDecimal;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
@@ -8,24 +30,6 @@ import com.zuehlke.pgadmissions.dto.ParameterSearchDTO;
 import com.zuehlke.pgadmissions.dto.TargetingParameterDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.TargetingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.*;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
-import static java.math.RoundingMode.HALF_UP;
 
 @Component
 public class TargetingServiceHelper implements PrismServiceHelper {

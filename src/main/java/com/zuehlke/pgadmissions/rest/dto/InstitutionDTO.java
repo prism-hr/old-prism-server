@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
+import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
+
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 
 public class InstitutionDTO extends ResourceParentDTO {
 

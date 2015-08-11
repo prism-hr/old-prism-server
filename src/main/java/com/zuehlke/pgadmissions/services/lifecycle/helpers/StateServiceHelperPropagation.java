@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.util.List;
 
 @Component
 public class StateServiceHelperPropagation implements PrismServiceHelper {

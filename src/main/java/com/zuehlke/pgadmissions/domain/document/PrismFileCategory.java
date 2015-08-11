@@ -1,6 +1,11 @@
 package com.zuehlke.pgadmissions.domain.document;
 
-import com.zuehlke.pgadmissions.services.helpers.persisters.*;
+import com.zuehlke.pgadmissions.services.helpers.persisters.ImageDocumentPersister;
+import com.zuehlke.pgadmissions.services.helpers.persisters.InstitutionBackgroundPersister;
+import com.zuehlke.pgadmissions.services.helpers.persisters.InstitutionLogoPersister;
+import com.zuehlke.pgadmissions.services.helpers.persisters.ProgramBackgroundPersister;
+import com.zuehlke.pgadmissions.services.helpers.persisters.ProjectBackgroundPersister;
+import com.zuehlke.pgadmissions.services.helpers.persisters.UserPortraitPersister;
 import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcessor;
 import com.zuehlke.pgadmissions.services.helpers.processors.InstitutionLogoProcessor;
 

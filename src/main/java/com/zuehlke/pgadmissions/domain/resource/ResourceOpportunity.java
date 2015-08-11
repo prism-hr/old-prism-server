@@ -6,6 +6,7 @@ import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
 public abstract class ResourceOpportunity<T extends PrismUserReassignmentProcessor> extends ResourceParentDivision<T> implements

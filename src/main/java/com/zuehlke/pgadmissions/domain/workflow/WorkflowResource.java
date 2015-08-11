@@ -3,12 +3,12 @@ package com.zuehlke.pgadmissions.domain.workflow;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public abstract class WorkflowResource implements UniqueEntity {

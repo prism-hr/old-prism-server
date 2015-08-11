@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
@@ -151,6 +152,13 @@ public class InstitutionDAO {
                 .setParameter("baseLongitude", coordinates.getLongitude())
                 .setParameterList("subjectAreas", subjectAreas)
                 .setResultTransformer(Transformers.aliasToBean(InstitutionTargetingDTO.class))
+                .list();
+    }
+
+    public List<Institution> getInstitutions(Collection<Integer> institutionIds) {
+        return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .setFetchMode("importedInstitution", FetchMode.SELECT) //
+                .add(Restrictions.in("id", institutionIds)) //
                 .list();
     }
 

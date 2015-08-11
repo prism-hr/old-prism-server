@@ -58,7 +58,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "importedInstitution")
+    @OneToMany(mappedBy = "institution")
     private Set<ImportedInstitutionSubjectArea> institutionSubjectAreas = Sets.newHashSet();
 
     @Override

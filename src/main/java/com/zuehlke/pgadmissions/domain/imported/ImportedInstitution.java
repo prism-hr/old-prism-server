@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -21,6 +22,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Entity
 @Table(name = "imported_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })
@@ -50,10 +52,13 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @OneToOne(mappedBy = "importedInstitution")
+    private Institution institution;
+
     @OneToMany(mappedBy = "importedEntity")
     private Set<ImportedInstitutionMapping> mappings = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "institution")
+    @OneToMany(mappedBy = "importedInstitution")
     private Set<ImportedInstitutionSubjectArea> institutionSubjectAreas = Sets.newHashSet();
 
     @Override
@@ -125,6 +130,10 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Institution getInstitution() {
+        return institution;
     }
 
     @Override

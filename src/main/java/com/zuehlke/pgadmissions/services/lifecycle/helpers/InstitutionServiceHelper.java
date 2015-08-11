@@ -51,9 +51,9 @@ import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
 
 @Component
-public class UcasInstitutionImportHelper implements PrismServiceHelper {
+public class InstitutionServiceHelper implements PrismServiceHelper {
 
-    private static Logger logger = LoggerFactory.getLogger(UcasInstitutionImportHelper.class);
+    private static Logger logger = LoggerFactory.getLogger(InstitutionServiceHelper.class);
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -163,7 +163,7 @@ public class UcasInstitutionImportHelper implements PrismServiceHelper {
                 address.getDomicile().setId(domiciles.get(0).getId());
             }
 
-            UcasInstitutionImportHelper thisBean = applicationContext.getBean(UcasInstitutionImportHelper.class);
+            InstitutionServiceHelper thisBean = applicationContext.getBean(InstitutionServiceHelper.class);
             try {
                 thisBean.createInstitution(user, facebookId, facebookPage, institutionDTO);
             } catch (WorkflowDuplicateResourceException e) {

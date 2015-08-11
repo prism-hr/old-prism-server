@@ -116,9 +116,6 @@ public class AdvertService {
     private AdvertMapper advertMapper;
 
     @Inject
-    private DocumentService documentService;
-
-    @Inject
     private RestTemplate restTemplate;
 
     public Advert getById(Integer id) {
@@ -137,7 +134,7 @@ public class AdvertService {
         if (queryDTO.isResourceAction()) {
             Resource<?> resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             if (resource.getInstitution() != null) {
-                queryDTO.setInstitutions(new Integer[]{resource.getInstitution().getId()});
+                queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
             }
         }
 
@@ -289,12 +286,12 @@ public class AdvertService {
             for (AdvertTargetDTO dtoValue : dtoValues) {
                 TargetEntity value;
                 Integer valueId = dtoValue.getId();
-                Object[] optionalArguments = new Object[]{};
+                Object[] optionalArguments = new Object[] {};
                 if (valueId == null && dtoValue.getClass().equals(AdvertCompetenceDTO.class)) {
                     AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) dtoValue;
                     value = getOrCreateCompetence(competenceDTO);
                     if (!((Competence) value).getDescription().equals(competenceDTO.getDescription())) {
-                        optionalArguments = new Object[]{competenceDTO.getDescription()};
+                        optionalArguments = new Object[] { competenceDTO.getDescription() };
                     }
                 } else if (valueId != null) {
                     value = (TargetEntity) entityService.getById(valueClass, dtoValue.getId());
@@ -446,7 +443,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
         try {
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -458,7 +455,7 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -577,7 +574,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
-                                        LocalDate baseline) {
+            LocalDate baseline) {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 
@@ -698,7 +695,7 @@ public class AdvertService {
     }
 
     private AdvertAttribute<?> createAdvertAttribute(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object value,
-                                                     Object... optionalArguments) {
+            Object... optionalArguments) {
         AdvertAttribute<?> entityAttribute = BeanUtils.instantiate(attributeClass);
         entityAttribute.setAdvert(advert);
         setProperty(entityAttribute, "value", value);
@@ -742,7 +739,7 @@ public class AdvertService {
 
     private HashMultimap<PrismScope, PrismState> getAdvertScopes() {
         HashMultimap<PrismScope, PrismState> scopes = HashMultimap.create();
-        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
             scopes.putAll(scope, stateService.getActiveResourceStates(scope));
         }
         return scopes;

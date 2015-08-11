@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.*;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.PrismServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.UcasInstitutionImportHelper;
 
 public enum PrismMaintenanceTask {
 

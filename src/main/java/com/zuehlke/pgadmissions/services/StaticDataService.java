@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.mapping.ScopeMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
@@ -112,11 +113,21 @@ public class StaticDataService {
     @Inject
     private CustomizationMapper customizationMapper;
 
+    @Inject
+    private ScopeMapper scopeMapper;
+
+    public Map<String, Object> getScopes() {
+        Map<String, Object> staticData = Maps.newHashMap();
+        staticData.put("scopes", scopeMapper.getScopeRepresentations());
+        return staticData;
+    }
+
     public Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
 
         List<Action> actions = entityService.list(Action.class);
-        List<ActionRepresentation> actionRepresentations = actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId())).collect(Collectors.toList());
+        List<ActionRepresentation> actionRepresentations = actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId()))
+                .collect(Collectors.toList());
 
         staticData.put("actions", actionRepresentations);
         return staticData;
@@ -173,9 +184,9 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
+        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class, PrismApplicationReserveStatus.class,
-                PrismDisplayPropertyCategory.class, PrismImportedEntity.class}) {
+                PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -260,8 +271,10 @@ public class StaticDataService {
 
     public Map<String, Object> getAdvertCompetences() {
         List<Competence> competences = entityService.list(Competence.class);
-        List<AdvertCompetenceRepresentation> competenceRepresentations = competences.stream()
-                .map(competence -> new AdvertCompetenceRepresentation().withId(competence.getId()).withName(competence.getName()).withDescription(competence.getDescription()))
+        List<AdvertCompetenceRepresentation> competenceRepresentations = competences
+                .stream()
+                .map(competence -> new AdvertCompetenceRepresentation().withId(competence.getId()).withName(competence.getName())
+                        .withDescription(competence.getDescription()))
                 .collect(Collectors.toList());
         return Collections.singletonMap("competences", competenceRepresentations);
     }
@@ -275,7 +288,8 @@ public class StaticDataService {
 
         for (PrismImportedEntity prismImportedEntity : getPrefetchEntities()) {
             List<T> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
-            List<U> entityRepresentations = entities.stream().map(entity -> (U) importedEntityMapper.getImportedEntityRepresentation(entity)).collect(Collectors.toList());
+            List<U> entityRepresentations = entities.stream().map(entity -> (U) importedEntityMapper.getImportedEntityRepresentation(entity))
+                    .collect(Collectors.toList());
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
 
@@ -310,7 +324,8 @@ public class StaticDataService {
             importedInstitution = institution.getImportedInstitution();
         }
         List<ImportedProgram> importedPrograms = importedEntityService.getImportedPrograms(importedInstitution, searchQuery);
-        return importedPrograms.stream().map(program -> importedEntityMapper.getImportedProgramRepresentation(program, institution)).collect(Collectors.toList());
+        return importedPrograms.stream().map(program -> importedEntityMapper.getImportedProgramRepresentation(program, institution))
+                .collect(Collectors.toList());
     }
 
     private static class ToIdFunction implements Function<WorkflowDefinition, Object> {

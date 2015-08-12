@@ -116,6 +116,7 @@ public class NotificationService {
         LocalDate baseline = new LocalDate();
         Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, author, baseline);
         sendIndividualUpdateNotifications(resource, comment, author, exclusions);
+        entityService.flush();
     }
 
     public void sendIndividualRequestReminders(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {

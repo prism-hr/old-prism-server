@@ -90,11 +90,13 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.ResourceServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.services.helpers.concurrency.StateServiceHelperConcurrency;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.StateDurationResolver;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
@@ -189,11 +191,6 @@ public class ResourceService {
             resource.setCreatedTimestamp(baseline);
             setResourceUpdated(resource, baseline);
 
-            if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-                ResourceParent<?> parent = (ResourceParent<?>) resource;
-                parent.setUpdatedTimestampSitemap(baseline);
-            }
-
             Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();
             if (populator != null) {
                 applicationContext.getBean(populator).populate(resource);
@@ -204,16 +201,18 @@ public class ResourceService {
             resource.setCode(generateResourceCode(resource));
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
                 resource.getAdvert().setResource(resource);
+                ((ResourceParent<?>) (resource)).setUpdatedTimestampSitemap(baseline);
             }
 
             Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
             if (workflowPropertyConfigurationVersion == null) {
                 customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
             }
-
+            
             entityService.flush();
         } else if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
             setResourceUpdated(resource, baseline);
+            entityService.flush();
         }
     }
 
@@ -239,6 +238,7 @@ public class ResourceService {
         Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourcePreprocessor();
         if (processor != null) {
             applicationContext.getBean(processor).process(resource, comment);
+            entityService.flush();
         }
     }
 
@@ -284,18 +284,14 @@ public class ResourceService {
             StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null //
                     : stateService.getStateDurationConfiguration(resource, comment.getUser(), stateDurationDefinition);
             resource.setDueDate(baseline.plusDays(stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration()));
-
-            entityService.flush();
         }
+        entityService.flush();
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Resource<?>> void postProcessResource(T resource, Comment comment) {
-        DateTime baselineTime = new DateTime();
-
         Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourcePostprocessor();
         if (processor != null) {
-            entityService.flush();
             applicationContext.getBean(processor).process(resource, comment);
         }
 
@@ -304,8 +300,13 @@ public class ResourceService {
         }
 
         if (comment.isStateGroupTransitionComment() && comment.getAction().getCreationScope() == null) {
-            createOrUpdateStateTransitionSummary(resource, baselineTime);
+            createOrUpdateStateTransitionSummary(resource, new DateTime());
         }
+
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            setAdvertIncompleteSection((ResourceParent<?>) resource);
+        }
+        entityService.flush();
     }
 
     public Comment executeUpdate(Resource<?> resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
@@ -382,12 +383,12 @@ public class ResourceService {
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition) {
         return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
     public List<Integer> getAssignedResources(final User user, final PrismScope scopeId, final ResourceListFilterDTO filter,
-                                              final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
+            final String lastSequenceIdentifier, final Integer recordsToRetrieve, final Junction condition, final PrismScope parentScopeId) {
         return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
     }
 
@@ -665,7 +666,7 @@ public class ResourceService {
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource<?> resource, List<PrismState> scopeStates,
-                                                                                      HashMultimap<PrismScope, PrismState> enclosedScopes) {
+            HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
@@ -677,7 +678,7 @@ public class ResourceService {
     }
 
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope resourceScope, PrismScope parentScope, Integer parentId,
-                                                                                       PrismScope targetScope) {
+            PrismScope targetScope) {
         return resourceDAO.getResourcesWhichPermitChildResourceCreation(resourceScope, parentScope, parentId, targetScope, userService.isLoggedInSession());
     }
 
@@ -716,6 +717,19 @@ public class ResourceService {
         } else {
             throw new WorkflowEngineException("Cannot terminate system resource");
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ResourceParent<?>> void setAdvertIncompleteSection(T resource) {
+        List<PrismDisplayPropertyDefinition> incompleteSections = Lists.newArrayList();
+        for (ResourceSectionRepresentation requiredSection : scopeService.getRequiredSections(resource.getResourceScope())) {
+            ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(requiredSection
+                    .getCompletenessEvaluator());
+            if (!completenessEvaluator.evaluate(resource)) {
+                incompleteSections.add(requiredSection.getDisplayProperty());
+            }
+        }
+        resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
     }
 
     private void createOrUpdateStateTransitionSummary(Resource<?> resource, DateTime baselineTime) {

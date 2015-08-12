@@ -30,6 +30,7 @@ public class StaticDataController {
     @RequestMapping(method = RequestMethod.GET)
     public Map<String, Object> getStaticData() {
         Map<String, Object> staticData = Maps.newHashMap();
+        staticData.putAll(staticDataService.getScopes());
         staticData.putAll(staticDataService.getActions());
         staticData.putAll(staticDataService.getStates());
         staticData.putAll(staticDataService.getStateGroups());

@@ -66,8 +66,8 @@ public class DepartmentService {
             rows.add(prepareColumnsForSqlInsert(columns));
         }
 
-        entityService.executeBulkInsert("department_imported_subject_area", "department_id, imported_subject_area_id",
-                prepareRowsForSqlInsert(null));
+        entityService.executeBulkInsert("department_imported_subject_area", "department_id, imported_subject_area_id, relation_strength",
+                prepareRowsForSqlInsert(rows));
     }
 
 }

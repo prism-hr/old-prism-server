@@ -267,7 +267,7 @@ public class ResourceDAO {
         for (PrismScope childScope : childResources.keySet()) {
             Set<Integer> scopedChildResources = childResources.get(childScope);
             if (!scopedChildResources.isEmpty()) {
-                resourceConstraint.add(Restrictions.in(childScope.getLowerCamelName(), scopedChildResources));
+                resourceConstraint.add(Restrictions.in(childScope.getLowerCamelName() + ".id", scopedChildResources));
             }
         }
 
@@ -513,7 +513,7 @@ public class ResourceDAO {
     }
 
     public List<Integer> getChildResources(Resource<?> resource, PrismScope childScope) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(childScope.getClass()) //
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(childScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .list();

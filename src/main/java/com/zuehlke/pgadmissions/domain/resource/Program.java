@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -74,6 +75,10 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
+
+    @Lob
+    @Column(name = "advert_incomplete_section")
+    private String advertIncompleteSection;
 
     @ManyToOne
     @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
@@ -245,6 +250,16 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+
+    @Override
+    public String getAdvertIncompleteSection() {
+        return advertIncompleteSection;
+    }
+
+    @Override
+    public void setAdvertIncompleteSection(String advertIncompleteSection) {
+        this.advertIncompleteSection = advertIncompleteSection;
     }
 
     @Override

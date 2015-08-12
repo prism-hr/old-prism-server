@@ -487,9 +487,9 @@ public class UserService {
     }
 
     private void mergeUsers(User oldUser, User newUser) throws Exception {
-        for (Entry<Class<? extends UserAssignment<?>>, String> userReassignmentProcessor : userAssignments.entries()) {
-            UserAssignment<?> userAssignment = BeanUtils.instantiate(userReassignmentProcessor.getKey());
-            applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userReassignmentProcessor.getValue());
+        for (Entry<Class<? extends UserAssignment<?>>, String> userAassignment : userAssignments.entries()) {
+            UserAssignment<?> userAssignment = BeanUtils.instantiate(userAassignment.getKey());
+            applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAassignment.getValue());
         }
     }
 

@@ -69,7 +69,6 @@ public class CommentMapper {
     @Inject
     private RoleService roleService;
 
-    // TODO: rewrite this shit so that it is maintainable
     public TimelineRepresentation getTimelineRepresentation(Resource<?> resource, User user) {
         TimelineRepresentation timeline = new TimelineRepresentation();
         List<Comment> transitionComments = commentService.getStateGroupTransitionComments(resource);
@@ -97,28 +96,11 @@ public class CommentMapper {
                 for (Comment comment : stateComments) {
                     Set<PrismActionRedactionType> commentRedactions = redactions.get(comment.getAction().getId());
                     if (comment.isViewEditComment()) {
-                        if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
-                            CommentRepresentation representation = getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
-                                    creatableRoles);
-                            commentGroup.addComment(representation);
-                            batchedViewEditCommentIds = Lists.newArrayList(comment.getId());
-                            lastViewEditComment = representation;
-                        } else {
-                            String contentNew = comment.getContent();
-                            String contentExisting = lastViewEditComment.getContent();
-                            if (contentExisting == null) {
-                                lastViewEditComment.setContent(contentNew);
-                            } else if (!contentExisting.contains(contentNew)) {
-                                contentExisting = contentExisting + "<br/>" + contentNew;
-                                lastViewEditComment.setContent(contentExisting);
-                            }
-                            batchedViewEditCommentIds.add(comment.getId());
-                            lastViewEditComment.setAssignedUsers(getCommentAssignedUserRepresentations(batchedViewEditCommentIds, creatableRoles));
-                        }
+                        addViewEditCommentRepresentation(user, comment, overridingRoles, commentRedactions, creatableRoles, commentGroup,
+                                batchedViewEditCommentIds, lastViewEditComment);
                     } else {
-                        CommentRepresentation representation = getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
-                                creatableRoles);
-                        commentGroup.addComment(representation);
+                        commentGroup.addComment(getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
+                                creatableRoles));
                     }
                 }
 
@@ -193,6 +175,29 @@ public class CommentMapper {
         List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
         Set<PrismActionRedactionType> redactions = actionService.getRedactions(resource, user).get(comment.getAction().getId());
         return getCommentRepresentationSecured(user, comment, rolesOverridingRedactions, redactions, creatableRoles);
+    }
+
+    private void addViewEditCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles, Set<PrismActionRedactionType> commentRedactions,
+            List<PrismRole> creatableRoles, TimelineCommentGroupRepresentation commentGroup, List<Integer> batchedViewEditCommentIds,
+            CommentRepresentation lastViewEditComment) {
+        if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
+            CommentRepresentation representation = getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
+                    creatableRoles);
+            commentGroup.addComment(representation);
+            batchedViewEditCommentIds = Lists.newArrayList(comment.getId());
+            lastViewEditComment = representation;
+        } else {
+            String contentNew = comment.getContent();
+            String contentExisting = lastViewEditComment.getContent();
+            if (contentExisting == null) {
+                lastViewEditComment.setContent(contentNew);
+            } else if (!contentExisting.contains(contentNew)) {
+                contentExisting = contentExisting + "<br/>" + contentNew;
+                lastViewEditComment.setContent(contentExisting);
+            }
+            batchedViewEditCommentIds.add(comment.getId());
+            lastViewEditComment.setAssignedUsers(getCommentAssignedUserRepresentations(batchedViewEditCommentIds, creatableRoles));
+        }
     }
 
     private CommentRepresentation getCommentRepresentationSecured(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,

@@ -3,12 +3,13 @@ package com.zuehlke.pgadmissions.rest.representation.user;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private Boolean sendApplicationRecommendationNotification;
 
-    private Integer permissionPrecedence;
+    private PrismScope permissionScope;
 
     private String parentUser;
 
@@ -26,12 +27,12 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
 
-    public Integer getPermissionPrecedence() {
-        return permissionPrecedence;
+    public PrismScope getPermissionScope() {
+        return permissionScope;
     }
 
-    public void setPermissionPrecedence(Integer permissionPrecedence) {
-        this.permissionPrecedence = permissionPrecedence;
+    public void setPermissionScope(PrismScope permissionScope) {
+        this.permissionScope = permissionScope;
     }
 
     public String getParentUser() {

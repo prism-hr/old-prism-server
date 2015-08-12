@@ -144,8 +144,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         resourceSections.put(INSTITUTION, getResourceParentSections());
         resourceSections.put(DEPARTMENT, getResourceParentSections());
-        resourceSections.put(PROGRAM, getResourceParentSections());
-        resourceSections.put(PROJECT, getResourceParentSections());
+        resourceSections.put(PROGRAM, getResourceOpportunitySections());
+        resourceSections.put(PROJECT, getResourceOpportunitySections());
 
         resourceSections.put(APPLICATION, new ResourceSectionsRepresentation() //
                 .withSection(new ResourceSectionRepresentation() //
@@ -345,6 +345,18 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     }
 
     private static ResourceSectionsRepresentation getResourceParentSections() {
+        return getResourceParentSections(new ResourceSectionsRepresentation());
+    }
+
+    private static ResourceSectionsRepresentation getResourceOpportunitySections() {
+        return getResourceParentSections(new ResourceSectionsRepresentation() //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER))
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_CLOSING_DATES_HEADER)));
+    }
+
+    private static ResourceSectionsRepresentation getResourceParentSections(ResourceSectionsRepresentation advertSections) {
         return new ResourceSectionsRepresentation() //
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_SUMMARY_HEADER) //
@@ -355,10 +367,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                         .withSubsections(new ResourceSectionsRepresentation() //
                                 .withSection(new ResourceSectionRepresentation() //
                                         .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER))
-                                .withSection(new ResourceSectionRepresentation() //
-                                        .withDisplayProperty(SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER))
-                                .withSection(new ResourceSectionRepresentation() //
-                                        .withDisplayProperty(SYSTEM_RESOURCE_CLOSING_DATES_HEADER)))) //
+                                .withSections(advertSections))) //
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_TARGETS_HEADER) //
                         .withIncompleteExplanation(SYSTEM_RESOURCE_TARGETS_INCOMPLETE))

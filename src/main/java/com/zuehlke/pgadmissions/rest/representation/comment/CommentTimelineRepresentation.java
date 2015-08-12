@@ -5,23 +5,23 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
-public class TimelineRepresentation {
+public class CommentTimelineRepresentation {
 
-    private List<TimelineCommentGroupRepresentation> commentGroups = Lists.newLinkedList();
+    private List<CommentGroupRepresentation> commentGroups = Lists.newLinkedList();
 
-    public final List<TimelineCommentGroupRepresentation> getCommentGroups() {
+    public final List<CommentGroupRepresentation> getCommentGroups() {
         return Lists.reverse(commentGroups);
     }
 
-    public final void setCommentGroups(List<TimelineCommentGroupRepresentation> commentGroups) {
+    public final void setCommentGroups(List<CommentGroupRepresentation> commentGroups) {
         this.commentGroups = commentGroups;
     }
 
-    public void addCommentGroup(TimelineCommentGroupRepresentation commentGroup) {
+    public void addCommentGroup(CommentGroupRepresentation commentGroup) {
         commentGroups.add(commentGroup);
     }
 
-    public static class TimelineCommentGroupRepresentation {
+    public static class CommentGroupRepresentation {
 
         private PrismStateGroup stateGroup;
 
@@ -43,12 +43,12 @@ public class TimelineRepresentation {
             this.comments = comments;
         }
 
-        public TimelineCommentGroupRepresentation withStateGroup(PrismStateGroup stateGroup) {
+        public CommentGroupRepresentation withStateGroup(PrismStateGroup stateGroup) {
             this.stateGroup = stateGroup;
             return this;
         }
 
-        public TimelineCommentGroupRepresentation addComment(CommentRepresentation comment) {
+        public CommentGroupRepresentation addComment(CommentRepresentation comment) {
             comments.add(comment);
             return this;
         }

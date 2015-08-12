@@ -7,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.comment.TimelineRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
@@ -26,7 +26,7 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     private List<ActionRepresentationExtended> actions;
 
-    private TimelineRepresentation timeline;
+    private CommentTimelineRepresentation timeline;
 
     private List<ResourceUserRolesRepresentation> userRoles;
 
@@ -42,11 +42,11 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
         this.actions = actions;
     }
 
-    public TimelineRepresentation getTimeline() {
+    public CommentTimelineRepresentation getTimeline() {
         return timeline;
     }
 
-    public void setTimeline(TimelineRepresentation timeline) {
+    public void setTimeline(CommentTimelineRepresentation timeline) {
         this.timeline = timeline;
     }
 

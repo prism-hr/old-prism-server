@@ -23,9 +23,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TRANSLATIONS_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_USER_BOUNCES_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_WORKFLOW_HEADER;
+
+import java.util.Map;
+
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -65,11 +69,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     SYSTEM(new PrismScopeDefinition() //
             .withResourceClass(System.class) //
-            .withResourceShortCode("SM") //
-            .withSections(new ResourceSectionsRepresentation() //
-                    .withSection(new ResourceSectionRepresentation() //
-                            .withDisplayProperty(SYSTEM_RESOURCE_STATISTICS_HEADER)) //
-                    .withSections(getResourceConfigurationSections()))),
+            .withResourceShortCode("SM")),
     INSTITUTION(new PrismScopeDefinition() //
             .withResourceClass(Institution.class) //
             .withResourceDTOClass(InstitutionDTO.class) //
@@ -78,8 +78,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id")) //
             .withActionExecutor(InstitutionExecutor.class) //
-            .withResourceCreator(InstitutionCreator.class) //
-            .withSections(getResourceParentSections())), //
+            .withResourceCreator(InstitutionCreator.class)), //
     DEPARTMENT(new PrismScopeDefinition() //
             .withResourceClass(Department.class) //
             .withResourceDTOClass(ResourceParentDivisionDTO.class) //
@@ -90,8 +89,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("department", "name")) //
             .withActionExecutor(DepartmentExecutor.class) //
             .withResourceCreator(DepartmentCreator.class) //
-            .withResourcePostprocessor(DepartmentPostprocessor.class) //
-            .withSections(getResourceParentSections())), //
+            .withResourcePostprocessor(DepartmentPostprocessor.class)), //
     PROGRAM(new PrismScopeDefinition() //
             .withResourceClass(Program.class) //
             .withResourceDTOClass(ResourceOpportunityDTO.class) //
@@ -103,8 +101,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("program", "name")) //
             .withActionExecutor(ProgramExecutor.class) //
             .withResourceCreator(ProgramCreator.class) //
-            .withResourcePostprocessor(ProgramPostprocessor.class) //
-            .withSections(getResourceParentSections())), //
+            .withResourcePostprocessor(ProgramPostprocessor.class)), //
     PROJECT(new PrismScopeDefinition() //
             .withResourceClass(Project.class) //
             .withResourceDTOClass(ResourceOpportunityDTO.class) //
@@ -117,8 +114,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("project", "name")) //
             .withActionExecutor(ProjectExecutor.class) //
             .withResourceCreator(ProjectCreator.class) //
-            .withResourcePostprocessor(ProjectPostprocessor.class) //
-            .withSections(getResourceParentSections())), //
+            .withResourcePostprocessor(ProjectPostprocessor.class)), //
     APPLICATION(new PrismScopeDefinition() //
             .withResourceClass(Application.class) //
             .withResourceDTOClass(ApplicationDTO.class) //
@@ -134,14 +130,29 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourcePersister(ApplicationPopulator.class) //
             .withResourcePreprocessor(ApplicationPreprocessor.class) //
             .withResourceProcessor(ApplicationProcessor.class) //
-            .withResourcePostprocessor(ApplicationPostprocessor.class) //
-            .withSections(new ResourceSectionsRepresentation() //
-                    .withSection(new ResourceSectionRepresentation() //
-                            .withDisplayProperty(SYSTEM_RESOURCE_APPLICATION_FORM_HEADER)) //
-                    .withSection(new ResourceSectionRepresentation() //
-                            .withDisplayProperty(SYSTEM_RESOURCE_TIMELINE_HEADER))));
+            .withResourcePostprocessor(ApplicationPostprocessor.class));
 
     private PrismScopeDefinition definition;
+
+    private static Map<PrismScope, ResourceSectionsRepresentation> resourceSections = Maps.newHashMap();
+
+    static {
+        resourceSections.put(SYSTEM, new ResourceSectionsRepresentation() //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_STATISTICS_HEADER)) //
+                .withSections(getResourceConfigurationSections()));
+
+        resourceSections.put(INSTITUTION, getResourceParentSections());
+        resourceSections.put(DEPARTMENT, getResourceParentSections());
+        resourceSections.put(PROGRAM, getResourceParentSections());
+        resourceSections.put(PROJECT, getResourceParentSections());
+
+        resourceSections.put(APPLICATION, new ResourceSectionsRepresentation() //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_APPLICATION_FORM_HEADER)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_TIMELINE_HEADER)));
+    }
 
     private PrismScope(PrismScopeDefinition definition) {
         this.definition = definition;
@@ -192,10 +203,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return definition.getResourcePostprocessor();
     }
 
-    public ResourceSectionsRepresentation getSections() {
-        return definition.getSections();
-    }
-
     public String getLowerCamelName() {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
@@ -225,8 +232,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         private Class<? extends ResourceProcessor<?>> resourceProcessor;
 
         private Class<? extends ResourceProcessor<?>> resourcePostprocessor;
-
-        private ResourceSectionsRepresentation sections;
 
         public Class<? extends Resource<?>> getResourceClass() {
             return resourceClass;
@@ -266,10 +271,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public Class<? extends ResourceProcessor<?>> getResourcePostprocessor() {
             return resourcePostprocessor;
-        }
-
-        public ResourceSectionsRepresentation getSections() {
-            return sections;
         }
 
         public PrismScopeDefinition withResourceClass(Class<? extends Resource<?>> resourceClass) {
@@ -322,11 +323,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             return this;
         }
 
-        public PrismScopeDefinition withSections(ResourceSectionsRepresentation sections) {
-            this.sections = sections;
-            return this;
-        }
+    }
 
+    public ResourceSectionsRepresentation getSections() {
+        return resourceSections.get(this);
     }
 
     private static class PrismColumnsDefinition {

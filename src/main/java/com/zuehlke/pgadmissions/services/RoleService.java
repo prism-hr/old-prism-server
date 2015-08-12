@@ -183,8 +183,8 @@ public class RoleService {
         assignUserRoles(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
-    public Integer getPermissionPrecedence(User user) {
-        return roleDAO.getPermissionOrdinal(user);
+    public PrismScope getPermissionScope(User user) {
+        return roleDAO.getPermissionScope(user);
     }
 
     public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {

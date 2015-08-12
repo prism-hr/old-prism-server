@@ -1,21 +1,22 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.LinkedHashSet;
-
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
 
 public class ResourceSectionRepresentation implements PrismLocalizableDefinition {
 
     private PrismDisplayPropertyDefinition displayProperty;
 
+    private Class<? extends ResourceCompletenessEvaluator<?>> completenessEvaluator;
+
     private PrismDisplayPropertyDefinition incompleteExplanation;
 
-    private LinkedHashSet<ResourceSectionRepresentation> subsections;
+    private ResourceSectionsRepresentation subsections;
 
     public boolean isRequired() {
-        return incompleteExplanation != null;
+        return completenessEvaluator != null;
     }
 
     @Override
@@ -23,11 +24,15 @@ public class ResourceSectionRepresentation implements PrismLocalizableDefinition
         return displayProperty;
     }
 
+    public Class<? extends ResourceCompletenessEvaluator<?>> getCompletenessEvaluator() {
+        return completenessEvaluator;
+    }
+
     public PrismDisplayPropertyDefinition getIncompleteExplanation() {
         return incompleteExplanation;
     }
 
-    public LinkedHashSet<ResourceSectionRepresentation> getSubsections() {
+    public ResourceSectionsRepresentation getSubsections() {
         return subsections;
     }
 
@@ -36,12 +41,17 @@ public class ResourceSectionRepresentation implements PrismLocalizableDefinition
         return this;
     }
 
+    public ResourceSectionRepresentation withCompletenessEvaluator(Class<? extends ResourceCompletenessEvaluator<?>> completenessEvaluator) {
+        this.completenessEvaluator = completenessEvaluator;
+        return this;
+    }
+
     public ResourceSectionRepresentation withIncompleteExplanation(PrismDisplayPropertyDefinition incompleteExplanation) {
         this.incompleteExplanation = incompleteExplanation;
         return this;
     }
 
-    public ResourceSectionRepresentation withSubsections(LinkedHashSet<ResourceSectionRepresentation> subsections) {
+    public ResourceSectionRepresentation withSubsections(ResourceSectionsRepresentation subsections) {
         this.subsections = subsections;
         return this;
     }

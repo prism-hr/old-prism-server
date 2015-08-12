@@ -466,6 +466,7 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
+    // TODO: Abstract for different tasks to fetch hierarchy and make it performant
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope resourceScope, PrismScope parentScope, Integer parentId,
             PrismScope targetScope, boolean userLoggedIn) {
         String resourceReference = resourceScope.getLowerCamelName();

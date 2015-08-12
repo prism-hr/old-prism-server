@@ -1237,7 +1237,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER(SYSTEM_RESOURCE_SECTION, "Email Templates"),
     SYSTEM_RESOURCE_CONFIGURATION_HEADER(SYSTEM_RESOURCE_SECTION, "Configuration"),
     SYSTEM_RESOURCE_SUMMARY_HEADER(SYSTEM_RESOURCE_SECTION, "Summary"),
-    SYSTEM_RESOURCE_SUMMARY_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Upload a background image to increase the interest in your advert"),
+    SYSTEM_RESOURCE_SUMMARY_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Upload images to increase the interest in your advert"),
     SYSTEM_RESOURCE_ADVERT_HEADER(SYSTEM_RESOURCE_SECTION, "Advert"),
     SYSTEM_RESOURCE_ADVERT_INCOMPLETE(SYSTEM_RESOURCE_SECTION,
             "Complete your advert, and attach some search categories to it, so that we can tell relevant applicants about your organization"),

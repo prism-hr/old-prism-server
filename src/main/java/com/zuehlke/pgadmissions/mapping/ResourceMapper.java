@@ -221,9 +221,10 @@ public class ResourceMapper {
 
             setRaisesUrgentFlag(representation, actions);
             setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
-
-            representation.setActions(actions);
             representation.setSequenceIdentifier(row.getSequenceIdentifier());
+
+            representation.setAdvertIncompleteSection(row.getAdvertIncompleteSection());
+            representation.setActions(actions);
             representations.add(representation);
         }
 
@@ -299,6 +300,8 @@ public class ResourceMapper {
         V representation = getResourceRepresentationExtended(resource, returnType);
 
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
+        representation.setAdvertIncompleteSection(resource.getAdvertIncompleteSection());
+
         representation.setPartnerActions(actionService.getPartnerActions(resource));
 
         return representation;

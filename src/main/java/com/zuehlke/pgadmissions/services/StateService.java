@@ -356,6 +356,7 @@ public class StateService {
     private void getOrCreateStateTransitionPending(Resource<?> resource, Action action) {
         StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withAction(action);
         entityService.getOrCreate(transientTransitionPending);
+        entityService.flush();
     }
 
 }

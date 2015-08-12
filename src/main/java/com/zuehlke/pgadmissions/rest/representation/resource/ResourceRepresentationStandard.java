@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
@@ -35,8 +36,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
-    
-    private String advertIncompleteSection;
+
+    private List<PrismDisplayPropertyDefinition> advertIncompleteSection;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -141,12 +142,12 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
-    public String getAdvertIncompleteSection() {
+
+    public List<PrismDisplayPropertyDefinition> getAdvertIncompleteSection() {
         return advertIncompleteSection;
     }
 
-    public void setAdvertIncompleteSection(String advertIncompleteSection) {
+    public void setAdvertIncompleteSection(List<PrismDisplayPropertyDefinition> advertIncompleteSection) {
         this.advertIncompleteSection = advertIncompleteSection;
     }
 

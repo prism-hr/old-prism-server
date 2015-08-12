@@ -304,7 +304,7 @@ public class ResourceService {
         }
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            setAdvertIncompleteSection((ResourceParent<?>) resource);
+            setResourceAdvertIncompleteSection((ResourceParent<?>) resource);
         }
         entityService.flush();
     }
@@ -719,8 +719,9 @@ public class ResourceService {
         }
     }
 
+    // TODO same approach for application based upon section configuration
     @SuppressWarnings("unchecked")
-    public <T extends ResourceParent<?>> void setAdvertIncompleteSection(T resource) {
+    public <T extends ResourceParent<?>> void setResourceAdvertIncompleteSection(T resource) {
         List<PrismDisplayPropertyDefinition> incompleteSections = Lists.newArrayList();
         for (ResourceSectionRepresentation requiredSection : scopeService.getRequiredSections(resource.getResourceScope())) {
             ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(requiredSection

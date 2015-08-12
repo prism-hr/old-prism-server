@@ -4,6 +4,7 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_APPLICATION_FORM_HEADER;
@@ -43,6 +44,7 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionsRepresentation;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCategoriesEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCompetencesEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertTargetsEvaluator;
@@ -376,7 +378,9 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                         .withIncompleteExplanation(SYSTEM_RESOURCE_ADVERT_INCOMPLETE) //
                         .withSubsections(new ResourceSectionsRepresentation() //
                                 .withSection(new ResourceSectionRepresentation() //
-                                        .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER))
+                                        .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER) //
+                                        .withCompletenessEvaluator(ResourceAdvertCategoriesEvaluator.class) //
+                                        .withIncompleteExplanation(SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE))
                                 .withSections(advertSections))) //
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_TARGETS_HEADER) //

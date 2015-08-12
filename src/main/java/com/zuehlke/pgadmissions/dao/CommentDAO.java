@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -141,55 +142,22 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getComments(Resource<?> resource) {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
-                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                .add(Restrictions.isNotNull("action.transitionAction")) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
-                                .add(Restrictions.neProperty("state", "transitionState"))
-                                .add(Restrictions.ne("action.systemInvocationOnly", true))) //
-                        .add(Restrictions.isNotNull("action.creationScope"))) //
-                .addOrder(Order.asc("createdTimestamp")) //
-                .addOrder(Order.asc("id")) //
-                .list();
-    }
-
     public List<Comment> getStateGroupTransitionComments(Resource<?> resource) {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
-                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
+        return getCommentTimelineCriteria() //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.isNotNull("action.transitionAction")) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
-                                .add(Restrictions.neProperty("state", "transitionState"))
-                                .add(Restrictions.ne("action.systemInvocationOnly", true))) //
-                        .add(Restrictions.isNotNull("action.creationScope"))) //
+                .add(getCommentTimelineStateTransitionCondition()) //
                 .addOrder(Order.asc("createdTimestamp")) //
                 .addOrder(Order.asc("id")) //
                 .list();
     }
 
     public List<Comment> getStateComments(Resource<?> resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
+        Criteria criteria = getCommentTimelineCriteria() //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                .add(Restrictions.eq("action.visibleAction", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(getCommentTimelineStateTransitionCondition()) //
+                        .add(Restrictions.eq("action.visibleAction", true))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("state.stateGroup", stateGroup)) //
                         .add(Restrictions.isNull("state"))) //
@@ -252,6 +220,25 @@ public class CommentDAO {
                 .add(Restrictions.eq(resourceReferenceComment, resource)) //
                 .add(Restrictions.eqProperty("user", resourceReference + ".user")) //
                 .list();
+    }
+
+    private Criteria getCommentTimelineCriteria() {
+        return sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN);
+    }
+
+    private static Junction getCommentTimelineStateTransitionCondition() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
+                        .add(Restrictions.neProperty("state", "transitionState"))
+                        .add(Restrictions.ne("action.systemInvocationOnly", true))) //
+                .add(Restrictions.isNotNull("action.creationScope"));
     }
 
 }

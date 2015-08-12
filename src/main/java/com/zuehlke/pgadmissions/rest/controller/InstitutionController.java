@@ -2,11 +2,11 @@ package com.zuehlke.pgadmissions.rest.controller;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +20,9 @@ import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
-import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -53,15 +52,10 @@ public class InstitutionController {
     @Inject
     private ResourceMapper resourceMapper;
 
-    @Inject
-    private InstitutionMapper institutionMapper;
-
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    public List<InstitutionRepresentationSimple> getInstitutions(@RequestParam(required = false) String query,
-            @RequestParam(required = false) String[] googleIds) {
-        return institutionService.getInstitutions(query, googleIds).stream()
-                .map(institutionMapper::getInstitutionRepresentationSimple)
-                .collect(Collectors.toList());
+    public List<InstitutionRepresentationLocation> getInstitutions(@RequestParam(required = false) Boolean activeOnly,
+            @RequestParam(required = false) String query, @RequestParam(required = false) String[] googleIds) {
+        return institutionService.getInstitutions(BooleanUtils.isTrue(activeOnly), query, googleIds);
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")

@@ -10,7 +10,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.REINITIALIZE_SERVER_MESSAGE_FOR_JUAN;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -85,7 +84,6 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.PrismExceptionForJuan;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
@@ -198,59 +196,55 @@ public class SystemService {
 
     @Transactional(timeout = 600)
     public void initializeWorkflow() throws Exception {
-        try {
-            logger.info("Initializing scope definitions");
-            verifyDefinition(Scope.class);
-            initializeScopeDefinitions();
+        logger.info("Initializing scope definitions");
+        verifyDefinition(Scope.class);
+        initializeScopeDefinitions();
 
-            logger.info("Initializing role definitions");
-            verifyDefinition(Role.class);
-            initializeRoles();
+        logger.info("Initializing role definitions");
+        verifyDefinition(Role.class);
+        initializeRoles();
 
-            logger.info("Initializing action definitions");
-            verifyDefinition(Action.class);
-            initializeActions();
+        logger.info("Initializing action definitions");
+        verifyDefinition(Action.class);
+        initializeActions();
 
-            logger.info("Initializing state group definitions");
-            verifyDefinition(StateGroup.class);
-            initializeStateGroups();
+        logger.info("Initializing state group definitions");
+        verifyDefinition(StateGroup.class);
+        initializeStateGroups();
 
-            logger.info("Initializing state definitions");
-            verifyDefinition(State.class);
-            initializeStates();
+        logger.info("Initializing state definitions");
+        verifyDefinition(State.class);
+        initializeStates();
 
-            logger.info("Initializing state duration definitions");
-            verifyDefinition(StateDurationDefinition.class);
-            initializeStateDurationDefinitions();
+        logger.info("Initializing state duration definitions");
+        verifyDefinition(StateDurationDefinition.class);
+        initializeStateDurationDefinitions();
 
-            logger.info("Initializing workflow property definitions");
-            verifyDefinition(WorkflowPropertyDefinition.class);
-            initializeWorkflowPropertyDefinitions();
+        logger.info("Initializing workflow property definitions");
+        verifyDefinition(WorkflowPropertyDefinition.class);
+        initializeWorkflowPropertyDefinitions();
 
-            logger.info("Initializing notification definitions");
-            verifyDefinition(NotificationDefinition.class);
-            initializeNotificationDefinitions();
+        logger.info("Initializing notification definitions");
+        verifyDefinition(NotificationDefinition.class);
+        initializeNotificationDefinitions();
 
-            logger.info("Initializing state action definitions");
-            initializeStateActions();
+        logger.info("Initializing state action definitions");
+        initializeStateActions();
 
-            logger.info("Initializing system object");
-            System system = initializeSystemResource();
+        logger.info("Initializing system object");
+        System system = initializeSystemResource();
 
-            logger.info("Initializing state duration configurations");
-            initializeStateDurationConfigurations(system);
+        logger.info("Initializing state duration configurations");
+        initializeStateDurationConfigurations(system);
 
-            logger.info("Initializing workflow property configurations");
-            initializeWorkflowPropertyConfigurations(system);
+        logger.info("Initializing workflow property configurations");
+        initializeWorkflowPropertyConfigurations(system);
 
-            logger.info("Initializing notification configurations");
-            initializeNotificationConfigurations(system);
+        logger.info("Initializing notification configurations");
+        initializeNotificationConfigurations(system);
 
-            entityService.flush();
-            entityService.clear();
-        } catch (Exception e) {
-            throw new PrismExceptionForJuan(REINITIALIZE_SERVER_MESSAGE_FOR_JUAN, e);
-        }
+        entityService.flush();
+        entityService.clear();
     }
 
     @Transactional

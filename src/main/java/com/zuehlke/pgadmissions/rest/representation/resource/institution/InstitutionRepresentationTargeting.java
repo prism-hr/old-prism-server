@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.institution;
 
 import java.math.BigDecimal;
 
-public class InstitutionRepresentationTargeting extends InstitutionRepresentationSimple {
+public class InstitutionRepresentationTargeting extends InstitutionRepresentationLocation {
 
     private BigDecimal relevance;
     

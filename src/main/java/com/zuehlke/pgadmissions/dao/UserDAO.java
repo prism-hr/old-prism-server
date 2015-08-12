@@ -277,8 +277,7 @@ public class UserDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("user.userNotifications", "userNotification", JoinType.INNER_JOIN); //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
         Junction roleDisjunction = Restrictions.disjunction();
         for (PrismScope scope : userAdministratorResources.keySet()) {

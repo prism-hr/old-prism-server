@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.google.common.io.ByteStreams;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
+import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -20,19 +22,14 @@ import org.springframework.social.facebook.api.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.io.ByteStreams;
-import com.zuehlke.pgadmissions.dao.InstitutionDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
-import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
-import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Service
 @Transactional
@@ -140,10 +137,10 @@ public class InstitutionService {
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
 
-    public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(AddressCoordinates addressCoordinates, List<Integer> subjectAreas) {
+    public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Advert currentAdvert, List<Integer> subjectAreas) {
         List<PrismState> activeStates = stateService.getActiveResourceStates(INSTITUTION);
         Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-        return institutionDAO.getInstitutionBySubjectAreas(activeStates, subjectAreaFamily, addressCoordinates).stream()
+        return institutionDAO.getInstitutionBySubjectAreas(currentAdvert, subjectAreaFamily, activeStates).stream()
                 .map(institutionMapper::getInstitutionRepresentationTargeting).collect(Collectors.toList());
     }
 

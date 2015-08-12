@@ -233,77 +233,11 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
-        AdvertCategories categories = advert.getCategories();
-        if (categories == null) {
-            categories = new AdvertCategories();
-            advert.setCategories(categories);
-        }
-
-        Map<String, List<?>> categoriesMap = categoriesDTO.getCategories();
-        for (String propertyName : categoriesMap.keySet()) {
-            List<?> dtoValues = categoriesMap.get(propertyName);
-            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
-            Class<? extends AdvertAttribute<?>> categoryClass = advertAttribute.getAttributeClass();
-            Class<?> valueClass = advertAttribute.getValueClass();
-            clearAdvertAttributes(categories, propertyName);
-
-            for (Object dtoValue : dtoValues) {
-                Class<?> newValueClass = dtoValue.getClass();
-                if (valueClass == null || !newValueClass.equals(valueClass)) {
-                    valueClass = newValueClass;
-                }
-
-                AdvertAttribute<?> entityCategory = createAdvertAttribute(advert, categoryClass, dtoValue);
-                entityService.getOrCreate(entityCategory);
-                categories.storeAttribute(entityCategory);
-            }
-        }
-    }
-
     public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
         ResourceParent<?> resource = (ResourceParent<?>) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateTargets(advert, targetsDTO);
         executeUpdate(resource, "COMMENT_UPDATED_TARGET");
-    }
-
-    private void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) {
-        AdvertTargets targets = advert.getTargets();
-        if (targets == null) {
-            targets = new AdvertTargets();
-            advert.setTargets(targets);
-        }
-
-        Map<String, List<? extends AdvertTargetDTO>> targetsMap = targetsDTO.getTargets();
-        for (String propertyName : targetsMap.keySet()) {
-            List<? extends AdvertTargetDTO> dtoValues = targetsMap.get(propertyName);
-            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
-            Class<? extends AdvertAttribute<?>> targetClass = advertAttribute.getAttributeClass();
-            Class<?> valueClass = advertAttribute.getValueClass();
-
-            clearAdvertAttributes(targets, propertyName);
-            for (AdvertTargetDTO dtoValue : dtoValues) {
-                TargetEntity value;
-                Integer valueId = dtoValue.getId();
-                Object[] optionalArguments = new Object[] {};
-                if (valueId == null && dtoValue.getClass().equals(AdvertCompetenceDTO.class)) {
-                    AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) dtoValue;
-                    value = getOrCreateCompetence(competenceDTO);
-                    if (!((Competence) value).getDescription().equals(competenceDTO.getDescription())) {
-                        optionalArguments = new Object[] { competenceDTO.getDescription() };
-                    }
-                } else if (valueId != null) {
-                    value = (TargetEntity) entityService.getById(valueClass, dtoValue.getId());
-                } else {
-                    throw new Error();
-                }
-
-                AdvertAttribute<?> entityTarget = createAdvertAttribute(advert, targetClass, value, optionalArguments);
-                entityService.getOrCreate(entityTarget);
-                targets.storeAttribute(entityTarget);
-            }
-        }
     }
 
     public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
@@ -434,6 +368,72 @@ public class AdvertService {
             return null;
         }
         return backgroundImage.getId();
+    }
+
+    private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
+        AdvertCategories categories = advert.getCategories();
+        if (categories == null) {
+            categories = new AdvertCategories();
+            advert.setCategories(categories);
+        }
+
+        Map<String, List<?>> categoriesMap = categoriesDTO.getCategories();
+        for (String propertyName : categoriesMap.keySet()) {
+            List<?> dtoValues = categoriesMap.get(propertyName);
+            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
+            Class<? extends AdvertAttribute<?>> categoryClass = advertAttribute.getAttributeClass();
+            Class<?> valueClass = advertAttribute.getValueClass();
+            clearAdvertAttributes(categories, propertyName);
+
+            for (Object dtoValue : dtoValues) {
+                Class<?> newValueClass = dtoValue.getClass();
+                if (valueClass == null || !newValueClass.equals(valueClass)) {
+                    valueClass = newValueClass;
+                }
+
+                AdvertAttribute<?> entityCategory = createAdvertAttribute(advert, categoryClass, dtoValue);
+                entityService.getOrCreate(entityCategory);
+                categories.storeAttribute(entityCategory);
+            }
+        }
+    }
+
+    private void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) {
+        AdvertTargets targets = advert.getTargets();
+        if (targets == null) {
+            targets = new AdvertTargets();
+            advert.setTargets(targets);
+        }
+
+        Map<String, List<? extends AdvertTargetDTO>> targetsMap = targetsDTO.getTargets();
+        for (String propertyName : targetsMap.keySet()) {
+            List<? extends AdvertTargetDTO> dtoValues = targetsMap.get(propertyName);
+            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
+            Class<? extends AdvertAttribute<?>> targetClass = advertAttribute.getAttributeClass();
+            Class<?> valueClass = advertAttribute.getValueClass();
+
+            clearAdvertAttributes(targets, propertyName);
+            for (AdvertTargetDTO dtoValue : dtoValues) {
+                TargetEntity value;
+                Integer valueId = dtoValue.getId();
+                Object[] optionalArguments = new Object[] {};
+                if (valueId == null && dtoValue.getClass().equals(AdvertCompetenceDTO.class)) {
+                    AdvertCompetenceDTO competenceDTO = (AdvertCompetenceDTO) dtoValue;
+                    value = getOrCreateCompetence(competenceDTO);
+                    if (!((Competence) value).getDescription().equals(competenceDTO.getDescription())) {
+                        optionalArguments = new Object[] { competenceDTO.getDescription() };
+                    }
+                } else if (valueId != null) {
+                    value = (TargetEntity) entityService.getById(valueClass, dtoValue.getId());
+                } else {
+                    throw new Error();
+                }
+
+                AdvertAttribute<?> entityTarget = createAdvertAttribute(advert, targetClass, value, optionalArguments);
+                entityService.getOrCreate(entityTarget);
+                targets.storeAttribute(entityTarget);
+            }
+        }
     }
 
     private String getCurrencyAtLocale(Advert advert) {

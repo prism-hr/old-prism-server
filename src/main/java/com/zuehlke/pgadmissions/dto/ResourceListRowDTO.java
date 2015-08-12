@@ -61,6 +61,8 @@ public class ResourceListRowDTO {
 
     private String sequenceIdentifier;
 
+    private String advertIncompleteSection;
+    
     private Set<ActionDTO> actions;
 
     public Integer getSystemId() {
@@ -261,6 +263,14 @@ public class ResourceListRowDTO {
 
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
+    public String getAdvertIncompleteSection() {
+        return advertIncompleteSection;
+    }
+
+    public void setAdvertIncompleteSection(String advertIncompleteSection) {
+        this.advertIncompleteSection = advertIncompleteSection;
     }
 
     public Set<ActionDTO> getActions() {

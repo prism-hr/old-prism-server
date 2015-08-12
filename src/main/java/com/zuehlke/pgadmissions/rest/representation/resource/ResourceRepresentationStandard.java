@@ -35,6 +35,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
+    
+    private String advertIncompleteSection;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -138,6 +140,14 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
+    public String getAdvertIncompleteSection() {
+        return advertIncompleteSection;
+    }
+
+    public void setAdvertIncompleteSection(String advertIncompleteSection) {
+        this.advertIncompleteSection = advertIncompleteSection;
     }
 
 }

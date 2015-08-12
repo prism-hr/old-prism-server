@@ -43,6 +43,10 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionsRepresentation;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCompetencesEvaluator;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertEvaluator;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertTargetsEvaluator;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceSummaryEvaluator;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
@@ -76,7 +80,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourceShortCode("IN") //
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "name") //
-                    .withColumn("institution", "logoImage.id")) //
+                    .withColumn("institution", "logoImage.id") //
+                    .withColumn("institution", "advertIncompleteSection")) //
             .withActionExecutor(InstitutionExecutor.class) //
             .withResourceCreator(InstitutionCreator.class)), //
     DEPARTMENT(new PrismScopeDefinition() //
@@ -86,7 +91,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourceListCustomColumns(new PrismColumnsDefinition() //
                     .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id") //
-                    .withColumn("department", "name")) //
+                    .withColumn("department", "name") //
+                    .withColumn("department", "advertIncompleteSection")) //
             .withActionExecutor(DepartmentExecutor.class) //
             .withResourceCreator(DepartmentCreator.class) //
             .withResourcePostprocessor(DepartmentPostprocessor.class)), //
@@ -98,7 +104,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id") //
                     .withColumn("department", "name") //
-                    .withColumn("program", "name")) //
+                    .withColumn("program", "name") //
+                    .withColumn("program", "advertIncompleteSection")) //
             .withActionExecutor(ProgramExecutor.class) //
             .withResourceCreator(ProgramCreator.class) //
             .withResourcePostprocessor(ProgramPostprocessor.class)), //
@@ -111,7 +118,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("institution", "logoImage.id") //
                     .withColumn("department", "name") //
                     .withColumn("program", "name") //
-                    .withColumn("project", "name")) //
+                    .withColumn("project", "name") //
+                    .withColumn("project", "advertIncompleteSection")) //
             .withActionExecutor(ProjectExecutor.class) //
             .withResourceCreator(ProjectCreator.class) //
             .withResourcePostprocessor(ProjectPostprocessor.class)), //
@@ -360,9 +368,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return new ResourceSectionsRepresentation() //
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_SUMMARY_HEADER) //
+                        .withCompletenessEvaluator(ResourceSummaryEvaluator.class) //
                         .withIncompleteExplanation(SYSTEM_RESOURCE_SUMMARY_INCOMPLETE))
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_HEADER) //
+                        .withCompletenessEvaluator(ResourceAdvertEvaluator.class) //
                         .withIncompleteExplanation(SYSTEM_RESOURCE_ADVERT_INCOMPLETE) //
                         .withSubsections(new ResourceSectionsRepresentation() //
                                 .withSection(new ResourceSectionRepresentation() //
@@ -370,9 +380,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                                 .withSections(advertSections))) //
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_TARGETS_HEADER) //
+                        .withCompletenessEvaluator(ResourceAdvertTargetsEvaluator.class) //
                         .withIncompleteExplanation(SYSTEM_RESOURCE_TARGETS_INCOMPLETE))
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_COMPETENCES_HEADER) //
+                        .withCompletenessEvaluator(ResourceAdvertCompetencesEvaluator.class)
                         .withIncompleteExplanation(SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE)) //
                 .withSection(new ResourceSectionRepresentation() //
                         .withDisplayProperty(SYSTEM_RESOURCE_STATISTICS_HEADER)) //

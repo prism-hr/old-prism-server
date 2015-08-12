@@ -3,6 +3,26 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_INCOMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_APPLICATION_FORM_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_CLOSING_DATES_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_CONFIGURATION_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_MANAGE_USERS_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_STATISTICS_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SUMMARY_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SUMMARY_INCOMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TARGETS_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TARGETS_INCOMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TIMELINE_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TRANSLATIONS_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_USER_BOUNCES_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_WORKFLOW_HEADER;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 import com.google.common.collect.HashMultimap;
@@ -17,6 +37,8 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionsRepresentation;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
@@ -43,7 +65,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     SYSTEM(new PrismScopeDefinition() //
             .withResourceClass(System.class) //
-            .withResourceShortCode("SM")),
+            .withResourceShortCode("SM") //
+            .withSections(new ResourceSectionsRepresentation() //
+                    .withSection(new ResourceSectionRepresentation() //
+                            .withDisplayProperty(SYSTEM_RESOURCE_STATISTICS_HEADER)) //
+                    .withSections(getResourceConfigurationSections()))),
     INSTITUTION(new PrismScopeDefinition() //
             .withResourceClass(Institution.class) //
             .withResourceDTOClass(InstitutionDTO.class) //
@@ -52,7 +78,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("institution", "name") //
                     .withColumn("institution", "logoImage.id")) //
             .withActionExecutor(InstitutionExecutor.class) //
-            .withResourceCreator(InstitutionCreator.class)), //
+            .withResourceCreator(InstitutionCreator.class) //
+            .withSections(getResourceParentSections())), //
     DEPARTMENT(new PrismScopeDefinition() //
             .withResourceClass(Department.class) //
             .withResourceDTOClass(ResourceParentDivisionDTO.class) //
@@ -63,7 +90,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("department", "name")) //
             .withActionExecutor(DepartmentExecutor.class) //
             .withResourceCreator(DepartmentCreator.class) //
-            .withResourcePostprocessor(DepartmentPostprocessor.class)), //
+            .withResourcePostprocessor(DepartmentPostprocessor.class) //
+            .withSections(getResourceParentSections())), //
     PROGRAM(new PrismScopeDefinition() //
             .withResourceClass(Program.class) //
             .withResourceDTOClass(ResourceOpportunityDTO.class) //
@@ -75,7 +103,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("program", "name")) //
             .withActionExecutor(ProgramExecutor.class) //
             .withResourceCreator(ProgramCreator.class) //
-            .withResourcePostprocessor(ProgramPostprocessor.class)), //
+            .withResourcePostprocessor(ProgramPostprocessor.class) //
+            .withSections(getResourceParentSections())), //
     PROJECT(new PrismScopeDefinition() //
             .withResourceClass(Project.class) //
             .withResourceDTOClass(ResourceOpportunityDTO.class) //
@@ -88,7 +117,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withColumn("project", "name")) //
             .withActionExecutor(ProjectExecutor.class) //
             .withResourceCreator(ProjectCreator.class) //
-            .withResourcePostprocessor(ProjectPostprocessor.class)), //
+            .withResourcePostprocessor(ProjectPostprocessor.class) //
+            .withSections(getResourceParentSections())), //
     APPLICATION(new PrismScopeDefinition() //
             .withResourceClass(Application.class) //
             .withResourceDTOClass(ApplicationDTO.class) //
@@ -104,7 +134,12 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourcePersister(ApplicationPopulator.class) //
             .withResourcePreprocessor(ApplicationPreprocessor.class) //
             .withResourceProcessor(ApplicationProcessor.class) //
-            .withResourcePostprocessor(ApplicationPostprocessor.class));
+            .withResourcePostprocessor(ApplicationPostprocessor.class) //
+            .withSections(new ResourceSectionsRepresentation() //
+                    .withSection(new ResourceSectionRepresentation() //
+                            .withDisplayProperty(SYSTEM_RESOURCE_APPLICATION_FORM_HEADER)) //
+                    .withSection(new ResourceSectionRepresentation() //
+                            .withDisplayProperty(SYSTEM_RESOURCE_TIMELINE_HEADER))));
 
     private PrismScopeDefinition definition;
 
@@ -157,6 +192,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return definition.getResourcePostprocessor();
     }
 
+    public ResourceSectionsRepresentation getSections() {
+        return definition.getSections();
+    }
+
     public String getLowerCamelName() {
         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
     }
@@ -186,6 +225,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         private Class<? extends ResourceProcessor<?>> resourceProcessor;
 
         private Class<? extends ResourceProcessor<?>> resourcePostprocessor;
+
+        private ResourceSectionsRepresentation sections;
 
         public Class<? extends Resource<?>> getResourceClass() {
             return resourceClass;
@@ -225,6 +266,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public Class<? extends ResourceProcessor<?>> getResourcePostprocessor() {
             return resourcePostprocessor;
+        }
+
+        public ResourceSectionsRepresentation getSections() {
+            return sections;
         }
 
         public PrismScopeDefinition withResourceClass(Class<? extends Resource<?>> resourceClass) {
@@ -277,6 +322,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             return this;
         }
 
+        public PrismScopeDefinition withSections(ResourceSectionsRepresentation sections) {
+            this.sections = sections;
+            return this;
+        }
+
     }
 
     private static class PrismColumnsDefinition {
@@ -292,6 +342,50 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             return definitions;
         }
 
+    }
+
+    private static ResourceSectionsRepresentation getResourceParentSections() {
+        return new ResourceSectionsRepresentation() //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_SUMMARY_HEADER) //
+                        .withIncompleteExplanation(SYSTEM_RESOURCE_SUMMARY_INCOMPLETE))
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_HEADER) //
+                        .withIncompleteExplanation(SYSTEM_RESOURCE_ADVERT_INCOMPLETE) //
+                        .withSubsections(new ResourceSectionsRepresentation() //
+                                .withSection(new ResourceSectionRepresentation() //
+                                        .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER))
+                                .withSection(new ResourceSectionRepresentation() //
+                                        .withDisplayProperty(SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER))
+                                .withSection(new ResourceSectionRepresentation() //
+                                        .withDisplayProperty(SYSTEM_RESOURCE_CLOSING_DATES_HEADER)))) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_TARGETS_HEADER) //
+                        .withIncompleteExplanation(SYSTEM_RESOURCE_TARGETS_INCOMPLETE))
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_COMPETENCES_HEADER) //
+                        .withIncompleteExplanation(SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_STATISTICS_HEADER)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_TIMELINE_HEADER)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_CONFIGURATION_HEADER) //
+                        .withSubsections(getResourceConfigurationSections()));
+    }
+
+    private static ResourceSectionsRepresentation getResourceConfigurationSections() {
+        return new ResourceSectionsRepresentation() //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_MANAGE_USERS_HEADER)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_USER_BOUNCES_HEADER)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_TRANSLATIONS_HEADER)) //
+                .withSection(new ResourceSectionRepresentation() //
+                        .withDisplayProperty(SYSTEM_RESOURCE_WORKFLOW_HEADER));
     }
 
 }

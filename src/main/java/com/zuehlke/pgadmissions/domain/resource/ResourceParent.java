@@ -16,6 +16,10 @@ public abstract class ResourceParent<T extends PrismUserReassignmentProcessor> e
 
     public abstract void setName(String name);
 
+    public abstract String getAdvertIncompleteSection();
+
+    public abstract void setAdvertIncompleteSection(String advertIncompleteSection);
+
     public abstract DateTime getUpdatedTimestampSitemap();
 
     public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);

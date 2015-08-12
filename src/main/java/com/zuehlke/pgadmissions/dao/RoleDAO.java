@@ -190,9 +190,9 @@ public class RoleDAO {
                 .list();
     }
 
-    public Integer getPermissionOrdinal(User user) {
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("scope.ordinal")) //
+    public PrismScope getPermissionScope(User user) {
+        return (PrismScope) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("scope.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //

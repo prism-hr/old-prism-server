@@ -67,7 +67,7 @@ public class UserMapper {
         UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
 
         representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
-        representation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
+        representation.setPermissionScope(roleService.getPermissionScope(user));
 
         representation.setParentUser(user.getEmail());
         representation.setLinkedUsers(userService.getLinkedUserAccounts(user));

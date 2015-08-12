@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 
@@ -35,7 +36,7 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
         this.state = state;
     }
 
-    public ResourceRepresentationSimple withScope(final com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope scope) {
+    public ResourceRepresentationSimple withScope(PrismScope scope) {
         setScope(scope);
         return this;
     }

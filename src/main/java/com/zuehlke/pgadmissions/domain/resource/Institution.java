@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -51,6 +52,10 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
+
+    @Lob
+    @Column(name = "advert_incomplete_section")
+    private String advertIncompleteSection;
 
     @Column(name = "code", unique = true)
     private String code;
@@ -184,6 +189,16 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+
+    @Override
+    public String getAdvertIncompleteSection() {
+        return advertIncompleteSection;
+    }
+
+    @Override
+    public void setAdvertIncompleteSection(String advertIncompleteSection) {
+        this.advertIncompleteSection = advertIncompleteSection;
     }
 
     @Override

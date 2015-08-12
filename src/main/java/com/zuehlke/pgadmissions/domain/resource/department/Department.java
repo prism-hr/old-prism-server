@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -75,6 +76,10 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
+    
+    @Lob
+    @Column(name = "advert_incomplete_section")
+    private String advertIncompleteSection;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -258,6 +263,11 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     }
 
     @Override
+    public Application getApplication() {
+        return null;
+    }
+    
+    @Override
     public Advert getAdvert() {
         return advert;
     }
@@ -266,10 +276,15 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
+    
+    @Override
+    public String getAdvertIncompleteSection() {
+        return advertIncompleteSection;
+    }
 
     @Override
-    public Application getApplication() {
-        return null;
+    public void setAdvertIncompleteSection(String advertIncompleteSection) {
+        this.advertIncompleteSection = advertIncompleteSection;
     }
 
     @Override

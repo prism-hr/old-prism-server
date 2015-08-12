@@ -113,10 +113,6 @@ public class InstitutionService {
                 .collect(Collectors.toList());
     }
 
-    public void disableInstitutionDomiciles(List<String> updates) {
-        institutionDAO.disableInstitutionDomiciles(updates);
-    }
-
     public String getBusinessYear(Institution institution, Integer year, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;

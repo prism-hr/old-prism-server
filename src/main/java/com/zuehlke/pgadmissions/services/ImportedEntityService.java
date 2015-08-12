@@ -1,43 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
@@ -51,6 +19,22 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.google.common.collect.Sets.newHashSet;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
 
 @Service
 @Transactional
@@ -335,10 +319,12 @@ public class ImportedEntityService {
         Map<Integer, SubjectAreaRepresentation> representations = importedSubjectAreas.stream()
                 .flatMap(subjectArea -> subjectArea.getAncestorsPath().stream())
                 .reduce(initialMap, (map, sa) -> {
-                    SubjectAreaRepresentation representation = new SubjectAreaRepresentation(sa.getId(), sa.getName());
-                    map.put(sa.getId(), representation);
-                    int parentId = sa.getParent() != null ? sa.getParent().getId() : -1;
-                    map.get(parentId).addChild(representation);
+                    if(!map.containsKey(sa.getId())) {
+                        SubjectAreaRepresentation representation = new SubjectAreaRepresentation(sa.getId(), sa.getName());
+                        map.put(sa.getId(), representation);
+                        int parentId = sa.getParent() != null ? sa.getParent().getId() : -1;
+                        map.get(parentId).addChild(representation);
+                    }
                     return map;
                 }, (map1, map2) -> {
                     throw new UnsupportedOperationException();

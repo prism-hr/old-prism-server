@@ -1,22 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
@@ -28,6 +11,15 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -68,7 +60,7 @@ public class InstitutionController {
     @RequestMapping(method = RequestMethod.GET, params = { "subjectAreas", "advertId" })
     @ResponseBody
     public List<InstitutionRepresentationTargeting> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas, @RequestParam Integer advertId) {
-        return institutionService.getInstitutionBySubjectAreas(advertService.getById(advertId).getAddress().getCoordinates(), subjectAreas);
+        return institutionService.getInstitutionBySubjectAreas(advertService.getById(advertId), subjectAreas);
     }
 
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)

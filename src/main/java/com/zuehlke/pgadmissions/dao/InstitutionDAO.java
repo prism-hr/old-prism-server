@@ -1,21 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.dto.InstitutionDTOHibernate;
+import com.zuehlke.pgadmissions.dto.InstitutionDTOSql;
+import freemarker.template.Template;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DoubleType;
@@ -25,17 +22,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.InstitutionDTOHibernate;
-import com.zuehlke.pgadmissions.dto.InstitutionDTOSql;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import freemarker.template.Template;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -46,15 +39,6 @@ public class InstitutionDAO {
 
     @Inject
     private FreeMarkerConfig freemarkerConfig;
-
-    public List<Institution> getApprovedInstitutionsByDomicile(ImportedAdvertDomicile domicile) {
-        return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("advert.domicile", domicile)) //
-                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
-                .addOrder(Order.asc("name")) //
-                .list();
-    }
 
     public Institution getUclInstitution() {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
@@ -79,15 +63,6 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("googleId", googleId)) //
                 .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
                 .uniqueResult();
-    }
-
-    public void disableInstitutionDomiciles(List<String> updates) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update InstitutionDomicile " //
-                        + "set enabled = false " //
-                        + "where id not in (:updates)") //
-                .setParameterList("updates", updates) //
-                .executeUpdate();
     }
 
     public void changeInstitutionBusinessYear(Integer institutionId, Integer businessYearEndMonth) throws Exception {
@@ -149,8 +124,8 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<InstitutionDTOSql> getInstitutionBySubjectAreas(List<PrismState> activeStates, Collection<Integer> subjectAreas,
-            AddressCoordinates addressCoordinates) {
+    public List<InstitutionDTOSql> getInstitutionBySubjectAreas(
+            Advert currentAdvert, Collection<Integer> subjectAreas, List<PrismState> activeStates) {
         return (List<InstitutionDTOSql>) sessionFactory.getCurrentSession().createSQLQuery(
                 "select institution.id as id, institution.name as name, institution.logo_image_id as logoImageId," +
                         " imported_advert_domicile.name as addressDomicileName, advert_address.address_line_1 as addressLine1," +
@@ -162,7 +137,7 @@ public class InstitutionDAO {
                         " haversine_distance(:baseLatitude, :baseLongitude, advert_address.location_x, advert_address.location_y) as targetingDistance" +
                         " from institution " +
                         " inner join resource_state " +
-                        " on institution.id = resource_state.institution_id " + 
+                        " on institution.id = resource_state.institution_id " +
                         " inner join imported_institution" +
                         " on institution.imported_institution_id = imported_institution.id" +
                         " inner join imported_institution_subject_area" +
@@ -174,9 +149,11 @@ public class InstitutionDAO {
                         " inner join imported_advert_domicile" +
                         " on advert_address.imported_advert_domicile_id = imported_advert_domicile.id" +
                         " where resource_state.state_id in (:activeStates)" +
+                        " and advert_address.imported_advert_domicile_id = :addressDomicile" +
                         " and advert_address.location_x is not null" +
                         " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
                         " and imported_institution_subject_area.enabled is true " +
+                        " and institution.id <> :currentInstitutionId" +
                         " group by institution.id" +
                         " order by targetingRelevance desc, targetingDistance asc")
                 .addScalar("id", IntegerType.INSTANCE)
@@ -192,8 +169,10 @@ public class InstitutionDAO {
                 .addScalar("addressCoordinateLongitude", DoubleType.INSTANCE)
                 .addScalar("targetingRelevance", DoubleType.INSTANCE)
                 .addScalar("targetingDistance", DoubleType.INSTANCE)
-                .setParameter("baseLatitude", addressCoordinates.getLatitude())
-                .setParameter("baseLongitude", addressCoordinates.getLongitude())
+                .setParameter("addressDomicile", currentAdvert.getAddress().getDomicile().getId())
+                .setParameter("baseLatitude", currentAdvert.getAddress().getCoordinates().getLatitude())
+                .setParameter("baseLongitude", currentAdvert.getAddress().getCoordinates().getLongitude())
+                .setParameter("currentInstitutionId", currentAdvert.getInstitution().getId())
                 .setParameterList("activeStates", activeStates.stream().map(activeState -> activeState.name()).collect(Collectors.toList()))
                 .setParameterList("subjectAreas", subjectAreas)
                 .setResultTransformer(Transformers.aliasToBean(InstitutionDTOSql.class))

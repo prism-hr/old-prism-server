@@ -503,6 +503,7 @@ public enum PrismStateTransitionGroup {
             if (!exclusionsAsList.contains(transitionState)) {
                 List<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
                 List<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
+                List<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
                 stateTransitions.add(new PrismStateTransition() //
                         .withTransitionState(stateTransition.getTransitionState()) //
                         .withTransitionAction(stateTransition.getTransitionAction()) //
@@ -510,7 +511,8 @@ public enum PrismStateTransitionGroup {
                         .withRoleTransitions(definedRoleTransitions.toArray(new PrismRoleTransition[definedRoleTransitions.size()])) //
                         .withRoleTransitions(roleTransitions.toArray(new PrismRoleTransition[roleTransitions.size()])) //
                         .withStateTerminations(definedStateTerminations.toArray(new PrismStateTermination[definedStateTerminations.size()])) //
-                        .withStateTerminations(stateTerminations.toArray(new PrismStateTermination[stateTerminations.size()])));
+                        .withStateTerminations(stateTerminations.toArray(new PrismStateTermination[stateTerminations.size()])) //
+                        .withPropagatedActions(definedPropagatedActions.toArray(new PrismAction[definedPropagatedActions.size()])));
             }
         }
         return stateTransitions.toArray(new PrismStateTransition[stateTransitions.size()]);

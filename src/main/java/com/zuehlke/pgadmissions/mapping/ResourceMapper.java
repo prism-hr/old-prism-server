@@ -286,7 +286,7 @@ public class ResourceMapper {
         representation.setSequenceIdentifier(resource.getSequenceIdentifier());
 
         representation.setActions(actions);
-        representation.setTimeline(commentMapper.getTimelineRepresentation(resource, currentUser));
+        representation.setTimeline(commentMapper.getCommentTimelineRepresentation(resource, currentUser));
         representation.setUserRoles(roleMapper.getResourceUserRoleRepresentations(resource));
 
         representation.setWorkflowConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));

@@ -222,7 +222,7 @@ public class AdvertMapper {
         AdvertTargets targets = advertService.getAdvertTargets(advert);
         return targets == null ? null : new AdvertTargetsRepresentation().withCompetences(getAdvertCompetenceRepresentations(targets.getCompetences()))
                 .withInstitutions(getAdvertTargetRepresentations(targets.getInstitutions()))
-                .withDepartments(getAdvertTargetRepresentations(targets.getDepartments())).withPrograms(getAdvertTargetRepresentations(targets.getPrograms()))
+                .withDepartments(getAdvertTargetRepresentations(targets.getDepartments()))
                 .withSubjectAreas(getAdvertTargetRepresentations(targets.getSubjectAreas()));
     }
 

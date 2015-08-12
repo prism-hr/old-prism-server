@@ -13,12 +13,10 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertDepartment;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertInstitution;
-import com.zuehlke.pgadmissions.domain.advert.AdvertProgram;
 import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 public enum PrismAdvertAttribute {
@@ -30,7 +28,6 @@ public enum PrismAdvertAttribute {
     COMPETENCE_TARGET(AdvertCompetence.class, Competence.class, "competences"),
     INSTITUTION_TARGET(AdvertInstitution.class, Institution.class, "institutions"),
     DEPARTMENT_TARGET(AdvertDepartment.class, Department.class, "departments"),
-    PROGRAM_TARGET(AdvertProgram.class, Program.class, "programs"),
     SUBJECT_AREA_TARGET(AdvertSubjectArea.class, ImportedSubjectArea.class, "subjectAreas");
 
     private final Class<? extends AdvertAttribute<?>> attributeClass;

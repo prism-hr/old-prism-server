@@ -26,10 +26,6 @@ public class AdvertTargets implements AdvertAttributes {
 
     @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertProgram> programs = Sets.newHashSet();
-
-    @OrderBy(clause = "value")
-    @OneToMany(mappedBy = "advert")
     private Set<AdvertSubjectArea> subjectAreas = Sets.newHashSet();
 
     public Set<AdvertCompetence> getCompetences() {
@@ -56,14 +52,6 @@ public class AdvertTargets implements AdvertAttributes {
         this.departments = departments;
     }
 
-    public Set<AdvertProgram> getPrograms() {
-        return programs;
-    }
-
-    public void setPrograms(Set<AdvertProgram> programs) {
-        this.programs = programs;
-    }
-
     public Set<AdvertSubjectArea> getSubjectAreas() {
         return subjectAreas;
     }
@@ -81,8 +69,6 @@ public class AdvertTargets implements AdvertAttributes {
             institutions.add((AdvertInstitution) value);
         } else if (valueClass.equals(AdvertDepartment.class)) {
             departments.add((AdvertDepartment) value);
-        } else if (valueClass.equals(AdvertProgram.class)) {
-            programs.add((AdvertProgram) value);
         } else {
             subjectAreas.add((AdvertSubjectArea) value);
         }

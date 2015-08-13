@@ -24,9 +24,11 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
+import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.*;
+import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -51,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByPropertyName;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
@@ -93,6 +96,9 @@ public class AdvertService {
 
     @Inject
     private AdvertMapper advertMapper;
+
+    @Inject
+    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private RestTemplate restTemplate;
@@ -354,6 +360,12 @@ public class AdvertService {
             return null;
         }
         return backgroundImage.getId();
+    }
+
+    public List<CompetenceRepresentation> searchCompetences(String q) {
+        return advertDAO.searchCompetences(q).stream()
+                .map(competence -> new CompetenceRepresentation().withId(competence.getId()).withName(competence.getName()).withDescription(competence.getDescription()))
+                .collect(Collectors.toList());
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
@@ -747,4 +759,5 @@ public class AdvertService {
         }
         return scopes;
     }
+
 }

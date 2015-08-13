@@ -27,9 +27,9 @@ public class ResourceListRowDTO {
 
     private String programName;
 
-    private String projectName;
-
     private Integer projectId;
+    
+    private String projectName;
 
     private Integer applicationId;
 
@@ -128,21 +128,21 @@ public class ResourceListRowDTO {
     public void setProgramName(String programName) {
         this.programName = programName;
     }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
+    
     public Integer getProjectId() {
         return projectId;
     }
 
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
+    }
+    
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public Integer getApplicationId() {

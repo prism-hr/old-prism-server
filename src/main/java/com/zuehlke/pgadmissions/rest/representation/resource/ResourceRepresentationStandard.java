@@ -37,7 +37,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     private String sequenceIdentifier;
 
-    private List<PrismDisplayPropertyDefinition> advertIncompleteSection;
+    private List<PrismDisplayPropertyDefinition> advertIncompleteSections;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -143,12 +143,12 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public List<PrismDisplayPropertyDefinition> getAdvertIncompleteSection() {
-        return advertIncompleteSection;
+    public List<PrismDisplayPropertyDefinition> getAdvertIncompleteSections() {
+        return advertIncompleteSections;
     }
 
-    public void setAdvertIncompleteSection(List<PrismDisplayPropertyDefinition> advertIncompleteSection) {
-        this.advertIncompleteSection = advertIncompleteSection;
+    public void setAdvertIncompleteSections(List<PrismDisplayPropertyDefinition> advertIncompleteSections) {
+        this.advertIncompleteSections = advertIncompleteSections;
     }
 
 }

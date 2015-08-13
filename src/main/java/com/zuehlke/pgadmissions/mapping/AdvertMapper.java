@@ -212,7 +212,7 @@ public class AdvertMapper {
         return competences
                 .stream()
                 .<AdvertCompetenceRepresentation> map(
-                        competence -> new AdvertCompetenceRepresentation().withId(competence.getValueId()).withName(competence.getName())
+                        competence -> new AdvertCompetenceRepresentation().withName(competence.getName())
                                 .withDescription(competence.getValue().getDescription()).withImportance(competence.getImportance()))
                 .collect(Collectors.toList());
     }

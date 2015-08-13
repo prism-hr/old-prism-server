@@ -1,23 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.Map;
-
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertDepartment;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
-import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.advert.AdvertInstitution;
-import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
+import com.zuehlke.pgadmissions.domain.advert.*;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import org.joda.time.LocalDate;
+
+import java.util.Map;
 
 public enum PrismAdvertAttribute {
 
@@ -25,7 +15,6 @@ public enum PrismAdvertAttribute {
     INDUSTRY_CATEGORY(AdvertIndustry.class, PrismAdvertIndustry.class, "industries"),
     FUNCTION_CATEGORY(AdvertFunction.class, PrismAdvertFunction.class, "functions"),
     THEME_CATEGORY(AdvertTheme.class, String.class, "themes"),
-    COMPETENCE_TARGET(AdvertCompetence.class, Competence.class, "competences"),
     INSTITUTION_TARGET(AdvertInstitution.class, Institution.class, "institutions"),
     DEPARTMENT_TARGET(AdvertDepartment.class, Department.class, "departments"),
     SUBJECT_AREA_TARGET(AdvertSubjectArea.class, ImportedSubjectArea.class, "subjectAreas");

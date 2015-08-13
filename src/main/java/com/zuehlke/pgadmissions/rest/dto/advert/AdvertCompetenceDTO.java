@@ -1,11 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-public class AdvertCompetenceDTO extends AdvertTargetDTO {
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+public class AdvertCompetenceDTO {
+
+    @Size(max = 255)
     private String name;
 
+    @Size(max = 2000)
     private String description;
 
+    @NotNull
     private Integer importance;
 
     public String getName() {

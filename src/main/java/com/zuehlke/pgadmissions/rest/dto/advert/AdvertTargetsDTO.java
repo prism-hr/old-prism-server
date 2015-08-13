@@ -7,8 +7,6 @@ import com.google.common.collect.ImmutableMap;
 
 public class AdvertTargetsDTO {
 
-    private List<AdvertCompetenceDTO> competences;
-
     private List<AdvertTargetDTO> institutions;
 
     private List<AdvertTargetDTO> departments;
@@ -16,14 +14,6 @@ public class AdvertTargetsDTO {
     private List<AdvertTargetDTO> programs;
 
     private List<AdvertTargetDTO> subjectAreas;
-
-    public List<AdvertCompetenceDTO> getCompetences() {
-        return competences;
-    }
-
-    public void setCompetences(List<AdvertCompetenceDTO> competences) {
-        this.competences = competences;
-    }
 
     public List<AdvertTargetDTO> getInstitutions() {
         return institutions;
@@ -58,7 +48,7 @@ public class AdvertTargetsDTO {
     }
 
     public Map<String, List<? extends AdvertTargetDTO>> getTargets() {
-        Map<String, List<? extends AdvertTargetDTO>> maps = ImmutableMap.of("competences", competences, "institutions", institutions,
+        Map<String, List<? extends AdvertTargetDTO>> maps = ImmutableMap.of("institutions", institutions,
                 "departments", departments, "programs", programs, "subjectAreas", subjectAreas);
         return maps;
     }

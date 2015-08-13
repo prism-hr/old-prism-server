@@ -1,15 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import com.google.common.base.Objects;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "competence")
@@ -128,7 +123,7 @@ public class Competence implements UniqueEntity, TargetEntity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addExclusion("name", name);
+        return new EntitySignature().addProperty("name", name);
     }
 
 }

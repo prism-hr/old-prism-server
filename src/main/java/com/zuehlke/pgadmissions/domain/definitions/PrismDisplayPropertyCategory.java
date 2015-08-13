@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismDisplayPropertyCategory {
 
@@ -58,6 +53,7 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_HTML_TRANSLATIONS_CONFIGURATION(SYSTEM),
     SYSTEM_PERFORMANCE_INDICATOR(SYSTEM),
     SYSTEM_RESOURCE_TARGETS(SYSTEM),
+    SYSTEM_RESOURCE_COMPETENCES(SYSTEM),
     SYSTEM_RESOURCE_ADVERT(SYSTEM),
     SYSTEM_RESOURCE_FINANCIAL_DETAILS(SYSTEM),
     INSTITUTION_COMMENT(INSTITUTION),

@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -28,7 +27,7 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     @ManyToOne
@@ -83,6 +82,12 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
         this.roleTransitionType = roleTransitionType;
     }
 
+    public CommentAssignedUser withComment(Comment comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    
     public CommentAssignedUser withUser(User user) {
         this.user = user;
         return this;
@@ -96,24 +101,6 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
     public CommentAssignedUser withRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
         this.roleTransitionType = roleTransitionType;
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(comment, user, role, roleTransitionType);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        CommentAssignedUser other = (CommentAssignedUser) object;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole())
-                && Objects.equal(roleTransitionType, other.getRoleTransitionType());
     }
 
     @Override

@@ -59,12 +59,6 @@ public class EntityDAO {
                 .list();
     }
 
-    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass)
-                .add(Restrictions.eq(propertyName, propertyValue))
-                .list();
-    }
-
     public Serializable save(Object entity) {
         return sessionFactory.getCurrentSession().save(entity);
     }

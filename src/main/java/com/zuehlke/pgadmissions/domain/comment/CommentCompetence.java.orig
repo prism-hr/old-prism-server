@@ -9,19 +9,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.Competence;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "comment_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "competence_id" }) })
-public class CommentCompetence {
+public class CommentCompetence implements UniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     @ManyToOne
@@ -111,20 +111,8 @@ public class CommentCompetence {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(comment, competence);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        CommentCompetence other = (CommentCompetence) object;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(competence, other.getCompetence());
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("comment", comment).addProperty("competence", competence);
     }
 
 }

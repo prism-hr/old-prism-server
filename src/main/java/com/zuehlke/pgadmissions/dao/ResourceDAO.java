@@ -8,15 +8,19 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -28,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
@@ -47,9 +52,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceAncestryDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -279,7 +284,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<UserAdministratorResourceDTO> getUserAdministratorResources(Resource<?> resource, HashMultimap<PrismScope, Integer> childResources, User user) {
+    public List<ResourceAncestryDTO> getUserAdministratorResources(Resource<?> resource, HashMultimap<PrismScope, Integer> childResources, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
 
         Junction resourceConstraint = Restrictions.disjunction() //
@@ -292,14 +297,14 @@ public class ResourceDAO {
             }
         }
 
-        return (List<UserAdministratorResourceDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+        return (List<ResourceAncestryDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("system"), "system") //
-                        .add(Projections.groupProperty("institution"), "institution") //
-                        .add(Projections.groupProperty("department"), "department") //
-                        .add(Projections.groupProperty("program"), "program") //
-                        .add(Projections.groupProperty("project"), "project") //
-                        .add(Projections.groupProperty("application"), "application")) //
+                        .add(Projections.groupProperty("system.id"), "systemId") //
+                        .add(Projections.groupProperty("institution.id"), "institutionId") //
+                        .add(Projections.groupProperty("department.id"), "departmentId") //
+                        .add(Projections.groupProperty("program.id"), "programId") //
+                        .add(Projections.groupProperty("project.id"), "projectId") //
+                        .add(Projections.groupProperty("application.id"), "applicationId")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
@@ -308,7 +313,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
                 .add(resourceConstraint) //
-                .setResultTransformer(Transformers.aliasToBean(UserAdministratorResourceDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceAncestryDTO.class)) //
                 .list();
     }
 
@@ -487,27 +492,32 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    // TODO: Abstract for different tasks and make perform
-    public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope resourceScope, PrismScope parentScope, Integer parentId,
-            PrismScope targetScope, boolean userLoggedIn) {
+    public List<ResourceAncestryDTO> getResourcesWhichPermitTargeting(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope,
+            List<PrismScope> parentScopes, String searchTerm) {
+        return (List<ResourceAncestryDTO>) getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes)
+                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))
+                .addOrder(Order.desc("name")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceAncestryDTO.class))
+                .list();
+    }
+
+    public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope, Integer filterResourceId,
+            PrismScope resourceScope, List<PrismScope> parentScopes, PrismScope creationScope, String searchTerm, boolean userLoggedIn) {
         String resourceReference = resourceScope.getLowerCamelName();
 
-        ProjectionList projections = Projections.projectionList() //
-                .add(Projections.groupProperty(resourceReference), "resource");
-
-        if (!resourceScope.equals(INSTITUTION)) {
-            projections.add(Projections.property("resourceCondition.partnerMode"), "partnerMode");
+        Projection[] columns = null;
+        if (!resourceScope.equals(SYSTEM)) {
+            columns = new Projection[] { Projections.property("resourceCondition.partnerMode").as("partnerMode") };
         }
 
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projections) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
+        Criteria criteria = getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes, columns)
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference + "." + parentScope.getLowerCamelName() + ".id", parentId)) //
-                .add(Restrictions.eq("action.creationScope.id", targetScope)) //
+                .add(Restrictions.eq("action.creationScope.id", creationScope)) //
+                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("resourceCondition.id")) //
                         .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")));
@@ -539,6 +549,49 @@ public class ResourceDAO {
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .list();
+    }
+
+    private Criteria getResourcesCriteria(PrismScope filterScope, List<Integer> filerResourceIds, PrismScope resourceScope, List<PrismScope> parentScopes,
+            Projection... customColumns) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass());
+        ProjectionList projections = Projections.projectionList();
+
+        addResourceColumns(projections, resourceScope, "");
+        for (PrismScope parentScope : parentScopes) {
+            String parentScopeReference = parentScope.getLowerCamelName();
+            addResourceColumns(projections, parentScope, parentScopeReference);
+            criteria.createAlias(parentScopeReference, parentScopeReference, JoinType.LEFT_OUTER_JOIN);
+        }
+
+        if (customColumns != null) {
+            for (Projection customColumn : customColumns) {
+                projections.add(customColumn);
+            }
+        }
+
+        if (!(filterScope == null || filerResourceIds == null || filerResourceIds.size() == 0)) {
+            criteria.add(Restrictions.in(filterScope.getLowerCamelName(), filerResourceIds));
+        }
+
+        return criteria;
+    }
+
+    private void addResourceColumns(ProjectionList projections, PrismScope resourceScope, String prefix) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        projections.add(getResourceProjection(resourceReference, prefix, "id"));
+        if (resourceScope.isResourceParentScope()) {
+            projections.add(getResourceProjection(resourceReference, prefix, "name"));
+        }
+
+        if (resourceScope.equals(INSTITUTION)) {
+            projections.add(getResourceProjection(resourceReference, prefix, "logoImage.id"));
+        }
+    }
+
+    private Projection getResourceProjection(String resourceReference, String prefix, String column) {
+        List<String> columnParts = Arrays.asList(column.split("\\."));
+        return Projections.property(Joiner.on(".").skipNulls().join(Strings.emptyToNull(prefix), column)).as(
+                Joiner.on("").join(columnParts.stream().map(part -> WordUtils.capitalize(part)).collect(Collectors.toList())));
     }
 
     private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {

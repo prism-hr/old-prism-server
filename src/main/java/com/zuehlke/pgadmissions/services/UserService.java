@@ -172,7 +172,7 @@ public class UserService {
     public Long getUserProgramRelationCount(User user, ImportedProgram program) {
         return userDAO.getUserProgramRelationCount(user, program);
     }
-    
+
     public void deleteUserProgram(User user, ImportedProgram program) {
         userDAO.deleteUserProgram(user, program);
     }
@@ -360,7 +360,7 @@ public class UserService {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource<?> resource, UserListFilterDTO userListFilterDTO) {
-        HashMultimap<PrismScope, Resource<?>> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
+        HashMultimap<PrismScope, Integer> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
         if (!userAdministratorResources.isEmpty()) {
             return userDAO.getBouncedOrUnverifiedUsers(userAdministratorResources, userListFilterDTO);
         }
@@ -368,7 +368,7 @@ public class UserService {
     }
 
     public void correctBouncedOrUnverifiedUser(Resource<?> resource, Integer userId, UserCorrectionDTO userCorrectionDTO) throws Exception {
-        HashMultimap<PrismScope, Resource<?>> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
+        HashMultimap<PrismScope, Integer> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userAdministratorResources, userId);
 
         String email = userCorrectionDTO.getEmail();

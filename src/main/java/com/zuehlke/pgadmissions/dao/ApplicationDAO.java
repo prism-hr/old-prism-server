@@ -57,6 +57,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 
 import freemarker.template.Template;
@@ -177,8 +178,12 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public List<Application> getOtherLiveApplications(Application application) {
-        return (List<Application>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+    public List<ResourceSimpleDTO> getOtherLiveApplications(Application application) {
+        return (List<ResourceSimpleDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
+                        .add(Projections.property("code"), "code") //
+                        .add(Projections.property("state.id"), "stateId"))
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("institution", application.getInstitution())) //
                 .add(Restrictions.eq("user", application.getUser())) //
@@ -187,6 +192,7 @@ public class ApplicationDAO {
                         .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VALIDATION.ordinal(), APPLICATION_RESERVED.ordinal())) //
                         .add(Restrictions.in("state.id", Arrays.asList(APPLICATION_APPROVAL, APPLICATION_REJECTED)))) //
                 .addOrder(Order.desc("sequenceIdentifier")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class))
                 .list();
     }
 

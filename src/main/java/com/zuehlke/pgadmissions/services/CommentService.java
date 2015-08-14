@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMEN
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -35,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -141,7 +141,9 @@ public class CommentService {
 
         entityService.save(comment);
 
-        assignUsers(comment, persistentAssignees);
+        comment.getAssignedUsers().addAll(persistentAssignees.stream().map(assignee -> assignee.withRoleTransitionType( //
+                assignee.getRoleTransitionType() == null ? CREATE : assignee.getRoleTransitionType())).collect(Collectors.toSet()));
+        
         comment.getCommentTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
@@ -328,13 +330,6 @@ public class CommentService {
 
     public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource<?> resource) {
         return commentDAO.getResourceOwnerCommentAssignedUsers(resource);
-    }
-
-    private void assignUsers(Comment comment, Set<CommentAssignedUser> assignees) {
-        for (CommentAssignedUser assignee : assignees) {
-            PrismRoleTransitionType transitionType = assignee.getRoleTransitionType();
-            comment.addAssignedUser(assignee.getUser(), assignee.getRole(), transitionType == null ? CREATE : transitionType);
-        }
     }
 
     private void updateCommentStates(Comment comment) {

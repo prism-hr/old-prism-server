@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
@@ -186,6 +187,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     public String getUpperCamelName() {
         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
+    }
+
+    public boolean isResourceParentScope() {
+        return ResourceParent.class.isAssignableFrom(definition.getResourceClass());
     }
 
     private static class PrismScopeDefinition {

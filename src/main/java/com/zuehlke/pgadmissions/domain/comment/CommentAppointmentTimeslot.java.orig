@@ -12,20 +12,22 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+
 @Entity
-@Table(name = "comment_appointment_preference", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "preference_datetime" }) })
-public class CommentAppointmentPreference extends CommentShedulingDefinition {
+@Table(name = "comment_appointment_timeslot", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "timeslot_datetime" }) })
+public class CommentAppointmentTimeslot implements UniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-    @Column(name = "preference_datetime", nullable = false)
+    @Column(name = "timeslot_datetime", nullable = false)
     private LocalDateTime dateTime;
 
     public Integer getId() {
@@ -36,29 +38,34 @@ public class CommentAppointmentPreference extends CommentShedulingDefinition {
         this.id = id;
     }
 
-    @Override
     public Comment getComment() {
         return comment;
     }
 
-    @Override
     public void setComment(Comment comment) {
         this.comment = comment;
     }
 
-    @Override
     public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    @Override
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 
-    public CommentAppointmentPreference withDateTime(LocalDateTime dateTime) {
+    public CommentAppointmentTimeslot withDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
         return this;
+    }
+
+    public String getDateTimeDisplay(String dateTimeFormat) {
+        return dateTime.toString(dateTimeFormat);
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("comment", comment).addProperty("dateTime", dateTime);
     }
 
 }

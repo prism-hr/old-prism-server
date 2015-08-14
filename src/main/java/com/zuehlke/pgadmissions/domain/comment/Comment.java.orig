@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TimeZone;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -57,12 +56,10 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -74,7 +71,6 @@ import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
@@ -182,38 +178,38 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    @OneToMany
     @OrderBy(clause = "role_id, id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
+    @OneToMany
     @OrderBy(clause = "primary_state desc, state_id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentState> commentStates = Sets.newHashSet();
 
+    @OneToMany
     @OrderBy(clause = "primary_state desc, state_id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentTransitionState> commentTransitionStates = Sets.newHashSet();
 
+    @OneToMany
     @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentCompetence> competences = Sets.newHashSet();
 
+    @OneToMany
     @OrderBy(clause = "timeslot_datetime")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
+    @OneToMany
     @OrderBy(clause = "preference_datetime")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
+    @OneToMany
     @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
     private Set<Document> documents = Sets.newHashSet();
 
@@ -589,18 +585,23 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
-        assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
+    public Comment addAssignedUser(CommentAssignedUser commentAssignedUser) {
+        assignedUsers.add(commentAssignedUser);
+        return this;
+    }
+    
+    public Comment addCommentState(CommentState commentState) {
+        commentStates.add(commentState);
         return this;
     }
 
-    public Comment addCommentState(State state, Boolean primaryState) {
-        commentStates.add(new CommentState().withState(state).withPrimaryState(primaryState));
+    public Comment addCommentTransitionState(CommentTransitionState commentTransitionState) {
+        commentTransitionStates.add(commentTransitionState);
         return this;
     }
 
-    public Comment addCommentTransitionState(State transitionState, Boolean primaryState) {
-        commentTransitionStates.add(new CommentTransitionState().withState(transitionState).withPrimaryState(primaryState));
+    public Comment addCommentTransitionStates(Set<CommentTransitionState> commentTransitionState) {
+        commentTransitionStates.addAll(commentTransitionState);
         return this;
     }
 
@@ -609,8 +610,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment addCompetence(Competence competence, Integer importance, Integer rating, String remark) {
-        competences.add(new CommentCompetence().withCompetence(competence).withImportance(importance).withRating(rating).withRemark(remark));
+    public Comment addCompetence(CommentCompetence competence) {
+        competences.add(competence);
         return this;
     }
 
@@ -817,23 +818,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     public boolean isResourceUserAssignmentProperty() {
         User resourceUser = getResource().getUser();
         return resourceUser.equals(user) || resourceUser.equals(delegateUser);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        Comment other = (Comment) object;
-        return Objects.equal(id, other.getId());
     }
 
     @Override

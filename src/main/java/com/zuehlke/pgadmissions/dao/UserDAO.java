@@ -272,7 +272,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public <T extends Resource<?>> List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, T> userAdministratorResources,
+    public List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, Integer> userAdministratorResources,
             UserListFilterDTO userListFilterDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
@@ -311,7 +311,7 @@ public class UserDAO {
                 .list();
     }
 
-    public <T extends Resource<?>> User getBouncedOrUnverifiedUser(HashMultimap<PrismScope, T> userAdministratorResources, Integer userId) {
+    public User getBouncedOrUnverifiedUser(HashMultimap<PrismScope, Integer> userAdministratorResources, Integer userId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -319,7 +319,7 @@ public class UserDAO {
 
         Disjunction disjunction = Restrictions.disjunction();
         for (PrismScope scope : userAdministratorResources.keySet()) {
-            disjunction.add(Restrictions.in(scope.getLowerCamelName(), userAdministratorResources.get(scope)));
+            disjunction.add(Restrictions.in(scope.getLowerCamelName() + ".id", userAdministratorResources.get(scope)));
         }
 
         return (User) criteria.add(disjunction) //

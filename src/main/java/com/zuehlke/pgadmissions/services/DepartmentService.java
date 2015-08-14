@@ -39,10 +39,6 @@ public class DepartmentService {
         return entityService.getById(Department.class, id);
     }
 
-    public List<Department> getDepartments(String searchTerm) {
-        return departmentDAO.getDepartments(searchTerm);
-    }
-
     public void setImportedPrograms(Department department, List<ImportedEntityDTO> importedProgramDTOs) {
         Set<ImportedProgram> importedPrograms = department.getImportedPrograms();
         importedPrograms.clear();

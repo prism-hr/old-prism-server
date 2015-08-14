@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.resource.ResourceAncestryDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
@@ -284,7 +284,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<ResourceAncestryDTO> getUserAdministratorResources(Resource<?> resource, HashMultimap<PrismScope, Integer> childResources, User user) {
+    public List<ResourceStandardDTO> getUserAdministratorResources(Resource<?> resource, HashMultimap<PrismScope, Integer> childResources, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
 
         Junction resourceConstraint = Restrictions.disjunction() //
@@ -297,7 +297,7 @@ public class ResourceDAO {
             }
         }
 
-        return (List<ResourceAncestryDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+        return (List<ResourceStandardDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("system.id"), "systemId") //
                         .add(Projections.groupProperty("institution.id"), "institutionId") //
@@ -313,7 +313,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
                 .add(resourceConstraint) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceAncestryDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceStandardDTO.class)) //
                 .list();
     }
 
@@ -492,12 +492,12 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceAncestryDTO> getResourcesWhichPermitTargeting(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope,
+    public List<ResourceStandardDTO> getResourcesWhichPermitTargeting(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope,
             List<PrismScope> parentScopes, String searchTerm) {
-        return (List<ResourceAncestryDTO>) getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes)
+        return (List<ResourceStandardDTO>) getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes)
                 .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))
                 .addOrder(Order.desc("name")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceAncestryDTO.class))
+                .setResultTransformer(Transformers.aliasToBean(ResourceStandardDTO.class))
                 .list();
     }
 

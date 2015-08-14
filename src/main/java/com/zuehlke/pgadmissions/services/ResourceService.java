@@ -73,7 +73,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceAncestryDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -419,7 +419,7 @@ public class ResourceService {
         }
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        for (ResourceAncestryDTO resourceDTO : resourceDAO.getUserAdministratorResources(resource, childResources, user)) {
+        for (ResourceStandardDTO resourceDTO : resourceDAO.getUserAdministratorResources(resource, childResources, user)) {
             resources.put(resourceDTO.getScope(), resourceDTO.getId());
         }
         return resources;
@@ -681,7 +681,7 @@ public class ResourceService {
         return childResources.isEmpty() ? null : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
 
-    public List<ResourceAncestryDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
+    public List<ResourceStandardDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
         return resourceDAO.getResourcesWhichPermitTargeting(SYSTEM, systemId, resourceScope,
                 scopeService.getParentScopesDescending(resourceScope, INSTITUTION), searchTerm);
     }

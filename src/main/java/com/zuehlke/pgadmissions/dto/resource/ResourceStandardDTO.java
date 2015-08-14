@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
+public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
 
     private static final String idReference = "Id";
 
@@ -164,12 +164,12 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
         return null;
     }
 
-    public ResourceAncestryDTO getParentResource() {
-        return getParentResource(ResourceAncestryDTO.class);
+    public ResourceStandardDTO getParentResource() {
+        return getParentResource(ResourceStandardDTO.class);
     }
 
-    public ResourceAncestryDTO getEnclosingResource(PrismScope scope) {
-        return getEnclosingResource(scope, ResourceAncestryDTO.class);
+    public ResourceStandardDTO getEnclosingResource(PrismScope scope) {
+        return getEnclosingResource(scope, ResourceStandardDTO.class);
     }
 
     @Override
@@ -185,17 +185,17 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ResourceAncestryDTO other = (ResourceAncestryDTO) object;
+        final ResourceStandardDTO other = (ResourceStandardDTO) object;
         return Objects.equal(getScope(), other.getScope()) && Objects.equal(getId(), other.getId());
     }
 
     @Override
-    public int compareTo(ResourceAncestryDTO resourceAncestry) {
+    public int compareTo(ResourceStandardDTO resourceAncestry) {
         int scopeComparison = new Integer(getScope().ordinal()).compareTo(new Integer(resourceAncestry.getScope().ordinal()));
         return (scopeComparison == 0) ? getId().compareTo(resourceAncestry.getId()) : scopeComparison;
     }
 
-    protected <T extends ResourceAncestryDTO> T getParentResource(Class<T> returnType) {
+    protected <T extends ResourceStandardDTO> T getParentResource(Class<T> returnType) {
         PrismScope scope = getScope();
         PrismScope[] parentScopes = PrismScope.values();
         for (int i = (parentScopes.length - 1); i >= 0; i--) {
@@ -210,7 +210,7 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
         return null;
     }
 
-    protected <T extends ResourceAncestryDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
+    protected <T extends ResourceStandardDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
         T enclosingResource = BeanUtils.instantiate(returnType);
 
         boolean cloning = false;

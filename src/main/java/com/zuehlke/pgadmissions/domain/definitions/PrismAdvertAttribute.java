@@ -1,13 +1,21 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import java.util.Map;
+
+import org.joda.time.LocalDate;
+
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.advert.*;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertDepartment;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
+import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
+import com.zuehlke.pgadmissions.domain.advert.AdvertInstitution;
+import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
-import org.joda.time.LocalDate;
-
-import java.util.Map;
 
 public enum PrismAdvertAttribute {
 

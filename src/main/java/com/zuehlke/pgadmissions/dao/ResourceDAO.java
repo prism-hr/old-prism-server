@@ -503,30 +503,28 @@ public class ResourceDAO {
 
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope, Integer filterResourceId,
             PrismScope resourceScope, List<PrismScope> parentScopes, PrismScope creationScope, String searchTerm, boolean userLoggedIn) {
-        String resourceReference = resourceScope.getLowerCamelName();
-
-        Projection[] columns = null;
-        if (!resourceScope.equals(SYSTEM)) {
-            columns = new Projection[] { Projections.property("resourceCondition.partnerMode").as("partnerMode") };
-        }
-
-        Criteria criteria = getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes, columns)
+        Criteria criteria = getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes,
+                Projections.property("resourceCondition.partnerMode").as("partnerMode"))
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.creationScope.id", creationScope)) //
-                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("resourceCondition.id")) //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")));
+                .add(Restrictions.eq("action.creationScope.id", creationScope));
+
+        if (searchTerm != null) {
+            criteria.add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)); //
+        }
+
+        criteria.add(Restrictions.disjunction() //
+                .add(Restrictions.isNull("resourceCondition.id")) //
+                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")));
 
         if (!userLoggedIn) {
             criteria.add(Restrictions.eq("resourceCondition.partnerMode", true));
         }
 
-        return (List<ResourceChildCreationDTO>) criteria.addOrder(Order.desc(resourceReference + ".name")) //
+        return (List<ResourceChildCreationDTO>) criteria.addOrder(Order.desc("name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class))
                 .list();
     }
@@ -554,44 +552,45 @@ public class ResourceDAO {
     private Criteria getResourcesCriteria(PrismScope filterScope, List<Integer> filerResourceIds, PrismScope resourceScope, List<PrismScope> parentScopes,
             Projection... customColumns) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass());
-        ProjectionList projections = Projections.projectionList();
+        ProjectionList projectionList = Projections.projectionList();
+        criteria.setProjection(projectionList);
 
-        addResourceColumns(projections, resourceScope, "");
+        addResourceProjections(projectionList, resourceScope, "");
         for (PrismScope parentScope : parentScopes) {
             String parentScopeReference = parentScope.getLowerCamelName();
-            addResourceColumns(projections, parentScope, parentScopeReference);
+            addResourceProjections(projectionList, parentScope, parentScopeReference);
             criteria.createAlias(parentScopeReference, parentScopeReference, JoinType.LEFT_OUTER_JOIN);
         }
 
         if (customColumns != null) {
             for (Projection customColumn : customColumns) {
-                projections.add(customColumn);
+                projectionList.add(customColumn);
             }
         }
 
         if (!(filterScope == null || filerResourceIds == null || filerResourceIds.size() == 0)) {
-            criteria.add(Restrictions.in(filterScope.getLowerCamelName(), filerResourceIds));
+            criteria.add(Restrictions.in(filterScope.getLowerCamelName() + ".id", filerResourceIds));
         }
 
         return criteria;
     }
 
-    private void addResourceColumns(ProjectionList projections, PrismScope resourceScope, String prefix) {
+    private void addResourceProjections(ProjectionList projectionList, PrismScope resourceScope, String prefix) {
         String resourceReference = resourceScope.getLowerCamelName();
-        projections.add(getResourceProjection(resourceReference, prefix, "id"));
+        projectionList.add(getResourceProjection(resourceReference, prefix, "id"));
         if (resourceScope.isResourceParentScope()) {
-            projections.add(getResourceProjection(resourceReference, prefix, "name"));
+            projectionList.add(getResourceProjection(resourceReference, prefix, "name"));
         }
 
         if (resourceScope.equals(INSTITUTION)) {
-            projections.add(getResourceProjection(resourceReference, prefix, "logoImage.id"));
+            projectionList.add(getResourceProjection(resourceReference, prefix, "logoImage.id"));
         }
     }
 
     private Projection getResourceProjection(String resourceReference, String prefix, String column) {
         List<String> columnParts = Arrays.asList(column.split("\\."));
         return Projections.property(Joiner.on(".").skipNulls().join(Strings.emptyToNull(prefix), column)).as(
-                Joiner.on("").join(columnParts.stream().map(part -> WordUtils.capitalize(part)).collect(Collectors.toList())));
+                resourceReference + Joiner.on("").join(columnParts.stream().map(part -> WordUtils.capitalize(part)).collect(Collectors.toList())));
     }
 
     private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {

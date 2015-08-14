@@ -19,15 +19,15 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
 
     private Integer systemId;
 
-    private Integer instititionId;
+    private Integer institutionId;
 
     private String institutionName;
 
-    private String institutionLogoImageId;
+    private Integer institutionLogoImageId;
 
     private Integer departmentId;
 
-    private String deparmentName;
+    private String departmentName;
 
     private Integer programId;
 
@@ -47,12 +47,12 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
         this.systemId = systemId;
     }
 
-    public Integer getInstititionId() {
-        return instititionId;
+    public Integer getInstitutionId() {
+        return institutionId;
     }
 
-    public void setInstititionId(Integer instititionId) {
-        this.instititionId = instititionId;
+    public void setInstitutionId(Integer institutionId) {
+        this.institutionId = institutionId;
     }
 
     public String getInstitutionName() {
@@ -63,11 +63,11 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
         this.institutionName = institutionName;
     }
 
-    public String getInstitutionLogoImageId() {
+    public Integer getInstitutionLogoImageId() {
         return institutionLogoImageId;
     }
 
-    public void setInstitutionLogoImageId(String institutionLogoImageId) {
+    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
         this.institutionLogoImageId = institutionLogoImageId;
     }
 
@@ -79,12 +79,12 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
         this.departmentId = departmentId;
     }
 
-    public String getDeparmentName() {
-        return deparmentName;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setDeparmentName(String deparmentName) {
-        this.deparmentName = deparmentName;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public Integer getProgramId() {
@@ -129,7 +129,7 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
 
     public PrismScope getScope() {
         PrismScope[] scopes = PrismScope.values();
-        for (int i = scopes.length; i > 0; i--) {
+        for (int i = (scopes.length - 1); i >= 0; i--) {
             PrismScope scope = scopes[i];
             if (getProperty(this, scope.getLowerCamelName() + idReference) != null) {
                 return scope;
@@ -140,7 +140,7 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
 
     public Integer getId() {
         PrismScope[] scopes = PrismScope.values();
-        for (int i = scopes.length; i > 0; i--) {
+        for (int i = (scopes.length - 1); i >= 0; i--) {
             PrismScope scope = scopes[i];
             Integer id = (Integer) getProperty(this, scope.getLowerCamelName() + idReference);
             if (id != null) {
@@ -152,7 +152,7 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
 
     public String getName() {
         PrismScope[] scopes = PrismScope.values();
-        for (int i = scopes.length; i > 0; i--) {
+        for (int i = (scopes.length - 1); i >= 0; i--) {
             PrismScope scope = scopes[i];
             String scopeReference = scope.getLowerCamelName();
             if (getProperty(this, scopeReference + idReference) != null) {
@@ -192,13 +192,13 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
     @Override
     public int compareTo(ResourceAncestryDTO resourceAncestry) {
         int scopeComparison = new Integer(getScope().ordinal()).compareTo(new Integer(resourceAncestry.getScope().ordinal()));
-        return (scopeComparison == 0) ? getName().compareTo(resourceAncestry.getName()) : scopeComparison;
+        return (scopeComparison == 0) ? getId().compareTo(resourceAncestry.getId()) : scopeComparison;
     }
 
     protected <T extends ResourceAncestryDTO> T getParentResource(Class<T> returnType) {
         PrismScope scope = getScope();
         PrismScope[] parentScopes = PrismScope.values();
-        for (int i = parentScopes.length; i > 0; i--) {
+        for (int i = (parentScopes.length - 1); i >= 0; i--) {
             PrismScope parentScope = parentScopes[i];
             if (!parentScope.equals(scope)) {
                 T parentResource = getEnclosingResource(parentScope, returnType);
@@ -215,7 +215,7 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
 
         boolean cloning = false;
         PrismScope[] parentScopes = PrismScope.values();
-        for (int i = parentScopes.length; i > 0; i--) {
+        for (int i = (parentScopes.length - 1); i >= 0; i--) {
             PrismScope parentScope = parentScopes[i];
             cloning = scope.equals(parentScope) ? true : cloning;
 

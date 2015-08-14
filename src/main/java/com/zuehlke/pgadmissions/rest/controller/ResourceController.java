@@ -224,10 +224,12 @@ public class ResourceController {
         return advertService.getAvailableAdvertThemes(resource.getAdvert(), null);
     }
 
+    // FIXME - pass 'stop scope' for rendering from client so that we can clean up server code
+    // FIXME = problem with rendering on client? data is being generated but not display
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
-    public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope creationScope,
+    public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope targetScope,
             @RequestParam(required = false) String searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, creationScope, searchTerm);
+        return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, targetScope, searchTerm);
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)

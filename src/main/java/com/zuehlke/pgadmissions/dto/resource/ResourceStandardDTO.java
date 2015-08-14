@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
@@ -16,6 +18,8 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
     private static final String nameReference = "Name";
 
     private static final String logoImageReference = "LogoImageId";
+
+    private boolean valid;
 
     private Integer systemId;
 
@@ -128,6 +132,7 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
     }
 
     public PrismScope getScope() {
+        validate();
         PrismScope[] scopes = PrismScope.values();
         for (int i = (scopes.length - 1); i >= 0; i--) {
             PrismScope scope = scopes[i];
@@ -139,10 +144,10 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
     }
 
     public Integer getId() {
+        validate();
         PrismScope[] scopes = PrismScope.values();
         for (int i = (scopes.length - 1); i >= 0; i--) {
-            PrismScope scope = scopes[i];
-            Integer id = (Integer) getProperty(this, scope.getLowerCamelName() + idReference);
+            Integer id = getId(scopes[i]);
             if (id != null) {
                 return id;
             }
@@ -151,14 +156,12 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
     }
 
     public String getName() {
+        validate();
         PrismScope[] scopes = PrismScope.values();
         for (int i = (scopes.length - 1); i >= 0; i--) {
-            PrismScope scope = scopes[i];
-            String scopeReference = scope.getLowerCamelName();
-            if (getProperty(this, scopeReference + idReference) != null) {
-                if (hasProperty(this, scopeReference + nameReference)) {
-                    return (String) getProperty(this, scopeReference + nameReference);
-                }
+            String name = getName(scopes[i]);
+            if (name != null) {
+                return name;
             }
         }
         return null;
@@ -196,6 +199,7 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
     }
 
     protected <T extends ResourceStandardDTO> T getParentResource(Class<T> returnType) {
+        validate();
         PrismScope scope = getScope();
         PrismScope[] parentScopes = PrismScope.values();
         for (int i = (parentScopes.length - 1); i >= 0; i--) {
@@ -211,6 +215,7 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
     }
 
     protected <T extends ResourceStandardDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
+        validate();
         T enclosingResource = BeanUtils.instantiate(returnType);
 
         boolean cloning = false;
@@ -228,6 +233,54 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
         }
 
         return enclosingResource.getId() == null ? null : enclosingResource;
+    }
+
+    private void validate() {
+        if (!valid) {
+            boolean corrupted = false;
+            boolean systemPresent = false;
+            boolean institutionPresent = false;
+            boolean institutionChildPresent = false;
+            PrismScope[] scopes = PrismScope.values();
+            for (int i = (scopes.length - 1); i >= 0; i--) {
+                PrismScope scope = scopes[i];
+                Integer id = getId(scope);
+                String name = getName(scope);
+                if (name != null && id == null) {
+                    corrupted = true;
+                } else if (id != null) {
+                    if (scope.equals(SYSTEM)) {
+                        systemPresent = true;
+                    } else if (scope.equals(INSTITUTION)) {
+                        institutionPresent = true;
+                    } else if (scope.ordinal() > INSTITUTION.ordinal()) {
+                        institutionChildPresent = true;
+                    }
+                }
+            }
+            if (corrupted || (!institutionPresent && institutionChildPresent) || !systemPresent) {
+                throw new Error("Object not populated correctly and unsafe to use");
+            }
+        }
+        valid = true;
+    }
+
+    private Integer getId(PrismScope scope) {
+        Integer id = (Integer) getProperty(this, scope.getLowerCamelName() + idReference);
+        if (id != null) {
+            return id;
+        }
+        return null;
+    }
+
+    private String getName(PrismScope scope) {
+        String scopeReference = scope.getLowerCamelName();
+        if (getProperty(this, scopeReference + idReference) != null) {
+            if (hasProperty(this, scopeReference + nameReference)) {
+                return (String) getProperty(this, scopeReference + nameReference);
+            }
+        }
+        return null;
     }
 
 }

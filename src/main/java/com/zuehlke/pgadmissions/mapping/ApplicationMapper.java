@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 
@@ -62,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
@@ -165,8 +167,8 @@ public class ApplicationMapper {
         representation.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
 
         List<ResourceRepresentationSimple> otherLiveApplications = Lists.newLinkedList();
-        for (Application otherLiveApplication : applicationService.getOtherLiveApplications(application)) {
-            otherLiveApplications.add(resourceMapper.getResourceRepresentationSimple(otherLiveApplication));
+        for (ResourceSimpleDTO otherLiveApplication : applicationService.getOtherLiveApplications(application)) {
+            otherLiveApplications.add(resourceMapper.getResourceRepresentationSimple(APPLICATION, otherLiveApplication));
         }
         representation.setOtherLiveApplications(otherLiveApplications);
 
@@ -326,7 +328,7 @@ public class ApplicationMapper {
     }
 
     private List<String> getApplicationThemeRepresentation(String themes) {
-        return StringUtils.isEmpty(themes) ? Collections.<String>emptyList() : Arrays.asList(themes.split("\\|"));
+        return StringUtils.isEmpty(themes) ? Collections.<String> emptyList() : Arrays.asList(themes.split("\\|"));
     }
 
     private ApplicationLanguageQualificationRepresentation getApplicationLanguageQualificationRepresentation(

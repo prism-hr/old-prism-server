@@ -69,8 +69,8 @@ public class InstitutionMapper {
         return representation;
     }
 
-    public List<ResourceChildCreationRepresentation> getInstitutionChildCreationRepresentations(PrismScope targetScope) {
-        return resourceMapper.getResourceChildCreationRepresentations(SYSTEM, systemId, targetScope);
+    public List<ResourceChildCreationRepresentation> getInstitutionChildCreationRepresentations(PrismScope targetScope, String search) {
+        return resourceMapper.getResourceChildCreationRepresentations(SYSTEM, systemId, targetScope, search);
     }
 
     private <T extends InstitutionRepresentationLocation> T getInstitutionRepresentationLocation(Institution institution, Class<T> returnType) {

@@ -1,9 +1,8 @@
-package com.zuehlke.pgadmissions.rest.representation.resource;
+package com.zuehlke.pgadmissions.dto.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
-public class ResourceRepresentationIdentity {
+public class ResourceIdentityDTO {
 
     private PrismScope scope;
 
@@ -11,7 +10,7 @@ public class ResourceRepresentationIdentity {
 
     private String name;
 
-    private DocumentRepresentation logoImage;
+    private Integer institutionLogoImageId;
 
     public PrismScope getScope() {
         return scope;
@@ -37,25 +36,25 @@ public class ResourceRepresentationIdentity {
         this.name = name;
     }
 
-    public DocumentRepresentation getLogoImage() {
-        return logoImage;
+    public Integer getInstitutionLogoImageId() {
+        return institutionLogoImageId;
     }
 
-    public void setLogoImage(DocumentRepresentation logoImage) {
-        this.logoImage = logoImage;
+    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
+        this.institutionLogoImageId = institutionLogoImageId;
     }
 
-    public ResourceRepresentationIdentity withScope(PrismScope scope) {
+    public ResourceIdentityDTO withScope(PrismScope scope) {
         this.scope = scope;
         return this;
     }
 
-    public ResourceRepresentationIdentity withId(Integer id) {
+    public ResourceIdentityDTO withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public ResourceRepresentationIdentity withName(String name) {
+    public ResourceIdentityDTO withName(String name) {
         this.name = name;
         return this;
     }

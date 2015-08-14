@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
@@ -22,6 +23,7 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,9 +73,9 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceAncestryDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -106,6 +108,9 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor
 @Service
 @Transactional
 public class ResourceService {
+
+    @Value("${system.id}")
+    private Integer systemId;
 
     @Inject
     private ResourceDAO resourceDAO;
@@ -208,7 +213,7 @@ public class ResourceService {
             if (workflowPropertyConfigurationVersion == null) {
                 customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
             }
-            
+
             entityService.flush();
         } else if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
             setResourceUpdated(resource, baseline);
@@ -407,18 +412,17 @@ public class ResourceService {
         return properties;
     }
 
-    public HashMultimap<PrismScope, Resource<?>> getUserAdministratorResources(Resource<?> resource, User user) {
+    public HashMultimap<PrismScope, Integer> getUserAdministratorResources(Resource<?> resource, User user) {
         HashMultimap<PrismScope, Integer> childResources = HashMultimap.create();
         for (PrismScope childScope : scopeService.getChildScopesAscending(resource.getResourceScope())) {
             childResources.putAll(childScope, resourceDAO.getChildResources(resource, childScope));
         }
 
-        HashMultimap<PrismScope, Resource<?>> userAdministratorResources = HashMultimap.create();
-        for (UserAdministratorResourceDTO userAdministratorResource : resourceDAO.getUserAdministratorResources(resource, childResources, user)) {
-            Resource<?> enclosedResource = userAdministratorResource.getResource();
-            userAdministratorResources.put(enclosedResource.getResourceScope(), enclosedResource);
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+        for (ResourceAncestryDTO resourceDTO : resourceDAO.getUserAdministratorResources(resource, childResources, user)) {
+            resources.put(resourceDTO.getScope(), resourceDTO.getId());
         }
-        return userAdministratorResources;
+        return resources;
     }
 
     public List<Integer> getResourcesByUserMatchingUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
@@ -677,9 +681,15 @@ public class ResourceService {
         return childResources.isEmpty() ? null : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
 
-    public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope resourceScope, PrismScope parentScope, Integer parentId,
-            PrismScope targetScope) {
-        return resourceDAO.getResourcesWhichPermitChildResourceCreation(resourceScope, parentScope, parentId, targetScope, userService.isLoggedInSession());
+    public List<ResourceAncestryDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
+        return resourceDAO.getResourcesWhichPermitTargeting(SYSTEM, systemId, resourceScope,
+                scopeService.getParentScopesDescending(resourceScope, INSTITUTION), searchTerm);
+    }
+
+    public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope, Integer filterResourceId,
+            PrismScope resourceScope, PrismScope creationScope, String searchTerm) {
+        return resourceDAO.getResourcesWhichPermitChildResourceCreation(filterScope, filterResourceId, resourceScope,
+                scopeService.getParentScopesDescending(resourceScope, filterScope), creationScope, searchTerm, userService.isLoggedInSession());
     }
 
     public String generateResourceCode(Resource<?> resource) {
@@ -719,7 +729,6 @@ public class ResourceService {
         }
     }
 
-    // TODO same approach for application based upon section configuration
     @SuppressWarnings("unchecked")
     public <T extends ResourceParent<?>> void setResourceAdvertIncompleteSection(T resource) {
         List<PrismDisplayPropertyDefinition> incompleteSections = Lists.newArrayList();

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.dto;
+package com.zuehlke.pgadmissions.dto.resource;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,16 +8,15 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
 
-public class ResourceListRowDTO {
+public class ResourceListRowDTO extends ResourceSimpleDTO {
 
     private Integer systemId;
 
     private Integer institutionId;
 
     private String institutionName;
-
-    private Integer institutionLogoImageId;
 
     private Integer departmentId;
 
@@ -28,12 +27,10 @@ public class ResourceListRowDTO {
     private String programName;
 
     private Integer projectId;
-    
+
     private String projectName;
 
     private Integer applicationId;
-
-    private String code;
 
     private Integer userId;
 
@@ -51,8 +48,6 @@ public class ResourceListRowDTO {
 
     private BigDecimal applicationRatingAverage;
 
-    private PrismState stateId;
-
     private List<PrismState> secondaryStateIds;
 
     private DateTime createdTimestamp;
@@ -62,7 +57,7 @@ public class ResourceListRowDTO {
     private String sequenceIdentifier;
 
     private String advertIncompleteSection;
-    
+
     private Set<ActionDTO> actions;
 
     public Integer getSystemId() {
@@ -87,14 +82,6 @@ public class ResourceListRowDTO {
 
     public void setInstitutionName(String institutionName) {
         this.institutionName = institutionName;
-    }
-
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
-    }
-
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
     }
 
     public Integer getDepartmentId() {
@@ -128,7 +115,7 @@ public class ResourceListRowDTO {
     public void setProgramName(String programName) {
         this.programName = programName;
     }
-    
+
     public Integer getProjectId() {
         return projectId;
     }
@@ -136,7 +123,7 @@ public class ResourceListRowDTO {
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
-    
+
     public String getProjectName() {
         return projectName;
     }
@@ -151,14 +138,6 @@ public class ResourceListRowDTO {
 
     public void setApplicationId(Integer applicationId) {
         this.applicationId = applicationId;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public Integer getUserId() {
@@ -225,14 +204,6 @@ public class ResourceListRowDTO {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public PrismState getStateId() {
-        return stateId;
-    }
-
-    public void setStateId(PrismState stateId) {
-        this.stateId = stateId;
-    }
-
     public List<PrismState> getSecondaryStateIds() {
         return secondaryStateIds;
     }
@@ -264,7 +235,7 @@ public class ResourceListRowDTO {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public String getAdvertIncompleteSection() {
         return advertIncompleteSection;
     }

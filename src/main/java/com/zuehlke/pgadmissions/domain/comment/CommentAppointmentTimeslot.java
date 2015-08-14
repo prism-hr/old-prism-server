@@ -12,11 +12,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
-import com.google.common.base.Objects;
-
 @Entity
 @Table(name = "comment_appointment_timeslot", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "timeslot_datetime" }) })
-public class CommentAppointmentTimeslot {
+public class CommentAppointmentTimeslot extends CommentShedulingDefinition {
 
     @Id
     @GeneratedValue
@@ -38,18 +36,22 @@ public class CommentAppointmentTimeslot {
         this.id = id;
     }
 
+    @Override
     public Comment getComment() {
         return comment;
     }
 
+    @Override
     public void setComment(Comment comment) {
         this.comment = comment;
     }
 
+    @Override
     public LocalDateTime getDateTime() {
         return dateTime;
     }
 
+    @Override
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
@@ -61,23 +63,6 @@ public class CommentAppointmentTimeslot {
 
     public String getDateTimeDisplay(String dateTimeFormat) {
         return dateTime.toString(dateTimeFormat);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(comment, dateTime);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        CommentAppointmentTimeslot other = (CommentAppointmentTimeslot) object;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(dateTime, other.getDateTime());
     }
 
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.services.StateService;
 
 @Component

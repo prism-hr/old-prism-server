@@ -61,10 +61,6 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<Institution> list() {
-        return sessionFactory.getCurrentSession().createCriteria(Institution.class).list();
-    }
-
     public Institution getActivatedInstitutionByGoogleId(String googleId) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("googleId", googleId)) //

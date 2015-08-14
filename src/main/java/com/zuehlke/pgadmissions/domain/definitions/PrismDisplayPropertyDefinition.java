@@ -1241,12 +1241,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_SUMMARY_HEADER(SYSTEM_RESOURCE_SECTION, "Summary"),
     SYSTEM_RESOURCE_SUMMARY_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Upload images to increase the interest in your advert"),
     SYSTEM_RESOURCE_ADVERT_HEADER(SYSTEM_RESOURCE_SECTION, "Advert"),
-    SYSTEM_RESOURCE_ADVERT_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Complete your advert, to help candidates understand whether they wish to join your organization"),
+    SYSTEM_RESOURCE_ADVERT_INCOMPLETE(SYSTEM_RESOURCE_SECTION,
+            "Complete your advert, to help candidates understand whether they wish to join your organization"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(SYSTEM_RESOURCE_SECTION, "Search Categories"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Provide some search categories to help candidates discover your organization"),
     SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER(SYSTEM_RESOURCE_SECTION, "Fees and Payments"),
     SYSTEM_RESOURCE_CLOSING_DATES_HEADER(SYSTEM_RESOURCE_SECTION, "Closing Dates"),
-    SYSTEM_RESOURCE_TARGETS_HEADER(SYSTEM_RESOURCE_SECTION, "Target Organizations"),
+    SYSTEM_RESOURCE_TARGETS_HEADER(SYSTEM_RESOURCE_SECTION, "Target Institutions"),
     SYSTEM_RESOURCE_TARGETS_INCOMPLETE(SYSTEM_RESOURCE_SECTION,
             "Tell us which organizations you want to target, so that we can find the most qualified candidates for you"),
     SYSTEM_RESOURCE_COMPETENCES_HEADER(SYSTEM_RESOURCE_SECTION, "Target Competences"),
@@ -1401,7 +1402,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_SOCIAL_LINKS(SYSTEM_ADVERTISE_SECTION, "Social Links Placement"),
     SYSTEM_RESOURCE_PARENT_ACCEPT_PUBLIC_MODE(SYSTEM_ADVERTISE_SECTION, "Accept from external organizations"),
     SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Work/Engagement Options"),
-    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The modes of participation that your opportunity offers (e.g. full-time, part-time, modular/flexible)."),
+    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT,
+            "The modes of participation that your opportunity offers (e.g. full-time, part-time, modular/flexible)."),
     SYSTEM_RESOURCE_PARENT_DURATION_MINIMUM_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Duration Minimum (Months)"),
     SYSTEM_RESOURCE_PARENT_DURATION_MINIMUM_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The minimum anticipated duration of study for your opportunity."),
     SYSTEM_RESOURCE_PARENT_DURATION_MAXIMUM_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Duration Maximum (Months)"),
@@ -1409,13 +1411,17 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Department"),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Select the deparment where this program/project belongs"),
     SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Possible Locations"),
-    SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The locations at which it is possible for successful applicants of your opportunity to attend at."),
+    SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT,
+            "The locations at which it is possible for successful applicants of your opportunity to attend at."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Business Year Start Month"),
-    SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The month of the year that your business year starts from. We use this knowledge to provide you with reports in a format the makes the greatest sense to you."),
+    SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(SYSTEM_HTML_RESOURCE_PARENT,
+            "The month of the year that your business year starts from. We use this knowledge to provide you with reports in a format the makes the greatest sense to you."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Currency"),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The currency that your organization typically does business in"),
     SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Minimum Hourly Wage"),
-    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Tell us what is the minimum wage that your organization would pay staff and/or work experience personnel. We need to know this so that we can verify that you meet sector requirements for the treatment of work experience personnel"),
+    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_HINT(
+            SYSTEM_HTML_RESOURCE_PARENT,
+            "Tell us what is the minimum wage that your organization would pay staff and/or work experience personnel. We need to know this so that we can verify that you meet sector requirements for the treatment of work experience personnel"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Logo"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Upload the logo for your institution."),
 
@@ -1424,9 +1430,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_RESOURCE_CONFIGURATION_SCOPE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Resource Scope"),
-    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The scope of the resource (e.g. system, institution, program, project, application) that you wish to define configuration for."),
+    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION,
+            "The scope of the resource (e.g. system, institution, program, project, application) that you wish to define configuration for."),
     SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Opportunity Type"),
-    SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The type of the program that you wish to define configuration for. Think about this in terms of the terminology that will make sense for different types of recruitment (e.g. student, intern, employee, etc)."),
+    SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_HINT(
+            SYSTEM_HTML_RESOURCE_CONFIGURATION,
+            "The type of the program that you wish to define configuration for. Think about this in terms of the terminology that will make sense for different types of recruitment (e.g. student, intern, employee, etc)."),
     SYSTEM_RESOURCE_CONFIGURATION_OVERRIDE_LOCAL_VERSIONS_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Override Local Versions"),
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Restore Default"),
 
@@ -1439,9 +1448,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TARGETS_DEPARTMENTS_LABEL(SYSTEM_RESOURCE_TARGETS, "Departments"),
     SYSTEM_RESOURCE_TARGETS_DEPARTMENTS_HINT(SYSTEM_RESOURCE_TARGETS, "???"),
     SYSTEM_RESOURCE_TARGETS_SUBJECT_AREAS_LABEL(SYSTEM_RESOURCE_TARGETS, "Subject Areas"),
-    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREAS_HINT(SYSTEM_RESOURCE_TARGETS, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
+    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREAS_HINT(SYSTEM_RESOURCE_TARGETS,
+            "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
 
-        /*
+    /*
      * *************** SYSTEM RESOURCE TARGETS *********************
      */
 
@@ -1457,7 +1467,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_HOMEPAGE_LABEL(SYSTEM_RESOURCE_ADVERT, "Homepage URL"),
     SYSTEM_ADVERT_HOMEPAGE_HINT(SYSTEM_RESOURCE_ADVERT, "Specify the web address at which further information about your opportunity can be found"),
     SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(SYSTEM_RESOURCE_ADVERT, "Use different address"),
-    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(SYSTEM_RESOURCE_ADVERT, "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
+    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(SYSTEM_RESOURCE_ADVERT,
+            "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
     SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_LABEL(SYSTEM_RESOURCE_ADVERT, "Industries"),
     SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_HINT(SYSTEM_RESOURCE_ADVERT, "Specify the industries that your advert is relevant to."),
     SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_LABEL(SYSTEM_RESOURCE_ADVERT, "Functions"),

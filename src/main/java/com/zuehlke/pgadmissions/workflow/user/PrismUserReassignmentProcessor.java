@@ -4,6 +4,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 
 public interface PrismUserReassignmentProcessor {
 
-    void reassign(User oldUser, User newUser, String userProperty) throws Exception;
+    void reassign(User oldUser, User newUser, String userProperty);
 
 }

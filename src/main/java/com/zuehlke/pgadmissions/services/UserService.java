@@ -1,37 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static java.math.RoundingMode.HALF_UP;
-
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -53,12 +21,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAssignment;
-import com.zuehlke.pgadmissions.domain.user.UserConnection;
-import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
-import com.zuehlke.pgadmissions.domain.user.UserProgram;
+import com.zuehlke.pgadmissions.domain.user.*;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -72,6 +35,34 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static java.math.RoundingMode.HALF_UP;
 
 @Service
 @Transactional
@@ -367,7 +358,7 @@ public class UserService {
         return Lists.<User> newArrayList();
     }
 
-    public void correctBouncedOrUnverifiedUser(Resource<?> resource, Integer userId, UserCorrectionDTO userCorrectionDTO) throws Exception {
+    public void correctBouncedOrUnverifiedUser(Resource<?> resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
         HashMultimap<PrismScope, Integer> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userAdministratorResources, userId);
 
@@ -468,8 +459,13 @@ public class UserService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends UserAssignment<?> & UniqueEntity> boolean mergeUserAssignment(T oldAssignment, User newUser, String userProperty) throws Exception {
-        EntitySignature newSignature = oldAssignment.getEntitySignature().clone();
+    public <T extends UserAssignment<?> & UniqueEntity> boolean mergeUserAssignment(T oldAssignment, User newUser, String userProperty) {
+        EntitySignature newSignature;
+        try {
+            newSignature = oldAssignment.getEntitySignature().clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
         newSignature.addProperty(userProperty, newUser);
 
         T mergedAssignmentConflict = entityService.getDuplicateEntity((Class<T>) oldAssignment.getClass(), newSignature);
@@ -480,16 +476,16 @@ public class UserService {
         return false;
     }
 
-    public <T extends UserAssignment<?> & UniqueEntity> void mergeUserAssignmentStrict(T oldAssignment, User newUser, String userProperty) throws Exception {
+    public <T extends UserAssignment<?> & UniqueEntity> void mergeUserAssignmentStrict(T oldAssignment, User newUser, String userProperty) {
         if (!mergeUserAssignment(oldAssignment, newUser, userProperty)) {
             entityService.delete(oldAssignment);
         }
     }
 
-    private void mergeUsers(User oldUser, User newUser) throws Exception {
-        for (Entry<Class<? extends UserAssignment<?>>, String> userAassignment : userAssignments.entries()) {
-            UserAssignment<?> userAssignment = BeanUtils.instantiate(userAassignment.getKey());
-            applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAassignment.getValue());
+    private void mergeUsers(User oldUser, User newUser) {
+        for (Entry<Class<? extends UserAssignment<?>>, String> userAssignmentEntry : userAssignments.entries()) {
+            UserAssignment<?> userAssignment = BeanUtils.instantiate(userAssignmentEntry.getKey());
+            applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAssignmentEntry.getValue());
         }
     }
 

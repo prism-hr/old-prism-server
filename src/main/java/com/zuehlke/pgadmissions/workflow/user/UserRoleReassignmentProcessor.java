@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.workflow.user;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class UserRoleReassignmentProcessor implements PrismUserReassignmentProcessor {
@@ -15,7 +14,7 @@ public class UserRoleReassignmentProcessor implements PrismUserReassignmentProce
     private UserService userService;
 
     @Override
-    public void reassign(User oldUser, User newUser, String userProperty) throws Exception {
+    public void reassign(User oldUser, User newUser, String userProperty) {
         for (UserRole oldUserRole : oldUser.getUserRoles()) {
             userService.mergeUserAssignmentStrict(oldUserRole, newUser, userProperty);
         }

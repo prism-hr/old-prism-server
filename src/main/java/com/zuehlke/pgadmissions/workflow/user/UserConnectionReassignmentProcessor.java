@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.workflow.user;
 
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 
 @Component
 public class UserConnectionReassignmentProcessor implements PrismUserReassignmentProcessor {
@@ -21,7 +19,7 @@ public class UserConnectionReassignmentProcessor implements PrismUserReassignmen
 
     @Override
     @SuppressWarnings("unchecked")
-    public void reassign(User oldUser, User newUser, String userProperty) throws Exception {
+    public void reassign(User oldUser, User newUser, String userProperty) {
         String collectionProperty = StringUtils.replace(userProperty, "user", "").toLowerCase() + "Connections";
         for (UserConnection oldUserConnection : (Set<UserConnection>) getProperty(oldUser, collectionProperty)) {
             userService.mergeUserAssignmentStrict(oldUserConnection, newUser, userProperty);

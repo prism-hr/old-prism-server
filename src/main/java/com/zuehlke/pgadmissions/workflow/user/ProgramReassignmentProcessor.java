@@ -15,7 +15,7 @@ public class ProgramReassignmentProcessor implements PrismUserReassignmentProces
     private ResourceService resourceService;
 
     @Override
-    public void reassign(User oldUser, User newUser, String userProperty) throws Exception {
+    public void reassign(User oldUser, User newUser, String userProperty) {
         for (Program oldProgram : oldUser.getPrograms()) {
             resourceService.reassignResource(oldProgram, newUser, userProperty);
         }

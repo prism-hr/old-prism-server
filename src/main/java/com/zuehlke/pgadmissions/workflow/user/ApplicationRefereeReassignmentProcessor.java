@@ -15,7 +15,7 @@ public class ApplicationRefereeReassignmentProcessor implements PrismUserReassig
     private UserService userService;
 
     @Override
-    public void reassign(User oldUser, User newUser, String userProperty) throws Exception {
+    public void reassign(User oldUser, User newUser, String userProperty) {
         for (ApplicationReferee oldApplicationReferee : oldUser.getApplicationReferees()) {
             userService.mergeUserAssignmentStrict(oldApplicationReferee, newUser, userProperty);
         }

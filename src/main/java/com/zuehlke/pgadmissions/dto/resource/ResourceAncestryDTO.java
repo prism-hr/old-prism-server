@@ -224,11 +224,10 @@ public class ResourceAncestryDTO implements Comparable<ResourceAncestryDTO> {
                 copyProperty(this, enclosingResource, scopeReference + idReference);
                 copyProperty(this, enclosingResource, scopeReference + nameReference);
                 copyProperty(this, enclosingResource, scopeReference + logoImageReference);
-                return enclosingResource;
             }
         }
 
-        return null;
+        return enclosingResource.getId() == null ? null : enclosingResource;
     }
 
 }

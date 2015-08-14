@@ -225,7 +225,7 @@ public class ResourceController {
     }
 
     // FIXME - pass 'stop scope' for rendering from client so that we can clean up server code
-    // FIXME = problem with rendering on client? data is being generated but not display
+    // FIXME - problem with rendering on client? data is being generated but not display
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
     public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope targetScope,
             @RequestParam(required = false) String searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {

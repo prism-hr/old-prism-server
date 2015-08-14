@@ -4,7 +4,7 @@ import org.apache.commons.lang.BooleanUtils;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public class ResourceChildCreationDTO extends ResourceAncestryDTO {
+public class ResourceChildCreationDTO extends ResourceStandardDTO {
 
     private Boolean partnerMode;
 

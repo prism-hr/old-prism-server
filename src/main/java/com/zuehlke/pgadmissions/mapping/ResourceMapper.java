@@ -53,7 +53,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceAncestryDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
@@ -553,10 +553,10 @@ public class ResourceMapper {
 
     public List<ResourceChildCreationRepresentation> getResourceTargetingRepresentations(String searchTerm) {
         PrismScope initialResourceScope = null;
-        LinkedHashMap<PrismScope, TreeSet<ResourceAncestryDTO>> resources = Maps.newLinkedHashMap();
+        LinkedHashMap<PrismScope, TreeSet<ResourceStandardDTO>> resources = Maps.newLinkedHashMap();
         for (PrismScope resourceScope : scopeService.getChildScopesAscending(SYSTEM, DEPARTMENT)) {
             initialResourceScope = initialResourceScope == null ? resourceScope : initialResourceScope;
-            TreeSet<ResourceAncestryDTO> sortedResources = Sets.newTreeSet(resourceService.getResourcesWhichPermitTargeting(resourceScope, searchTerm));
+            TreeSet<ResourceStandardDTO> sortedResources = Sets.newTreeSet(resourceService.getResourcesWhichPermitTargeting(resourceScope, searchTerm));
             resources.put(resourceScope, sortedResources);
         }
 
@@ -586,7 +586,7 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ResourceAncestryDTO> Set<ResourceChildCreationRepresentation> getResourceRepresentationHierarchy(PrismScope resourceScope,
+    private <T extends ResourceStandardDTO> Set<ResourceChildCreationRepresentation> getResourceRepresentationHierarchy(PrismScope resourceScope,
             LinkedHashMap<PrismScope, TreeSet<T>> resources, PrismScope stopScope) {
         for (Entry<PrismScope, TreeSet<T>> resourceEntries : Lists.reverse(Lists.newLinkedList(resources.entrySet()))) {
             PrismScope resourceEntryScope = resourceEntries.getKey();
@@ -620,7 +620,7 @@ public class ResourceMapper {
         return representations;
     }
 
-    private <T extends ResourceAncestryDTO> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(T resource) {
+    private <T extends ResourceStandardDTO> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(T resource) {
         ResourceChildCreationRepresentation representation = new ResourceChildCreationRepresentation() //
                 .withScope(resource.getScope()).withId(resource.getId()).withName(resource.getName());
         if (resource.getClass().equals(ResourceChildCreationDTO.class)) {

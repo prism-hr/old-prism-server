@@ -70,6 +70,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
@@ -368,7 +369,7 @@ public class ApplicationService {
         return applicationDAO.getDeclinedReferenceCount(application);
     }
 
-    public List<Application> getOtherLiveApplications(Application application) {
+    public List<ResourceSimpleDTO> getOtherLiveApplications(Application application) {
         return applicationDAO.getOtherLiveApplications(application);
     }
 

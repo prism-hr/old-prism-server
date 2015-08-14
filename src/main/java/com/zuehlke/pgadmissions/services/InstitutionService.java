@@ -101,10 +101,6 @@ public class InstitutionService {
         entityService.save(institution);
     }
 
-    public List<Institution> list() {
-        return institutionDAO.list();
-    }
-
     public Institution getActivatedInstitutionByGoogleId(String googleId) {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }

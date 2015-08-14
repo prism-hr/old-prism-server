@@ -225,9 +225,9 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
-    public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope targetScope,
-            @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, targetScope);
+    public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope creationScope,
+            @RequestParam(required = false) String searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, creationScope, searchTerm);
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)

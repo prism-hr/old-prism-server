@@ -1,14 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
-
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -34,17 +30,6 @@ public class DepartmentDAO {
                         .add(Projections.property("name"), "name")) //
                 .add(Restrictions.eq("institution", institution)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class))
-                .list();
-    }
-
-    public List<Department> getDepartments(String searchTerm) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Department.class);
-        if (searchTerm != null) {
-            criteria.add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE));
-        }
-
-        return criteria.add(Restrictions.eq("state.id", DEPARTMENT_APPROVED))
-                .setMaxResults(10)
                 .list();
     }
 

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
@@ -237,29 +235,14 @@ public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
 
     private void validate() {
         if (!valid) {
-            boolean corrupted = false;
-            boolean systemPresent = false;
-            boolean institutionPresent = false;
-            boolean institutionChildPresent = false;
             PrismScope[] scopes = PrismScope.values();
             for (int i = (scopes.length - 1); i >= 0; i--) {
                 PrismScope scope = scopes[i];
                 Integer id = getId(scope);
                 String name = getName(scope);
                 if (name != null && id == null) {
-                    corrupted = true;
-                } else if (id != null) {
-                    if (scope.equals(SYSTEM)) {
-                        systemPresent = true;
-                    } else if (scope.equals(INSTITUTION)) {
-                        institutionPresent = true;
-                    } else if (scope.ordinal() > INSTITUTION.ordinal()) {
-                        institutionChildPresent = true;
-                    }
+                    throw new Error("Object not populated correctly and unsafe to use");
                 }
-            }
-            if (corrupted || (!institutionPresent && institutionChildPresent) || !systemPresent) {
-                throw new Error("Object not populated correctly and unsafe to use");
             }
         }
         valid = true;

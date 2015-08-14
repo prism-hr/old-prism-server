@@ -1,25 +1,16 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.services.StaticDataService;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.StaticDataService;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/static")
@@ -27,9 +18,6 @@ public class StaticDataController {
 
     @Inject
     private StaticDataService staticDataService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Cacheable("staticData")
     @RequestMapping(method = RequestMethod.GET)
@@ -69,11 +57,6 @@ public class StaticDataController {
     public List<ImportedProgramResponse> searchImportedPrograms(
             @PathVariable Integer institutionId, @RequestParam String q, @RequestParam Optional<Boolean> restrictToInstitution) {
         return staticDataService.searchImportedPrograms(institutionId, q, restrictToInstitution.orElse(false));
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/competences", params = "q")
-    public List<CompetenceRepresentation> searchCompetences(@RequestParam String q) {
-        return advertService.searchCompetences(q);
     }
 
 }

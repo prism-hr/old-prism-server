@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 
 @Service
@@ -105,7 +105,7 @@ public class InstitutionService {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
-    public List<InstitutionRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {
+    public List<ResourceRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {
         List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
         return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream().map(institutionMapper::getInstitutionRepresentationLocation)
                 .collect(Collectors.toList());

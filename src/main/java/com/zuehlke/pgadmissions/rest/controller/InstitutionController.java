@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -53,7 +53,7 @@ public class InstitutionController {
     private ResourceMapper resourceMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    public List<InstitutionRepresentationLocation> getInstitutions(@RequestParam(required = false) Boolean activeOnly,
+    public List<ResourceRepresentationLocation> getInstitutions(@RequestParam(required = false) Boolean activeOnly,
             @RequestParam(required = false) String query, @RequestParam(required = false) String[] googleIds) {
         return institutionService.getInstitutions(BooleanUtils.isTrue(activeOnly), query, googleIds);
     }

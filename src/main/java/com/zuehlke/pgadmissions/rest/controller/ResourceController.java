@@ -95,6 +95,16 @@ public class ResourceController {
         return resourceMapper.getResourceRepresentationSimple(resource);
     }
 
+    @Transactional
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=location")
+    @PreAuthorize("isAuthenticated()")
+    public ResourceRepresentationLocation getResourceLocation(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource<?> resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationLocation(resource);
+    }
+
+
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(

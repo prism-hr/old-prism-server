@@ -199,6 +199,12 @@ public class ResourceMapper {
         return getResourceRepresentationSimple(resource, ResourceRepresentationSimple.class);
     }
 
+    public ResourceRepresentationLocation getResourceRepresentationLocation(Resource resource) {
+        ResourceRepresentationLocation representation = getResourceRepresentationSimple(resource, ResourceRepresentationLocation.class);
+        representation.setAddress(advertMapper.getAdvertAddressRepresentation(resource.getAdvert()));
+        return representation;
+    }
+
     public <T extends ResourceSimpleDTO> ResourceRepresentationSimple getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO) {
         return getResourceRepresentationSimple(resourceScope, resourceDTO, ResourceRepresentationSimple.class);
     }

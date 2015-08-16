@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.institution;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
+
 import java.math.BigDecimal;
 
-public class InstitutionRepresentationTargeting extends InstitutionRepresentationLocation {
+public class InstitutionRepresentationTargeting extends ResourceRepresentationLocation {
 
     private BigDecimal relevance;
-    
+
     private BigDecimal distance;
 
     public BigDecimal getRelevance() {
@@ -23,5 +25,5 @@ public class InstitutionRepresentationTargeting extends InstitutionRepresentatio
     public void setDistance(BigDecimal distance) {
         this.distance = distance;
     }
-    
+
 }

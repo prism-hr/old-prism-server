@@ -1,18 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.GEOCODING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -20,22 +7,31 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertReprese
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.Optional;
+
+import static com.zuehlke.pgadmissions.utils.PrismConstants.GEOCODING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
 
 @Service
 @Transactional
 public class InstitutionMapper {
 
-    @Value("${system.id}")
-    private Integer systemId;
-
-    @Inject
-    private AdvertMapper advertMapper;
-
     @Inject
     DocumentMapper documentMapper;
-
+    @Value("${system.id}")
+    private Integer systemId;
+    @Inject
+    private AdvertMapper advertMapper;
     @Inject
     private ResourceMapper resourceMapper;
 
@@ -43,12 +39,8 @@ public class InstitutionMapper {
         return getInstitutionRepresentation(institution, InstitutionRepresentation.class);
     }
 
-    public InstitutionRepresentationLocation getInstitutionRepresentationLocation(Institution institution) {
-        return getInstitutionRepresentationLocation(institution, InstitutionRepresentationLocation.class);
-    }
-
-    public InstitutionRepresentationLocation getInstitutionRepresentationLocation(InstitutionDTO<?> institution) {
-        return getInstitutionRepresentationLocation(institution, InstitutionRepresentationLocation.class);
+    public ResourceRepresentationLocation getInstitutionRepresentationLocation(InstitutionDTO<?> institution) {
+        return getInstitutionRepresentationLocation(institution, ResourceRepresentationLocation.class);
     }
 
     public InstitutionRepresentationTargeting getInstitutionRepresentationTargeting(InstitutionDTO<?> institution) {
@@ -64,18 +56,12 @@ public class InstitutionMapper {
         return representation;
     }
 
-    private <T extends InstitutionRepresentationLocation> T getInstitutionRepresentationLocation(Institution institution, Class<T> returnType) {
-        T representation = resourceMapper.getResourceRepresentationSimple(institution, returnType);
-        representation.setAddress(advertMapper.getAdvertAddressRepresentation(institution.getAdvert()));
-        return representation;
-    }
-
-    private <T extends InstitutionRepresentationLocation> T getInstitutionRepresentationLocation(InstitutionDTO<?> institution, Class<T> returnType) {
+    private <T extends ResourceRepresentationLocation> T getInstitutionRepresentationLocation(InstitutionDTO<?> institution, Class<T> returnType) {
         T representation = BeanUtils.instantiate(returnType);
 
         representation.setId(institution.getId());
         representation.setName(institution.getName());
-        representation.setLogoImage(new DocumentRepresentation().withId(institution.getLogoImageId()));
+        representation.setLogoImage(Optional.ofNullable(institution.getLogoImageId()).map(id -> new DocumentRepresentation().withId(institution.getLogoImageId())).orElse(null));
 
         representation.setAddress(new AddressAdvertRepresentation().withDomicile(new ImportedAdvertDomicileResponse()
                 .withName(institution.getAddressDomicileName())).withAddressLine1(institution.getAddressLine1())

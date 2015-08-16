@@ -1,9 +1,8 @@
-package com.zuehlke.pgadmissions.rest.representation.resource.institution;
+package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
-public class InstitutionRepresentationLocation extends ResourceRepresentationSimple {
+public class ResourceRepresentationLocation extends ResourceRepresentationSimple {
 
     private AddressAdvertRepresentation address;
 

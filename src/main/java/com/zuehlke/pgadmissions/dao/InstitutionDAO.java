@@ -156,11 +156,11 @@ public class InstitutionDAO {
                         " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
                         " and imported_institution_subject_area.enabled is true " +
                         " and institution.id <> :currentInstitutionId" +
-                        " group by institution.id" +
+                        " group by institutionId" +
                         " order by targetingRelevance desc, targetingDistance asc")
-                .addScalar("id", IntegerType.INSTANCE)
-                .addScalar("name", StringType.INSTANCE)
-                .addScalar("logoImageId", IntegerType.INSTANCE)
+                .addScalar("institutionId", IntegerType.INSTANCE)
+                .addScalar("institutionName", StringType.INSTANCE)
+                .addScalar("institutionLogoImageId", IntegerType.INSTANCE)
                 .addScalar("addressLine1", StringType.INSTANCE)
                 .addScalar("addressLine2", StringType.INSTANCE)
                 .addScalar("addressTown", StringType.INSTANCE)

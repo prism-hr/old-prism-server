@@ -78,9 +78,6 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     @Column(name = "business_year_start_month", nullable = false)
     private Integer businessYearStartMonth;
 
-    @Column(name = "minimum_wage", nullable = false)
-    private BigDecimal minimumWage;
-
     @Column(name = "google_id")
     private String googleId;
 
@@ -244,15 +241,7 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
         this.businessYearStartMonth = businessYearStartMonth;
     }
-
-    public BigDecimal getMinimumWage() {
-        return minimumWage;
-    }
-
-    public void setMinimumWage(BigDecimal minimumWage) {
-        this.minimumWage = minimumWage;
-    }
-
+    
     public String getGoogleId() {
         return googleId;
     }
@@ -380,11 +369,6 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
 
     public Institution withBusinessYearStartMonth(Integer businessYearStartMonth) {
         this.businessYearStartMonth = businessYearStartMonth;
-        return this;
-    }
-
-    public Institution withMinimumWage(BigDecimal minimumWage) {
-        this.minimumWage = minimumWage;
         return this;
     }
 

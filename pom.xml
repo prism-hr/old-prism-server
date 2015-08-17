@@ -42,7 +42,7 @@
     </scm>
 
     <dependencies>
-
+    
         <dependency>
             <groupId>uk.co.alumeni</groupId>
             <artifactId>prism-sdk</artifactId>

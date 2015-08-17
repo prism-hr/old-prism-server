@@ -1,5 +1,37 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static java.math.RoundingMode.HALF_UP;
+
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -21,7 +53,12 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.*;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.domain.user.UserConnection;
+import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.user.UserProgram;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -35,34 +72,6 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static java.math.RoundingMode.HALF_UP;
 
 @Service
 @Transactional
@@ -93,6 +102,9 @@ public class UserService {
 
     @Inject
     private ResourceService resourceService;
+
+    @Inject
+    private ScopeService scopeService;
 
     @Inject
     private SystemService systemService;
@@ -150,7 +162,8 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource<?> resource, List<PrismRole> roles) throws Exception {
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource<?> resource, List<PrismRole> roles)
+            throws Exception {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.assignUserRoles(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
@@ -337,7 +350,8 @@ public class UserService {
 
     public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
         UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
-                .withInstitution(application.getInstitution()).withIdentityType(PrismUserInstitutionIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
+                .withInstitution(application.getInstitution()).withIdentityType(PrismUserInstitutionIdentity.STUDY_APPLICANT)
+                .withIdentitier(exportUserId);
         entityService.createOrUpdate(transientUserInstitutionIdentity);
     }
 
@@ -351,16 +365,17 @@ public class UserService {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource<?> resource, UserListFilterDTO userListFilterDTO) {
-        HashMultimap<PrismScope, Integer> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
-        if (!userAdministratorResources.isEmpty()) {
-            return userDAO.getBouncedOrUnverifiedUsers(userAdministratorResources, userListFilterDTO);
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+        if (!administratorResources.isEmpty()) {
+            HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
+            return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
         }
         return Lists.<User> newArrayList();
     }
 
     public void correctBouncedOrUnverifiedUser(Resource<?> resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
-        HashMultimap<PrismScope, Integer> userAdministratorResources = resourceService.getUserAdministratorResources(resource, getCurrentUser());
-        User user = userDAO.getBouncedOrUnverifiedUser(userAdministratorResources, userId);
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+        User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
 
         String email = userCorrectionDTO.getEmail();
         User userDuplicate = getUserByEmail(email);

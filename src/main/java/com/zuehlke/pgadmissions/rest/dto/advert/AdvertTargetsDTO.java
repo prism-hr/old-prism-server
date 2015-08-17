@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
+import com.google.common.collect.Maps;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 
 public class AdvertTargetsDTO {
 
     private List<AdvertTargetDTO> institutions;
 
     private List<AdvertTargetDTO> departments;
-
-    private List<AdvertTargetDTO> programs;
 
     private List<AdvertTargetDTO> subjectAreas;
 
@@ -31,14 +30,6 @@ public class AdvertTargetsDTO {
         this.departments = departments;
     }
 
-    public List<AdvertTargetDTO> getPrograms() {
-        return programs;
-    }
-
-    public void setPrograms(List<AdvertTargetDTO> programs) {
-        this.programs = programs;
-    }
-
     public List<AdvertTargetDTO> getSubjectAreas() {
         return subjectAreas;
     }
@@ -48,9 +39,11 @@ public class AdvertTargetsDTO {
     }
 
     public Map<String, List<? extends AdvertTargetDTO>> getTargets() {
-        Map<String, List<? extends AdvertTargetDTO>> maps = ImmutableMap.of("institutions", institutions,
-                "departments", departments, "programs", programs, "subjectAreas", subjectAreas);
-        return maps;
+        Map<String, List<? extends AdvertTargetDTO>> targets = Maps.newLinkedHashMap();
+        targets.put("institutions", institutions != null ? institutions : Collections.emptyList());
+        targets.put("departments", departments != null ? departments : Collections.emptyList());
+        targets.put("subjectAreas", subjectAreas != null ? subjectAreas : Collections.emptyList());
+        return targets;
     }
 
 }

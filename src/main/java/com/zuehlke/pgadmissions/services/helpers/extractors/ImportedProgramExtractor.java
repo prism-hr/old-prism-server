@@ -17,13 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
 
 @Component
 public class ImportedProgramExtractor<T extends ImportedProgramRequest> implements ImportedEntityExtractor<T> {

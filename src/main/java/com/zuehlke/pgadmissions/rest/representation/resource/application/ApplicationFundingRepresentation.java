@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ApplicationFundingRepresentation extends ApplicationSectionRepresentation {
 

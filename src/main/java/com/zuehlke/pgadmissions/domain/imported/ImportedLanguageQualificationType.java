@@ -12,12 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedLanguageQualificationTypeDefinition;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedLanguageQualificationTypeDefinition;
 
 @Entity
 @Table(name = "imported_language_qualification_type")

@@ -1,37 +1,37 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.GEOCODING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
+
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.Optional;
-
-import static com.zuehlke.pgadmissions.utils.PrismConstants.GEOCODING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
 
 @Service
 @Transactional
 public class InstitutionMapper {
 
-    @Inject
-    DocumentMapper documentMapper;
     @Value("${system.id}")
     private Integer systemId;
-    @Inject
-    private AdvertMapper advertMapper;
+
     @Inject
     private ResourceMapper resourceMapper;
 

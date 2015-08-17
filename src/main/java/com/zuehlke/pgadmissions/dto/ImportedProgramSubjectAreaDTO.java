@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
 
-import jersey.repackaged.com.google.common.base.Objects;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType;
+
+import jersey.repackaged.com.google.common.base.Objects;
 
 public class ImportedProgramSubjectAreaDTO {
 

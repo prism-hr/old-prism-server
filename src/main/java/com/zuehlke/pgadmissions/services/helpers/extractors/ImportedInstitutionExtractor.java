@@ -10,11 +10,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
 
 @Component
 public class ImportedInstitutionExtractor<T extends ImportedInstitutionRequest> implements ImportedEntityExtractor<T> {

@@ -8,10 +8,10 @@ import static org.apache.commons.lang.StringUtils.isNumeric;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dto.TokenizedStringDTO;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class PrismStringUtils {
 

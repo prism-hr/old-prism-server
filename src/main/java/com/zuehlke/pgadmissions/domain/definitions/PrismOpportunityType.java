@@ -20,14 +20,14 @@ import java.util.Set;
 
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
+
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>, PrismLocalizableDefinition {
 

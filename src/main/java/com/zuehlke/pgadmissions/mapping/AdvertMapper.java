@@ -14,8 +14,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -50,6 +48,8 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationS
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 
 @Service
 @Transactional

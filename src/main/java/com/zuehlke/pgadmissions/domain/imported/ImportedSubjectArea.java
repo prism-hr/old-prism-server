@@ -15,14 +15,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import jersey.repackaged.com.google.common.base.Objects;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
+
+import jersey.repackaged.com.google.common.base.Objects;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedSubjectAreaDefinition;
 
 @Entity
 @Table(name = "imported_subject_area")

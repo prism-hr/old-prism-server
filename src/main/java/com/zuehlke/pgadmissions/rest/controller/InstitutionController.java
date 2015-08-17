@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 @RestController
 @RequestMapping("api/institutions")

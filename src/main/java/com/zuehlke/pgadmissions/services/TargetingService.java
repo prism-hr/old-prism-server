@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -42,6 +40,8 @@ import com.zuehlke.pgadmissions.dto.ImportedProgramSubjectAreasDTO;
 import com.zuehlke.pgadmissions.dto.TargetingParameterDTO;
 import com.zuehlke.pgadmissions.dto.TokenizedStringDTO;
 import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 @Service
 @Transactional

@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.mapping.helpers;
 
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedAdvertDomicileRequest;
-
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedAdvertDomicileRequest;
 
 @Component
 public class ImportedAdvertDomicileTransformer implements ImportedEntityTransformer<ImportedAdvertDomicileRequest, ImportedAdvertDomicile> {

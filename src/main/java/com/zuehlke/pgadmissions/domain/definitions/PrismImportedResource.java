@@ -4,10 +4,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-import uk.co.alumeni.prism.api.model.resource.request.ResourceParentRequest;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+import uk.co.alumeni.prism.api.model.resource.request.ResourceParentRequest;
 
 public enum PrismImportedResource implements EnumDefinition<uk.co.alumeni.prism.enums.PrismImportedResource> {
 

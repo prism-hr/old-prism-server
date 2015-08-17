@@ -2,13 +2,13 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import java.util.Set;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 public abstract class ImportedEntity<T, U extends ImportedEntityMapping<?>> implements UniqueEntity, ImportedEntityDefinition,
         ImportedEntityResponseDefinition<T> {

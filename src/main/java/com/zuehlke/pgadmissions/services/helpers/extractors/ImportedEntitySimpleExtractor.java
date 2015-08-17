@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 @Component
 public class ImportedEntitySimpleExtractor implements ImportedEntityExtractor<ImportedEntityRequest> {

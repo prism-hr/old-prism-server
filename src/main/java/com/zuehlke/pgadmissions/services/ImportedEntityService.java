@@ -25,8 +25,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -51,6 +49,8 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 @Service
 @Transactional

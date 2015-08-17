@@ -5,9 +5,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+
+import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
 @Entity
 @Table(name = "address")

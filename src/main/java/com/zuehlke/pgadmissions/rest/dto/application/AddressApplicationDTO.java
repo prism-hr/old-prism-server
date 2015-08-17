@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 
 import javax.validation.constraints.NotNull;
 
-import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+
+import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
 public class AddressApplicationDTO extends Address implements AddressDefinition<ImportedEntityDTO> {
 

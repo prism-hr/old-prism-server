@@ -24,9 +24,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -95,6 +92,9 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
 @Transactional

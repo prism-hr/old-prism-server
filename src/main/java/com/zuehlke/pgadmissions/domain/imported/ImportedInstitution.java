@@ -15,14 +15,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedInstitutionDefinition;
 
 @Entity
 @Table(name = "imported_institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_domicile_id", "name" }) })

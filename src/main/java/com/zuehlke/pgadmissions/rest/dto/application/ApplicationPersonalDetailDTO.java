@@ -7,10 +7,10 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+
 import uk.co.alumeni.prism.utils.validation.DatePast;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
-
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 
 public class ApplicationPersonalDetailDTO {
 

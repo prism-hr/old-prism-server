@@ -27,8 +27,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 
 import java.util.Map;
 
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -70,6 +68,8 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.De
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
+
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope> {
 

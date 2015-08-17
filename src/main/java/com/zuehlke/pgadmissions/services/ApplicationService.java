@@ -35,8 +35,6 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.ColumnDescription;
@@ -84,6 +82,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.validation.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
 @Transactional

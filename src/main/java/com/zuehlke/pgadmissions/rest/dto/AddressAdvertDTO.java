@@ -3,10 +3,10 @@ package com.zuehlke.pgadmissions.rest.dto;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
+
+import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
 
 public class AddressAdvertDTO extends Address implements AddressDefinition<ImportedAdvertDomicileDTO> {
 

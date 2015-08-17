@@ -25,10 +25,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
-
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicantTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
@@ -78,6 +74,10 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

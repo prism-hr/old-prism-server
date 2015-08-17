@@ -28,8 +28,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.model.S3Object;
@@ -97,6 +95,8 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismFileUtils;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 @Service
 public class SystemService {

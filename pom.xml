@@ -478,8 +478,8 @@
                     <driver>com.mysql.jdbc.Driver</driver>
                     <url>
                         <![CDATA[jdbc:mysql://${sql.host}/${sql.db}?useUnicode=yes&characterEncoding=UTF-8&connectionCollation=utf8_general_ci]]></url>
-                    <userid>pgadmissions</userid>
-                    <password>pgadmissions</password>
+                    <userid>${sql.userid}</userid>
+                    <password>${sql.password}</password>
                     <dbms>mysql</dbms>
                     <delimiter>;</delimiter>
                     <delimiterType>row</delimiterType>
@@ -565,6 +565,8 @@
             <properties>
                 <sql.host>localhost</sql.host>
                 <sql.db>prism</sql.db>
+                <sql.userid>pgadmissions</sql.userid>
+                <sql.password>pgadmissions</sql.password>
                 <wildfly.management.port>666</wildfly.management.port>
             </properties>
         </profile>
@@ -605,6 +607,8 @@
             <properties>
                 <sql.host>prism-uat.cd4p8rv23vn5.eu-west-1.rds.amazonaws.com</sql.host>
                 <sql.db>prism</sql.db>
+                <sql.userid>prism</sql.userid>
+                <sql.password>pgadmissions</sql.password>
                 <wildfly.management.port>9990</wildfly.management.port>
             </properties>
             <build>
@@ -637,6 +641,8 @@
             <properties>
                 <sql.host>localhost</sql.host>
                 <sql.db>prism</sql.db>
+                <sql.userid>prism</sql.userid>
+                <sql.password>pgadmissions</sql.password>
                 <wildfly.management.port>9992</wildfly.management.port>
             </properties>
             <build>

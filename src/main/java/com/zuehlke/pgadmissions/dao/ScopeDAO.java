@@ -17,9 +17,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 public class ScopeDAO {
 
     @Autowired
-    private EntityDAO entityDAO;
-
-    @Autowired
     private SessionFactory sessionFactory;
 
     public List<PrismScope> getScopesDescending() {
@@ -29,6 +26,15 @@ public class ScopeDAO {
                 .list();
     }
 
+    public List<PrismScope> getEnclosingScopesDescending(PrismScope prismScope, PrismScope finalScope) {
+        return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.le("ordinal", prismScope.ordinal())) //
+                .add(Restrictions.ge("ordinal", finalScope.ordinal()))
+                .addOrder(Order.asc("ordinal")) //
+                .list();
+    }
+    
     public List<PrismScope> getParentScopesDescending(PrismScope prismScope) {
         return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
                 .setProjection(Projections.property("id")) //

@@ -76,11 +76,8 @@ public class InstitutionMapper {
 
     private <T extends InstitutionRepresentation> T getInstitutionRepresentation(Institution institution, Class<T> returnType) {
         T representation = resourceMapper.getResourceParentRepresentation(institution, returnType);
-
         representation.setCurrency(institution.getCurrency());
-        representation.setMinimumWage(institution.getMinimumWage());
         representation.setBusinessYearStartMonth(institution.getBusinessYearStartMonth());
-
         return representation;
     }
 

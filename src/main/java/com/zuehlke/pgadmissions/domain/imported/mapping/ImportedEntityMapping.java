@@ -2,11 +2,11 @@ package com.zuehlke.pgadmissions.domain.imported.mapping;
 
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityMappingDefinition;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityMappingDefinition;
 
 public abstract class ImportedEntityMapping<T extends ImportedEntity<?, ?>> implements UniqueEntity, ImportedEntityMappingDefinition {
 

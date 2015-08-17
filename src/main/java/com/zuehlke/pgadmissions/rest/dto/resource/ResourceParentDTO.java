@@ -7,10 +7,10 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition<AdvertDTO> {
 

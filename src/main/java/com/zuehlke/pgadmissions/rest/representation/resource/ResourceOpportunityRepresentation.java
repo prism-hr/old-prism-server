@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ResourceOpportunityRepresentation extends ResourceParentDivisionRepresentation {
 

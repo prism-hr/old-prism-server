@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.workflow.user;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserCompetence;
 import com.zuehlke.pgadmissions.services.UserService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class UserCompetenceReassignmentProcessor implements PrismUserReassignmentProcessor {

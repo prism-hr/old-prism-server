@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.institution;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
-
 import java.math.BigDecimal;
+
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 
 public class InstitutionRepresentationTargeting extends ResourceRepresentationLocation {
 

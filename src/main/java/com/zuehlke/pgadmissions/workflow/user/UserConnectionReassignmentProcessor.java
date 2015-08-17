@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.workflow.user;
 
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserConnection;
-import com.zuehlke.pgadmissions.services.UserService;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserConnection;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class UserConnectionReassignmentProcessor implements PrismUserReassignmentProcessor {

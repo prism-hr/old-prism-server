@@ -2,11 +2,11 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import java.util.List;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
 

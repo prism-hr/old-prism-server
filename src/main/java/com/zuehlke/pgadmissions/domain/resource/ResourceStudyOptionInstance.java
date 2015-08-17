@@ -12,9 +12,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.api.model.resource.ResourceInstanceDefinition;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+
+import uk.co.alumeni.prism.api.model.resource.ResourceInstanceDefinition;
 
 @Entity
 @Table(name = "resource_study_option_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "business_year" }))

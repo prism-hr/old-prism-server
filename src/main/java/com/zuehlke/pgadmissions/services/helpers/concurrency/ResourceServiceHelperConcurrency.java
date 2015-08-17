@@ -1,23 +1,25 @@
 package com.zuehlke.pgadmissions.services.helpers.concurrency;
 
+import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.concludeThreads;
+import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.dispatchThread;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.hibernate.criterion.Junction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
-import org.hibernate.criterion.Junction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.concludeThreads;
-import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.dispatchThread;
 
 @Component
 public class ResourceServiceHelperConcurrency {

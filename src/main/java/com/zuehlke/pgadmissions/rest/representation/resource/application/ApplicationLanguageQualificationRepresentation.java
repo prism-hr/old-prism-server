@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
-
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
 
 public class ApplicationLanguageQualificationRepresentation extends ApplicationSectionRepresentation {
 

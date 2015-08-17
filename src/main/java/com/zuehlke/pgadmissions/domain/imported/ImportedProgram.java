@@ -16,15 +16,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedProgramDefinition;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedProgramDefinition;
 
 @Entity
 @Table(name = "imported_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "imported_institution_id", "qualification", "name" }) })

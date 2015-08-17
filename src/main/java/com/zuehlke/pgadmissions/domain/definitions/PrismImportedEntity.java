@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -50,6 +47,9 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedInstitutionE
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedSubjectAreaExtractor;
+
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.enums.PrismImportedEntity> {
 

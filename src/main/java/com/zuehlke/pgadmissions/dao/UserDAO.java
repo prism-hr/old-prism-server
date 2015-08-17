@@ -389,8 +389,8 @@ public class UserDAO {
                 .executeUpdate();
     }
 
-    private void appendAdministratorResourceConditions(Criteria criteria, Resource<?> resource,
-            HashMultimap<PrismScope, Integer> administratorResources, HashMultimap<PrismScope, PrismScope> expandedScopes) {
+    private void appendAdministratorResourceConditions(Criteria criteria, Resource<?> resource, HashMultimap<PrismScope, Integer> administratorResources,
+            HashMultimap<PrismScope, PrismScope> expandedScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         String resourceReference = resourceScope.getLowerCamelName();
 
@@ -426,7 +426,7 @@ public class UserDAO {
                 exclusionsDisjunction.add(Restrictions.isNotNull(expandedReference + ".id"));
             }
         }
-        
+
         if (exclusionsDisjunction.conditions().iterator().hasNext()) {
             criteria.add(exclusionsDisjunction);
         }

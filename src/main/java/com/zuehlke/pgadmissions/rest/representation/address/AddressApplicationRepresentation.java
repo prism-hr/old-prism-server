@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.address;
 
+import com.zuehlke.pgadmissions.domain.address.Address;
+
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import uk.co.alumeni.prism.api.model.resource.AddressDefinition;
-
-import com.zuehlke.pgadmissions.domain.address.Address;
 
 public class AddressApplicationRepresentation extends Address implements AddressDefinition<ImportedEntityResponse> {
 

@@ -5,10 +5,10 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
+
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 public abstract class ResourceParent<T extends PrismUserReassignmentProcessor> extends Resource<T> implements ResourceParentDefinition<Advert> {
 

@@ -16,11 +16,11 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+
+import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
 
 @Entity
 @Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "imported_study_option_id" }),

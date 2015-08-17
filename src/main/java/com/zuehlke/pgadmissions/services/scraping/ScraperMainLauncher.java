@@ -13,10 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -25,6 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 
 public class ScraperMainLauncher {
 

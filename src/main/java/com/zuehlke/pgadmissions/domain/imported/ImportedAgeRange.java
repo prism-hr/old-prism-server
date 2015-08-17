@@ -11,12 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedAgeRangeDefinition;
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
+
+import uk.co.alumeni.prism.api.model.imported.ImportedAgeRangeDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 @Entity
 @Table(name = "imported_age_range")

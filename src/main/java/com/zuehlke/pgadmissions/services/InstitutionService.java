@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
 
 @Service
@@ -103,7 +103,7 @@ public class InstitutionService {
 		return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
 	}
 
-	public List<InstitutionRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm,
+	public List<ResourceRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm,
 			String[] googleIds) {
 		List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
 		return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream()
@@ -141,36 +141,29 @@ public class InstitutionService {
 				.map(institutionMapper::getInstitutionRepresentationTargeting).collect(Collectors.toList());
 	}
 
-	public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId,
-			Page facebookPage) {
-		ActionOutcomeDTO outcome = resourceService.createResource(user,
-				actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
-		Institution institution = (Institution) outcome.getResource();
-		Integer institutionId = institution.getId();
-		if (facebookId != null) {
-			try {
-				CloseableHttpClient httpclient = HttpClients.createDefault();
-				HttpEntity logoEntity = httpclient
-						.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large"))
-						.getEntity();
-				byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
-				documentService.createImage("" + institutionId + "_logo", logoImageContent,
-						logoEntity.getContentType().getValue(), institutionId,
-						PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
+    public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
+        ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
+        Institution institution = (Institution) outcome.getResource();
+        Integer institutionId = institution.getId();
+        if (facebookId != null) {
+            try {
+                CloseableHttpClient httpclient = HttpClients.createDefault();
+                HttpEntity logoEntity = httpclient.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large")).getEntity();
+                byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
+                documentService.createImage("" + institutionId + "_logo", logoImageContent, logoEntity.getContentType().getValue(), institutionId,
+                        PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
 
-				if (facebookPage.getCover() != null) {
-					HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource()))
-							.getEntity();
-					byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
-					documentService.createImage("" + institutionId + "_background", backgroundImageContent,
-							backgroundEntity.getContentType().getValue(), institutionId,
-							PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
-				}
-			} catch (IOException e) {
-				logger.error("Could not load facebook image for institution ID: " + institutionId, e);
-			}
-		}
-		return institution;
-	}
+                if (facebookPage.getCover() != null) {
+                    HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource())).getEntity();
+                    byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
+                    documentService.createImage("" + institutionId + "_background", backgroundImageContent, backgroundEntity.getContentType().getValue(),
+                            institutionId, PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
+                }
+            } catch (IOException e) {
+                logger.error("Could not load facebook image for institution ID: " + institutionId, e);
+            }
+        }
+        return institution;
+    }
 
 }

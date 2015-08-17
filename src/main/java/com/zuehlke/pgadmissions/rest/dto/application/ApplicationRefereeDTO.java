@@ -7,10 +7,10 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ApplicationRefereeDTO {
 

@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.mapping.helpers;
 
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedAgeRangeRequest;
-
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedAgeRangeRequest;
 
 @Component
 public class ImportedAgeRangeTransformer implements ImportedEntityTransformer<ImportedAgeRangeRequest, ImportedAgeRange> {

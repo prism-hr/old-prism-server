@@ -6,10 +6,10 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.utils.validation.DateNotFuture;
-
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
 public class ApplicationFundingDTO {
 

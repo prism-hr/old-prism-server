@@ -21,10 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Anchor;
@@ -75,6 +71,10 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

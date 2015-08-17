@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 
-public class InstitutionRepresentationTargeting extends ResourceRepresentationLocation {
+public class ResourceRepresentationTargeting extends ResourceRepresentationLocation {
 
     private BigDecimal relevance;
 

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,6 +40,10 @@ public class ScopeService {
         return scopeDAO.getScopesDescending();
     }
 
+    public List<PrismScope> getEnclosingScopesDescending(PrismScope prismScope, PrismScope finalScope) {
+        return scopeDAO.getEnclosingScopesDescending(prismScope, finalScope);
+    }
+
     public List<PrismScope> getParentScopesDescending(PrismScope prismScope) {
         return scopeDAO.getParentScopesDescending(prismScope);
     }
@@ -54,7 +60,8 @@ public class ScopeService {
         return scopeDAO.getChildScopesAscending(prismScope, finalScope);
     }
 
-    public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope resourceScope, PrismScope... excludedScopes) {
+    public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope resourceScope,
+            PrismScope... excludedScopes) {
         HashMultimap<PrismScope, PrismState> childScopes = HashMultimap.create();
         for (PrismScope childScope : getChildScopesAscending(resourceScope)) {
             if (excludedScopes.length == 0 || !ArrayUtils.contains(excludedScopes, childScope)) {
@@ -64,12 +71,28 @@ public class ScopeService {
         return childScopes;
     }
 
-    public List<ResourceSectionRepresentation> getRequiredSections(PrismScope scope) {
-        return getRequiredSections(scope.getSections(), null);
+    public List<ResourceSectionRepresentation> getRequiredSections(PrismScope prismScope) {
+        return getRequiredSections(prismScope.getSections(), null);
+    }
+
+    public HashMultimap<PrismScope, PrismScope> getExpandedScopes(PrismScope prismScope) {
+        HashMultimap<PrismScope, PrismScope> enclosedScopes = HashMultimap.create();
+        List<PrismScope> scopes = Lists.newLinkedList(getEnclosingScopesDescending(APPLICATION, prismScope));
+
+        int scopeCount = scopes.size();
+        for (int i = 0; i < scopeCount; i++) {
+            if (i < (scopeCount - 1)) {
+                enclosedScopes.putAll(scopes.get(i), scopes.subList(0, (i + 1)));
+            } else {
+                enclosedScopes.putAll(scopes.get(i), scopes);
+            }
+        }
+
+        return enclosedScopes;
     }
 
     private List<ResourceSectionRepresentation> getRequiredSections(ResourceSectionsRepresentation sections,
-                                                                    List<ResourceSectionRepresentation> requiredSections) {
+            List<ResourceSectionRepresentation> requiredSections) {
         requiredSections = requiredSections == null ? Lists.newArrayList() : requiredSections;
         for (ResourceSectionRepresentation section : sections) {
             if (section.isRequired()) {

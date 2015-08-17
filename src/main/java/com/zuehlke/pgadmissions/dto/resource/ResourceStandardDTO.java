@@ -11,259 +11,238 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceStandardDTO implements Comparable<ResourceStandardDTO> {
 
-    private static final String idReference = "Id";
+	private static final String idReference = "Id";
 
-    private static final String nameReference = "Name";
+	private static final String nameReference = "Name";
 
-    private static final String logoImageReference = "LogoImageId";
+	private static final String logoImageReference = "LogoImageId";
 
-    private boolean valid;
+	private Integer systemId;
 
-    private Integer systemId;
+	private Integer institutionId;
 
-    private Integer institutionId;
+	private String institutionName;
 
-    private String institutionName;
+	private Integer institutionLogoImageId;
 
-    private Integer institutionLogoImageId;
+	private Integer departmentId;
 
-    private Integer departmentId;
+	private String departmentName;
 
-    private String departmentName;
+	private Integer programId;
 
-    private Integer programId;
+	private String programName;
 
-    private String programName;
+	private Integer projectId;
 
-    private Integer projectId;
+	private String projectName;
 
-    private String projectName;
+	private Integer applicationId;
 
-    private Integer applicationId;
+	public Integer getSystemId() {
+		return systemId;
+	}
 
-    public Integer getSystemId() {
-        return systemId;
-    }
+	public void setSystemId(Integer systemId) {
+		this.systemId = systemId;
+	}
 
-    public void setSystemId(Integer systemId) {
-        this.systemId = systemId;
-    }
+	public Integer getInstitutionId() {
+		return institutionId;
+	}
 
-    public Integer getInstitutionId() {
-        return institutionId;
-    }
+	public void setInstitutionId(Integer institutionId) {
+		this.institutionId = institutionId;
+	}
 
-    public void setInstitutionId(Integer institutionId) {
-        this.institutionId = institutionId;
-    }
+	public String getInstitutionName() {
+		return institutionName;
+	}
 
-    public String getInstitutionName() {
-        return institutionName;
-    }
+	public void setInstitutionName(String institutionName) {
+		this.institutionName = institutionName;
+	}
 
-    public void setInstitutionName(String institutionName) {
-        this.institutionName = institutionName;
-    }
+	public Integer getInstitutionLogoImageId() {
+		return institutionLogoImageId;
+	}
 
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
-    }
+	public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
+		this.institutionLogoImageId = institutionLogoImageId;
+	}
 
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
-    }
+	public Integer getDepartmentId() {
+		return departmentId;
+	}
 
-    public Integer getDepartmentId() {
-        return departmentId;
-    }
+	public void setDepartmentId(Integer departmentId) {
+		this.departmentId = departmentId;
+	}
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
-    }
+	public String getDepartmentName() {
+		return departmentName;
+	}
 
-    public String getDepartmentName() {
-        return departmentName;
-    }
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
+	public Integer getProgramId() {
+		return programId;
+	}
 
-    public Integer getProgramId() {
-        return programId;
-    }
+	public void setProgramId(Integer programId) {
+		this.programId = programId;
+	}
 
-    public void setProgramId(Integer programId) {
-        this.programId = programId;
-    }
+	public String getProgramName() {
+		return programName;
+	}
 
-    public String getProgramName() {
-        return programName;
-    }
+	public void setProgramName(String programName) {
+		this.programName = programName;
+	}
 
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
+	public Integer getProjectId() {
+		return projectId;
+	}
 
-    public Integer getProjectId() {
-        return projectId;
-    }
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
+	}
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
+	public String getProjectName() {
+		return projectName;
+	}
 
-    public String getProjectName() {
-        return projectName;
-    }
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
+	public Integer getApplicationId() {
+		return applicationId;
+	}
 
-    public Integer getApplicationId() {
-        return applicationId;
-    }
+	public void setApplicationId(Integer applicationId) {
+		this.applicationId = applicationId;
+	}
 
-    public void setApplicationId(Integer applicationId) {
-        this.applicationId = applicationId;
-    }
+	public PrismScope getScope() {
+		PrismScope[] scopes = PrismScope.values();
+		for (int i = (scopes.length - 1); i >= 0; i--) {
+			PrismScope scope = scopes[i];
+			if (getProperty(this, scope.getLowerCamelName() + idReference) != null) {
+				return scope;
+			}
+		}
+		return null;
+	}
 
-    public PrismScope getScope() {
-        validate();
-        PrismScope[] scopes = PrismScope.values();
-        for (int i = (scopes.length - 1); i >= 0; i--) {
-            PrismScope scope = scopes[i];
-            if (getProperty(this, scope.getLowerCamelName() + idReference) != null) {
-                return scope;
-            }
-        }
-        return null;
-    }
+	public Integer getId() {
+		PrismScope[] scopes = PrismScope.values();
+		for (int i = (scopes.length - 1); i >= 0; i--) {
+			Integer id = getId(scopes[i]);
+			if (id != null) {
+				return id;
+			}
+		}
+		return null;
+	}
 
-    public Integer getId() {
-        validate();
-        PrismScope[] scopes = PrismScope.values();
-        for (int i = (scopes.length - 1); i >= 0; i--) {
-            Integer id = getId(scopes[i]);
-            if (id != null) {
-                return id;
-            }
-        }
-        return null;
-    }
+	public String getName() {
+		PrismScope[] scopes = PrismScope.values();
+		for (int i = (scopes.length - 1); i >= 0; i--) {
+			String name = getName(scopes[i]);
+			if (name != null) {
+				return name;
+			}
+		}
+		return null;
+	}
 
-    public String getName() {
-        validate();
-        PrismScope[] scopes = PrismScope.values();
-        for (int i = (scopes.length - 1); i >= 0; i--) {
-            String name = getName(scopes[i]);
-            if (name != null) {
-                return name;
-            }
-        }
-        return null;
-    }
+	public ResourceStandardDTO getParentResource() {
+		return getParentResource(ResourceStandardDTO.class);
+	}
 
-    public ResourceStandardDTO getParentResource() {
-        return getParentResource(ResourceStandardDTO.class);
-    }
+	public ResourceStandardDTO getEnclosingResource(PrismScope scope) {
+		return getEnclosingResource(scope, ResourceStandardDTO.class);
+	}
 
-    public ResourceStandardDTO getEnclosingResource(PrismScope scope) {
-        return getEnclosingResource(scope, ResourceStandardDTO.class);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getScope(), getId());
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getScope(), getId());
-    }
+	@Override
+	public boolean equals(Object object) {
+		if (object == null) {
+			return false;
+		}
+		if (getClass() != object.getClass()) {
+			return false;
+		}
+		final ResourceStandardDTO other = (ResourceStandardDTO) object;
+		return Objects.equal(getScope(), other.getScope()) && Objects.equal(getId(), other.getId());
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final ResourceStandardDTO other = (ResourceStandardDTO) object;
-        return Objects.equal(getScope(), other.getScope()) && Objects.equal(getId(), other.getId());
-    }
+	@Override
+	public int compareTo(ResourceStandardDTO resourceAncestry) {
+		int scopeComparison = new Integer(getScope().ordinal())
+				.compareTo(new Integer(resourceAncestry.getScope().ordinal()));
+		return (scopeComparison == 0) ? getId().compareTo(resourceAncestry.getId()) : scopeComparison;
+	}
 
-    @Override
-    public int compareTo(ResourceStandardDTO resourceAncestry) {
-        int scopeComparison = new Integer(getScope().ordinal()).compareTo(new Integer(resourceAncestry.getScope().ordinal()));
-        return (scopeComparison == 0) ? getId().compareTo(resourceAncestry.getId()) : scopeComparison;
-    }
+	protected <T extends ResourceStandardDTO> T getParentResource(Class<T> returnType) {
+		PrismScope scope = getScope();
+		PrismScope[] parentScopes = PrismScope.values();
+		for (int i = (parentScopes.length - 1); i >= 0; i--) {
+			PrismScope parentScope = parentScopes[i];
+			if (!parentScope.equals(scope)) {
+				T parentResource = getEnclosingResource(parentScope, returnType);
+				if (parentResource != null) {
+					return parentResource;
+				}
+			}
+		}
+		return null;
+	}
 
-    protected <T extends ResourceStandardDTO> T getParentResource(Class<T> returnType) {
-        validate();
-        PrismScope scope = getScope();
-        PrismScope[] parentScopes = PrismScope.values();
-        for (int i = (parentScopes.length - 1); i >= 0; i--) {
-            PrismScope parentScope = parentScopes[i];
-            if (!parentScope.equals(scope)) {
-                T parentResource = getEnclosingResource(parentScope, returnType);
-                if (parentResource != null) {
-                    return parentResource;
-                }
-            }
-        }
-        return null;
-    }
+	protected <T extends ResourceStandardDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
+		T enclosingResource = BeanUtils.instantiate(returnType);
 
-    protected <T extends ResourceStandardDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
-        validate();
-        T enclosingResource = BeanUtils.instantiate(returnType);
+		boolean cloning = false;
+		PrismScope[] parentScopes = PrismScope.values();
+		for (int i = (parentScopes.length - 1); i >= 0; i--) {
+			PrismScope parentScope = parentScopes[i];
+			cloning = scope.equals(parentScope) ? true : cloning;
 
-        boolean cloning = false;
-        PrismScope[] parentScopes = PrismScope.values();
-        for (int i = (parentScopes.length - 1); i >= 0; i--) {
-            PrismScope parentScope = parentScopes[i];
-            cloning = scope.equals(parentScope) ? true : cloning;
+			if (cloning) {
+				String scopeReference = scope.getLowerCamelName();
+				copyProperty(this, enclosingResource, scopeReference + idReference);
+				copyProperty(this, enclosingResource, scopeReference + nameReference);
+				copyProperty(this, enclosingResource, scopeReference + logoImageReference);
+			}
+		}
 
-            if (cloning) {
-                String scopeReference = scope.getLowerCamelName();
-                copyProperty(this, enclosingResource, scopeReference + idReference);
-                copyProperty(this, enclosingResource, scopeReference + nameReference);
-                copyProperty(this, enclosingResource, scopeReference + logoImageReference);
-            }
-        }
+		return enclosingResource.getId() == null ? null : enclosingResource;
+	}
 
-        return enclosingResource.getId() == null ? null : enclosingResource;
-    }
+	private Integer getId(PrismScope scope) {
+		Integer id = (Integer) getProperty(this, scope.getLowerCamelName() + idReference);
+		if (id != null) {
+			return id;
+		}
+		return null;
+	}
 
-    private void validate() {
-        if (!valid) {
-            PrismScope[] scopes = PrismScope.values();
-            for (int i = (scopes.length - 1); i >= 0; i--) {
-                PrismScope scope = scopes[i];
-                Integer id = getId(scope);
-                String name = getName(scope);
-                if (name != null && id == null) {
-                    throw new Error("Object not populated correctly and unsafe to use");
-                }
-            }
-        }
-        valid = true;
-    }
-
-    private Integer getId(PrismScope scope) {
-        Integer id = (Integer) getProperty(this, scope.getLowerCamelName() + idReference);
-        if (id != null) {
-            return id;
-        }
-        return null;
-    }
-
-    private String getName(PrismScope scope) {
-        String scopeReference = scope.getLowerCamelName();
-        if (getProperty(this, scopeReference + idReference) != null) {
-            if (hasProperty(this, scopeReference + nameReference)) {
-                return (String) getProperty(this, scopeReference + nameReference);
-            }
-        }
-        return null;
-    }
+	private String getName(PrismScope scope) {
+		String scopeReference = scope.getLowerCamelName();
+		if (getProperty(this, scopeReference + idReference) != null) {
+			if (hasProperty(this, scopeReference + nameReference)) {
+				return (String) getProperty(this, scopeReference + nameReference);
+			}
+		}
+		return null;
+	}
 
 }

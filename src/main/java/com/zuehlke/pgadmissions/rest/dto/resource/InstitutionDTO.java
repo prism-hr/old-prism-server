@@ -1,51 +1,38 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.math.BigDecimal;
-
 import javax.validation.constraints.NotNull;
 
 public class InstitutionDTO extends ResourceParentDTO {
 
-    @NotNull
-    private String currency;
+	@NotNull
+	private String currency;
 
-    @NotNull
-    private Integer businessYearStartMonth;
+	@NotNull
+	private Integer businessYearStartMonth;
 
-    @NotNull
-    private BigDecimal minimumWage;
+	private Integer importedInstitutionId;
 
-    private Integer importedInstitutionId;
+	public String getCurrency() {
+		return currency;
+	}
 
-    public String getCurrency() {
-        return currency;
-    }
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
+	public Integer getBusinessYearStartMonth() {
+		return businessYearStartMonth;
+	}
 
-    public Integer getBusinessYearStartMonth() {
-        return businessYearStartMonth;
-    }
+	public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
+		this.businessYearStartMonth = businessYearStartMonth;
+	}
 
-    public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
-        this.businessYearStartMonth = businessYearStartMonth;
-    }
+	public Integer getImportedInstitutionId() {
+		return importedInstitutionId;
+	}
 
-    public BigDecimal getMinimumWage() {
-        return minimumWage;
-    }
-
-    public void setMinimumWage(BigDecimal minimumWage) {
-        this.minimumWage = minimumWage;
-    }
-
-    public Integer getImportedInstitutionId() {
-        return importedInstitutionId;
-    }
-
-    public void setImportedInstitutionId(Integer importedInstitutionId) {
-        this.importedInstitutionId = importedInstitutionId;
-    }
+	public void setImportedInstitutionId(Integer importedInstitutionId) {
+		this.importedInstitutionId = importedInstitutionId;
+	}
 }

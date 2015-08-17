@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -134,14 +133,13 @@ public class UserDAO {
                 .add(Restrictions.eq("applicationInterested", true)) //
                 .addOrder(Order.asc("parentUser.firstName")) //
                 .addOrder(Order.asc("parentUser.lastName")) //
-                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class))
-                .list();
+                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
     }
 
     public List<UserSelectionDTO> getUsersNotInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user.parentUser"), "user")
+                        .add(Projections.groupProperty("user.parentUser"), "user") //
                         .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
@@ -151,11 +149,11 @@ public class UserDAO {
                         .add(Restrictions.isNull("userAccount.id")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.eq("applicationInterested", false)) //
-                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class))
-                .list();
+                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
     }
 
-    public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects, List<Integer> relatedApplications) {
+    public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects,
+            List<Integer> relatedApplications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.parentUser"), "user")) //
@@ -181,13 +179,12 @@ public class UserDAO {
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .addOrder(Order.asc("parentUser.firstName")) //
                 .addOrder(Order.asc("parentUser.lastName")) //
-                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class))
-                .list();
+                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
     }
 
     public void refreshParentUser(User linkIntoUser, User linkFromUser) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update User " //
+        sessionFactory.getCurrentSession()
+                .createQuery("update User " //
                         + "set parentUser = :user " //
                         + "where parentUser = :linkIntoUserParentUser " //
                         + "or parentUser = :linkFromUserParentUser") //
@@ -198,8 +195,8 @@ public class UserDAO {
     }
 
     public void switchParentUser(User oldParentUser, User newParentUser) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update User " //
+        sessionFactory.getCurrentSession()
+                .createQuery("update User " //
                         + "set parentUser = :newParentUser " //
                         + "where parentUser = :oldParentUser") //
                 .setParameter("newParentUser", newParentUser) //
@@ -222,8 +219,8 @@ public class UserDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("firstName"), "firstName") //
                         .add(Projections.property("lastName"), "lastName") //
-                        .add(Projections.groupProperty("email"), "email")
-                        .add(Projections.property("primaryExternalAccount.accountImageUrl"), "accountImageUrl")
+                        .add(Projections.groupProperty("email"), "email") //
+                        .add(Projections.property("primaryExternalAccount.accountImageUrl"), "accountImageUrl") //
                         .add(Projections.property("externalAccount.accountProfileUrl"), "accountProfileUrl")) //
                 .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
@@ -254,8 +251,8 @@ public class UserDAO {
     }
 
     public void selectParentUser(User newParentUser) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update User " //
+        sessionFactory.getCurrentSession()
+                .createQuery("update User " //
                         + "set parentUser = :newParentUser " //
                         + "where parentUser = :oldParentUser") //
                 .setParameter("newParentUser", newParentUser) //
@@ -272,33 +269,24 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, Integer> userAdministratorResources,
-            UserListFilterDTO userListFilterDTO) {
+    public List<User> getBouncedOrUnverifiedUsers(Resource<?> resource, HashMultimap<PrismScope, Integer> administratorResources,
+            HashMultimap<PrismScope, PrismScope> expandedScopes, UserListFilterDTO userListFilterDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        Junction roleDisjunction = Restrictions.disjunction();
-        for (PrismScope scope : userAdministratorResources.keySet()) {
-            String scopeReference = scope.getLowerCamelName();
-            roleDisjunction.add(Restrictions.in(scopeReference, userAdministratorResources.get(scope)));
-        }
-
-        criteria.add(roleDisjunction);
+        appendAdministratorResourceConditions(criteria, resource, administratorResources, expandedScopes);
 
         if (userListFilterDTO.isInvalidOnly()) {
             criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));
         } else {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.isNull("user.userAccount")) //
-                    .add(Restrictions.eq("userAccount.enabled", false)) //
-                    .add(Restrictions.isNotNull("user.emailBouncedMessage")));
+            criteria.add(getUserAccountUnverifiedDisjunction());
         }
 
         String searchTerm = userListFilterDTO.getSearchTerm();
         if (searchTerm != null) {
-            criteria.add(WorkflowDAOUtils.getSimilarUserRestriction("user", searchTerm)); //
+            criteria.add(getSimilarUserRestriction("user", searchTerm)); //
         }
 
         Integer lastUserId = userListFilterDTO.getLastUserId();
@@ -311,25 +299,23 @@ public class UserDAO {
                 .list();
     }
 
-    public User getBouncedOrUnverifiedUser(HashMultimap<PrismScope, Integer> userAdministratorResources, Integer userId) {
+    public User getBouncedOrUnverifiedUser(Integer userId, Resource<?> resource, HashMultimap<PrismScope, Integer> administratorResources,
+            HashMultimap<PrismScope, PrismScope> expandedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        Disjunction disjunction = Restrictions.disjunction();
-        for (PrismScope scope : userAdministratorResources.keySet()) {
-            disjunction.add(Restrictions.in(scope.getLowerCamelName() + ".id", userAdministratorResources.get(scope)));
-        }
+        appendAdministratorResourceConditions(criteria, resource, administratorResources, expandedScopes);
 
-        return (User) criteria.add(disjunction) //
+        return (User) criteria.add(getUserAccountUnverifiedDisjunction()) //
                 .add(Restrictions.eq("user.id", userId)) //
                 .uniqueResult();
     }
 
     public List<User> getUsersWithAction(Resource<?> resource, PrismAction... actions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("userRole.user")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
@@ -394,13 +380,63 @@ public class UserDAO {
     }
 
     public void deleteUserProgram(User user, ImportedProgram program) {
-        sessionFactory.getCurrentSession().createSQLQuery( //
-                "delete UserProgram " //
+        sessionFactory.getCurrentSession()
+                .createSQLQuery("delete UserProgram " //
                         + "where user = :user " //
                         + "and program = :program") //
                 .setParameter("user", user) //
                 .setParameter("program", program) //
                 .executeUpdate();
+    }
+
+    private void appendAdministratorResourceConditions(Criteria criteria, Resource<?> resource,
+            HashMultimap<PrismScope, Integer> administratorResources, HashMultimap<PrismScope, PrismScope> expandedScopes) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String resourceReference = resourceScope.getLowerCamelName();
+
+        Junction exclusionsDisjunction = Restrictions.disjunction();
+        for (PrismScope expandedScope : expandedScopes.keySet()) {
+            Junction expandedConjunction = Restrictions.conjunction();
+
+            String expandedReference = expandedScope.getLowerCamelName();
+            if (resourceScope.equals(expandedScope)) {
+                expandedConjunction.add(Restrictions.eq(resourceReference + ".id", resource.getId()));
+            } else {
+                expandedConjunction.add(Restrictions.eq(expandedReference + "." + resourceReference + ".id", resource.getId()));
+            }
+
+            Junction enclosingDisjunction = Restrictions.disjunction();
+            for (PrismScope enclosingScope : expandedScopes.get(expandedScope)) {
+                Set<Integer> enclosingResources = administratorResources.get(enclosingScope);
+                if (!enclosingResources.isEmpty()) {
+
+                    if (expandedScope.equals(enclosingScope)) {
+                        enclosingDisjunction.add(Restrictions.in(expandedReference + ".id", enclosingResources));
+                    } else {
+                        enclosingDisjunction
+                                .add(Restrictions.in(expandedReference + "." + enclosingScope.getLowerCamelName() + ".id", enclosingResources));
+                    }
+
+                }
+            }
+
+            if (enclosingDisjunction.conditions().iterator().hasNext()) {
+                criteria.createAlias(expandedReference, expandedReference, JoinType.LEFT_OUTER_JOIN, //
+                        expandedConjunction.add(enclosingDisjunction));
+                exclusionsDisjunction.add(Restrictions.isNotNull(expandedReference + ".id"));
+            }
+        }
+        
+        if (exclusionsDisjunction.conditions().iterator().hasNext()) {
+            criteria.add(exclusionsDisjunction);
+        }
+    }
+
+    private Junction getUserAccountUnverifiedDisjunction() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.isNull("user.userAccount")) //
+                .add(Restrictions.eq("userAccount.enabled", false)) //
+                .add(Restrictions.isNotNull("user.emailBouncedMessage"));
     }
 
 }

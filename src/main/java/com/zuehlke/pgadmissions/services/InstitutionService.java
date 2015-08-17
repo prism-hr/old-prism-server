@@ -37,130 +37,140 @@ import com.zuehlke.pgadmissions.rest.representation.resource.institution.Institu
 @Transactional
 public class InstitutionService {
 
-    private static Logger logger = LoggerFactory.getLogger(InstitutionService.class);
+	private static Logger logger = LoggerFactory.getLogger(InstitutionService.class);
 
-    @Inject
-    private InstitutionDAO institutionDAO;
+	@Inject
+	private InstitutionDAO institutionDAO;
 
-    @Inject
-    private ActionService actionService;
+	@Inject
+	private ActionService actionService;
 
-    @Inject
-    private AdvertService advertService;
+	@Inject
+	private AdvertService advertService;
 
-    @Inject
-    private DocumentService documentService;
+	@Inject
+	private DocumentService documentService;
 
-    @Inject
-    private EntityService entityService;
+	@Inject
+	private EntityService entityService;
 
-    @Inject
-    private ImportedEntityService importedEntityService;
+	@Inject
+	private ImportedEntityService importedEntityService;
 
-    @Inject
-    private InstitutionMapper institutionMapper;
+	@Inject
+	private InstitutionMapper institutionMapper;
 
-    @Inject
-    private ResourceService resourceService;
+	@Inject
+	private ResourceService resourceService;
 
-    @Inject
-    private StateService stateService;
+	@Inject
+	private StateService stateService;
 
-    public Institution getById(Integer id) {
-        return entityService.getById(Institution.class, id);
-    }
+	public Institution getById(Integer id) {
+		return entityService.getById(Institution.class, id);
+	}
 
-    public Institution getUclInstitution() {
-        return institutionDAO.getUclInstitution();
-    }
+	public Institution getUclInstitution() {
+		return institutionDAO.getUclInstitution();
+	}
 
-    public void update(Institution institution, InstitutionDTO institutionDTO) throws Exception {
-        resourceService.updateResource(institution, institutionDTO);
-        institution.setGoogleId(institution.getAdvert().getAddress().getGoogleId());
+	public void update(Institution institution, InstitutionDTO institutionDTO) throws Exception {
+		resourceService.updateResource(institution, institutionDTO);
+		institution.setGoogleId(institution.getAdvert().getAddress().getGoogleId());
 
-        String oldCurrency = institution.getCurrency();
-        String newCurrency = institutionDTO.getCurrency();
-        if (!oldCurrency.equals(newCurrency)) {
-            changeInstitutionCurrency(institution, newCurrency);
-        }
+		String oldCurrency = institution.getCurrency();
+		String newCurrency = institutionDTO.getCurrency();
+		if (!oldCurrency.equals(newCurrency)) {
+			changeInstitutionCurrency(institution, newCurrency);
+		}
 
-        Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
-        Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
-        if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
-            changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
-        }
+		Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
+		Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
+		if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
+			changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
+		}
+	}
 
-        institution.setMinimumWage(institutionDTO.getMinimumWage());
-    }
+	public List<String> listAvailableCurrencies() {
+		return institutionDAO.listAvailableCurrencies();
+	}
 
-    public List<String> listAvailableCurrencies() {
-        return institutionDAO.listAvailableCurrencies();
-    }
+	public void save(Institution institution) {
+		entityService.save(institution);
+	}
 
-    public void save(Institution institution) {
-        entityService.save(institution);
-    }
+	public Institution getActivatedInstitutionByGoogleId(String googleId) {
+		return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
+	}
 
-    public Institution getActivatedInstitutionByGoogleId(String googleId) {
-        return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
-    }
+	public List<InstitutionRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm,
+			String[] googleIds) {
+		List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
+		return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream()
+				.map(institutionMapper::getInstitutionRepresentationLocation).collect(Collectors.toList());
+	}
 
-    public List<InstitutionRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {
-        List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
-        return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream().map(institutionMapper::getInstitutionRepresentationLocation)
-                .collect(Collectors.toList());
-    }
+	public String getBusinessYear(Institution institution, Integer year, Integer month) {
+		Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
+		Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
+		return month == 1 ? businessYear.toString()
+				: (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
+	}
 
-    public String getBusinessYear(Institution institution, Integer year, Integer month) {
-        Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
-        Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
-        return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
-    }
+	private void changeInstitutionCurrency(Institution institution, String newCurrency) throws Exception {
+		List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
+		for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
+			advertService.updateFinancialDetails(advertWithFeesAndPays, newCurrency);
+		}
+		institution.setCurrency(newCurrency);
+	}
 
-    private void changeInstitutionCurrency(Institution institution, String newCurrency) throws Exception {
-        List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
-        for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
-            advertService.updateFinancialDetails(advertWithFeesAndPays, newCurrency);
-        }
-        institution.setCurrency(newCurrency);
-    }
+	private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth)
+			throws Exception {
+		institution.setBusinessYearStartMonth(businessYearStartMonth);
+		Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
+		institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
+	}
 
-    private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
-        institution.setBusinessYearStartMonth(businessYearStartMonth);
-        Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
-        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
-    }
+	public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Advert currentAdvert,
+			List<Integer> subjectAreas) {
+		List<PrismState> activeStates = stateService.getActiveResourceStates(INSTITUTION);
+		Set<Integer> subjectAreaFamily = importedEntityService
+				.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
+		return institutionDAO.getInstitutionBySubjectAreas(currentAdvert, subjectAreaFamily, activeStates).stream()
+				.map(institutionMapper::getInstitutionRepresentationTargeting).collect(Collectors.toList());
+	}
 
-    public List<InstitutionRepresentationTargeting> getInstitutionBySubjectAreas(Advert currentAdvert, List<Integer> subjectAreas) {
-        List<PrismState> activeStates = stateService.getActiveResourceStates(INSTITUTION);
-        Set<Integer> subjectAreaFamily = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-        return institutionDAO.getInstitutionBySubjectAreas(currentAdvert, subjectAreaFamily, activeStates).stream()
-                .map(institutionMapper::getInstitutionRepresentationTargeting).collect(Collectors.toList());
-    }
+	public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId,
+			Page facebookPage) {
+		ActionOutcomeDTO outcome = resourceService.createResource(user,
+				actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
+		Institution institution = (Institution) outcome.getResource();
+		Integer institutionId = institution.getId();
+		if (facebookId != null) {
+			try {
+				CloseableHttpClient httpclient = HttpClients.createDefault();
+				HttpEntity logoEntity = httpclient
+						.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large"))
+						.getEntity();
+				byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
+				documentService.createImage("" + institutionId + "_logo", logoImageContent,
+						logoEntity.getContentType().getValue(), institutionId,
+						PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
 
-    public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
-        ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
-        Institution institution = (Institution) outcome.getResource();
-        Integer institutionId = institution.getId();
-        if (facebookId != null) {
-            try {
-                CloseableHttpClient httpclient = HttpClients.createDefault();
-                HttpEntity logoEntity = httpclient.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large")).getEntity();
-                byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
-                documentService.createImage("" + institutionId + "_logo", logoImageContent, logoEntity.getContentType().getValue(), institutionId,
-                        PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
-
-                if (facebookPage.getCover() != null) {
-                    HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource())).getEntity();
-                    byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
-                    documentService.createImage("" + institutionId + "_background", backgroundImageContent, backgroundEntity.getContentType().getValue(),
-                            institutionId, PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
-                }
-            } catch (IOException e) {
-                logger.error("Could not load facebook image for institution ID: " + institutionId, e);
-            }
-        }
-        return institution;
-    }
+				if (facebookPage.getCover() != null) {
+					HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource()))
+							.getEntity();
+					byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
+					documentService.createImage("" + institutionId + "_background", backgroundImageContent,
+							backgroundEntity.getContentType().getValue(), institutionId,
+							PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
+				}
+			} catch (IOException e) {
+				logger.error("Could not load facebook image for institution ID: " + institutionId, e);
+			}
+		}
+		return institution;
+	}
 
 }

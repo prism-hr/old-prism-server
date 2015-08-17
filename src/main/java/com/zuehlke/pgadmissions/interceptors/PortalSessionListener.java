@@ -22,8 +22,7 @@ public class PortalSessionListener implements HttpSessionListener {
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
-		
-
+		return;
 	}
 
 }

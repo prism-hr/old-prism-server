@@ -18,7 +18,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.DoubleType;
+import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
@@ -32,8 +32,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.InstitutionDTOHibernate;
-import com.zuehlke.pgadmissions.dto.InstitutionDTOSql;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
 
 import freemarker.template.Template;
 
@@ -89,7 +88,7 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public List<InstitutionDTOHibernate> getInstitutions(List<PrismState> activeStates, String searchTerm, String[] googleIds) {
+    public List<ResourceTargetingDTO> getInstitutions(List<PrismState> activeStates, String searchTerm, String[] googleIds) {
         Disjunction searchCriterion = Restrictions.disjunction();
 
         if (searchTerm != null) {
@@ -101,9 +100,9 @@ public class InstitutionDAO {
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Institution.class)
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id"), "id") //
-                        .add(Projections.property("name"), "name") //
-                        .add(Projections.property("logoImage.id"), "logoImageId") //
+                        .add(Projections.groupProperty("id"), "institutionId") //
+                        .add(Projections.property("name"), "institutionName") //
+                        .add(Projections.property("logoImage.id"), "institutionlogoImageId") //
                         .add(Projections.property("domicile.name"), "addressDomicileName") //
                         .add(Projections.property("address.addressLine1"), "addressLine1") //
                         .add(Projections.property("address.addressLine2"), "addressLine2") //
@@ -122,15 +121,15 @@ public class InstitutionDAO {
                     .add(Restrictions.in("resourceState.state.id", activeStates));
         }
 
-        return (List<InstitutionDTOHibernate>) criteria.add(searchCriterion)
-                .setResultTransformer(Transformers.aliasToBean(InstitutionDTOHibernate.class))
+        return (List<ResourceTargetingDTO>) criteria.add(searchCriterion)
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
                 .list();
     }
 
-    public List<InstitutionDTOSql> getInstitutionBySubjectAreas(
+    public List<ResourceTargetingDTO> getInstitutionBySubjectAreas(
             Advert currentAdvert, Collection<Integer> subjectAreas, List<PrismState> activeStates) {
-        return (List<InstitutionDTOSql>) sessionFactory.getCurrentSession().createSQLQuery(
-                "select institution.id as id, institution.name as name, institution.logo_image_id as logoImageId," +
+        return (List<ResourceTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
+                "select institution.id as institutionId, institution.name as institutionName, institution.logo_image_id as institutionLogoImageId," +
                         " imported_advert_domicile.name as addressDomicileName, advert_address.address_line_1 as addressLine1," +
                         " advert_address.address_line_2 as addressLine2, advert_address.address_town as addressTown," +
                         " advert_address.address_region as addressRegion, advert_address.address_code as addressCode," +
@@ -168,17 +167,17 @@ public class InstitutionDAO {
                 .addScalar("addressRegion", StringType.INSTANCE)
                 .addScalar("addressCode", StringType.INSTANCE)
                 .addScalar("addressDomicileName", StringType.INSTANCE)
-                .addScalar("addressCoordinateLatitude", DoubleType.INSTANCE)
-                .addScalar("addressCoordinateLongitude", DoubleType.INSTANCE)
-                .addScalar("targetingRelevance", DoubleType.INSTANCE)
-                .addScalar("targetingDistance", DoubleType.INSTANCE)
+                .addScalar("addressCoordinateLatitude", BigDecimalType.INSTANCE)
+                .addScalar("addressCoordinateLongitude", BigDecimalType.INSTANCE)
+                .addScalar("targetingRelevance", BigDecimalType.INSTANCE)
+                .addScalar("targetingDistance", BigDecimalType.INSTANCE)
                 .setParameter("addressDomicile", currentAdvert.getAddress().getDomicile().getId())
                 .setParameter("baseLatitude", currentAdvert.getAddress().getCoordinates().getLatitude())
                 .setParameter("baseLongitude", currentAdvert.getAddress().getCoordinates().getLongitude())
                 .setParameter("currentInstitutionId", currentAdvert.getInstitution().getId())
                 .setParameterList("activeStates", activeStates.stream().map(activeState -> activeState.name()).collect(Collectors.toList()))
                 .setParameterList("subjectAreas", subjectAreas)
-                .setResultTransformer(Transformers.aliasToBean(InstitutionDTOSql.class))
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
                 .list();
     }
 

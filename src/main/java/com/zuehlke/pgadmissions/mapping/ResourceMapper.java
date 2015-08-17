@@ -10,11 +10,15 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.GEOCODING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
@@ -56,10 +60,14 @@ import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.DepartmentRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
@@ -83,6 +91,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlot
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -94,6 +103,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
+import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
@@ -247,6 +257,17 @@ public class ResourceMapper {
     public ResourceRepresentationLocation getResourceRepresentationLocation(Resource<?> resource) {
         ResourceRepresentationLocation representation = getResourceRepresentationSimple(resource, ResourceRepresentationLocation.class);
         representation.setAddress(advertMapper.getAdvertAddressRepresentation(resource.getAdvert()));
+        return representation;
+    }
+    
+    public ResourceRepresentationLocation getResourceRepresentationLocation(ResourceTargetingDTO resource) {
+        return getInstitutionRepresentationLocation(resource, ResourceRepresentationLocation.class);
+    }
+
+    public ResourceRepresentationTargeting getResourceRepresentationTargeting(ResourceTargetingDTO resource) {
+        ResourceRepresentationTargeting representation = getInstitutionRepresentationLocation(resource, ResourceRepresentationTargeting.class);
+        representation.setRelevance(decimalObjectToBigDecimal(resource.getTargetingRelevance(), TARGETING_PRECISION));
+        representation.setDistance(decimalObjectToBigDecimal(resource.getTargetingDistance(), TARGETING_PRECISION));
         return representation;
     }
 
@@ -585,6 +606,26 @@ public class ResourceMapper {
         return getResourceRepresentationHierarchy(initialResourceScope, resources, stopScope);
     }
 
+    public <T extends ResourceRepresentationLocation> T getInstitutionRepresentationLocation(ResourceTargetingDTO institution, Class<T> returnType) {
+        T representation = BeanUtils.instantiate(returnType);
+
+        Integer logoImageId = institution.getInstitutionLogoImageId();
+        representation.setId(institution.getId());
+        representation.setName(institution.getName());
+        representation.setLogoImage(Optional.ofNullable(logoImageId).map(id -> new DocumentRepresentation().withId(logoImageId)).orElse(null));
+
+        representation.setAddress(new AddressAdvertRepresentation().withDomicile(new ImportedAdvertDomicileResponse()
+                .withName(institution.getAddressDomicileName())).withAddressLine1(institution.getAddressLine1())
+                .withAddressLine2(institution.getAddressLine2()).withAddressTown(institution.getAddressTown())
+                .withAddressRegion(institution.getAddressRegion()).withAddressCode(institution.getAddressCode())
+                .withGoogleId(institution.getAddressGoogleId()).withCoordinates(new AddressCoordinatesRepresentation()
+                        .withLatitude(decimalObjectToBigDecimal(institution.getAddressCoordinateLatitude(), GEOCODING_PRECISION))
+                        .withLongitude(decimalObjectToBigDecimal(institution.getAddressCoordinateLongitude(), GEOCODING_PRECISION))));
+
+        return representation;
+    }
+
+    
     @SuppressWarnings("unchecked")
     private <T extends ResourceStandardDTO> List<ResourceChildCreationRepresentation> getResourceRepresentationHierarchy(
             PrismScope resourceScope, LinkedHashMap<PrismScope, TreeSet<T>> resources, PrismScope stopScope) {

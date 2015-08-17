@@ -1,12 +1,8 @@
-package com.zuehlke.pgadmissions.dto;
+package com.zuehlke.pgadmissions.dto.resource;
 
-public abstract class InstitutionDTO<T> {
+import java.math.BigDecimal;
 
-    private Integer id;
-
-    private String name;
-
-    private Integer logoImageId;
+public class ResourceTargetingDTO extends ResourceStandardDTO {
 
     private String addressDomicileName;
 
@@ -22,29 +18,13 @@ public abstract class InstitutionDTO<T> {
 
     private String addressGoogleId;
 
-    public Integer getId() {
-        return id;
-    }
+    private BigDecimal addressCoordinateLatitude;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private BigDecimal addressCoordinateLongitude;
 
-    public String getName() {
-        return name;
-    }
+    private BigDecimal targetingRelevance;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getLogoImageId() {
-        return logoImageId;
-    }
-
-    public void setLogoImageId(Integer logoImageId) {
-        this.logoImageId = logoImageId;
-    }
+    private BigDecimal targetingDistance;
 
     public String getAddressDomicileName() {
         return addressDomicileName;
@@ -102,20 +82,36 @@ public abstract class InstitutionDTO<T> {
         this.addressGoogleId = addressGoogleId;
     }
 
-    public abstract T getAddressCoordinateLatitude();
+    public BigDecimal getAddressCoordinateLatitude() {
+        return addressCoordinateLatitude;
+    }
 
-    public abstract void setAddressCoordinateLatitude(T addressCoordinateLatitude);
+    public void setAddressCoordinateLatitude(BigDecimal addressCoordinateLatitude) {
+        this.addressCoordinateLatitude = addressCoordinateLatitude;
+    }
 
-    public abstract T getAddressCoordinateLongitude();
+    public BigDecimal getAddressCoordinateLongitude() {
+        return addressCoordinateLongitude;
+    }
 
-    public abstract void setAddressCoordinateLongitude(T addressCoordinateLongitude);
+    public void setAddressCoordinateLongitude(BigDecimal addressCoordinateLongitude) {
+        this.addressCoordinateLongitude = addressCoordinateLongitude;
+    }
 
-    public abstract T getTargetingRelevance();
+    public BigDecimal getTargetingRelevance() {
+        return targetingRelevance;
+    }
 
-    public abstract void setTargetingRelevance(T targetingRelevance);
+    public void setTargetingRelevance(BigDecimal targetingRelevance) {
+        this.targetingRelevance = targetingRelevance;
+    }
 
-    public abstract T getTargetingDistance();
+    public BigDecimal getTargetingDistance() {
+        return targetingDistance;
+    }
 
-    public abstract void setTargetingDistance(T targetingDistance);
+    public void setTargetingDistance(BigDecimal targetingDistance) {
+        this.targetingDistance = targetingDistance;
+    }
 
 }

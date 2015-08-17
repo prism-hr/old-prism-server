@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationTargeting;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
@@ -67,7 +67,7 @@ public class InstitutionController {
 
     @RequestMapping(method = RequestMethod.GET, params = { "subjectAreas", "advertId" })
     @ResponseBody
-    public List<InstitutionRepresentationTargeting> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas, @RequestParam Integer advertId) {
+    public List<ResourceRepresentationTargeting> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas, @RequestParam Integer advertId) {
         return institutionService.getInstitutionBySubjectAreas(advertService.getById(advertId), subjectAreas);
     }
 

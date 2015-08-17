@@ -76,6 +76,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -204,14 +205,15 @@ public class ResourceService {
 				applicationContext.getBean(populator).populate(resource);
 			}
 
+	         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+	                resource.getAdvert().setResource(resource);
+	                ((ResourceParent<?>) (resource)).setUpdatedTimestampSitemap(baseline);
+	            }
+			
 			entityService.save(resource);
+			entityService.flush();
 
 			resource.setCode(generateResourceCode(resource));
-			if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-				resource.getAdvert().setResource(resource);
-				((ResourceParent<?>) (resource)).setUpdatedTimestampSitemap(baseline);
-			}
-
 			Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
 			if (workflowPropertyConfigurationVersion == null) {
 				customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
@@ -727,7 +729,7 @@ public class ResourceService {
 				: new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
 	}
 
-	public List<ResourceStandardDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
+	public List<ResourceTargetingDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
 		return resourceDAO.getResourcesWhichPermitTargeting(SYSTEM, systemId, resourceScope,
 				scopeService.getParentScopesDescending(resourceScope, INSTITUTION), searchTerm);
 	}

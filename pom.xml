@@ -576,6 +576,8 @@
             <properties>
                 <sql.host>localhost</sql.host>
                 <sql.db>pgadmissions_sit</sql.db>
+                <sql.userid>pgadmissions</sql.userid>
+                <sql.password>pgadmissions</sql.password>
             </properties>
             <build>
                 <plugins>

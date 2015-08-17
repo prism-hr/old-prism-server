@@ -42,7 +42,7 @@
     </scm>
 
     <dependencies>
-    
+
         <dependency>
             <groupId>uk.co.alumeni</groupId>
             <artifactId>prism-sdk</artifactId>
@@ -564,7 +564,7 @@
             </activation>
             <properties>
                 <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions</sql.db>
+                <sql.db>prism</sql.db>
                 <wildfly.management.port>666</wildfly.management.port>
             </properties>
         </profile>
@@ -603,8 +603,9 @@
         <profile>
             <id>uat</id>
             <properties>
-                <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions_uat</sql.db>
+                <sql.host>prism-uat.cd4p8rv23vn5.eu-west-1.rds.amazonaws.com</sql.host>
+                <sql.db>prism</sql.db>
+                <wildfly.management.port>9990</wildfly.management.port>
             </properties>
             <build>
                 <plugins>
@@ -632,10 +633,10 @@
         </profile>
 
         <profile>
-            <id>ucl-prod</id>
+            <id>prod</id>
             <properties>
                 <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions</sql.db>
+                <sql.db>prism</sql.db>
                 <wildfly.management.port>9992</wildfly.management.port>
             </properties>
             <build>
@@ -652,7 +653,7 @@
                                     <tasks>
                                         <delete
                                                 file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.ucl.prod.properties"
+                                        <copy file="src/environments/environment.prod.properties"
                                               tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>

@@ -123,7 +123,6 @@ public class ResourceController {
         return resourceMapper.getResourceRepresentationLocation(resource);
     }
 
-
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
@@ -137,7 +136,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
 
@@ -148,7 +147,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
     @PreAuthorize("isAuthenticated()")
     public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest request,
-                          HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
@@ -176,7 +175,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody Map<String, PrismRole> body) throws Exception {
+            @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
         Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -186,7 +185,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource<?> resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
         roleService.assignUserRoles(resource, user, DELETE, role);
@@ -195,7 +194,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
+            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
 
@@ -225,7 +224,7 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                     @Valid @RequestBody CommentDTO commentDTO) throws Exception {
+            @Valid @RequestBody CommentDTO commentDTO) throws Exception {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
         return actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
@@ -236,11 +235,9 @@ public class ResourceController {
         return advertService.getAvailableAdvertThemes(resource.getAdvert(), null);
     }
 
-    // FIXME - pass 'stop scope' for rendering from client so that we can clean up server code
-    // FIXME - problem with rendering on client? data is being generated but not display
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
     public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope targetScope,
-                                                                           @RequestParam PrismScope stopScope, @RequestParam Optional<String> searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @RequestParam PrismScope stopScope, @RequestParam Optional<String> searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, targetScope, stopScope, searchTerm.orElse(null));
     }
 
@@ -253,7 +250,7 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers/{userId}", method = RequestMethod.PUT)
     public void correctBouncedOrUnverifiedUser(@PathVariable Integer resourceId, @PathVariable Integer userId,
-                                               @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource<?> resource = loadResource(resourceId, resourceDescriptor);
         userService.correctBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
     }

@@ -614,10 +614,10 @@ public class ResourceMapper {
 
     public List<ResourceChildCreationRepresentation> getResourceTargetingRepresentations(String searchTerm) {
         PrismScope initialResourceScope = null;
-        LinkedHashMap<PrismScope, TreeSet<ResourceStandardDTO>> resources = Maps.newLinkedHashMap();
+        LinkedHashMap<PrismScope, TreeSet<ResourceTargetingDTO>> resources = Maps.newLinkedHashMap();
         for (PrismScope resourceScope : scopeService.getChildScopesAscending(SYSTEM, DEPARTMENT)) {
             initialResourceScope = initialResourceScope == null ? resourceScope : initialResourceScope;
-            TreeSet<ResourceStandardDTO> sortedResources = Sets.newTreeSet(resourceService.getResourcesWhichPermitTargeting(resourceScope, searchTerm));
+            TreeSet<ResourceTargetingDTO> sortedResources = Sets.newTreeSet(resourceService.getResourcesWhichPermitTargeting(resourceScope, searchTerm));
             resources.put(resourceScope, sortedResources);
         }
 

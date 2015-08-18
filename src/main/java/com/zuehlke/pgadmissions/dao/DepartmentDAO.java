@@ -86,7 +86,7 @@ public class DepartmentDAO {
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
                 .createAlias("advertSelectedResources", "advertSelectedResource", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("advertSelectedResource.advert.id", advert));
+                        Restrictions.eq("advertSelectedResource.advert", advert));
 
         if (activeStates != null) {
             criteria.createAlias("resourceStates", "resourceState") //

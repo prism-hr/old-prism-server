@@ -143,7 +143,7 @@ public class InstitutionDAO {
 
         if (!advertNull) {
             criteria.createAlias("advertSelectedResources", "advertSelectedResource", JoinType.LEFT_OUTER_JOIN, //
-                    Restrictions.eq("advertSelectedResource.advert.id", advert));
+                    Restrictions.eq("advertSelectedResource.advert", advert));
         }
 
         if (activeStates != null) {

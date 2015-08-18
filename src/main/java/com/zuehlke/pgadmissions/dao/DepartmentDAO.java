@@ -35,7 +35,7 @@ public class DepartmentDAO {
 
     public void deleteDepartmentImportedSubjectAreas(Department department) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete DepartmentImportedSubjectAreas "
+                "delete DepartmentImportedSubjectArea "
                         + "where department = :department") //
                 .setParameter("department", department) //
                 .executeUpdate();
@@ -45,18 +45,17 @@ public class DepartmentDAO {
         return (List<DepartmentImportedSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id"), "id") //
-                        .add(Projections.groupProperty("subjectArea.id"), "subjectArea") //
+                        .add(Projections.groupProperty("programSubjectArea.id"), "subjectArea") //
                         .add(Projections.sum("programSubjectArea.relationStrength"), "programRelationStrength") //
                         .add(Projections.property("institutionSubjectArea.relationStrength"), "institutionRelationStrength")) //
                 .createAlias("importedPrograms", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.programSubjectAreas", "programSubjectArea", JoinType.INNER_JOIN) //
                 .createAlias("program.institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN, //
-                        Restrictions.eqProperty("programSubjectArea.id", "institutionSubjectArea.id")) //
+                .createAlias("institution.institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN) //
+                .add(Restrictions.eqProperty("programSubjectArea.id", "institutionSubjectArea.id"))
                 .add(Restrictions.eq("id", department.getId())) //
                 .setResultTransformer(Transformers.aliasToBean(DepartmentImportedSubjectAreaDTO.class)) //
                 .list();
-
     }
 
 }

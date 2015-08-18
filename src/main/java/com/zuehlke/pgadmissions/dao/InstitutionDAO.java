@@ -119,7 +119,7 @@ public class InstitutionDAO {
         ProjectionList projectionList = Projections.projectionList() //
                 .add(Projections.groupProperty("id"), "institutionId") //
                 .add(Projections.property("name"), "institutionName") //
-                .add(Projections.property("logoImage.id"), "institutionlogoImageId") //
+                .add(Projections.property("logoImage.id"), "institutionLogoImageId") //
                 .add(Projections.property("domicile.name"), "addressDomicileName") //
                 .add(Projections.property("address.addressLine1"), "addressLine1") //
                 .add(Projections.property("address.addressLine2"), "addressLine2") //
@@ -143,7 +143,7 @@ public class InstitutionDAO {
 
         if (!advertNull) {
             criteria.createAlias("advertSelectedResources", "advertSelectedResource", JoinType.LEFT_OUTER_JOIN, //
-                    Restrictions.eq("advertSelectedResource", advert));
+                    Restrictions.eq("advertSelectedResource.advert.id", advert));
         }
 
         if (activeStates != null) {

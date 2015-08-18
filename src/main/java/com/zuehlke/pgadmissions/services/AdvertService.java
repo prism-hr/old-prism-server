@@ -158,8 +158,9 @@ public class AdvertService {
 
     public Advert createAdvert(Resource<?> parentResource, AdvertDTO advertDTO, String resourceName) {
         Advert advert = new Advert();
-        updateAdvert(parentResource, advert, advertDTO, resourceName);
+        advert.setName(resourceName);
         entityService.save(advert);
+        updateAdvert(parentResource, advert, advertDTO, resourceName);;
         return advert;
     }
 

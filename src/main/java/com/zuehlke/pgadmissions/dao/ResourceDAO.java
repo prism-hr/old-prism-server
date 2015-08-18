@@ -232,8 +232,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter,
-            Junction conditions, String lastSequenceIdentifier, Integer recordsToRetrieve) {
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
+            Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -254,9 +254,8 @@ public class ResourceDAO {
         return (List<Integer>) criteria.list();
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId,
-            ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
-            Integer recordsToRetrieve) {
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
         String parentResourceReference = parentScopeId.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
@@ -268,6 +267,33 @@ public class ResourceDAO {
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.partnerMode", false)) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(getResourceStateActionConstraint()) //
+                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
+                .add(Restrictions.isNull("state.hidden"));
+
+        appendResourceListFilterCriterion(criteria, conditions, filter);
+        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
+        return (List<Integer>) criteria.list();
+    }
+    
+    public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, PrismScope partnerScopeId, ResourceListFilterDTO filter, Junction conditions,
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
+        String partnerResourceReference = partnerScopeId.getLowerCamelName();
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.targets.selectedResources", "selectedResource", JoinType.INNER_JOIN)
+                .createAlias("selectedResource." + partnerResourceReference, partnerResourceReference, JoinType.INNER_JOIN) //
+                .createAlias(partnerResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
+                        Restrictions.eq("stateActionAssignment.partnerMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //

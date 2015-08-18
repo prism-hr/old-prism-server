@@ -345,7 +345,7 @@ public class AdvertDAO {
         String keyword = queryDTO.getKeyword();
         if (keyword != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.ilike("theme.theme", MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("theme.value", MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("name", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //

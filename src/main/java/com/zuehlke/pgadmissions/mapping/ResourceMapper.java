@@ -280,7 +280,7 @@ public class ResourceMapper {
     public ResourceRepresentationTargeting getResourceRepresentationTargeting(ResourceTargetingDTO resource) {
         ResourceRepresentationTargeting representation = getResourceRepresentationLocation(resource, ResourceRepresentationTargeting.class);
 
-        BigDecimal targetingRelevance = representation.getRelevance();
+        BigDecimal targetingRelevance = resource.getTargetingRelevance();
         if (targetingRelevance != null) {
             representation.setRelevance(targetingRelevance.setScale(TARGETING_PRECISION, HALF_UP));
         }

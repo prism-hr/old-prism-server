@@ -42,7 +42,7 @@
     </scm>
 
     <dependencies>
-    
+
         <dependency>
             <groupId>uk.co.alumeni</groupId>
             <artifactId>prism-sdk</artifactId>
@@ -478,8 +478,8 @@
                     <driver>com.mysql.jdbc.Driver</driver>
                     <url>
                         <![CDATA[jdbc:mysql://${sql.host}/${sql.db}?useUnicode=yes&characterEncoding=UTF-8&connectionCollation=utf8_general_ci]]></url>
-                    <userid>pgadmissions</userid>
-                    <password>pgadmissions</password>
+                    <userid>${sql.userid}</userid>
+                    <password>${sql.password}</password>
                     <dbms>mysql</dbms>
                     <delimiter>;</delimiter>
                     <delimiterType>row</delimiterType>
@@ -564,7 +564,9 @@
             </activation>
             <properties>
                 <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions</sql.db>
+                <sql.db>prism</sql.db>
+                <sql.userid>pgadmissions</sql.userid>
+                <sql.password>pgadmissions</sql.password>
                 <wildfly.management.port>666</wildfly.management.port>
             </properties>
         </profile>
@@ -574,6 +576,8 @@
             <properties>
                 <sql.host>localhost</sql.host>
                 <sql.db>pgadmissions_sit</sql.db>
+                <sql.userid>pgadmissions</sql.userid>
+                <sql.password>pgadmissions</sql.password>
             </properties>
             <build>
                 <plugins>
@@ -603,8 +607,11 @@
         <profile>
             <id>uat</id>
             <properties>
-                <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions_uat</sql.db>
+                <sql.host>prism-uat.cd4p8rv23vn5.eu-west-1.rds.amazonaws.com</sql.host>
+                <sql.db>prism</sql.db>
+                <sql.userid>prism</sql.userid>
+                <sql.password>pgadmissions</sql.password>
+                <wildfly.management.port>9990</wildfly.management.port>
             </properties>
             <build>
                 <plugins>
@@ -632,10 +639,12 @@
         </profile>
 
         <profile>
-            <id>ucl-prod</id>
+            <id>prod</id>
             <properties>
                 <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions</sql.db>
+                <sql.db>prism</sql.db>
+                <sql.userid>prism</sql.userid>
+                <sql.password>pgadmissions</sql.password>
                 <wildfly.management.port>9992</wildfly.management.port>
             </properties>
             <build>
@@ -652,7 +661,7 @@
                                     <tasks>
                                         <delete
                                                 file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.ucl.prod.properties"
+                                        <copy file="src/environments/environment.prod.properties"
                                               tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>

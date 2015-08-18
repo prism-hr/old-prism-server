@@ -204,19 +204,19 @@ alter table resource_state_transition_summary
 	add foreign key (department_id) references department (id)
 ;
 
-alter table system	
+alter table system
 	drop foreign key system_ibfk_3,
 	drop index institution_partner_id,
 	drop column institution_partner_id
 ;
 
-alter table institution	
+alter table institution
 	drop foreign key institution_ibfk_12,
 	drop index institution_partner_id,
 	drop column institution_partner_id
 ;
 
-alter table program	
+alter table program
 	drop foreign key program_ibfk_11,
 	drop index institution_partner_id,
 	drop column institution_partner_id
@@ -338,7 +338,7 @@ alter table comment
 ;
 
 update comment
-set application_export_succeeded = 
+set application_export_succeeded =
 	if((action_id = "APPLICATION_EXPORT" and application_export_reference is not null), 1, 0)
 where action_id = "APPLICATION_EXPORT"
 ;
@@ -365,7 +365,7 @@ create table imported_advert_domicile_mapping (
 	index (institution_id, enabled),
 	index (institution_id, imported_advert_domicile_id, imported_timestamp),
 	foreign key (institution_id) references institution (id),
-	foreign key (imported_advert_domicile_id) references imported_advert_domicile (id)) 
+	foreign key (imported_advert_domicile_id) references imported_advert_domicile (id))
 collate = utf8_general_ci
 engine = innodb
 ;
@@ -424,6 +424,37 @@ alter table department
 ;
 
 update comment_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED")
+;
+
+update comment_transition_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED")
+;
+
+update resource_previous_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED")
+;
+
+update resource_state
+set state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED")
+;
+
+update project
+set previous_state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED"),
+	state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED")
+;
+
+update program
+set previous_state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED"),
+	state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED")
+;
+
+update comment
+set state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED"),
+	transition_state_id = replace(state_id, "APPROVAL_PARTNER_INSTITUTION", "APPROVED")
+;
+
+update comment_state
 set state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
 ;
 
@@ -454,14 +485,14 @@ set state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED"),
 	transition_state_id = replace(state_id, "APPROVAL_PARTNER", "APPROVED")
 ;
 
-delete 
+delete
 from role_transition
 where state_transition_id in (
 	select id
 	from state_transition
 	where transition_state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER"))
 	or state_transition_id in (
-		select id 
+		select id
 		from state_transition
 		where state_action_id in (
 			select id
@@ -469,13 +500,13 @@ where state_transition_id in (
 			where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")))
 ;
 
-delete 
+delete
 from state_transition
 where transition_state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")
 ;
 
 
-delete 
+delete
 from state_transition
 where state_action_id in (
 	select id
@@ -483,7 +514,7 @@ where state_action_id in (
 	where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER"))
 ;
 
-delete 
+delete
 from state_action_notification
 where state_action_id in (
 	select id
@@ -492,7 +523,7 @@ where state_action_id in (
 ;
 
 
-delete 
+delete
 from state_action_assignment
 where state_action_id in (
 	select id
@@ -505,7 +536,7 @@ from state_action
 where state_id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")
 ;
 
-delete 
+delete
 from state
 where id in ("PROGRAM_APPROVAL_PARTNER", "PROJECT_APPROVAL_PARTNER")
 ;
@@ -541,14 +572,14 @@ set state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVE
 	transition_state_id = replace(state_id, "APPROVAL_PARTNER_PENDING_CORRECTION", "APPROVED")
 ;
 
-delete 
+delete
 from role_transition
 where state_transition_id in (
 	select id
 	from state_transition
 	where transition_state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION"))
 	or state_transition_id in (
-		select id 
+		select id
 		from state_transition
 		where state_action_id in (
 			select id
@@ -556,13 +587,13 @@ where state_transition_id in (
 			where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")))
 ;
 
-delete 
+delete
 from state_transition
 where transition_state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")
 ;
 
 
-delete 
+delete
 from state_transition
 where state_action_id in (
 	select id
@@ -570,7 +601,7 @@ where state_action_id in (
 	where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION"))
 ;
 
-delete 
+delete
 from state_action_notification
 where state_action_id in (
 	select id
@@ -579,7 +610,7 @@ where state_action_id in (
 ;
 
 
-delete 
+delete
 from state_action_assignment
 where state_action_id in (
 	select id
@@ -592,7 +623,7 @@ from state_action
 where state_id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")
 ;
 
-delete 
+delete
 from state
 where id in ("PROGRAM_APPROVAL_PARTNER_PENDING_CORRECTION", "PROJECT_APPROVAL_PARTNER_PENDING_CORRECTION")
 ;

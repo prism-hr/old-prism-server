@@ -22,7 +22,7 @@
     </bean>
 
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="${data.source}"/>
+        <property name="jndiName" value="java:jboss/datasources/prism"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

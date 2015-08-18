@@ -233,7 +233,7 @@ public class ImportedEntityService {
                 }
             }
 
-            entityService.executeBulkInsert(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
+            entityService.executeBulkInsertUpdate(prismImportedEntity.getMappingInsertTable(), prismImportedEntity.getMappingInsertColumns(),
                     prepareRowsForSqlInsert(rows), prismImportedEntity.getMappingInsertOnDuplicateKeyUpdate());
         }
     }
@@ -574,7 +574,7 @@ public class ImportedEntityService {
             ImportedEntityExtractor<T> extractor = (ImportedEntityExtractor<T>) applicationContext.getBean(prismImportedEntity.getImportInsertExtractor());
             List<String> rows = extractor.extract(prismImportedEntity, definitionBatch, enable);
             if (!rows.isEmpty()) {
-                entityService.executeBulkInsert(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
+                entityService.executeBulkInsertUpdate(prismImportedEntity.getImportInsertTable(), prismImportedEntity.getImportInsertColumns(),
                         prepareRowsForSqlInsert(rows), prismImportedEntity.getImportInsertOnDuplicateKeyUpdate());
             }
         }

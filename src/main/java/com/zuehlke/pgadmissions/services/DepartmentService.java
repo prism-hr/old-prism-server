@@ -52,18 +52,21 @@ public class DepartmentService {
     public void synchronizeImportedSubjectAreas(Department department) {
         departmentDAO.deleteDepartmentImportedSubjectAreas(department);
 
-        List<String> rows = Lists.newArrayList();
-        for (DepartmentImportedSubjectAreaDTO subjectAreaDTO : departmentDAO.getImportedSubjectAreas(department)) {
-            List<String> columns = Lists.newLinkedList();
-            columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getDepartment()));
-            columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getSubjectArea()));
-            columns.add(prepareDecimalForSqlInsert(subjectAreaDTO.getProgramRelationStrength().multiply(
-                    subjectAreaDTO.getInstitutionRelationStrength()).setScale(RATING_PRECISION, HALF_UP)));
-            rows.add(prepareColumnsForSqlInsert(columns));
-        }
+        List<DepartmentImportedSubjectAreaDTO> subjectAreas = departmentDAO.getImportedSubjectAreas(department);
+        if (!subjectAreas.isEmpty()) {
+            List<String> rows = Lists.newArrayList();
+            for (DepartmentImportedSubjectAreaDTO subjectAreaDTO : departmentDAO.getImportedSubjectAreas(department)) {
+                List<String> columns = Lists.newLinkedList();
+                columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getDepartment()));
+                columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getSubjectArea()));
+                columns.add(prepareDecimalForSqlInsert(subjectAreaDTO.getProgramRelationStrength().multiply(
+                        subjectAreaDTO.getInstitutionRelationStrength()).setScale(RATING_PRECISION, HALF_UP)));
+                rows.add(prepareColumnsForSqlInsert(columns));
+            }
 
-        entityService.executeBulkInsert("department_imported_subject_area", "department_id, imported_subject_area_id, relation_strength",
-                prepareRowsForSqlInsert(rows));
+            entityService.executeBulkInsert("department_imported_subject_area", "department_id, imported_subject_area_id, relation_strength",
+                    prepareRowsForSqlInsert(rows));
+        }
     }
 
 }

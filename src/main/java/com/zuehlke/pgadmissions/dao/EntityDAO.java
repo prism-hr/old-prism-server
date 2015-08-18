@@ -125,12 +125,11 @@ public class EntityDAO {
     public void executeBulkInsert(String table, String columns, String inserts) {
         sessionFactory.getCurrentSession().createSQLQuery(
                 "insert into " + table + " (" + columns + ") "
-                        + "values " + inserts + " "
-                        + "on duplicate key update")
+                        + "values " + inserts)
                 .executeUpdate();
     }
 
-    public void executeBulkInsert(String table, String columns, String inserts, String updates) {
+    public void executeBulkInsertUpdate(String table, String columns, String inserts, String updates) {
         sessionFactory.getCurrentSession().createSQLQuery(
                 "insert into " + table + " (" + columns + ") "
                         + "values " + inserts + " "

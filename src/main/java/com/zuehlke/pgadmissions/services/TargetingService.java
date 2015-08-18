@@ -74,7 +74,7 @@ public class TargetingService {
         if (inserts != null) {
             logger.info("Indexing imported program: " + importedProgramId.toString() + //
                     "-" + program.getInstitution().getName() + "-" + program.getName());
-            executeBulkMerge("imported_program_subject_area", //
+            executeBulkInsertUpdate("imported_program_subject_area", //
                     "imported_program_id, imported_subject_area_id, match_type, relation_strength", //
                     inserts, IMPORTED_ENTITY_RELATION_UPDATE);
         }
@@ -89,7 +89,7 @@ public class TargetingService {
         if (inserts != null) {
             logger.info("Indexing imported institution: " + importedInstitutionId.toString() + //
                     "-" + institution.getName() + " with parameters (" + parameterSet.toString() + ")");
-            executeBulkMerge("imported_institution_subject_area", //
+            executeBulkInsertUpdate("imported_institution_subject_area", //
                     "imported_institution_id, imported_subject_area_id, concentration_factor, proliferation_factor, relation_strength, enabled", //
                     inserts, IMPORTED_ENTITY_RELATION_UPDATE);
         }
@@ -296,8 +296,8 @@ public class TargetingService {
         return getTokenRequiredConfidence(tokenCount, (threshold * THRESHOLD_TOKEN));
     }
 
-    private synchronized void executeBulkMerge(String table, String columns, String inserts, String updates) {
-        entityService.executeBulkInsert(table, columns, inserts, updates);
+    private synchronized void executeBulkInsertUpdate(String table, String columns, String inserts, String updates) {
+        entityService.executeBulkInsertUpdate(table, columns, inserts, updates);
     }
 
     private synchronized void setNewInstitutionSubjectAreaScore(ImportedSubjectArea subjectArea, Collection<Integer> subjectAreaFamily,

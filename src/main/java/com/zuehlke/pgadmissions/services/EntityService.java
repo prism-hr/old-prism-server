@@ -103,8 +103,8 @@ public class EntityService {
         flush();
     }
 
-    public void executeBulkInsert(String table, String columns, String inserts, String updates) {
-        entityDAO.executeBulkInsert(table, columns, inserts, updates);
+    public void executeBulkInsertUpdate(String table, String columns, String inserts, String updates) {
+        entityDAO.executeBulkInsertUpdate(table, columns, inserts, updates);
         flush();
     }
 

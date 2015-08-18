@@ -411,23 +411,25 @@ public class ResourceService {
                 parentScopeIds, null, null, null);
     }
 
-    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-            ResourceListFilterDTO filter) throws Exception {
+    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter) {
         return applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, scopeId,
                 parentScopeIds, filter, null, null);
     }
 
-    public List<Integer> getAssignedResources(final User user, final PrismScope scopeId,
-            final ResourceListFilterDTO filter, final String lastSequenceIdentifier, final Integer recordsToRetrieve,
-            final Junction condition) {
-        return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier,
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve,
+            Junction condition) {
+        return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
+    }
+
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve,
+            Junction condition, PrismScope parentScopeId) {
+        return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier,
                 recordsToRetrieve);
     }
 
-    public List<Integer> getAssignedResources(final User user, final PrismScope scopeId,
-            final ResourceListFilterDTO filter, final String lastSequenceIdentifier, final Integer recordsToRetrieve,
-            final Junction condition, final PrismScope parentScopeId) {
-        return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier,
+    public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve,
+            Junction condition, PrismScope partnerScopeId) {
+        return resourceDAO.getAssignedPartnerResources(user, scopeId, partnerScopeId, filter, condition, lastSequenceIdentifier,
                 recordsToRetrieve);
     }
 
@@ -746,7 +748,7 @@ public class ResourceService {
             Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
             resourceDAO.getResourceTargets(advert, institutionScopes, null, activeInstitutionStates, subjectAreasLookup).forEach(target -> {
                 setTargetDistance(advert, target);
-                targets.put(target, target); 
+                targets.put(target, target);
             });
         }
 

@@ -753,11 +753,11 @@ public class ResourceService {
             });
         }
 
-        if (institutions != null) {
+        if (CollectionUtils.isNotEmpty(institutions)) {
             appendTargetResources(institutionService.getInstitutions(currentAdvert, institutions, activeInstitutionStates), targets, indexedTargets);
         }
 
-        boolean departmentsNull = departments == null;
+        boolean departmentsNull = CollectionUtils.isEmpty(departments);
         if (!departmentsNull) {
             List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, activeInstitutionStates);
             appendTargetResources(institutionService.getInstitutions(currentAdvert, departmentInstitutions, activeInstitutionStates), targets, indexedTargets);
@@ -775,12 +775,6 @@ public class ResourceService {
             if (target.getTargetingDistance() == null) {
                 orphanedTargets.put(target.getScope(), target.getId());
             }
-        });
-
-        orphanedTargets.keySet().forEach(resourceScope -> {
-            resourceDAO.getResourceDistances(currentAdvert, resourceScope, orphanedTargets.get(resourceScope)).forEach(target -> {
-                indexedTargets.get(target).setTargetingDistance(target.getTargetingDistance());
-            });
         });
 
         return targets;

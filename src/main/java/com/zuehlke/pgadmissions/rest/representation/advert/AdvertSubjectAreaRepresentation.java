@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-public class AdvertTargetRepresentation {
+public class AdvertSubjectAreaRepresentation {
 
     private Integer id;
 
@@ -22,12 +22,12 @@ public class AdvertTargetRepresentation {
         this.name = name;
     }
 
-    public AdvertTargetRepresentation withId(Integer id) {
+    public AdvertSubjectAreaRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public AdvertTargetRepresentation withName(String name) {
+    public AdvertSubjectAreaRepresentation withName(String name) {
         this.name = name;
         return this;
     }

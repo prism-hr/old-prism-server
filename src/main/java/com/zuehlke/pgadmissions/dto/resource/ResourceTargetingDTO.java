@@ -159,10 +159,15 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
         setId(scope, id);
         return this;
     }
-
+    
     @Override
     public ResourceTargetingDTO getParentResource() {
         return super.getParentResource(ResourceTargetingDTO.class);
+    }
+    
+    @Override
+    public ResourceTargetingDTO getEnclosingResource(PrismScope scope) {
+        return super.getEnclosingResource(scope, ResourceTargetingDTO.class);
     }
 
     @Override

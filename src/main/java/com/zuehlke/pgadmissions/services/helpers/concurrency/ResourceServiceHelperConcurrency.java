@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.helpers.concurrency;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.concludeThreads;
 import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.dispatchThread;
 
@@ -33,12 +35,17 @@ public class ResourceServiceHelperConcurrency {
             final ResourceListFilterDTO filter, final String lastSequenceIdentifier, final Integer recordsToRetrieve) {
         final Set<Integer> assigned = Sets.newHashSet();
         final Junction condition = resourceService.getFilterConditions(scopeId, filter);
-        final List<Thread> workers = Lists.newArrayListWithCapacity(6);
+        final List<Thread> workers = Lists.newArrayListWithCapacity(8);
 
         dispatchThread(workers, () -> assigned.addAll(resourceService.getAssignedResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition)));
 
         for (final PrismScope parentScopeId : parentScopeIds) {
-            dispatchThread(workers, () -> assigned.addAll(resourceService.getAssignedResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition, parentScopeId)));
+            dispatchThread(workers,
+                    () -> assigned.addAll(resourceService.getAssignedResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition, parentScopeId)));
+            if (Lists.newArrayList(DEPARTMENT, INSTITUTION).contains(parentScopeId)) {
+                dispatchThread(workers, () -> assigned
+                        .addAll(resourceService.getAssignedPartnerResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition, parentScopeId)));
+            }
         }
 
         try {

@@ -17,12 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.dto.DepartmentImportedSubjectAreaDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 
 @Service
@@ -67,10 +64,6 @@ public class DepartmentService {
 
         entityService.executeBulkInsert("department_imported_subject_area", "department_id, imported_subject_area_id, relation_strength",
                 prepareRowsForSqlInsert(rows));
-    }
-    
-    public List<ResourceTargetingDTO> getDepartments(Advert advert, List<Integer> departments, List<PrismState> activeStates) {
-        return departmentDAO.getDepartments(advert, departments, activeStates);
     }
 
 }

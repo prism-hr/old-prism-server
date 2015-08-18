@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -28,9 +29,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -534,57 +532,77 @@ public class ResourceDAO {
                 .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
 
-    public List<ResourceTargetingDTO> getResourceTargetsBySubjectArea(Advert advert, Collection<Integer> subjectAreas, List<PrismState> activeStates) {
-        return (List<ResourceTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
-                "select institution.id as institutionId, institution.name as institutionName, institution.logo_image_id as institutionLogoImageId," +
-                        " imported_advert_domicile.name as addressDomicileName, advert_address.address_line_1 as addressLine1," +
-                        " advert_address.address_line_2 as addressLine2, advert_address.address_town as addressTown," +
-                        " advert_address.address_region as addressRegion, advert_address.address_code as addressCode," +
-                        " advert_address.google_id as addressGoogleId, advert_address.location_x as addressCoordinateLatitude," +
-                        " advert_address.location_y as addressCoordinateLongitude," +
-                        " sum(imported_institution_subject_area.relation_strength) as targetingRelevance," +
-                        " haversine_distance(:baseLatitude, :baseLongitude, advert_address.location_x, advert_address.location_y) as targetingDistance" +
-                        " from institution " +
-                        " inner join resource_state " +
-                        " on institution.id = resource_state.institution_id " +
-                        " inner join imported_institution" +
-                        " on institution.imported_institution_id = imported_institution.id" +
-                        " inner join imported_institution_subject_area" +
-                        " on imported_institution_subject_area.imported_institution_id = imported_institution.id" +
-                        " inner join advert" +
-                        " on institution.advert_id = advert.id" +
-                        " inner join advert_address" +
-                        " on advert.advert_address_id = advert_address.id" +
-                        " inner join imported_advert_domicile" +
-                        " on advert_address.imported_advert_domicile_id = imported_advert_domicile.id" +
-                        " where resource_state.state_id in (:activeStates)" +
-                        " and advert_address.imported_advert_domicile_id = :addressDomicile" +
-                        " and advert_address.location_x is not null" +
-                        " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
-                        " and imported_institution_subject_area.enabled is true " +
-                        " and institution.id <> :currentResourceId" +
-                        " group by institutionId" +
-                        " order by targetingRelevance desc, institutionName asc, institutionId asc")
-                .addScalar("institutionId", IntegerType.INSTANCE)
-                .addScalar("institutionName", StringType.INSTANCE)
-                .addScalar("institutionLogoImageId", IntegerType.INSTANCE)
-                .addScalar("addressLine1", StringType.INSTANCE)
-                .addScalar("addressLine2", StringType.INSTANCE)
-                .addScalar("addressTown", StringType.INSTANCE)
-                .addScalar("addressRegion", StringType.INSTANCE)
-                .addScalar("addressCode", StringType.INSTANCE)
-                .addScalar("addressDomicileName", StringType.INSTANCE)
-                .addScalar("addressCoordinateLatitude", BigDecimalType.INSTANCE)
-                .addScalar("addressCoordinateLongitude", BigDecimalType.INSTANCE)
-                .addScalar("targetingRelevance", BigDecimalType.INSTANCE)
-                .addScalar("targetingDistance", BigDecimalType.INSTANCE)
-                .setParameter("addressDomicile", advert.getAddress().getDomicile().getId())
-                .setParameter("baseLatitude", advert.getAddress().getCoordinates().getLatitude())
-                .setParameter("baseLongitude", advert.getAddress().getCoordinates().getLongitude())
-                .setParameter("advertResourceId", advert.getResource().getId())
-                .setParameterList("activeStates", activeStates.stream().map(activeState -> activeState.name()).collect(Collectors.toList()))
-                .setParameterList("subjectAreas", subjectAreas)
-                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
+    public List<ResourceTargetingDTO> getResourceTargets(Advert advert, PrismScope[] resourceScopes, Collection<Integer> resourceIds, Collection<PrismState> activeStates,
+            Collection<Integer> subjectAreas) {
+        ProjectionList projectionList = Projections.projectionList();
+
+        PrismScope resourceScope = null;
+        int resourceScopesLength = resourceScopes.length;
+        for (int i = 0; i < resourceScopesLength; i++) {
+            PrismScope currentScope = resourceScopes[i];
+            String currentScopeReference = currentScope.getLowerCamelName();
+            if (i == 0) {
+                resourceScope = currentScope;
+                addResourceProjections(projectionList, currentScope, "");
+            } else {
+                addResourceProjections(projectionList, currentScope, currentScopeReference);
+            }
+        }
+
+        projectionList.add(Projections.property("domicile.name"), "addressDomicileName") //
+                .add(Projections.property("address.addressLine1"), "addressLine1") //
+                .add(Projections.property("address.addressLine2"), "addressLine2") //
+                .add(Projections.property("address.addressTown"), "addressTown") //
+                .add(Projections.property("address.addressRegion"), "addressRegion") //
+                .add(Projections.property("address.addressCode"), "addressCode") //
+                .add(Projections.property("address.googleId"), "addressGoogleId") //
+                .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
+                .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude") //
+                .add(Projections.property("advertSelectedResource.id"), "selectedId") //
+                .add(Projections.property("advertSelectedResource.endorsed"), "endorsed");
+
+        boolean doSubjectAreaFilter = CollectionUtils.isNotEmpty(subjectAreas);
+        if (doSubjectAreaFilter) {
+            projectionList.add(Projections.sum("institutionSubjectArea.relationStrength").as("targetingRelevance"));
+        }
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass())
+                .setProjection(projectionList);
+
+        for (int i = 1; i < resourceScopesLength; i++) {
+            String joinScopeReference = resourceScopes[i].getLowerCamelName();
+            criteria.createAlias(joinScopeReference, joinScopeReference, JoinType.INNER_JOIN);
+        }
+
+        String importedInstitutionJoinPath = resourceScope.equals(INSTITUTION) ? "importedInstitution" : "institution.importedInstitution";
+
+        criteria.createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
+                .createAlias("advertSelectedResources", "advertSelectedResource", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("advertSelectedResource.advert", advert))
+                .createAlias("resourceStates", "resourceState") //
+                .createAlias(importedInstitutionJoinPath, "importedInstitution", JoinType.INNER_JOIN,
+                        Restrictions.isNotNull("importedInstitution.ucasId"));
+
+        if (doSubjectAreaFilter) {
+            criteria.createAlias("institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN) //
+                    .add(Restrictions.in("instituitionSubjectArea.id", subjectAreas));
+        }
+
+        if (!CollectionUtils.isEmpty(resourceIds)) {
+            criteria.add(Restrictions.in("id", resourceIds));
+        }
+
+        criteria.add(Restrictions.in("resourceState.state.id", activeStates));
+
+        if (doSubjectAreaFilter) {
+            criteria.addOrder(Order.desc("targetingRelevance"));
+        }
+
+        return (List<ResourceTargetingDTO>) criteria.addOrder(Order.asc("name")) //
+                .addOrder(Order.asc("id")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class)) //
                 .list();
     }
 

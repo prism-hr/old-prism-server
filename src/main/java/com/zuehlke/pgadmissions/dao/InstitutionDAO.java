@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +9,9 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -26,7 +23,6 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -86,10 +82,6 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceTargetingDTO> getInstitutions(Advert advert, Collection<Integer> institutions, List<PrismState> activeStates) {
-        return getInstitutions(advert, activeStates, Restrictions.in("id", institutions));
-    }
-
     public List<ResourceTargetingDTO> getInstitutions(List<PrismState> activeStates, String searchTerm, String[] googleIds) {
         Disjunction searchCriterion = Restrictions.disjunction();
 
@@ -100,7 +92,32 @@ public class InstitutionDAO {
             searchCriterion.add(Restrictions.in("googleId", googleIds));
         }
 
-        return getInstitutions(null, activeStates, searchCriterion);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Institution.class)
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id"), "institutionId") //
+                        .add(Projections.property("name"), "institutionName") //
+                        .add(Projections.property("logoImage.id"), "institutionLogoImageId") //
+                        .add(Projections.property("domicile.name"), "addressDomicileName") //
+                        .add(Projections.property("address.addressLine1"), "addressLine1") //
+                        .add(Projections.property("address.addressLine2"), "addressLine2") //
+                        .add(Projections.property("address.addressTown"), "addressTown") //
+                        .add(Projections.property("address.addressRegion"), "addressRegion") //
+                        .add(Projections.property("address.addressCode"), "addressCode") //
+                        .add(Projections.property("address.googleId"), "addressGoogleId") //
+                        .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
+                        .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN);
+
+        if (activeStates != null) {
+            criteria.createAlias("resourceStates", "resourceState") //
+                    .add(Restrictions.in("resourceState.state.id", activeStates));
+        }
+
+        return (List<ResourceTargetingDTO>) criteria.add(searchCriterion)
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
+                .list();
     }
 
     public List<Integer> getInstitutionsByDepartments(List<Integer> departments, List<PrismState> activeStates) {
@@ -110,49 +127,6 @@ public class InstitutionDAO {
                 .createAlias("departments", "department") //
                 .add(Restrictions.in("resourceState.state.id", activeStates)) //
                 .add(Restrictions.in("department.id", departments)) //
-                .list();
-    }
-
-    private List<ResourceTargetingDTO> getInstitutions(Advert advert, List<PrismState> activeStates, Criterion searchCriterion) {
-        boolean advertNull = advert == null;
-
-        ProjectionList projectionList = Projections.projectionList() //
-                .add(Projections.groupProperty("id"), "institutionId") //
-                .add(Projections.property("name"), "institutionName") //
-                .add(Projections.property("logoImage.id"), "institutionLogoImageId") //
-                .add(Projections.property("domicile.name"), "addressDomicileName") //
-                .add(Projections.property("address.addressLine1"), "addressLine1") //
-                .add(Projections.property("address.addressLine2"), "addressLine2") //
-                .add(Projections.property("address.addressTown"), "addressTown") //
-                .add(Projections.property("address.addressRegion"), "addressRegion") //
-                .add(Projections.property("address.addressCode"), "addressCode") //
-                .add(Projections.property("address.googleId"), "addressGoogleId") //
-                .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
-                .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude");
-
-        if (!advertNull) {
-            projectionList.add(Projections.property("advertSelectedResource.id"), "selectedId") //
-                    .add(Projections.property("advertSelectedResource.endorsed"), "endorsed");
-        }
-
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Institution.class)
-                .setProjection(projectionList) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
-                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN);
-
-        if (!advertNull) {
-            criteria.createAlias("advertSelectedResources", "advertSelectedResource", JoinType.LEFT_OUTER_JOIN, //
-                    Restrictions.eq("advertSelectedResource.advert", advert));
-        }
-
-        if (activeStates != null) {
-            criteria.createAlias("resourceStates", "resourceState") //
-                    .add(Restrictions.in("resourceState.state.id", activeStates));
-        }
-
-        return (List<ResourceTargetingDTO>) criteria.add(searchCriterion)
-                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
                 .list();
     }
 

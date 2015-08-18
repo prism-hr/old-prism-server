@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
@@ -98,10 +96,6 @@ public class InstitutionService {
 
     public Institution getActivatedInstitutionByGoogleId(String googleId) {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
-    }
-
-    public List<ResourceTargetingDTO> getInstitutions(Advert advert, Collection<Integer> institutions, List<PrismState> activeStates) {
-        return institutionDAO.getInstitutions(advert, institutions, activeStates);
     }
 
     public List<ResourceRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {

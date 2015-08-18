@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.D
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEmailCreatorApproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditActive;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditApproved;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -24,7 +24,7 @@ public class PrismDepartmentDisabledCompleted extends PrismWorkflowState {
                         .withTransitionState(DEPARTMENT_APPROVED) //
                         .withTransitionAction(DEPARTMENT_VIEW_EDIT)));
 
-        stateActions.add(departmentViewEditActive()); //
+        stateActions.add(departmentViewEditApproved()); //
     }
 
 }

@@ -13,7 +13,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEscalateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionTerminateUnapproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditActive;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -35,7 +35,7 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
         stateActions.add(institutionEmailCreatorUnnapproved()); //
         stateActions.add(institutionEscalateUnapproved()); //
         stateActions.add(institutionTerminateUnapproved()); //
-        stateActions.add(institutionViewEditActive()); //
+        stateActions.add(institutionViewEditApproval(state)); //
         stateActions.add(institutionWithdraw());
     }
 

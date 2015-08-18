@@ -1,25 +1,31 @@
 package com.zuehlke.pgadmissions.utils;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.EARTH_RADIUS_MILES;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 
 import java.math.BigDecimal;
 
 public class PrismGeocodingUtils {
 
-    public static BigDecimal getHaversineDistance(BigDecimal baseLatitude, BigDecimal baseLongitude, BigDecimal targetLatitude, BigDecimal targetLongitude) {
-        if (!(baseLatitude == null || baseLongitude == null || targetLatitude == null || targetLongitude == null)) {
-            double baseLatitudeDouble = baseLatitude.doubleValue();
-            double baseLongitudeDouble = baseLongitude.doubleValue();
+    public static BigDecimal getHaversineDistance(BigDecimal bLat, BigDecimal bLon, BigDecimal tLat, BigDecimal tLon) {
+        if (!(bLat == null || bLon == null || tLat == null || tLon == null)) {
+            double lat1 = bLat.doubleValue();
+            double lon1 = bLon.doubleValue();
 
-            double targetLatitudeDouble = targetLatitude.doubleValue();
-            double targetLongitudeDouble = targetLongitude.doubleValue();
+            double lat2 = tLat.doubleValue();
+            double lon2 = tLon.doubleValue();
 
-            Double distance = (3959 * Math.acos(Math.cos(Math.toRadians(baseLatitudeDouble)) //
-                    * Math.cos(Math.toRadians(targetLatitudeDouble)) //
-                    * Math.cos((Math.toRadians(targetLongitudeDouble) - Math.toRadians(baseLongitudeDouble))) + (Math.sin(Math.toRadians(baseLatitudeDouble))
-                            * Math.sin(Math.toRadians(baseLongitudeDouble)))));
+            double dLat = Math.toRadians(lat2 - lat1);
+            double dLon = Math.toRadians(lon2 - lon1);
+            lat1 = Math.toRadians(lat1);
+            lat2 = Math.toRadians(lat2);
 
-            return PrismConversionUtils.doubleToBigDecimal(distance, TARGETING_PRECISION);
+            double a = Math.pow(Math.sin(dLat / 2), 2)
+                    + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
+            double c = 2 * Math.asin(Math.sqrt(a));
+            return doubleToBigDecimal(EARTH_RADIUS_MILES * c, TARGETING_PRECISION);
+
         }
         return null;
     }

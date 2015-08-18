@@ -184,6 +184,7 @@ public class ApplicationDAO {
                         .add(Projections.property("id"), "id") //
                         .add(Projections.property("code"), "code") //
                         .add(Projections.property("state.id"), "stateId"))
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("institution", application.getInstitution())) //
                 .add(Restrictions.eq("user", application.getUser())) //

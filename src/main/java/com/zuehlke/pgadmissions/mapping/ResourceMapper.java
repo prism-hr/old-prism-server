@@ -272,7 +272,7 @@ public class ResourceMapper {
     }
 
     public List<ResourceRepresentationTargeting> getResourceTargetingRepresentations(Advert currentAdvert, List<Integer> subjectAreas, List<Integer> institutions,
-                                                                                     List<Integer> departments) {
+            List<Integer> departments) {
         return resourceService.getTargetedResources(currentAdvert, subjectAreas, institutions, departments).stream().map(this::getResourceRepresentationTargeting)
                 .collect(Collectors.toList());
     }
@@ -319,7 +319,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceSimpleDTO, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO,
-                                                                                                                   Class<V> returnType) {
+            Class<V> returnType) {
         V representation = getResourceRepresentation(resourceScope, resourceDTO, returnType);
         representation.setCode(resourceDTO.getCode());
         representation.setImportedCode(resourceDTO.getImportedCode());
@@ -717,7 +717,7 @@ public class ResourceMapper {
     }
 
     private <T extends ResourceIdentityDTO, V extends ResourceRepresentationIdentity> V getResourceRepresentation(PrismScope resourceScope, T resourceDTO,
-                                                                                                                  Class<V> returnType) {
+            Class<V> returnType) {
         V representation = BeanUtils.instantiate(returnType);
 
         representation.setScope(resourceScope);

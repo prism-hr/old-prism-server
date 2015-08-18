@@ -17,6 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_WITHDRAWN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_VIEW_EDIT_TRANSITION;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
@@ -53,7 +54,17 @@ public class PrismDepartmentWorkflow {
                         .withTransitionAction(DEPARTMENT_TERMINATE));
     }
 
-    public static PrismStateAction departmentViewEditActive() {
+    public static PrismStateAction departmentViewEditApproval(PrismState state) {
+        return departmentViewEditAbstract()
+                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(state)
+                        .withTransitionAction(DEPARTMENT_VIEW_EDIT)
+                        .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
+    }
+
+    public static PrismStateAction departmentViewEditApproved() {
         return departmentViewEditAbstract() //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //

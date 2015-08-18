@@ -18,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_VIEW_EDIT_TRANSITION;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
@@ -53,7 +54,17 @@ public class PrismProgramWorkflow {
                         .withTransitionAction(PROGRAM_TERMINATE));
     }
 
-    public static PrismStateAction programViewEditActive() {
+    public static PrismStateAction programViewEditApproval(PrismState state) {
+        return programViewEditAbstract()
+                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(state)
+                        .withTransitionAction(PROGRAM_VIEW_EDIT)
+                        .withRoleTransitions(PROGRAM_MANAGE_USERS_GROUP));
+    }
+
+    public static PrismStateAction programViewEditApproved() {
         return programViewEditAbstract() //
                 .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //

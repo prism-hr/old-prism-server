@@ -18,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_VIEW_EDIT_TRANSITION;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
@@ -53,14 +54,24 @@ public class PrismProjectWorkflow {
                         .withTransitionAction(PROJECT_TERMINATE));
     }
 
-    public static PrismStateAction projectViewEditActive() {
+    public static PrismStateAction projectViewEditApproval(PrismState state) {
+        return projectViewEditAbstract()
+                .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(state)
+                        .withTransitionAction(PROJECT_VIEW_EDIT)
+                        .withRoleTransitions(PROJECT_MANAGE_USERS_GROUP));
+    }
+
+    public static PrismStateAction projectViewEditApproved() {
         return projectViewEditAbstract()
                 .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
                 .withTransitions(PROJECT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROJECT_MANAGE_USERS_GROUP));
     }
-    
+
     public static PrismStateAction projectViewEditInactive() {
         return projectViewEditAbstract()
                 .withActionEnhancement(PROJECT_VIEW_AS_USER) //

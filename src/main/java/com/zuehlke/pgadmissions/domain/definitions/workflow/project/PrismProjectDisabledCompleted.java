@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreatorApproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditActive;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditApproved;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -24,7 +24,7 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
                         .withTransitionState(PROJECT_APPROVED) //
                         .withTransitionAction(PROJECT_VIEW_EDIT)));
 
-        stateActions.add(projectViewEditActive());
+        stateActions.add(projectViewEditApproved());
     }
 
 }

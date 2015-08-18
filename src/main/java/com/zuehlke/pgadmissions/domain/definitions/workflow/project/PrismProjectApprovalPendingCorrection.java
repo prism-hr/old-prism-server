@@ -10,7 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.Prism
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateUnapproved;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditActive;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -36,7 +36,7 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
         stateActions.add(projectEmailCreatorUnnapproved()); //
         stateActions.add(projectEscalateUnapproved());
         stateActions.add(projectTerminateUnapproved());
-        stateActions.add(projectViewEditActive());
+        stateActions.add(projectViewEditApproval(state));
         stateActions.add(projectWithdraw());
     }
 

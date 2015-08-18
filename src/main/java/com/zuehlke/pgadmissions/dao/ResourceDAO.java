@@ -533,8 +533,37 @@ public class ResourceDAO {
                         + "where program = :resourceOpportunity)")
                 .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
-    
-    public List<ResourceTargetingDTO> getResourceTargets(Advert currentAdvert, Collection<Integer> subjectAreas, List<PrismState> activeStates) {
+
+    public List<ResourceTargetingDTO> getResourceDistances(Advert advert, PrismScope resourceScope, Collection<Integer> resourceIds) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        return (List<ResourceTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
+                "select " + resourceReference + ".id as " + resourceReference + "Id," +
+                        " haversine_distance(:baseLatitude, :baseLongitude, advert_address.location_x, advert_address.location_y) as targetingDistance" +
+                        " from " + resourceReference +
+                        " inner join advert" +
+                        " on " + resourceReference + ".advert_id = advert.id" +
+                        " inner join advert_address" +
+                        " on advert.advert_address_id = advert_address.id" +
+                        " inner join imported_advert_domicile" +
+                        " on advert_address.imported_advert_domicile_id = imported_advert_domicile.id" +
+                        " where " + resourceReference + "Id in (:resourceIds)" +
+                        " and advert_address.imported_advert_domicile_id = :addressDomicile" +
+                        " and advert_address.location_x is not null" +
+                        " and " + resourceReference + ".id <> :currentResourceId" +
+                        " group by " + resourceReference + "Id" +
+                        " order by " + resourceReference + "Id asc")
+                .addScalar(resourceReference + "Id", IntegerType.INSTANCE)
+                .addScalar("targetingDistance", BigDecimalType.INSTANCE)
+                .setParameterList("resourceIds", resourceIds)
+                .setParameter("addressDomicile", advert.getAddress().getDomicile().getId())
+                .setParameter("baseLatitude", advert.getAddress().getCoordinates().getLatitude())
+                .setParameter("baseLongitude", advert.getAddress().getCoordinates().getLongitude())
+                .setParameter("advertResourceId", advert.getResource().getId())
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
+                .list();
+    }
+
+    public List<ResourceTargetingDTO> getResourceTargetsBySubjectArea(Advert advert, Collection<Integer> subjectAreas, List<PrismState> activeStates) {
         return (List<ResourceTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
                 "select institution.id as institutionId, institution.name as institutionName, institution.logo_image_id as institutionLogoImageId," +
                         " imported_advert_domicile.name as addressDomicileName, advert_address.address_line_1 as addressLine1," +
@@ -562,7 +591,7 @@ public class ResourceDAO {
                         " and advert_address.location_x is not null" +
                         " and imported_institution_subject_area.imported_subject_area_id in (:subjectAreas)" +
                         " and imported_institution_subject_area.enabled is true " +
-                        " and institution.id <> :currentInstitutionId" +
+                        " and institution.id <> :currentResourceId" +
                         " group by institutionId" +
                         " order by targetingRelevance desc, institutionName asc, institutionId asc")
                 .addScalar("institutionId", IntegerType.INSTANCE)
@@ -578,10 +607,10 @@ public class ResourceDAO {
                 .addScalar("addressCoordinateLongitude", BigDecimalType.INSTANCE)
                 .addScalar("targetingRelevance", BigDecimalType.INSTANCE)
                 .addScalar("targetingDistance", BigDecimalType.INSTANCE)
-                .setParameter("addressDomicile", currentAdvert.getAddress().getDomicile().getId())
-                .setParameter("baseLatitude", currentAdvert.getAddress().getCoordinates().getLatitude())
-                .setParameter("baseLongitude", currentAdvert.getAddress().getCoordinates().getLongitude())
-                .setParameter("currentInstitutionId", currentAdvert.getInstitution().getId())
+                .setParameter("addressDomicile", advert.getAddress().getDomicile().getId())
+                .setParameter("baseLatitude", advert.getAddress().getCoordinates().getLatitude())
+                .setParameter("baseLongitude", advert.getAddress().getCoordinates().getLongitude())
+                .setParameter("advertResourceId", advert.getResource().getId())
                 .setParameterList("activeStates", activeStates.stream().map(activeState -> activeState.name()).collect(Collectors.toList()))
                 .setParameterList("subjectAreas", subjectAreas)
                 .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
@@ -608,7 +637,7 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceStandardDTO.class)) //
                 .list();
     }
-    
+
     public List<PrismStateGroup> getResourceStateGroups(Resource<?> resource) {
         return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("state.stateGroup.id")) //
@@ -688,7 +717,7 @@ public class ResourceDAO {
 
         return criteria;
     }
-    
+
     private Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates,
             Junction enclosedScopeExclusion) {
         return Restrictions.disjunction() //

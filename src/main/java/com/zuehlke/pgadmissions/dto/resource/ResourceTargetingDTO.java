@@ -29,14 +29,14 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
 
     private BigDecimal addressCoordinateLongitude;
 
-    private BigDecimal targetingRelevance;
-
-    private BigDecimal targetingDistance;
-
-    private Integer advertSelectedResourceId;
+    private Integer selectedId;
 
     private Boolean endorsed;
 
+    private BigDecimal targetingRelevance;
+    
+    private BigDecimal targetingDistance;
+   
     private Set<ResourceTargetingDTO> departments = Sets.newTreeSet();
 
     public String getAddressDomicileName() {
@@ -111,28 +111,12 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
     }
 
-    public BigDecimal getTargetingRelevance() {
-        return targetingRelevance;
+    public Integer getSelectedId() {
+        return selectedId;
     }
 
-    public void setTargetingRelevance(BigDecimal targetingRelevance) {
-        this.targetingRelevance = targetingRelevance;
-    }
-
-    public BigDecimal getTargetingDistance() {
-        return targetingDistance;
-    }
-
-    public void setTargetingDistance(BigDecimal targetingDistance) {
-        this.targetingDistance = targetingDistance;
-    }
-
-    public Integer getAdvertSelectedResourceId() {
-        return advertSelectedResourceId;
-    }
-
-    public void setAdvertSelectedResourceId(Integer advertSelectedResourceId) {
-        this.advertSelectedResourceId = advertSelectedResourceId;
+    public void setSelectedId(Integer selectedId) {
+        this.selectedId = selectedId;
     }
 
     public Boolean getEndorsed() {
@@ -141,6 +125,22 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
 
     public void setEndorsed(Boolean endorsed) {
         this.endorsed = endorsed;
+    }
+    
+    public BigDecimal getTargetingRelevance() {
+        return targetingRelevance;
+    }
+
+    public void setTargetingRelevance(BigDecimal targetingRelevance) {
+        this.targetingRelevance = targetingRelevance;
+    }
+    
+    public BigDecimal getTargetingDistance() {
+        return targetingDistance;
+    }
+
+    public void setTargetingDistance(BigDecimal targetingDistance) {
+        this.targetingDistance = targetingDistance;
     }
 
     public Set<ResourceTargetingDTO> getDepartments() {
@@ -152,7 +152,7 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
     }
 
     public Boolean getSelected() {
-        return advertSelectedResourceId != null;
+        return selectedId != null;
     }
     
     public ResourceTargetingDTO withId(PrismScope scope, Integer id) {

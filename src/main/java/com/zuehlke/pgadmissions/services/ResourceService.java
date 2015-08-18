@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -742,31 +743,47 @@ public class ResourceService {
             subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
         }
 
+        TreeSet<ResourceTargetingDTO> targets = Sets.newTreeSet();
         TreeMap<ResourceTargetingDTO, ResourceTargetingDTO> indexedTargets = Maps.newTreeMap();
         List<PrismState> activeInstitutionStates = stateService.getActiveResourceStates(INSTITUTION);
         if (!subjectAreasLookup.isEmpty()) {
-            resourceDAO.getResourceTargets(currentAdvert, subjectAreasLookup, activeInstitutionStates).forEach(target -> {
+            resourceDAO.getResourceTargetsBySubjectArea(currentAdvert, subjectAreasLookup, activeInstitutionStates).forEach(target -> {
+                targets.add(target);
                 indexedTargets.put(target, target);
             });
         }
 
         if (institutions != null) {
-            appendTargetResources(institutionService.getInstitutions(currentAdvert, institutions, activeInstitutionStates), indexedTargets);
+            appendTargetResources(institutionService.getInstitutions(currentAdvert, institutions, activeInstitutionStates), targets, indexedTargets);
         }
 
         boolean departmentsNull = departments == null;
         if (!departmentsNull) {
             List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, activeInstitutionStates);
-            appendTargetResources(institutionService.getInstitutions(currentAdvert, departmentInstitutions, activeInstitutionStates), indexedTargets);
+            appendTargetResources(institutionService.getInstitutions(currentAdvert, departmentInstitutions, activeInstitutionStates), targets, indexedTargets);
         }
 
         if (!departmentsNull) {
             departmentService.getDepartments(currentAdvert, departments, stateService.getActiveResourceStates(DEPARTMENT)).forEach(department -> {
                 indexedTargets.get(department.getParentResource()).addDepartment(department);
+                indexedTargets.put(department, department);
             });
         }
 
-        return indexedTargets.keySet();
+        HashMultimap<PrismScope, Integer> orphanedTargets = HashMultimap.create();
+        indexedTargets.keySet().forEach(target -> {
+            if (target.getTargetingDistance() == null) {
+                orphanedTargets.put(target.getScope(), target.getId());
+            }
+        });
+
+        orphanedTargets.keySet().forEach(resourceScope -> {
+            resourceDAO.getResourceDistances(currentAdvert, resourceScope, orphanedTargets.get(resourceScope)).forEach(target -> {
+                indexedTargets.get(target).setTargetingDistance(target.getTargetingDistance());
+            });
+        });
+
+        return targets;
     }
 
     public List<ResourceTargetingDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
@@ -833,14 +850,15 @@ public class ResourceService {
         resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
     }
 
-    private void appendTargetResources(List<ResourceTargetingDTO> resources, Map<ResourceTargetingDTO, ResourceTargetingDTO> indexedTargets) {
+    private void appendTargetResources(List<ResourceTargetingDTO> resources, Set<ResourceTargetingDTO> targets, Map<ResourceTargetingDTO, ResourceTargetingDTO> indexedTargets) {
         resources.forEach(target -> {
             ResourceTargetingDTO persistedTarget = indexedTargets.get(target);
             if (persistedTarget == null) {
+                targets.add(target);
                 indexedTargets.put(target, target);
             } else {
-                Integer advertSelectedResourceId = persistedTarget.getAdvertSelectedResourceId();
-                persistedTarget.setAdvertSelectedResourceId(advertSelectedResourceId == null ? target.getAdvertSelectedResourceId() : advertSelectedResourceId);
+                Integer persistedSelectedId = persistedTarget.getSelectedId();
+                persistedTarget.setSelectedId(persistedSelectedId == null ? target.getSelectedId() : persistedSelectedId);
 
                 Boolean persistedTargetEndorsed = persistedTarget.getEndorsed();
                 persistedTarget.setEndorsed(persistedTargetEndorsed == null ? target.getEndorsed() : persistedTargetEndorsed);

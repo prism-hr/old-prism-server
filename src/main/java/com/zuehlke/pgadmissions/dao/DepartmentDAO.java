@@ -79,7 +79,7 @@ public class DepartmentDAO {
                         .add(Projections.property("address.googleId"), "addressGoogleId") //
                         .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
                         .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude") //
-                        .add(Projections.property("advertSelectedResource.id"), "advertSelectedResourceId") //
+                        .add(Projections.property("advertSelectedResource.id"), "selectedId") //
                         .add(Projections.property("advertSelectedResource.endorsed"), "endorsed")) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //

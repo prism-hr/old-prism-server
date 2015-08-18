@@ -16,6 +16,7 @@ import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectT
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -274,8 +275,16 @@ public class ResourceMapper {
 
     public ResourceRepresentationTargeting getResourceRepresentationTargeting(ResourceTargetingDTO resource) {
         ResourceRepresentationTargeting representation = getResourceRepresentationLocation(resource, ResourceRepresentationTargeting.class);
-        representation.setRelevance(representation.getRelevance().setScale(TARGETING_PRECISION, HALF_UP));
-        representation.setDistance(resource.getTargetingDistance().setScale(TARGETING_PRECISION, HALF_UP));
+        
+        BigDecimal targetingRelevance = representation.getRelevance();
+        if (targetingRelevance != null) {
+            representation.setRelevance(targetingRelevance.setScale(TARGETING_PRECISION, HALF_UP));
+        }
+        
+        BigDecimal targetingDistance = resource.getTargetingDistance();
+        if (targetingDistance != null) {
+            representation.setDistance(targetingDistance.setScale(TARGETING_PRECISION, HALF_UP));
+        }
         
         representation.setSelected(resource.getSelected());
         representation.setEndorsed(resource.getEndorsed());

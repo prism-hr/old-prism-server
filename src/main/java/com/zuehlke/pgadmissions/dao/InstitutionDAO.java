@@ -131,7 +131,7 @@ public class InstitutionDAO {
                 .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude");
 
         if (!advertNull) {
-            projectionList.add(Projections.property("advertSelectedResource.id"), "advertSelectedResourceId") //
+            projectionList.add(Projections.property("advertSelectedResource.id"), "selectedId") //
                     .add(Projections.property("advertSelectedResource.endorsed"), "endorsed");
         }
 

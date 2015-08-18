@@ -534,35 +534,6 @@ public class ResourceDAO {
                 .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
 
-    public List<ResourceTargetingDTO> getResourceDistances(Advert advert, PrismScope resourceScope, Collection<Integer> resourceIds) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<ResourceTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
-                "select " + resourceReference + ".id as " + resourceReference + "Id," +
-                        " haversine_distance(:baseLatitude, :baseLongitude, advert_address.location_x, advert_address.location_y) as targetingDistance" +
-                        " from " + resourceReference +
-                        " inner join advert" +
-                        " on " + resourceReference + ".advert_id = advert.id" +
-                        " inner join advert_address" +
-                        " on advert.advert_address_id = advert_address.id" +
-                        " inner join imported_advert_domicile" +
-                        " on advert_address.imported_advert_domicile_id = imported_advert_domicile.id" +
-                        " where " + resourceReference + "Id in (:resourceIds)" +
-                        " and advert_address.imported_advert_domicile_id = :addressDomicile" +
-                        " and advert_address.location_x is not null" +
-                        " and " + resourceReference + ".id <> :currentResourceId" +
-                        " group by " + resourceReference + "Id" +
-                        " order by " + resourceReference + "Id asc")
-                .addScalar(resourceReference + "Id", IntegerType.INSTANCE)
-                .addScalar("targetingDistance", BigDecimalType.INSTANCE)
-                .setParameterList("resourceIds", resourceIds)
-                .setParameter("addressDomicile", advert.getAddress().getDomicile().getId())
-                .setParameter("baseLatitude", advert.getAddress().getCoordinates().getLatitude())
-                .setParameter("baseLongitude", advert.getAddress().getCoordinates().getLongitude())
-                .setParameter("advertResourceId", advert.getResource().getId())
-                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
-                .list();
-    }
-
     public List<ResourceTargetingDTO> getResourceTargetsBySubjectArea(Advert advert, Collection<Integer> subjectAreas, List<PrismState> activeStates) {
         return (List<ResourceTargetingDTO>) sessionFactory.getCurrentSession().createSQLQuery(
                 "select institution.id as institutionId, institution.name as institutionName, institution.logo_image_id as institutionLogoImageId," +

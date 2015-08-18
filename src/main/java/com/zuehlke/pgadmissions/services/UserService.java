@@ -468,7 +468,7 @@ public class UserService {
         }
 
         if (!rows.isEmpty()) {
-            entityService.executeBulkInsert("user_competence", "user_id, competence_id, rating_count, rating_average",
+            entityService.executeBulkInsertUpdate("user_competence", "user_id, competence_id, rating_count, rating_average",
                     PrismQueryUtils.prepareRowsForSqlInsert(rows), "rating_count = values(rating_count), rating_average = values(rating_average)");
         }
     }

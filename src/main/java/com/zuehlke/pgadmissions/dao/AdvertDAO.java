@@ -314,7 +314,7 @@ public class AdvertDAO {
     public void deleteAdvertAttributes(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass) {
         sessionFactory.getCurrentSession().createQuery(
                 "delete " + attributeClass.getSimpleName() + " "
-                        + "where advert =: advert")
+                        + "where advert = :advert")
                 .setParameter("advert", advert) //
                 .executeUpdate();
     }

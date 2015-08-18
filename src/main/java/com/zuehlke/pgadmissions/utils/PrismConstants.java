@@ -34,4 +34,6 @@ public class PrismConstants {
 
     public static final Integer GEOCODING_PRECISION = 14;
 
+    public static final Integer EARTH_RADIUS_MILES = 3959;
+
 }

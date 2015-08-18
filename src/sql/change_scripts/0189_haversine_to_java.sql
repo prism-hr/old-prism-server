@@ -1,2 +1,2 @@
-drop function haversine_distance
+drop function if exists haversine_distance
 ;

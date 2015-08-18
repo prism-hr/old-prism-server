@@ -38,13 +38,13 @@ public class ImportedEntityType implements UniqueEntity {
         return lastImportedTimestamp;
     }
 
-    public void setLastImportedTimestamp(DateTime lastImportedTimestamp) {
-        this.lastImportedTimestamp = lastImportedTimestamp;
-    }
-
     public ImportedEntityType withId(PrismImportedEntity id) {
         this.id = id;
         return this;
+    }
+
+    public void setLastImportedTimestamp(DateTime lastImportedTimestamp) {
+        this.lastImportedTimestamp = lastImportedTimestamp;
     }
 
     @Override

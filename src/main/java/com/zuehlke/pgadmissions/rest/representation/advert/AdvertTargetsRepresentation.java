@@ -2,15 +2,17 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
+
 public class AdvertTargetsRepresentation {
 
     private List<AdvertCompetenceRepresentation> competences;
 
-    private List<AdvertTargetRepresentation> institutions;
+    private List<AdvertSubjectAreaRepresentation> subjectAreas;
 
-    private List<AdvertTargetRepresentation> departments;
+    private List<ResourceRepresentationTargeting> resources;
 
-    private List<AdvertTargetRepresentation> subjectAreas;
+    private List<ResourceRepresentationTargeting> selectedResources;
 
     public List<AdvertCompetenceRepresentation> getCompetences() {
         return competences;
@@ -20,28 +22,28 @@ public class AdvertTargetsRepresentation {
         this.competences = competences;
     }
 
-    public List<AdvertTargetRepresentation> getInstitutions() {
-        return institutions;
-    }
-
-    public void setInstitutions(List<AdvertTargetRepresentation> institutions) {
-        this.institutions = institutions;
-    }
-
-    public List<AdvertTargetRepresentation> getDepartments() {
-        return departments;
-    }
-
-    public void setDepartments(List<AdvertTargetRepresentation> departments) {
-        this.departments = departments;
-    }
-
-    public List<AdvertTargetRepresentation> getSubjectAreas() {
+    public List<AdvertSubjectAreaRepresentation> getSubjectAreas() {
         return subjectAreas;
     }
 
-    public void setSubjectAreas(List<AdvertTargetRepresentation> subjectAreas) {
+    public void setSubjectAreas(List<AdvertSubjectAreaRepresentation> subjectAreas) {
         this.subjectAreas = subjectAreas;
+    }
+
+    public List<ResourceRepresentationTargeting> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<ResourceRepresentationTargeting> resources) {
+        this.resources = resources;
+    }
+
+    public List<ResourceRepresentationTargeting> getSelectedResources() {
+        return selectedResources;
+    }
+
+    public void setSelectedResources(List<ResourceRepresentationTargeting> selectedResources) {
+        this.selectedResources = selectedResources;
     }
 
     public AdvertTargetsRepresentation withCompetences(List<AdvertCompetenceRepresentation> competences) {
@@ -49,19 +51,19 @@ public class AdvertTargetsRepresentation {
         return this;
     }
 
-    public AdvertTargetsRepresentation withInstitutions(List<AdvertTargetRepresentation> institutions) {
-        this.institutions = institutions;
-        return this;
-    }
-
-    public AdvertTargetsRepresentation withDepartments(List<AdvertTargetRepresentation> departments) {
-        this.departments = departments;
-        return this;
-    }
-
-    public AdvertTargetsRepresentation withSubjectAreas(List<AdvertTargetRepresentation> subjectAreas) {
+    public AdvertTargetsRepresentation withSubjectAreas(List<AdvertSubjectAreaRepresentation> subjectAreas) {
         this.subjectAreas = subjectAreas;
         return this;
     }
+    
+    public AdvertTargetsRepresentation withResources(List<ResourceRepresentationTargeting> resources) {
+        this.resources = resources;
+        return this;
+    }
 
+    public AdvertTargetsRepresentation withSelectedResources(List<ResourceRepresentationTargeting> selectedResources) {
+        this.selectedResources = selectedResources;
+        return this;
+    }
+    
 }

@@ -66,4 +66,14 @@ public class AdvertSubjectArea extends AdvertTarget<ImportedSubjectArea> {
         return value.getName();
     }
 
+    public AdvertSubjectArea withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+
+    public AdvertSubjectArea withValue(ImportedSubjectArea value) {
+        this.value = value;
+        return this;
+    }
+
 }

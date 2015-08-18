@@ -12,7 +12,7 @@ public class ResourceAdvertTargetsEvaluator implements ResourceCompletenessEvalu
     @Override
     public boolean evaluate(ResourceParent<?> resource) {
         AdvertTargets targets = resource.getAdvert().getTargets();
-        return !(targets == null || (CollectionUtils.isEmpty(targets.getInstitutions()) && CollectionUtils.isEmpty(targets.getDepartments())));
+        return !(targets == null || (CollectionUtils.isEmpty(targets.getSelectedResources())));
     }
 
 }

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute.getByPropertyName;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -30,7 +29,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
@@ -43,25 +41,28 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttributes;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
+import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
+import com.zuehlke.pgadmissions.domain.advert.AdvertResource;
+import com.zuehlke.pgadmissions.domain.advert.AdvertResourceSelected;
+import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetResource;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertAttribute;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -78,7 +79,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 
@@ -380,12 +380,13 @@ public class AdvertService {
     }
 
     public List<CompetenceRepresentation> searchCompetences(String q) {
-        return advertDAO
-                .searchCompetences(q)
-                .stream()
-                .map(competence -> new CompetenceRepresentation().withId(competence.getId()).withName(competence.getName())
-                        .withDescription(competence.getDescription()))
+        return advertDAO.searchCompetences(q).stream()
+                .map(competence -> new CompetenceRepresentation().withId(competence.getId()).withName(competence.getName()).withDescription(competence.getDescription()))
                 .collect(Collectors.toList());
+    }
+    
+    public List<Integer> getAdvertResources(Advert advert, PrismScope resourceScope, Class<? extends AdvertTargetResource> targetClass) {
+        return advertDAO.getAdvertResources(advert, resourceScope, targetClass);
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
@@ -393,27 +394,39 @@ public class AdvertService {
         if (categories == null) {
             categories = new AdvertCategories();
             advert.setCategories(categories);
+        } else {
+            advertDAO.deleteAdvertAttributes(advert, AdvertIndustry.class);
+            categories.getIndustries().clear();
+
+            advertDAO.deleteAdvertAttributes(advert, AdvertFunction.class);
+            categories.getFunctions().clear();
+
+            advertDAO.deleteAdvertAttributes(advert, AdvertTheme.class);
+            categories.getThemes().clear();
+
+            entityService.flush();
         }
 
-        Map<String, List<?>> categoriesMap = categoriesDTO.getCategories();
-        for (String propertyName : categoriesMap.keySet()) {
-            List<?> dtoValues = categoriesMap.get(propertyName);
-            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
-            Class<? extends AdvertAttribute<?>> categoryClass = advertAttribute.getAttributeClass();
-            Class<?> valueClass = advertAttribute.getValueClass();
-            clearAdvertAttributes(categories, propertyName);
+        Set<AdvertIndustry> subjectAreas = categories.getIndustries();
+        categoriesDTO.getIndustries().stream().forEach(categoryDTO -> {
+            AdvertIndustry category = new AdvertIndustry().withAdvert(advert).withValue(categoryDTO);
+            entityService.save(category);
+            subjectAreas.add(category);
+        });
 
-            for (Object dtoValue : dtoValues) {
-                Class<?> newValueClass = dtoValue.getClass();
-                if (valueClass == null || !newValueClass.equals(valueClass)) {
-                    valueClass = newValueClass;
-                }
+        Set<AdvertFunction> functions = categories.getFunctions();
+        categoriesDTO.getFunctions().stream().forEach(categoryDTO -> {
+            AdvertFunction category = new AdvertFunction().withAdvert(advert).withValue(categoryDTO);
+            entityService.save(category);
+            functions.add(category);
+        });
 
-                AdvertAttribute<?> entityCategory = createAdvertAttribute(advert, categoryClass, dtoValue);
-                entityService.getOrCreate(entityCategory);
-                categories.storeAttribute(entityCategory);
-            }
-        }
+        Set<AdvertTheme> themes = categories.getThemes();
+        categoriesDTO.getThemes().stream().forEach(categoryDTO -> {
+            AdvertTheme category = new AdvertTheme().withAdvert(advert).withValue(categoryDTO);
+            entityService.save(category);
+            themes.add(category);
+        });
     }
 
     private void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) {
@@ -421,29 +434,40 @@ public class AdvertService {
         if (targets == null) {
             targets = new AdvertTargets();
             advert.setTargets(targets);
+        } else {
+            advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
+            targets.getSubjectAreas().clear();
+
+            advertDAO.deleteAdvertAttributes(advert, AdvertResource.class);
+            targets.getResources().clear();
+
+            advertDAO.deleteAdvertAttributes(advert, AdvertResourceSelected.class);
+            targets.getSelectedResources().clear();
+
+            entityService.flush();
         }
 
-        Map<String, List<? extends AdvertTargetDTO>> targetsMap = targetsDTO.getTargets();
-        for (String propertyName : targetsMap.keySet()) {
-            List<? extends AdvertTargetDTO> dtoValues = targetsMap.get(propertyName);
-            PrismAdvertAttribute advertAttribute = getByPropertyName(propertyName);
-            Class<? extends AdvertAttribute<?>> targetClass = advertAttribute.getAttributeClass();
-            Class<?> valueClass = advertAttribute.getValueClass();
+        Set<AdvertSubjectArea> subjectAreas = targets.getSubjectAreas();
+        targetsDTO.getSubjectAreas().stream().forEach(targetDTO -> {
+            AdvertSubjectArea target = new AdvertSubjectArea().withAdvert(advert).withValue(entityService.getById(ImportedSubjectArea.class, targetDTO.getId()));
+            entityService.save(target);
+            subjectAreas.add(target);
+        });
 
-            clearAdvertAttributes(targets, propertyName);
-            for (AdvertTargetDTO dtoValue : dtoValues) {
-                TargetEntity value;
-                Integer valueId = dtoValue.getId();
-                if (valueId == null) {
-                    throw new Error();
-                }
-                value = (TargetEntity) entityService.getById(valueClass, dtoValue.getId());
+        Set<AdvertResource> resources = targets.getResources();
+        targetsDTO.getResources().stream().forEach(targetDTO -> {
+            AdvertResource target = new AdvertResource().withAdvert(advert).withValue((ResourceParent<?>) resourceService.getById(targetDTO.getScope(), targetDTO.getId()));
+            entityService.save(target);
+            resources.add(target);
+        });
 
-                AdvertAttribute<?> entityTarget = createAdvertAttribute(advert, targetClass, value);
-                entityService.getOrCreate(entityTarget);
-                targets.storeAttribute(entityTarget);
-            }
-        }
+        Set<AdvertResourceSelected> selectedResources = targets.getSelectedResources();
+        targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
+            AdvertResourceSelected target = new AdvertResourceSelected().withAdvert(advert)
+                    .withValue((ResourceParent<?>) resourceService.getById(targetDTO.getScope(), targetDTO.getId())).withEndorsed(false);
+            entityService.save(target);
+            selectedResources.add(target);
+        });
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {
@@ -495,7 +519,7 @@ public class AdvertService {
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
             BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
             maximumSpecified = maximumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -733,13 +757,6 @@ public class AdvertService {
         return address;
     }
 
-    private AdvertAttribute<?> createAdvertAttribute(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, Object value) {
-        AdvertAttribute<?> entityAttribute = BeanUtils.instantiate(attributeClass);
-        entityAttribute.setAdvert(advert);
-        setProperty(entityAttribute, "value", value);
-        return entityAttribute;
-    }
-
     private AdvertClosingDate createAdvertClosingDate(Advert advert, AdvertClosingDateDTO advertClosingDateDTO) {
         AdvertClosingDate advertClosingDate = new AdvertClosingDate();
         advertClosingDate.setAdvert(advert);
@@ -760,16 +777,6 @@ public class AdvertService {
             persistentCompetence.setUpdatedTimestamp(baseline);
         }
         return persistentCompetence;
-    }
-
-    private void clearAdvertAttributes(AdvertAttributes attributes, String propertyName) {
-        try {
-            Set<?> collection = (Set<?>) PropertyUtils.getSimpleProperty(attributes, propertyName);
-            collection.forEach(entityService::delete);
-            entityService.flush();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private HashMultimap<PrismScope, PrismState> getAdvertScopes() {

@@ -29,10 +29,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetResource;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
@@ -233,10 +235,12 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("fee.currencySpecified")) //
                                 .add(Restrictions.isNotNull("fee.currencyAtLocale")) //
-                                .add(Restrictions.neProperty("fee.currencySpecified", "fee.currencyAtLocale"))).add(Restrictions.conjunction() //
+                                .add(Restrictions.neProperty("fee.currencySpecified", "fee.currencyAtLocale")))
+                        .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("pay.currencySpecified")) //
                                 .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
-                                .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
+                                .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale"))))
+                .list();
     }
 
     public List<Integer> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
@@ -304,6 +308,23 @@ public class AdvertDAO {
     public List<Competence> searchCompetences(String q) {
         return sessionFactory.getCurrentSession().createCriteria(Competence.class)
                 .add(Restrictions.ilike("name", q, MatchMode.ANYWHERE))
+                .list();
+    }
+
+    public void deleteAdvertAttributes(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass) {
+        sessionFactory.getCurrentSession().createQuery(
+                "delete " + attributeClass.getSimpleName() + " "
+                        + "where advert =: advert")
+                .setParameter("advert", advert) //
+                .executeUpdate();
+    }
+
+    public List<Integer> getAdvertResources(Advert advert, PrismScope resourceScope, Class<? extends AdvertTargetResource> targetClass) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(targetClass) //
+                .setProjection(Projections.property(resourceReference + ".id")) //
+                .add(Restrictions.eq("advert", advert)) //
+                .add(Restrictions.isNotNull(resourceReference)) //
                 .list();
     }
 

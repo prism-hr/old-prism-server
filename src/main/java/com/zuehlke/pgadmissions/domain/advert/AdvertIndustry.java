@@ -58,5 +58,15 @@ public class AdvertIndustry extends AdvertAttribute<PrismAdvertIndustry> {
     public final void setValue(PrismAdvertIndustry industry) {
         this.value = industry;
     }
+    
+    public AdvertIndustry withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
 
+    public AdvertIndustry withValue(PrismAdvertIndustry value) {
+        this.value = value;
+        return this;
+    }
+    
 }

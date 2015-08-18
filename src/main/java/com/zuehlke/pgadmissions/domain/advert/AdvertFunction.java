@@ -58,5 +58,15 @@ public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
     public final void setValue(PrismAdvertFunction function) {
         this.value = function;
     }
+    
+    public AdvertFunction withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+
+    public AdvertFunction withValue(PrismAdvertFunction value) {
+        this.value = value;
+        return this;
+    }
 
 }

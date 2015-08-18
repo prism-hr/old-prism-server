@@ -54,4 +54,14 @@ public class AdvertTheme extends AdvertAttribute<String> {
         this.value = theme;
     }
 
+    public AdvertTheme withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+
+    public AdvertTheme withValue(String value) {
+        this.value = value;
+        return this;
+    }
+
 }

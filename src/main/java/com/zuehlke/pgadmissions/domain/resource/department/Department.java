@@ -27,6 +27,8 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertResource;
+import com.zuehlke.pgadmissions.domain.advert.AdvertResourceSelected;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
@@ -45,7 +47,7 @@ import com.zuehlke.pgadmissions.workflow.user.DepartmentReassignmentProcessor;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "name" }) })
-public class Department extends ResourceParentDivision<DepartmentReassignmentProcessor> implements TargetEntity {
+public class Department extends ResourceParentDivision<DepartmentReassignmentProcessor>implements TargetEntity {
 
     @Id
     @GeneratedValue
@@ -76,7 +78,7 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
-    
+
     @Lob
     @Column(name = "advert_incomplete_section")
     private String advertIncompleteSection;
@@ -160,8 +162,15 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @OneToMany(mappedBy = "department")
     private Set<Advert> adverts = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "department")
+    private Set<AdvertResource> advertResources = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "department")
+    private Set<AdvertResourceSelected> advertSelectedResources = Sets.newHashSet();
+
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "department_imported_program", joinColumns = { @JoinColumn(name = "department_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "imported_program_id", nullable = false) })
+    @JoinTable(name = "department_imported_program", joinColumns = { @JoinColumn(name = "department_id", nullable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "imported_program_id", nullable = false) })
     private Set<ImportedProgram> importedPrograms = Sets.newHashSet();
 
     @Override
@@ -266,7 +275,7 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     public Application getApplication() {
         return null;
     }
-    
+
     @Override
     public Advert getAdvert() {
         return advert;
@@ -276,7 +285,7 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
-    
+
     @Override
     public String getAdvertIncompleteSection() {
         return advertIncompleteSection;
@@ -423,6 +432,14 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @Override
     public Set<Advert> getAdverts() {
         return adverts;
+    }
+
+    public Set<AdvertResource> getAdvertResources() {
+        return advertResources;
+    }
+
+    public Set<AdvertResourceSelected> getAdvertSelectedResources() {
+        return advertSelectedResources;
     }
 
     public Set<ImportedProgram> getImportedPrograms() {

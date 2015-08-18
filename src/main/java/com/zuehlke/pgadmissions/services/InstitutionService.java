@@ -4,8 +4,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -28,10 +28,10 @@ import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
 
 @Service
 @Transactional
@@ -53,9 +53,6 @@ public class InstitutionService {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private ImportedEntityService importedEntityService;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -103,6 +100,10 @@ public class InstitutionService {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
+    public List<ResourceTargetingDTO> getInstitutions(Advert advert, Collection<Integer> institutions, List<PrismState> activeStates) {
+        return institutionDAO.getInstitutions(advert, institutions, activeStates);
+    }
+
     public List<ResourceRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {
         List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
         return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream()
@@ -131,14 +132,6 @@ public class InstitutionService {
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
 
-    public List<ResourceRepresentationTargeting> getInstitutionBySubjectAreas(Advert currentAdvert, List<Integer> subjectAreas) {
-        List<PrismState> activeStates = stateService.getActiveResourceStates(INSTITUTION);
-        Set<Integer> subjectAreaFamily = importedEntityService
-                .getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-        return institutionDAO.getInstitutionBySubjectAreas(currentAdvert, subjectAreaFamily, activeStates).stream()
-                .map(resourceMapper::getResourceRepresentationTargeting).collect(Collectors.toList());
-    }
-
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
         ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
         Institution institution = (Institution) outcome.getResource();
@@ -162,6 +155,10 @@ public class InstitutionService {
             }
         }
         return institution;
+    }
+
+    public List<Integer> getInstitutionsByDepartments(List<Integer> departments, List<PrismState> activeStates) {
+        return institutionDAO.getInstitutionsByDepartments(departments, activeStates);
     }
 
 }

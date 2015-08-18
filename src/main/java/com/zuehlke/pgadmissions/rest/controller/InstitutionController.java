@@ -21,8 +21,6 @@ import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -47,9 +45,6 @@ public class InstitutionController {
     private ImportedEntityMapper importedEntityMapper;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private ResourceMapper resourceMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
@@ -63,12 +58,6 @@ public class InstitutionController {
     public ResourceRepresentationSimple getInstitution(String googleId) {
         Institution institution = institutionService.getActivatedInstitutionByGoogleId(googleId);
         return institution == null ? null : resourceMapper.getResourceRepresentationSimple(institution);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, params = { "subjectAreas", "advertId" })
-    @ResponseBody
-    public List<ResourceRepresentationTargeting> getInstitutionsBySubjectAreas(@RequestParam List<Integer> subjectAreas, @RequestParam Integer advertId) {
-        return institutionService.getInstitutionBySubjectAreas(advertService.getById(advertId), subjectAreas);
     }
 
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)

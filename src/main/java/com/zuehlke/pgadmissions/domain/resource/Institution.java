@@ -25,6 +25,8 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertResource;
+import com.zuehlke.pgadmissions.domain.advert.AdvertResourceSelected;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -169,6 +171,12 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
 
     @OneToMany(mappedBy = "institution")
     private Set<Advert> adverts = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "institution")
+    private Set<AdvertResource> advertResources = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "institution")
+    private Set<AdvertResourceSelected> advertSelectedResources = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -332,6 +340,14 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     @Override
     public Set<Advert> getAdverts() {
         return adverts;
+    }
+
+    public Set<AdvertResource> getAdvertResources() {
+        return advertResources;
+    }
+
+    public Set<AdvertResourceSelected> getAdvertSelectedResources() {
+        return advertSelectedResources;
     }
 
     public ImportedInstitution getImportedInstitution() {

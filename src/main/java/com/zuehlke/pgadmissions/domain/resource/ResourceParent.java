@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
-public abstract class ResourceParent<T extends PrismUserReassignmentProcessor> extends Resource<T> implements ResourceParentDefinition<Advert> {
+public abstract class ResourceParent<T extends PrismUserReassignmentProcessor> extends Resource<T>implements ResourceParentDefinition<Advert> {
 
     public abstract String getName();
 

@@ -18,15 +18,15 @@ public class AdvertTargets implements AdvertAttributes {
 
     @OrderBy(clause = "value")
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertInstitution> institutions = Sets.newHashSet();
-
-    @OrderBy(clause = "value")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertDepartment> departments = Sets.newHashSet();
-
-    @OrderBy(clause = "value")
-    @OneToMany(mappedBy = "advert")
     private Set<AdvertSubjectArea> subjectAreas = Sets.newHashSet();
+
+    @OrderBy(clause = "institution, department")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertResource> resources = Sets.newHashSet();
+
+    @OrderBy(clause = "institution, department")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertResourceSelected> selectedResources = Sets.newHashSet();
 
     public Set<AdvertCompetence> getCompetences() {
         return competences;
@@ -34,22 +34,6 @@ public class AdvertTargets implements AdvertAttributes {
 
     public void setCompetences(Set<AdvertCompetence> competences) {
         this.competences = competences;
-    }
-
-    public Set<AdvertInstitution> getInstitutions() {
-        return institutions;
-    }
-
-    public void setInstitutions(Set<AdvertInstitution> institutions) {
-        this.institutions = institutions;
-    }
-
-    public Set<AdvertDepartment> getDepartments() {
-        return departments;
-    }
-
-    public void setDepartments(Set<AdvertDepartment> departments) {
-        this.departments = departments;
     }
 
     public Set<AdvertSubjectArea> getSubjectAreas() {
@@ -60,15 +44,31 @@ public class AdvertTargets implements AdvertAttributes {
         this.subjectAreas = subjectAreas;
     }
 
+    public Set<AdvertResource> getResources() {
+        return resources;
+    }
+
+    public void setResources(Set<AdvertResource> resources) {
+        this.resources = resources;
+    }
+
+    public Set<AdvertResourceSelected> getSelectedResources() {
+        return selectedResources;
+    }
+
+    public void setSelectedResources(Set<AdvertResourceSelected> selectedResources) {
+        this.selectedResources = selectedResources;
+    }
+
     @Override
     public void storeAttribute(AdvertAttribute<?> value) {
         Class<?> valueClass = value.getClass();
         if (valueClass.equals(AdvertCompetence.class)) {
             competences.add((AdvertCompetence) value);
-        } else if (valueClass.equals(AdvertInstitution.class)) {
-            institutions.add((AdvertInstitution) value);
-        } else if (valueClass.equals(AdvertDepartment.class)) {
-            departments.add((AdvertDepartment) value);
+        } else if (valueClass.equals(AdvertResource.class)) {
+            resources.add((AdvertResource) value);
+        } else if (valueClass.equals(AdvertResourceSelected.class)) {
+            selectedResources.add((AdvertResourceSelected) value);
         } else {
             subjectAreas.add((AdvertSubjectArea) value);
         }

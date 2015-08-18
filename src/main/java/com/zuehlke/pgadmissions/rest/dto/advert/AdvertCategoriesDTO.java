@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
 import java.util.List;
-import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 
@@ -37,11 +35,6 @@ public class AdvertCategoriesDTO {
 
     public void setThemes(List<String> themes) {
         this.themes = themes;
-    }
-
-    public Map<String, List<? extends Object>> getCategories() {
-        Map<String, List<? extends Object>> maps = ImmutableMap.of("industries", industries, "functions", functions, "themes", themes);
-        return maps;
     }
 
 }

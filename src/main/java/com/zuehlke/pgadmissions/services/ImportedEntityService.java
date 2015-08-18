@@ -118,7 +118,7 @@ public class ImportedEntityService {
         return references;
     }
 
-    public List<ImportedInstitution> getUnimportedUcasInstitutions(){
+    public List<ImportedInstitution> getUnimportedUcasInstitutions() {
         return importedEntityDAO.getUnimportedUcasInstitutions();
     }
 
@@ -335,14 +335,14 @@ public class ImportedEntityService {
         Map<Integer, SubjectAreaRepresentation> representations = importedSubjectAreas.stream()
                 .flatMap(subjectArea -> subjectArea.getAncestorsPath().stream())
                 .reduce(initialMap, (map, sa) -> {
-                    if(!map.containsKey(sa.getId())) {
+                    if (!map.containsKey(sa.getId())) {
                         SubjectAreaRepresentation representation = new SubjectAreaRepresentation(sa.getId(), sa.getName());
                         map.put(sa.getId(), representation);
                         int parentId = sa.getParent() != null ? sa.getParent().getId() : -1;
                         map.get(parentId).addChild(representation);
                     }
                     return map;
-                }, (map1, map2) -> {
+                } , (map1, map2) -> {
                     throw new UnsupportedOperationException();
                 });
 

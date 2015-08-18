@@ -1,6 +1,13 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
 import java.math.BigDecimal;
+import java.util.Set;
+
+import org.apache.commons.lang3.ObjectUtils;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import jersey.repackaged.com.google.common.collect.Sets;
 
 public class ResourceTargetingDTO extends ResourceStandardDTO {
 
@@ -25,6 +32,12 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
     private BigDecimal targetingRelevance;
 
     private BigDecimal targetingDistance;
+
+    private Integer advertSelectedResourceId;
+
+    private Boolean endorsed;
+
+    private Set<ResourceTargetingDTO> departments = Sets.newTreeSet();
 
     public String getAddressDomicileName() {
         return addressDomicileName;
@@ -112,6 +125,58 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
 
     public void setTargetingDistance(BigDecimal targetingDistance) {
         this.targetingDistance = targetingDistance;
+    }
+
+    public Integer getAdvertSelectedResourceId() {
+        return advertSelectedResourceId;
+    }
+
+    public void setAdvertSelectedResourceId(Integer advertSelectedResourceId) {
+        this.advertSelectedResourceId = advertSelectedResourceId;
+    }
+
+    public Boolean getEndorsed() {
+        return endorsed;
+    }
+
+    public void setEndorsed(Boolean endorsed) {
+        this.endorsed = endorsed;
+    }
+
+    public Set<ResourceTargetingDTO> getDepartments() {
+        return departments;
+    }
+
+    public void addDepartment(ResourceTargetingDTO department) {
+        this.departments.add(department);
+    }
+
+    public Boolean getSelected() {
+        return advertSelectedResourceId != null;
+    }
+    
+    public ResourceTargetingDTO withId(PrismScope scope, Integer id) {
+        setId(scope, id);
+        return this;
+    }
+
+    @Override
+    public ResourceTargetingDTO getParentResource() {
+        return super.getParentResource(ResourceTargetingDTO.class);
+    }
+
+    @Override
+    public int compareTo(Object object) {
+        if (object.getClass().equals(ResourceTargetingDTO.class)) {
+            ResourceTargetingDTO other = (ResourceTargetingDTO) object;
+            int relevanceComparison = ObjectUtils.compare(other.getTargetingRelevance(), targetingRelevance);
+            if (relevanceComparison == 0) {
+                int nameComparison = ObjectUtils.compare(getName(), other.getName());
+                return (nameComparison == 0) ? ObjectUtils.compare(getId(), other.getId()) : nameComparison;
+            }
+            return relevanceComparison;
+        }
+        return 0;
     }
 
 }

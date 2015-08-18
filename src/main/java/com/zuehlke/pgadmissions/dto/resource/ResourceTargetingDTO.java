@@ -174,14 +174,23 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
     public int compareTo(Object object) {
         if (object.getClass().equals(ResourceTargetingDTO.class)) {
             ResourceTargetingDTO other = (ResourceTargetingDTO) object;
+            
+            if (compareToWithoutRelevance(other) == 0) {
+                return 0;
+            }
+            
             int relevanceComparison = ObjectUtils.compare(other.getTargetingRelevance(), targetingRelevance);
             if (relevanceComparison == 0) {
-                int nameComparison = ObjectUtils.compare(getName(), other.getName());
-                return (nameComparison == 0) ? ObjectUtils.compare(getId(), other.getId()) : nameComparison;
+                return compareToWithoutRelevance(other);
             }
             return relevanceComparison;
         }
         return 0;
+    }
+
+    private int compareToWithoutRelevance(ResourceTargetingDTO other) {
+        int nameComparison = ObjectUtils.compare(getName(), other.getName());
+        return (nameComparison == 0) ? ObjectUtils.compare(getId(), other.getId()) : nameComparison;
     }
 
 }

@@ -746,7 +746,7 @@ public class ResourceService {
             Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
             resourceDAO.getResourceTargets(advert, institutionScopes, null, activeInstitutionStates, subjectAreasLookup).forEach(target -> {
                 setTargetDistance(advert, target);
-                targets.put(target, target);
+                targets.put(target, target); 
             });
         }
 

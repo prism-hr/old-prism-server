@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.util.List;
 
@@ -184,7 +186,14 @@ public class RoleService {
     }
 
     public PrismScope getPermissionScope(User user) {
-        return roleDAO.getPermissionScope(user);
+        PrismScope permissionScope = roleDAO.getPermissionScope(user);
+        int permissionScopeOrdinal = permissionScope.ordinal();
+        for (PrismScope permissionScopePartner : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            if (permissionScopePartner.ordinal() < permissionScopeOrdinal) {
+                return permissionScopePartner;
+            }
+        }
+        return permissionScope;
     }
 
     public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {
@@ -212,11 +221,10 @@ public class RoleService {
         if (getRolesForResource(resource, user).size() < 2 && resource.getUser().getId() == user.getId()) {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
-        ;
+
         UserRole userRole = getUserRole(resource, user, role);
         entityService.delete(userRole);
-        entityService.flush(); // so that getRolesForResource() returns
-                               // up-to-date values
+        entityService.flush();
     }
 
     public List<PrismRole> getRolesByScope(PrismScope prismScope) {

@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -27,6 +9,14 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.workflow.user.SystemReassignmentProcessor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "system")
@@ -45,9 +35,6 @@ public class System extends Resource<SystemReassignmentProcessor> {
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-
-    @Column(name = "minimum_wage", nullable = false)
-    private BigDecimal minimumWage;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -155,14 +142,6 @@ public class System extends Resource<SystemReassignmentProcessor> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public BigDecimal getMinimumWage() {
-        return minimumWage;
-    }
-
-    public void setMinimumWage(BigDecimal minimumWage) {
-        this.minimumWage = minimumWage;
     }
 
     @Override
@@ -422,11 +401,6 @@ public class System extends Resource<SystemReassignmentProcessor> {
 
     public System withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public System withMinimumWage(BigDecimal minimumWage) {
-        this.minimumWage = minimumWage;
         return this;
     }
 

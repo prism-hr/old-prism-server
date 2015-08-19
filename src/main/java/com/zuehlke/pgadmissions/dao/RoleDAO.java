@@ -201,6 +201,25 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
+    public PrismScope getPermissionScopePartner(User user, PrismScope partnerScope) {
+        String partnerScopeReference = partnerScope.getLowerCamelName();
+        return (PrismScope) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("scope.id")) //
+                .createAlias(partnerScopeReference, partnerScopeReference, JoinType.INNER_JOIN) //
+                .createAlias("institution.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.targets.selectedResources", "selectedResources", JoinType.INNER_JOIN) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateActionAssignment.partnerMode", true)) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.asc("scope.ordinal")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
     public List<UserRole> getUserRoleByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope... excludedPrismScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //

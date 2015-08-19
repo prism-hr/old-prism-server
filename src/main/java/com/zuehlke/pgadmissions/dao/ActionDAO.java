@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -110,16 +112,42 @@ public class ActionDAO {
 
     public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
             Integer departmentId, Integer programId, Integer projectId, Integer applicationId, User user) {
+        boolean isSystemScope = resourceScope.equals(SYSTEM);
         String resourceReference = resourceScope.getLowerCamelName();
-        return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+
+        Junction resourceConstraint = Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction()
+                                .add(Restrictions.eq("userRole.application.id", applicationId)) //
+                                .add(Restrictions.eq("userRole.project.id", projectId)) //
+                                .add(Restrictions.eq("userRole.program.id", programId)) //
+                                .add(Restrictions.eq("userRole.department.id", departmentId)) //
+                                .add(Restrictions.eq("userRole.institution.id", institutionId)) //
+                                .add(Restrictions.eq("userRole.system.id", systemId)))
+                        .add(Restrictions.eq("stateActionAssignment.partnerMode", false)));
+        if (!isSystemScope) {
+            resourceConstraint.add(Restrictions.conjunction() //
+                    .add(Restrictions.disjunction() //
+                            .add(Restrictions.eq("selectedResource.department.id", departmentId))
+                            .add(Restrictions.eq("selectedResource.institution.id", institutionId))))
+                    .add(Restrictions.eq("stateActionAssignment.partnerMode", true));
+        }
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN);
+
+        if (!isSystemScope) {
+            criteria.createAlias(resourceReference + ".advert", "advert", JoinType.INNER_JOIN) //
+                    .createAlias("advert.targets.selectedResources", "selectedResource", JoinType.LEFT_OUTER_JOIN);
+        }
+
+        return (List<ActionDTO>) criteria.createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
@@ -129,16 +157,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.eq(resourceReference + ".id", resourceId)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.disjunction()
-                                        .add(Restrictions.eq("userRole.application.id", applicationId)) //
-                                        .add(Restrictions.eq("userRole.project.id", projectId)) //
-                                        .add(Restrictions.eq("userRole.program.id", programId)) //
-                                        .add(Restrictions.eq("userRole.department.id", departmentId)) //
-                                        .add(Restrictions.eq("userRole.institution.id", institutionId)) //
-                                        .add(Restrictions.eq("userRole.system.id", systemId)))
-                                .add(Restrictions.eq("stateActionAssignment.partnerMode", false)))) //
+                .add(resourceConstraint) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //

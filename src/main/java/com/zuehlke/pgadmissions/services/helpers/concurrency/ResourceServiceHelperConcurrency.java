@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services.helpers.concurrency;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.concludeThreads;
 import static com.zuehlke.pgadmissions.utils.PrismThreadUtils.dispatchThread;
 
@@ -42,9 +43,12 @@ public class ResourceServiceHelperConcurrency {
         for (final PrismScope parentScopeId : parentScopeIds) {
             dispatchThread(workers,
                     () -> assigned.addAll(resourceService.getAssignedResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition, parentScopeId)));
-            if (Lists.newArrayList(DEPARTMENT, INSTITUTION).contains(parentScopeId)) {
+        }
+        
+        if (!scopeId.equals(SYSTEM)) {
+            for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
                 dispatchThread(workers, () -> assigned
-                        .addAll(resourceService.getAssignedPartnerResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition, parentScopeId)));
+                        .addAll(resourceService.getAssignedPartnerResources(user, scopeId, filter, lastSequenceIdentifier, recordsToRetrieve, condition, partnerScopeId)));
             }
         }
 

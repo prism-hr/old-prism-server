@@ -140,8 +140,7 @@ public class ResourceController {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
 
-        return resourceMapper.getResourceListRowRepresentations(resourceScope,
-                resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
+        return resourceMapper.getResourceListRowRepresentations(resourceScope, resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "type=report")

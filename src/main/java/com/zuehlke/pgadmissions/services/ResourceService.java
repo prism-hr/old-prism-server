@@ -379,27 +379,22 @@ public class ResourceService {
         return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceScope, baseline, rangeStart, rangeClose);
     }
 
-    public List<ResourceListRowDTO> getResourceList(final PrismScope resourceScope, ResourceListFilterDTO filter,
-            String lastSequenceIdentifier) throws Exception {
-        final User user = userService.getCurrentUser();
+    public List<ResourceListRowDTO> getResourceList(final PrismScope resourceScope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
+        User user = userService.getCurrentUser();
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(resourceScope);
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, resourceScope, filter);
 
         int maxRecords = LIST_PAGE_ROW_COUNT;
-        Set<Integer> assignedResources = applicationContext.getBean(ResourceServiceHelperConcurrency.class)
+        Set<Integer> resources = applicationContext.getBean(ResourceServiceHelperConcurrency.class)
                 .getAssignedResources(user, resourceScope, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
-        boolean hasRedactions = actionService.hasRedactions(resourceScope, assignedResources, user);
+        boolean hasRedactions = actionService.hasRedactions(resourceScope, resources, user);
 
-        if (!assignedResources.isEmpty()) {
-            final HashMultimap<Integer, ActionDTO> creations = actionService.getCreateResourceActions(resourceScope,
-                    assignedResources);
-            List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds,
-                    assignedResources, filter, lastSequenceIdentifier, maxRecords, hasRedactions);
+        if (!resources.isEmpty()) {
+            HashMultimap<Integer, ActionDTO> creations = actionService.getCreateResourceActions(resourceScope, resources);
+            List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds, resources, filter, lastSequenceIdentifier, maxRecords, hasRedactions);
 
-            applicationContext.getBean(StateServiceHelperConcurrency.class).appendSecondaryStates(resourceScope, rows,
-                    maxRecords);
-            applicationContext.getBean(ActionServiceHelperConcurrency.class).appendActions(resourceScope, user, rows,
-                    creations, maxRecords);
+            applicationContext.getBean(StateServiceHelperConcurrency.class).appendSecondaryStates(resourceScope, rows, maxRecords);
+            applicationContext.getBean(ActionServiceHelperConcurrency.class).appendActions(resourceScope, user, rows, creations, maxRecords);
             return rows;
         }
 

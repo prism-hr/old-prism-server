@@ -128,9 +128,9 @@ public class ActionDAO {
         if (!isSystemScope) {
             resourceConstraint.add(Restrictions.conjunction() //
                     .add(Restrictions.disjunction() //
-                            .add(Restrictions.eq("selectedResource.department.id", departmentId))
-                            .add(Restrictions.eq("selectedResource.institution.id", institutionId))))
-                    .add(Restrictions.eq("stateActionAssignment.partnerMode", true));
+                            .add(Restrictions.eqProperty("selectedResource.department", "userRole.department"))
+                            .add(Restrictions.eqProperty("selectedResource.institution", "userRole.institution")))
+                    .add(Restrictions.eq("stateActionAssignment.partnerMode", true)));
         }
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //

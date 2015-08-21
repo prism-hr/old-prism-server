@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.utils;
+package com.zuehlke.pgadmissions;
 
 public class PrismConstants {
 

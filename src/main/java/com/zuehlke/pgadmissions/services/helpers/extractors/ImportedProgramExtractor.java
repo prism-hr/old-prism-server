@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
+import static com.zuehlke.pgadmissions.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.getByUcasLevel;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;

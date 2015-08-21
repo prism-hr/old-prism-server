@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
+import com.zuehlke.pgadmissions.PrismConstants;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Controller
 @RequestMapping("api/pgadmissions")

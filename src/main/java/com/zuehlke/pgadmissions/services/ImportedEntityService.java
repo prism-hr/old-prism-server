@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.MAX_BATCH_INSERT_SIZE;
+import static com.zuehlke.pgadmissions.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;

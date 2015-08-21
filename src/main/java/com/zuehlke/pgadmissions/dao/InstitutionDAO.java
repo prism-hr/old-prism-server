@@ -26,7 +26,7 @@ import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 
 import freemarker.template.Template;
 
@@ -82,7 +82,7 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceTargetingDTO> getInstitutions(List<PrismState> activeStates, String searchTerm, String[] googleIds) {
+    public List<ResourceTargetDTO> getInstitutions(List<PrismState> activeStates, String searchTerm, String[] googleIds) {
         Disjunction searchCriterion = Restrictions.disjunction();
 
         if (searchTerm != null) {
@@ -115,8 +115,8 @@ public class InstitutionDAO {
                     .add(Restrictions.in("resourceState.state.id", activeStates));
         }
 
-        return (List<ResourceTargetingDTO>) criteria.add(searchCriterion)
-                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
+        return (List<ResourceTargetDTO>) criteria.add(searchCriterion)
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetDTO.class))
                 .list();
     }
 

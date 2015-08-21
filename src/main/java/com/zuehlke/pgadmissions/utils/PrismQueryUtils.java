@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.utils;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.NULL;
+import static com.zuehlke.pgadmissions.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanString;
 import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.StringEscapeUtils.escapeSql;

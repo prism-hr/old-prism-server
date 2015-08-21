@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.PrismConstants.LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
@@ -9,14 +10,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.utils.PrismGeocodingUtils.getHaversineDistance;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -56,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEv
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -78,10 +75,11 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ResourceTargetListDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -734,41 +732,35 @@ public class ResourceService {
                 : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
 
-    public Set<ResourceTargetingDTO> getTargetedResources(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments) {
+    public Set<ResourceTargetDTO> getTargetedResources(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments) {
         PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION, SYSTEM };
         List<PrismState> activeInstitutionStates = stateService.getActiveResourceStates(INSTITUTION);
 
-        TreeMap<ResourceTargetingDTO, ResourceTargetingDTO> targets = Maps.newTreeMap();
+        ResourceTargetListDTO targets = new ResourceTargetListDTO(advert);
         if (CollectionUtils.isNotEmpty(subjectAreas)) {
             Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-            resourceDAO.getResourceTargets(advert, institutionScopes, null, activeInstitutionStates, subjectAreasLookup).forEach(target -> {
-                setTargetDistance(advert, target);
-                targets.put(target, target);
-            });
+            targets.addAll(resourceDAO.getResourceTargets(advert, institutionScopes, null, activeInstitutionStates, subjectAreasLookup));
         }
 
         if (CollectionUtils.isNotEmpty(institutions)) {
-            appendTargetResources(advert, resourceDAO.getResourceTargets(advert, institutionScopes, institutions, activeInstitutionStates, null), targets);
+            targets.addAll(resourceDAO.getResourceTargets(advert, institutionScopes, institutions, activeInstitutionStates, null));
         }
 
         boolean hasDepartments = CollectionUtils.isNotEmpty(departments);
         if (hasDepartments) {
             List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, activeInstitutionStates);
-            appendTargetResources(advert, resourceDAO.getResourceTargets(advert, institutionScopes, departmentInstitutions, activeInstitutionStates, null), targets);
+            targets.addAll(resourceDAO.getResourceTargets(advert, institutionScopes, departmentInstitutions, activeInstitutionStates, null));
         }
 
         if (hasDepartments) {
-            resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, stateService.getActiveResourceStates(DEPARTMENT), null)
-                    .forEach(department -> {
-                        setTargetDistance(advert, department);
-                        targets.get(department.getParentResource()).addDepartment(department);
-                    });
+            List<PrismState> activeDepartmentStates = stateService.getActiveResourceStates(DEPARTMENT);
+            targets.addAll(resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, activeDepartmentStates, null));
         }
 
         return targets.keySet();
     }
 
-    public List<ResourceTargetingDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
+    public List<ResourceTargetDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
         return resourceDAO.getResourcesWhichPermitTargeting(SYSTEM, systemId, resourceScope,
                 scopeService.getParentScopesDescending(resourceScope, INSTITUTION), searchTerm);
     }
@@ -830,30 +822,6 @@ public class ResourceService {
             }
         }
         resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
-    }
-
-    private void appendTargetResources(Advert advert, List<ResourceTargetingDTO> resources, Map<ResourceTargetingDTO, ResourceTargetingDTO> indexedTargets) {
-        resources.forEach(target -> {
-            ResourceTargetingDTO persistedTarget = indexedTargets.get(target);
-            if (persistedTarget == null) {
-                setTargetDistance(advert, target);
-                indexedTargets.put(target, target);
-            } else {
-                Integer persistedSelectedId = persistedTarget.getSelectedId();
-                persistedTarget.setSelectedId(persistedSelectedId == null ? target.getSelectedId() : persistedSelectedId);
-
-                Boolean persistedTargetEndorsed = persistedTarget.getEndorsed();
-                persistedTarget.setEndorsed(persistedTargetEndorsed == null ? target.getEndorsed() : persistedTargetEndorsed);
-            }
-        });
-    }
-
-    private void setTargetDistance(Advert advert, ResourceTargetingDTO target) {
-        AddressCoordinates baseCoordinates = advert.getAddress().getCoordinates();
-        if (baseCoordinates != null) {
-            target.setTargetingDistance(getHaversineDistance(baseCoordinates.getLatitude(), baseCoordinates.getLongitude(), target.getAddressCoordinateLatitude(),
-                    target.getAddressCoordinateLongitude()));
-        }
     }
 
     private void createOrUpdateStateTransitionSummary(Resource<?> resource, DateTime baselineTime) {

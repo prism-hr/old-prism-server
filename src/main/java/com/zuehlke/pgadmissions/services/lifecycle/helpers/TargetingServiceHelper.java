@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import static com.google.common.collect.Sets.newLinkedHashSet;
+import static com.zuehlke.pgadmissions.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTIONS;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_INSTITUTION_SUBJECT_AREAS;
 import static com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper.PrismTargetingIndexationState.INDEXING_PROGRAMS;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
 import static java.math.RoundingMode.HALF_UP;
 

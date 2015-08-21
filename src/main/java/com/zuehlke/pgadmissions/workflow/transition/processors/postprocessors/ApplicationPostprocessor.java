@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
+import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
@@ -9,8 +11,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.RATING_PRECISION;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;

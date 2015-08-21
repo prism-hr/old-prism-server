@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
@@ -52,7 +52,7 @@ public class TargetingController {
 
     @ResponseBody
     @RequestMapping(value = "/targetResources", method = RequestMethod.GET)
-    public List<ResourceRepresentationTargeting> getTargetResources(@RequestParam Integer advertId, @RequestParam(required = false) List<Integer> subjectAreas,
+    public List<ResourceRepresentationTarget> getTargetResources(@RequestParam Integer advertId, @RequestParam(required = false) List<Integer> subjectAreas,
             @RequestParam(required = false) List<Integer> institutions, @RequestParam(required = false) List<Integer> departments) {
         return resourceMapper.getResourceTargetingRepresentations(advertService.getById(advertId), subjectAreas, institutions, departments);
     }

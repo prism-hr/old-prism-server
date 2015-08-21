@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.utils;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.EARTH_RADIUS_MILES;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.GEOCODING_PRECISION;
+import static com.zuehlke.pgadmissions.PrismConstants.EARTH_RADIUS_MILES;
+import static com.zuehlke.pgadmissions.PrismConstants.GEOCODING_PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 
 import java.math.BigDecimal;

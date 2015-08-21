@@ -1,10 +1,16 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "advert_resource", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "institution_id", "department_id" }) })

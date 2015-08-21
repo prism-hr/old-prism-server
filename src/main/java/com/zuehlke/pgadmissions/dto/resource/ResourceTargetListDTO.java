@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.dto;
+package com.zuehlke.pgadmissions.dto.resource;
 
 import static com.zuehlke.pgadmissions.utils.PrismGeocodingUtils.getHaversineDistance;
 
@@ -10,7 +10,6 @@ import java.util.TreeMap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 
 public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTargetDTO> {
 

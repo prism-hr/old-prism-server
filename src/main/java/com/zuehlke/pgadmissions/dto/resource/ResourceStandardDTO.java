@@ -188,23 +188,20 @@ public class ResourceStandardDTO implements Comparable<Object> {
 
     @Override
     public int compareTo(Object object) {
-        if (object.getClass().equals(this.getClass())) {
-            ResourceStandardDTO other = (ResourceStandardDTO) object;
-            Integer scopeOrdinal = getScopeOrdinal();
-            Integer otherScopeOrdinal = other.getScopeOrdinal();
-            
-            int scopeComparison = scopeOrdinal.compareTo(otherScopeOrdinal);
-            if (scopeComparison == 0) {
-                if (!(scopeOrdinal == 0 || otherScopeOrdinal == 0)) {
-                    int nameComparison = getName().compareTo(other.getName());
-                    return (nameComparison == 0) ? getId().compareTo(other.getId()) : nameComparison;
-                }
-                
-                return getId().compareTo(other.getId());
+        ResourceStandardDTO other = (ResourceStandardDTO) object;
+        Integer scopeOrdinal = getScopeOrdinal();
+        Integer otherScopeOrdinal = other.getScopeOrdinal();
+
+        int scopeComparison = scopeOrdinal.compareTo(otherScopeOrdinal);
+        if (scopeComparison == 0) {
+            if (!(scopeOrdinal == 0 || otherScopeOrdinal == 0)) {
+                int nameComparison = getName().compareTo(other.getName());
+                return (nameComparison == 0) ? getId().compareTo(other.getId()) : nameComparison;
             }
-            return 0;
+
+            return getId().compareTo(other.getId());
         }
-        return 0;
+        return scopeComparison;
     }
 
     protected <T extends ResourceStandardDTO> T getParentResource(Class<T> returnType) {

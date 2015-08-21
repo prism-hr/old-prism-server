@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK;
@@ -14,7 +15,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramS
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
 import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.util.Arrays;

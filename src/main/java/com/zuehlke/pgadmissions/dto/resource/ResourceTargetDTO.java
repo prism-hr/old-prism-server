@@ -3,13 +3,11 @@ package com.zuehlke.pgadmissions.dto.resource;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import jersey.repackaged.com.google.common.collect.Sets;
 
-public class ResourceTargetingDTO extends ResourceStandardDTO {
+public class ResourceTargetDTO extends ResourceStandardDTO {
 
     private String addressDomicileName;
 
@@ -34,10 +32,10 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
     private Boolean endorsed;
 
     private BigDecimal targetingRelevance;
-    
+
     private BigDecimal targetingDistance;
-   
-    private Set<ResourceTargetingDTO> departments = Sets.newTreeSet();
+
+    private Set<ResourceTargetDTO> departments = Sets.newTreeSet();
 
     public String getAddressDomicileName() {
         return addressDomicileName;
@@ -126,7 +124,7 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
     public void setEndorsed(Boolean endorsed) {
         this.endorsed = endorsed;
     }
-    
+
     public BigDecimal getTargetingRelevance() {
         return targetingRelevance;
     }
@@ -134,7 +132,7 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
     public void setTargetingRelevance(BigDecimal targetingRelevance) {
         this.targetingRelevance = targetingRelevance;
     }
-    
+
     public BigDecimal getTargetingDistance() {
         return targetingDistance;
     }
@@ -143,54 +141,47 @@ public class ResourceTargetingDTO extends ResourceStandardDTO {
         this.targetingDistance = targetingDistance;
     }
 
-    public Set<ResourceTargetingDTO> getDepartments() {
+    public Set<ResourceTargetDTO> getDepartments() {
         return departments;
     }
 
-    public void addDepartment(ResourceTargetingDTO department) {
+    public void addDepartment(ResourceTargetDTO department) {
         this.departments.add(department);
     }
 
     public Boolean getSelected() {
         return selectedId != null;
     }
-    
-    public ResourceTargetingDTO withId(PrismScope scope, Integer id) {
+
+    public ResourceTargetDTO withId(PrismScope scope, Integer id) {
         setId(scope, id);
         return this;
     }
-    
+
     @Override
-    public ResourceTargetingDTO getParentResource() {
-        return super.getParentResource(ResourceTargetingDTO.class);
+    public ResourceTargetDTO getParentResource() {
+        return super.getParentResource(ResourceTargetDTO.class);
     }
-    
+
     @Override
-    public ResourceTargetingDTO getEnclosingResource(PrismScope scope) {
-        return super.getEnclosingResource(scope, ResourceTargetingDTO.class);
+    public ResourceTargetDTO getEnclosingResource(PrismScope scope) {
+        return super.getEnclosingResource(scope, ResourceTargetDTO.class);
     }
 
     @Override
     public int compareTo(Object object) {
-        if (object.getClass().equals(ResourceTargetingDTO.class)) {
-            ResourceTargetingDTO other = (ResourceTargetingDTO) object;
+        if (object.getClass().equals(this.getClass())) {
+            ResourceTargetDTO other = (ResourceTargetDTO) object;
+            BigDecimal otherTargetingRelevance = other.getTargetingRelevance();
             
-            if (compareToWithoutRelevance(other) == 0) {
-                return 0;
+            if (!(targetingRelevance == null || otherTargetingRelevance == null)) {
+                int relevanceComparison = otherTargetingRelevance.compareTo(targetingRelevance);
+                return relevanceComparison == 0 ? super.compareTo(other) : relevanceComparison;    
             }
             
-            int relevanceComparison = ObjectUtils.compare(other.getTargetingRelevance(), targetingRelevance);
-            if (relevanceComparison == 0) {
-                return compareToWithoutRelevance(other);
-            }
-            return relevanceComparison;
+            return super.compareTo(other);
         }
         return 0;
-    }
-
-    private int compareToWithoutRelevance(ResourceTargetingDTO other) {
-        int nameComparison = ObjectUtils.compare(getName(), other.getName());
-        return (nameComparison == 0) ? ObjectUtils.compare(getId(), other.getId()) : nameComparison;
     }
 
 }

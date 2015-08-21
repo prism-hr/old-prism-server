@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.values;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.JACS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.PARENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.TOKEN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismTargetingMatchType.UCAS;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.STOP_WORDS;
 import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.getTopInstitutionsBySubjectArea;

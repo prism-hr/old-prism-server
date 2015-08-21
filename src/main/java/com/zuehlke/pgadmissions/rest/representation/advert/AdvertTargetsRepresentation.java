@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
 
 public class AdvertTargetsRepresentation {
 
@@ -10,9 +10,9 @@ public class AdvertTargetsRepresentation {
 
     private List<AdvertSubjectAreaRepresentation> subjectAreas;
 
-    private List<ResourceRepresentationTargeting> resources;
+    private List<ResourceRepresentationTarget> resources;
 
-    private List<ResourceRepresentationTargeting> selectedResources;
+    private List<ResourceRepresentationTarget> selectedResources;
 
     public List<AdvertCompetenceRepresentation> getCompetences() {
         return competences;
@@ -30,19 +30,19 @@ public class AdvertTargetsRepresentation {
         this.subjectAreas = subjectAreas;
     }
 
-    public List<ResourceRepresentationTargeting> getResources() {
+    public List<ResourceRepresentationTarget> getResources() {
         return resources;
     }
 
-    public void setResources(List<ResourceRepresentationTargeting> resources) {
+    public void setResources(List<ResourceRepresentationTarget> resources) {
         this.resources = resources;
     }
 
-    public List<ResourceRepresentationTargeting> getSelectedResources() {
+    public List<ResourceRepresentationTarget> getSelectedResources() {
         return selectedResources;
     }
 
-    public void setSelectedResources(List<ResourceRepresentationTargeting> selectedResources) {
+    public void setSelectedResources(List<ResourceRepresentationTarget> selectedResources) {
         this.selectedResources = selectedResources;
     }
 
@@ -56,12 +56,12 @@ public class AdvertTargetsRepresentation {
         return this;
     }
     
-    public AdvertTargetsRepresentation withResources(List<ResourceRepresentationTargeting> resources) {
+    public AdvertTargetsRepresentation withResources(List<ResourceRepresentationTarget> resources) {
         this.resources = resources;
         return this;
     }
 
-    public AdvertTargetsRepresentation withSelectedResources(List<ResourceRepresentationTargeting> selectedResources) {
+    public AdvertTargetsRepresentation withSelectedResources(List<ResourceRepresentationTarget> selectedResources) {
         this.selectedResources = selectedResources;
         return this;
     }

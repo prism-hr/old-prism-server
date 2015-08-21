@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,7 +61,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -278,7 +279,7 @@ public class ResourceDAO {
         appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
-    
+
     public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, PrismScope partnerScopeId, ResourceListFilterDTO filter, Junction conditions,
             String lastSequenceIdentifier, Integer recordsToRetrieve) {
         String partnerResourceReference = partnerScopeId.getLowerCamelName();
@@ -503,9 +504,9 @@ public class ResourceDAO {
                 .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
 
-    public List<ResourceTargetingDTO> getResourcesWhichPermitTargeting(PrismScope filterScope, Integer filterResourceId,
+    public List<ResourceTargetDTO> getResourcesWhichPermitTargeting(PrismScope filterScope, Integer filterResourceId,
             PrismScope resourceScope, List<PrismScope> parentScopes, String searchTerm) {
-        return (List<ResourceTargetingDTO>) getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId),
+        Criteria criteria = getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId),
                 resourceScope, parentScopes, Projections.property("domicile.name").as("addressDomicileName"), Projections.property("address.addressLine1").as("addressLine1"),
                 Projections.property("address.addressLine2").as("addressLine2"), Projections.property("address.addressTown").as("addressTown"),
                 Projections.property("address.addressRegion").as("addressRegion"), Projections.property("address.addressCode").as("addressCode"),
@@ -514,10 +515,17 @@ public class ResourceDAO {
                         .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
                         .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                         .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
-                        .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
-                        .addOrder(Order.desc("name")) //
-                        .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class)) //
-                        .list();
+                        .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN); //
+
+        if (resourceScope.equals(DEPARTMENT)) {
+            criteria.add(Restrictions.isNotNull("institution.importedInstitution")); //
+        } else {
+            criteria.add(Restrictions.isNotNull("importedInstitution"));
+        }
+
+        return (List<ResourceTargetDTO>) criteria.addOrder(Order.desc("name")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetDTO.class)) //
+                .list();
     }
 
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope,
@@ -558,7 +566,7 @@ public class ResourceDAO {
                 .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
 
-    public List<ResourceTargetingDTO> getResourceTargets(Advert advert, PrismScope[] resourceScopes, Collection<Integer> resourceIds, Collection<PrismState> activeStates,
+    public List<ResourceTargetDTO> getResourceTargets(Advert advert, PrismScope[] resourceScopes, Collection<Integer> resourceIds, Collection<PrismState> activeStates,
             Collection<Integer> subjectAreas) {
         ProjectionList projectionList = Projections.projectionList();
 
@@ -626,9 +634,9 @@ public class ResourceDAO {
             criteria.addOrder(Order.desc("targetingRelevance"));
         }
 
-        return (List<ResourceTargetingDTO>) criteria.addOrder(Order.asc("name"))
+        return (List<ResourceTargetDTO>) criteria.addOrder(Order.asc("name"))
                 .addOrder(Order.asc("id"))
-                .setResultTransformer(Transformers.aliasToBean(ResourceTargetingDTO.class))
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetDTO.class))
                 .list();
     }
 
@@ -720,8 +728,7 @@ public class ResourceDAO {
         PrismFilterSortOrder sortOrder = filter.getSortOrder();
 
         if (lastSequenceIdentifier != null) {
-            criteria.add(
-                    PrismFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
+            criteria.add(PrismFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
         }
 
         criteria.addOrder(PrismFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));

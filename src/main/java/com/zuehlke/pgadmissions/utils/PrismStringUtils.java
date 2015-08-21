@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.utils;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.CHARACTER_WILDCARD;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.SPACE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.WORD_BOUNDARY;
+import static com.zuehlke.pgadmissions.PrismConstants.CHARACTER_WILDCARD;
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+import static com.zuehlke.pgadmissions.PrismConstants.WORD_BOUNDARY;
 import static org.apache.commons.lang.StringUtils.isNumeric;
 
 import java.math.BigDecimal;

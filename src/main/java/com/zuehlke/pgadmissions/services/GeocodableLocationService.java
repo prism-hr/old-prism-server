@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.OK;
+import static com.zuehlke.pgadmissions.PrismConstants.OK;
 
 import java.net.URI;
 import java.net.URLEncoder;

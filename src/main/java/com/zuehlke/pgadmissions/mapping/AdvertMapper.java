@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.*;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -223,7 +223,7 @@ public class AdvertMapper {
                 .collect(Collectors.toList());
     }
 
-    private List<ResourceRepresentationTargeting> getAdvertResourceRepresentations(Advert advert, Class<? extends AdvertTargetResource> targetClass) {
+    private List<ResourceRepresentationTarget> getAdvertResourceRepresentations(Advert advert, Class<? extends AdvertTargetResource> targetClass) {
         return resourceMapper.getResourceTargetingRepresentations(advert, null, advertService.getAdvertResources(advert, INSTITUTION, targetClass),
                 advertService.getAdvertResources(advert, DEPARTMENT, targetClass));
     }

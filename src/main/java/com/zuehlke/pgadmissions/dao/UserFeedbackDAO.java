@@ -12,9 +12,9 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.PrismConstants;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Repository
 @SuppressWarnings("unchecked")

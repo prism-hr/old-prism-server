@@ -29,9 +29,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.PrismConstants;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional

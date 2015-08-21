@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 
 import com.google.common.base.Objects;
@@ -191,8 +190,19 @@ public class ResourceStandardDTO implements Comparable<Object> {
     public int compareTo(Object object) {
         if (object.getClass().equals(this.getClass())) {
             ResourceStandardDTO other = (ResourceStandardDTO) object;
-            int scopeComparison = ObjectUtils.compare(new Integer(getScopeOrdinal()), new Integer(other.getScopeOrdinal()));
-            return (scopeComparison == 0) ? ObjectUtils.compare(getId(), other.getId()) : scopeComparison;
+            Integer scopeOrdinal = getScopeOrdinal();
+            Integer otherScopeOrdinal = other.getScopeOrdinal();
+            
+            int scopeComparison = scopeOrdinal.compareTo(otherScopeOrdinal);
+            if (scopeComparison == 0) {
+                if (!(scopeOrdinal == 0 || otherScopeOrdinal == 0)) {
+                    int nameComparison = getName().compareTo(other.getName());
+                    return (nameComparison == 0) ? getId().compareTo(other.getId()) : nameComparison;
+                }
+                
+                return getId().compareTo(other.getId());
+            }
+            return 0;
         }
         return 0;
     }

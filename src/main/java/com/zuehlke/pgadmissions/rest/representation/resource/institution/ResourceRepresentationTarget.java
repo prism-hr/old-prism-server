@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 
-public class ResourceRepresentationTargeting extends ResourceRepresentationLocation {
+public class ResourceRepresentationTarget extends ResourceRepresentationLocation {
 
     private BigDecimal relevance;
 

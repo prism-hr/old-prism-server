@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.PrismConstants.GEOCODING_PRECISION;
+import static com.zuehlke.pgadmissions.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_USERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
@@ -9,9 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.GEOCODING_PRECISION;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
@@ -66,7 +66,7 @@ import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetingDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -100,7 +100,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlot
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTargeting;
+import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -267,18 +267,18 @@ public class ResourceMapper {
         return representation;
     }
 
-    public ResourceRepresentationLocation getResourceRepresentationLocation(ResourceTargetingDTO resource) {
+    public ResourceRepresentationLocation getResourceRepresentationLocation(ResourceTargetDTO resource) {
         return getResourceRepresentationLocation(resource, ResourceRepresentationLocation.class);
     }
 
-    public List<ResourceRepresentationTargeting> getResourceTargetingRepresentations(Advert currentAdvert, List<Integer> subjectAreas, List<Integer> institutions,
+    public List<ResourceRepresentationTarget> getResourceTargetingRepresentations(Advert currentAdvert, List<Integer> subjectAreas, List<Integer> institutions,
             List<Integer> departments) {
         return resourceService.getTargetedResources(currentAdvert, subjectAreas, institutions, departments).stream().map(this::getResourceRepresentationTargeting)
                 .collect(Collectors.toList());
     }
 
-    public ResourceRepresentationTargeting getResourceRepresentationTargeting(ResourceTargetingDTO resource) {
-        ResourceRepresentationTargeting representation = getResourceRepresentationLocation(resource, ResourceRepresentationTargeting.class);
+    public ResourceRepresentationTarget getResourceRepresentationTargeting(ResourceTargetDTO resource) {
+        ResourceRepresentationTarget representation = getResourceRepresentationLocation(resource, ResourceRepresentationTarget.class);
 
         BigDecimal targetingRelevance = resource.getTargetingRelevance();
         if (targetingRelevance != null) {
@@ -293,7 +293,7 @@ public class ResourceMapper {
         representation.setSelected(resource.getSelected());
         representation.setEndorsed(resource.getEndorsed());
 
-        Set<ResourceTargetingDTO> departments = resource.getDepartments();
+        Set<ResourceTargetDTO> departments = resource.getDepartments();
         if (!departments.isEmpty()) {
             representation.setDepartments(departments.stream().map(this::getResourceRepresentationTargeting).collect(Collectors.toList()));
         }
@@ -617,10 +617,10 @@ public class ResourceMapper {
 
     public List<ResourceChildCreationRepresentation> getResourceTargetingRepresentations(String searchTerm) {
         PrismScope initialResourceScope = null;
-        LinkedHashMap<PrismScope, TreeSet<ResourceTargetingDTO>> resources = Maps.newLinkedHashMap();
+        LinkedHashMap<PrismScope, TreeSet<ResourceTargetDTO>> resources = Maps.newLinkedHashMap();
         for (PrismScope resourceScope : scopeService.getChildScopesAscending(SYSTEM, DEPARTMENT)) {
             initialResourceScope = initialResourceScope == null ? resourceScope : initialResourceScope;
-            TreeSet<ResourceTargetingDTO> sortedResources = Sets.newTreeSet(resourceService.getResourcesWhichPermitTargeting(resourceScope, searchTerm));
+            TreeSet<ResourceTargetDTO> sortedResources = Sets.newTreeSet(resourceService.getResourcesWhichPermitTargeting(resourceScope, searchTerm));
             resources.put(resourceScope, sortedResources);
         }
 
@@ -641,7 +641,7 @@ public class ResourceMapper {
         return getResourceRepresentationHierarchy(initialResourceScope, resources, stopScope);
     }
 
-    public <T extends ResourceRepresentationLocation> T getResourceRepresentationLocation(ResourceTargetingDTO resource, Class<T> returnType) {
+    public <T extends ResourceRepresentationLocation> T getResourceRepresentationLocation(ResourceTargetDTO resource, Class<T> returnType) {
         T representation = BeanUtils.instantiate(returnType);
 
         Integer logoImageId = resource.getInstitutionLogoImageId();

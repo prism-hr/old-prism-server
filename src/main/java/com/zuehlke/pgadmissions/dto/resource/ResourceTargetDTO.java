@@ -29,7 +29,7 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
 
     private BigDecimal addressCoordinateLongitude;
 
-    private Integer selectedId;
+    private Boolean selected;
 
     private Boolean endorsed;
 
@@ -111,12 +111,12 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
     }
 
-    public Integer getSelectedId() {
-        return selectedId;
+    public Boolean getSelected() {
+        return selected;
     }
 
-    public void setSelectedId(Integer selectedId) {
-        this.selectedId = selectedId;
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 
     public Boolean getEndorsed() {
@@ -149,10 +149,6 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
 
     public void addDepartment(ResourceTargetDTO department) {
         this.departments.add(department);
-    }
-
-    public Boolean getSelected() {
-        return selectedId != null;
     }
 
     public ResourceTargetDTO withId(PrismScope scope, Integer id) {

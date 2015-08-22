@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
-import org.apache.commons.lang.BooleanUtils;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceChildCreationDTO extends ResourceStandardDTO {
@@ -9,7 +7,7 @@ public class ResourceChildCreationDTO extends ResourceStandardDTO {
     private Boolean partnerMode;
 
     public Boolean getPartnerMode() {
-        return BooleanUtils.isTrue(partnerMode);
+        return partnerMode;
     }
 
     public void setPartnerMode(Boolean partnerMode) {

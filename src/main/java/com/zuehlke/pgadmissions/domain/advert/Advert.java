@@ -91,33 +91,33 @@ public class Advert implements UniqueEntity {
     private AddressAdvert address;
 
     @Embedded
-    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
-            @AttributeOverride(name = "currencySpecified", column = @Column(name = "fee_currency_specified")),
-            @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "fee_currency_at_locale")),
-            @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_fee_minimum_specified")),
-            @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_fee_maximum_specified")),
-            @AttributeOverride(name = "yearMinimumSpecified", column = @Column(name = "year_fee_minimum_specified")),
-            @AttributeOverride(name = "yearMaximumSpecified", column = @Column(name = "year_fee_maximum_specified")),
-            @AttributeOverride(name = "monthMinimumAtLocale", column = @Column(name = "month_fee_minimum_at_locale")),
-            @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale")),
-            @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale")),
-            @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted")) })
+    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval") ),
+            @AttributeOverride(name = "currencySpecified", column = @Column(name = "fee_currency_specified") ),
+            @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "fee_currency_at_locale") ),
+            @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_fee_minimum_specified") ),
+            @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_fee_maximum_specified") ),
+            @AttributeOverride(name = "yearMinimumSpecified", column = @Column(name = "year_fee_minimum_specified") ),
+            @AttributeOverride(name = "yearMaximumSpecified", column = @Column(name = "year_fee_maximum_specified") ),
+            @AttributeOverride(name = "monthMinimumAtLocale", column = @Column(name = "month_fee_minimum_at_locale") ),
+            @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale") ),
+            @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale") ),
+            @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale") ),
+            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted") ) })
     private AdvertFinancialDetail fee;
 
     @Embedded
-    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
-            @AttributeOverride(name = "currencySpecified", column = @Column(name = "pay_currency_specified")),
-            @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "pay_currency_at_locale")),
-            @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_pay_minimum_specified")),
-            @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_pay_maximum_specified")),
-            @AttributeOverride(name = "yearMinimumSpecified", column = @Column(name = "year_pay_minimum_specified")),
-            @AttributeOverride(name = "yearMaximumSpecified", column = @Column(name = "year_pay_maximum_specified")),
-            @AttributeOverride(name = "monthMinimumAtLocale", column = @Column(name = "month_pay_minimum_at_locale")),
-            @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale")),
-            @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale")),
-            @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")) })
+    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "pay_interval") ),
+            @AttributeOverride(name = "currencySpecified", column = @Column(name = "pay_currency_specified") ),
+            @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "pay_currency_at_locale") ),
+            @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_pay_minimum_specified") ),
+            @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_pay_maximum_specified") ),
+            @AttributeOverride(name = "yearMinimumSpecified", column = @Column(name = "year_pay_minimum_specified") ),
+            @AttributeOverride(name = "yearMaximumSpecified", column = @Column(name = "year_pay_maximum_specified") ),
+            @AttributeOverride(name = "monthMinimumAtLocale", column = @Column(name = "month_pay_minimum_at_locale") ),
+            @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale") ),
+            @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale") ),
+            @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale") ),
+            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted") ) })
     private AdvertFinancialDetail pay;
 
     @OneToOne
@@ -136,6 +136,10 @@ public class Advert implements UniqueEntity {
 
     @Embedded
     private AdvertTargets targets;
+
+    @OrderBy(clause = "id")
+    @OneToMany(mappedBy = "value")
+    private Set<AdvertTargetAdvert> targeters;
 
     @OrderBy(clause = "closing_date desc")
     @OneToMany(mappedBy = "advert")
@@ -303,6 +307,10 @@ public class Advert implements UniqueEntity {
 
     public void setTargets(AdvertTargets targets) {
         this.targets = targets;
+    }
+
+    public Set<AdvertTargetAdvert> getTargeters() {
+        return targeters;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {

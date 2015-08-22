@@ -60,7 +60,7 @@ public class AdvertSubjectArea extends AdvertTarget<ImportedSubjectArea> {
     public Integer getValueId() {
         return value.getId();
     }
-
+    
     @Override
     public String getName() {
         return value.getName();

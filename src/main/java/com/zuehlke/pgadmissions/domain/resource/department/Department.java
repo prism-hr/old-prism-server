@@ -27,8 +27,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertResource;
-import com.zuehlke.pgadmissions.domain.advert.AdvertResourceSelected;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
@@ -161,12 +159,6 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
 
     @OneToMany(mappedBy = "department")
     private Set<Advert> adverts = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "department")
-    private Set<AdvertResource> advertResources = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "department")
-    private Set<AdvertResourceSelected> advertSelectedResources = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "department_imported_program", joinColumns = { @JoinColumn(name = "department_id", nullable = false) }, inverseJoinColumns = {
@@ -432,14 +424,6 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @Override
     public Set<Advert> getAdverts() {
         return adverts;
-    }
-
-    public Set<AdvertResource> getAdvertResources() {
-        return advertResources;
-    }
-
-    public Set<AdvertResourceSelected> getAdvertSelectedResources() {
-        return advertSelectedResources;
     }
 
     public Set<ImportedProgram> getImportedPrograms() {

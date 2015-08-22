@@ -732,7 +732,7 @@ public class ResourceService {
                 : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
 
-    public Set<ResourceTargetDTO> getTargetedResources(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments) {
+    public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments) {
         PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION, SYSTEM };
         List<PrismState> activeInstitutionStates = stateService.getActiveResourceStates(INSTITUTION);
 

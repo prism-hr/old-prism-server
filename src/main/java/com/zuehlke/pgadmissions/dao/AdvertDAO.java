@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargetResource;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
@@ -319,12 +319,21 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public List<Integer> getAdvertResources(Advert advert, PrismScope resourceScope, Class<? extends AdvertTargetResource> targetClass) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(targetClass) //
-                .setProjection(Projections.property(resourceReference + ".id")) //
+    public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
                 .add(Restrictions.eq("advert", advert)) //
-                .add(Restrictions.isNotNull(resourceReference)) //
+                .add(Restrictions.eq("selected", selected)) //
+                .list();
+    }
+
+    public List<Integer> getAdvertTargetResources(Advert advert, PrismScope resourceScope, boolean selected) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
+                .setProjection(Projections.property(resourceReference + ".id")) //
+                .createAlias("value", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert." + resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("advert", advert)) //
+                .add(Restrictions.eq("selected", selected)) //
                 .list();
     }
 

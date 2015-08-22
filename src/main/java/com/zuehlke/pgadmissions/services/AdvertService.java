@@ -49,10 +49,8 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.advert.AdvertResource;
-import com.zuehlke.pgadmissions.domain.advert.AdvertResourceSelected;
 import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargetResource;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -79,6 +77,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 
@@ -136,7 +135,7 @@ public class AdvertService {
         if (queryDTO.isResourceAction()) {
             Resource<?> resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             if (resource.getInstitution() != null) {
-                queryDTO.setInstitutions(new Integer[]{resource.getInstitution().getId()});
+                queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
             }
         }
 
@@ -160,7 +159,8 @@ public class AdvertService {
         Advert advert = new Advert();
         advert.setName(resourceName);
         entityService.save(advert);
-        updateAdvert(parentResource, advert, advertDTO, resourceName);;
+        updateAdvert(parentResource, advert, advertDTO, resourceName);
+        ;
         return advert;
     }
 
@@ -386,8 +386,12 @@ public class AdvertService {
                 .collect(Collectors.toList());
     }
 
-    public List<Integer> getAdvertResources(Advert advert, PrismScope resourceScope, Class<? extends AdvertTargetResource> targetClass) {
-        return advertDAO.getAdvertResources(advert, resourceScope, targetClass);
+    public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
+        return advertDAO.getAdvertTargetAdverts(advert, selected);
+    }
+    
+    public List<Integer> getAdvertTargetResources(Advert advert, PrismScope resourceScope, boolean selected) {
+        return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
@@ -439,11 +443,8 @@ public class AdvertService {
             advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
             targets.getSubjectAreas().clear();
 
-            advertDAO.deleteAdvertAttributes(advert, AdvertResource.class);
-            targets.getResources().clear();
-
-            advertDAO.deleteAdvertAttributes(advert, AdvertResourceSelected.class);
-            targets.getSelectedResources().clear();
+            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
+            targets.getAdverts().clear();
 
             entityService.flush();
         }
@@ -457,24 +458,27 @@ public class AdvertService {
             });
         }
 
-        Set<AdvertResource> resources = targets.getResources();
+        Set<AdvertTargetAdvert> adverts = targets.getAdverts();
         if (targetsDTO.getResources() != null) {
             targetsDTO.getResources().stream().forEach(targetDTO -> {
-                AdvertResource target = new AdvertResource().withAdvert(advert).withValue((ResourceParent<?>) resourceService.getById(targetDTO.getScope(), targetDTO.getId()));
+                AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, false);
                 entityService.save(target);
-                resources.add(target);
+                adverts.add(target);
             });
         }
 
-        Set<AdvertResourceSelected> selectedResources = targets.getSelectedResources();
         if (targetsDTO.getSelectedResources() != null) {
             targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
-                AdvertResourceSelected target = new AdvertResourceSelected().withAdvert(advert)
-                        .withValue((ResourceParent<?>) resourceService.getById(targetDTO.getScope(), targetDTO.getId())).withEndorsed(false);
-                entityService.save(target);
-                selectedResources.add(target);
+                AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, true);
+                entityService.createOrUpdate(target);
+                adverts.add(target);
             });
         }
+    }
+
+    private AdvertTargetAdvert createAdvertTargetAdvert(Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
+        return new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
+                .withSelected(selected).withEndorsed(false);
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {
@@ -513,7 +517,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
         try {
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
             PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -525,8 +529,8 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
             maximumSpecified = maximumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -644,7 +648,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
-                                        LocalDate baseline) {
+            LocalDate baseline) {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 
@@ -788,7 +792,7 @@ public class AdvertService {
 
     private HashMultimap<PrismScope, PrismState> getAdvertScopes() {
         HashMultimap<PrismScope, PrismState> scopes = HashMultimap.create();
-        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
             scopes.putAll(scope, stateService.getActiveResourceStates(scope));
         }
         return scopes;

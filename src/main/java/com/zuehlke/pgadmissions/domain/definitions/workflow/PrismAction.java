@@ -40,8 +40,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_ASSIGN_REVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_ASSIGN_SUPERVISORS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_RESERVE(getDefaultProcessApplicationActionDefinition()),
-    APPLICATION_COMMENT(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_RESERVE(getDefaultProcessApplicationActionDefinition()), APPLICATION_COMMENT(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE(getDefaultViewEditApplicationActionDefinition()), //
     APPLICATION_COMPLETE_VALIDATION_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE_VERIFICATION_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
@@ -64,18 +63,17 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_ESCALATE(getDefaultEscalateResourceActionDefinition(APPLICATION)), //
     APPLICATION_EXPORT(getDefaultResourceActionDefinitionSystemInvocation(EXPORT_RESOURCE, APPLICATION) //
             .withVisibleAction() //
-            .withRedactions(getDefaultApplicationActionRedactions())),
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(getDefaultRateApplicationActionDefinition()), //
-    APPLICATION_PROVIDE_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
-    APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinition()), //
-    APPLICATION_PURGE(getDefaultResourceActionDefinitionSystemInvocation(PURGE_RESOURCE, APPLICATION)), //
-    APPLICATION_REVERSE_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
-    APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
-    APPLICATION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(APPLICATION)), //
-    APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
+            .withRedactions(getDefaultApplicationActionRedactions())), APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+            APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(getDefaultRateApplicationActionDefinition()), //
+            APPLICATION_PROVIDE_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
+            APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinition()), //
+            APPLICATION_PURGE(getDefaultResourceActionDefinitionSystemInvocation(PURGE_RESOURCE, APPLICATION)), //
+            APPLICATION_REVERSE_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+            APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+            APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
+            APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
+            APPLICATION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(APPLICATION)), //
+            APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
 
     PROJECT_ENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_UNENDORSE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
@@ -362,6 +360,23 @@ public enum PrismAction implements PrismLocalizableDefinition {
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ACTION_" + name());
+    }
+
+    public enum PrismActionGroup {
+
+        RESOURCE_ENDORSE(INSTITUTION_ENDORSE, DEPARTMENT_ENDORSE, PROGRAM_ENDORSE, PROJECT_ENDORSE), //
+        RESOURCE_UNENDORSE(INSTITUTION_UNENDORSE, DEPARTMENT_UNENDORSE, PROGRAM_UNENDORSE, PROJECT_UNENDORSE);
+
+        private PrismAction[] actions;
+
+        private PrismActionGroup(PrismAction... actions) {
+            this.actions = actions;
+        }
+
+        public PrismAction[] getActions() {
+            return actions;
+        }
+
     }
 
 }

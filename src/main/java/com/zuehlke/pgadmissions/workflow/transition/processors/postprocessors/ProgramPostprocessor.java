@@ -29,6 +29,10 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
 
         resource.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
+
+        if (comment.isResourceEndorsementComment()) {
+            advertService.provideAdvertRating(resource.getAdvert(), comment.getUser(), comment.getRating());
+        }
     }
 
 }

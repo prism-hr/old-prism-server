@@ -65,6 +65,7 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProces
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.DepartmentPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
@@ -81,7 +82,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             .withResourceDTOClass(InstitutionDTO.class) //
             .withResourceShortCode("IN") //
             .withActionExecutor(InstitutionExecutor.class) //
-            .withResourceCreator(InstitutionCreator.class)), //
+            .withResourceCreator(InstitutionCreator.class) //
+            .withResourcePostprocessor(InstitutionPostprocessor.class)), //
     DEPARTMENT(new PrismScopeDefinition() //
             .withResourceClass(Department.class) //
             .withResourceDTOClass(ResourceParentDivisionDTO.class) //

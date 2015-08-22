@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.department;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismActionResolution.RESOLVE_ENDORSEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_IMPORT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
@@ -55,7 +53,7 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
         stateActions.add(departmentEmailCreatorApproved());
 
         stateActions.add(new PrismStateAction() //
-                .withActionResolution(DEPARTMENT_ENDORSE, RESOLVE_ENDORSEMENT, DEPARTMENT_UNENDORSE) //
+                .withAction(DEPARTMENT_ENDORSE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_DEPARTMENT_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //

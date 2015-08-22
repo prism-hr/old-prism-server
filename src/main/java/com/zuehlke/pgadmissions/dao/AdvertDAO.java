@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -42,11 +45,13 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -335,6 +340,45 @@ public class AdvertDAO {
                 .add(Restrictions.eq("advert", advert)) //
                 .add(Restrictions.eq("selected", selected)) //
                 .list();
+    }
+
+    public List<Integer> getAdvertsUserCanEndorseOrUnendorseFor(PrismScope scope, User user, PrismAction action) {
+        String resourceReference = scope.getLowerCamelName();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("targetAdvert.id")) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
+                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("advertTarget.selected", true)) //
+                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
+                .add(Restrictions.isNotNull(resourceReference)) //
+                .add(Restrictions.eq("action.id", action)) //
+                .add(getPartnerUserRoleConstraint(scope, "stateActionAssignment")) //
+                .add(getResourceStateActionConstraint()) //
+                .add(getUserEnabledConstraint(user)) //
+                .list();
+    }
+
+    public void provideAdvertRating(Advert advert, Collection<Integer> targetAdverts, BigDecimal rating) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update AdvertTargetAdvert " //
+                        + "set rating = :rating "
+                        + "where advert = :advert "
+                        + "and targetAdvert.id in (:targetAdverts)") //
+                .setParameter("rating", rating) //
+                .setParameter("advert", advert) //
+                .setParameterList("targetAdverts", targetAdverts) //
+                .executeUpdate();
     }
 
     private Junction getResourceConditionConstraint(String tableReference) {

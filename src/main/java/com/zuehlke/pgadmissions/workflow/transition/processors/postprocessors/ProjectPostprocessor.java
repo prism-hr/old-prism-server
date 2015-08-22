@@ -26,7 +26,7 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
     @Inject
     private AdvertService advertService;
-
+    
     @Inject
     private RoleService roleService;
 
@@ -53,6 +53,10 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
         if (comment.isProjectViewEditComment()) {
             connectProjectSupervisors(resource, comment);
+        }
+        
+        if (comment.isResourceEndorsementComment()) {
+            advertService.provideAdvertRating(resource.getAdvert(), comment.getUser(), comment.getRating());
         }
     }
 

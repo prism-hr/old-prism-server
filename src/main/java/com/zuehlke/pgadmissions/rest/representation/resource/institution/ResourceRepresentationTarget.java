@@ -13,7 +13,7 @@ public class ResourceRepresentationTarget extends ResourceRepresentationLocation
 
     private Boolean selected;
 
-    private Boolean endorsed;
+    private BigDecimal rating;
 
     private List<ResourceRepresentationLocation> departments;
 
@@ -41,12 +41,12 @@ public class ResourceRepresentationTarget extends ResourceRepresentationLocation
         this.selected = selected;
     }
 
-    public Boolean getEndorsed() {
-        return endorsed;
+    public BigDecimal getRating() {
+        return rating;
     }
 
-    public void setEndorsed(Boolean endorsed) {
-        this.endorsed = endorsed;
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
     }
 
     public List<ResourceRepresentationLocation> getDepartments() {

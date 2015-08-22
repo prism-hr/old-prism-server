@@ -31,7 +31,7 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
 
     private Boolean selected;
 
-    private Boolean endorsed;
+    private BigDecimal rating;
 
     private BigDecimal targetingRelevance;
 
@@ -119,12 +119,12 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
         this.selected = selected;
     }
 
-    public Boolean getEndorsed() {
-        return endorsed;
+    public BigDecimal getRating() {
+        return rating;
     }
 
-    public void setEndorsed(Boolean endorsed) {
-        this.endorsed = endorsed;
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
     }
 
     public BigDecimal getTargetingRelevance() {

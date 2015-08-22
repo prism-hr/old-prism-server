@@ -184,7 +184,7 @@ public class CommentMapper {
         }
         return commentGroup;
     }
-    
+
     private void addViewEditCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles, Set<PrismActionRedactionType> commentRedactions,
             List<PrismRole> creatableRoles, CommentGroupRepresentation commentGroup, List<Integer> batchedViewEditCommentIds,
             CommentRepresentation lastViewEditComment) {
@@ -242,7 +242,7 @@ public class CommentMapper {
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withApplicationReserveStatus(comment.getApplicationReserveStatus())
                 .withRejectionReason(rejectionReason == null ? null : rejectionReason.getName()).withRejectionReasonSystem(comment.getRejectionReasonSystem())
-                .withApplicationRating(comment.getApplicationRating()).withExport(getCommentExportRepresentation(comment))
+                .withApplicationRating(comment.getRating()).withExport(getCommentExportRepresentation(comment))
                 .withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));

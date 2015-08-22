@@ -20,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
@@ -172,8 +173,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
 
-    @Column(name = "application_rating")
-    private BigDecimal applicationRating;
+    @Column(name = "rating")
+    private BigDecimal rating;
 
     @Embedded
     private CommentExport export;
@@ -414,12 +415,12 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
-    public BigDecimal getApplicationRating() {
-        return applicationRating;
+    public BigDecimal getRating() {
+        return rating;
     }
 
-    public void setApplicationRating(BigDecimal applicationRating) {
-        this.applicationRating = applicationRating;
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
     }
 
     public CommentExport getExport() {
@@ -544,8 +545,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment withApplicationRating(BigDecimal applicationRating) {
-        this.applicationRating = applicationRating;
+    public Comment withApplicationRating(BigDecimal rating) {
+        this.rating = rating;
         return this;
     }
 
@@ -659,7 +660,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     }
 
     public boolean isApplicationRatingComment() {
-        return action.getRatingAction() && applicationRating != null;
+        return action.getId().getScope().equals(APPLICATION) && action.getRatingAction() && rating != null;
     }
 
     public boolean isApplicationCompletionComment() {
@@ -777,8 +778,12 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return applicationReserveStatus != null;
     }
 
+    public boolean isResourceEndorsementComment() {
+        return !action.getId().getScope().equals(APPLICATION) && rating != null;
+    }
+
     public String getApplicationRatingDisplay() {
-        return applicationRating == null ? null : applicationRating.toPlainString();
+        return rating == null ? null : rating.toPlainString();
     }
 
     public String getUserDisplay() {

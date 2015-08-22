@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismActionResolution.RESOLVE_ENDORSEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_IMPORT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST;
@@ -44,7 +42,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
         stateActions.add(programEmailCreatorApproved());
 
         stateActions.add(new PrismStateAction() //
-                .withActionResolution(PROGRAM_ENDORSE, RESOLVE_ENDORSEMENT, PROGRAM_UNENDORSE) //
+                .withAction(PROGRAM_ENDORSE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //

@@ -112,8 +112,8 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
     private void synchronizeApplicationRating(Application application, Comment comment) {
         buildAggregatedRating(comment);
-        if (comment.getApplicationRating() == null) {
-            comment.setApplicationRating(new BigDecimal(DEFAULT_RATING));
+        if (comment.getRating() == null) {
+            comment.setRating(new BigDecimal(DEFAULT_RATING));
         }
 
         ApplicationRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(application);
@@ -148,7 +148,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
                 rating = rating.add(new BigDecimal(score).divide(sumImportance, RATING_PRECISION, HALF_UP));
             }
 
-            comment.setApplicationRating(rating);
+            comment.setRating(rating);
             userService.updateUserCompetence(comment.getApplication().getUser());
         }
     }

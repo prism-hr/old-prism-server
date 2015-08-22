@@ -30,6 +30,10 @@ public class DepartmentPostprocessor implements ResourceProcessor<Department> {
         if (comment.isCreateComment() || comment.isViewEditComment()) {
             departmentService.synchronizeImportedSubjectAreas(resource);
         }
+
+        if (comment.isResourceEndorsementComment()) {
+            advertService.provideAdvertRating(resource.getAdvert(), comment.getUser(), comment.getRating());
+        }
     }
 
 }

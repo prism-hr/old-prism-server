@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,8 +30,8 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     @Column(name = "selected", nullable = false)
     private Boolean selected;
 
-    @Column(name = "endorsed", nullable = false)
-    private Boolean endorsed;
+    @Column(name = "rating")
+    private BigDecimal rating;
 
     public Integer getId() {
         return id;
@@ -63,19 +65,19 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         this.selected = selected;
     }
 
-    public Boolean getEndorsed() {
-        return endorsed;
+    public BigDecimal getRating() {
+        return rating;
     }
 
-    public void setEndorsed(Boolean endorsed) {
-        this.endorsed = endorsed;
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
     }
-    
+
     @Override
     public Integer getValueId() {
         return value.getId();
     }
-    
+
     @Override
     public String getName() {
         return value.getName();
@@ -96,9 +98,4 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         return this;
     }
 
-    public AdvertTargetAdvert withEndorsed(Boolean endorsed) {
-        this.endorsed = endorsed;
-        return this;
-    }
-    
 }

@@ -58,3 +58,7 @@ delete
 from action
 where id like "%UNENDORSE"
 ;
+
+update advert_target_advert
+set rating = null
+;

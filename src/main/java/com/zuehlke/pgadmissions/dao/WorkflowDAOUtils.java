@@ -81,7 +81,7 @@ public class WorkflowDAOUtils {
                         Restrictions.in(actionIdReference, RESOURCE_ENDORSE.getActions()))) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.in(actionIdReference, RESOURCE_ENDORSE.getActions())) //
-                        .add(Restrictions.eq(advertTargetReference + ".rating", null)));
+                        .add(Restrictions.isNull(advertTargetReference + ".rating")));
     }
 
 }

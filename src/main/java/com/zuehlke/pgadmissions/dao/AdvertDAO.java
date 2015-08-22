@@ -54,6 +54,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
+import com.zuehlke.pgadmissions.dto.AdvertTargetAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 
 // FIXME adverts for applying to institution and/or department directly
@@ -342,10 +343,13 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getAdvertsUserCanEndorse(PrismScope scope, User user, PrismAction action) {
+    public List<AdvertTargetAdvertDTO> getAdvertsUserCanEndorse(PrismScope scope, User user, PrismAction action) {
         String resourceReference = scope.getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("targetAdvert.id")) //
+        return (List<AdvertTargetAdvertDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("targetAdvert.id"), "targetAdvertId")
+                        .add(Projections.property("ratingCount"), "ratingCount") //
+                        .add(Projections.property("ratingAverage"), "ratingAverage")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
@@ -369,15 +373,17 @@ public class AdvertDAO {
                 .list();
     }
 
-    public void provideAdvertRating(Advert advert, Collection<Integer> targetAdverts, BigDecimal rating) {
+    public void setAdvertRating(Advert advert, Integer targetAdvertId, Integer ratingCount, BigDecimal ratingAverage) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTargetAdvert " //
-                        + "set rating = :rating "
+                        + "set ratingCount = :ratingCount " //
+                        + "set ratingAverage = :ratingAverage "
                         + "where advert = :advert "
-                        + "and targetAdvert.id in (:targetAdverts)") //
-                .setParameter("rating", rating) //
+                        + "and targetAdvert.id = :targetAdvertId") //
+                .setParameter("ratingCount", ratingCount)
+                .setParameter("ratingAverage", ratingAverage) //
                 .setParameter("advert", advert) //
-                .setParameterList("targetAdverts", targetAdverts) //
+                .setParameter("targetAdvertId", targetAdvertId) //
                 .executeUpdate();
     }
 

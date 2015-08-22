@@ -30,8 +30,11 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     @Column(name = "selected", nullable = false)
     private Boolean selected;
 
-    @Column(name = "rating")
-    private BigDecimal rating;
+    @Column(name = "rating_count")
+    private Integer ratingCount;
+
+    @Column(name = "rating_average")
+    private BigDecimal ratingAverage;
 
     public Integer getId() {
         return id;
@@ -64,13 +67,21 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     public void setSelected(Boolean selected) {
         this.selected = selected;
     }
-
-    public BigDecimal getRating() {
-        return rating;
+    
+    public Integer getRatingCount() {
+        return ratingCount;
     }
 
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
+    public void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public BigDecimal getRatingAverage() {
+        return ratingAverage;
+    }
+
+    public void setRatingAverage(BigDecimal ratingAverage) {
+        this.ratingAverage = ratingAverage;
     }
 
     @Override

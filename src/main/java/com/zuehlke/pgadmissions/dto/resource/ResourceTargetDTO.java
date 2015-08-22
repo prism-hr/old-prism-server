@@ -123,8 +123,8 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
         return rating;
     }
 
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
+    public void setRating(BigDecimal ratingAverage) {
+        this.rating = ratingAverage;
     }
 
     public BigDecimal getTargetingRelevance() {

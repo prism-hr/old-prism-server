@@ -68,6 +68,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
+import com.zuehlke.pgadmissions.dto.AdvertTargetAdvertDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
@@ -400,15 +401,22 @@ public class AdvertService {
     }
 
     public void provideAdvertRating(Advert advert, User user, BigDecimal rating) {
-        Set<Integer> targetAdverts = Sets.newHashSet();
+        Set<AdvertTargetAdvertDTO> targetAdverts = Sets.newHashSet();
         PrismAction action = PrismAction.valueOf(advert.getResource().getResourceScope().name() + "_ENDORSE");
         scopeService.getEnclosingScopesDescending(DEPARTMENT, SYSTEM).forEach(scope -> {
             targetAdverts.addAll(advertDAO.getAdvertsUserCanEndorse(scope, user, action));
         });
 
-        if (!targetAdverts.isEmpty()) {
-            advertDAO.provideAdvertRating(advert, targetAdverts, rating);
-        }
+        targetAdverts.forEach(targetAdvert -> {
+            Integer ratingCount = targetAdvert.getRatingCount();
+            BigDecimal ratingAverage = targetAdvert.getRatingAverage();
+
+            ratingCount = ratingCount == null ? 0 : ratingCount;
+            ratingAverage = ratingAverage == null ? new BigDecimal(0) : ratingAverage;
+
+            advertDAO.setAdvertRating(advert, targetAdvert.getTargetAdvertId(), (ratingCount + 1),
+                    ratingAverage.multiply(new BigDecimal(ratingCount)).add(rating).divide(new BigDecimal(ratingCount + 1)).setScale(2, RoundingMode.HALF_UP));
+        });
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

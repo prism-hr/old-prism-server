@@ -595,7 +595,7 @@ public class ResourceDAO {
                 .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
                 .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude") //
                 .add(Projections.property("targeter.selected"), "selected") //
-                .add(Projections.property("targeter.rating"), "rating");
+                .add(Projections.property("targeter.ratingAverage"), "rating");
 
         boolean doSubjectAreaFilter = CollectionUtils.isNotEmpty(subjectAreas);
         if (doSubjectAreaFilter) {

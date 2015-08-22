@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +31,7 @@ public class WorkflowDAOUtils {
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user));
     }
-    
+
     public static Junction getUserRoleConstraint(Resource<?> resource) {
         return Restrictions.disjunction() //
                 .add(Restrictions.eq("userRole.application", resource.getApplication())) //
@@ -39,7 +41,7 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                 .add(Restrictions.eq("userRole.system", resource.getSystem()));
     }
-    
+
     public static Junction getPartnerUserRoleConstraint(PrismScope resourceScope, String targetEntity) {
         return Restrictions.conjunction() //
                 .add(Restrictions.disjunction() //
@@ -72,6 +74,21 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.ilike(alias + "lastName", searchTerm, MatchMode.START)) //
                 .add(Restrictions.ilike(alias + "fullName", searchTerm, MatchMode.START)) //
                 .add(Restrictions.ilike(alias + "email", searchTerm, MatchMode.START));
+    }
+
+    public static Junction endorsementActionResolution(String actionIdReference, String advertTargetReference) {
+        return Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.not( //
+                                Restrictions.in(actionIdReference, RESOURCE_ENDORSE.getActions()))) //
+                        .add(Restrictions.not( //
+                                Restrictions.in(actionIdReference, RESOURCE_UNENDORSE.getActions())))) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.in(actionIdReference, RESOURCE_ENDORSE.getActions())) //
+                        .add(Restrictions.eq(advertTargetReference + ".endorsed", false))) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.in(actionIdReference, RESOURCE_UNENDORSE.getActions()))
+                        .add(Restrictions.eq(advertTargetReference + ".endorsed", true)));
     }
 
 }

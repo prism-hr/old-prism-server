@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.endorsementActionResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
@@ -75,6 +76,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN) //
                 .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
+                .add(endorsementActionResolution("action.id", "advertTarget"))
                 .add(Restrictions.isNull("actionRedaction.id")) //
                 .list();
     }

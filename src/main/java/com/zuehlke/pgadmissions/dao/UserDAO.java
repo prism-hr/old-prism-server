@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.endorsementActionResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
@@ -333,6 +334,7 @@ public class UserDAO {
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
                 .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
+                .add(endorsementActionResolution("stateAction.action.id", "advertTarget"))
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //

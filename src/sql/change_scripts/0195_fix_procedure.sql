@@ -1,4 +1,4 @@
-drop prodedure admin_delete_institution
+drop procedure admin_delete_institution
 ;
 
 create procedure admin_delete_institution(in in_institution_id int(10) unsigned)
@@ -76,7 +76,7 @@ begin
 	delete
 	from institution
 	where id = in_institution_id;
-	
+
 	delete
 	from advert
 	where project_id = null

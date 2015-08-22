@@ -1,5 +1,4 @@
 alter table advert_target_advert
-	drop index advert_id_4,
 	drop column endorsed,
 	add column rating int(1) unsigned,
 	add index (advert_id, rating)

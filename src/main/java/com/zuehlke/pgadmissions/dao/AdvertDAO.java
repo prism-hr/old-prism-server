@@ -342,7 +342,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getAdvertsUserCanEndorseOrUnendorseFor(PrismScope scope, User user, PrismAction action) {
+    public List<Integer> getAdvertsUserCanEndorse(PrismScope scope, User user, PrismAction action) {
         String resourceReference = scope.getLowerCamelName();
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("targetAdvert.id")) //

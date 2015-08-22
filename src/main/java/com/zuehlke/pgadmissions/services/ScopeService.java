@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ScopeDAO;
@@ -17,7 +7,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionsRepresentation;
+import org.apache.commons.lang.ArrayUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 @Service
 @Transactional
@@ -61,7 +58,7 @@ public class ScopeService {
     }
 
     public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope resourceScope,
-            PrismScope... excludedScopes) {
+                                                                               PrismScope... excludedScopes) {
         HashMultimap<PrismScope, PrismState> childScopes = HashMultimap.create();
         for (PrismScope childScope : getChildScopesAscending(resourceScope)) {
             if (excludedScopes.length == 0 || !ArrayUtils.contains(excludedScopes, childScope)) {
@@ -91,14 +88,14 @@ public class ScopeService {
         return enclosedScopes;
     }
 
-    private List<ResourceSectionRepresentation> getRequiredSections(ResourceSectionsRepresentation sections,
-            List<ResourceSectionRepresentation> requiredSections) {
+    private List<ResourceSectionRepresentation> getRequiredSections(
+            List<ResourceSectionRepresentation> sections, List<ResourceSectionRepresentation> requiredSections) {
         requiredSections = requiredSections == null ? Lists.newArrayList() : requiredSections;
         for (ResourceSectionRepresentation section : sections) {
             if (section.isRequired()) {
                 requiredSections.add(section);
             }
-            ResourceSectionsRepresentation subsections = section.getSubsections();
+            List<ResourceSectionRepresentation> subsections = section.getSubsections();
             if (subsections != null) {
                 getRequiredSections(subsections, requiredSections);
             }

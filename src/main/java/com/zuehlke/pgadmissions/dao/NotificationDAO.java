@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.endorsementActionResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
@@ -87,7 +87,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
-                .add(endorsementActionResolution("stateAction.action.id", "advertTarget")) //
+                .add(getEndorsementActionResolution("stateAction.action.id", "advertTarget")) //
                 .add(Restrictions.isNull("userNotification.id")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
@@ -122,7 +122,7 @@ public class NotificationDAO {
 
         return (List<UserNotificationDefinitionDTO>) criteria //
                 .add(getUserRoleConstraint(resource)) //
-                .add(endorsementActionResolution("stateAction.action.id", "advertTarget")) //
+                .add(getEndorsementActionResolution("stateAction.action.id", "advertTarget")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -153,7 +153,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
-                .add(endorsementActionResolution("stateAction.action.id", "advertTarget")) //
+                .add(getEndorsementActionResolution("stateAction.action.id", "advertTarget")) //
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
@@ -184,7 +184,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
-                .add(endorsementActionResolution("stateAction.action.id", "advertTarget")) //
+                .add(getEndorsementActionResolution("stateAction.action.id", "advertTarget")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
                         .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
@@ -222,7 +222,7 @@ public class NotificationDAO {
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.eq("comment." + resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource)) //
-                .add(endorsementActionResolution("stateAction.action.id", "targetAdvert"))
+                .add(getEndorsementActionResolution("stateAction.action.id", "targetAdvert"))
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
                         .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //

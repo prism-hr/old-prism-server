@@ -219,7 +219,7 @@ public class SystemInitialisationHelper {
         System system = systemService.getSystem();
         for (NotificationDefinition definition : notificationService.getDefinitions()) {
             PrismNotificationDefinition prismNotificationDefinition = definition.getId();
-            
+
             assertEquals(prismNotificationDefinition.getNotificationType(), definition.getNotificationType());
             assertEquals(prismNotificationDefinition.getNotificationPurpose(), definition.getNotificationPurpose());
             assertEquals(prismNotificationDefinition.getScope(), definition.getScope().getId());
@@ -256,9 +256,7 @@ public class SystemInitialisationHelper {
     public void verifyStateActionCreation() {
         Integer stateActionsExpected = 0;
         for (PrismState prismState : PrismState.values()) {
-            for (PrismStateAction prismStateAction : PrismState.getStateActions(prismState)) {
-                stateActionsExpected = stateActionsExpected + (prismStateAction.getActionResolution() == null ? 1 : 2);
-            }
+            stateActionsExpected = stateActionsExpected + PrismState.getStateActions(prismState).size();
         }
 
         List<StateAction> stateActions = stateService.getStateActions();

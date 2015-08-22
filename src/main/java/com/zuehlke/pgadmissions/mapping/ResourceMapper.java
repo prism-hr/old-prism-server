@@ -292,7 +292,7 @@ public class ResourceMapper {
         }
 
         representation.setSelected(resource.getSelected());
-        representation.setEndorsed(resource.getEndorsed());
+        representation.setRating(resource.getRating());
 
         Set<ResourceTargetDTO> departments = resource.getDepartments();
         if (!departments.isEmpty()) {

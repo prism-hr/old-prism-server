@@ -120,7 +120,7 @@ public class ApplicationDAO {
                         .add(Projections.property("comment"), "comment")) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
-                .addOrder(Order.desc("comment.applicationRating")) //
+                .addOrder(Order.desc("comment.rating")) //
                 .addOrder(Order.asc("comment.createdTimestamp")) //
                 .addOrder(Order.asc("comment.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReferenceDTO.class)) //
@@ -273,9 +273,9 @@ public class ApplicationDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("application"), "parent") //
                         .add(Projections.countDistinct("id"), "applicationRatingCount") //
-                        .add(Projections.avg("applicationRating"), "applicationRatingAverage")) //
+                        .add(Projections.avg("rating"), "applicationRatingAverage")) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNotNull("applicationRating")) //
+                .add(Restrictions.isNotNull("rating")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
                 .uniqueResult();
     }

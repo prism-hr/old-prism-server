@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.project;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismActionResolution.RESOLVE_ENDORSEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
@@ -31,7 +29,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
         stateActions.add(projectEmailCreatorApproved()); //
 
         stateActions.add(new PrismStateAction() //
-                .withActionResolution(PROJECT_ENDORSE, RESOLVE_ENDORSEMENT, PROJECT_UNENDORSE) //
+                .withAction(PROJECT_ENDORSE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //

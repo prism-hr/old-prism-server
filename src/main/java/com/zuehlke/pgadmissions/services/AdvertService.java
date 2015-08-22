@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
@@ -56,6 +57,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -106,6 +108,9 @@ public class AdvertService {
 
     @Inject
     private ResourceService resourceService;
+
+    @Inject
+    private ScopeService scopeService;
 
     @Inject
     private StateService stateService;
@@ -389,9 +394,21 @@ public class AdvertService {
     public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
         return advertDAO.getAdvertTargetAdverts(advert, selected);
     }
-    
+
     public List<Integer> getAdvertTargetResources(Advert advert, PrismScope resourceScope, boolean selected) {
         return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
+    }
+
+    public void provideAdvertRating(Advert advert, User user, BigDecimal rating) {
+        Set<Integer> targetAdverts = Sets.newHashSet();
+        PrismAction action = PrismAction.valueOf(advert.getResource().getResourceScope().name() + "_ENDORSE");
+        scopeService.getEnclosingScopesDescending(DEPARTMENT, SYSTEM).forEach(scope -> {
+            targetAdverts.addAll(advertDAO.getAdvertsUserCanEndorseOrUnendorseFor(scope, user, action));
+        });
+
+        if (!targetAdverts.isEmpty()) {
+            advertDAO.provideAdvertRating(advert, targetAdverts, rating);
+        }
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
@@ -478,7 +495,7 @@ public class AdvertService {
 
     private AdvertTargetAdvert createAdvertTargetAdvert(Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
         return new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
-                .withSelected(selected).withEndorsed(false);
+                .withSelected(selected);
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {

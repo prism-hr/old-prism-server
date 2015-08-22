@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismActionResolution;
 
 public class PrismStateAction {
 
@@ -13,8 +12,6 @@ public class PrismStateAction {
     private Boolean raisesUrgentFlag = false;
 
     private PrismActionCondition actionCondition;
-
-    private PrismActionResolution actionResolution;
 
     private PrismAction actionOther;
 
@@ -38,10 +35,6 @@ public class PrismStateAction {
 
     public PrismActionCondition getActionCondition() {
         return actionCondition;
-    }
-
-    public PrismActionResolution getActionResolution() {
-        return actionResolution;
     }
 
     public PrismAction getActionOther() {
@@ -70,13 +63,6 @@ public class PrismStateAction {
 
     public PrismStateAction withAction(PrismAction action) {
         this.action = action;
-        return this;
-    }
-
-    public PrismStateAction withActionResolution(PrismAction action, PrismActionResolution actionResolution, PrismAction actionOther) {
-        this.action = action;
-        this.actionResolution = actionResolution;
-        this.actionOther = actionOther;
         return this;
     }
 

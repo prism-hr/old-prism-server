@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.institution;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismActionResolution.RESOLVE_ENDORSEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
@@ -9,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
@@ -68,7 +66,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
         stateActions.add(institutionEmailCreatorApproved()); //
 
         stateActions.add(new PrismStateAction() //
-                .withActionResolution(INSTITUTION_ENDORSE, RESOLVE_ENDORSEMENT, INSTITUTION_UNENDORSE) //
+                .withAction(INSTITUTION_ENDORSE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_INSTITUTION_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //

@@ -16,6 +16,7 @@ import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectT
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -273,7 +274,7 @@ public class ResourceMapper {
 
     public List<ResourceRepresentationTarget> getResourceTargetingRepresentations(Advert currentAdvert, List<Integer> subjectAreas, List<Integer> institutions,
             List<Integer> departments) {
-        return resourceService.getTargetedResources(currentAdvert, subjectAreas, institutions, departments).stream().map(this::getResourceRepresentationTargeting)
+        return resourceService.getResourceTargets(currentAdvert, subjectAreas, institutions, departments).stream().map(this::getResourceRepresentationTargeting)
                 .collect(Collectors.toList());
     }
 
@@ -677,31 +678,46 @@ public class ResourceMapper {
             }
         }
 
-        int counter = 0;
+        int level = 0;
+        int depth = resources.keySet().size();
+        Boolean isResourceUserCreation = null;
+        boolean isLoggedInSession = userService.isLoggedInSession();
+
         Map<T, ResourceChildCreationRepresentation> index = Maps.newHashMap();
         Set<ResourceChildCreationRepresentation> representations = Sets.newLinkedHashSet();
         for (Entry<PrismScope, TreeSet<T>> resourceEntry : resources.entrySet()) {
             if (resourceEntry.getKey().ordinal() <= stopScope.ordinal()) {
                 for (T resource : resourceEntry.getValue()) {
-                    ResourceChildCreationRepresentation resourceChildCreationRepresentation = getResourceChildCreationRepresentation(resource);
-                    if (counter == 0) {
+                    isResourceUserCreation = isResourceUserCreation == null ? resource.getClass().equals(ResourceChildCreationDTO.class) : isResourceUserCreation;
+                    ResourceChildCreationRepresentation resourceChildCreationRepresentation = getResourceChildCreationRepresentation(resource, isLoggedInSession);
+                    if (level == 0) {
                         representations.add(resourceChildCreationRepresentation);
                     } else {
                         index.get(resource.getParentResource()).addChildResource(resourceChildCreationRepresentation);
                     }
-                    index.put(resource, resourceChildCreationRepresentation);
+
+                    if (!checkNotResourceUserCreationDisabledLeaf(level, depth, isResourceUserCreation, resourceChildCreationRepresentation)) {
+                        index.put(resource, resourceChildCreationRepresentation);
+                    }
                 }
             }
-            counter++;
+            level++;
         }
         return Lists.newArrayList(representations);
     }
 
-    private <T extends ResourceStandardDTO> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(T resource) {
+    private boolean checkNotResourceUserCreationDisabledLeaf(int level, int depth, Boolean isResourceUserCreation,
+            ResourceChildCreationRepresentation resourceChildCreationRepresentation) {
+        return BooleanUtils.isTrue(isResourceUserCreation) && level == (depth - 1) && BooleanUtils.isFalse(resourceChildCreationRepresentation.getPartnerMode())
+                && isEmpty(resourceChildCreationRepresentation.getChildResources());
+    }
+
+    private <T extends ResourceStandardDTO> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(T resource, boolean isLoggedInSession) {
         ResourceChildCreationRepresentation representation = new ResourceChildCreationRepresentation() //
                 .withScope(resource.getScope()).withId(resource.getId()).withName(resource.getName());
         if (resource.getClass().equals(ResourceChildCreationDTO.class)) {
-            representation.setPartnerMode(((ResourceChildCreationDTO) resource).getPartnerMode());
+            Boolean partnerMode = ((ResourceChildCreationDTO) resource).getPartnerMode();
+            representation.setPartnerMode(isLoggedInSession ? partnerMode != null : BooleanUtils.isTrue(partnerMode));
         }
         return representation;
     }

@@ -12,21 +12,17 @@ import com.google.common.collect.Sets;
 @Embeddable
 public class AdvertTargets implements AdvertAttributes {
 
-    @OrderBy(clause = "value")
+    @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertCompetence> competences = Sets.newHashSet();
 
-    @OrderBy(clause = "value")
+    @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertSubjectArea> subjectAreas = Sets.newHashSet();
 
-    @OrderBy(clause = "institution, department")
+    @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertResource> resources = Sets.newHashSet();
-
-    @OrderBy(clause = "institution, department")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertResourceSelected> selectedResources = Sets.newHashSet();
+    private Set<AdvertTargetAdvert> adverts = Sets.newHashSet();
 
     public Set<AdvertCompetence> getCompetences() {
         return competences;
@@ -44,20 +40,12 @@ public class AdvertTargets implements AdvertAttributes {
         this.subjectAreas = subjectAreas;
     }
 
-    public Set<AdvertResource> getResources() {
-        return resources;
+    public Set<AdvertTargetAdvert> getAdverts() {
+        return adverts;
     }
 
-    public void setResources(Set<AdvertResource> resources) {
-        this.resources = resources;
-    }
-
-    public Set<AdvertResourceSelected> getSelectedResources() {
-        return selectedResources;
-    }
-
-    public void setSelectedResources(Set<AdvertResourceSelected> selectedResources) {
-        this.selectedResources = selectedResources;
+    public void setAdverts(Set<AdvertTargetAdvert> adverts) {
+        this.adverts = adverts;
     }
 
     @Override
@@ -65,10 +53,8 @@ public class AdvertTargets implements AdvertAttributes {
         Class<?> valueClass = value.getClass();
         if (valueClass.equals(AdvertCompetence.class)) {
             competences.add((AdvertCompetence) value);
-        } else if (valueClass.equals(AdvertResource.class)) {
-            resources.add((AdvertResource) value);
-        } else if (valueClass.equals(AdvertResourceSelected.class)) {
-            selectedResources.add((AdvertResourceSelected) value);
+        } else if (valueClass.equals(AdvertTargetAdvert.class)) {
+            adverts.add((AdvertTargetAdvert) value);
         } else {
             subjectAreas.add((AdvertSubjectArea) value);
         }

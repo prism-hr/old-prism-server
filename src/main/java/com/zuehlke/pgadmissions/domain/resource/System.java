@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -33,6 +34,11 @@ public class System extends Resource<SystemReassignmentProcessor> {
 
     @Id
     private Integer id;
+    
+    @OneToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "advert_id", nullable = false, unique = true)
+    private Advert advert;
 
     @Column(name = "code", unique = true)
     private String code;
@@ -210,11 +216,12 @@ public class System extends Resource<SystemReassignmentProcessor> {
 
     @Override
     public Advert getAdvert() {
-        return null;
+        return advert;
     }
 
     @Override
     public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     @Override

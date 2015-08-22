@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOTemplates.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.List;
@@ -58,8 +58,14 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource, User user) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("advertTarget.selected", true)) //
+                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -78,14 +84,6 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .list();
-    }
-
-    public List<PrismRole> getRolesWithinResource(Resource<?> resource, User user) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property("role.id")) //
-                .add(Restrictions.eq("user", user)) //
-                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
                 .list();
     }
 

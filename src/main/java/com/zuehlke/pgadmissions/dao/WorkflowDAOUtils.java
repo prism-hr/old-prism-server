@@ -1,34 +1,26 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
-public class WorkflowDAOTemplates {
+public class WorkflowDAOUtils {
 
     public static Junction getUserRoleConstraint(Resource<?> resource, String targetEntity) {
-        Junction constraint = Restrictions.conjunction() //
-                .add(getUserRoleConstraint(resource)) //
-                .add(Restrictions.eq(targetEntity + ".partnerMode", false)); //
-
-        // FIXME: Add constraints for partner access
-
+        PrismScope resourceScope = resource.getResourceScope();
+        Junction constraint = Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(getUserRoleConstraint(resource)) //
+                        .add(Restrictions.eq(targetEntity + ".partnerMode", false))) //
+                .add(getPartnerUserRoleConstraint(resourceScope, targetEntity)); //
         return constraint;
-    }
-
-    public static Junction getUserRoleConstraint(Resource<?> resource) {
-        return Restrictions.conjunction() //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.department", resource.getDepartment())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem())));
     }
 
     public static Junction getUserRoleConstraint(Resource<?> resource, User user, String targetEntity) {
@@ -36,6 +28,25 @@ public class WorkflowDAOTemplates {
                 .add(getUserRoleConstraint(resource, targetEntity)) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user));
+    }
+    
+    public static Junction getUserRoleConstraint(Resource<?> resource) {
+        return Restrictions.disjunction() //
+                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                .add(Restrictions.eq("userRole.department", resource.getDepartment())) //
+                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                .add(Restrictions.eq("userRole.system", resource.getSystem()));
+    }
+    
+    public static Junction getPartnerUserRoleConstraint(PrismScope resourceScope, String targetEntity) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqProperty("targetAdvert.department", "userRole.department"))
+                        .add(Restrictions.eqProperty("targetAdvert.institution", "userRole.institution"))
+                        .add(Restrictions.eqProperty(resourceScope.equals(SYSTEM) ? "system" : resourceScope.getLowerCamelName() + ".system", "userRole.system")))
+                .add(Restrictions.eq(targetEntity + ".partnerMode", true));
     }
 
     public static Junction getUserEnabledConstraint(User user) {

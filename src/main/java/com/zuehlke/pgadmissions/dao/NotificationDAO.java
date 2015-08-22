@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOTemplates.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
@@ -67,6 +67,11 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId") //
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("advertTarget.selected", true)) //
+                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
@@ -121,6 +126,11 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId") //
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("advertTarget.selected", true)) //
+                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
@@ -146,6 +156,11 @@ public class NotificationDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("advertTarget.selected", true)) //
+                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //

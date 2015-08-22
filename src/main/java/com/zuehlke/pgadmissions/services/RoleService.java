@@ -144,10 +144,6 @@ public class RoleService {
         return roleDAO.getRolesForResource(resource, user);
     }
 
-    public List<PrismRole> getRolesWithinResource(Resource<?> resource, User user) {
-        return roleDAO.getRolesWithinResource(resource, user);
-    }
-
     public List<User> getRoleUsers(Resource<?> resource, Role... roles) {
         return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, roles);
     }

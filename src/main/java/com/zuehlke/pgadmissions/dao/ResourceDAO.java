@@ -289,8 +289,10 @@ public class ResourceDAO {
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.selectedResources", "selectedResource", JoinType.INNER_JOIN)
-                .createAlias("selectedResource." + partnerResourceReference, partnerResourceReference, JoinType.INNER_JOIN) //
+                .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
+                        Restrictions.eq("advertTarget.selected", true)) //
+                .createAlias("advertTarget.value", "targetAdvert", JoinType.INNER_JOIN)
+                .createAlias("targetAdvert." + partnerResourceReference, partnerResourceReference, JoinType.INNER_JOIN) //
                 .createAlias(partnerResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
@@ -592,8 +594,8 @@ public class ResourceDAO {
                 .add(Projections.property("address.googleId"), "addressGoogleId") //
                 .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
                 .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude") //
-                .add(Projections.property("advertSelectedResource.id"), "selectedId") //
-                .add(Projections.property("advertSelectedResource.endorsed"), "endorsed");
+                .add(Projections.property("targeter.selected"), "selected") //
+                .add(Projections.property("targeter.endorsed"), "endorsed");
 
         boolean doSubjectAreaFilter = CollectionUtils.isNotEmpty(subjectAreas);
         if (doSubjectAreaFilter) {
@@ -613,8 +615,8 @@ public class ResourceDAO {
         criteria.createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
-                .createAlias("advertSelectedResources", "advertSelectedResource", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("advertSelectedResource.advert", advert))
+                .createAlias("advert.targeters", "targeter", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("targeter.advert", advert)) //
                 .createAlias("resourceStates", "resourceState") //
                 .createAlias(importedInstitutionJoinPath, "importedInstitution", JoinType.INNER_JOIN,
                         Restrictions.isNotNull("importedInstitution.ucasId"));

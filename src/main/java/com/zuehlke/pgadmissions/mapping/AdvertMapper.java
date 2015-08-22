@@ -24,10 +24,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertResource;
-import com.zuehlke.pgadmissions.domain.advert.AdvertResourceSelected;
 import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargetResource;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
@@ -228,8 +225,8 @@ public class AdvertMapper {
         AdvertTargets targets = advertService.getAdvertTargets(advert);
         if (targets != null) {
             return new AdvertTargetsRepresentation().withCompetences(getAdvertCompetenceRepresentations(targets.getCompetences()))
-                    .withSubjectAreas(getAdvertSubjectAreaRepresentations(targets.getSubjectAreas())).withResources(getAdvertResourceRepresentations(advert, AdvertResource.class))
-                    .withSelectedResources(getAdvertResourceRepresentations(advert, AdvertResourceSelected.class));
+                    .withSubjectAreas(getAdvertSubjectAreaRepresentations(targets.getSubjectAreas()))
+                    .withResources(getAdvertResourceRepresentations(advert, false)).withSelectedResources(getAdvertResourceRepresentations(advert, true));
         }
         return null;
     }
@@ -244,9 +241,9 @@ public class AdvertMapper {
                 .collect(Collectors.toList());
     }
 
-    private List<ResourceRepresentationTarget> getAdvertResourceRepresentations(Advert advert, Class<? extends AdvertTargetResource> targetClass) {
-        return resourceMapper.getResourceTargetingRepresentations(advert, null, advertService.getAdvertResources(advert, INSTITUTION, targetClass),
-                advertService.getAdvertResources(advert, DEPARTMENT, targetClass));
+    private List<ResourceRepresentationTarget> getAdvertResourceRepresentations(Advert advert, boolean selected) {
+        return resourceMapper.getResourceTargetingRepresentations(advert, null, advertService.getAdvertTargetResources(advert, INSTITUTION, selected),
+                advertService.getAdvertTargetResources(advert, DEPARTMENT, selected));
     }
 
     private ImportedAdvertDomicileResponse getAdvertDomicileRepresentation(ImportedAdvertDomicile domicile) {

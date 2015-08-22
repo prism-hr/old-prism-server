@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -27,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceStateDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -195,11 +197,25 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public List<PrismState> getSecondaryResourceStates(PrismScope resourceScope, Integer resourceId) {
+    public List<PrismState> getSecondaryResourceStates(Resource<?> resource) {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("state.id")) //
-                .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("primaryState", false)) //
+                .list();
+    }
+
+    public List<ResourceStateDTO> getSecondaryResourceStates(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        String resourceIdReference = resourceScope.getLowerCamelName() + ".id";
+        return (List<ResourceStateDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property(resourceIdReference), "resourceId") //
+                        .add(Projections.property("state.id"), "stateId")) //
+                .add(Restrictions.in(resourceIdReference, resourceIds)) //
+                .add(Restrictions.eq("primaryState", false)) //
+                .addOrder(Order.asc(resourceIdReference)) //
+                .addOrder(Order.asc("state.id")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceStateDTO.class)) //
                 .list();
     }
 

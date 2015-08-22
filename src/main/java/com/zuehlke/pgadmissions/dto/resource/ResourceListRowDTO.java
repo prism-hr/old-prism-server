@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dto.resource;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
@@ -58,7 +57,7 @@ public class ResourceListRowDTO extends ResourceSimpleDTO {
 
     private String advertIncompleteSection;
 
-    private Set<ActionDTO> actions;
+    private List<ActionDTO> actions;
 
     public Integer getSystemId() {
         return systemId;
@@ -244,16 +243,16 @@ public class ResourceListRowDTO extends ResourceSimpleDTO {
         this.advertIncompleteSection = advertIncompleteSection;
     }
 
-    public Set<ActionDTO> getActions() {
+    public List<ActionDTO> getActions() {
         return actions;
     }
 
-    public void setActions(Set<ActionDTO> actions) {
+    public void setActions(List<ActionDTO> actions) {
         this.actions = actions;
     }
 
     public Integer getResourceId() {
-        return ObjectUtils.firstNonNull(applicationId, projectId, programId, departmentId, institutionId);
+        return ObjectUtils.firstNonNull(applicationId, projectId, programId, departmentId, institutionId, systemId);
     }
 
 }

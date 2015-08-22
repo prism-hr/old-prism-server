@@ -1,16 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOTemplates.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOTemplates.getUserEnabledConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOTemplates.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -108,12 +111,20 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
-    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
-            Integer departmentId, Integer programId, Integer projectId, Integer applicationId, User user) {
+    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Collection<Integer> resourceIds, List<PrismScope> parentScopes, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
+        String resourceIdReference = resourceReference + ".id";
+
+        Junction resourceConstraint = Restrictions.disjunction() //
+                .add(Restrictions.eqProperty(resourceReference, "userRole." + resourceReference));
+        parentScopes.forEach(parentScope -> {
+            String parentReference = parentScope.getLowerCamelName();
+            resourceConstraint.add(Restrictions.eqProperty(resourceReference + "." + parentReference, "userRole." + parentReference));
+        });
+
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property(resourceReference + ".id"), "resourceId") //
+                        .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState")) //
@@ -132,25 +143,20 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .add(Restrictions.eq(resourceReference + ".id", resourceId)) //
+                .add(Restrictions.in(resourceIdReference, resourceIds)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.disjunction()
-                                        .add(Restrictions.eq("userRole.application.id", applicationId)) //
-                                        .add(Restrictions.eq("userRole.project.id", projectId)) //
-                                        .add(Restrictions.eq("userRole.program.id", programId)) //
-                                        .add(Restrictions.eq("userRole.department.id", departmentId)) //
-                                        .add(Restrictions.eq("userRole.institution.id", institutionId)) //
-                                        .add(Restrictions.eq("userRole.system.id", systemId)))
+                                .add(resourceConstraint)
                                 .add(Restrictions.eq("stateActionAssignment.partnerMode", false))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.disjunction() //
                                         .add(Restrictions.eqProperty("targetAdvert.department", "userRole.department"))
                                         .add(Restrictions.eqProperty("targetAdvert.institution", "userRole.institution"))
-                                        .add(Restrictions.eq("userRole.system.id", systemId)))
+                                        .add(Restrictions.eqProperty(resourceScope.equals(SYSTEM) ? "system" : resourceReference + ".system", "userRole.system")))
                                 .add(Restrictions.eq("stateActionAssignment.partnerMode", true)))) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
+                .addOrder(Order.asc(resourceIdReference))
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.desc("primaryState")) //
                 .addOrder(Order.asc("action.id")) //

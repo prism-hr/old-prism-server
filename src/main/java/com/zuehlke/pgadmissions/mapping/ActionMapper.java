@@ -53,17 +53,9 @@ public class ActionMapper {
 
     public List<ActionRepresentationExtended> getActionRepresentations(Resource<?> resource, User user) {
         PrismScope scope = resource.getResourceScope();
-        Integer resourceId = resource.getId();
-        Integer systemId = resource.getSystem().getId();
-        Integer institutionId = getResourceId(resource.getInstitution());
-        Integer departmentId = getResourceId(resource.getDepartment());
-        Integer programId = getResourceId(resource.getProgram());
-        Integer projectId = getResourceId(resource.getProject());
-        Integer applicationId = getResourceId(resource.getApplication());
 
         Set<ActionRepresentationExtended> representations = Sets.newLinkedHashSet();
-        List<ActionDTO> actions = actionService.getPermittedActions(scope, resourceId, systemId, institutionId, departmentId, programId, projectId,
-                applicationId, user);
+        List<ActionDTO> actions = actionService.getPermittedActions(resource, user);
         for (ActionDTO action : actions) {
             representations.add(getActionRepresentationExtended(resource, action, user));
         }
@@ -79,7 +71,7 @@ public class ActionMapper {
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
         return new ActionOutcomeRepresentation().withTransitionResource(
                 resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(
-                actionOutcomeDTO.getTransitionAction().getId());
+                        actionOutcomeDTO.getTransitionAction().getId());
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource<?> resource, ActionDTO action, User user) {
@@ -113,10 +105,6 @@ public class ActionMapper {
         representation.setCategory(action.getActionCategory());
 
         return representation;
-    }
-
-    private <T extends Resource<?>> Integer getResourceId(T resource) {
-        return resource == null ? null : resource.getId();
     }
 
 }

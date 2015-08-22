@@ -37,7 +37,7 @@ public class System extends Resource<SystemReassignmentProcessor> {
     
     @OneToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false, unique = true)
+    @JoinColumn(name = "advert_id", unique = true)
     private Advert advert;
 
     @Column(name = "code", unique = true)

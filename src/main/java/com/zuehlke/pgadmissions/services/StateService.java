@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.StateDAO;
@@ -248,11 +250,15 @@ public class StateService {
     }
 
     public List<PrismState> getSecondaryResourceStates(Resource<?> resource) {
-        return stateDAO.getSecondaryResourceStates(resource.getResourceScope(), resource.getId());
+        return stateDAO.getSecondaryResourceStates(resource);
     }
 
-    public List<PrismState> getSecondaryResourceStates(PrismScope resourceScope, Integer resourceId) {
-        return stateDAO.getSecondaryResourceStates(resourceScope, resourceId);
+    public LinkedHashMultimap<Integer, PrismState> getSecondaryResourceStates(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, PrismState> secondaryResourceStates = LinkedHashMultimap.create();
+        stateDAO.getSecondaryResourceStates(resourceScope, resourceIds).forEach(secondaryResourceState -> {
+            secondaryResourceStates.put(secondaryResourceState.getResourceId(), secondaryResourceState.getStateId());
+        });
+        return secondaryResourceStates;
     }
 
     public List<StateSelectableDTO> getSelectableTransitionStates(State state, PrismAction actionId) {

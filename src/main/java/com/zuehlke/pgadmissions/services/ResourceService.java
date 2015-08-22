@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
@@ -99,15 +100,14 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.services.helpers.concurrency.ActionServiceHelperConcurrency;
-import com.zuehlke.pgadmissions.services.helpers.concurrency.ResourceServiceHelperConcurrency;
-import com.zuehlke.pgadmissions.services.helpers.concurrency.StateServiceHelperConcurrency;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.StateDurationResolver;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+
+import jersey.repackaged.com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -377,22 +377,32 @@ public class ResourceService {
         return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceScope, baseline, rangeStart, rangeClose);
     }
 
-    public List<ResourceListRowDTO> getResourceList(final PrismScope resourceScope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
+    public List<ResourceListRowDTO> getResourceList(PrismScope resourceScope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
         User user = userService.getCurrentUser();
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(resourceScope);
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, resourceScope, filter);
 
         int maxRecords = LIST_PAGE_ROW_COUNT;
-        Set<Integer> resources = applicationContext.getBean(ResourceServiceHelperConcurrency.class)
-                .getAssignedResources(user, resourceScope, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
+        Set<Integer> resources = getAssignedResources(user, resourceScope, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
         boolean hasRedactions = actionService.hasRedactions(resourceScope, resources, user);
 
         if (!resources.isEmpty()) {
             HashMultimap<Integer, ActionDTO> creations = actionService.getCreateResourceActions(resourceScope, resources);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds, resources, filter, lastSequenceIdentifier, maxRecords, hasRedactions);
+            Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
+            Set<Integer> resourceIds = rowIndex.keySet();
 
-            applicationContext.getBean(StateServiceHelperConcurrency.class).appendSecondaryStates(resourceScope, rows, maxRecords);
-            applicationContext.getBean(ActionServiceHelperConcurrency.class).appendActions(resourceScope, user, rows, creations, maxRecords);
+            LinkedHashMultimap<Integer, PrismState> secondaryStates = stateService.getSecondaryResourceStates(resourceScope, resourceIds);
+            LinkedHashMultimap<Integer, ActionDTO> permittedActions = actionService.getPermittedActions(resourceScope, resourceIds, user);
+            rowIndex.keySet().forEach(resourceId -> {
+                ResourceListRowDTO row = rowIndex.get(resourceId);
+                row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
+
+                List<ActionDTO> actions = Lists.newLinkedList(permittedActions.get(resourceId));
+                actions.addAll(creations.get(resourceId));
+                row.setActions(actions);
+            });
+
             return rows;
         }
 
@@ -400,30 +410,33 @@ public class ResourceService {
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds) {
-        return applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, scopeId,
-                parentScopeIds, null, null, null);
+        return getAssignedResources(user, scopeId, parentScopeIds, null, null, null, null);
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter) {
-        return applicationContext.getBean(ResourceServiceHelperConcurrency.class).getAssignedResources(user, scopeId,
-                parentScopeIds, filter, null, null);
+        return getAssignedResources(user, scopeId, parentScopeIds, filter, getFilterConditions(scopeId, filter), null, null);
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve,
-            Junction condition) {
-        return resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve);
+    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter, String lastSequenceIdentifier,
+            Integer recordsToRetrieve) {
+        return getAssignedResources(user, scopeId, parentScopeIds, filter, getFilterConditions(scopeId, filter), lastSequenceIdentifier, recordsToRetrieve);
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve,
-            Junction condition, PrismScope parentScopeId) {
-        return resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier,
-                recordsToRetrieve);
-    }
+    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter, Junction condition,
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
+        Set<Integer> assigned = Sets.newHashSet(resourceDAO.getAssignedResources(user, scopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve));
 
-    public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve,
-            Junction condition, PrismScope partnerScopeId) {
-        return resourceDAO.getAssignedPartnerResources(user, scopeId, partnerScopeId, filter, condition, lastSequenceIdentifier,
-                recordsToRetrieve);
+        for (final PrismScope parentScopeId : parentScopeIds) {
+            assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve));
+        }
+
+        if (!scopeId.equals(SYSTEM)) {
+            for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+                assigned.addAll(resourceDAO.getAssignedPartnerResources(user, scopeId, partnerScopeId, filter, condition, lastSequenceIdentifier, recordsToRetrieve));
+            }
+        }
+
+        return assigned;
     }
 
     @SuppressWarnings("unchecked")

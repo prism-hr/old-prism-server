@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -39,7 +41,6 @@ import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -62,6 +63,9 @@ public class ActionService {
     private RoleService roleService;
 
     @Inject
+    private ScopeService scopeService;
+
+    @Inject
     private StateService stateService;
 
     @Inject
@@ -79,14 +83,19 @@ public class ActionService {
         throw new WorkflowPermissionException(resource, action);
     }
 
-    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, ResourceListRowDTO row, User user) {
-        return actionDAO.getPermittedActions(resourceScope, row.getResourceId(), row.getSystemId(), row.getInstitutionId(), row.getDepartmentId(),
-                row.getProgramId(), row.getProjectId(), row.getApplicationId(), user);
+    public List<ActionDTO> getPermittedActions(Resource<?> resource, User user) {
+        PrismScope resourceScope = resource.getResourceScope();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope());
+        return actionDAO.getPermittedActions(resourceScope, Lists.newArrayList(resource.getId()), parentScopes, user);
     }
 
-    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
-            Integer departmentId, Integer programId, Integer projectId, Integer applicationId, User user) {
-        return actionDAO.getPermittedActions(resourceScope, resourceId, systemId, institutionId, departmentId, programId, projectId, applicationId, user);
+    public LinkedHashMultimap<Integer, ActionDTO> getPermittedActions(PrismScope resourceScope, Collection<Integer> resourceIds, User user) {
+        LinkedHashMultimap<Integer, ActionDTO> permittedActions = LinkedHashMultimap.create();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resourceScope);
+        actionDAO.getPermittedActions(resourceScope, resourceIds, parentScopes, user).forEach(permittedAction -> {
+            permittedActions.put(permittedAction.getResourceId(), permittedAction);
+        });
+        return permittedActions;
     }
 
     public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Set<Integer> resourceIds, PrismScope... exclusions) {

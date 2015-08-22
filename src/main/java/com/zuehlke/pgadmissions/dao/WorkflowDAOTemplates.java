@@ -8,7 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
-public class WorkflowDAOUtils {
+public class WorkflowDAOTemplates {
 
     public static Junction getUserRoleConstraint(Resource<?> resource, String targetEntity) {
         Junction constraint = Restrictions.conjunction() //
@@ -21,13 +21,14 @@ public class WorkflowDAOUtils {
     }
 
     public static Junction getUserRoleConstraint(Resource<?> resource) {
-        return Restrictions.disjunction() //
-                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                .add(Restrictions.eq("userRole.department", resource.getDepartment())) //
-                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                .add(Restrictions.eq("userRole.system", resource.getSystem()));
+        return Restrictions.conjunction() //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.department", resource.getDepartment())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem())));
     }
 
     public static Junction getUserRoleConstraint(Resource<?> resource, User user, String targetEntity) {

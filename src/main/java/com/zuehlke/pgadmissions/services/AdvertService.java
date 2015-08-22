@@ -403,7 +403,7 @@ public class AdvertService {
         Set<Integer> targetAdverts = Sets.newHashSet();
         PrismAction action = PrismAction.valueOf(advert.getResource().getResourceScope().name() + "_ENDORSE");
         scopeService.getEnclosingScopesDescending(DEPARTMENT, SYSTEM).forEach(scope -> {
-            targetAdverts.addAll(advertDAO.getAdvertsUserCanEndorseOrUnendorseFor(scope, user, action));
+            targetAdverts.addAll(advertDAO.getAdvertsUserCanEndorse(scope, user, action));
         });
 
         if (!targetAdverts.isEmpty()) {

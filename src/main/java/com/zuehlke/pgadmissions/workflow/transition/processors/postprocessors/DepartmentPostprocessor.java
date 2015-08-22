@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
@@ -34,6 +36,10 @@ public class DepartmentPostprocessor implements ResourceProcessor<Department> {
         if (comment.isResourceEndorsementComment()) {
             advertService.provideAdvertRating(resource.getAdvert(), comment.getUser(), comment.getRating());
         }
+        
+        comment.getAssignedUsers().stream().filter(assignee -> assignee.getRoleTransitionType().equals(CREATE)).forEach(assignee -> {
+            
+        });
     }
 
 }

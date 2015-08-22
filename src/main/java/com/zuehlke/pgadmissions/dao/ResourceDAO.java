@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOTemplates.getResourceStateActionConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOTemplates.getSimilarUserRestriction;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;

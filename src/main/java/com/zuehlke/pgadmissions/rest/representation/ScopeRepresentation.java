@@ -1,19 +1,21 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
+
+import java.util.List;
 
 public class ScopeRepresentation {
 
     private PrismScope id;
 
-    private ResourceSectionsRepresentation sections;
+    private List<ResourceSectionRepresentation> sections;
 
     public PrismScope getId() {
         return id;
     }
 
-    public ResourceSectionsRepresentation getSections() {
+    public List<ResourceSectionRepresentation> getSections() {
         return sections;
     }
 
@@ -22,7 +24,7 @@ public class ScopeRepresentation {
         return this;
     }
 
-    public ScopeRepresentation withSections(ResourceSectionsRepresentation sections) {
+    public ScopeRepresentation withSections(List<ResourceSectionRepresentation> sections) {
         this.sections = sections;
         return this;
     }

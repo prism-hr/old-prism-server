@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.PrismConstants.LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
@@ -10,7 +11,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.math.RoundingMode.HALF_UP;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +81,7 @@ import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetListDTO;
@@ -205,8 +209,7 @@ public class ResourceService {
             resource.setCreatedTimestamp(baseline);
             setResourceUpdated(resource, baseline);
 
-            Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource
-                    .getResourceScope().getResourcePopulator();
+            Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();
             if (populator != null) {
                 applicationContext.getBean(populator).populate(resource);
             }
@@ -669,8 +672,7 @@ public class ResourceService {
         resource.setImportedCode(resourceDTO.getImportedCode());
 
         if (resourceDTO.getClass().equals(DepartmentDTO.class)) {
-            departmentService.setImportedPrograms((Department) resource,
-                    ((DepartmentDTO) resourceDTO).getImportedPrograms());
+            departmentService.setImportedPrograms((Department) resource, ((DepartmentDTO) resourceDTO).getImportedPrograms());
         }
 
         updateResource(resource, (ResourceParentDTO) resourceDTO);
@@ -678,10 +680,13 @@ public class ResourceService {
 
     public <T extends ResourceParent<?>, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) {
         AdvertDTO advertDTO = resourceDTO.getAdvert();
+
+        String name = resourceDTO.getName();
         Advert advert = resource.getAdvert();
-        resource.setName(resourceDTO.getName());
+        resource.setName(name);
+        advert.setName(name);
+
         advertService.updateAdvert(resource.getParentResource(), advert, advertDTO, resourceDTO.getName());
-        resource.setName(advert.getName());
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
@@ -835,6 +840,25 @@ public class ResourceService {
             }
         }
         resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
+    }
+
+    public <T extends ResourceParent<?>> T getActiveResourceByName(Class<T> resourceClass, User user, String name) {
+        return resourceDAO.getActiveResourceByName(resourceClass, user, name, stateService.getActiveResourceStates(PrismScope.getResourceClass(resourceClass)));
+    }
+
+    public <T extends ResourceParent<?>> void synchronizeResourceRating(T resource, Comment comment) {
+        ResourceRatingSummaryDTO ratingSummary = resourceDAO.getResourceRatingSummary(resource);
+        resource.setOpportunityRatingCount(ratingSummary.getRatingCount().intValue());
+        resource.setOpportunityRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
+
+        entityService.flush();
+
+        scopeService.getParentScopesDescending(resource.getResourceScope(), INSTITUTION).forEach(scope -> {
+            ResourceParent<?> parent = (ResourceParent<?>) resource.getEnclosingResource(scope);
+            ResourceRatingSummaryDTO parentRatingSummary = resourceDAO.getResourceRatingSummary(resource, parent);
+            parent.setOpportunityRatingCount(parentRatingSummary.getRatingCount().intValue());
+            parent.setOpportunityRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
+        });
     }
 
     private void createOrUpdateStateTransitionSummary(Resource<?> resource, DateTime baselineTime) {

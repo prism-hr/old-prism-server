@@ -83,7 +83,7 @@ public class ApplicationDownloadReferenceBuilder {
                     body);
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, referenceComment.getContent(), body);
 
-            BigDecimal rating = referenceComment.getApplicationRating();
+            BigDecimal rating = referenceComment.getRating();
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), rating == null ? null : rating.toPlainString(), body);
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);

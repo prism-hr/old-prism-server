@@ -824,16 +824,6 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Set<ResourceParent<?>> getParentResources() {
-        Set<ResourceParent<?>> parentResources = Sets.newLinkedHashSet();
-        for (ResourceParent<?> parentResource : new ResourceParent[] { project, program, department, institution }) {
-            if (parentResource != null) {
-                parentResources.add(parentResource);
-            }
-        }
-        return parentResources;
-    }
-
     public String getCreatedTimestampDisplay(String dateFormat) {
         return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat);
     }

@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
@@ -57,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -68,7 +66,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
-import com.zuehlke.pgadmissions.dto.AdvertTargetAdvertDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
@@ -109,9 +106,6 @@ public class AdvertService {
 
     @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private ScopeService scopeService;
 
     @Inject
     private StateService stateService;
@@ -166,12 +160,10 @@ public class AdvertService {
         advert.setName(resourceName);
         entityService.save(advert);
         updateAdvert(parentResource, advert, advertDTO, resourceName);
-        ;
         return advert;
     }
 
     public void updateAdvert(Resource<?> parentResource, Advert advert, AdvertDTO advertDTO, String resourceName) {
-        advert.setName(resourceName);
         advert.setSummary(advertDTO.getSummary());
         advert.setHomepage(advertDTO.getHomepage());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
@@ -398,25 +390,6 @@ public class AdvertService {
 
     public List<Integer> getAdvertTargetResources(Advert advert, PrismScope resourceScope, boolean selected) {
         return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
-    }
-
-    public void provideAdvertRating(Advert advert, User user, BigDecimal rating) {
-        Set<AdvertTargetAdvertDTO> targetAdverts = Sets.newHashSet();
-        PrismAction action = PrismAction.valueOf(advert.getResource().getResourceScope().name() + "_ENDORSE");
-        scopeService.getEnclosingScopesDescending(DEPARTMENT, SYSTEM).forEach(scope -> {
-            targetAdverts.addAll(advertDAO.getAdvertsUserCanEndorse(scope, user, action));
-        });
-
-        targetAdverts.forEach(targetAdvert -> {
-            Integer ratingCount = targetAdvert.getRatingCount();
-            BigDecimal ratingAverage = targetAdvert.getRatingAverage();
-
-            ratingCount = ratingCount == null ? 0 : ratingCount;
-            ratingAverage = ratingAverage == null ? new BigDecimal(0) : ratingAverage;
-
-            advertDAO.setAdvertRating(advert, targetAdvert.getTargetAdvertId(), (ratingCount + 1),
-                    ratingAverage.multiply(new BigDecimal(ratingCount)).add(rating).divide(new BigDecimal(ratingCount + 1)).setScale(2, RoundingMode.HALF_UP));
-        });
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

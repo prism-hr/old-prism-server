@@ -75,13 +75,13 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.ilike(alias + "email", searchTerm, MatchMode.START));
     }
 
-    public static Junction getEndorsementActionResolution(String actionIdReference, String advertTargetReference) {
+    public static Junction getEndorsementActionResolution(String actionIdReference, String commentIdReference) {
         return Restrictions.disjunction() //
                 .add(Restrictions.not( //
                         Restrictions.in(actionIdReference, RESOURCE_ENDORSE.getActions()))) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.in(actionIdReference, RESOURCE_ENDORSE.getActions())) //
-                        .add(Restrictions.isNull(advertTargetReference + ".ratingCount")));
+                        .add(Restrictions.isNull(commentIdReference)));
     }
 
 }

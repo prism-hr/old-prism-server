@@ -71,9 +71,6 @@ public class CommentService {
     private EntityService entityService;
 
     @Inject
-    private RoleService roleService;
-
-    @Inject
     private StateService stateService;
 
     @Inject
@@ -143,7 +140,7 @@ public class CommentService {
 
         comment.getAssignedUsers().addAll(persistentAssignees.stream().map(assignee -> assignee.withRoleTransitionType( //
                 assignee.getRoleTransitionType() == null ? CREATE : assignee.getRoleTransitionType())).collect(Collectors.toSet()));
-        
+
         comment.getCommentTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
@@ -271,18 +268,6 @@ public class CommentService {
         return commentDAO.getAssignedUsers(commentIds, roleIds);
     }
 
-    public Comment prepareResourceParentComment(ResourceParent<?> resource, User user, Action action, CommentDTO commentDTO, PrismRole... roleAssignments)
-            throws Exception {
-        Comment comment = new Comment().withUser(user).withResource(resource).withContent(commentDTO.getContent()).withAction(action)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-        appendCommentProperties(comment, commentDTO);
-        for (PrismRole roleAssignment : roleAssignments) {
-            Role role = roleService.getById(roleAssignment);
-            comment.addAssignedUser(user, role, CREATE);
-        }
-        return comment;
-    }
-
     public List<Comment> getStateGroupTransitionComments(Resource<?> resource) {
         return commentDAO.getStateGroupTransitionComments(resource);
     }
@@ -313,14 +298,18 @@ public class CommentService {
     public <T extends ResourceParent<?>, U extends ResourceParentDTO> Comment prepareProcessResourceComment(T resource, User user, Action action,
             U resourceParentDTO, CommentDTO commentDTO) throws Exception {
         String resourceScopeReference = resource.getResourceScope().name();
-        String commentContent = action.getId().equals(PrismAction.valueOf(resourceScopeReference + "_VIEW_EDIT")) ? applicationContext
-                .getBean(PropertyLoader.class).localize(resource).load(PrismDisplayPropertyDefinition.valueOf(resourceScopeReference + "_COMMENT_UPDATED"))
-                : commentDTO.getContent();
+
+        String commentContent = null;
+        if (action.getId().equals(PrismAction.valueOf(resourceScopeReference + "_VIEW_EDIT"))) {
+            commentContent = applicationContext.getBean(PropertyLoader.class).localize(resource)
+                    .load(PrismDisplayPropertyDefinition.valueOf(resourceScopeReference + "_COMMENT_UPDATED"));
+        } else {
+            commentContent = commentDTO.getContent();
+        }
 
         Comment comment = new Comment().withUser(user).withResource(resource).withContent(commentContent).withAction(action)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+                .withRating(commentDTO.getRating()).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         appendCommentProperties(comment, commentDTO);
-
         return comment;
     }
 
@@ -330,6 +319,10 @@ public class CommentService {
 
     public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource<?> resource) {
         return commentDAO.getResourceOwnerCommentAssignedUsers(resource);
+    }
+
+    public List<Comment> getEndorsementComments(User user) {
+        return commentDAO.getEndorsementComments(user);
     }
 
     private void updateCommentStates(Comment comment) {

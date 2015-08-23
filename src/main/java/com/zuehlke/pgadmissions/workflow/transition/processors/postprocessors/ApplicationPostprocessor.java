@@ -11,6 +11,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
@@ -35,12 +37,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
@@ -62,6 +65,9 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     @Inject
     private RoleService roleService;
 
+    @Inject
+    private ScopeService scopeService;
+    
     @Inject
     private UserService userService;
 
@@ -116,20 +122,21 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             comment.setRating(new BigDecimal(DEFAULT_RATING));
         }
 
-        ApplicationRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(application);
-        application.setApplicationRatingCount(ratingSummary.getApplicationRatingCount().intValue());
-        application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()));
+        ResourceRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(application);
+        application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
+        application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
 
         entityService.flush();
 
-        for (ResourceParent<?> parent : application.getParentResources()) {
-            ApplicationRatingSummaryDTO parentRatingSummary = applicationService.getApplicationRatingSummary(parent);
-            Integer ratingCount = parentRatingSummary.getApplicationRatingCount().intValue();
-            Integer ratingApplications = parentRatingSummary.getApplicationRatingApplications().intValue();
+        scopeService.getParentScopesDescending(APPLICATION, INSTITUTION).forEach(scope -> {
+            ResourceParent<?> parent = (ResourceParent<?>) application.getEnclosingResource(scope);
+            ResourceRatingSummaryDTO parentRatingSummary = applicationService.getApplicationRatingSummary(parent);
+            Integer ratingCount = parentRatingSummary.getRatingCount().intValue();
+            Integer ratingApplications = parentRatingSummary.getRatingResources().intValue();
             parent.setApplicationRatingCount(ratingCount);
             parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications), RATING_PRECISION, HALF_UP));
-            parent.setApplicationRatingAverage(BigDecimal.valueOf(parentRatingSummary.getApplicationRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
-        }
+            parent.setApplicationRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
+        });
     }
 
     private void buildAggregatedRating(Comment comment) {

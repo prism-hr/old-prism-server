@@ -139,6 +139,9 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
+    
+    @Column(name = "rating")
+    private BigDecimal rating;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
@@ -172,9 +175,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
-
-    @Column(name = "rating")
-    private BigDecimal rating;
 
     @Embedded
     private CommentExport export;
@@ -335,6 +335,14 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.transitionState = transitionState;
     }
 
+    public BigDecimal getRating() {
+        return rating;
+    }
+
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
+    }
+    
     public PrismYesNoUnsureResponse getApplicationEligible() {
         return applicationEligible;
     }
@@ -413,14 +421,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public void setRejectionReasonSystem(String rejectionReasonSystem) {
         this.rejectionReasonSystem = rejectionReasonSystem;
-    }
-
-    public BigDecimal getRating() {
-        return rating;
-    }
-
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
     }
 
     public CommentExport getExport() {
@@ -545,7 +545,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment withApplicationRating(BigDecimal rating) {
+    public Comment withRating(BigDecimal rating) {
         this.rating = rating;
         return this;
     }

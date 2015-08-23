@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -51,6 +52,12 @@ public class InstitutionService {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private ImportedEntityService importedEntityService;
+    
+    @Inject
+    private GeocodableLocationService geocodableLocationService;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -127,28 +134,41 @@ public class InstitutionService {
     }
 
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
-        ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
-        Institution institution = (Institution) outcome.getResource();
-        Integer institutionId = institution.getId();
-        if (facebookId != null) {
-            try {
-                CloseableHttpClient httpclient = HttpClients.createDefault();
-                HttpEntity logoEntity = httpclient.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large")).getEntity();
-                byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
-                documentService.createImage("" + institutionId + "_logo", logoImageContent, logoEntity.getContentType().getValue(), institutionId,
-                        PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
+        String name = institutionDTO.getName();
+        Institution persistentInstitution = resourceService.getActiveResourceByName(Institution.class, user, name);
+        if (persistentInstitution == null) {
+            ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
+            Institution institution = (Institution) outcome.getResource();
+            Integer institutionId = institution.getId();
+            if (facebookId != null) {
+                try {
+                    CloseableHttpClient httpclient = HttpClients.createDefault();
+                    HttpEntity logoEntity = httpclient.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large")).getEntity();
+                    byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
+                    documentService.createImage("" + institutionId + "_logo", logoImageContent, logoEntity.getContentType().getValue(), institutionId,
+                            PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
 
-                if (facebookPage.getCover() != null) {
-                    HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource())).getEntity();
-                    byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
-                    documentService.createImage("" + institutionId + "_background", backgroundImageContent, backgroundEntity.getContentType().getValue(),
-                            institutionId, PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
+                    if (facebookPage.getCover() != null) {
+                        HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource())).getEntity();
+                        byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
+                        documentService.createImage("" + institutionId + "_background", backgroundImageContent, backgroundEntity.getContentType().getValue(),
+                                institutionId, PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
+                    }
+                } catch (IOException e) {
+                    logger.error("Could not load facebook image for institution ID: " + institutionId, e);
                 }
-            } catch (IOException e) {
-                logger.error("Could not load facebook image for institution ID: " + institutionId, e);
             }
+            
+            try {
+                geocodableLocationService.setGeocodeLocation(name, institution.getAdvert().getAddress()); 
+            } catch (Exception e) {
+                logger.error("Could not load geocode location for institution ID: " + institutionId, e);
+            }
+            return institution;
+        } else {
+            persistentInstitution.setImportedInstitution(importedEntityService.getById(ImportedInstitution.class, institutionDTO.getImportedInstitutionId()));
+            return persistentInstitution;
         }
-        return institution;
     }
 
     public List<Integer> getInstitutionsByDepartments(List<Integer> departments, List<PrismState> activeStates) {

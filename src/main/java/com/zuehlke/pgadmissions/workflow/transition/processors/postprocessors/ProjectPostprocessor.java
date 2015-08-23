@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
@@ -26,6 +27,9 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
     @Inject
     private AdvertService advertService;
+    
+    @Inject
+    private ResourceService resourceService;
     
     @Inject
     private RoleService roleService;
@@ -56,7 +60,7 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
         }
         
         if (comment.isResourceEndorsementComment()) {
-            advertService.provideAdvertRating(resource.getAdvert(), comment.getUser(), comment.getRating());
+            resourceService.synchronizeResourceRating(resource, comment);
         }
     }
 

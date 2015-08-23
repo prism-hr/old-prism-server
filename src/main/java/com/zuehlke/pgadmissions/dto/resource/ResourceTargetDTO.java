@@ -31,8 +31,6 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
 
     private Boolean selected;
 
-    private BigDecimal rating;
-
     private BigDecimal targetingRelevance;
 
     private BigDecimal targetingDistance;
@@ -117,14 +115,6 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
 
     public void setSelected(Boolean selected) {
         this.selected = selected;
-    }
-
-    public BigDecimal getRating() {
-        return rating;
-    }
-
-    public void setRating(BigDecimal ratingAverage) {
-        this.rating = ratingAverage;
     }
 
     public BigDecimal getTargetingRelevance() {

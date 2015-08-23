@@ -13,8 +13,6 @@ public class ResourceRepresentationTarget extends ResourceRepresentationLocation
 
     private Boolean selected;
 
-    private BigDecimal rating;
-
     private List<ResourceRepresentationLocation> departments;
 
     public BigDecimal getRelevance() {
@@ -39,14 +37,6 @@ public class ResourceRepresentationTarget extends ResourceRepresentationLocation
 
     public void setSelected(Boolean selected) {
         this.selected = selected;
-    }
-
-    public BigDecimal getRating() {
-        return rating;
-    }
-
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
     }
 
     public List<ResourceRepresentationLocation> getDepartments() {

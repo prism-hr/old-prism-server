@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Component
@@ -16,6 +17,9 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
 
     @Inject
     private AdvertService advertService;
+    
+    @Inject
+    private ResourceService resourceService;
 
     @Override
     public void process(Program resource, Comment comment) {
@@ -31,7 +35,7 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
 
         if (comment.isResourceEndorsementComment()) {
-            advertService.provideAdvertRating(resource.getAdvert(), comment.getUser(), comment.getRating());
+            resourceService.synchronizeResourceRating(resource, comment);
         }
     }
 

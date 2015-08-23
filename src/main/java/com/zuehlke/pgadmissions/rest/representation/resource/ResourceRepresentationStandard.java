@@ -26,6 +26,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private boolean raisesUpdateFlag;
 
     private BigDecimal applicationRatingAverage;
+    
+    private BigDecimal opportunityRatingAverage;
 
     private StateRepresentationSimple previousState;
 
@@ -101,6 +103,14 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    public BigDecimal getOpportunityRatingAverage() {
+        return opportunityRatingAverage;
+    }
+
+    public void setOpportunityRatingAverage(BigDecimal opportunityRatingAverage) {
+        this.opportunityRatingAverage = opportunityRatingAverage;
     }
 
     public StateRepresentationSimple getPreviousState() {

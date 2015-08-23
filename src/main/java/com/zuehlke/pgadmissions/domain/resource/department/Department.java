@@ -92,6 +92,12 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
+    
+    @Column(name = "opportunity_rating_count")
+    private Integer opportunityRatingCount;
+
+    @Column(name = "opportunity_rating_average")
+    private BigDecimal opportunityRatingAverage;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -468,6 +474,26 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
+    }
+    
+    @Override
+    public Integer getOpportunityRatingCount() {
+        return opportunityRatingCount;
+    }
+
+    @Override
+    public void setOpportunityRatingCount(Integer opportunityRatingCount) {
+        this.opportunityRatingCount = opportunityRatingCount;
+    }
+
+    @Override
+    public BigDecimal getOpportunityRatingAverage() {
+        return opportunityRatingAverage;
+    }
+
+    @Override
+    public void setOpportunityRatingAverage(BigDecimal opportunityRatingAverage) {
+        this.opportunityRatingAverage = opportunityRatingAverage;
     }
 
     public Department withImportedCode(String importedCode) {

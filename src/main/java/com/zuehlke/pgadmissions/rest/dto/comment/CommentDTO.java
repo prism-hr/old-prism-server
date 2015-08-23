@@ -31,12 +31,12 @@ public class CommentDTO {
     private String content;
 
     private PrismState transitionState;
+    
+    private BigDecimal rating;
 
     private PrismYesNoUnsureResponse applicationEligible;
 
     private Boolean applicationInterested;
-
-    private BigDecimal applicationRating;
 
     @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
@@ -154,12 +154,12 @@ public class CommentDTO {
         this.applicationInterested = applicationInterested;
     }
 
-    public BigDecimal getApplicationRating() {
-        return applicationRating;
+    public BigDecimal getRating() {
+        return rating;
     }
 
-    public void setApplicationRating(BigDecimal applicationRating) {
-        this.applicationRating = applicationRating;
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
     }
 
     public final CommentInterviewAppointmentDTO getInterviewAppointment() {

@@ -63,11 +63,11 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
@@ -339,11 +339,11 @@ public class ApplicationService {
         }
     }
 
-    public ApplicationRatingSummaryDTO getApplicationRatingSummary(Application application) {
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(Application application) {
         return applicationDAO.getApplicationRatingSummary(application);
     }
 
-    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent<?> resource) {
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(ResourceParent<?> resource) {
         return applicationDAO.getApplicationRatingSummary(resource);
     }
 

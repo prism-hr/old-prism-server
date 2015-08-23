@@ -54,9 +54,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 
@@ -268,29 +268,29 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public ApplicationRatingSummaryDTO getApplicationRatingSummary(Application application) {
-        return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(Application application) {
+        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("application"), "parent") //
-                        .add(Projections.countDistinct("id"), "applicationRatingCount") //
-                        .add(Projections.avg("rating"), "applicationRatingAverage")) //
+                        .add(Projections.groupProperty("application"), "resource") //
+                        .add(Projections.countDistinct("id"), "ratingCount") //
+                        .add(Projections.avg("rating"), "ratingAverage")) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNotNull("rating")) //
-                .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
 
-    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent<?> resource) {
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(ResourceParent<?> resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty(resourceReference), "parent") //
-                        .add(Projections.sum("applicationRatingCount"), "applicationRatingCount") //
-                        .add(Projections.countDistinct("id"), "applicationRatingApplications") //
-                        .add(Projections.avg("applicationRatingAverage"), "applicationRatingAverage")) //
+                        .add(Projections.groupProperty(resourceReference), "resource") //
+                        .add(Projections.sum("applicationRatingCount"), "ratingCount") //
+                        .add(Projections.countDistinct("id"), "ratingResources") //
+                        .add(Projections.avg("applicationRatingAverage"), "ratingAverage")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.isNotNull("applicationRatingCount")) //
-                .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
 

@@ -236,13 +236,12 @@ public class CommentMapper {
     private CommentRepresentation getCommentRepresentationExtended(Comment comment) {
         ImportedEntitySimple rejectionReason = comment.getRejectionReason();
         return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
-                .withTransitionState(comment.getTransitionState().getId()).withApplicationEligible(comment.getApplicationEligible())
+                .withTransitionState(comment.getTransitionState().getId()).withRating(comment.getRating()).withApplicationEligible(comment.getApplicationEligible())
                 .withApplicationInterested(comment.getApplicationInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
-                .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true))
-                .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
-                .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withApplicationReserveStatus(comment.getApplicationReserveStatus())
-                .withRejectionReason(rejectionReason == null ? null : rejectionReason.getName()).withRejectionReasonSystem(comment.getRejectionReasonSystem())
-                .withApplicationRating(comment.getRating()).withExport(getCommentExportRepresentation(comment))
+                .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withPositionDetail(getCommentPositionDetailRepresentation(comment))
+                .withOfferDetail(getCommentOfferDetailRepresentation(comment)).withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment())
+                .withApplicationReserveStatus(comment.getApplicationReserveStatus()).withRejectionReason(rejectionReason == null ? null : rejectionReason.getName())
+                .withRejectionReasonSystem(comment.getRejectionReasonSystem()).withExport(getCommentExportRepresentation(comment))
                 .withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));

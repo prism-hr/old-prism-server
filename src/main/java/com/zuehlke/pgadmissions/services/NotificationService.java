@@ -311,7 +311,7 @@ public class NotificationService {
 
     private Set<User> sendIndividualRequestNotifications(Resource<?> resource, Comment comment, User author, LocalDate baseline) {
         Set<User> recipients = Sets.newHashSet();
-        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, author, baseline);
+        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline);
 
         if (requests.size() > 0) {
             for (UserNotificationDefinitionDTO request : requests) {

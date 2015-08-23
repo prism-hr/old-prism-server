@@ -292,7 +292,6 @@ public class ResourceMapper {
         }
 
         representation.setSelected(resource.getSelected());
-        representation.setRating(resource.getRating());
 
         Set<ResourceTargetDTO> departments = resource.getDepartments();
         if (!departments.isEmpty()) {
@@ -362,6 +361,7 @@ public class ResourceMapper {
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass()) && !actionService.hasRedactions(resource, userService.getCurrentUser())) {
             representation.setApplicationRatingAverage(((ResourceParent<?>) resource).getApplicationRatingAverage());
+            representation.setOpportunityRatingAverage(((ResourceParent<?>) resource).getOpportunityRatingAverage());
         }
 
         representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));

@@ -40,6 +40,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -60,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
@@ -594,8 +596,7 @@ public class ResourceDAO {
                 .add(Projections.property("address.googleId"), "addressGoogleId") //
                 .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
                 .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude") //
-                .add(Projections.property("targeter.selected"), "selected") //
-                .add(Projections.property("targeter.ratingAverage"), "rating");
+                .add(Projections.property("targeter.selected"), "selected");
 
         boolean doSubjectAreaFilter = CollectionUtils.isNotEmpty(subjectAreas);
         if (doSubjectAreaFilter) {
@@ -669,6 +670,43 @@ public class ResourceDAO {
                 .createAlias("state", "state") //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .list();
+    }
+    
+    public <T extends ResourceParent<?>> T getActiveResourceByName(Class<T> resourceClass, User user, String name, Collection<PrismState> activeStates) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("name", name)) //
+                .add(Restrictions.in("resourceState.state.id", activeStates)) //
+                .addOrder(Order.asc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+    
+    public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent<?> resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty(resourceReference), "resource") //
+                        .add(Projections.countDistinct("id"), "ratingCount") //
+                        .add(Projections.avg("rating"), "ratingAverage")) //
+                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.isNotNull("rating")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
+                .uniqueResult();
+    }
+    
+    public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent<?> resource, ResourceParent<?> parent) {
+        String parentReference = parent.getResourceScope().getLowerCamelName();
+        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty(parentReference), "resource") //
+                        .add(Projections.sum("opportunityRatingCount"), "ratingCount") //
+                        .add(Projections.avg("opportunityRatingAverage"), "ratingAverage")) //
+                .add(Restrictions.eq(parentReference, parent)) //
+                .add(Restrictions.isNotNull("opportunityRatingCount")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
+                .uniqueResult();
     }
 
     private Criteria getResourcesCriteria(PrismScope filterScope, List<Integer> filerResourceIds,

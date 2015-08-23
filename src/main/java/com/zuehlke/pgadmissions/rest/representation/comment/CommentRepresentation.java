@@ -30,6 +30,8 @@ public class CommentRepresentation {
     private PrismState state;
 
     private PrismState transitionState;
+    
+    private BigDecimal rating;
 
     private PrismYesNoUnsureResponse applicationEligible;
 
@@ -50,8 +52,6 @@ public class CommentRepresentation {
     private String rejectionReason;
 
     private String rejectionReasonSystem;
-
-    private BigDecimal applicationRating;
 
     private CommentExportRepresentation export;
 
@@ -211,12 +211,12 @@ public class CommentRepresentation {
         this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
-    public BigDecimal getApplicationRating() {
-        return applicationRating;
+    public BigDecimal getRating() {
+        return rating;
     }
 
-    public void setApplicationRating(BigDecimal applicationRating) {
-        this.applicationRating = applicationRating;
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
     }
 
     public CommentExportRepresentation getExport() {
@@ -314,6 +314,11 @@ public class CommentRepresentation {
         this.transitionState = transitionState;
         return this;
     }
+    
+    public CommentRepresentation withRating(BigDecimal rating) {
+        this.rating = rating;
+        return this;
+    }
 
     public CommentRepresentation withApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
         this.applicationEligible = applicationEligible;
@@ -362,11 +367,6 @@ public class CommentRepresentation {
 
     public CommentRepresentation withRejectionReasonSystem(String rejectionReasonSystem) {
         this.rejectionReasonSystem = rejectionReasonSystem;
-        return this;
-    }
-
-    public CommentRepresentation withApplicationRating(BigDecimal applicationRating) {
-        this.applicationRating = applicationRating;
         return this;
     }
 

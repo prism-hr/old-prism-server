@@ -63,6 +63,22 @@ public class GeocodableLocationService {
         URI request = new DefaultResourceLoader().getResource(googlePlacesApiUri + "json?placeid=" + googleIdentifier + "&key=" + googleApiKey).getURI();
         return restTemplate.getForObject(request, EstablishmentSearchResponseDTO.class);
     }
+    
+    public void setGeocodeLocation(String establishment, AddressAdvert address) throws Exception {
+        List<String> addressTokens = Lists.reverse(address.getLocationTokens());
+        addressTokens.add(establishment);
+        for (int i = addressTokens.size(); i >= 0; i--) {
+            List<String> requestTokens = addressTokens.subList(0, i);
+            LocationSearchResponseDTO response = getGeocodeLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
+            if (response.getStatus().equals(OK)) {
+                List<GoogleResultDTO> results = response.getResults();
+                if (!results.isEmpty()) {
+                    setLocation(address, results.get(0).getGeometry());
+                    return;
+                }
+            }
+        }
+    }
 
     private boolean setEstablishmentLocation(String googleIdentifier, AddressAdvert address) throws Exception {
         EstablishmentSearchResponseDTO response = getEstablishmentLocation(googleIdentifier);
@@ -81,22 +97,6 @@ public class GeocodableLocationService {
         String addressEncoded = URLEncoder.encode(address, "UTF-8");
         URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleApiKey).getURI();
         return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
-    }
-
-    private void setGeocodeLocation(String establishment, AddressAdvert address) throws Exception {
-        List<String> addressTokens = Lists.reverse(address.getLocationTokens());
-        addressTokens.add(establishment);
-        for (int i = addressTokens.size(); i >= 0; i--) {
-            List<String> requestTokens = addressTokens.subList(0, i);
-            LocationSearchResponseDTO response = getGeocodeLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
-            if (response.getStatus().equals(OK)) {
-                List<GoogleResultDTO> results = response.getResults();
-                if (!results.isEmpty()) {
-                    setLocation(address, results.get(0).getGeometry());
-                    return;
-                }
-            }
-        }
     }
 
     private void setLocation(GeocodableLocation location, GoogleGeometryDTO geometry) {

@@ -752,27 +752,36 @@ public class ResourceService {
 
     public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments) {
         PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION, SYSTEM };
-        List<PrismState> activeInstitutionStates = stateService.getActiveResourceStates(INSTITUTION);
+        List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
+        List<Integer> targetInstitutions = advertService.getAdvertTargetResources(advert, INSTITUTION, true);
 
         ResourceTargetListDTO targets = new ResourceTargetListDTO(advert);
         if (CollectionUtils.isNotEmpty(subjectAreas)) {
             Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-            targets.addAll(resourceDAO.getResourceTargets(advert, institutionScopes, null, activeInstitutionStates, subjectAreasLookup));
+            Map<Integer, BigDecimal> subjectAreaInstitutions = importedEntityService.getImportedInstitutionsBySubjectAreas(subjectAreasLookup).stream()
+                    .collect(Collectors.toMap(institution -> (institution.getResourceId()), institution -> (institution.getTargetingRelevance())));
+
+            List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, institutionScopes, subjectAreaInstitutions.keySet(), institutionStates);
+            subjectAreaTargets.forEach(target -> {
+                target.setTargetingRelevance(subjectAreaInstitutions.get(target.getId()));
+                addResourceTarget(targets, target, targetInstitutions);
+            });
         }
 
         if (CollectionUtils.isNotEmpty(institutions)) {
-            targets.addAll(resourceDAO.getResourceTargets(advert, institutionScopes, institutions, activeInstitutionStates, null));
+            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, institutionScopes, institutions, institutionStates), targetInstitutions);
         }
 
         boolean hasDepartments = CollectionUtils.isNotEmpty(departments);
         if (hasDepartments) {
-            List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, activeInstitutionStates);
-            targets.addAll(resourceDAO.getResourceTargets(advert, institutionScopes, departmentInstitutions, activeInstitutionStates, null));
+            List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, institutionStates);
+            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, institutionScopes, departmentInstitutions, institutionStates), targetInstitutions);
         }
 
         if (hasDepartments) {
-            List<PrismState> activeDepartmentStates = stateService.getActiveResourceStates(DEPARTMENT);
-            targets.addAll(resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, activeDepartmentStates, null));
+            List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
+            List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
+            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
         }
 
         return targets.keySet();
@@ -922,6 +931,17 @@ public class ResourceService {
     private <T extends Resource<?>> void setResourceUpdated(T resource, DateTime baseline) {
         resource.setUpdatedTimestamp(baseline);
         resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
+    }
+
+    private void addResourceTargets(ResourceTargetListDTO targets, List<ResourceTargetDTO> newTargets, List<Integer> targetResources) {
+        newTargets.forEach(newTarget -> {
+            addResourceTarget(targets, newTarget, targetResources);
+        });
+    }
+
+    private void addResourceTarget(ResourceTargetListDTO targets, ResourceTargetDTO target, List<Integer> targetResources) {
+        target.setSelected(targetResources.contains(target.getId()));
+        targets.add(target);
     }
 
 }

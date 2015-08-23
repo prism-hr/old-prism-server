@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dto.resource;
 import static com.zuehlke.pgadmissions.utils.PrismGeocodingUtils.getHaversineDistance;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -31,12 +30,6 @@ public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTa
 
     public void add(ResourceTargetDTO value) {
         put(value, value);
-    }
-
-    public void addAll(Collection<ResourceTargetDTO> values) {
-        values.forEach(value -> {
-            add(value);
-        });
     }
 
     @Override

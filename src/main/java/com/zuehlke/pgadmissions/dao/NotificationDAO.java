@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
@@ -13,6 +12,7 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -62,7 +62,7 @@ public class NotificationDAO {
                 .executeUpdate();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualRequestDefinitions(Resource<?> resource, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getIndividualRequestDefinitions(Resource<?> resource, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -75,9 +75,7 @@ public class NotificationDAO {
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("comment.user", "userRole.user")) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
+                        getExclusionsConstraint(exclusions)) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
@@ -98,7 +96,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource<?> resource, Action action, Set<User> exclusions) {
+    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource<?> resource, Action action, List<Integer> exclusions, Set<User> userExclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class) //
                 .setProjection(Projections.projectionList() //
@@ -110,9 +108,7 @@ public class NotificationDAO {
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("comment.user", "userRole.user")) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
+                        getExclusionsConstraint(exclusions)) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
@@ -126,7 +122,7 @@ public class NotificationDAO {
 
         if (!exclusions.isEmpty()) {
             criteria.add(Restrictions.not( //
-                    Restrictions.in("userRole.user", exclusions))); //
+                    Restrictions.in("userRole.user", userExclusions))); //
         }
 
         return (List<UserNotificationDefinitionDTO>) criteria //
@@ -136,7 +132,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualReminderDefinitions(Resource<?> resource, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getIndividualReminderDefinitions(Resource<?> resource, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -149,9 +145,7 @@ public class NotificationDAO {
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("comment.user", "userRole.user")) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
+                        getExclusionsConstraint(exclusions)) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
@@ -172,7 +166,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getSyndicatedRequestDefinitions(Resource<?> resource, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getSyndicatedRequestDefinitions(Resource<?> resource, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -184,9 +178,7 @@ public class NotificationDAO {
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("comment.user", "userRole.user")) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions()))) //
+                        getExclusionsConstraint(exclusions)) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
@@ -209,7 +201,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getSyndicatedUpdateDefinitions(Resource<?> resource, Action action, User invoker, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getSyndicatedUpdateDefinitions(Resource<?> resource, Action action, User invoker, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(CommentState.class) //
                 .setProjection(Projections.projectionList() //
@@ -222,9 +214,7 @@ public class NotificationDAO {
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("comment.user", "userRole.user")) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
+                        getExclusionsConstraint(exclusions)) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
@@ -321,6 +311,14 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateActionAssignment.role", role)) //
                 .list();
+    }
+
+    private Junction getExclusionsConstraint(List<Integer> exclusions) {
+        Junction exclusionsConstraint = Restrictions.disjunction();
+        exclusions.forEach(exclusion -> {
+            exclusionsConstraint.add(Restrictions.eq("comment.id", exclusion));
+        });
+        return exclusionsConstraint;
     }
 
 }

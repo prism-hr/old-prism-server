@@ -108,6 +108,10 @@ public class CommentService {
     public Comment getLatestComment(Resource<?> resource, PrismAction actionId, User user, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
     }
+    
+    public List<Integer> getComments(Resource<?> resource, PrismAction[] actions) {
+        return commentDAO.getComments(resource, actions);
+    }
 
     public boolean isCommentOwner(Comment comment, User user) {
         Integer userId = user.getId();
@@ -319,10 +323,6 @@ public class CommentService {
 
     public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource<?> resource) {
         return commentDAO.getResourceOwnerCommentAssignedUsers(resource);
-    }
-
-    public List<Comment> getEndorsementComments(User user) {
-        return commentDAO.getEndorsementComments(user);
     }
 
     private void updateCommentStates(Comment comment) {

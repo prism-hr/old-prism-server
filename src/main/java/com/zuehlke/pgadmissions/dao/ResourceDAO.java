@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -570,8 +569,7 @@ public class ResourceDAO {
                 .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
 
-    public List<ResourceTargetDTO> getResourceTargets(Advert advert, PrismScope[] resourceScopes, Collection<Integer> resourceIds, Collection<PrismState> activeStates,
-            Collection<Integer> subjectAreas) {
+    public List<ResourceTargetDTO> getResourceTargets(Advert advert, PrismScope[] resourceScopes, Collection<Integer> resourceIds, Collection<PrismState> activeStates) {
         ProjectionList projectionList = Projections.projectionList();
 
         PrismScope resourceScope = null;
@@ -595,13 +593,7 @@ public class ResourceDAO {
                 .add(Projections.property("address.addressCode"), "addressCode") //
                 .add(Projections.property("address.googleId"), "addressGoogleId") //
                 .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
-                .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude") //
-                .add(Projections.property("targeter.selected"), "selected");
-
-        boolean doSubjectAreaFilter = CollectionUtils.isNotEmpty(subjectAreas);
-        if (doSubjectAreaFilter) {
-            projectionList.add(Projections.sum("institutionSubjectArea.relationStrength").as("targetingRelevance"));
-        }
+                .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude");
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass())
                 .setProjection(projectionList);
@@ -616,28 +608,13 @@ public class ResourceDAO {
         criteria.createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
-                .createAlias("advert.targeters", "targeter", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("targeter.advert", advert)) //
                 .createAlias("resourceStates", "resourceState") //
                 .createAlias(importedInstitutionJoinPath, "importedInstitution", JoinType.INNER_JOIN,
                         Restrictions.isNotNull("importedInstitution.ucasId"));
 
-        if (doSubjectAreaFilter) {
-            criteria.createAlias("importedInstitution.institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN) //
-                    .add(Restrictions.in("institutionSubjectArea.subjectArea.id", subjectAreas));
-        }
-
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
-            criteria.add(Restrictions.in("id", resourceIds));
-        }
-
-        criteria.add(Restrictions.in("resourceState.state.id", activeStates));
-
-        if (doSubjectAreaFilter) {
-            criteria.addOrder(Order.desc("targetingRelevance"));
-        }
-
-        return (List<ResourceTargetDTO>) criteria.addOrder(Order.asc("name"))
+        return (List<ResourceTargetDTO>) criteria.add(Restrictions.in("id", resourceIds))
+                .add(Restrictions.in("resourceState.state.id", activeStates))
+                .addOrder(Order.asc("name"))
                 .addOrder(Order.asc("id"))
                 .setResultTransformer(Transformers.aliasToBean(ResourceTargetDTO.class))
                 .list();
@@ -671,7 +648,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .list();
     }
-    
+
     public <T extends ResourceParent<?>> T getActiveResourceByName(Class<T> resourceClass, User user, String name, Collection<PrismState> activeStates) {
         return (T) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -682,7 +659,7 @@ public class ResourceDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent<?> resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
@@ -695,7 +672,7 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
-    
+
     public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent<?> resource, ResourceParent<?> parent) {
         String parentReference = parent.getResourceScope().getLowerCamelName();
         return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //

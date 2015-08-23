@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -292,12 +291,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertTarget<?>> getAdvertTargets(Advert advert, Class<? extends AdvertTarget<?>> targetClass) {
-        return (List<AdvertTarget<?>>) sessionFactory.getCurrentSession().createCriteria(targetClass) //
-                .add(Restrictions.eq("advert", advert)) //
-                .list();
-    }
-
     public List<ImportedAdvertDomicile> getAdvertDomiciles() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class) //
                 .add(Restrictions.eq("enabled", true)) //
@@ -321,6 +314,7 @@ public class AdvertDAO {
 
     public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
+                .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq("advert", advert)) //
                 .add(Restrictions.eq("selected", selected)) //
                 .list();

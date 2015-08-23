@@ -5,6 +5,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ResourceSectionRepresentation implements PrismLocalizableDefinition {
 
     private PrismDisplayPropertyDefinition displayProperty;
@@ -13,7 +16,7 @@ public class ResourceSectionRepresentation implements PrismLocalizableDefinition
 
     private PrismDisplayPropertyDefinition incompleteExplanation;
 
-    private ResourceSectionsRepresentation subsections;
+    private List<ResourceSectionRepresentation> subsections;
 
     public boolean isRequired() {
         return completenessEvaluator != null;
@@ -32,7 +35,7 @@ public class ResourceSectionRepresentation implements PrismLocalizableDefinition
         return incompleteExplanation;
     }
 
-    public ResourceSectionsRepresentation getSubsections() {
+    public List<ResourceSectionRepresentation> getSubsections() {
         return subsections;
     }
 
@@ -51,7 +54,11 @@ public class ResourceSectionRepresentation implements PrismLocalizableDefinition
         return this;
     }
 
-    public ResourceSectionRepresentation withSubsections(ResourceSectionsRepresentation subsections) {
+    public ResourceSectionRepresentation withSubsections(ResourceSectionRepresentation... subsections) {
+        return withSubsections(Arrays.asList(subsections));
+    }
+
+    public ResourceSectionRepresentation withSubsections(List<ResourceSectionRepresentation> subsections) {
         this.subsections = subsections;
         return this;
     }

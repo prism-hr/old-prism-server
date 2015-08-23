@@ -34,6 +34,7 @@ set advert_resource_selected.target_advert_id = department.advert_id
 
 alter table advert_resource
 	modify column target_advert_id int(10) unsigned not null,
+	drop index advert_id,
 	drop foreign key advert_resource_ibfk_2,
 	drop foreign key advert_resource_ibfk_3,
 	drop column institution_id,
@@ -42,6 +43,7 @@ alter table advert_resource
 
 alter table advert_resource_selected
 	modify column target_advert_id int(10) unsigned not null,
+	drop index advert_id,
 	drop foreign key advert_resource_selected_ibfk_2,
 	drop foreign key advert_resource_selected_ibfk_3,
 	drop column institution_id,
@@ -56,7 +58,7 @@ alter table advert_resource_selected
 	modify column target_advert_id int(10) unsigned not null
 ;
 
-alter table advert_resource 
+alter table advert_resource
 	add column selected int(10) unsigned not null default 0,
 	add column endorsed int(10) unsigned not null default 0,
 	add index (advert_id, selected),

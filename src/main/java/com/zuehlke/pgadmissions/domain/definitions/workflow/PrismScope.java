@@ -1,39 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_INCOMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_APPLICATION_FORM_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_CLOSING_DATES_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_CONFIGURATION_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_MANAGE_USERS_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_STATISTICS_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SUMMARY_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SUMMARY_INCOMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TARGETS_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TARGETS_INCOMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TIMELINE_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TRANSLATIONS_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_USER_BOUNCES_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_WORKFLOW_HEADER;
-
-import java.util.Map;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.*;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
@@ -41,36 +10,21 @@ import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionsRepresentation;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCategoriesEvaluator;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCompetencesEvaluator;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertEvaluator;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertTargetsEvaluator;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceSummaryEvaluator;
-import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ApplicationCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.DepartmentCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.InstitutionCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ProgramCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ProjectCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
+import com.zuehlke.pgadmissions.workflow.executors.action.*;
+import com.zuehlke.pgadmissions.workflow.transition.creators.*;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ApplicationPopulator;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.DepartmentPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.*;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
-
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.base.CaseFormat.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.ResourceSectionsBuilder.*;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope> {
 
@@ -115,33 +69,24 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                                                     .withResourceProcessor(ApplicationProcessor.class) //
                                                     .withResourcePostprocessor(ApplicationPostprocessor.class));
 
-    private PrismScopeDefinition definition;
+    private static Map<PrismScope, List<ResourceSectionRepresentation>> resourceSections = Maps.newHashMap();
 
     private static Map<Class<? extends Resource<?>>, PrismScope> byResourceClass = Maps.newHashMap();
-
-    private static Map<PrismScope, ResourceSectionsRepresentation> resourceSections = Maps.newHashMap();
 
     static {
         for (PrismScope scope : values()) {
             byResourceClass.put(scope.getResourceClass(), scope);
         }
 
-        resourceSections.put(SYSTEM, new ResourceSectionsRepresentation() //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_STATISTICS_HEADER)) //
-                .withSections(getResourceConfigurationSections()));
-
-        resourceSections.put(INSTITUTION, getResourceParentSections());
-        resourceSections.put(DEPARTMENT, getResourceParentSections());
-        resourceSections.put(PROGRAM, getResourceOpportunitySections());
-        resourceSections.put(PROJECT, getResourceOpportunitySections());
-
-        resourceSections.put(APPLICATION, new ResourceSectionsRepresentation() //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_APPLICATION_FORM_HEADER)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_TIMELINE_HEADER)));
+        resourceSections.put(SYSTEM, buildSystemSections());
+        resourceSections.put(INSTITUTION, buildDefaultResourceParentSections());
+        resourceSections.put(DEPARTMENT, buildDepartmentSections());
+        resourceSections.put(PROGRAM, buildOpportunitySections());
+        resourceSections.put(PROJECT, buildOpportunitySections());
+        resourceSections.put(APPLICATION, buildApplicationSections());
     }
+
+    private PrismScopeDefinition definition;
 
     private PrismScope(PrismScopeDefinition definition) {
         this.definition = definition;
@@ -198,6 +143,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     public boolean isResourceParentScope() {
         return ResourceParent.class.isAssignableFrom(definition.getResourceClass());
+    }
+
+    public List<ResourceSectionRepresentation> getSections() {
+        return resourceSections.get(this);
     }
 
     private static class PrismScopeDefinition {
@@ -303,71 +252,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     }
 
-    public ResourceSectionsRepresentation getSections() {
-        return resourceSections.get(this);
     }
 
     public static PrismScope getResourceClass(Class<? extends Resource<?>> resourceClass) {
         return byResourceClass.get(resourceClass);
-    }
-
-    private static ResourceSectionsRepresentation getResourceParentSections() {
-        return getResourceParentSections(new ResourceSectionsRepresentation());
-    }
-
-    private static ResourceSectionsRepresentation getResourceOpportunitySections() {
-        return getResourceParentSections(new ResourceSectionsRepresentation() //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER))
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_CLOSING_DATES_HEADER)));
-    }
-
-    private static ResourceSectionsRepresentation getResourceParentSections(ResourceSectionsRepresentation advertSections) {
-        return new ResourceSectionsRepresentation() //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_SUMMARY_HEADER) //
-                        .withCompletenessEvaluator(ResourceSummaryEvaluator.class) //
-                        .withIncompleteExplanation(SYSTEM_RESOURCE_SUMMARY_INCOMPLETE))
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_HEADER) //
-                        .withCompletenessEvaluator(ResourceAdvertEvaluator.class) //
-                        .withIncompleteExplanation(SYSTEM_RESOURCE_ADVERT_INCOMPLETE) //
-                        .withSubsections(new ResourceSectionsRepresentation() //
-                                .withSection(new ResourceSectionRepresentation() //
-                                        .withDisplayProperty(SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER) //
-                                        .withCompletenessEvaluator(ResourceAdvertCategoriesEvaluator.class) //
-                                        .withIncompleteExplanation(SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE))
-                                .withSections(advertSections))) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_TARGETS_HEADER) //
-                        .withCompletenessEvaluator(ResourceAdvertTargetsEvaluator.class) //
-                        .withIncompleteExplanation(SYSTEM_RESOURCE_TARGETS_INCOMPLETE))
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_COMPETENCES_HEADER) //
-                        .withCompletenessEvaluator(ResourceAdvertCompetencesEvaluator.class)
-                        .withIncompleteExplanation(SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_STATISTICS_HEADER)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_TIMELINE_HEADER)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_CONFIGURATION_HEADER) //
-                        .withSubsections(getResourceConfigurationSections()));
-    }
-
-    private static ResourceSectionsRepresentation getResourceConfigurationSections() {
-        return new ResourceSectionsRepresentation() //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_MANAGE_USERS_HEADER)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_USER_BOUNCES_HEADER)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_TRANSLATIONS_HEADER)) //
-                .withSection(new ResourceSectionRepresentation() //
-                        .withDisplayProperty(SYSTEM_RESOURCE_WORKFLOW_HEADER));
-    }
-
 }

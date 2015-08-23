@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.getResourceScope;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
@@ -852,7 +853,7 @@ public class ResourceService {
     }
 
     public <T extends ResourceParent<?>> T getActiveResourceByName(Class<T> resourceClass, User user, String name) {
-        return resourceDAO.getActiveResourceByName(resourceClass, user, name, stateService.getActiveResourceStates(PrismScope.getResourceClass(resourceClass)));
+        return resourceDAO.getActiveResourceByName(resourceClass, user, name, stateService.getActiveResourceStates(getResourceScope(resourceClass)));
     }
 
     public <T extends ResourceParent<?>> void synchronizeResourceRating(T resource, Comment comment) {

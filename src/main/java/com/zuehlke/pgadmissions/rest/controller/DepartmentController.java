@@ -1,13 +1,19 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
-import com.zuehlke.pgadmissions.services.DepartmentService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import com.zuehlke.pgadmissions.services.DepartmentService;
 
 @RestController
 @RequestMapping("api/departments/{departmentId}")

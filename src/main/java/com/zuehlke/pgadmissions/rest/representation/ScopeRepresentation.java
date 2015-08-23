@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
-
-import java.util.List;
 
 public class ScopeRepresentation {
 

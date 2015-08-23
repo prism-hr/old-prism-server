@@ -1,8 +1,24 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.ResourceSectionBuilder.buildApplicationSections;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.ResourceSectionBuilder.buildDefaultResourceParentSections;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.ResourceSectionBuilder.buildDepartmentSections;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.ResourceSectionBuilder.buildOpportunitySections;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.ResourceSectionBuilder.buildSystemSections;
+
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.resource.*;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
@@ -10,64 +26,74 @@ import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSectionRepresentation;
-import com.zuehlke.pgadmissions.workflow.executors.action.*;
-import com.zuehlke.pgadmissions.workflow.transition.creators.*;
+import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
+import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
+import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
+import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
+import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
+import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
+import com.zuehlke.pgadmissions.workflow.transition.creators.ApplicationCreator;
+import com.zuehlke.pgadmissions.workflow.transition.creators.DepartmentCreator;
+import com.zuehlke.pgadmissions.workflow.transition.creators.InstitutionCreator;
+import com.zuehlke.pgadmissions.workflow.transition.creators.ProgramCreator;
+import com.zuehlke.pgadmissions.workflow.transition.creators.ProjectCreator;
+import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ApplicationPopulator;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.*;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.DepartmentPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
+
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.base.CaseFormat.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.ResourceSectionsBuilder.*;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope> {
 
     SYSTEM(new PrismScopeDefinition() //
             .withResourceClass(System.class) //
-            .withResourceShortCode("SM")), INSTITUTION(new PrismScopeDefinition() //
-                    .withResourceClass(Institution.class) //
-                    .withResourceDTOClass(InstitutionDTO.class) //
-                    .withResourceShortCode("IN") //
-                    .withActionExecutor(InstitutionExecutor.class) //
-                    .withResourceCreator(InstitutionCreator.class) //
-                    .withResourcePostprocessor(InstitutionPostprocessor.class)), //
-                    DEPARTMENT(new PrismScopeDefinition() //
-                            .withResourceClass(Department.class) //
-                            .withResourceDTOClass(ResourceParentDivisionDTO.class) //
-                            .withResourceShortCode("DT") //
-                            .withActionExecutor(DepartmentExecutor.class) //
-                            .withResourceCreator(DepartmentCreator.class) //
-                            .withResourcePostprocessor(DepartmentPostprocessor.class)), //
-                            PROGRAM(new PrismScopeDefinition() //
-                                    .withResourceClass(Program.class) //
-                                    .withResourceDTOClass(ResourceOpportunityDTO.class) //
-                                    .withResourceShortCode("PM") //
-                                    .withActionExecutor(ProgramExecutor.class) //
-                                    .withResourceCreator(ProgramCreator.class) //
-                                    .withResourcePostprocessor(ProgramPostprocessor.class)), //
-                                    PROJECT(new PrismScopeDefinition() //
-                                            .withResourceClass(Project.class) //
-                                            .withResourceDTOClass(ResourceOpportunityDTO.class) //
-                                            .withResourceShortCode("PT") //
-                                            .withActionExecutor(ProjectExecutor.class) //
-                                            .withResourceCreator(ProjectCreator.class) //
-                                            .withResourcePostprocessor(ProjectPostprocessor.class)), //
-                                            APPLICATION(new PrismScopeDefinition() //
-                                                    .withResourceClass(Application.class) //
-                                                    .withResourceDTOClass(ApplicationDTO.class) //
-                                                    .withResourceShortCode("AN") //
-                                                    .withActionExecutor(ApplicationExecutor.class) //
-                                                    .withResourceCreator(ApplicationCreator.class) //
-                                                    .withResourcePersister(ApplicationPopulator.class) //
-                                                    .withResourcePreprocessor(ApplicationPreprocessor.class) //
-                                                    .withResourceProcessor(ApplicationProcessor.class) //
-                                                    .withResourcePostprocessor(ApplicationPostprocessor.class));
+            .withResourceShortCode("SM")), //
+    INSTITUTION(new PrismScopeDefinition() //
+            .withResourceClass(Institution.class) //
+            .withResourceDTOClass(InstitutionDTO.class) //
+            .withResourceShortCode("IN") //
+            .withActionExecutor(InstitutionExecutor.class) //
+            .withResourceCreator(InstitutionCreator.class) //
+            .withResourcePostprocessor(InstitutionPostprocessor.class)), //
+    DEPARTMENT(new PrismScopeDefinition() //
+            .withResourceClass(Department.class) //
+            .withResourceDTOClass(ResourceParentDivisionDTO.class) //
+            .withResourceShortCode("DT") //
+            .withActionExecutor(DepartmentExecutor.class) //
+            .withResourceCreator(DepartmentCreator.class) //
+            .withResourcePostprocessor(DepartmentPostprocessor.class)), //
+    PROGRAM(new PrismScopeDefinition() //
+            .withResourceClass(Program.class) //
+            .withResourceDTOClass(ResourceOpportunityDTO.class) //
+            .withResourceShortCode("PM") //
+            .withActionExecutor(ProgramExecutor.class) //
+            .withResourceCreator(ProgramCreator.class) //
+            .withResourcePostprocessor(ProgramPostprocessor.class)), //
+    PROJECT(new PrismScopeDefinition() //
+            .withResourceClass(Project.class) //
+            .withResourceDTOClass(ResourceOpportunityDTO.class) //
+            .withResourceShortCode("PT") //
+            .withActionExecutor(ProjectExecutor.class) //
+            .withResourceCreator(ProjectCreator.class) //
+            .withResourcePostprocessor(ProjectPostprocessor.class)), //
+    APPLICATION(new PrismScopeDefinition() //
+            .withResourceClass(Application.class) //
+            .withResourceDTOClass(ApplicationDTO.class) //
+            .withResourceShortCode("AN") //
+            .withActionExecutor(ApplicationExecutor.class) //
+            .withResourceCreator(ApplicationCreator.class) //
+            .withResourcePersister(ApplicationPopulator.class) //
+            .withResourcePreprocessor(ApplicationPreprocessor.class) //
+            .withResourceProcessor(ApplicationProcessor.class) //
+            .withResourcePostprocessor(ApplicationPostprocessor.class));
 
     private static Map<PrismScope, List<ResourceSectionRepresentation>> resourceSections = Maps.newHashMap();
 
@@ -147,6 +173,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     public List<ResourceSectionRepresentation> getSections() {
         return resourceSections.get(this);
+    }
+    
+    public static PrismScope getResourceScope(Class<? extends Resource<?>> resourceClass) {
+        return byResourceClass.get(resourceClass);
     }
 
     private static class PrismScopeDefinition {
@@ -252,8 +282,4 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     }
 
-    }
-
-    public static PrismScope getResourceClass(Class<? extends Resource<?>> resourceClass) {
-        return byResourceClass.get(resourceClass);
 }

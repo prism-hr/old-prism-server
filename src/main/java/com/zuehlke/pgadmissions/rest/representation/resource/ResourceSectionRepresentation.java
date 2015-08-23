@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class ResourceSectionRepresentation implements PrismLocalizableDefinition {
 

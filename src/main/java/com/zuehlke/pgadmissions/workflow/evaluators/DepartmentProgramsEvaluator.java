@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.workflow.evaluators;
 
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 @Component
 public class DepartmentProgramsEvaluator implements ResourceCompletenessEvaluator<Department> {

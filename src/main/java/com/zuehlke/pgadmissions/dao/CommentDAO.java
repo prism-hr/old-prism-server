@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,6 +89,14 @@ public class CommentDAO {
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+    
+    public List<Integer> getComments(Resource<?> resource, PrismAction[] actions) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.in("action.id", actions)) //
+                .list();
     }
 
     public List<User> getAppointmentInvitees(Comment comment) {
@@ -221,13 +227,6 @@ public class CommentDAO {
                 .createAlias(resourceReferenceComment, resourceReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReferenceComment, resource)) //
                 .add(Restrictions.eqProperty("user", resourceReference + ".user")) //
-                .list();
-    }
-    
-    public List<Comment> getEndorsementComments(User user) {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.in("action.id", RESOURCE_ENDORSE.getActions())) //
                 .list();
     }
 

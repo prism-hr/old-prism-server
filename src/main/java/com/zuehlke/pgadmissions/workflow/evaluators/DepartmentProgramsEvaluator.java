@@ -9,7 +9,7 @@ public class DepartmentProgramsEvaluator implements ResourceCompletenessEvaluato
 
     @Override
     public boolean evaluate(Department department) {
-        return !department.getPrograms().isEmpty();
+        return !department.getImportedPrograms().isEmpty();
     }
 
 }

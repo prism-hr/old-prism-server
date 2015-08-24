@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,29 +42,18 @@ public class ScopeService {
         return scopeDAO.getEnclosingScopesDescending(prismScope, finalScope);
     }
 
-    public List<PrismScope> getParentScopesDescending(PrismScope prismScope) {
-        return scopeDAO.getParentScopesDescending(prismScope);
+    public List<PrismScope> getParentScopesDescending(PrismScope scope, PrismScope finalScope) {
+        return scopeDAO.getParentScopesDescending(scope, finalScope);
     }
 
-    public List<PrismScope> getParentScopesDescending(PrismScope prismScope, PrismScope finalScope) {
-        return scopeDAO.getParentScopesDescending(prismScope, finalScope);
+    public List<PrismScope> getChildScopesAscending(PrismScope scope, PrismScope finalScope) {
+        return scopeDAO.getChildScopesAscending(scope, finalScope);
     }
 
-    public List<PrismScope> getChildScopesAscending(PrismScope prismScope) {
-        return scopeDAO.getChildScopesAscending(prismScope);
-    }
-
-    public List<PrismScope> getChildScopesAscending(PrismScope prismScope, PrismScope finalScope) {
-        return scopeDAO.getChildScopesAscending(prismScope, finalScope);
-    }
-
-    public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope resourceScope,
-                                                                               PrismScope... excludedScopes) {
+    public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope scope, PrismScope finalScope) {
         HashMultimap<PrismScope, PrismState> childScopes = HashMultimap.create();
-        for (PrismScope childScope : getChildScopesAscending(resourceScope)) {
-            if (excludedScopes.length == 0 || !ArrayUtils.contains(excludedScopes, childScope)) {
-                childScopes.putAll(childScope, stateService.getActiveResourceStates(childScope));
-            }
+        for (PrismScope childScope : getChildScopesAscending(scope, finalScope)) {
+            childScopes.putAll(childScope, stateService.getActiveResourceStates(childScope));
         }
         return childScopes;
     }

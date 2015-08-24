@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_USERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -344,7 +343,7 @@ public class ResourceMapper {
         V representation = getResourceRepresentationSimple(resource, returnType);
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
 
-        for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope())) {
+        for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope(), SYSTEM)) {
             if (!parentScope.equals(SYSTEM)) {
                 Resource<?> parentResource = resource.getEnclosingResource(parentScope);
                 if (parentResource != null) {
@@ -458,7 +457,7 @@ public class ResourceMapper {
 
     public <T extends ResourceParent<?>, U extends ResourceRepresentationClient> void appendResourceSummaryRepresentation(T resource, U representation) {
         List<ResourceCountRepresentation> counts = Lists.newLinkedList();
-        for (PrismScope childScope : scopeService.getChildScopesAscending(resource.getResourceScope())) {
+        for (PrismScope childScope : scopeService.getChildScopesAscending(resource.getResourceScope(), SYSTEM)) {
             counts.add(new ResourceCountRepresentation().withResourceScope(childScope).withResourceCount(
                     resourceService.getActiveChildResourceCount(resource, childScope)));
             if (childScope.equals(PROJECT)) {
@@ -571,21 +570,17 @@ public class ResourceMapper {
 
         PrismScope resourceScope = resource.getResourceScope();
 
-        for (PrismScope parentScope : scopeService.getParentScopesDescending(resourceScope)) {
-            if (!parentScope.equals(SYSTEM)) {
-                Resource<?> parentResource = resource.getEnclosingResource(parentScope);
-                if (parentResource != null) {
-                    setRobotResourceRepresentation(representation, parentResource);
-                }
+        for (PrismScope parentScope : scopeService.getParentScopesDescending(resourceScope, INSTITUTION)) {
+            Resource<?> parentResource = resource.getEnclosingResource(parentScope);
+            if (parentResource != null) {
+                setRobotResourceRepresentation(representation, parentResource);
             }
         }
 
-        for (PrismScope childScope : scopeService.getChildScopesAscending(resourceScope)) {
-            if (!childScope.equals(APPLICATION)) {
-                String childScopeReference = "related" + childScope.getUpperCamelName() + "s";
-                setProperty(representation, childScopeReference, resourceService.getResourceRobotRelatedRepresentations(resource, childScope,
-                        loader.load(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITIES_RELATED_" + childScope.name() + "S"))));
-            }
+        for (PrismScope childScope : scopeService.getChildScopesAscending(resourceScope, PROJECT)) {
+            String childScopeReference = "related" + childScope.getUpperCamelName() + "s";
+            setProperty(representation, childScopeReference, resourceService.getResourceRobotRelatedRepresentations(resource, childScope,
+                    loader.load(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITIES_RELATED_" + childScope.name() + "S"))));
         }
 
         Set<Resource<?>> userResources = resourceScope.equals(PROJECT) ? Sets.newHashSet(resource) : (Set<Resource<?>>) getProperty(resource, "projects");
@@ -785,7 +780,7 @@ public class ResourceMapper {
     private void setRobotResourceRepresentation(ResourceRepresentationRobot representation, Resource<?> resource) {
         PrismScope resourceScope = resource.getResourceScope();
         ResourceRepresentationRobotMetadata resourceRepresentation = resourceService.getResourceRobotMetadataRepresentation(resource,
-                stateService.getActiveResourceStates(resourceScope), scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
+                stateService.getActiveResourceStates(resourceScope), scopeService.getChildScopesWithActiveStates(resourceScope, PROJECT));
         resourceRepresentation.setAuthor(resource.getUser().getRobotRepresentation());
         resourceRepresentation.setThumbnailUrl(getResourceThumbnailUrlRobot(resource));
         resourceRepresentation.setResourceUrl(getResourceUrlRobot(resource));

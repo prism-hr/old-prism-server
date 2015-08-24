@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.getResourceScope;
 import static java.math.RoundingMode.HALF_UP;
@@ -384,7 +385,7 @@ public class ResourceService {
 
     public List<ResourceListRowDTO> getResourceList(PrismScope resourceScope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
         User user = userService.getCurrentUser();
-        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(resourceScope);
+        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(resourceScope, SYSTEM);
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, resourceScope, filter);
 
         int maxRecords = LIST_PAGE_ROW_COUNT;
@@ -464,7 +465,7 @@ public class ResourceService {
 
     public HashMultimap<PrismScope, Integer> getUserAdministratorResources(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION)) {
+        for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, SYSTEM)) {
             for (ResourceStandardDTO resource : resourceDAO.getUserAdministratorResources(scope, user)) {
                 resources.put(resource.getScope(), resource.getId());
             }
@@ -722,13 +723,13 @@ public class ResourceService {
     public DateTime getLatestUpdatedTimestampSitemap(PrismScope resourceScope) {
         return resourceDAO.getLatestUpdatedTimestampSitemap(resourceScope,
                 stateService.getActiveResourceStates(resourceScope),
-                scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
+                scopeService.getChildScopesWithActiveStates(resourceScope, PROJECT));
     }
 
     public List<ResourceRepresentationSitemap> getResourceSitemapRepresentations(PrismScope resourceScope) {
         return resourceDAO.getResourceSitemapRepresentations(resourceScope,
                 stateService.getActiveResourceStates(resourceScope),
-                scopeService.getChildScopesWithActiveStates(resourceScope, APPLICATION));
+                scopeService.getChildScopesWithActiveStates(resourceScope, PROJECT));
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource<?> resource,
@@ -738,8 +739,7 @@ public class ResourceService {
 
     public ResourceRepresentationRobotMetadataRelated getResourceRobotRelatedRepresentations(Resource<?> resource,
             PrismScope relatedScope, String label) {
-        HashMultimap<PrismScope, PrismState> childScopes = scopeService.getChildScopesWithActiveStates(relatedScope,
-                APPLICATION);
+        HashMultimap<PrismScope, PrismState> childScopes = scopeService.getChildScopesWithActiveStates(relatedScope, PROJECT);
         List<ResourceRepresentationIdentity> childResources = resourceDAO.getResourceRobotRelatedRepresentations(
                 resource, relatedScope, stateService.getActiveResourceStates(relatedScope), childScopes);
         return childResources.isEmpty() ? null

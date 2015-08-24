@@ -13,6 +13,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.v
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 import static org.joda.time.DateTimeConstants.MONDAY;
@@ -269,7 +270,7 @@ public class ApplicationService {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
 
         PrismScope scopeId = PrismScope.APPLICATION;
-        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(APPLICATION);
+        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(APPLICATION, SYSTEM);
 
         User user = userService.getCurrentUser();
         resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);

@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -55,7 +56,7 @@ public class InstitutionService {
 
     @Inject
     private ImportedEntityService importedEntityService;
-    
+
     @Inject
     private GeocodableLocationService geocodableLocationService;
 
@@ -158,9 +159,9 @@ public class InstitutionService {
                     logger.error("Could not load facebook image for institution ID: " + institutionId, e);
                 }
             }
-            
+
             try {
-                geocodableLocationService.setGeocodeLocation(name, institution.getAdvert().getAddress()); 
+                geocodableLocationService.setGeocodeLocation(name, institution.getAdvert().getAddress());
             } catch (Exception e) {
                 logger.error("Could not load geocode location for institution ID: " + institutionId, e);
             }
@@ -173,6 +174,10 @@ public class InstitutionService {
 
     public List<Integer> getInstitutionsByDepartments(List<Integer> departments, List<PrismState> activeStates) {
         return institutionDAO.getInstitutionsByDepartments(departments, activeStates);
+    }
+
+    public Institution getInstitutionByImportedProgram(ImportedProgram importedProgram) {
+        return institutionDAO.getInstitutionByImportedProgram(importedProgram);
     }
 
 }

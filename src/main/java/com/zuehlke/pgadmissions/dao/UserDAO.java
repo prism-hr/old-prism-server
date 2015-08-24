@@ -380,23 +380,31 @@ public class UserDAO {
                 .list();
     }
 
-    public Long getUserProgramRelationCount(User user, ImportedProgram program) {
+    public Long getUserProgramRelationCount(User user, ImportedProgram importedProgram) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.count("qualification.id")) //
                 .createAlias("qualification", "qualification", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("program", importedProgram)) //
                 .uniqueResult();
 
     }
 
-    public void deleteUserProgram(User user, ImportedProgram program) {
+    public void deleteUserProgram(User user, ImportedProgram importedProgram) {
         sessionFactory.getCurrentSession()
                 .createSQLQuery("delete UserProgram " //
                         + "where user = :user " //
                         + "and program = :program") //
                 .setParameter("user", user) //
-                .setParameter("program", program) //
+                .setParameter("program", importedProgram) //
+                .executeUpdate();
+    }
+
+    public void deleteUserAdvert(User user) {
+        sessionFactory.getCurrentSession()
+                .createSQLQuery("delete UserAdvert " //
+                        + "where user = :user") //
+                .setParameter("user", user) //
                 .executeUpdate();
     }
 

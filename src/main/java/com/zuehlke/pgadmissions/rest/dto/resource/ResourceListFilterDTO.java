@@ -19,6 +19,8 @@ public class ResourceListFilterDTO {
     private String valueString;
 
     private Boolean urgentOnly;
+    
+    private Boolean targetOnly;
 
     private List<ResourceListFilterConstraintDTO> constraints;
     
@@ -58,6 +60,18 @@ public class ResourceListFilterDTO {
         return urgentOnly;
     }
 
+    public void setUrgentOnly(Boolean urgentOnly) {
+        this.urgentOnly = urgentOnly;
+    }
+
+    public Boolean getTargetOnly() {
+        return targetOnly;
+    }
+
+    public void setTargetOnly(Boolean targetOnly) {
+        this.targetOnly = targetOnly;
+    }
+    
     public final List<ResourceListFilterConstraintDTO> getConstraints() {
         return constraints;
     }
@@ -97,6 +111,10 @@ public class ResourceListFilterDTO {
 
     public boolean isUrgentOnly() {
         return BooleanUtils.toBoolean(urgentOnly);
+    }
+    
+    public boolean isTargetOnly() {
+        return BooleanUtils.toBoolean(targetOnly);
     }
 
     public boolean hasConstraints() {

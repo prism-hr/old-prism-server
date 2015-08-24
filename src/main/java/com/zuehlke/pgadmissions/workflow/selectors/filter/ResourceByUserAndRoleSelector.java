@@ -39,15 +39,15 @@ public class ResourceByUserAndRoleSelector implements PrismResourceListFilterSel
         if (filter == SUPERVISOR) {
             String searchTerm = constraint.getValueString();
             roles.addAll(Lists.<PrismRole> newArrayList(APPLICATION_CONFIRMED_SUPERVISOR_GROUP.getRoles()));
-            List<Integer> applications = resourceService.getResourcesByUserMatchingUserAndRole(scope, searchTerm, roles);
+            List<Integer> applications = resourceService.getResourcesByMatchingUserAndRole(scope, searchTerm, roles);
             applications.addAll(applicationService.getApplicationsByMatchingSuggestedSupervisor(searchTerm));
             return applications;
         } else if (filter == USER) {
             roles.add(APPLICATION_CREATOR);
-            return resourceService.getResourcesByUserMatchingUserAndRole(scope, constraint.getValueString(), roles);
+            return resourceService.getResourcesByMatchingUserAndRole(scope, constraint.getValueString(), roles);
         } else {
             roles.addAll(roleService.getRolesByScope(PrismScope.valueOf(constraint.getFilterProperty().name().replace("_USER", ""))));
-            return resourceService.getResourcesByUserMatchingUserAndRole(scope, constraint.getValueString(), roles);
+            return resourceService.getResourcesByMatchingUserAndRole(scope, constraint.getValueString(), roles);
         }
     }
 

@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRequiredSection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -787,11 +788,11 @@ public class ResourceMapper {
         setProperty(representation, resourceScope.getLowerCamelName(), resourceRepresentation);
     }
 
-    private List<PrismDisplayPropertyDefinition> getResourceAdvertIncompleteSectionRepresentation(String advertIncompleteSection) {
-        List<PrismDisplayPropertyDefinition> incompleteSections = Lists.newLinkedList();
+    private List<PrismRequiredSection> getResourceAdvertIncompleteSectionRepresentation(String advertIncompleteSection) {
+        List<PrismRequiredSection> incompleteSections = Lists.newLinkedList();
         if (advertIncompleteSection != null) {
             for (String section : Splitter.on("|").omitEmptyStrings().split(advertIncompleteSection)) {
-                incompleteSections.add(PrismDisplayPropertyDefinition.valueOf(section));
+                incompleteSections.add(PrismRequiredSection.valueOf(section));
             }
         }
         return incompleteSections;

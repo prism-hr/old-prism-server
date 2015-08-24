@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 
@@ -128,6 +129,14 @@ public class InstitutionDAO {
                 .add(Restrictions.in("resourceState.state.id", activeStates)) //
                 .add(Restrictions.in("department.id", departments)) //
                 .list();
+    }
+
+    public Institution getInstitutionByImportedProgram(ImportedProgram importedProgram) {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .createAlias("importedInstitution", "importedInstitution", JoinType.INNER_JOIN) //
+                .createAlias("importedInstitution.programs", "importedProgram", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("importedProgram.id", importedProgram.getId())) //
+                .uniqueResult();
     }
 
 }

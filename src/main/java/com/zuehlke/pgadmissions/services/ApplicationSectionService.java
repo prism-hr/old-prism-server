@@ -305,8 +305,15 @@ public class ApplicationSectionService {
 
         ImportedProgramDTO importedProgramDTO = qualificationDTO.getProgram();
         ImportedProgram importedProgram = importedEntityService.getOrCreateImportedProgram(institution, importedProgramDTO);
+
+        User user = application.getUser();
+        ImportedProgram oldImportedProgram = qualification.getProgram();
+        if (oldImportedProgram != null && !oldImportedProgram.getId().equals(importedProgram.getId())) {
+            userService.deleteUserProgram(user, oldImportedProgram);
+        }
+
         qualification.setProgram(importedProgram);
-        userService.createOrUpdateUserProgram(application.getUser(), qualification.getProgram());
+        userService.createOrUpdateUserProgram(user, qualification.getProgram());
 
         qualification.setLanguage(qualificationDTO.getLanguage());
         qualification.setStartDate(qualificationDTO.getStartDate());

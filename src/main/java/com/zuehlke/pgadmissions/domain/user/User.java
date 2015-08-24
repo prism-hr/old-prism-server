@@ -139,6 +139,9 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<UserProgram> userPrograms = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "user")
+    private Set<UserAdvert> userAdverts = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -306,6 +309,10 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<UserProgram> getUserPrograms() {
         return userPrograms;
+    }
+    
+    public Set<UserAdvert> getUserAdverts() {
+        return userAdverts;
     }
 
     public User withId(Integer id) {

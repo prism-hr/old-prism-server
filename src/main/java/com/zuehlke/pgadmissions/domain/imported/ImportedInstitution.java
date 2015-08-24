@@ -61,6 +61,9 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @OneToMany(mappedBy = "institution")
     private Set<ImportedInstitutionSubjectArea> institutionSubjectAreas = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "institution")
+    private Set<ImportedProgram> programs = Sets.newHashSet();
+
     @Override
     public Integer getId() {
         return id;
@@ -144,8 +147,12 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     public Set<ImportedInstitutionSubjectArea> getInstitutionSubjectAreas() {
         return institutionSubjectAreas;
     }
+    
+    public Set<ImportedProgram> getPrograms() {
+        return programs;
+    }
 
-    public ImportedInstitution withId(final Integer id) {
+    public ImportedInstitution withId(Integer id) {
         this.id = id;
         return this;
     }

@@ -9,6 +9,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VERIFICATION;
 import static org.hibernate.criterion.MatchMode.ANYWHERE;
 
 import java.util.Arrays;
@@ -247,8 +251,11 @@ public class ResourceDAO {
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.partnerMode", false)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole.user", user)) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN);
+
+        appendResourceListTargetCriterion(scopeId, criteria, filter);
+
+        criteria.add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
@@ -272,8 +279,11 @@ public class ResourceDAO {
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.partnerMode", false)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole.user", user)) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN);
+
+        appendResourceListTargetCriterion(scopeId, criteria, filter);
+
+        criteria.add(Restrictions.eq("userRole.user", user)) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(Restrictions.isNull("state.hidden"));
@@ -301,8 +311,11 @@ public class ResourceDAO {
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.partnerMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole.user", user)) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN);
+
+        appendResourceListTargetCriterion(scopeId, criteria, filter);
+
+        criteria.add(Restrictions.eq("userRole.user", user)) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(Restrictions.isNull("state.hidden"));
@@ -731,6 +744,20 @@ public class ResourceDAO {
                 .as(resourceReference + Joiner.on("").join(Arrays.asList(column.split("\\.")).stream().map(part -> WordUtils.capitalize(part)).collect(Collectors.toList())));
     }
 
+    private static void appendResourceListTargetCriterion(PrismScope scopeId, Criteria criteria, ResourceListFilterDTO filter) {
+        if (scopeId.equals(APPLICATION) && filter.isTargetOnly()) {
+            criteria.createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN)
+                    .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                    .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                    .add(Restrictions.disjunction() //
+                            .add(Restrictions.isNull("advertTarget.id"))
+                            .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"))
+                            .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VERIFICATION.ordinal(), APPLICATION_RESERVED.ordinal()))
+                            .add(Restrictions.in("state.id", new PrismState[] { APPLICATION_APPROVAL, APPLICATION_REJECTED }))); //
+        }
+    }
+
     private static void appendResourceListFilterCriterion(PrismScope scopeId, Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
@@ -775,7 +802,7 @@ public class ResourceDAO {
         return criteria;
     }
 
-    private Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates,
+    private static Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates,
             Junction enclosedScopeExclusion) {
         return Restrictions.disjunction() //
                 .add(Restrictions.disjunction() //
@@ -783,7 +810,7 @@ public class ResourceDAO {
                         .add(Restrictions.not(enclosedScopeExclusion)));
     }
 
-    private Junction getResourceActiveEnclosedScopeRestriction(Criteria criteria,
+    private static Junction getResourceActiveEnclosedScopeRestriction(Criteria criteria,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Junction enclosedScopeExclusion = Restrictions.conjunction();
         for (PrismScope enclosedScope : enclosedScopes.keySet()) {

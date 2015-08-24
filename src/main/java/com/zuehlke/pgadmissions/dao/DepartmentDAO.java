@@ -11,6 +11,7 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.dto.DepartmentImportedSubjectAreaDTO;
@@ -55,6 +56,13 @@ public class DepartmentDAO {
                 .add(Restrictions.eqProperty("programSubjectArea.id", "institutionSubjectArea.id"))
                 .add(Restrictions.eq("id", department.getId())) //
                 .setResultTransformer(Transformers.aliasToBean(DepartmentImportedSubjectAreaDTO.class)) //
+                .list();
+    }
+
+    public List<Department> getDepartmentsByImportedProgram(ImportedProgram importedProgram) {
+        return (List<Department>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
+                .createAlias("importedPrograms", "importedProgram") //
+                .add(Restrictions.eq("importedProgram.id", importedProgram.getId())) //
                 .list();
     }
 

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EXPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
@@ -48,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -164,7 +166,7 @@ public class ApplicationDAO {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.rowCount()) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_PROVIDE_REFERENCE)) //
+                .add(Restrictions.eq("action.id", APPLICATION_PROVIDE_REFERENCE)) //
                 .add(Restrictions.eq("declinedResponse", false)) //
                 .uniqueResult();
     }
@@ -173,7 +175,7 @@ public class ApplicationDAO {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.rowCount()) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_PROVIDE_REFERENCE)) //
+                .add(Restrictions.eq("action.id", APPLICATION_PROVIDE_REFERENCE)) //
                 .add(Restrictions.eq("declinedResponse", true)) //
                 .uniqueResult();
     }
@@ -191,7 +193,7 @@ public class ApplicationDAO {
                 .add(Restrictions.ne("id", application.getId())) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VALIDATION.ordinal(), APPLICATION_RESERVED.ordinal())) //
-                        .add(Restrictions.in("state.id", Arrays.asList(APPLICATION_APPROVAL, APPLICATION_REJECTED)))) //
+                        .add(Restrictions.in("state.id", new PrismState[] {APPLICATION_APPROVAL, APPLICATION_REJECTED}))) //
                 .addOrder(Order.desc("sequenceIdentifier")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class))
                 .list();

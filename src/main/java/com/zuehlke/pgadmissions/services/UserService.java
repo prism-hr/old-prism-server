@@ -53,8 +53,10 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAdvert;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
@@ -99,6 +101,12 @@ public class UserService {
 
     @Inject
     private DocumentService documentService;
+
+    @Inject
+    private DepartmentService departmentService;
+
+    @Inject
+    private InstitutionService institutionService;
 
     @Inject
     private ResourceService resourceService;
@@ -169,16 +177,23 @@ public class UserService {
         return user;
     }
 
-    public void createOrUpdateUserProgram(User user, ImportedProgram program) {
-        entityService.createOrUpdate(new UserProgram().withUser(user).withProgram(program));
+    public void createOrUpdateUserProgram(User user, ImportedProgram importedProgram) {
+        entityService.createOrUpdate(new UserProgram().withUser(user).withProgram(importedProgram));
+        createOrUpdateUserAdverts(user, importedProgram);
     }
 
-    public Long getUserProgramRelationCount(User user, ImportedProgram program) {
-        return userDAO.getUserProgramRelationCount(user, program);
+    public Long getUserProgramRelationCount(User user, ImportedProgram importedProgram) {
+        return userDAO.getUserProgramRelationCount(user, importedProgram);
     }
 
-    public void deleteUserProgram(User user, ImportedProgram program) {
-        userDAO.deleteUserProgram(user, program);
+    public void deleteUserProgram(User user, ImportedProgram importedProgram) {
+        userDAO.deleteUserProgram(user, importedProgram);
+        userDAO.deleteUserAdvert(user);
+        entityService.flush();
+        
+        user.getUserPrograms().forEach(userProgram -> {
+            createOrUpdateUserAdverts(user, importedProgram);
+        });
     }
 
     public Set<String> getUserProperties(Class<? extends UserAssignment<?>> userAssignmentClass) {
@@ -512,6 +527,21 @@ public class UserService {
             }
         }
         return userAssignments;
+    }
+    
+    private void createOrUpdateUserAdverts(User user, ImportedProgram importedProgram) {
+        List<Department> departments = departmentService.getDepartmentsByImportedProgram(importedProgram);
+        if (departments.isEmpty()) {
+            Institution institution = institutionService.getInstitutionByImportedProgram(importedProgram);
+            if (institution != null) {
+                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(institution.getAdvert()));
+            }
+        } else {
+            departments.forEach(department -> {
+                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getAdvert()));
+                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getInstitution().getAdvert()));
+            });
+        }
     }
 
 }

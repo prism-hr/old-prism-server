@@ -48,9 +48,12 @@ public class DepartmentService {
         Set<ImportedProgram> importedPrograms = department.getImportedPrograms();
         importedPrograms.clear();
         if (importedProgramDTOs != null) {
-            for (ImportedEntityDTO importedProgramDTO : importedProgramDTOs) {
-                importedPrograms.add(importedEntityService.getById(ImportedProgram.class, importedProgramDTO.getId()));
-            }
+            importedPrograms.forEach(importedProgramDTO -> {
+                ImportedProgram importedProgram = importedEntityService.getById(ImportedProgram.class, importedProgramDTO.getId());
+                if (importedProgram.getInstitution().getId().equals(department.getInstitution().getImportedInstitution().getId())) {
+                    importedPrograms.add(importedProgram);    
+                }
+            });
         }
     }
 
@@ -78,6 +81,10 @@ public class DepartmentService {
             entityService.executeBulkInsert("department_imported_subject_area", "department_id, imported_subject_area_id, relation_strength",
                     prepareRowsForSqlInsert(rows));
         }
+    }
+    
+    public List<Department> getDepartmentsByImportedProgram(ImportedProgram importedProgram) {
+        return departmentDAO.getDepartmentsByImportedProgram(importedProgram);
     }
 
 }

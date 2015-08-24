@@ -85,13 +85,13 @@ public class ActionService {
 
     public List<ActionDTO> getPermittedActions(Resource<?> resource, User user) {
         PrismScope resourceScope = resource.getResourceScope();
-        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope());
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope(), SYSTEM);
         return actionDAO.getPermittedActions(resourceScope, Lists.newArrayList(resource.getId()), parentScopes, user);
     }
 
     public LinkedHashMultimap<Integer, ActionDTO> getPermittedActions(PrismScope resourceScope, Collection<Integer> resourceIds, User user) {
         LinkedHashMultimap<Integer, ActionDTO> permittedActions = LinkedHashMultimap.create();
-        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resourceScope);
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resourceScope, SYSTEM);
         actionDAO.getPermittedActions(resourceScope, resourceIds, parentScopes, user).forEach(permittedAction -> {
             permittedActions.put(permittedAction.getResourceId(), permittedAction);
         });

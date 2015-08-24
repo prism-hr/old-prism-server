@@ -62,6 +62,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationTyp
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -127,11 +128,16 @@ public class ApplicationSectionService {
 
         PrismOpportunityType prismOpportunityType = programDetailDTO.getOpportunityType();
         if (prismOpportunityType == null) {
-            ResourceOpportunity<?> parent = (ResourceOpportunity<?>) application.getParentResource();
-            programDetail.setOpportunityType(parent.getOpportunityType());
+            ResourceParent<?> parent = (ResourceParent<?>) application.getParentResource();
+            if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
+                ImportedEntitySimple opportunityType = ((ResourceOpportunity<?>) parent).getOpportunityType();
+                setOpportunityType(application, programDetail, opportunityType);
+            } else {
+                application.setOpportunityCategory(programDetailDTO.getOpportunityCategory());
+            }
         } else {
             ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class, prismOpportunityType.name());
-            programDetail.setOpportunityType(opportunityType);
+            setOpportunityType(application, programDetail, opportunityType);
         }
 
         ImportedEntitySimple studyOption = importedEntityService.getById(ImportedEntitySimple.class, programDetailDTO.getStudyOption().getId());
@@ -649,6 +655,11 @@ public class ApplicationSectionService {
     private CommentAssignedUser getUserAssignmentDelete(User user, PrismRole roleId) {
         Role role = roleService.getById(roleId);
         return new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(DELETE);
+    }
+
+    private void setOpportunityType(Application application, ApplicationProgramDetail programDetail, ImportedEntitySimple opportunityType) {
+        programDetail.setOpportunityType(opportunityType);
+        application.setOpportunityCategory(PrismOpportunityType.valueOf(opportunityType.getName()).getCategory());
     }
 
 }

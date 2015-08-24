@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -30,6 +32,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -83,6 +86,10 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
     @ManyToOne
     @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
     private ImportedEntitySimple opportunityType;
+    
+    @Column(name = "opportunity_category", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismOpportunityCategory opportunityCategory;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -276,6 +283,16 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
     @Override
     public void setOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    @Override
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
+    }
+
+    @Override
+    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
     }
 
     @Override
@@ -641,6 +658,16 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
         return this;
     }
 
+    @Override
+    public String getOpportunityCategories() {
+        return null;
+    }
+    
+    @Override
+    public void setOpportunityCategories(String opportunityCategories) {
+        return;
+    }
+    
     @Override
     public Class<ProgramReassignmentProcessor> getUserReassignmentProcessor() {
         return ProgramReassignmentProcessor.class;

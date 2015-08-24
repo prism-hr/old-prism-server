@@ -6,9 +6,12 @@ import org.apache.commons.lang.BooleanUtils;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 
 public class ResourceListFilterDTO {
-
+    
+    private PrismOpportunityCategory opportunityCategory;
+    
     private PrismFilterMatchMode matchMode;
 
     private PrismFilterSortOrder sortOrder;
@@ -18,6 +21,14 @@ public class ResourceListFilterDTO {
     private Boolean urgentOnly;
 
     private List<ResourceListFilterConstraintDTO> constraints;
+    
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
+    }
+
+    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
+    }
 
     public final PrismFilterMatchMode getMatchMode() {
         return matchMode;

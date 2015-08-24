@@ -12,13 +12,17 @@ import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 public abstract class ResourceParent<T extends PrismUserReassignmentProcessor> extends Resource<T>implements ResourceParentDefinition<Advert> {
 
-    public abstract String getName();
+    public abstract String getOpportunityCategories();
 
-    public abstract void setName(String name);
-
+    public abstract void setOpportunityCategories(String opportunityCategories);
+    
     public abstract String getAdvertIncompleteSection();
 
     public abstract void setAdvertIncompleteSection(String advertIncompleteSection);
+    
+    public abstract String getName();
+
+    public abstract void setName(String name);
 
     public abstract DateTime getUpdatedTimestampSitemap();
 

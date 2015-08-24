@@ -196,8 +196,8 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
         return new DefaultStartDateDTO().withImmediate(immediate).withScheduled(scheduled);
     }
 
-    public static List<PrismOpportunityType> getOpportunityTypes(PrismOpportunityCategory programCategory) {
-        return byCategory.get(programCategory);
+    public static List<PrismOpportunityType> getOpportunityTypes(PrismOpportunityCategory opportunityCategory) {
+        return byCategory.get(opportunityCategory);
     }
 
     public static PrismOpportunityType getSystemOpportunityType() {

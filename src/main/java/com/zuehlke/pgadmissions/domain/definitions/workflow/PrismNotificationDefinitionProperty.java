@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.RESUME_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_MARKETING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_SYNDICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_DEPARTMENT_SYNDICATED;
@@ -64,6 +65,8 @@ import com.zuehlke.pgadmissions.workflow.notification.property.ProgramUserContac
 import com.zuehlke.pgadmissions.workflow.notification.property.ProjectCodeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ProjectTitleBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ProjectUserContactBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.ResumeCodeBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.ResumeCreatorFirstNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemApplicationHomepageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemApplicationRecommendationBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemDepartmentHomepageBuilder;
@@ -105,6 +108,9 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
+    RESUME_CREATOR_FIRST_NAME(RESUME_GLOBAL, true, ResumeCreatorFirstNameBuilder.class), //
+    RESUME_CREATOR_FULL_NAME(RESUME_GLOBAL, true, ResumeCreatorFirstNameBuilder.class), //
+    RESUME_CODE(RESUME_GLOBAL, true, ResumeCodeBuilder.class), //
     APPLICATION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CODE(APPLICATION_GLOBAL, true, ApplicationCodeBuilder.class), //
     APPLICATION_PARENT_RESOURCE_TITLE(APPLICATION_GLOBAL, true, ApplicationParentResourceTitleBuilder.class), //

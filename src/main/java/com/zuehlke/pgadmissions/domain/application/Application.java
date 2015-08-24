@@ -21,7 +21,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -96,7 +95,7 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "institution_id", nullable = false)
+    @JoinColumn(name = "institution_id")
     private Institution institution;
 
     @ManyToOne
@@ -119,7 +118,7 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
     @JoinColumn(name = "advert_id")
     private Advert advert;
 
-    @Column(name = "opportunity_category")
+    @Column(name = "opportunity_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismOpportunityCategory opportunityCategory;
 
@@ -213,7 +212,7 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
     @Enumerated(EnumType.STRING)
     private PrismOfferType confirmedOfferType;
 
-    @Column(name = "retain", nullable = false)
+    @Column(name = "retain")
     private Boolean retain;
 
     @Column(name = "submitted_timestamp")
@@ -682,111 +681,6 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
         return userRoles;
     }
 
-    public Application withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public Application withCode(String code) {
-        this.code = code;
-        return this;
-    }
-
-    public Application withSystem(System system) {
-        this.system = system;
-        return this;
-    }
-
-    public Application withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public Application withProgram(Program program) {
-        this.program = program;
-        return this;
-    }
-
-    public Application withProject(Project project) {
-        this.project = project;
-        return this;
-    }
-
-    public Application withAdvert(Advert advert) {
-        this.advert = advert;
-        return this;
-    }
-
-    public Application withUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    public Application withState(State state) {
-        this.state = state;
-        return this;
-    }
-
-    public Application withDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-        return this;
-    }
-
-    public Application withCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-        return this;
-    }
-
-    public Application withSubmittedTimestamp(DateTime submittedTimestamp) {
-        this.submittedTimestamp = submittedTimestamp;
-        return this;
-    }
-
-    public Application withPersonalDetail(ApplicationPersonalDetail personalDetail) {
-        this.personalDetail = personalDetail;
-        return this;
-    }
-
-    public Application withProgramDetail(ApplicationProgramDetail programDetail) {
-        this.programDetail = programDetail;
-        return this;
-    }
-
-    public Application withAddress(ApplicationAddress applicationAddress) {
-        this.address = applicationAddress;
-        return this;
-    }
-
-    public Application withDocument(ApplicationDocument applicationDocument) {
-        this.document = applicationDocument;
-        return this;
-    }
-
-    public Application withAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
-        this.additionalInformation = additionalInformation;
-        return this;
-    }
-
-    public Application withRetain(Boolean retain) {
-        this.retain = retain;
-        return this;
-    }
-
-    public Application withReferees(ApplicationReferee... referees) {
-        this.referees.addAll(Arrays.asList(referees));
-        return this;
-    }
-
-    public Application withQualifications(ApplicationQualification... qualifications) {
-        this.qualifications.addAll(Arrays.asList(qualifications));
-        return this;
-    }
-
-    public Application withParentResource(Resource<?> parentResource) {
-        setParentResource(parentResource);
-        return this;
-    }
-
     @Override
     public State getState() {
         return state;
@@ -836,7 +730,27 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
+    
+    public Application withUser(User user) {
+        this.user = user;
+        return this;
+    }
 
+    public Application withParentResource(Resource<?> parentResource) {
+        setParentResource(parentResource);
+        return this;
+    }
+    
+    public Application withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+
+    public Application withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
+        return this;
+    }
+    
     public String getCreatedTimestampDisplay(String dateFormat) {
         return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat);
     }

@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationApprovedResolver;
@@ -40,8 +41,13 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.Prog
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.resume.ResumeCompletedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.resume.ResumeUpdatedResolver;
 
 public enum PrismStateTransitionEvaluation {
+
+    RESUME_COMPLETED_OUTCOME(true, RESUME, ResumeCompletedResolver.class), //
+    RESUME_UPDATED_OUTCOME(true, RESUME, ResumeUpdatedResolver.class), //
 
     APPLICATION_COMPLETED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
     APPLICATION_CONFIRMED_SUPERVISION_OUTCOME(false, APPLICATION, ApplicationConfirmedSupervisionResolver.class), //
@@ -65,18 +71,22 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PROVIDED_REVIEW_OUTCOME(false, APPLICATION, ApplicationProvidedReviewResolver.class), //
     APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationUpdateInterviewAvailabilityResolver.class), //
     APPLICATION_PURGED_OUTCOME(false, APPLICATION, ApplicationPurgedResolver.class), //
-    INSTITUTION_APPROVED_OUTCOME(true, INSTITUTION, InstitutionApprovedResolver.class), //
-    INSTITUTION_UPDATED_OUTCOME(true, INSTITUTION, InstitutionUpdatedResolver.class), //
-    INSTITUTION_CREATED_OUTCOME(false, INSTITUTION, InstitutionCreatedResolver.class), //
+
+    PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
+    PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
+    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class), //
+
+    PROGRAM_APPROVED_OUTCOME(true, PROGRAM, ProgramApprovedResolver.class), //
+    PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
+    PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class),
+
     DEPARTMENT_APPROVED_OUTCOME(true, DEPARTMENT, DepartmentApprovedResolver.class), //
     DEPARTMENT_UPDATED_OUTCOME(true, DEPARTMENT, DepartmentUpdatedResolver.class), //
     DEPARTMENT_CREATED_OUTCOME(false, DEPARTMENT, DepartmentCreatedResolver.class), //
-    PROGRAM_APPROVED_OUTCOME(true, PROGRAM, ProgramApprovedResolver.class), //
-    PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
-    PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //
-    PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
-    PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
-    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class);
+
+    INSTITUTION_APPROVED_OUTCOME(true, INSTITUTION, InstitutionApprovedResolver.class), //
+    INSTITUTION_UPDATED_OUTCOME(true, INSTITUTION, InstitutionUpdatedResolver.class), //
+    INSTITUTION_CREATED_OUTCOME(false, INSTITUTION, InstitutionCreatedResolver.class);
 
     private boolean nextStateSelection;
 

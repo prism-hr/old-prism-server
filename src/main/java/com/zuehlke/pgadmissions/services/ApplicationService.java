@@ -18,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 import static org.joda.time.DateTimeConstants.MONDAY;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
@@ -73,8 +74,6 @@ import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
@@ -102,6 +101,9 @@ public class ApplicationService {
     @Inject
     private EntityService entityService;
 
+    @Inject
+    private RoleService roleService;
+    
     @Inject
     private UserService userService;
 
@@ -148,13 +150,6 @@ public class ApplicationService {
 
     public Application getByCodeLegacy(String codeLegacy) {
         return entityService.getByProperty(Application.class, "codeLegacy", codeLegacy);
-    }
-
-    public Resource<?> createApplication(User user, ApplicationDTO newResource) {
-        ResourceDTO parentResourceDTO = newResource.getParentResource();
-        ResourceParent<?> parentResource = (ResourceParent<?>) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
-        return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert()).withRetain(false)
-                .withCreatedTimestamp(new DateTime());
     }
 
     public ApplicationStartDateRepresentation getStartDateRepresentation(Integer applicationId, Integer studyOptionId) {
@@ -225,9 +220,10 @@ public class ApplicationService {
         List<ApplicationReferenceDTO> references = applicationDAO.getApplicationRefereesResponded(application);
 
         Institution institution = application.getInstitution();
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(application);
         List<ApplicationRefereeRepresentation> representations = Lists.newArrayListWithCapacity(references.size());
         for (ApplicationReferenceDTO reference : references) {
-            representations.add(applicationMapper.getApplicationRefereeRepresentation(reference, institution));
+            representations.add(applicationMapper.getApplicationRefereeRepresentation(reference, institution, overridingRoles));
         }
 
         // TODO move this shit into the adapter
@@ -250,7 +246,8 @@ public class ApplicationService {
                 for (int i = 0; i < referencesPending; i++) {
                     representations.add(new ApplicationRefereeRepresentation().withUser(userMapper.getUserRepresentationSimple(institution.getUser()))
                             .withJobTitle(jobTitle).withAddress(new AddressApplicationRepresentation().withDomicile(domicileMock)
-                                    .withAddressLine1(addressLineMock).withAddressCode(addressLineMock).withAddressCode(addressCodeMock)).withPhone(phoneMock));
+                                    .withAddressLine1(addressLineMock).withAddressCode(addressLineMock).withAddressCode(addressCodeMock))
+                            .withPhone(phoneMock));
                 }
             }
         }
@@ -326,21 +323,28 @@ public class ApplicationService {
     }
 
     public void prepopulateApplication(Application application) {
-        Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
-        if (previousApplication != null) {
-            applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);
-            BeanPropertyBindingResult errors = validateApplication(application);
-            for (ObjectError error : errors.getAllErrors()) {
-                Object property = PrismReflectionUtils.getProperty(application, error.getObjectName());
-                if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
-                    ApplicationSection section = (ApplicationSection) property;
-                    section.setLastUpdatedTimestamp(null);
-                }
+        User user = application.getUser();
+        Application templateApplication = applicationDAO.getPreviousSubmittedApplication(user, application.getOpportunityCategory());
+        templateApplication = templateApplication == null ? applicationDAO.getPreviousSubmittedApplication(user, null) : templateApplication;
+
+        if (templateApplication != null) {
+            prepopulateApplication(application, templateApplication);
+        }
+    }
+
+    public <T extends Application> void prepopulateApplication(T application, T templateApplication) {
+        applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, templateApplication);
+        BeanPropertyBindingResult errors = validateApplication(application);
+        for (ObjectError error : errors.getAllErrors()) {
+            Object property = PrismReflectionUtils.getProperty(application, error.getObjectName());
+            if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
+                ApplicationSection section = (ApplicationSection) property;
+                section.setLastUpdatedTimestamp(null);
             }
         }
     }
 
-    public ResourceRatingSummaryDTO getApplicationRatingSummary(Application application) {
+    public <T extends Application> ResourceRatingSummaryDTO getApplicationRatingSummary(T application) {
         return applicationDAO.getApplicationRatingSummary(application);
     }
 
@@ -352,7 +356,7 @@ public class ApplicationService {
         return applicationDAO.getApplicationReferee(application, user);
     }
 
-    public BeanPropertyBindingResult validateApplication(Application application) {
+    public <T extends Application> BeanPropertyBindingResult validateApplication(T application) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
         ValidationUtils.invokeValidator(applicationValidator, application, errors);
         return errors;
@@ -402,6 +406,12 @@ public class ApplicationService {
         Application application = getById(applicationId);
         return resourceService.getResourceStateGroups(application).contains(PrismStateGroup.APPLICATION_APPROVED)
                 && !application.getState().equals(APPLICATION_APPROVED);
+    }
+    
+    public <T extends Application> void syncronizeApplicationRating(T application) {
+        ResourceRatingSummaryDTO ratingSummary = getApplicationRatingSummary(application);
+        application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
+        application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
     }
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {

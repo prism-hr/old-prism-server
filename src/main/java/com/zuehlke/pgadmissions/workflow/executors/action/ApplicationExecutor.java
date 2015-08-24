@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 
 import javax.inject.Inject;
 
@@ -16,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -56,7 +56,8 @@ public class ApplicationExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
 
         User user = userService.getById(commentDTO.getUser());
-        if (actionId == APPLICATION_COMPLETE) {
+        boolean isCompleteAction = actionId.equals(APPLICATION_COMPLETE);
+        if (isCompleteAction) {
             BeanPropertyBindingResult errors = applicationService.validateApplication(application);
             if (errors.hasErrors()) {
                 throw new PrismValidationException("Application not completed", errors);
@@ -89,9 +90,10 @@ public class ApplicationExecutor implements ActionExecutor {
         }
 
         commentService.appendCommentProperties(comment, commentDTO);
+        commentService.appendCommentApplicationProperties(comment, commentDTO);
 
-        if (actionId == PrismAction.APPLICATION_COMPLETE) {
-            Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
+        if (isCompleteAction) {
+            Role refereeRole = entityService.getById(Role.class, APPLICATION_REFEREE);
             for (ApplicationReferee referee : application.getReferees()) {
                 comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser()).withRole(refereeRole));
             }

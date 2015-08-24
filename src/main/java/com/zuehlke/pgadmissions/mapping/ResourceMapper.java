@@ -47,13 +47,12 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -74,9 +73,7 @@ import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationE
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.DepartmentRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceCountRepresentation;
@@ -105,6 +102,7 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -145,6 +143,9 @@ public class ResourceMapper {
     private CommentMapper commentMapper;
 
     @Inject
+    private DepartmentMapper departmentMapper;
+
+    @Inject
     private DocumentMapper documentMapper;
 
     @Inject
@@ -167,6 +168,9 @@ public class ResourceMapper {
 
     @Inject
     private ScopeService scopeService;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private UserService userService;
@@ -257,10 +261,6 @@ public class ResourceMapper {
         return representations;
     }
 
-    public <T extends Resource<?>> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
-        return getResourceRepresentationSimple(resource, ResourceRepresentationSimple.class);
-    }
-
     public ResourceRepresentationLocation getResourceRepresentationLocation(Resource<?> resource) {
         ResourceRepresentationLocation representation = getResourceRepresentationSimple(resource, ResourceRepresentationLocation.class);
         representation.setAddress(advertMapper.getAdvertAddressRepresentation(resource.getAdvert()));
@@ -317,8 +317,7 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceSimpleDTO, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO,
-            Class<V> returnType) {
+    public <T extends ResourceSimpleDTO, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO, Class<V> returnType) {
         V representation = getResourceRepresentation(resourceScope, resourceDTO, returnType);
         representation.setCode(resourceDTO.getCode());
         representation.setImportedCode(resourceDTO.getImportedCode());
@@ -331,47 +330,18 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationExtended(T resource) throws Exception {
-        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class);
+    public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationSimple(T resource) {
+        return getResourceRepresentationSimple(resource);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Resource<?>, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType) {
-        DateTime baseline = new DateTime();
+    public <T extends Resource<?>, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
         User currentUser = userService.getCurrentUser();
-
-        V representation = getResourceRepresentationSimple(resource, returnType);
-        representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
-
-        for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope(), SYSTEM)) {
-            if (!parentScope.equals(SYSTEM)) {
-                Resource<?> parentResource = resource.getEnclosingResource(parentScope);
-                if (parentResource != null) {
-                    representation.setParentResource(getResourceRepresentationSimple(parentResource));
-                }
-            }
-        }
-
-        DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
 
-        setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
-        setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
-
-        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && !actionService.hasRedactions(resource, userService.getCurrentUser())) {
-            representation.setApplicationRatingAverage(((ResourceParent<?>) resource).getApplicationRatingAverage());
-            representation.setOpportunityRatingAverage(((ResourceParent<?>) resource).getOpportunityRatingAverage());
-        }
-
-        representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));
-        representation.setSecondaryStates(stateMapper.getSecondaryStateRepresentations(resource));
-
-        representation.setCreatedTimestamp(resource.getCreatedTimestamp());
-        representation.setUpdatedTimestamp(updatedTimestamp);
-        representation.setSequenceIdentifier(resource.getSequenceIdentifier());
+        V representation = getResourceRepresentationStandard(resource, returnType, actions, overridingRoles);
 
         representation.setActions(actions);
-        representation.setTimeline(commentMapper.getCommentTimelineRepresentation(resource, currentUser));
+        representation.setTimeline(commentMapper.getCommentTimelineRepresentation(resource, currentUser, overridingRoles));
         representation.setUserRoles(roleMapper.getResourceUserRoleRepresentations(resource));
 
         representation.setWorkflowConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
@@ -379,17 +349,24 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceParent<?>, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType) {
-        V representation = getResourceRepresentationExtended(resource, returnType);
+    public <T extends Resource<?>> ResourceRepresentationStandard getResourceRepresentationStandard(T resource) {
+        User currentUser = userService.getCurrentUser();
+        List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
+        return getResourceRepresentationStandard(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource));
+    }
+
+    public <T extends ResourceParent<?>, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType,
+            List<PrismRole> overridingRoles) {
+        V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         representation.setPartnerActions(actionService.getPartnerActions(resource));
         return representation;
     }
 
-    public <T extends ResourceOpportunity<?>, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(
-            T resource, Class<V> returnType) {
-        V representation = getResourceParentRepresentation(resource, returnType);
+    public <T extends ResourceOpportunity<?>, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource, Class<V> returnType,
+            List<PrismRole> overridingRoles) {
+        V representation = getResourceParentRepresentation(resource, returnType, overridingRoles);
 
         List<ImportedEntityResponse> studyOptions = Lists.newLinkedList();
         for (ImportedEntitySimple studyOption : resourceService.getStudyOptions(resource)) {
@@ -402,57 +379,47 @@ public class ResourceMapper {
         representation.setDurationMinimum(resource.getDurationMinimum());
         representation.setDurationMaximum(resource.getDurationMaximum());
         return representation;
-
     }
 
-    public <T extends Department, V extends DepartmentRepresentationClient> V getDepartmentRepresentationClient(T resource, Class<V> returnType) {
-        V representation = getResourceParentRepresentation(resource, returnType);
-        List<ImportedEntityResponse> programRepresentations = resource.getImportedPrograms().stream()
-                .map(program -> (ImportedEntityResponse) importedEntityMapper.getImportedEntityRepresentation(program)).collect(Collectors.toList());
-        representation.setImportedPrograms(programRepresentations);
-        appendResourceSummaryRepresentation(resource, representation);
-        return representation;
-    }
-
-    public <T extends ResourceOpportunity<?>, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(
-            T resource, Class<V> returnType) {
-        V representation = getResourceOpportunityRepresentation(resource, returnType);
+    public <T extends ResourceOpportunity<?>, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource, Class<V> returnType,
+            List<PrismRole> overridingRoles) {
+        V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
     }
 
     public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationClient(T resource) {
         Class<?> resourceClass = resource.getClass();
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
         if (Institution.class.equals(resourceClass)) {
-            return institutionMapper.getInstitutionRepresentationClient((Institution) resource);
+            return institutionMapper.getInstitutionRepresentationClient((Institution) resource, overridingRoles);
         } else if (Department.class.equals(resourceClass)) {
-            return getDepartmentRepresentationClient((Department) resource, DepartmentRepresentationClient.class);
-        } else if (Program.class.equals(resourceClass)) {
-            return getResourceOpportunityRepresentationClient((ResourceOpportunity<?>) resource, ProgramRepresentationClient.class);
-        } else if (Project.class.equals(resourceClass)) {
-            return getResourceOpportunityRepresentationClient((ResourceOpportunity<?>) resource, ProjectRepresentationClient.class);
+            return departmentMapper.getDepartmentRepresentationClient((Department) resource, overridingRoles);
+        } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
+            return getResourceOpportunityRepresentationClient((ResourceOpportunity<?>) resource, ProgramRepresentationClient.class, overridingRoles);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
-            return applicationMapper.getApplicationRepresentationClient((Application) resource);
+            return applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles);
         }
 
-        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class);
+        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
     }
 
     public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
         Class<?> resourceClass = resource.getClass();
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
-        if (resourceClass.equals(Institution.class)) {
-            return institutionMapper.getInstitutionRepresentation((Institution) resource);
-        } else if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return getResourceParentRepresentation((ResourceParent<?>) resource, DepartmentRepresentationClient.class);
+        if (Institution.class.equals(resourceClass)) {
+            return institutionMapper.getInstitutionRepresentation((Institution) resource, overridingRoles);
+        } else if (Department.class.equals(resourceClass)) {
+            return departmentMapper.getDepartmentRepresentation((Department) resource, overridingRoles);
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
-            return getResourceOpportunityRepresentation((ResourceOpportunity<?>) resource, ResourceOpportunityRepresentationClient.class);
+            return getResourceOpportunityRepresentation((ResourceOpportunity<?>) resource, ResourceOpportunityRepresentationClient.class, overridingRoles);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
-            return applicationMapper.getApplicationRepresentationExport((Application) resource);
+            return applicationMapper.getApplicationRepresentationExport((Application) resource, overridingRoles);
         }
 
-        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class);
+        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
     }
 
     public <T extends ResourceParent<?>, U extends ResourceRepresentationClient> void appendResourceSummaryRepresentation(T resource, U representation) {
@@ -479,8 +446,7 @@ public class ResourceMapper {
         }
     }
 
-    public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(
-            ResourceParent<?> resource, List<ResourceReportFilterPropertyDTO> constraints) {
+    public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent<?> resource, List<ResourceReportFilterPropertyDTO> constraints) {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
@@ -658,6 +624,40 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
+    private <T extends Resource<?>, V extends ResourceRepresentationStandard> V getResourceRepresentationStandard(T resource, Class<V> returnType,
+            List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
+        V representation = getResourceRepresentationSimple(resource, returnType);
+        representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
+
+        for (PrismScope parentScope : scopeService.getParentScopesDescending(resource.getResourceScope(), SYSTEM)) {
+            if (!parentScope.equals(SYSTEM)) {
+                Resource<?> parentResource = resource.getEnclosingResource(parentScope);
+                if (parentResource != null) {
+                    representation.setParentResource(getResourceRepresentationSimple(parentResource));
+                }
+            }
+        }
+
+        DateTime updatedTimestamp = resource.getUpdatedTimestamp();
+
+        setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
+        setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
+
+        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && !hasRedactions(resource, overridingRoles)) {
+            representation.setApplicationRatingAverage(((ResourceParent<?>) resource).getApplicationRatingAverage());
+            representation.setOpportunityRatingAverage(((ResourceParent<?>) resource).getOpportunityRatingAverage());
+        }
+
+        representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));
+        representation.setSecondaryStates(stateMapper.getSecondaryStateRepresentations(resource));
+
+        representation.setCreatedTimestamp(resource.getCreatedTimestamp());
+        representation.setUpdatedTimestamp(updatedTimestamp);
+        representation.setSequenceIdentifier(resource.getSequenceIdentifier());
+        return representation;
+    }
+
+    @SuppressWarnings("unchecked")
     private <T extends ResourceStandardDTO> List<ResourceChildCreationRepresentation> getResourceRepresentationHierarchy(
             PrismScope resourceScope, LinkedHashMap<PrismScope, TreeSet<T>> resources, PrismScope stopScope) {
         for (Entry<PrismScope, TreeSet<T>> resourceEntries : Lists.reverse(Lists.newLinkedList(resources.entrySet()))) {
@@ -795,6 +795,11 @@ public class ResourceMapper {
             }
         }
         return incompleteSections;
+    }
+
+    private boolean hasRedactions(Resource<?> resource, List<PrismRole> overridingRoles) {
+        User user = userService.getCurrentUser();
+        return !actionService.getRedactions(resource, user, overridingRoles).isEmpty();
     }
 
     private static class ResourceProcessingMonth {

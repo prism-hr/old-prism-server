@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -40,15 +40,15 @@ public class DeclineController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResourceRepresentationExtended getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
+    public ResourceRepresentationStandard getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
             @RequestParam String activationCode) throws Exception {
-        userService.getUserByActivationCode(activationCode);
-        Resource<?> resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
-        if (!actionId.isDeclinableAction()) {
+        User user = userService.getUserByActivationCode(activationCode);
+        if (user == null || !actionId.isDeclinableAction()) {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");
         }
 
-        return resourceMapper.getResourceRepresentationExtended(resource);
+        Resource<?> resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
+        return resourceMapper.getResourceRepresentationStandard(resource);
     }
 
 }

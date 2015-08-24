@@ -14,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_MANAGE_USERS_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_RESUME_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_STATISTICS_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SUMMARY_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SUMMARY_INCOMPLETE;
@@ -39,7 +40,7 @@ public class ResourceSectionBuilder {
 
     private List<ResourceSectionRepresentation> sections = new LinkedList<>();
 
-    public static List<ResourceSectionRepresentation> buildDefaultResourceParentSections() {
+    public static List<ResourceSectionRepresentation> buildResourceParentSections() {
         return new ResourceSectionBuilder()
                 .addResourceSummarySection()
                 .addResourceParentSections(false, false)
@@ -68,6 +69,15 @@ public class ResourceSectionBuilder {
                 .build();
     }
 
+    public static List<ResourceSectionRepresentation> buildResumeSections() {
+        return new ResourceSectionBuilder()
+                .addSections(new ResourceSectionRepresentation()
+                        .withDisplayProperty(SYSTEM_RESOURCE_RESUME_HEADER),
+                        new ResourceSectionRepresentation() //
+                                .withDisplayProperty(SYSTEM_RESOURCE_TIMELINE_HEADER))
+                .build();
+    }
+    
     public static List<ResourceSectionRepresentation> buildApplicationSections() {
         return new ResourceSectionBuilder()
                 .addSections(new ResourceSectionRepresentation()

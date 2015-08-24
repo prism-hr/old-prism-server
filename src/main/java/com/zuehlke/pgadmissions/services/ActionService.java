@@ -167,14 +167,9 @@ public class ActionService {
         return actionDAO.getEscalationActions();
     }
 
-    public boolean hasRedactions(Resource<?> resource, User user) {
-        return !getRedactions(resource, user).isEmpty();
-    }
-
-    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource<?> resource, User user) {
+    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource<?> resource, User user, List<PrismRole> overridingRoles) {
         HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
-        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
-        if (rolesOverridingRedactions.isEmpty()) {
+        if (overridingRoles.isEmpty()) {
             List<PrismRole> roleIds = roleService.getRolesForResource(resource, user);
             if (!roleIds.isEmpty()) {
                 List<ActionRedactionDTO> redactions = actionDAO.getRedactions(resource, roleIds);
@@ -191,7 +186,7 @@ public class ActionService {
     }
 
     public List<PrismActionRedactionType> getRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
-        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope, user);
+        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope);
         if (rolesOverridingRedactions.isEmpty()) {
             List<PrismRole> roleIds = roleService.getRoles(user);
             if (!(resourceIds.isEmpty() || roleIds.isEmpty())) {

@@ -1190,6 +1190,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TIMELINE_NOW(SYSTEM_RESOURCE_SECTION, "Now"),
     SYSTEM_RESOURCE_TIMELINE_ON_BEHALF_OF(SYSTEM_RESOURCE_SECTION, "{{user}} on behalf of {{delegateUser}}"),
     SYSTEM_RESOURCE_APPLICATION_FORM_HEADER(SYSTEM_RESOURCE_SECTION, "Application Form"),
+    SYSTEM_RESOURCE_RESUME_HEADER(SYSTEM_RESOURCE_SECTION, "Application Template"),
 
     /*
      * *************** SYSTEM ACCOUNT SECTION *********************

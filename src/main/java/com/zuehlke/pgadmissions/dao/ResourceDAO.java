@@ -664,8 +664,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends ResourceParent<?>> T getActiveResourceByName(Class<T> resourceClass, User user, String name, Collection<PrismState> activeStates) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+    public ResourceParent<?> getActiveResourceByName(PrismScope resourceScope, User user, String name, Collection<PrismState> activeStates) {
+        return (ResourceParent<?>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("name", name)) //
@@ -775,7 +775,7 @@ public class ResourceDAO {
             case INSTITUTION:
                 criteria.add(Restrictions.ilike("opportunityCategories", opportunityCategory.name(), ANYWHERE));
                 break;
-            case SYSTEM:
+            default:
                 break;
             }
         }

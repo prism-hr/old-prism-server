@@ -136,7 +136,7 @@ public class InstitutionService {
 
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
         String name = institutionDTO.getName();
-        Institution persistentInstitution = resourceService.getActiveResourceByName(Institution.class, user, name);
+        Institution persistentInstitution = (Institution) resourceService.getActiveResourceByName(INSTITUTION, user, name);
         if (persistentInstitution == null) {
             ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
             Institution institution = (Institution) outcome.getResource();

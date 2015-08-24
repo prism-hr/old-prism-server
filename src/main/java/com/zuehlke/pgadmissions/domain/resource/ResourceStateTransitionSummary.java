@@ -13,10 +13,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
 
 @Entity
 @Table(name = "resource_state_transition_summary", uniqueConstraints = {
@@ -25,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
         @UniqueConstraint(columnNames = { "department_id", "state_group_id", "transition_state_selection" }),
         @UniqueConstraint(columnNames = { "program_id", "state_group_id", "transition_state_selection" }),
         @UniqueConstraint(columnNames = { "project_id", "state_group_id", "transition_state_selection" }) })
-public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
+public class ResourceStateTransitionSummary extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -38,7 +37,7 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -99,12 +98,12 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
     }
-    
+
     @Override
     public Program getProgram() {
         return program;
@@ -123,15 +122,6 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
     @Override
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    @Override
-    public Application getApplication() {
-        return null;
-    }
-
-    @Override
-    public void setApplication(Application application) {
     }
 
     public final StateGroup getStateGroup() {

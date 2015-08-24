@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.user.User;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -11,8 +11,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.user.User;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -53,9 +52,9 @@ public class DocumentDAO {
                 .add(Restrictions.isNull("applicationCoveringLetter.id")) //
                 .add(Restrictions.isNull("portraitImage.id")) //
                 .add(Restrictions.isNull("logoImage.id")) //
-                .add(Restrictions.isNotNull("institutionBackgroundImage.id")) //
-                .add(Restrictions.isNotNull("programBackgroundImage.id")) //
-                .add(Restrictions.isNotNull("projectBackgroundImage.id")) //
+                .add(Restrictions.isNull("institutionBackgroundImage.id")) //
+                .add(Restrictions.isNull("programBackgroundImage.id")) //
+                .add(Restrictions.isNull("projectBackgroundImage.id")) //
                 .add(Restrictions.le("createdTimestamp", baselineTime.minusDays(1))) //
                 .list();
     }

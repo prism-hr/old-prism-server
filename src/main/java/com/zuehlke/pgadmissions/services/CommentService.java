@@ -108,7 +108,7 @@ public class CommentService {
     public Comment getLatestComment(Resource<?> resource, PrismAction actionId, User user, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
     }
-    
+
     public List<Integer> getComments(Resource<?> resource, PrismAction[] actions) {
         return commentDAO.getComments(resource, actions);
     }
@@ -217,9 +217,19 @@ public class CommentService {
         comment.setRejectionReason(rejectionReason);
     }
 
-    public void appendCommentProperties(Comment comment, CommentDTO commentDTO) throws Exception {
+    public void appendCommentProperties(Comment comment, CommentDTO commentDTO) {
         appendAssignedUsers(comment, commentDTO);
         appendTransitionStates(comment, commentDTO);
+
+        if (commentDTO.getDocuments() != null) {
+            appendDocuments(comment, commentDTO);
+        }
+    }
+
+    public void appendCommentApplicationProperties(Comment comment, CommentDTO commentDTO) {
+        if (commentDTO.getCompetences() != null) {
+            appendCompetences(comment, commentDTO);
+        }
 
         if (commentDTO.getInterviewAppointment() != null) {
             appendInterviewAppointment(comment, commentDTO);
@@ -227,14 +237,6 @@ public class CommentService {
 
         if (commentDTO.getInterviewInstruction() != null) {
             appendInterviewInstruction(comment, commentDTO);
-        }
-
-        if (commentDTO.getDocuments() != null) {
-            appendDocuments(comment, commentDTO);
-        }
-
-        if (commentDTO.getCompetences() != null) {
-            appendCompetences(comment, commentDTO);
         }
     }
 

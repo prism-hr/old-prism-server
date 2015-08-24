@@ -20,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 @Entity
 @Table(name = "resource_previous_state", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "department_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "state_id" }), @UniqueConstraint(columnNames = { "project_id", "state_id" }), 
-        @UniqueConstraint(columnNames = { "application_id", "state_id" }) })
+        @UniqueConstraint(columnNames = { "program_id", "state_id" }), @UniqueConstraint(columnNames = { "project_id", "state_id" }),
+        @UniqueConstraint(columnNames = { "application_id", "state_id" }), @UniqueConstraint(columnNames = { "resume_id", "state_id" }) })
 public class ResourcePreviousState extends ResourceStateDefinition {
 
     @Id
@@ -35,7 +35,7 @@ public class ResourcePreviousState extends ResourceStateDefinition {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -51,6 +51,10 @@ public class ResourcePreviousState extends ResourceStateDefinition {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
 
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
@@ -97,12 +101,12 @@ public class ResourcePreviousState extends ResourceStateDefinition {
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
     }
-    
+
     @Override
     public Program getProgram() {
         return program;
@@ -131,6 +135,16 @@ public class ResourcePreviousState extends ResourceStateDefinition {
     @Override
     public void setApplication(Application application) {
         this.application = application;
+    }
+
+    @Override
+    public Resume getResume() {
+        return resume;
+    }
+
+    @Override
+    public void setResume(Resume resume) {
+        this.resume = resume;
     }
 
     @Override

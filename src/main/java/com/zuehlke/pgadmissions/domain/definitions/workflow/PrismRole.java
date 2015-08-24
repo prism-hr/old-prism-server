@@ -9,12 +9,17 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
+// FIXME: generalise concept of supervisor for employment
 public enum PrismRole implements PrismLocalizableDefinition {
+
+    RESUME_CREATOR(APPLICANT, RESUME), //
+    RESUME_REVIEWER(RECRUITER, RESUME), //
 
     APPLICATION_ADMINISTRATOR(RECRUITER, APPLICATION), //
     APPLICATION_CREATOR(APPLICANT, APPLICATION), //
@@ -28,20 +33,25 @@ public enum PrismRole implements PrismLocalizableDefinition {
     APPLICATION_SECONDARY_SUPERVISOR(RECRUITER, APPLICATION), //
     APPLICATION_VIEWER_RECRUITER(RECRUITER, APPLICATION), //
     APPLICATION_VIEWER_REFEREE(REFEREE, APPLICATION), //
-    INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, INSTITUTION), //
-    INSTITUTION_APPROVER(RECRUITER, INSTITUTION), //
-    INSTITUTION_VIEWER(RECRUITER, INSTITUTION), //
-    DEPARTMENT_ADMINISTRATOR(ADMINISTRATOR, DEPARTMENT), //
-    DEPARTMENT_APPROVER(RECRUITER, DEPARTMENT), //
-    DEPARTMENT_VIEWER(RECRUITER, DEPARTMENT), //
-    PROGRAM_ADMINISTRATOR(ADMINISTRATOR, PROGRAM), //
-    PROGRAM_APPROVER(RECRUITER, PROGRAM), //
-    PROGRAM_VIEWER(RECRUITER, PROGRAM), //
+
     PROJECT_ADMINISTRATOR(ADMINISTRATOR, PROJECT), //
     PROJECT_PRIMARY_SUPERVISOR(RECRUITER, PROJECT), //
     PROJECT_SECONDARY_SUPERVISOR(RECRUITER, PROJECT), //
     PROJECT_APPROVER(RECRUITER, PROJECT), //
     PROJECT_VIEWER(RECRUITER, PROJECT), //
+
+    PROGRAM_ADMINISTRATOR(ADMINISTRATOR, PROGRAM), //
+    PROGRAM_APPROVER(RECRUITER, PROGRAM), //
+    PROGRAM_VIEWER(RECRUITER, PROGRAM), //
+
+    DEPARTMENT_ADMINISTRATOR(ADMINISTRATOR, DEPARTMENT), //
+    DEPARTMENT_APPROVER(RECRUITER, DEPARTMENT), //
+    DEPARTMENT_VIEWER(RECRUITER, DEPARTMENT), //
+
+    INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, INSTITUTION), //
+    INSTITUTION_APPROVER(RECRUITER, INSTITUTION), //
+    INSTITUTION_VIEWER(RECRUITER, INSTITUTION), //
+
     SYSTEM_ADMINISTRATOR(ADMINISTRATOR, SYSTEM);
 
     private PrismRoleCategory roleCategory;

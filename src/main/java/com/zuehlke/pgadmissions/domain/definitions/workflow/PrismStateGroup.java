@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -12,6 +13,10 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
 public enum PrismStateGroup implements PrismLocalizableDefinition {
 
+    RESUME_INCOMPLETE(RESUME), //
+    RESUME_COMPLETE(RESUME), //
+    RESUME_RETIRED(RESUME), //
+    
     APPLICATION_UNSUBMITTED(APPLICATION), //
     APPLICATION_VALIDATION(APPLICATION), //
     APPLICATION_VERIFICATION(APPLICATION), //
@@ -23,26 +28,31 @@ public enum PrismStateGroup implements PrismLocalizableDefinition {
     APPLICATION_RESERVED(APPLICATION), //
     APPLICATION_REJECTED(APPLICATION), //
     APPLICATION_WITHDRAWN(APPLICATION), //
+    
     PROJECT_APPROVAL(PROJECT), //
     PROJECT_APPROVED(PROJECT), //
     PROJECT_REJECTED(PROJECT), //
     PROJECT_DISABLED(PROJECT), //
     PROJECT_WITHDRAWN(PROJECT), //
+    
     PROGRAM_APPROVAL(PROGRAM), //
     PROGRAM_APPROVED(PROGRAM), //
     PROGRAM_REJECTED(PROGRAM), //
     PROGRAM_DISABLED(PROGRAM), //
     PROGRAM_WITHDRAWN(PROGRAM), //
+    
     DEPARTMENT_APPROVAL(DEPARTMENT), //
     DEPARTMENT_APPROVED(DEPARTMENT), //
     DEPARTMENT_REJECTED(DEPARTMENT), //
     DEPARTMENT_DISABLED(DEPARTMENT), //
     DEPARTMENT_WITHDRAWN(DEPARTMENT), //
+    
     INSTITUTION_APPROVAL(INSTITUTION), //
     INSTITUTION_APPROVED(INSTITUTION), //
     INSTITUTION_REJECTED(INSTITUTION), //
     INSTITUTION_DISABLED(INSTITUTION), //
     INSTITUTION_WITHDRAWN(INSTITUTION), //
+    
     SYSTEM_RUNNING(SYSTEM);
 
     private PrismScope scope;

@@ -89,7 +89,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProject
 import com.zuehlke.pgadmissions.domain.definitions.workflow.system.PrismSystemRunning;
 
 public enum PrismState {
-
+    
+    RESUME_INCOMPLETE(PrismStateGroup.RESUME_INCOMPLETE, null, null, null),
+    RESUME_COMPLETE_PUBLISHED(PrismStateGroup.RESUME_COMPLETE, null, null, null),
+    RESUME_COMPLETE_CONCEALED(PrismStateGroup.RESUME_COMPLETE, null, null, null),
+    RESUME_RETIRED(PrismStateGroup.RESUME_RETIRED, null, null, null), 
+    
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationUnsubmitted.class),
     APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
@@ -163,6 +168,7 @@ public enum PrismState {
             PrismApplicationWithdrawnCompleted.class),
     APPLICATION_WITHDRAWN_COMPLETED_RETAINED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompletedRetained.class),
     APPLICATION_WITHDRAWN_COMPLETED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, null),
+    
     PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, PrismProjectApproval.class),
     PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null,
             PrismProjectApprovalPendingCorrection.class),
@@ -170,6 +176,7 @@ public enum PrismState {
     PROJECT_DISABLED_COMPLETED(PrismStateGroup.PROJECT_DISABLED, null, null, PrismProjectDisabledCompleted.class),
     PROJECT_REJECTED(PrismStateGroup.PROJECT_REJECTED, null, null, PrismProjectRejected.class),
     PROJECT_WITHDRAWN(PrismStateGroup.PROJECT_WITHDRAWN, null, null, PrismProjectWithdrawn.class),
+    
     PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, PrismProgramApproval.class),
     PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramApprovalPendingCorrection.class),
@@ -177,6 +184,7 @@ public enum PrismState {
     PROGRAM_DISABLED_COMPLETED(PrismStateGroup.PROGRAM_DISABLED, null, null, PrismProgramDisabledCompleted.class),
     PROGRAM_REJECTED(PrismStateGroup.PROGRAM_REJECTED, null, null, PrismProgramRejected.class),
     PROGRAM_WITHDRAWN(PrismStateGroup.PROGRAM_WITHDRAWN, null, null, PrismProgramWithdrawn.class),
+    
     DEPARTMENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null, PrismDepartmentApproval.class),
     DEPARTMENT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null,
             PrismDepartmentApprovalPendingCorrection.class),
@@ -184,6 +192,7 @@ public enum PrismState {
     DEPARTMENT_DISABLED_COMPLETED(PrismStateGroup.DEPARTMENT_DISABLED, null, null, PrismDepartmentDisabledCompleted.class),
     DEPARTMENT_REJECTED(PrismStateGroup.DEPARTMENT_REJECTED, null, null, PrismDepartmentRejected.class),
     DEPARTMENT_WITHDRAWN(PrismStateGroup.DEPARTMENT_WITHDRAWN, null, null, PrismDepartmentWithdrawn.class),
+    
     INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null, PrismInstitutionApproval.class),
     INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null,
             PrismInstitutionApprovalPendingCorrection.class),
@@ -191,6 +200,7 @@ public enum PrismState {
     INSTITUTION_DISABLED_COMPLETED(PrismStateGroup.INSTITUTION_DISABLED, null, null, PrismInstitutionDisabledCompleted.class),
     INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, null, PrismInstitutionRejected.class),
     INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, null, PrismInstitutionWithdrawn.class),
+    
     SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, PrismSystemRunning.class);
 
     private static final HashMap<PrismState, PrismWorkflowState> workflowStateDefinitions = Maps.newHashMap();

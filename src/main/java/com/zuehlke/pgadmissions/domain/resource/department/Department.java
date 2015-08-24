@@ -77,6 +77,9 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
 
+    @Column(name = "opportunity_category")
+    private String opportunityCategories;
+
     @Lob
     @Column(name = "advert_incomplete_section")
     private String advertIncompleteSection;
@@ -92,7 +95,7 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
-    
+
     @Column(name = "opportunity_rating_count")
     private Integer opportunityRatingCount;
 
@@ -282,6 +285,16 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     @Override
     public void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+
+    @Override
+    public String getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    @Override
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     @Override
@@ -475,7 +488,7 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
-    
+
     @Override
     public Integer getOpportunityRatingCount() {
         return opportunityRatingCount;

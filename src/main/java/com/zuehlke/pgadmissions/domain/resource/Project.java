@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -30,6 +32,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -89,6 +92,10 @@ public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
     @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
     private ImportedEntitySimple opportunityType;
 
+    @Column(name = "opportunity_category", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismOpportunityCategory opportunityCategory;
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -109,13 +116,13 @@ public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
-    
+
     @Column(name = "opportunity_rating_count")
     private Integer opportunityRatingCount;
 
     @Column(name = "opportunity_rating_average")
     private BigDecimal opportunityRatingAverage;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -295,6 +302,16 @@ public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
     @Override
     public void setOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    @Override
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
+    }
+
+    @Override
+    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
     }
 
     @Override
@@ -625,6 +642,16 @@ public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
     public Project withCode(String code) {
         this.code = code;
         return this;
+    }
+
+    @Override
+    public String getOpportunityCategories() {
+        return null;
+    }
+
+    @Override
+    public void setOpportunityCategories(String opportunityCategories) {
+        return;
     }
 
     @Override

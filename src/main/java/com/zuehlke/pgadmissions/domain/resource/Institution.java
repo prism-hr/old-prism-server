@@ -52,6 +52,9 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
+    
+    @Column(name = "opportunity_category")
+    private String opportunityCategories;
 
     @Lob
     @Column(name = "advert_incomplete_section")
@@ -192,6 +195,16 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+
+    @Override
+    public String getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    @Override
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     @Override

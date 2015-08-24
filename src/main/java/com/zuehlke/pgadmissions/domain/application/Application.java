@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -117,6 +118,10 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id")
     private Advert advert;
+
+    @Column(name = "opportunity_category")
+    @Enumerated(EnumType.STRING)
+    private PrismOpportunityCategory opportunityCategory;
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -380,6 +385,14 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
 
     public final void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
+    }
+
+    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
     }
 
     @Override

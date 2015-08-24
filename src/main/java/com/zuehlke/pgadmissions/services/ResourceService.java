@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -556,22 +557,20 @@ public class ResourceService {
         return filteredActionConditions;
     }
 
-    public <T extends ResourceParent<?>, U extends ResourceParentDTO> void setResourceAttributes(T resource,
-            U resourceDTO) {
+    public <T extends ResourceParent<?>, U extends ResourceParentDTO> void setResourceAttributes(T resource, U resourceDTO) {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ResourceOpportunity<?> resourceOpportunity = (ResourceOpportunity<?>) resource;
             ResourceOpportunityDTO resourceOpportunityDTO = (ResourceOpportunityDTO) resourceDTO;
 
             Program program = resource.getProgram();
             if (!program.sameAs(resource) && BooleanUtils.isTrue(program.getAdvert().isImported())) {
-                resourceOpportunity.setOpportunityType(program.getOpportunityType());
+                ImportedEntitySimple opportunityType = program.getOpportunityType();
+                setResourceOpportunityType(resourceOpportunity, opportunityType);
             } else {
-                resourceOpportunity.setOpportunityType(importedEntityService.getByName(ImportedEntitySimple.class,
-                        resourceOpportunityDTO.getOpportunityType().name()));
-                List<ImportedEntitySimple> studyOptions = resourceOpportunityDTO
-                        .getStudyOptions().stream().map(studyOptionDTO -> importedEntityService
-                                .getById(ImportedEntitySimple.class, studyOptionDTO.getId()))
-                        .collect(Collectors.toList());
+                ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class, resourceOpportunityDTO.getOpportunityType().name());
+                setResourceOpportunityType(resourceOpportunity, opportunityType);
+                List<ImportedEntitySimple> studyOptions = resourceOpportunityDTO.getStudyOptions().stream()
+                        .map(studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId())).collect(Collectors.toList());
                 setStudyOptions(resourceOpportunity, studyOptions, LocalDate.now());
             }
 
@@ -588,23 +587,19 @@ public class ResourceService {
         if (resourceConditions == null) {
             List<PrismResourceCondition> defaultResourceConditions;
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-                PrismOpportunityType opportunityType = PrismOpportunityType
-                        .valueOf(((ResourceOpportunity<?>) resource).getOpportunityType().getName());
-                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope(),
-                        opportunityType);
+                PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity<?>) resource).getOpportunityType().getName());
+                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope(), opportunityType);
             } else {
                 defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope());
             }
 
             for (PrismResourceCondition defaultResourceCondition : defaultResourceConditions) {
-                resource.addResourceCondition(new ResourceCondition().withResource(resource)
-                        .withActionCondition(defaultResourceCondition.getActionCondition())
+                resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(defaultResourceCondition.getActionCondition())
                         .withPartnerNode(defaultResourceCondition.isPartnerMode()));
             }
         } else {
             for (ResourceParentDTO.ResourceConditionDTO resourceCondition : resourceConditions) {
-                resource.addResourceCondition(new ResourceCondition().withResource(resource)
-                        .withActionCondition(resourceCondition.getActionCondition())
+                resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(resourceCondition.getActionCondition())
                         .withPartnerNode(resourceCondition.getPartnerMode()));
             }
         }
@@ -943,6 +938,25 @@ public class ResourceService {
     private void addResourceTarget(ResourceTargetListDTO targets, ResourceTargetDTO target, List<Integer> targetResources) {
         target.setSelected(targetResources.contains(target.getId()));
         targets.add(target);
+    }
+
+    private void setResourceOpportunityType(ResourceOpportunity<?> resourceOpportunity, ImportedEntitySimple opportunityType) {
+        resourceOpportunity.setOpportunityType(opportunityType);
+
+        PrismOpportunityCategory opportunityCategory = PrismOpportunityType.valueOf(opportunityType.getName()).getCategory();
+        resourceOpportunity.setOpportunityCategory(opportunityCategory);
+
+        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+            ResourceParent<?> parent = (ResourceParent<?>) resourceOpportunity.getEnclosingResource(scope);
+            String opportunityCategories = parent.getOpportunityCategories();
+            if (opportunityCategories == null) {
+                parent.setOpportunityCategories(opportunityCategory.name());
+            } else {
+                Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
+                opportunityCategoriesSplit.add(opportunityCategories);
+                parent.setOpportunityCategories(Joiner.on("|").join(opportunityCategoriesSplit));
+            }
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static org.hibernate.criterion.MatchMode.ANYWHERE;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +42,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -251,7 +253,7 @@ public class ResourceDAO {
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriterion(criteria, conditions, filter);
+        appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
         appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
@@ -276,7 +278,7 @@ public class ResourceDAO {
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriterion(criteria, conditions, filter);
+        appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
         appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
@@ -305,7 +307,7 @@ public class ResourceDAO {
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriterion(criteria, conditions, filter);
+        appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
         appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
@@ -729,10 +731,26 @@ public class ResourceDAO {
                 .as(resourceReference + Joiner.on("").join(Arrays.asList(column.split("\\.")).stream().map(part -> WordUtils.capitalize(part)).collect(Collectors.toList())));
     }
 
-    private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions,
-            ResourceListFilterDTO filter) {
+    private static void appendResourceListFilterCriterion(PrismScope scopeId, Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+        }
+
+        PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();
+        if (opportunityCategory != null) {
+            switch (scopeId) {
+            case APPLICATION:
+            case PROGRAM:
+            case PROJECT:
+                criteria.add(Restrictions.eq("opportunityCategory", opportunityCategory));
+                break;
+            case DEPARTMENT:
+            case INSTITUTION:
+                criteria.add(Restrictions.ilike("opportunityCategories", opportunityCategory.name(), ANYWHERE));
+                break;
+            case SYSTEM:
+                break;
+            }
         }
 
         if (conditions != null) {

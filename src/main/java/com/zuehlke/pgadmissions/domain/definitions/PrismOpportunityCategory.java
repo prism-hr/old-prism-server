@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismOpportunityCategory {
 
-    STUDY(true, false),
+    STUDY(true, true),
     FUNDING(false, true),
     EXPERIENCE(false, true),
     WORK(false, true),

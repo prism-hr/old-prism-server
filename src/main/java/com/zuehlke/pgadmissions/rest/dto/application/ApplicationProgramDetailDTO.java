@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.dto.EntityDTO;
 
@@ -16,6 +17,8 @@ public class ApplicationProgramDetailDTO {
     private Boolean previousApplication;
 
     private PrismOpportunityType opportunityType;
+
+    private PrismOpportunityCategory opportunityCategory;
 
     @NotNull
     private EntityDTO studyOption;
@@ -44,6 +47,14 @@ public class ApplicationProgramDetailDTO {
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
+    }
+
+    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
     }
 
     public EntityDTO getStudyOption() {

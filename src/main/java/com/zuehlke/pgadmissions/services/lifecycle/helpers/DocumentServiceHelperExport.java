@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -41,7 +40,7 @@ public class DocumentServiceHelperExport extends PrismServiceHelperAbstract {
         return shuttingDown;
     }
 
-    private void exportDocumentToAmazon(Integer documentId) throws IOException {
+    private void exportDocumentToAmazon(Integer documentId) {
         if (!isShuttingDown()) {
             documentService.exportDocumentToAmazon(documentId);
         }

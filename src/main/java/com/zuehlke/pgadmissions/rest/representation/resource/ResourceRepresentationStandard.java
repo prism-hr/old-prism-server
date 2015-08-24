@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private boolean raisesUpdateFlag;
 
     private BigDecimal applicationRatingAverage;
-    
+
     private BigDecimal opportunityRatingAverage;
 
     private StateRepresentationSimple previousState;
@@ -159,6 +161,10 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     public void setAdvertIncompleteSections(List<PrismDisplayPropertyDefinition> advertIncompleteSections) {
         this.advertIncompleteSections = advertIncompleteSections;
+    }
+
+    public void setParentResource(ResourceRepresentationSimple parentResource) {
+        setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
 
 }

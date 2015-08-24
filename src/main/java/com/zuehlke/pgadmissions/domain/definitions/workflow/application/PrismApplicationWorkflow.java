@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CORRECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_EMAIL_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_FORGET_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PURGE;
@@ -118,7 +119,7 @@ public class PrismApplicationWorkflow {
 
     public static PrismStateAction applicationEmailCreator() {
         return new PrismStateAction() //
-                .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
+                .withAction(APPLICATION_EMAIL_CREATOR) //
                 .withAssignments(APPLICATION_PARENT_VIEWER_GROUP) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);

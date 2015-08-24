@@ -67,7 +67,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
     @Inject
     private ScopeService scopeService;
-    
+
     @Inject
     private UserService userService;
 
@@ -100,7 +100,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         if (comment.isApplicationCompletionComment()) {
             resource.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
-
     }
 
     private void synchronizeProjectSupervisors(Application application) {
@@ -122,10 +121,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             comment.setRating(new BigDecimal(DEFAULT_RATING));
         }
 
-        ResourceRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(application);
-        application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
-        application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
-
+        applicationService.syncronizeApplicationRating(application);
         entityService.flush();
 
         scopeService.getParentScopesDescending(APPLICATION, INSTITUTION).forEach(scope -> {

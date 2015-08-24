@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -12,10 +10,9 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "scope")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "scope")
 @JsonSubTypes({
+        @JsonSubTypes.Type(value = ApplicationRepresentationClient.class, name = "RESUME"),
         @JsonSubTypes.Type(value = ApplicationRepresentationClient.class, name = "APPLICATION"),
         @JsonSubTypes.Type(value = ProjectRepresentationClient.class, name = "PROJECT"),
         @JsonSubTypes.Type(value = ProgramRepresentationClient.class, name = "PROGRAM"),
@@ -72,10 +69,6 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     public void setConditions(List<ResourceConditionRepresentation> conditions) {
         this.conditions = conditions;
-    }
-
-    public void setParentResource(ResourceRepresentationSimple parentResource) {
-        setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
 
 }

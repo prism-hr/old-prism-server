@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getCommentExclusionsConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource, User user) {
+    public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource, User user, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
@@ -69,9 +69,7 @@ public class RoleDAO {
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
+                        getCommentExclusionsConstraint(exclusions))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //

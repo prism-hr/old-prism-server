@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -60,6 +61,9 @@ public class RoleService {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private CommentService commentService;
 
     @Inject
     private CustomizationService customizationService;
@@ -132,12 +136,13 @@ public class RoleService {
         return roleDAO.getRoles(user);
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, User user) {
-        return roleDAO.getRolesOverridingRedactions(resourceScope, user);
+    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope) {
+        return roleDAO.getRolesOverridingRedactions(resourceScope, userService.getCurrentUser());
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource, User user) {
-        return roleDAO.getRolesOverridingRedactions(resource, user);
+    public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource) {
+        List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
+        return roleDAO.getRolesOverridingRedactions(resource, userService.getCurrentUser(), exclusions);
     }
 
     public List<PrismRole> getRolesForResource(Resource<?> resource, User user) {

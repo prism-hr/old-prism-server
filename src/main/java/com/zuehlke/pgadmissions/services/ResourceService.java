@@ -12,7 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.getResourceScope;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
@@ -847,8 +846,12 @@ public class ResourceService {
         resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
     }
 
-    public <T extends ResourceParent<?>> T getActiveResourceByName(Class<T> resourceClass, User user, String name) {
-        return resourceDAO.getActiveResourceByName(resourceClass, user, name, stateService.getActiveResourceStates(getResourceScope(resourceClass)));
+    public ResourceParent<?> getActiveResourceByName(PrismScope resourceScope, User user, String name) {
+        Class<? extends Resource<?>> resourceClass = resourceScope.getResourceClass();
+        if (ResourceParent.class.isAssignableFrom(resourceClass)) {
+            return resourceDAO.getActiveResourceByName(resourceScope, user, name, stateService.getActiveResourceStates(resourceScope));
+        }
+        return null;
     }
 
     public <T extends ResourceParent<?>> void synchronizeResourceRating(T resource, Comment comment) {

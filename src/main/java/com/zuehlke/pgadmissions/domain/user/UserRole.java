@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -25,13 +26,10 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 import com.zuehlke.pgadmissions.workflow.user.UserRoleReassignmentProcessor;
 
 @Entity
-@Table(name = "user_role", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
+@Table(name = "user_role", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
+        @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
+        @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "resume_id", "user_id", "role_id" }) })
 public class UserRole extends WorkflowResourceExecution implements UserAssignment<UserRoleReassignmentProcessor> {
 
     @Id
@@ -61,6 +59,10 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -142,6 +144,16 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
         this.application = application;
     }
 
+    @Override
+    public Resume getResume() {
+        return resume;
+    }
+
+    @Override
+    public void setResume(Resume resume) {
+        this.resume = resume;
+    }
+
     public User getUser() {
         return user;
     }
@@ -190,7 +202,7 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     public Class<UserRoleReassignmentProcessor> getUserReassignmentProcessor() {
         return UserRoleReassignmentProcessor.class;
     }
-    
+
     @Override
     public boolean isResourceUserAssignmentProperty() {
         return false;

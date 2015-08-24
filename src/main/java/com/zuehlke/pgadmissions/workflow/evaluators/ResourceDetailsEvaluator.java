@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
-public class ResourceSummaryEvaluator implements ResourceCompletenessEvaluator<ResourceParent<?>> {
+public class ResourceDetailsEvaluator implements ResourceCompletenessEvaluator<ResourceParent<?>> {
 
     @Inject
     private AdvertService advertService;

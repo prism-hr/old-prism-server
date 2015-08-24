@@ -1,23 +1,16 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.services.StaticDataService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.bind.annotation.*;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.inject.Inject;
-
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.services.StaticDataService;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 @RestController
 @RequestMapping("/api/static")
@@ -30,7 +23,6 @@ public class StaticDataController {
     @RequestMapping(method = RequestMethod.GET)
     public Map<String, Object> getStaticData() {
         Map<String, Object> staticData = Maps.newHashMap();
-        staticData.putAll(staticDataService.getScopes());
         staticData.putAll(staticDataService.getActions());
         staticData.putAll(staticDataService.getStates());
         staticData.putAll(staticDataService.getStateGroups());

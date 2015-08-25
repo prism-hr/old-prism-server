@@ -253,7 +253,7 @@ public class SystemService {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(SYSTEM_STARTUP);
-            String content = applicationContext.getBean(PropertyLoader.class).localize(system).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
+            String content = applicationContext.getBean(PropertyLoader.class).localize(system).loadLazy(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
             Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
                     .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), CREATE);
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);

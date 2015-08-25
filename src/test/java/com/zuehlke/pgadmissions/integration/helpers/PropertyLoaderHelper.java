@@ -33,14 +33,14 @@ public class PropertyLoaderHelper {
 		System system = systemService.getSystem();
 
 		PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system);
-		assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
+		assertEquals(propertyLoader.loadLazy(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
 
 		customizationService.createOrUpdateConfiguration(PrismConfiguration.DISPLAY_PROPERTY, systemService.getSystem(), null,
 		        new DisplayPropertyConfigurationDTO().withDefinitionId(SYSTEM_YES).withValue("Hej"));
 		PropertyLoader propertyLoaderSk = applicationContext.getBean(PropertyLoader.class).localize(system);
 
-		assertEquals(propertyLoaderSk.load(SYSTEM_YES), "Hej");
-		assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
-		assertEquals(propertyLoaderSk.load(SYSTEM_NO), SYSTEM_NO.getDefaultValue());
+		assertEquals(propertyLoaderSk.loadLazy(SYSTEM_YES), "Hej");
+		assertEquals(propertyLoader.loadLazy(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
+		assertEquals(propertyLoaderSk.loadLazy(SYSTEM_NO), SYSTEM_NO.getDefaultValue());
 	}
 }

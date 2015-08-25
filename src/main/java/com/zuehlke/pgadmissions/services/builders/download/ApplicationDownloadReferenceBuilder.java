@@ -53,7 +53,7 @@ public class ApplicationDownloadReferenceBuilder {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
 
-            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX));
+            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_REFEREE_REFERENCE_APPENDIX));
 
             addReferenceComment(pdfDocument, body, pdfWriter, application, commentRepresentation);
             addReferenceDocument(pdfDocument, pdfWriter, commentRepresentation);
@@ -69,22 +69,22 @@ public class ApplicationDownloadReferenceBuilder {
 
     public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, ApplicationRepresentationExport application,
             CommentRepresentation referenceComment) throws Exception {
-        String rowTitle = propertyLoader.load(SYSTEM_COMMENT_HEADER);
+        String rowTitle = propertyLoader.loadLazy(SYSTEM_COMMENT_HEADER);
 
         if (referenceComment == null) {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle,
-                    applicationService.isApproved(application.getId()) ? propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
+                    applicationService.isApproved(application.getId()) ? propertyLoader.loadLazy(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else if (referenceComment.getDeclinedResponse()) {
-            applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, propertyLoader.load(APPLICATION_COMMENT_DECLINED_REFEREE), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, propertyLoader.loadLazy(APPLICATION_COMMENT_DECLINED_REFEREE), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUser().getFullName(),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUser().getFullName(),
                     body);
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, referenceComment.getContent(), body);
 
             BigDecimal rating = referenceComment.getRating();
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), rating == null ? null : rating.toPlainString(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_RATING), rating == null ? null : rating.toPlainString(), body);
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }

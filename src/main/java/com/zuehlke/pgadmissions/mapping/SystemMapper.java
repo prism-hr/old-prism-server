@@ -41,12 +41,12 @@ public class SystemMapper {
     public ResourceRepresentationRobot getRobotsRepresentation() {
         System system = systemService.getSystem();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
-        return new ResourceRepresentationRobot(loader.load(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl).withSystem(
+        return new ResourceRepresentationRobot(loader.loadLazy(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl).withSystem(
                 new ResourceRepresentationRobotMetadata().withId(system.getId()).withAuthor(system.getUser().getFullName()).withName(system.getName())
-                        .withSummmary(loader.load(SYSTEM_DESCRIPTION)).withThumbnailUrl(resourceMapper.getResourceThumbnailUrlRobot(system))
+                        .withSummmary(loader.loadLazy(SYSTEM_DESCRIPTION)).withThumbnailUrl(resourceMapper.getResourceThumbnailUrlRobot(system))
                         .withResourceUrl(resourceMapper.getResourceUrlRobot(system)))
                 .withRelatedInstitutions(
-                        resourceService.getResourceRobotRelatedRepresentations(system, INSTITUTION, loader.load(SYSTEM_OPPORTUNITIES_RELATED_INSTITUTIONS)));
+                        resourceService.getResourceRobotRelatedRepresentations(system, INSTITUTION, loader.loadLazy(SYSTEM_OPPORTUNITIES_RELATED_INSTITUTIONS)));
     }
 
 }

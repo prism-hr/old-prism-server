@@ -522,6 +522,13 @@ public class ResourceDAO {
                 .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
 
+    public ResourceStandardDTO getParentResources(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope, Integer resourceId, List<PrismScope> parentScopes) {
+        return (ResourceStandardDTO) getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes)
+                .add(Restrictions.eq("id", resourceId))
+                .setResultTransformer(Transformers.aliasToBean(ResourceStandardDTO.class)) //
+                .uniqueResult();
+    }
+
     public List<ResourceTargetDTO> getResourcesWhichPermitTargeting(PrismScope filterScope, Integer filterResourceId,
             PrismScope resourceScope, List<PrismScope> parentScopes, String searchTerm) {
         Criteria criteria = getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId),

@@ -218,7 +218,7 @@ public class ApplicationExportBuilder {
         ApplicationPersonalDetailRepresentation personalDetail = applicationExport.getPersonalDetail();
         if (personalDetail.getPassport() == null) {
             PassportTp passportTp = objectFactory.createPassportTp();
-            String notProvided = propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED);
+            String notProvided = propertyLoader.loadLazy(SYSTEM_VALUE_NOT_PROVIDED);
             passportTp.setName(notProvided);
             passportTp.setNumber(notProvided);
             passportTp.setExpiryDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().plusYears(1)));
@@ -257,12 +257,12 @@ public class ApplicationExportBuilder {
         addressTp.setAddressLine4(address.getAddressRegion());
 
         String addressCode = address.getAddressCode();
-        addressTp.setPostCode(addressCode == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
+        addressTp.setPostCode(addressCode == null ? propertyLoader.loadLazy(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
 
         addressTp.setCountry(getImportedEntityCode(address.getDomicile()));
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(user.getEmail());
-        contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
+        contactDtlsTp.setLandline(propertyLoader.loadLazy(SYSTEM_PHONE_MOCK));
         return contactDtlsTp;
     }
 
@@ -275,12 +275,12 @@ public class ApplicationExportBuilder {
 
         applicationTp.setStartMonth(confirmedStartDate == null ? null : confirmedStartDate.toDateTimeAtStartOfDay());
         applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName(applicationExport.getAssignedSupervisors()));
-        applicationTp.setPersonalStatement(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
+        applicationTp.setPersonalStatement(propertyLoader.loadLazy(SYSTEM_REFER_TO_DOCUMENT));
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationExport));
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(applicationExport.getSubmittedTimestamp()));
         applicationTp.setExternalApplicationID(applicationExport.getCode());
 
-        applicationTp.setIpAddress(propertyLoader.load(SYSTEM_IP_PLACEHOLDER));
+        applicationTp.setIpAddress(propertyLoader.loadLazy(SYSTEM_IP_PLACEHOLDER));
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(applicationExport.getSubmittedTimestamp()));
         applicationTp.setRefereeList(buildReferee(applicationExport.getReferees()));
 
@@ -305,13 +305,13 @@ public class ApplicationExportBuilder {
         if (offer != null) {
             applicationTp.setAtasStatement(offer.getPositionDescription());
 
-            String none = propertyLoader.load(SYSTEM_NONE);
+            String none = propertyLoader.loadLazy(SYSTEM_NONE);
             LocalDate positionProvisionalStartDate = offer.getPositionProvisionalStartDate();
             String conditions = offer.getAppointmentConditions();
 
-            String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + (conditions == null ? none : conditions)
-                    + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": "
-                    + (positionProvisionalStartDate == null ? none : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT)));
+            String offerSummary = propertyLoader.loadLazy(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + (conditions == null ? none : conditions)
+                    + "\n\n" + propertyLoader.loadLazy(APPLICATION_PREFERRED_START_DATE) + ": "
+                    + (positionProvisionalStartDate == null ? none : positionProvisionalStartDate.toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)));
             applicationTp.setDepartmentalOfferConditions(offerSummary);
         }
 
@@ -327,7 +327,7 @@ public class ApplicationExportBuilder {
         ResourceStudyOptionInstanceRepresentation exportProgramInstance = applicationExport.getResourceStudyOptionInstance();
         occurrenceTp.setAcademicYear(applicationExportBuilderHelper.buildXmlDateYearOnly(exportProgramInstance.getBusinessYear()));
         String exportInstanceIdentifier = exportProgramInstance.getIdentifier();
-        occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : exportInstanceIdentifier);
+        occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? propertyLoader.loadLazy(SYSTEM_VALUE_NOT_PROVIDED) : exportInstanceIdentifier);
         occurrenceTp.setStartDate(applicationExportBuilderHelper.buildXmlDate(exportProgramInstance.getApplicationStartDate()));
         occurrenceTp.setEndDate(applicationExportBuilderHelper.buildXmlDate(exportProgramInstance.getApplicationCloseDate()));
         return occurrenceTp;
@@ -410,7 +410,7 @@ public class ApplicationExportBuilder {
             qualificationsTp.setStartDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().minusYears(1)));
             qualificationsTp.setEndDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().plusYears(1)));
 
-            String notProvided = propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED);
+            String notProvided = propertyLoader.loadLazy(SYSTEM_VALUE_NOT_PROVIDED);
 
             qualificationsTp.setGrade(notProvided);
             qualificationsTp.setLanguageOfInstruction(notProvided);
@@ -422,7 +422,7 @@ public class ApplicationExportBuilder {
             qualificationsTp.setQualification(qualificationTp);
 
             InstitutionTp institutionTp = objectFactory.createInstitutionTp();
-            institutionTp.setCode(propertyLoader.load(SYSTEM_OTHER));
+            institutionTp.setCode(propertyLoader.loadLazy(SYSTEM_OTHER));
             institutionTp.setName(notProvided);
             CountryTp countryTp = objectFactory.createCountryTp();
             countryTp.setCode("XK");
@@ -472,7 +472,7 @@ public class ApplicationExportBuilder {
 
             ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
             contactDtlsTp.setEmail(reference.getUser().getEmail());
-            contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
+            contactDtlsTp.setLandline(propertyLoader.loadLazy(SYSTEM_PHONE_MOCK));
 
             AddressTp addressTp = objectFactory.createAddressTp();
             AddressApplicationRepresentation address = reference.getAddress();
@@ -502,7 +502,7 @@ public class ApplicationExportBuilder {
             String languageQualificationTypeCode = getImportedEntityCode(languageQualification.getType());
             if (languageQualificationTypeCode.startsWith("OTHER")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
+                englishLanguageTp.setOtherLanguageExam(propertyLoader.loadLazy(SYSTEM_REFER_TO_DOCUMENT));
             } else if (languageQualificationTypeCode.startsWith("TOEFL")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
                 englishLanguageTp.setMethod(languageQualificationTypeCode);

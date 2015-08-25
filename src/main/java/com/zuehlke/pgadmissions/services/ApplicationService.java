@@ -235,10 +235,10 @@ public class ApplicationService {
             DomicileUseDTO domicileUseDTO = importedEntityService.getMostUsedDomicile(institution);
 
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
-            String jobTitle = loader.load(SYSTEM_ROLE_APPLICATION_ADMINISTRATOR);
-            String addressLineMock = loader.load(SYSTEM_ADDRESS_LINE_MOCK);
-            String addressCodeMock = loader.load(SYSTEM_ADDRESS_CODE_MOCK);
-            String phoneMock = loader.load(SYSTEM_PHONE_MOCK);
+            String jobTitle = loader.loadLazy(SYSTEM_ROLE_APPLICATION_ADMINISTRATOR);
+            String addressLineMock = loader.loadLazy(SYSTEM_ADDRESS_LINE_MOCK);
+            String addressCodeMock = loader.loadLazy(SYSTEM_ADDRESS_CODE_MOCK);
+            String phoneMock = loader.loadLazy(SYSTEM_PHONE_MOCK);
 
             if (domicileUseDTO != null) {
                 ImportedEntityResponse domicileMock = importedEntityMapper.getImportedEntityRepresentation(domicileUseDTO.getDomicile(), institution);
@@ -284,16 +284,16 @@ public class ApplicationService {
         for (PrismReportColumn column : PrismReportColumn.values()) {
             if ((column.getDefinitions().isEmpty() || !Collections.disjoint(column.getDefinitions(), workflowPropertyDefinitions))
                     && (redactions.isEmpty() || Collections.disjoint(redactions, column.getRedactions()))) {
-                headers.add(new ColumnDescription(column.getAccessor(), TEXT, loader.load(column.getTitle())));
+                headers.add(new ColumnDescription(column.getAccessor(), TEXT, loader.loadLazy(column.getTitle())));
                 columns.add(column);
                 columnAccessors.add(column.getColumnAccessor());
             }
         }
 
-        headers.add(new ColumnDescription("link", TEXT, loader.load(SYSTEM_LINK)));
+        headers.add(new ColumnDescription("link", TEXT, loader.loadLazy(SYSTEM_LINK)));
         dataTable.addColumns(headers);
 
-        String dateFormat = loader.load(SYSTEM_DATE_FORMAT);
+        String dateFormat = loader.loadLazy(SYSTEM_DATE_FORMAT);
         List<ApplicationReportListRowDTO> reportRows = applicationDAO.getApplicationReport(assignedApplications, Joiner.on(", ").join(columnAccessors));
 
         for (ApplicationReportListRowDTO reportRow : reportRows) {
@@ -307,7 +307,7 @@ public class ApplicationService {
                     break;
                 case DISPLAY_PROPERTY:
                     Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                    value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
+                    value = index == null ? "" : loader.loadLazy((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
                     break;
                 case STRING:
                     value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);

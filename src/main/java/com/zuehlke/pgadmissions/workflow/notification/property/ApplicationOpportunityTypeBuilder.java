@@ -10,7 +10,7 @@ public class ApplicationOpportunityTypeBuilder implements NotificationPropertyBu
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getPropertyLoader().load(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITY_TYPE_"
+        return propertyLoader.getPropertyLoader().loadLazy(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITY_TYPE_"
                 + propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getOpportunityType().name()));
     }
 

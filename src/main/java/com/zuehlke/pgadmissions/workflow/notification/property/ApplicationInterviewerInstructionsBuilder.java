@@ -14,7 +14,7 @@ public class ApplicationInterviewerInstructionsBuilder implements NotificationPr
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         CommentInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionModelDTO().getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getInterviewerInstructions();
-        return instructions == null ? propertyLoader.getPropertyLoader().load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
+        return instructions == null ? propertyLoader.getPropertyLoader().loadLazy(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
 }

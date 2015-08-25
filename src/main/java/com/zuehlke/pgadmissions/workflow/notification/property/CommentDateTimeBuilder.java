@@ -12,7 +12,7 @@ public class CommentDateTimeBuilder implements NotificationPropertyBuilder {
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         return propertyLoader.getNotificationDefinitionModelDTO().getComment()
-                .getCreatedTimestampDisplay(propertyLoader.getPropertyLoader().load(SYSTEM_DATE_TIME_FORMAT));
+                .getCreatedTimestampDisplay(propertyLoader.getPropertyLoader().loadLazy(SYSTEM_DATE_TIME_FORMAT));
     }
 
 }

@@ -339,7 +339,7 @@ public class ResourceService {
         Action action = actionService.getViewEditAction(resource);
 
         Comment comment = new Comment().withUser(user).withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).localize(resource).load(messageIndex))
+                .withContent(applicationContext.getBean(PropertyLoader.class).localize(resource).loadLazy(messageIndex))
                 .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
 
         for (CommentAssignedUser assignee : assignees) {
@@ -440,18 +440,15 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource<?> resource) {
-        return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService
-                .getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, resource,
-                        resource.getWorkflowPropertyConfigurationVersion());
+        return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, resource,
+                resource.getWorkflowPropertyConfigurationVersion());
     }
 
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource<?> resource,
-            PrismScope propertiesScope) throws Exception {
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource<?> resource, PrismScope propertiesScope) throws Exception {
         Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
-        for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition
-                .getProperties(propertiesScope)) {
-            properties.put(prismDisplayPropertyDefinition, loader.load(prismDisplayPropertyDefinition));
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+        for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.getProperties(propertiesScope)) {
+            properties.put(prismDisplayPropertyDefinition, loader.loadEager(prismDisplayPropertyDefinition));
         }
         return properties;
     }
@@ -767,6 +764,11 @@ public class ResourceService {
         }
 
         return targets.keySet();
+    }
+
+    public ResourceStandardDTO getResourceWithParents(Resource<?> resource, List<PrismScope> parentScopes) {
+        PrismScope resourceScope = resource.getResourceScope();
+        return resourceDAO.getParentResources(SYSTEM, systemId, resourceScope, resource.getId(), parentScopes);
     }
 
     public List<ResourceTargetDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {

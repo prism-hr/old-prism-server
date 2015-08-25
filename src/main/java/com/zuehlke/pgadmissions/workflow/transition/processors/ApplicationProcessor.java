@@ -46,7 +46,7 @@ public class ApplicationProcessor implements ResourceProcessor<Application> {
 
     private void setRejectionReasonSystem(Application application, Comment comment) {
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
-        comment.setRejectionReasonSystem(propertyLoader.load(APPLICATION_COMMENT_REJECTION_SYSTEM));
+        comment.setRejectionReasonSystem(propertyLoader.loadLazy(APPLICATION_COMMENT_REJECTION_SYSTEM));
     }
 
     private void appendApplicationReferees(Application application, Comment comment) {

@@ -30,6 +30,7 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 import javax.inject.Inject;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -139,9 +140,9 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
+        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class, PrismApplicationReserveStatus.class,
-                PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
+                PrismDisplayPropertyCategory.class, PrismImportedEntity.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -222,6 +223,16 @@ public class StaticDataService {
         staticData.put("actionConditions", actionConditionsMultimap.asMap());
         return staticData;
     }
+
+
+    public Map<String, Object> getRequiredSections() {
+        List<Object> sectionDefinitions = new LinkedList<>();
+        for (PrismScope.PrismScopeRequiredSection section : PrismScope.PrismScopeRequiredSection.values()) {
+            sectionDefinitions.add(ImmutableMap.of("id", section, "explanationDisplayProperty", section.getIncompleteExplanation()));
+        }
+        return Collections.singletonMap("requiredSections", sectionDefinitions);
+    }
+
 
     @SuppressWarnings("unchecked")
     @Cacheable("importedInstitutionData")

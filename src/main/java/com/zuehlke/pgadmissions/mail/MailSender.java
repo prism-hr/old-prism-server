@@ -98,7 +98,7 @@ public class MailSender {
             Document logoImage = institution != null ? institution.getLogoImage() : null;
             final String html = processContent(configuration.getDefinition().getId(), configuration.getContent(), model, subject,
                     logoImage);
-            final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
+            final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + messageDTO.toString());

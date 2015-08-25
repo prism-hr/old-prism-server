@@ -98,7 +98,7 @@ public class RoleService {
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
 
             Comment comment = new Comment().withAction(action).withUser(invoker)
-                    .withContent(loader.load(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                    .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
             for (PrismRole role : roles) {
                 comment.addAssignedUser(user, getById(role), transitionType);

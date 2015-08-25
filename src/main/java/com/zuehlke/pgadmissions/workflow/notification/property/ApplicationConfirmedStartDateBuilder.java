@@ -12,7 +12,7 @@ public class ApplicationConfirmedStartDateBuilder implements NotificationPropert
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         return propertyLoader.getNotificationDefinitionModelDTO().getComment()
-                .getPositionProvisionalStartDateDisplay(propertyLoader.getPropertyLoader().load(SYSTEM_DATE_FORMAT));
+                .getPositionProvisionalStartDateDisplay(propertyLoader.getPropertyLoader().loadLazy(SYSTEM_DATE_FORMAT));
     }
 
 }

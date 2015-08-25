@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
+import org.hibernate.validator.constraints.Range;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -12,6 +14,7 @@ public class AdvertCompetenceDTO {
     private String description;
 
     @NotNull
+    @Range(min = 1, max = 3)
     private Integer importance;
 
     public String getName() {

@@ -1394,11 +1394,14 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
 
     /*
-     * *************** SYSTEM RESOURCE TARGETS *********************
+     * *************** SYSTEM RESOURCE COMPETENCES *********************
      */
 
     SYSTEM_RESOURCE_COMPETENCES_NAME_LABEL(SYSTEM_RESOURCE_COMPETENCES, "Competence Name"),
     SYSTEM_RESOURCE_COMPETENCES_NAME_HINT(SYSTEM_RESOURCE_COMPETENCES, "Specify the competences that you are looking for in your applicants."),
+    SYSTEM_RESOURCE_COMPETENCES_ESSENTIAL(SYSTEM_RESOURCE_COMPETENCES, "Essential"),
+    SYSTEM_RESOURCE_COMPETENCES_EXPECTED(SYSTEM_RESOURCE_COMPETENCES, "Expected"),
+    SYSTEM_RESOURCE_COMPETENCES_DESIRABLE(SYSTEM_RESOURCE_COMPETENCES, "Desirable"),
 
     /*
      * *************** SYSTEM RESOURCE ADVERT *********************
@@ -1452,7 +1455,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     /*
      * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION
-     * *********************
+      *********************
      */
 
     SYSTEM_EMAIL_CONFIGURATION_TEMPLATE_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Email Template"),

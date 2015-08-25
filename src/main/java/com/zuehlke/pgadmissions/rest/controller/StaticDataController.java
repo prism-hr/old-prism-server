@@ -34,6 +34,7 @@ public class StaticDataController {
         staticData.putAll(staticDataService.getConfigurations());
         staticData.putAll(staticDataService.getProgramCategories());
         staticData.putAll(staticDataService.getActionConditions());
+        staticData.putAll(staticDataService.getRequiredSections());
         return staticData;
     }
 

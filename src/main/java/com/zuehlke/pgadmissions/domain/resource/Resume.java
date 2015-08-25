@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -34,8 +35,8 @@ public class Resume extends Application {
         return;
     }
 
-    public Resume withScope(String scope) {
-        setScope(scope);
+    public Resume withScope(PrismScope scope) {
+        setScope(scope.name());
         return this;
     }
 

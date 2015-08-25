@@ -105,9 +105,6 @@ public class ApplicationMapper {
     private AddressMapper addressMapper;
 
     @Inject
-    private AdvertMapper advertMapper;
-
-    @Inject
     private AdvertService advertService;
 
     @Inject
@@ -154,8 +151,8 @@ public class ApplicationMapper {
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));
-        representation.setUsersPotentiallyInterestedInApplication(userMapper.getUserRepresentations(userService.getUsersPotentiallyInterestedInApplication(
-                application, usersInterested)));
+        representation.setUsersPotentiallyInterestedInApplication(
+                userMapper.getUserRepresentations(userService.getUsersPotentiallyInterestedInApplication(application, usersInterested)));
 
         representation.setInterview(getApplicationInterviewRepresentation(application));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
@@ -172,8 +169,6 @@ public class ApplicationMapper {
             otherLiveApplications.add(resourceMapper.getResourceRepresentationSimple(APPLICATION, otherLiveApplication));
         }
         representation.setOtherLiveApplications(otherLiveApplications);
-
-        representation.setRecommendedAdverts(advertMapper.getRecommendedAdvertRepresentations(application));
         return representation;
     }
 
@@ -474,7 +469,7 @@ public class ApplicationMapper {
     }
 
     private CommentRepresentation getApplicationReferenceRepresentation(Comment referenceComment, List<PrismRole> overridingRoles) {
-        return referenceComment == null ? null : commentMapper.getCommentRepresentationSecured(userService.getCurrentUser(), referenceComment, overridingRoles);
+        return referenceComment == null ? null : commentMapper.getCommentRepresentation(userService.getCurrentUser(), referenceComment, overridingRoles);
     }
 
     private ApplicationInterviewRepresentation getApplicationInterviewRepresentation(Application application) {

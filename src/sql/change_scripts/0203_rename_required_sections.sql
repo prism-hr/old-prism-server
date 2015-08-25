@@ -34,5 +34,3 @@ SET
   advert_incomplete_section = replace(advert_incomplete_section, "SYSTEM_RESOURCE_TARGETS_HEADER", "ADVERT_TARGETS"),
   advert_incomplete_section = replace(advert_incomplete_section, "SYSTEM_RESOURCE_COMPETENCES_HEADER", "ADVERT_COMPETENCES")
 ;
-
-

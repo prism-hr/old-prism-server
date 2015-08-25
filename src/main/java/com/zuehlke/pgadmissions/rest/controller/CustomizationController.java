@@ -73,8 +73,7 @@ public class CustomizationController {
 
         Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (BooleanUtils.isTrue(fetchReference)) {
-            List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentations(configurationType, resource, scope,
-                    opportunityType, category);
+            List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category);
             return sparsifyDisplayPropertyConfigurations(category, translations);
         }
         List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentationsConfigurationMode(configurationType,

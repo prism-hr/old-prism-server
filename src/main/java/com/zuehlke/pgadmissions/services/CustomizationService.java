@@ -114,13 +114,12 @@ public class CustomizationService {
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource<?> resource,
-            PrismScope scope,
-            PrismOpportunityType opportunityType, Enum<?> category) {
+            PrismScope scope, PrismOpportunityType opportunityType, Enum<?> category) {
         return getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category, false);
     }
 
-    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsConfigurationMode(
-            PrismConfiguration configurationType, Resource<?> resource, PrismScope scope, PrismOpportunityType opportunityType, Enum<?> category) {
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsConfigurationMode(PrismConfiguration configurationType, Resource<?> resource, PrismScope scope,
+            PrismOpportunityType opportunityType, Enum<?> category) {
         return getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category, true);
     }
 
@@ -244,8 +243,7 @@ public class CustomizationService {
         entityService.createOrUpdate(configuration);
     }
 
-    public WorkflowConfiguration<?> createOrUpdateConfigurationUser(
-            PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public WorkflowConfiguration<?> createOrUpdateConfigurationUser(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) throws Exception {
         WorkflowConfiguration<?> configuration = createConfiguration(configurationType, resource, opportunityType, workflowConfigurationDTO);
         resourceService.executeUpdate(resource,
@@ -272,8 +270,7 @@ public class CustomizationService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> WorkflowConfiguration<T> createConfiguration(
-            PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    private <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) {
         T definition = (T) entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
         WorkflowConfiguration<T> configuration = customizationMapper.getWorkflowConfiguration(workflowConfigurationDTO);
@@ -288,7 +285,7 @@ public class CustomizationService {
         return resource.getResourceScope().ordinal() > PROJECT.ordinal() ? resource.getParentResource() : resource;
     }
 
-    private  List<WorkflowConfigurationRepresentation> parseRepresentations(PrismConfiguration configurationType, List<WorkflowConfiguration<?>> configurations) {
+    private List<WorkflowConfigurationRepresentation> parseRepresentations(PrismConfiguration configurationType, List<WorkflowConfiguration<?>> configurations) {
         if (configurations.isEmpty()) {
             return Collections.emptyList();
         } else {

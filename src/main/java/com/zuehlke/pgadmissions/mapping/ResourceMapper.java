@@ -47,9 +47,9 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRequiredSection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PrismScopeRequiredSection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -301,6 +301,10 @@ public class ResourceMapper {
         return representation;
     }
 
+    public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationSimple(T resource) {
+        return getResourceRepresentationSimple(resource, ResourceRepresentationExtended.class);
+    }
+
     public <T extends ResourceSimpleDTO> ResourceRepresentationSimple getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO) {
         return getResourceRepresentationSimple(resourceScope, resourceDTO, ResourceRepresentationSimple.class);
     }
@@ -329,10 +333,6 @@ public class ResourceMapper {
         }
 
         return representation;
-    }
-
-    public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationSimple(T resource) {
-        return getResourceRepresentationSimple(resource);
     }
 
     public <T extends Resource<?>, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
@@ -788,11 +788,11 @@ public class ResourceMapper {
         setProperty(representation, resourceScope.getLowerCamelName(), resourceRepresentation);
     }
 
-    private List<PrismRequiredSection> getResourceAdvertIncompleteSectionRepresentation(String advertIncompleteSection) {
-        List<PrismRequiredSection> incompleteSections = Lists.newLinkedList();
+    private List<PrismScopeRequiredSection> getResourceAdvertIncompleteSectionRepresentation(String advertIncompleteSection) {
+        List<PrismScopeRequiredSection> incompleteSections = Lists.newLinkedList();
         if (advertIncompleteSection != null) {
             for (String section : Splitter.on("|").omitEmptyStrings().split(advertIncompleteSection)) {
-                incompleteSections.add(PrismRequiredSection.valueOf(section));
+                incompleteSections.add(PrismScopeRequiredSection.valueOf(section));
             }
         }
         return incompleteSections;

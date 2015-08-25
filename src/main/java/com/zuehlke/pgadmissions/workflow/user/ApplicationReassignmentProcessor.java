@@ -16,6 +16,10 @@ public class ApplicationReassignmentProcessor implements PrismUserReassignmentPr
 
     @Override
     public void reassign(User oldUser, User newUser, String userProperty) {
+        for (Application oldResume : oldUser.getResumes()) {
+            resourceService.reassignResource(oldResume, newUser, userProperty);
+        }
+
         for (Application oldApplication : oldUser.getApplications()) {
             resourceService.reassignResource(oldApplication, newUser, userProperty);
         }

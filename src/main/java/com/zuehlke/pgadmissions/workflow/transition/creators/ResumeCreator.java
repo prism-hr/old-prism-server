@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
@@ -30,7 +32,7 @@ public class ResumeCreator implements ResourceCreator<ApplicationDTO> {
     public Resource<?> create(User user, ApplicationDTO newResource) {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
         ResourceParent<?> parentResource = (ResourceParent<?>) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
-        Resume resume = new Resume().withUser(user).withParentResource(parentResource).withOpportunityCategory(newResource.getOpportunityCategory());
+        Resume resume = new Resume().withScope(RESUME.name()).withUser(user).withParentResource(parentResource).withOpportunityCategory(newResource.getOpportunityCategory());
 
         Resume persistentResume = entityService.getDuplicateEntity(resume);
         if (persistentResume != null) {

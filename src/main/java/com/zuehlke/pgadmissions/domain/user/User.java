@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.workflow.user.UserReassignmentProcessor;
@@ -83,6 +84,9 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @OneToMany(mappedBy = "parentUser")
     private Set<User> childUsers = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "user", targetEntity = Application.class)
+    private Set<Resume> resumes = Sets.newHashSet();
+    
     @OneToMany(mappedBy = "user")
     private Set<Application> applications = Sets.newHashSet();
 
@@ -239,6 +243,10 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return userRoles;
     }
 
+    public Set<Resume> getResumes() {
+        return resumes;
+    }
+    
     public Set<Application> getApplications() {
         return applications;
     }

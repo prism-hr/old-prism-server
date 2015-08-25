@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
 
@@ -63,10 +63,10 @@ public class RoleService {
     private UserService userService;
 
     @Inject
-    private CommentService commentService;
+    private CustomizationService customizationService;
 
     @Inject
-    private CustomizationService customizationService;
+    private ScopeService scopeService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -136,13 +136,16 @@ public class RoleService {
         return roleDAO.getRoles(user);
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope) {
-        return roleDAO.getRolesOverridingRedactions(resourceScope, userService.getCurrentUser());
+    public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource) {
+        User user = userService.getCurrentUser();
+        PrismScope resourceScope = resource.getResourceScope();
+        List<Integer> resourceIds = Lists.newArrayList(resource.getId());
+        return getRolesOverridingRedactions(resourceScope, resourceIds, user);
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(Resource<?> resource) {
-        List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
-        return roleDAO.getRolesOverridingRedactions(resource, userService.getCurrentUser(), exclusions);
+    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, List<Integer> resourceIds) {
+        User user = userService.getCurrentUser();
+        return getRolesOverridingRedactions(resourceScope, resourceIds, user);
     }
 
     public List<PrismRole> getRolesForResource(Resource<?> resource, User user) {
@@ -310,6 +313,16 @@ public class RoleService {
 
             applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
         }
+    }
+
+    private List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, List<Integer> resourceIds, User user) {
+        List<PrismRole> overridingRoles = Lists.newArrayList();
+        roleDAO.getRolesOverridingRedactions(resourceScope, resourceIds, scopeService.getParentScopesDescending(resourceScope, SYSTEM), user).forEach(overridingRole -> {
+            if (overridingRole.getActionRedactions().isEmpty()) {
+                overridingRoles.add(overridingRole.getId());
+            }
+        });
+        return overridingRoles;
     }
 
 }

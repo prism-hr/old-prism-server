@@ -47,7 +47,7 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<Role> getRolesOverridingRedactions(PrismScope resourceScope, Collection<Integer> resourceIds, List<PrismScope> parentScopes, User user) {
+    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, Collection<Integer> resourceIds, Collection<PrismScope> parentScopes, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
         String resourceIdReference = resourceReference + ".id";
 
@@ -58,8 +58,8 @@ public class RoleDAO {
             resourceConstraint.add(Restrictions.eqProperty(resourceReference + "." + parentReference, "userRole." + parentReference));
         });
 
-        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("userRole.role")) //
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
@@ -80,6 +80,7 @@ public class RoleDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
+                .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(resourceConstraint) //
@@ -90,8 +91,16 @@ public class RoleDAO {
                 .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .list();
     }
-
+    
     public List<PrismRole> getRolesForResource(Resource<?> resource, User user) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(WorkflowDAOUtils.getUserRoleConstraint(resource)) //
+                .list();
+    }
+    
+    public List<PrismRole> getRolesForResourceStrict(Resource<?> resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq("user", user)) //

@@ -31,10 +31,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -52,7 +49,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PrismScopeRequiredSection;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -119,8 +116,6 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 @Service
 @Transactional
 public class ResourceMapper {
-
-    private static final Logger logger = LoggerFactory.getLogger(ResourceMapper.class);
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -341,22 +336,14 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends Resource<?>, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType, List<PrismRole> overridingRoles,
-            StopWatch watch) {
+    public <T extends Resource<?>, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
         User currentUser = userService.getCurrentUser();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        V representation = getResourceRepresentationStandard(resource, returnType, actions, overridingRoles, watch);
+        V representation = getResourceRepresentationStandard(resource, returnType, actions, overridingRoles);
+
         representation.setActions(actions);
-
-        logger.info("Got application and action data: " + watch.getTime() + "ms");
-
         representation.setTimeline(commentMapper.getCommentTimelineRepresentation(resource, currentUser, overridingRoles));
-
-        logger.info("Got application timeline data in: " + watch.getTime() + "ms");
-
         representation.setUserRoles(roleMapper.getResourceUserRoleRepresentations(resource));
-
-        logger.info("Got application user role data in: " + watch.getTime() + "ms");
 
         representation.setWorkflowConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
         representation.setConditions(getResourceConditionRepresentations(resource));
@@ -366,12 +353,12 @@ public class ResourceMapper {
     public <T extends Resource<?>> ResourceRepresentationStandard getResourceRepresentationStandard(T resource) {
         User currentUser = userService.getCurrentUser();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        return getResourceRepresentationStandard(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource), null);
+        return getResourceRepresentationStandard(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource));
     }
 
     public <T extends ResourceParent<?>, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType,
             List<PrismRole> overridingRoles) {
-        V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles, null);
+        V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         representation.setPartnerActions(actionService.getPartnerActions(resource));
@@ -403,13 +390,8 @@ public class ResourceMapper {
     }
 
     public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationClient(T resource) {
-        StopWatch watch = new StopWatch();
-        watch.start();
-
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
-
-        logger.info("Got overriding role data in: " + watch.getTime() + "ms");
 
         if (Institution.class.equals(resourceClass)) {
             return institutionMapper.getInstitutionRepresentationClient((Institution) resource, overridingRoles);
@@ -418,12 +400,11 @@ public class ResourceMapper {
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
             return getResourceOpportunityRepresentationClient((ResourceOpportunity<?>) resource, ProgramRepresentationClient.class, overridingRoles);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
-            ApplicationRepresentationClient representation = applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles, watch);
-            logger.info("Got application data in: " + watch.getTime() + "ms");
+            ApplicationRepresentationClient representation = applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles);
             return representation;
         }
 
-        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles, null);
+        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
     }
 
     public <T extends Resource<?>> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
@@ -440,7 +421,7 @@ public class ResourceMapper {
             return applicationMapper.getApplicationRepresentationExport((Application) resource, overridingRoles);
         }
 
-        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles, null);
+        return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
     }
 
     public <T extends ResourceParent<?>, U extends ResourceRepresentationClient> void appendResourceSummaryRepresentation(T resource, U representation) {
@@ -646,7 +627,7 @@ public class ResourceMapper {
 
     @SuppressWarnings("unchecked")
     private <T extends Resource<?>, V extends ResourceRepresentationStandard> V getResourceRepresentationStandard(T resource, Class<V> returnType,
-            List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles, StopWatch watch) {
+            List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationSimple(resource, returnType);
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
 
@@ -665,8 +646,6 @@ public class ResourceMapper {
             }
         }
 
-        logger.info("Got simple resource data in: " + watch.getTime() + "ms");
-
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
 
         setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
@@ -683,9 +662,6 @@ public class ResourceMapper {
         representation.setCreatedTimestamp(resource.getCreatedTimestamp());
         representation.setUpdatedTimestamp(updatedTimestamp);
         representation.setSequenceIdentifier(resource.getSequenceIdentifier());
-
-        logger.info("Got resource state data in: " + watch.getTime() + "ms");
-
         return representation;
     }
 
@@ -819,11 +795,11 @@ public class ResourceMapper {
         setProperty(representation, resourceScope.getLowerCamelName(), resourceRepresentation);
     }
 
-    private List<PrismScopeRequiredSection> getResourceAdvertIncompleteSectionRepresentation(String advertIncompleteSection) {
-        List<PrismScopeRequiredSection> incompleteSections = Lists.newLinkedList();
+    private List<PrismScopeSectionDefinition> getResourceAdvertIncompleteSectionRepresentation(String advertIncompleteSection) {
+        List<PrismScopeSectionDefinition> incompleteSections = Lists.newLinkedList();
         if (advertIncompleteSection != null) {
             for (String section : Splitter.on("|").omitEmptyStrings().split(advertIncompleteSection)) {
-                incompleteSections.add(PrismScopeRequiredSection.valueOf(section));
+                incompleteSections.add(PrismScopeSectionDefinition.valueOf(section));
             }
         }
         return incompleteSections;

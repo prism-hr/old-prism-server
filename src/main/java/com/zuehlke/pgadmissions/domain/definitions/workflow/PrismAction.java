@@ -42,8 +42,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     RESUME_ASSIGN_REVIEWERS(getDefaultProcessResourceActionDefinitionVisible(RESUME)), //
     RESUME_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(RESUME)), //
     RESUME_PROVIDE_REVIEW(getDefaultReviewResourceActionDefinition(RESUME)), //
-    RESUME_RETIRE(getDefaultProcessResourceActionDefinitionVisible(RESUME) //
-            .withSystemInvocationOnly()), //
+    RESUME_RETIRE(getDefaultProcessResourceActionDefinitionVisible(RESUME)), //
 
     APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_ASSIGN_REVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //

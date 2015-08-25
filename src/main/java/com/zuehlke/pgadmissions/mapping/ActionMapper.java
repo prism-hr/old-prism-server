@@ -51,7 +51,7 @@ public class ActionMapper {
         return representations;
     }
 
-    public List<ActionRepresentationExtended> getActionRepresentations(Resource<?> resource, User user) {
+    public List<ActionRepresentationExtended> getActionRepresentations(Resource resource, User user) {
         PrismScope scope = resource.getResourceScope();
 
         Set<ActionRepresentationExtended> representations = Sets.newLinkedHashSet();
@@ -73,7 +73,7 @@ public class ActionMapper {
                 resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
     }
 
-    private ActionRepresentationExtended getActionRepresentationExtended(Resource<?> resource, ActionDTO action, User user) {
+    private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
         PrismAction prismAction = action.getActionId();
         ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class);
 

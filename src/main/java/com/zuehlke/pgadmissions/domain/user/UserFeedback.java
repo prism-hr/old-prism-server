@@ -257,7 +257,7 @@ public class UserFeedback extends WorkflowResourceExecution implements UserAssig
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public UserFeedback withResource(Resource<?> resource) {
+    public UserFeedback withResource(Resource resource) {
         setResource(resource);
         return this;
     }

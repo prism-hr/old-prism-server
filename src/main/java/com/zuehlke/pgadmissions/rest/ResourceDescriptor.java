@@ -6,19 +6,19 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 
 public class ResourceDescriptor {
 
-    private Class<? extends Resource<?>> type;
+    private Class<? extends Resource> type;
 
     private Class<? extends ResourceRepresentationSimple> representationType;
 
     private PrismScope resourceScope;
 
-    public ResourceDescriptor(Class<? extends Resource<?>> type, Class<? extends ResourceRepresentationSimple> representationType, PrismScope resourceScope) {
+    public ResourceDescriptor(Class<? extends Resource> type, Class<? extends ResourceRepresentationSimple> representationType, PrismScope resourceScope) {
         this.type = type;
         this.representationType = representationType;
         this.resourceScope = resourceScope;
     }
 
-    public Class<? extends Resource<?>> getType() {
+    public Class<? extends Resource> getType() {
         return type;
     }
 

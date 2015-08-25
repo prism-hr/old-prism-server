@@ -37,7 +37,7 @@ public class StateDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<StateTransition> getPotentialStateTransitions(Resource<?> resource, Action action) {
+    public List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
@@ -49,7 +49,7 @@ public class StateDAO {
                 .list();
     }
 
-    public List<StateTransition> getPotentialUserStateTransitions(Resource<?> resource, Action action) {
+    public List<StateTransition> getPotentialUserStateTransitions(Resource resource, Action action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
@@ -66,7 +66,7 @@ public class StateDAO {
                 .list();
     }
 
-    public StateTransition getSecondaryStateTransition(Resource<?> resource, PrismState state, Action action) {
+    public StateTransition getSecondaryStateTransition(Resource resource, PrismState state, Action action) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
@@ -76,7 +76,7 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public StateTransition getStateTransition(Resource<?> resource, Action action) {
+    public StateTransition getStateTransition(Resource resource, Action action) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction") //
                 .createAlias("stateAction.state", "state") //
@@ -89,7 +89,7 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public StateTransition getStateTransition(Resource<?> resource, Action action, PrismState transitionStateId) {
+    public StateTransition getStateTransition(Resource resource, Action action, PrismState transitionStateId) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction") //
                 .createAlias("stateAction.state", "state") //
@@ -176,7 +176,7 @@ public class StateDAO {
                 .list();
     }
 
-    public List<State> getCurrentStates(Resource<?> resource) {
+    public List<State> getCurrentStates(Resource resource) {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("state")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
@@ -184,8 +184,8 @@ public class StateDAO {
                 .list();
     }
 
-    public String getRecommendedNextStates(Resource<?> resource) {
-        Resource<?> parentResource = resource.getParentResource();
+    public String getRecommendedNextStates(Resource resource) {
+        Resource parentResource = resource.getParentResource();
         return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //
                 .setProjection(Projections.property("transitionStateSelection")) //
                 .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
@@ -197,7 +197,7 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public List<PrismState> getSecondaryResourceStates(Resource<?> resource) {
+    public List<PrismState> getSecondaryResourceStates(Resource resource) {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("state.id")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //

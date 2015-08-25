@@ -156,7 +156,7 @@ public class ResourceStateTransitionSummary extends WorkflowResource {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public ResourceStateTransitionSummary withResource(Resource<?> resource) {
+    public ResourceStateTransitionSummary withResource(Resource resource) {
         setResource(resource);
         return this;
     }

@@ -33,11 +33,10 @@ import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.workflow.user.InstitutionReassignmentProcessor;
 
 @Entity
 @Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "name" }) })
-public class Institution extends ResourceParent<InstitutionReassignmentProcessor>implements TargetEntity {
+public class Institution extends ResourceParent implements TargetEntity {
 
     @Id
     @GeneratedValue
@@ -52,7 +51,7 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
-    
+
     @Column(name = "opportunity_category")
     private String opportunityCategories;
 
@@ -95,7 +94,7 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
-    
+
     @Column(name = "opportunity_rating_count")
     private Integer opportunityRatingCount;
 
@@ -306,7 +305,7 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
-    
+
     @Override
     public Integer getOpportunityRatingCount() {
         return opportunityRatingCount;
@@ -326,7 +325,6 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     public void setOpportunityRatingAverage(BigDecimal opportunityRatingAverage) {
         this.opportunityRatingAverage = opportunityRatingAverage;
     }
-
 
     @Override
     public Set<ResourceCondition> getResourceConditions() {
@@ -615,11 +613,6 @@ public class Institution extends ResourceParent<InstitutionReassignmentProcessor
     @Override
     public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
-    }
-
-    @Override
-    public Class<InstitutionReassignmentProcessor> getUserReassignmentProcessor() {
-        return InstitutionReassignmentProcessor.class;
     }
 
     @Override

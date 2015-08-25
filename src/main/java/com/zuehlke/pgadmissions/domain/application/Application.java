@@ -72,20 +72,19 @@ import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.workflow.user.ApplicationReassignmentProcessor;
 
 @Entity
 @Table(name = "application")
 @Inheritance(strategy = SINGLE_TABLE)
 @DiscriminatorColumn(name = "scope_id", discriminatorType = STRING)
 @DiscriminatorValue("APPLICATION")
-public class Application extends Resource<ApplicationReassignmentProcessor> {
+public class Application extends Resource {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "scope_id", insertable=false, updatable=false, nullable = false)
+    @Column(name = "scope_id", insertable = false, updatable = false, nullable = false)
     private String scope;
 
     @Column(name = "code", unique = true)
@@ -760,7 +759,7 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
         return this;
     }
 
-    public Application withParentResource(Resource<?> parentResource) {
+    public Application withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
     }
@@ -800,19 +799,19 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
     }
 
     public String getParentResourceTitleDisplay() {
-        ResourceParent<?> parent = (ResourceParent<?>) getParentResource();
+        ResourceParent parent = (ResourceParent) getParentResource();
         return parent.getName();
     }
 
     public String getParentResourceCodeDisplay() {
-        ResourceParent<?> parent = (ResourceParent<?>) getParentResource();
+        ResourceParent parent = (ResourceParent) getParentResource();
         return parent.getCode();
     }
 
     public PrismOpportunityType getOpportunityType() {
-        Resource<?> resourceParent = getParentResource();
+        Resource resourceParent = getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(resourceParent.getClass())) {
-            return PrismOpportunityType.valueOf(((ResourceOpportunity<?>) resourceParent).getOpportunityType().getName());
+            return PrismOpportunityType.valueOf(((ResourceOpportunity) resourceParent).getOpportunityType().getName());
         }
         return null;
     }
@@ -822,13 +821,9 @@ public class Application extends Resource<ApplicationReassignmentProcessor> {
         return opportunityType == null ? IMMEDIATE : opportunityType.getDefaultStartType();
     }
 
-    public Class<ApplicationReassignmentProcessor> getUserReassignmentProcessor() {
-        return ApplicationReassignmentProcessor.class;
-    }
-
     @Override
     public EntitySignature getEntitySignature() {
-        Resource<?> parentResource = getParentResource();
+        Resource parentResource = getParentResource();
         return new EntitySignature()
                 .addProperty("user", user)
                 .addProperty(parentResource.getResourceScope().getLowerCamelName(), parentResource)

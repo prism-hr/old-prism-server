@@ -159,9 +159,9 @@ public class ApplicationService {
         ImportedEntitySimple studyOption = importedEntityService.getById(ImportedEntitySimple.class, studyOptionId);
 
         ResourceStudyOption resourceStudyOption = null;
-        Resource<?> parentResource = application.getParentResource();
+        Resource parentResource = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity<?>) application.getParentResource(), studyOption);
+            resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
         }
 
         LocalDate earliestStartDate = getEarliestStartDate(resourceStudyOption, baseline);
@@ -195,7 +195,7 @@ public class ApplicationService {
 
             if (!(applicationStartDate == null || applicationCloseDate == null)) {
                 LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
-                        valueOf(((ResourceOpportunity<?>) resourceStudyOption.getResource()).getOpportunityType().getName()).getDefaultStartBuffer());
+                        valueOf(((ResourceOpportunity) resourceStudyOption.getResource()).getOpportunityType().getName()).getDefaultStartBuffer());
                 LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
                 return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
             }
@@ -348,7 +348,7 @@ public class ApplicationService {
         return applicationDAO.getApplicationRatingSummary(application);
     }
 
-    public ResourceRatingSummaryDTO getApplicationRatingSummary(ResourceParent<?> resource) {
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
         return applicationDAO.getApplicationRatingSummary(resource);
     }
 
@@ -378,17 +378,17 @@ public class ApplicationService {
         return applicationDAO.getOtherLiveApplications(application);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent<?> resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent<?> resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent<?> resource,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
             List<ResourceReportFilterPropertyDTO> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
     }
@@ -415,9 +415,9 @@ public class ApplicationService {
     }
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
-        ResourceParent<?> parentResource = (ResourceParent<?>) application.getParentResource();
+        ResourceParent parentResource = (ResourceParent) application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            PrismOpportunityType opportunityType = valueOf(((ResourceOpportunity<?>) parentResource).getOpportunityType().getName());
+            PrismOpportunityType opportunityType = valueOf(((ResourceOpportunity) parentResource).getOpportunityType().getName());
             DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
 
             LocalDate immediate = defaults.getImmediate();

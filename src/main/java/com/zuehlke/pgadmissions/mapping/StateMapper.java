@@ -40,7 +40,7 @@ public class StateMapper {
         return representation;
     }
 
-    public List<StateRepresentationSimple> getSecondaryStateRepresentations(Resource<?> resource) {
+    public List<StateRepresentationSimple> getSecondaryStateRepresentations(Resource resource) {
         return getStateRepresentations(stateService.getSecondaryResourceStates(resource));
     }
 
@@ -50,14 +50,14 @@ public class StateMapper {
                 .collect(Collectors.toList());
     }
 
-    public List<StateRepresentationExtended> getStateRepresentations(Resource<?> resource, PrismAction action) {
+    public List<StateRepresentationExtended> getStateRepresentations(Resource resource, PrismAction action) {
         List<StateSelectableDTO> states = stateService.getSelectableTransitionStates(resource.getState(), action);
         return states.stream()
                 .map(state -> getStateRepresentationExtended(state.getState(), BooleanUtils.toBoolean(state.getParallelizable())))
                 .collect(Collectors.toList());
     }
 
-    public List<StateRepresentationSimple> getRecommendedNextStateRepresentations(Resource<?> resource) {
+    public List<StateRepresentationSimple> getRecommendedNextStateRepresentations(Resource resource) {
         return stateService.getRecommendedNextStates(resource).stream()
                 .map(this::getStateRepresentationSimple)
                 .collect(Collectors.toList());

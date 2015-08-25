@@ -103,10 +103,12 @@ public class ApplicationCopyHelper {
             if (BooleanUtils.isTrue(demographicConfiguration.getEnabled())) {
                 ApplicationDemographic fromDemographic = from.getPersonalDetail().getDemographic();
 
-                ImportedEntitySimple ethnicity = getEnabledImportedEntity(fromDemographic.getEthnicity(), personalDetail);
-                ImportedEntitySimple disability = getEnabledImportedEntity(fromDemographic.getDisability(), personalDetail);
+                ImportedEntitySimple ethnicity = null; 
+                ImportedEntitySimple disability = null;
 
                 if (fromDemographic != null) {
+                    ethnicity = getEnabledImportedEntity(fromDemographic.getEthnicity(), personalDetail);
+                    disability = getEnabledImportedEntity(fromDemographic.getDisability(), personalDetail);
                     personalDetail.setDemographic(new ApplicationDemographic().withEthnicity(ethnicity).withDisability(disability));
                 }
 
@@ -162,8 +164,7 @@ public class ApplicationCopyHelper {
 
         if (BooleanUtils.isTrue(qualificationConfiguration.getEnabled())) {
             WorkflowPropertyConfiguration qualificationDocumentConfiguration = (WorkflowPropertyConfiguration) customizationService
-                    .getConfigurationWithVersion(
-                            WORKFLOW_PROPERTY, APPLICATION_QUALIFICATION_PROOF_OF_AWARD, to.getWorkflowPropertyConfigurationVersion());
+                    .getConfigurationWithVersion(WORKFLOW_PROPERTY, APPLICATION_QUALIFICATION_PROOF_OF_AWARD, to.getWorkflowPropertyConfigurationVersion());
 
             Integer counter = 0;
             for (ApplicationQualification fromQualification : from.getQualifications()) {

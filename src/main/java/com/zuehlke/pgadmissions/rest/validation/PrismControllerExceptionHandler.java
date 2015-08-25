@@ -54,7 +54,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         User currentUser = userService.getCurrentUser();
 
         log.error("Problem", ex);
-        Resource<?> fallbackResource = ex.getFallbackResource();
+        Resource fallbackResource = ex.getFallbackResource();
 
         Map<String, Object> body = Maps.newHashMap();
         body.put("fallbackAction", ex.getFallbackAction().getId());

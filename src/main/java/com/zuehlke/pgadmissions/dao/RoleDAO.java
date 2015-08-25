@@ -89,7 +89,7 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getRolesForResource(Resource<?> resource, User user) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class, "userRole") //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq("user", user)) //
                 .add(WorkflowDAOUtils.getUserRoleConstraint(resource)) //

@@ -32,7 +32,7 @@ public class WorkflowDAOUtils {
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user));
     }
-
+    
     public static Junction getUserRoleConstraint(Resource<?> resource) {
         return Restrictions.disjunction() //
                 .add(Restrictions.eq("userRole.application", resource.getApplication())) //

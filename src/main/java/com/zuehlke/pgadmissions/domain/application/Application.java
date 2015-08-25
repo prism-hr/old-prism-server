@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -749,8 +750,8 @@ public class Application extends Resource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Application withScope(String scope) {
-        this.scope = scope;
+    public Application withScope(PrismScope scope) {
+        this.scope = scope.name();
         return this;
     }
 

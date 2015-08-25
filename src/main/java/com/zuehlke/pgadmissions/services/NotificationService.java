@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
 import java.util.Set;
@@ -300,7 +301,7 @@ public class NotificationService {
     public void resetNotifications(User user) {
         notificationDAO.resetNotifications(user);
         for (PrismScope scope : PrismScope.values()) {
-            List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);
+            List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
             Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
             if (!assignedResources.isEmpty()) {
                 notificationDAO.resetNotificationsSyndicated(scope, assignedResources);

@@ -39,6 +39,8 @@ public class ResourceStandardDTO implements Comparable<Object> {
     private String projectName;
 
     private Integer applicationId;
+    
+    private Integer resumeId;
 
     public Integer getSystemId() {
         return systemId;
@@ -126,6 +128,14 @@ public class ResourceStandardDTO implements Comparable<Object> {
 
     public void setApplicationId(Integer applicationId) {
         this.applicationId = applicationId;
+    }
+
+    public Integer getResumeId() {
+        return resumeId;
+    }
+
+    public void setResumeId(Integer resumeId) {
+        this.resumeId = resumeId;
     }
 
     public PrismScope getScope() {

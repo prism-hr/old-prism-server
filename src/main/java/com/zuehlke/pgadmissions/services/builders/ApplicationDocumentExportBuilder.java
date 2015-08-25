@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -31,12 +32,13 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadEquivalentExperienceBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
-//TODO move this shit into the adapter
+// TODO move this shit into the adapter
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class ApplicationDocumentExportBuilder {
@@ -55,6 +57,9 @@ public class ApplicationDocumentExportBuilder {
     private DocumentService documentService;
 
     @Inject
+    private RoleService roleService;
+
+    @Inject
     private ApplicationMapper applicationMapper;
 
     @Inject
@@ -65,13 +70,14 @@ public class ApplicationDocumentExportBuilder {
         ZipOutputStream zos = null;
         try {
             zos = new ZipOutputStream(outputStream);
+            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(application);
             buildAcademicQualifications(application, contentsProperties, zos);
             buildLanguageQualification(application, contentsProperties, zos);
             buildPersonalStatement(application, contentsProperties, zos);
             buildCv(application, exportReference, contentsProperties, zos);
-            buildReferences(application, contentsProperties, zos);
-            buildStandaloneApplication(application, exportReference, contentsProperties, zos);
-            buildMergedApplication(application, exportReference, contentsProperties, zos);
+            buildReferences(application, contentsProperties, zos, overridingRoles);
+            buildStandaloneApplication(application, exportReference, contentsProperties, zos, overridingRoles);
+            buildMergedApplication(application, exportReference, contentsProperties, zos, overridingRoles);
             buildContentsFile(application, exportReference, contentsProperties, zos);
         } finally {
             IOUtils.closeQuietly(zos);
@@ -172,13 +178,13 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildReferences(Application application, Properties contentsProperties, ZipOutputStream zos) throws Exception {
+    private void buildReferences(Application application, Properties contentsProperties, ZipOutputStream zos, List<PrismRole> overridingRoles) throws Exception {
         List<ApplicationRefereeRepresentation> references = applicationService.getApplicationExportReferees(application);
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             zos.write(applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
-                    .build(applicationMapper.getApplicationRepresentationExport(application), references.get(i).getComment()));
+                    .build(applicationMapper.getApplicationRepresentationExport(application, overridingRoles), references.get(i).getComment()));
             zos.closeEntry();
             int referenceNumberId = i + 1;
             contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
@@ -186,13 +192,13 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildStandaloneApplication(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    private void buildStandaloneApplication(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos, List<PrismRole> overridingRoles)
             throws IOException {
         String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "ApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
-            applicationDownloadService.build(applicationMapper.getApplicationRepresentationExport(application), propertyLoader,
+            applicationDownloadService.build(applicationMapper.getApplicationRepresentationExport(application, overridingRoles), propertyLoader,
                     applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
@@ -202,12 +208,14 @@ public class ApplicationDocumentExportBuilder {
         contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
     }
 
-    private void buildMergedApplication(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildMergedApplication(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos, List<PrismRole> overridingRoles)
+            throws IOException {
         String serverFilename = "MergedApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "MergedApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverFilename));
         try {
-            applicationDownloadService.build(applicationMapper.getApplicationRepresentationExport(application), propertyLoader, applicationDownloadBuilderHelper, zos);
+            applicationDownloadService.build(applicationMapper.getApplicationRepresentationExport(application, overridingRoles), propertyLoader, applicationDownloadBuilderHelper,
+                    zos);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
         }

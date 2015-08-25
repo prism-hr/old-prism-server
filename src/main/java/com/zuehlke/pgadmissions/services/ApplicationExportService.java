@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -39,6 +40,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicati
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentExport;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
@@ -78,6 +80,9 @@ public class ApplicationExportService {
     @Inject
     private WebServiceTemplate webServiceTemplate;
 
+    @Inject
+    private RoleService roleService;
+    
     @Inject
     private UserService userService;
 
@@ -127,10 +132,11 @@ public class ApplicationExportService {
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws Exception {
         localize(application);
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(application);
         return applicationContext
                 .getBean(ApplicationExportBuilder.class)
                 .localize(propertyLoader)
-                .build(applicationMapper.getApplicationRepresentationExport(application));
+                .build(applicationMapper.getApplicationRepresentationExport(application, overridingRoles));
     }
 
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws Exception {

@@ -60,8 +60,7 @@ public class PropertyLoader {
 
     private HashMap<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource<?> resource, PrismScope scope, PrismDisplayPropertyCategory category,
             PrismOpportunityType opportunityType) {
-        List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations( //
-                DISPLAY_PROPERTY, resource, scope, opportunityType, category);
+        List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations(DISPLAY_PROPERTY, resource, scope, opportunityType, category);
         HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation value : values) {
             DisplayPropertyConfigurationRepresentation displayValue = (DisplayPropertyConfigurationRepresentation) value;

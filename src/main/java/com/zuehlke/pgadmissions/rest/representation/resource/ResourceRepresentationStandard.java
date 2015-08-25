@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRequiredSection;
-import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import org.joda.time.DateTime;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import org.joda.time.DateTime;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PrismScopeRequiredSection;
+import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ResourceRepresentationStandard extends ResourceRepresentationSimple {
 
@@ -38,7 +41,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     private String sequenceIdentifier;
 
-    private List<PrismRequiredSection> advertIncompleteSections;
+    private List<PrismScopeRequiredSection> advertIncompleteSections;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -152,12 +155,16 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public List<PrismRequiredSection> getAdvertIncompleteSections() {
+    public List<PrismScopeRequiredSection> getAdvertIncompleteSections() {
         return advertIncompleteSections;
     }
 
-    public void setAdvertIncompleteSections(List<PrismRequiredSection> advertIncompleteSections) {
+    public void setAdvertIncompleteSections(List<PrismScopeRequiredSection> advertIncompleteSections) {
         this.advertIncompleteSections = advertIncompleteSections;
+    }
+
+    public void setParentResource(ResourceRepresentationSimple parentResource) {
+        setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
 
 }

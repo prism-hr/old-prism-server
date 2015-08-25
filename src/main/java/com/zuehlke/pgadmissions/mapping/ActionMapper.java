@@ -70,8 +70,7 @@ public class ActionMapper {
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
         return new ActionOutcomeRepresentation().withTransitionResource(
-                resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(
-                        actionOutcomeDTO.getTransitionAction().getId());
+                resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource())).withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource<?> resource, ActionDTO action, User user) {

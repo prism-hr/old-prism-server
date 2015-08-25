@@ -6,8 +6,9 @@ import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.lang.WordUtils.capitalize;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -74,6 +75,7 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
+import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
 @Service
 @Transactional
@@ -130,7 +132,7 @@ public class UserService {
         for (ClassMetadata metadata : entities.values()) {
             Class<?> entityClass = metadata.getMappedClass();
             if (entityClass != null) {
-                Set<String> userProperties = getUserAssignments(entityClass);
+                Set<String> userProperties = getUserAssignments(entityClass, null);
                 boolean isUserAssignment = !userProperties.isEmpty();
                 if (UserAssignment.class.isAssignableFrom(entityClass)) {
                     if (!isUserAssignment) {
@@ -190,7 +192,7 @@ public class UserService {
         userDAO.deleteUserProgram(user, importedProgram);
         userDAO.deleteUserAdvert(user);
         entityService.flush();
-        
+
         user.getUserPrograms().forEach(userProgram -> {
             createOrUpdateUserAdverts(user, importedProgram);
         });
@@ -500,7 +502,7 @@ public class UserService {
 
         T mergedAssignmentConflict = entityService.getDuplicateEntity((Class<T>) oldAssignment.getClass(), newSignature);
         if (mergedAssignmentConflict == null) {
-            setProperty(oldAssignment, userProperty, newUser);
+            invokeMethod(oldAssignment, "set" + capitalize(userProperty), newUser);
             return true;
         }
         return false;
@@ -513,22 +515,35 @@ public class UserService {
     }
 
     private void mergeUsers(User oldUser, User newUser) {
+        Set<Class<? extends PrismUserReassignmentProcessor>> calledProcessors = Sets.newHashSet();
         for (Entry<Class<? extends UserAssignment<?>>, String> userAssignmentEntry : userAssignments.entries()) {
             UserAssignment<?> userAssignment = BeanUtils.instantiate(userAssignmentEntry.getKey());
-            applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAssignmentEntry.getValue());
+            Class<? extends PrismUserReassignmentProcessor> processor = userAssignment.getUserReassignmentProcessor();
+            if (!calledProcessors.contains(processor)) {
+                applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAssignmentEntry.getValue());
+                calledProcessors.add(processor);
+            }
         }
     }
 
-    private Set<String> getUserAssignments(Class<?> entityClass) {
-        Set<String> userAssignments = Sets.newHashSet();
+    private Set<String> getUserAssignments(Class<?> entityClass, Set<String> userAssignments) {
+        userAssignments = userAssignments == null ? Sets.newHashSet() : userAssignments;
         for (Field entityProperty : entityClass.getDeclaredFields()) {
             if (User.class.isAssignableFrom(entityProperty.getType())) {
                 userAssignments.add(entityProperty.getName());
             }
         }
+
+        if (userAssignments.isEmpty()) {
+            Class<?> entitySuperClass = entityClass.getSuperclass();
+            if (!Object.class.equals(entitySuperClass)) {
+                return getUserAssignments(entitySuperClass, userAssignments);
+            }
+        }
+
         return userAssignments;
     }
-    
+
     private void createOrUpdateUserAdverts(User user, ImportedProgram importedProgram) {
         List<Department> departments = departmentService.getDepartmentsByImportedProgram(importedProgram);
         if (departments.isEmpty()) {

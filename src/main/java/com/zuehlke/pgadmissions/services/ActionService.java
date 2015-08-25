@@ -186,7 +186,7 @@ public class ActionService {
     }
 
     public List<PrismActionRedactionType> getRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
-        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope);
+        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope, Lists.newArrayList(resourceIds));
         if (rolesOverridingRedactions.isEmpty()) {
             List<PrismRole> roleIds = roleService.getRoles(user);
             if (!(resourceIds.isEmpty() || roleIds.isEmpty())) {

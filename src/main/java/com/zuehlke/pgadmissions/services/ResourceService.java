@@ -53,9 +53,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRequiredSection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PrismScopeRequiredSection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -797,8 +797,7 @@ public class ResourceService {
                 }
             }
 
-            for (CommentAssignedUser oldCommentAssignedUser : commentService
-                    .getResourceOwnerCommentAssignedUsers(resource)) {
+            for (CommentAssignedUser oldCommentAssignedUser : commentService.getResourceOwnerCommentAssignedUsers(resource)) {
                 for (String commentAssignedUserUserProperty : commentAssignedUserUserProperties) {
                     userService.mergeUserAssignment(oldCommentAssignedUser, newUser, commentAssignedUserUserProperty);
                 }
@@ -820,8 +819,8 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends ResourceParent<?>> void setResourceAdvertIncompleteSection(T resource) {
-        List<PrismRequiredSection> incompleteSections = Lists.newLinkedList();
-        for (PrismRequiredSection section : PrismRequiredSection.values()) {
+        List<PrismScopeRequiredSection> incompleteSections = Lists.newLinkedList();
+        for (PrismScopeRequiredSection section : resource.getResourceScope().getRequiredSections()) {
             ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(section.getCompletenessEvaluator());
             if (!completenessEvaluator.evaluate(resource)) {
                 incompleteSections.add(section);

@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -79,8 +80,8 @@ public class ApplicationDownloadService {
             PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, oStream);
             pdfDocument.open();
 
-            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(APPLICATION);
             HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
+            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(APPLICATION, Lists.newArrayList(applicationIds));
             HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers = Maps.newHashMap();
 
             for (Integer applicationId : applicationIds) {

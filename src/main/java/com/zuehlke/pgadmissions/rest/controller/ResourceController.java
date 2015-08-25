@@ -63,7 +63,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping("api/{resourceScope:applications|projects|programs|departments|institutions|systems}")
+@RequestMapping("api/{resourceScope:resumes|applications|projects|programs|departments|institutions|systems}")
 public class ResourceController {
 
     @Inject
@@ -160,8 +160,7 @@ public class ResourceController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
     @PreAuthorize("isAuthenticated()")
-    public ResourceSummaryPlotRepresentation getPlot(
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+    public ResourceSummaryPlotRepresentation getPlot(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @RequestParam(required = false) String filter) throws Exception {
         Resource<?> resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
         if (!(resource instanceof ResourceParent)) {

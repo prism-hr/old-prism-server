@@ -70,7 +70,6 @@ public class CustomizationController {
             @RequestParam PrismScope scope,
             @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestParam(required = false) Boolean fetchReference) throws Exception {
-
         Resource<?> resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (BooleanUtils.isTrue(fetchReference)) {
             List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category);

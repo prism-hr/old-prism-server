@@ -16,7 +16,7 @@ public class CommentTransitionOutcomeBuilder implements NotificationPropertyBuil
         NotificationDefinitionModelDTO modelDTO = propertyLoader.getNotificationDefinitionModelDTO();
         String resourceName = modelDTO.getResource().getResourceScope().name();
         String outcomePostfix = Iterables.getLast(Lists.newArrayList(modelDTO.getComment().getTransitionState().getId().name().split("_")));
-        return propertyLoader.getPropertyLoader().load(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
+        return propertyLoader.getPropertyLoader().loadLazy(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
     }
 
 }

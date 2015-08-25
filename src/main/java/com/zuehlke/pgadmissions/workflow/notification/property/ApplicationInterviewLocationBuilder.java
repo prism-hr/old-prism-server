@@ -15,7 +15,7 @@ public class ApplicationInterviewLocationBuilder implements NotificationProperty
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         CommentInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionModelDTO().getComment().getInterviewInstruction();
         String interviewLocation = interviewInstruction == null ? null : interviewInstruction.getInterviewLocation();
-        return interviewLocation == null ? "<p>" + propertyLoader.getPropertyLoader().load(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>"
+        return interviewLocation == null ? "<p>" + propertyLoader.getPropertyLoader().loadLazy(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>"
                 : propertyLoader.buildRedirectionControl(interviewLocation, APPLICATION_COMMENT_DIRECTIONS);
     }
 

@@ -308,7 +308,7 @@ public class CommentService {
         String commentContent = null;
         if (action.getId().equals(PrismAction.valueOf(resourceScopeReference + "_VIEW_EDIT"))) {
             commentContent = applicationContext.getBean(PropertyLoader.class).localize(resource)
-                    .load(PrismDisplayPropertyDefinition.valueOf(resourceScopeReference + "_COMMENT_UPDATED"));
+                    .loadLazy(PrismDisplayPropertyDefinition.valueOf(resourceScopeReference + "_COMMENT_UPDATED"));
         } else {
             commentContent = commentDTO.getContent();
         }

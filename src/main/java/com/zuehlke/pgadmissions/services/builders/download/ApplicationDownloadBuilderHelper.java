@@ -144,7 +144,7 @@ public class ApplicationDownloadBuilderHelper {
     private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) throws Exception {
         Phrase phrase;
         if (StringUtils.isBlank(content)) {
-            phrase = new Phrase(propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED), ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
+            phrase = new Phrase(propertyLoader.loadLazy(SYSTEM_VALUE_NOT_PROVIDED), ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
         } else if (index == null) {
             phrase = new Phrase(content, ApplicationDownloadBuilderConfiguration.getFont(fontSize));
         } else {

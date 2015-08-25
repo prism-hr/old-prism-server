@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.dto.resource;
 
 import javax.validation.constraints.NotNull;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceDTO {
@@ -38,4 +39,21 @@ public class ResourceDTO {
         return this;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, scope);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceDTO other = (ResourceDTO) object;
+        return scope.equals(other.getScope()) && id.equals(other.getId());
+    }
+    
 }

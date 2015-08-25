@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Collection;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -88,7 +89,7 @@ public class RoleService {
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
 
             Comment comment = new Comment().withAction(action).withUser(invoker)
-                    .withContent(loader.load(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                    .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
             for (PrismRole role : roles) {
                 comment.addAssignedUser(user, getById(role), transitionType);
@@ -100,7 +101,7 @@ public class RoleService {
     }
 
     public void setResourceOwner(Resource<?> resource, User user) throws Exception {
-        if (getRolesForResource(resource, user).isEmpty()) {
+        if (roleDAO.getRolesForResourceStrict(resource, user).isEmpty()) {
             throw new PrismForbiddenException("User has no role within given resource");
         }
         resource.setUser(user);
@@ -143,6 +144,10 @@ public class RoleService {
         return roleDAO.getRolesForResource(resource, user);
     }
 
+    public List<PrismRole> getRolesForResourceStrict(Resource<?> resource, User user) {
+        return roleDAO.getRolesForResourceStrict(resource, user);
+    }
+
     public List<User> getRoleUsers(Resource<?> resource, Role... roles) {
         return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, roles);
     }
@@ -176,7 +181,7 @@ public class RoleService {
     }
 
     public void deleteUserRoles(Resource<?> resource, User user) throws Exception {
-        List<PrismRole> roles = roleDAO.getRolesForResource(resource, user);
+        List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
         assignUserRoles(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
@@ -214,7 +219,7 @@ public class RoleService {
     }
 
     public void deleteUserRole(Resource<?> resource, User user, Role role) {
-        if (getRolesForResource(resource, user).size() < 2 && resource.getUser().getId() == user.getId()) {
+        if (roleDAO.getRolesForResourceStrict(resource, user).size() < 2 && resource.getUser().getId().equals(user.getId())) {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
 
@@ -307,14 +312,8 @@ public class RoleService {
         }
     }
 
-    private List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, List<Integer> resourceIds, User user) {
-        List<PrismRole> overridingRoles = Lists.newArrayList();
-        roleDAO.getRolesOverridingRedactions(resourceScope, resourceIds, scopeService.getParentScopesDescending(resourceScope, SYSTEM), user).forEach(overridingRole -> {
-            if (overridingRole.getActionRedactions().isEmpty()) {
-                overridingRoles.add(overridingRole.getId());
-            }
-        });
-        return overridingRoles;
+    private List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, Collection<Integer> resourceIds, User user) {
+        return roleDAO.getRolesOverridingRedactions(resourceScope, resourceIds, scopeService.getParentScopesDescending(resourceScope, SYSTEM), user);
     }
 
 }

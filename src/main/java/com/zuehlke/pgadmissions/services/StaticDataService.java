@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PrismScopeRequiredSection;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
@@ -171,9 +171,9 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
+        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class, PrismApplicationReserveStatus.class,
-                PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
+                PrismDisplayPropertyCategory.class, PrismImportedEntity.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -255,19 +255,20 @@ public class StaticDataService {
         return staticData;
     }
 
+
     public Map<String, Object> getRequiredSections() {
         List<Object> sectionDefinitions = new LinkedList<>();
-        for (PrismScopeRequiredSection section : PrismScopeRequiredSection.values()) {
+        for (PrismScopeSectionDefinition section : PrismScopeSectionDefinition.values()) {
             sectionDefinitions.add(ImmutableMap.of("id", section, "explanationDisplayProperty", section.getIncompleteExplanation()));
         }
         return Collections.singletonMap("requiredSections", sectionDefinitions);
     }
 
+
     @SuppressWarnings("unchecked")
     @Cacheable("importedInstitutionData")
     public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> Map<String, Object> getInstitutionData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
-
         Institution institution = entityService.getById(Institution.class, institutionId);
 
         for (PrismImportedEntity prismImportedEntity : getPrefetchEntities()) {

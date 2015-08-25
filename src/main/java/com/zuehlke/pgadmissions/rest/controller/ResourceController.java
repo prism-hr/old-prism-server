@@ -13,9 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -69,8 +66,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("api/{resourceScope:resumes|applications|projects|programs|departments|institutions|systems}")
 public class ResourceController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceController.class);
-    
     @Inject
     private EntityService entityService;
 
@@ -135,14 +130,7 @@ public class ResourceController {
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope propertiesScope) throws Exception {
         Resource<?> resource = loadResource(resourceId, resourceDescriptor);
-        
-        StopWatch watch = new StopWatch();
-        watch.start();
-        
-        Map<PrismDisplayPropertyDefinition, String> properties = resourceService.getDisplayProperties(resource, propertiesScope);
-        logger.info("Got " + propertiesScope.getLowerCamelName() + " properties in " + watch.getTime() + "ms");
-        
-        return properties;
+        return resourceService.getDisplayProperties(resource, propertiesScope);
     }
 
     @RequestMapping(method = RequestMethod.GET)

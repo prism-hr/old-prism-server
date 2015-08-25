@@ -20,10 +20,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -104,8 +101,6 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 @Transactional
 public class ApplicationMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
-    
     @Inject
     private AddressMapper addressMapper;
 
@@ -139,11 +134,9 @@ public class ApplicationMapper {
     @Inject
     private UserService userService;
 
-    public ApplicationRepresentationClient getApplicationRepresentationClient(Application application, List<PrismRole> overridingRoles, StopWatch watch) {
-        ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, null, ApplicationRepresentationClient.class, overridingRoles, watch);
+    public ApplicationRepresentationClient getApplicationRepresentationClient(Application application, List<PrismRole> overridingRoles) {
+        ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, null, ApplicationRepresentationClient.class, overridingRoles);
         representation.setPossibleThemes(advertService.getAdvertThemes(application.getAdvert()));
-        
-        logger.info("Got application extended data in: " + watch.getTime() + "ms");
 
         Resource<?> parent = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
@@ -175,15 +168,13 @@ public class ApplicationMapper {
             otherLiveApplications.add(resourceMapper.getResourceRepresentationSimple(APPLICATION, otherLiveApplication));
         }
         representation.setOtherLiveApplications(otherLiveApplications);
-        
-        logger.info("Got application enriched data in: " + watch.getTime() + "ms");
-        
+
         return representation;
     }
 
     public ApplicationRepresentationExport getApplicationRepresentationExport(Application application, List<PrismRole> overridingRoles) throws Exception {
         ApplicationRepresentationExport representation = getApplicationRepresentationExtended(application, application.getInstitution(), ApplicationRepresentationExport.class,
-                overridingRoles, null);
+                overridingRoles);
 
         representation.setUserInstitutionIdentity(userMapper.getUserInstitutionIdentityRepresentation(application.getUser(), application.getInstitution(),
                 STUDY_APPLICANT));
@@ -200,15 +191,9 @@ public class ApplicationMapper {
     }
 
     public <T extends ApplicationRepresentationExtended> T getApplicationRepresentationExtended(Application application, Institution institution, Class<T> returnType,
-            List<PrismRole> overridingRoles, StopWatch watch) {
-        T representation = getApplicationRepresentation(application, institution, returnType, overridingRoles, watch);
-        
-        logger.info("Got application data in: " + watch.getTime() + "ms");
-        
+            List<PrismRole> overridingRoles) {
+        T representation = getApplicationRepresentation(application, institution, returnType, overridingRoles);
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
-        
-        logger.info("Got application offer data in: " + watch.getTime() + "ms");
-        
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
         return representation;
     }
@@ -241,10 +226,9 @@ public class ApplicationMapper {
     }
 
     private <T extends ApplicationRepresentationSimple> T getApplicationRepresentation(Application application, Institution institution, Class<T> returnType,
-            List<PrismRole> overridingRoles, StopWatch watch) {
-        T representation = resourceMapper.getResourceRepresentationExtended(application, returnType, overridingRoles, watch);
-        logger.info("Got resource extended data in: " + watch.getTime() + "ms");
-        
+            List<PrismRole> overridingRoles) {
+        T representation = resourceMapper.getResourceRepresentationExtended(application, returnType, overridingRoles);
+
         representation.setClosingDate(application.getClosingDate());
         representation.setSubmittedTimestamp(application.getSubmittedTimestamp());
         representation.setPreviousApplication(application.getPreviousApplication());

@@ -43,7 +43,6 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -162,8 +161,8 @@ public class ApplicationDownloadBuilder {
 
             applicationDownloadBuilderHelper.addContentRowMedium(
                     propertyLoader.load(APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL, APPLICATION_CONFIRMED_START_DATE,
-                            confirmedStartDate == null), confirmedStartDate == null ? startDate.toString(dateFormat) : confirmedStartDate.toString(dateFormat),
-                    body);
+                            confirmedStartDate == null),
+                    confirmedStartDate == null ? startDate.toString(dateFormat) : confirmedStartDate.toString(dateFormat), body);
 
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_REFERRAL_SOURCE),
                     getImportedEntityAsString(programDetail.getReferralSource()), body);
@@ -265,7 +264,8 @@ public class ApplicationDownloadBuilder {
                     getImportedEntityAsString(personalDetail.getGender()), body);
             applicationDownloadBuilderHelper.addContentRowMedium(
                     propertyLoader.loadLazy(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL), personalDetail.getDateOfBirth()
-                            .toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)), body);
+                            .toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)),
+                    body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL),
                     getImportedEntityAsString(personalDetail.getCountry()), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL),
@@ -275,7 +275,8 @@ public class ApplicationDownloadBuilder {
                     Joiner.on(", ")
                             .skipNulls()
                             .join(getImportedEntityAsString(personalDetail.getFirstNationality()),
-                                    getImportedEntityAsString(personalDetail.getSecondNationality())), body);
+                                    getImportedEntityAsString(personalDetail.getSecondNationality())),
+                    body);
 
             ApplicationDemographicRepresentation demographic = personalDetail.getDemographic();
             if (demographic != null) {
@@ -719,7 +720,7 @@ public class ApplicationDownloadBuilder {
         if (programDetail != null) {
             ImportedEntityResponse studyOption = programDetail.getStudyOption();
             applicationDownloadBuilderHelper.addContentRow(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL),
-                    studyOption == null ? null : propertyLoader.loadLazy(PrismStudyOption.valueOf(studyOption.getName()).getDisplayProperty()), fontSize, table);
+                    studyOption == null ? null : studyOption.getName(), fontSize, table);
         }
     }
 

@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +38,6 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfig
 @Service
 @Transactional
 public class CustomizationService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CustomizationService.class);
 
     @Inject
     private CustomizationDAO customizationDAO;
@@ -267,14 +262,8 @@ public class CustomizationService {
         Resource<?> configuredResource = getConfiguredResource(resource);
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
         if (configurationType.isCategorizable()) {
-            StopWatch watch = new StopWatch();
-            watch.start();
-
             List<WorkflowConfiguration<?>> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope,
                     configuredOpportunityType, category, configurationMode);
-
-            logger.info("Got display properties for: " + scope.getLowerCamelName() + " " + watch.getTime() + "ms");
-
             return parseRepresentations(configurationType, configurations);
         }
         return getConfigurationRepresentations(configurationType, configuredResource, scope, configuredOpportunityType);

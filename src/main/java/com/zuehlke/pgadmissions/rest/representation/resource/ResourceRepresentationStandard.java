@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PrismScopeRequiredSection;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
@@ -41,7 +41,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     private String sequenceIdentifier;
 
-    private List<PrismScopeRequiredSection> advertIncompleteSections;
+    private List<PrismScopeSectionDefinition> advertIncompleteSections;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -155,11 +155,11 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public List<PrismScopeRequiredSection> getAdvertIncompleteSections() {
+    public List<PrismScopeSectionDefinition> getAdvertIncompleteSections() {
         return advertIncompleteSections;
     }
 
-    public void setAdvertIncompleteSections(List<PrismScopeRequiredSection> advertIncompleteSections) {
+    public void setAdvertIncompleteSections(List<PrismScopeSectionDefinition> advertIncompleteSections) {
         this.advertIncompleteSections = advertIncompleteSections;
     }
 

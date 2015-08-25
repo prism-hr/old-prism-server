@@ -119,7 +119,7 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute implements
         this.instances = instances;
     }
 
-    public ResourceStudyOption withResource(ResourceParent<?> resource) {
+    public ResourceStudyOption withResource(ResourceParent resource) {
         setResource(resource);
         return this;
     }

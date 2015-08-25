@@ -246,7 +246,7 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
         return this;
     }
 
-    public Resource<?> getResource() {
+    public Resource getResource() {
         if (comment != null) {
             return comment.getResource();
         } else if (applicationLanguageQualification != null) {
@@ -287,7 +287,7 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
             return false;
         }
 
-        Resource<?> resource = getResource();
+        Resource resource = getResource();
         resource = resource == null ? comment.getResource() : resource;
 
         if (resource == null) {

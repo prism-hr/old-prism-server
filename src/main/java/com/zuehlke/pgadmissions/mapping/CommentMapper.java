@@ -68,7 +68,7 @@ public class CommentMapper {
     @Inject
     private RoleService roleService;
 
-    public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource<?> resource, User user, List<PrismRole> overridingRoles) {
+    public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource resource, User user, List<PrismRole> overridingRoles) {
         List<Comment> comments = commentService.getTimelineComments(resource);
 
         CommentTimelineRepresentation timelineRepresentation = new CommentTimelineRepresentation();
@@ -152,7 +152,7 @@ public class CommentMapper {
     }
 
     public CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles) {
-        Resource<?> resource = comment.getResource();
+        Resource resource = comment.getResource();
         List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
         Set<PrismActionRedactionType> redactions = actionService.getRedactions(resource, user, overridingRoles).get(comment.getAction().getId());
         return getCommentRepresentation(user, comment, overridingRoles, redactions, creatableRoles);

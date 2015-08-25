@@ -35,7 +35,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
 	private SystemService systemService;
 
 	@Override
-	public Resource<?> create(User user, InstitutionDTO newResource) {
+	public Resource create(User user, InstitutionDTO newResource) {
 		System system = systemService.getSystem();
 
 		AdvertDTO advertDTO = newResource.getAdvert();

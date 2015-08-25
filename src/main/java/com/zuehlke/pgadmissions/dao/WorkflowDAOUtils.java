@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 
 public class WorkflowDAOUtils {
 
-    public static Junction getUserRoleConstraint(Resource<?> resource, String targetEntity) {
+    public static Junction getUserRoleConstraint(Resource resource, String targetEntity) {
         PrismScope resourceScope = resource.getResourceScope();
         Junction constraint = Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
@@ -26,14 +26,14 @@ public class WorkflowDAOUtils {
         return constraint;
     }
 
-    public static Junction getUserRoleConstraint(Resource<?> resource, User user, String targetEntity) {
+    public static Junction getUserRoleConstraint(Resource resource, User user, String targetEntity) {
         return Restrictions.conjunction() //
                 .add(getUserRoleConstraint(resource, targetEntity)) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user));
     }
     
-    public static Junction getUserRoleConstraint(Resource<?> resource) {
+    public static Junction getUserRoleConstraint(Resource resource) {
         return Restrictions.disjunction() //
                 .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                 .add(Restrictions.eq("userRole.project", resource.getProject())) //

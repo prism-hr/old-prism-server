@@ -32,7 +32,7 @@ public class CommentDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Comment getLatestComment(Resource<?> resource) {
+    public Comment getLatestComment(Resource resource) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //
@@ -41,7 +41,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource<?> resource, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("action.id", prismActions)) //
@@ -51,7 +51,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource<?> resource, User user, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource resource, User user, PrismAction... prismActions) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("action.id", prismActions)) //
@@ -64,7 +64,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource<?> resource, PrismAction prismAction, DateTime baseline) {
+    public Comment getLatestComment(Resource resource, PrismAction prismAction, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("action.id", prismAction)) //
@@ -75,7 +75,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource<?> resource, PrismAction prismAction, User user, DateTime baseline) {
+    public Comment getLatestComment(Resource resource, PrismAction prismAction, User user, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("action.id", prismAction)) //
@@ -89,7 +89,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getComments(Resource<?> resource, PrismAction[] actions) {
+    public List<Integer> getComments(Resource resource, PrismAction[] actions) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
@@ -148,7 +148,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getTimelineComments(Resource<?> resource) {
+    public List<Comment> getTimelineComments(Resource resource) {
         return getCommentTimelineCriteria() //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
@@ -191,7 +191,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getResourceOwnerComments(Resource<?> resource) {
+    public List<Comment> getResourceOwnerComments(Resource resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
@@ -202,7 +202,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource<?> resource) {
+    public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         String resourceReferenceComment = "comment." + resourceReference;
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //

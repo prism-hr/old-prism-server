@@ -111,7 +111,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return uk.co.alumeni.prism.enums.PrismScope.valueOf(name());
     }
 
-    public Class<? extends Resource<?>> getResourceClass() {
+    public Class<? extends Resource> getResourceClass() {
         return definition.getResourceClass();
     }
 
@@ -161,7 +161,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private static class PrismScopeDefinition {
 
-        private Class<? extends Resource<?>> resourceClass;
+        private Class<? extends Resource> resourceClass;
 
         private Class<?> resourceDTOClass;
 
@@ -179,7 +179,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         private Class<? extends ResourceProcessor<?>> resourcePostprocessor;
 
-        public Class<? extends Resource<?>> getResourceClass() {
+        public Class<? extends Resource> getResourceClass() {
             return resourceClass;
         }
 
@@ -215,7 +215,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             return resourcePostprocessor;
         }
 
-        public PrismScopeDefinition withResourceClass(Class<? extends Resource<?>> resourceClass) {
+        public PrismScopeDefinition withResourceClass(Class<? extends Resource> resourceClass) {
             this.resourceClass = resourceClass;
             return this;
         }

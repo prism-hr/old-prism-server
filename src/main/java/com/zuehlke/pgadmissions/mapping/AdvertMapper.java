@@ -77,7 +77,7 @@ public class AdvertMapper {
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
-        ResourceParent<?> resource = advert.getResource();
+        ResourceParent resource = advert.getResource();
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
         representation.setResource(resourceMapper.getResourceRepresentationSimple(resource));
 
@@ -92,7 +92,7 @@ public class AdvertMapper {
         }
 
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            representation.setOpportunityType(valueOf(((ResourceOpportunity<?>) resource).getOpportunityType().getName()));
+            representation.setOpportunityType(valueOf(((ResourceOpportunity) resource).getOpportunityType().getName()));
         }
 
         representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));

@@ -42,7 +42,7 @@ public class UserFeedbackService {
     private UserService userService;
 
     public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
-        Resource<?> resource = resourceService.getById(userFeedbackDTO.getResourceScope().getResourceClass(), userFeedbackDTO.getResourceId());
+        Resource resource = resourceService.getById(userFeedbackDTO.getResourceScope().getResourceClass(), userFeedbackDTO.getResourceId());
         Action action = actionService.getById(userFeedbackDTO.getAction());
         User user = userService.getCurrentUser();
 

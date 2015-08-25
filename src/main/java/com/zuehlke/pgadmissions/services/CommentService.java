@@ -88,27 +88,27 @@ public class CommentService {
         return entityService.getById(Comment.class, id);
     }
 
-    public Comment getLatestComment(Resource<?> resource) {
+    public Comment getLatestComment(Resource resource) {
         return commentDAO.getLatestComment(resource);
     }
 
-    public Comment getLatestComment(Resource<?> resource, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
         return prismActions.length > 0 ? commentDAO.getLatestComment(resource, prismActions) : null;
     }
 
-    public Comment getLatestComment(Resource<?> resource, User user, PrismAction... prismActions) {
+    public Comment getLatestComment(Resource resource, User user, PrismAction... prismActions) {
         return prismActions.length > 0 ? commentDAO.getLatestComment(resource, user, prismActions) : null;
     }
 
-    public Comment getLatestComment(Resource<?> resource, PrismAction actionId, DateTime baseline) {
+    public Comment getLatestComment(Resource resource, PrismAction actionId, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, baseline);
     }
 
-    public Comment getLatestComment(Resource<?> resource, PrismAction actionId, User user, DateTime baseline) {
+    public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
     }
 
-    public List<Integer> getComments(Resource<?> resource, PrismAction[] actions) {
+    public List<Integer> getComments(Resource resource, PrismAction[] actions) {
         return commentDAO.getComments(resource, actions);
     }
 
@@ -118,7 +118,7 @@ public class CommentService {
         return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
     }
 
-    public void persistComment(Resource<?> resource, Comment comment) {
+    public void persistComment(Resource resource, Comment comment) {
         Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
@@ -247,7 +247,7 @@ public class CommentService {
         }
     }
 
-    public Comment createInterviewPreferenceComment(Resource<?> resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
+    public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
             DateTime baseline) {
         Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
                 .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
@@ -273,7 +273,7 @@ public class CommentService {
         return commentDAO.getAssignedUsers(commentIds, roleIds);
     }
 
-    public List<Comment> getTimelineComments(Resource<?> resource) {
+    public List<Comment> getTimelineComments(Resource resource) {
         return commentDAO.getTimelineComments(resource);
     }
 
@@ -296,7 +296,7 @@ public class CommentService {
         return commentDAO.getDeclinedSupervisors(comment);
     }
 
-    public <T extends ResourceParent<?>, U extends ResourceParentDTO> Comment prepareProcessResourceComment(T resource, User user, Action action,
+    public <T extends ResourceParent, U extends ResourceParentDTO> Comment prepareProcessResourceComment(T resource, User user, Action action,
             U resourceParentDTO, CommentDTO commentDTO) throws Exception {
         String resourceScopeReference = resource.getResourceScope().name();
 
@@ -314,11 +314,11 @@ public class CommentService {
         return comment;
     }
 
-    public List<Comment> getResourceOwnerComments(Resource<?> resource) {
+    public List<Comment> getResourceOwnerComments(Resource resource) {
         return commentDAO.getResourceOwnerComments(resource);
     }
 
-    public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource<?> resource) {
+    public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource resource) {
         return commentDAO.getResourceOwnerCommentAssignedUsers(resource);
     }
 

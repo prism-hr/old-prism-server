@@ -64,7 +64,7 @@ public class DocumentDAO {
                 .executeUpdate();
     }
 
-    public List<Document> getResourceOwnerDocuments(Resource<?> resource) {
+    public List<Document> getResourceOwnerDocuments(Resource resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         String resourceReferenceComment = "comment." + resourceReference;
         return (List<Document>) sessionFactory.getCurrentSession().createCriteria(Document.class) //

@@ -44,7 +44,7 @@ public class Resume extends Application {
         return this;
     }
 
-    public Resume withParentResource(Resource<?> parentResource) {
+    public Resume withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
     }

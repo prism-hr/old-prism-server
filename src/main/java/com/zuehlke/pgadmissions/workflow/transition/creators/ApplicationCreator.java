@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
+// FIXME: send opportunity category from client for department or institution
 @Component
 public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
 
@@ -23,13 +24,13 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
     private ResourceService resourceService;
 
     @Override
-    public Resource<?> create(User user, ApplicationDTO newResource) {
+    public Resource create(User user, ApplicationDTO newResource) {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
-        ResourceParent<?> parentResource = (ResourceParent<?>) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
+        ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
 
         PrismOpportunityCategory opportunityCategory = newResource.getOpportunityCategory();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            opportunityCategory = opportunityCategory == null ? ((ResourceOpportunity<?>) parentResource).getOpportunityCategory() : opportunityCategory;
+            opportunityCategory = opportunityCategory == null ? ((ResourceOpportunity) parentResource).getOpportunityCategory() : opportunityCategory;
         }
 
         return new Application().withScope(APPLICATION.name()).withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert())

@@ -75,7 +75,7 @@ public class ActionService {
         return entityService.getById(Action.class, id);
     }
 
-    public void validateInvokeAction(Resource<?> resource, Action action, Comment comment) {
+    public void validateInvokeAction(Resource resource, Action action, Comment comment) {
         resource = resourceService.getOperativeResource(resource, action);
         if (checkActionAvailable(resource, action, comment.getUser(), comment.getDeclinedResponse())) {
             return;
@@ -83,7 +83,7 @@ public class ActionService {
         throw new WorkflowPermissionException(resource, action);
     }
 
-    public List<ActionDTO> getPermittedActions(Resource<?> resource, User user) {
+    public List<ActionDTO> getPermittedActions(Resource resource, User user) {
         PrismScope resourceScope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope(), SYSTEM);
         return actionDAO.getPermittedActions(resourceScope, Lists.newArrayList(resource.getId()), parentScopes, user);
@@ -102,11 +102,11 @@ public class ActionService {
         return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, exclusions);
     }
 
-    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource<?> resource, PrismAction actionId, User user) {
+    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
         return actionDAO.getGlobalActionEnhancements(resource, actionId, user);
     }
 
-    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource<?> resource, PrismAction actionId, User user) {
+    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, PrismAction actionId, User user) {
         return actionDAO.getCustomActionEnhancements(resource, actionId, user);
     }
 
@@ -118,23 +118,23 @@ public class ActionService {
         return creationActions;
     }
 
-    public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource<?> resource, User user) {
+    public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
         Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
         enhancements.addAll(actionDAO.getGlobalActionEnhancements(resource, user));
         enhancements.addAll(actionDAO.getCustomActionEnhancements(resource, user));
         return Lists.newArrayList(enhancements);
     }
 
-    public ActionOutcomeDTO executeUserAction(Resource<?> resource, Action action, Comment comment) {
+    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) {
         validateInvokeAction(resource, action, comment);
         return executeAction(resource, action, comment);
     }
 
-    public ActionOutcomeDTO executeAction(Resource<?> resource, Action action, Comment comment) {
+    public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) {
         return executeAction(resource, action, comment, true);
     }
 
-    public ActionOutcomeDTO executeActionSilent(Resource<?> resource, Action action, Comment comment) {
+    public ActionOutcomeDTO executeActionSilent(Resource resource, Action action, Comment comment) {
         return executeAction(resource, action, comment, false);
     }
 
@@ -147,11 +147,11 @@ public class ActionService {
         return null;
     }
 
-    public Action getViewEditAction(Resource<?> resource) {
+    public Action getViewEditAction(Resource resource) {
         return actionDAO.getViewEditAction(resource);
     }
 
-    public Action getRedirectAction(Action action, User actionOwner, Resource<?> duplicateResource) {
+    public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
         if (BooleanUtils.isFalse(action.getSystemInvocationOnly())) {
             return actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
         } else {
@@ -167,7 +167,7 @@ public class ActionService {
         return actionDAO.getEscalationActions();
     }
 
-    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource<?> resource, User user, List<PrismRole> overridingRoles) {
+    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource resource, User user, List<PrismRole> overridingRoles) {
         HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
         if (overridingRoles.isEmpty()) {
             List<PrismRole> roleIds = roleService.getRolesForResource(resource, user);
@@ -204,7 +204,7 @@ public class ActionService {
         return actionDAO.getConfigurableActions();
     }
 
-    public void validateViewEditAction(Resource<?> resource, Action action, User invoker) {
+    public void validateViewEditAction(Resource resource, Action action, User invoker) {
         if (checkActionAvailable(resource, action, invoker, false)) {
             return;
         }
@@ -254,18 +254,12 @@ public class ActionService {
         return createResourceActions;
     }
 
-    public List<PrismAction> getPartnerActions(ResourceParent<?> resource) {
+    public List<PrismAction> getPartnerActions(ResourceParent resource) {
         List<PrismActionCondition> actionConditions = resourceService.getActionConditions(resource);
-
-        if (!actionConditions.isEmpty()) {
-            return actionDAO.getPartnerActions(resource, actionConditions);
-        }
-
-        return Lists.newArrayList();
-
+        return !actionConditions.isEmpty() ?  actionDAO.getPartnerActions(resource, actionConditions) : Lists.newArrayList();
     }
 
-    public boolean checkActionAvailable(Resource<?> resource, Action action, User user, boolean declinedResponse) {
+    public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
         if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
             return true;
         } else if (actionDAO.getPermittedUnsecuredAction(resource, action, userService.isCurrentUser(user)) != null) {
@@ -276,11 +270,11 @@ public class ActionService {
         return false;
     }
 
-    private ActionOutcomeDTO executeAction(Resource<?> resource, Action action, Comment comment, boolean notify) {
+    private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) {
         User user = comment.getUser();
 
         if (action.getActionCategory() == CREATE_RESOURCE || action.getActionCategory() == VIEW_EDIT_RESOURCE) {
-            Resource<?> duplicate = entityService.getDuplicateEntity(resource);
+            Resource duplicate = entityService.getDuplicateEntity(resource);
 
             if (duplicate != null) {
                 if (action.getActionCategory() == CREATE_RESOURCE) {
@@ -297,7 +291,7 @@ public class ActionService {
 
         StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
         Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
-        Resource<?> transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
+        Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
         return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
                 .withTransitionAction(transitionAction);

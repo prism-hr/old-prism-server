@@ -181,7 +181,7 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
         this.lastNotifiedDate = lastNotifiedDate;
     }
 
-    public UserNotification withResource(Resource<?> resource) {
+    public UserNotification withResource(Resource resource) {
         setResource(resource);
         return this;
     }

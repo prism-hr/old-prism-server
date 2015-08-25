@@ -24,7 +24,7 @@ public class ResourceImportService {
     @Inject
     private ActionService actionService;
 
-    public Resource<?> importResource(User user, ResourceCreationDTO resourceDTO) {
+    public Resource importResource(User user, ResourceCreationDTO resourceDTO) {
         PrismAction action = null;
         if (resourceDTO.getScope() == INSTITUTION) {
             action = SYSTEM_IMPORT_INSTITUTION;

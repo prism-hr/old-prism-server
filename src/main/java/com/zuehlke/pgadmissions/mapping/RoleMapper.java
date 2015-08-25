@@ -27,7 +27,7 @@ public class RoleMapper {
     @Inject
     private UserService userService;
 
-    public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource<?> resource) {
+    public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource) {
         List<User> users = userService.getResourceUsers(resource);
         List<ResourceUserRolesRepresentation> resourceUserRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
@@ -36,7 +36,7 @@ public class RoleMapper {
         return resourceUserRolesRepresentations;
     }
 
-    private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource<?> resource, User user) {
+    private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user) {
         return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimple(user)).withRoles(
                 roleService.getRolesForResourceStrict(resource, user));
     }

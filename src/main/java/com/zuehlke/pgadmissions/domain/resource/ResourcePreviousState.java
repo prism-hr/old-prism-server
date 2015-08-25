@@ -177,7 +177,7 @@ public class ResourcePreviousState extends ResourceStateDefinition {
         this.createdDate = createdDate;
     }
 
-    public ResourcePreviousState withResource(Resource<?> resource) {
+    public ResourcePreviousState withResource(Resource resource) {
         setResource(resource);
         return this;
     }

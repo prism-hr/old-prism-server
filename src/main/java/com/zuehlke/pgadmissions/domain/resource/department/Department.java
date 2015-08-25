@@ -41,11 +41,10 @@ import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.workflow.user.DepartmentReassignmentProcessor;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "name" }) })
-public class Department extends ResourceParentDivision<DepartmentReassignmentProcessor>implements TargetEntity {
+public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Id
     @GeneratedValue
@@ -532,11 +531,6 @@ public class Department extends ResourceParentDivision<DepartmentReassignmentPro
     public Department withName(String name) {
         this.name = name;
         return this;
-    }
-
-    @Override
-    public Class<DepartmentReassignmentProcessor> getUserReassignmentProcessor() {
-        return DepartmentReassignmentProcessor.class;
     }
 
     @Override

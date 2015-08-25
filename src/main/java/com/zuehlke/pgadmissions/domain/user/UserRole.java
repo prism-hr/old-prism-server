@@ -178,7 +178,7 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
         this.assignedTimestamp = assignedTimestamp;
     }
 
-    public UserRole withResource(Resource<?> resource) {
+    public UserRole withResource(Resource resource) {
         setResource(resource);
         return this;
     }

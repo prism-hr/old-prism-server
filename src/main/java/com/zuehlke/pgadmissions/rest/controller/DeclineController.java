@@ -47,7 +47,7 @@ public class DeclineController {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");
         }
 
-        Resource<?> resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
+        Resource resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
         return resourceMapper.getResourceRepresentationStandard(resource);
     }
 

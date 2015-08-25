@@ -38,11 +38,10 @@ import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.workflow.user.ProjectReassignmentProcessor;
 
 @Entity
 @Table(name = "project")
-public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
+public class Project extends ResourceOpportunity {
 
     @Id
     @GeneratedValue
@@ -574,7 +573,7 @@ public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
         return resourceConditions;
     }
 
-    public Project withParentResource(Resource<?> parentResource) {
+    public Project withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
     }
@@ -652,11 +651,6 @@ public class Project extends ResourceOpportunity<ProjectReassignmentProcessor> {
     @Override
     public void setOpportunityCategories(String opportunityCategories) {
         return;
-    }
-
-    @Override
-    public Class<ProjectReassignmentProcessor> getUserReassignmentProcessor() {
-        return ProjectReassignmentProcessor.class;
     }
 
     @Override

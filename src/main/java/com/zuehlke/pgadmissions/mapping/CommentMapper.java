@@ -69,7 +69,7 @@ public class CommentMapper {
     @Inject
     private RoleService roleService;
 
-    public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource<?> resource, User user) {
+    public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource<?> resource, User user, List<PrismRole> overridingRoles) {
         CommentTimelineRepresentation representations = new CommentTimelineRepresentation();
         List<Comment> transitionComments = commentService.getStateGroupTransitionComments(resource);
 
@@ -78,9 +78,8 @@ public class CommentMapper {
             StateGroup stateGroup = null;
             List<Comment> previousComments = Lists.newArrayList();
 
-            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, user);
             List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
+            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user, overridingRoles);
 
             for (int i = 0; i < transitionCommentCount; i++) {
                 Comment start = transitionComments.get(i);
@@ -159,12 +158,11 @@ public class CommentMapper {
         return null;
     }
 
-    public CommentRepresentation getCommentRepresentationSecured(User user, Comment comment) {
+    public CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles) {
         Resource<?> resource = comment.getResource();
         List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
-        Set<PrismActionRedactionType> redactions = actionService.getRedactions(resource, user).get(comment.getAction().getId());
-        return getCommentRepresentationSecured(user, comment, rolesOverridingRedactions, redactions, creatableRoles);
+        Set<PrismActionRedactionType> redactions = actionService.getRedactions(resource, user, overridingRoles).get(comment.getAction().getId());
+        return getCommentRepresentation(user, comment, overridingRoles, redactions, creatableRoles);
     }
 
     private CommentGroupRepresentation getCommentGroupRepresentation(User user, List<Comment> comments, StateGroup stateGroup, List<PrismRole> overridingRoles,
@@ -175,11 +173,9 @@ public class CommentMapper {
         for (Comment comment : comments) {
             Set<PrismActionRedactionType> commentRedactions = redactions.get(comment.getAction().getId());
             if (comment.isViewEditComment()) {
-                addViewEditCommentRepresentation(user, comment, overridingRoles, commentRedactions, creatableRoles, commentGroup,
-                        batchedViewEditCommentIds, lastViewEditComment);
+                addViewEditCommentRepresentation(user, comment, overridingRoles, commentRedactions, creatableRoles, commentGroup, batchedViewEditCommentIds, lastViewEditComment);
             } else {
-                commentGroup.addComment(getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
-                        creatableRoles));
+                commentGroup.addComment(getCommentRepresentation(user, comment, overridingRoles, commentRedactions, creatableRoles));
             }
         }
         return commentGroup;
@@ -189,7 +185,7 @@ public class CommentMapper {
             List<PrismRole> creatableRoles, CommentGroupRepresentation commentGroup, List<Integer> batchedViewEditCommentIds,
             CommentRepresentation lastViewEditComment) {
         if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
-            CommentRepresentation representation = getCommentRepresentationSecured(user, comment, overridingRoles, commentRedactions,
+            CommentRepresentation representation = getCommentRepresentation(user, comment, overridingRoles, commentRedactions,
                     creatableRoles);
             commentGroup.addComment(representation);
             batchedViewEditCommentIds = Lists.newArrayList(comment.getId());
@@ -208,9 +204,8 @@ public class CommentMapper {
         }
     }
 
-    private CommentRepresentation getCommentRepresentationSecured(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,
-            Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
-        if (!rolesOverridingRedactions.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user)) {
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
+        if (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user)) {
             CommentRepresentation representation = getCommentRepresentationExtended(comment);
             representation.setAssignedUsers(getCommentAssignedUserRepresentations(comment, creatableRoles));
             return representation;

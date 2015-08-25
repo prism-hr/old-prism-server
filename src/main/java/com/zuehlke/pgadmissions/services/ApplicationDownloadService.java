@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -13,10 +15,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -37,6 +41,9 @@ public class ApplicationDownloadService {
 
     @Inject
     private SystemService systemService;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private UserService userService;
@@ -74,6 +81,7 @@ public class ApplicationDownloadService {
             pdfDocument.open();
 
             HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
+            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(APPLICATION, Lists.newArrayList(applicationIds));
             HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers = Maps.newHashMap();
 
             for (Integer applicationId : applicationIds) {
@@ -95,7 +103,7 @@ public class ApplicationDownloadService {
                 try {
                     applicationContext.getBean(ApplicationDownloadBuilder.class)
                             .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))
-                            .build(applicationMapper.getApplicationRepresentationExport(application), pdfDocument, pdfWriter);
+                            .build(applicationMapper.getApplicationRepresentationExport(application, overridingRoles), pdfDocument, pdfWriter);
                 } catch (PdfDocumentBuilderException e) {
                     logger.error("Error building download for application " + application.getCode(), e);
                 }

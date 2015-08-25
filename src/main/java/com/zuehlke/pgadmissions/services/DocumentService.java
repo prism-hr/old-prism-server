@@ -56,7 +56,7 @@ import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcess
 @Transactional
 public class DocumentService {
 
-    private static Logger log = LoggerFactory.getLogger(DocumentService.class);
+    private static Logger logger = LoggerFactory.getLogger(DocumentService.class);
 
     @Value("${context.environment}")
     private String contextEnvironment;
@@ -90,17 +90,17 @@ public class DocumentService {
     }
 
     public Document getById(Integer id, PrismFileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
     }
 
     public Document createDocument(Part uploadStream) throws Exception {
-        try(InputStream iStream = uploadStream.getInputStream()) {
+        try (InputStream iStream = uploadStream.getInputStream()) {
             return create(DOCUMENT, getFileName(uploadStream), Streams.readAll(iStream), uploadStream.getContentType(), null, null);
         }
     }
 
     public Document createImage(Part uploadStream, Integer institutionId, PrismImageCategory imageCategory) throws IOException {
-        try(InputStream iStream = uploadStream.getInputStream()) {
+        try (InputStream iStream = uploadStream.getInputStream()) {
             return createImage(getFileName(uploadStream), Streams.readAll(iStream), uploadStream.getContentType(), institutionId, imageCategory);
         }
     }
@@ -186,7 +186,7 @@ public class DocumentService {
         return documentDAO.getExportDocuments();
     }
 
-    public void exportDocumentToAmazon(Integer documentId) throws IOException, IntegrationException {
+    public void exportDocumentToAmazon(Integer documentId) {
         Document document = getById(documentId);
         if (!document.getExported()) {
             AmazonS3 amazonClient = getAmazonClient();
@@ -253,7 +253,7 @@ public class DocumentService {
                 return null;
             }
         } catch (AmazonServiceException e) {
-            log.error("Could not import data due to missing file: " + bucketName + "/" + fileName);
+            logger.error("Could not import data due to missing file: " + bucketName + "/" + fileName);
         }
 
         return amazonClient.getObject(bucketName, fileName);

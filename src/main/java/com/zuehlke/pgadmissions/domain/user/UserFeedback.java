@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -58,6 +59,10 @@ public class UserFeedback extends WorkflowResourceExecution implements UserAssig
     @JoinColumn(name = "application_id")
     private Application application;
 
+    @ManyToOne
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
+    
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -160,6 +165,16 @@ public class UserFeedback extends WorkflowResourceExecution implements UserAssig
     @Override
     public void setApplication(Application application) {
         this.application = application;
+    }
+
+    @Override
+    public Resume getResume() {
+        return resume;
+    }
+
+    @Override
+    public void setResume(Resume resume) {
+        this.resume = resume;
     }
 
     public User getUser() {

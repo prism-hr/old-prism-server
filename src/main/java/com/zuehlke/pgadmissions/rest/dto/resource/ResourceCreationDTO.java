@@ -6,10 +6,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "scope")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "scope")
 @JsonSubTypes({
+        @Type(value = ApplicationDTO.class, name = "RESUME"),
         @Type(value = ApplicationDTO.class, name = "APPLICATION"),
         @Type(value = ResourceOpportunityDTO.class, name = "PROJECT"),
         @Type(value = ResourceOpportunityDTO.class, name = "PROGRAM"),

@@ -53,6 +53,10 @@ public class ResourceCondition extends WorkflowResourceExecution {
     @JoinColumn(name = "application_id", insertable = false, updatable = false)
     private Application application;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id", insertable = false, updatable = false)
+    private Resume resume;
+
     @Column(name = "action_condition", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionCondition actionCondition;
@@ -128,6 +132,16 @@ public class ResourceCondition extends WorkflowResourceExecution {
     @Override
     public void setApplication(Application application) {
         this.application = application;
+    }
+
+    @Override
+    public Resume getResume() {
+        return resume;
+    }
+
+    @Override
+    public void setResume(Resume resume) {
+        this.resume = resume;
     }
 
     public PrismActionCondition getActionCondition() {

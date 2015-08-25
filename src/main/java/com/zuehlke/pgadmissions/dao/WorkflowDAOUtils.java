@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
@@ -82,6 +84,14 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.in(actionIdReference, RESOURCE_ENDORSE.getActions())) //
                         .add(Restrictions.isNull(commentIdReference)));
+    }
+    
+    public static Junction getCommentExclusionsConstraint(List<Integer> exclusions) {
+        Junction exclusionsConstraint = Restrictions.disjunction();
+        exclusions.forEach(exclusion -> {
+            exclusionsConstraint.add(Restrictions.eq("comment.id", exclusion));
+        });
+        return exclusionsConstraint;
     }
 
 }

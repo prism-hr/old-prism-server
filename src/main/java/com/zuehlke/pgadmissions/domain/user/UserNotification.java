@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
@@ -30,7 +31,8 @@ import com.zuehlke.pgadmissions.workflow.user.UserNotificationReassignmentProces
         @UniqueConstraint(columnNames = { "department_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "user_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "user_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "application_id", "user_id", "notification_definition_id" }) })
+        @UniqueConstraint(columnNames = { "application_id", "user_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "resume_id", "user_id", "notification_definition_id" }) })
 public class UserNotification extends WorkflowResourceExecution implements UserAssignment<UserNotificationReassignmentProcessor> {
 
     @Id
@@ -60,6 +62,10 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -141,6 +147,16 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
         this.application = application;
     }
 
+    @Override
+    public Resume getResume() {
+        return resume;
+    }
+
+    @Override
+    public void setResume(Resume resume) {
+        this.resume = resume;
+    }
+
     public User getUser() {
         return user;
     }
@@ -189,7 +205,7 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
     public Class<UserNotificationReassignmentProcessor> getUserReassignmentProcessor() {
         return UserNotificationReassignmentProcessor.class;
     }
-    
+
     @Override
     public boolean isResourceUserAssignmentProperty() {
         return false;

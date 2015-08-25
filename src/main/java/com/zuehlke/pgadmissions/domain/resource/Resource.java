@@ -138,6 +138,8 @@ public abstract class Resource<T extends PrismUserReassignmentProcessor> impleme
             return (V) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
         case APPLICATION:
             return (V) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
+        case RESUME:
+            return (V) getSystem();
         default:
             throw new UnsupportedOperationException();
         }

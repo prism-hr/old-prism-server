@@ -38,7 +38,7 @@ public class RoleMapper {
 
     private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource<?> resource, User user) {
         return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimple(user)).withRoles(
-                roleService.getRolesForResource(resource, user));
+                roleService.getRolesForResourceStrict(resource, user));
     }
 
 }

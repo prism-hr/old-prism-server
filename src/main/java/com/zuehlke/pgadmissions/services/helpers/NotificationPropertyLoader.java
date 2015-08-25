@@ -103,7 +103,7 @@ public class NotificationPropertyLoader {
 
     public String load(PrismNotificationDefinitionProperty property) throws Exception {
         String value = applicationContext.getBean(property.getBuilder()).build(this);
-        return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
+        return value == null ? "[" + propertyLoader.loadLazy(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.loadLazy(SYSTEM_HELPDESK_REPORT)
                 + ": " + helpdesk + "]" : value;
     }
 
@@ -153,11 +153,11 @@ public class NotificationPropertyLoader {
     private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel)
             throws Exception {
         Map<String, Object> model = Maps.newHashMap();
-        ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.load(linkLabel));
+        ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.loadLazy(linkLabel));
         model.put("link", link);
 
         if (declineLinkLabel != null) {
-            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", url + "&decline=1", "label", propertyLoader.load(declineLinkLabel));
+            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", url + "&decline=1", "label", propertyLoader.loadLazy(declineLinkLabel));
             model.put("declineLink", declineLink);
         }
 

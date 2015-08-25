@@ -215,7 +215,7 @@ public class UserService {
         if (userByEmail != null && !HibernateUtils.sameEntities(userByEmail, user)) {
             BeanPropertyBindingResult errors = new BeanPropertyBindingResult(userDTO, "userDTO");
             PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
-            errors.rejectValue("email", null, propertyLoader.load(PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
+            errors.rejectValue("email", null, propertyLoader.loadLazy(PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
             throw new PrismValidationException("Cannot update user", errors);
         }
 

@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -49,7 +50,7 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaRespon
 @Transactional
 public class ImportedEntityMapper {
 
-    private Map<Resource<?>, PropertyLoader> loaders = Maps.newHashMap();
+    private Map<ResourceDTO, PropertyLoader> loaders = Maps.newHashMap();
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -99,13 +100,14 @@ public class ImportedEntityMapper {
             representation.setName(entity.getName());
         } else {
             Resource resource = institutionNull ? systemService.getSystem() : institution;
-            PropertyLoader loader = loaders.get(resource);
+            ResourceDTO resourceDTO = new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId());
+            PropertyLoader loader = loaders.get(resourceDTO);
             if (loader == null) {
                 loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
-                loaders.put(institution, loader);
+                loaders.put(resourceDTO, loader);
             }
 
-            representation.setName(loader.load(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName()))
+            representation.setName(loader.loadLazy(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName()))
                     .getDisplayProperty()));
         }
 

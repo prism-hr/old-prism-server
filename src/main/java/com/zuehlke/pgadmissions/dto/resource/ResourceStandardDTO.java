@@ -39,7 +39,7 @@ public class ResourceStandardDTO implements Comparable<Object> {
     private String projectName;
 
     private Integer applicationId;
-    
+
     private Integer resumeId;
 
     public Integer getSystemId() {

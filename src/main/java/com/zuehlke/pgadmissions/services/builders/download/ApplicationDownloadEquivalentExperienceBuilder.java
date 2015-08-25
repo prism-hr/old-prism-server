@@ -29,8 +29,8 @@ public class ApplicationDownloadEquivalentExperienceBuilder {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
 
-            PdfPTable body = applicationDownloadBuilderHelper.newSectionHeader(propertyLoader.load(APPLICATION_QUALIFICATION_EQUIVALENT_HEADER));
-            PdfPCell cell = applicationDownloadBuilderHelper.newContentCellMedium(propertyLoader.load(APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE));
+            PdfPTable body = applicationDownloadBuilderHelper.newSectionHeader(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_EQUIVALENT_HEADER));
+            PdfPCell cell = applicationDownloadBuilderHelper.newContentCellMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE));
             cell.setColspan(2);
             body.addCell(cell);
 

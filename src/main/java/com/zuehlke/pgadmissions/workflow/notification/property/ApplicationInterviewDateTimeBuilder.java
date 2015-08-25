@@ -12,7 +12,7 @@ public class ApplicationInterviewDateTimeBuilder implements NotificationProperty
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         return propertyLoader.getNotificationDefinitionModelDTO().getComment()
-                .getInterviewDateTimeDisplay(propertyLoader.getPropertyLoader().load(SYSTEM_DATE_TIME_FORMAT));
+                .getInterviewDateTimeDisplay(propertyLoader.getPropertyLoader().loadLazy(SYSTEM_DATE_TIME_FORMAT));
     }
 
 }

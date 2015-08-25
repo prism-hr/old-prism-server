@@ -47,7 +47,7 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
             return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
         }
 
-        return propertyLoader.getPropertyLoader().load(SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS);
+        return propertyLoader.getPropertyLoader().loadLazy(SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS);
     }
 
 }

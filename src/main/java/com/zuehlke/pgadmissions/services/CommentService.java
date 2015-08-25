@@ -46,7 +46,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
@@ -274,12 +273,8 @@ public class CommentService {
         return commentDAO.getAssignedUsers(commentIds, roleIds);
     }
 
-    public List<Comment> getStateGroupTransitionComments(Resource<?> resource) {
-        return commentDAO.getStateGroupTransitionComments(resource);
-    }
-
-    public List<Comment> getStateComments(Resource<?> resource, Comment start, Comment close, StateGroup stateGroup, List<Comment> exclusions) {
-        return commentDAO.getStateComments(resource, start, close, stateGroup, exclusions);
+    public List<Comment> getTimelineComments(Resource<?> resource) {
+        return commentDAO.getTimelineComments(resource);
     }
 
     public List<User> getAppointmentInvitees(Comment comment) {

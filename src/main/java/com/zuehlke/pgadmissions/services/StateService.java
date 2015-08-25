@@ -118,7 +118,7 @@ public class StateService {
         return entityService.list(StateTransitionEvaluation.class);
     }
 
-    public StateDurationConfiguration getStateDurationConfiguration(Resource<?> resource, User user, StateDurationDefinition definition) {
+    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition definition) {
         return (StateDurationConfiguration) customizationService.getConfiguration(STATE_DURATION, resource, definition);
     }
 
@@ -148,11 +148,11 @@ public class StateService {
         return stateDAO.getStateTransitionsPending(scopeId);
     }
 
-    public StateTransition executeStateTransition(Resource<?> resource, Action action, Comment comment) throws Exception {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws Exception {
         return executeStateTransition(resource, action, comment, true);
     }
 
-    public StateTransition executeStateTransition(Resource<?> resource, Action action, Comment comment, boolean notify) {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment, boolean notify) {
         comment.setResource(resource);
         resourceService.persistResource(resource, comment);
         commentService.persistComment(resource, comment);
@@ -189,15 +189,15 @@ public class StateService {
         return stateTransition;
     }
 
-    public StateTransition getStateTransition(Resource<?> resource, Action action) {
+    public StateTransition getStateTransition(Resource resource, Action action) {
         return stateDAO.getStateTransition(resource, action);
     }
 
-    public StateTransition getStateTransition(Resource<?> resource, Action action, PrismState prismTransitionState) {
+    public StateTransition getStateTransition(Resource resource, Action action, PrismState prismTransitionState) {
         return stateDAO.getStateTransition(resource, action, prismTransitionState);
     }
 
-    public StateTransition getPredefinedStateTransition(Resource<?> resource, Comment comment) {
+    public StateTransition getPredefinedStateTransition(Resource resource, Comment comment) {
         State transitionState = comment.getTransitionState();
         if (transitionState != null) {
             return getStateTransition(resource, comment.getAction(), transitionState.getId());
@@ -205,7 +205,7 @@ public class StateService {
         throw new WorkflowEngineException("Transition state not defined");
     }
 
-    public StateTransition getPredefinedOrCurrentStateTransition(Resource<?> resource, Comment comment) {
+    public StateTransition getPredefinedOrCurrentStateTransition(Resource resource, Comment comment) {
         State transitionState = comment.getTransitionState();
         if (transitionState != null) {
             return getStateTransition(resource, comment.getAction(), transitionState.getId());
@@ -214,7 +214,7 @@ public class StateService {
     }
 
     public void executeDeferredStateTransition(PrismScope resourceScope, Integer resourceId, PrismAction actionId) throws Exception {
-        Resource<?> resource = resourceService.getById(resourceScope, resourceId);
+        Resource resource = resourceService.getById(resourceScope, resourceId);
         Action action = actionService.getById(actionId);
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
@@ -238,18 +238,18 @@ public class StateService {
         return stateDAO.getActiveResourceStates(resourceScope);
     }
 
-    public List<State> getCurrentStates(Resource<?> resource) {
+    public List<State> getCurrentStates(Resource resource) {
         return stateDAO.getCurrentStates(resource);
     }
 
-    public List<PrismState> getRecommendedNextStates(Resource<?> resource) {
+    public List<PrismState> getRecommendedNextStates(Resource resource) {
         String tokens = stateDAO.getRecommendedNextStates(resource);
         return Lists.newArrayList(Splitter.on("|").omitEmptyStrings().split(Strings.nullToEmpty(tokens))).stream()
                 .map(token -> PrismState.valueOf(token))
                 .collect(Collectors.toList());
     }
 
-    public List<PrismState> getSecondaryResourceStates(Resource<?> resource) {
+    public List<PrismState> getSecondaryResourceStates(Resource resource) {
         return stateDAO.getSecondaryResourceStates(resource);
     }
 
@@ -305,8 +305,8 @@ public class StateService {
         }
     }
 
-    private StateTransition getStateTransition(Resource<?> resource, Action action, Comment comment) {
-        Resource<?> operativeResource = resourceService.getOperativeResource(resource, action);
+    private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
+        Resource operativeResource = resourceService.getOperativeResource(resource, action);
 
         List<StateTransition> potentialStateTransitions;
         if (BooleanUtils.isTrue(action.getSystemInvocationOnly())) {
@@ -318,8 +318,8 @@ public class StateService {
         return resolveStateTransition(resource, comment, potentialStateTransitions);
     }
 
-    private List<StateTransition> getSecondaryStateTransitions(Resource<?> resource, Action action, Comment comment) {
-        Resource<?> operativeResource = resourceService.getOperativeResource(resource, action);
+    private List<StateTransition> getSecondaryStateTransitions(Resource resource, Action action, Comment comment) {
+        Resource operativeResource = resourceService.getOperativeResource(resource, action);
 
         List<StateTransition> stateTransitions = Lists.newArrayList();
         List<PrismState> states = getSecondaryResourceStates(operativeResource);
@@ -331,7 +331,7 @@ public class StateService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Resource<?>> StateTransition resolveStateTransition(T resource, Comment comment, List<StateTransition> potentialStateTransitions) {
+    private <T extends Resource> StateTransition resolveStateTransition(T resource, Comment comment, List<StateTransition> potentialStateTransitions) {
         if (potentialStateTransitions.size() > 1) {
             StateTransitionResolver<T> resolver = (StateTransitionResolver<T>) applicationContext.getBean(potentialStateTransitions.get(0)
                     .getStateTransitionEvaluation().getId().getResolver());
@@ -341,7 +341,7 @@ public class StateService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Resource<?>> Set<State> getStateTerminations(T resource, Action action, StateTransition stateTransition) {
+    private <T extends Resource> Set<State> getStateTerminations(T resource, Action action, StateTransition stateTransition) {
         T operative = resourceService.getOperativeResource(resource, action);
         Set<State> stateTerminations = Sets.newHashSet();
         Set<StateTermination> potentialStateTerminations = stateTransition.getStateTerminations();
@@ -359,7 +359,7 @@ public class StateService {
         return stateTerminations;
     }
 
-    private void getOrCreateStateTransitionPending(Resource<?> resource, Action action) {
+    private void getOrCreateStateTransitionPending(Resource resource, Action action) {
         StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withAction(action);
         entityService.getOrCreate(transientTransitionPending);
         entityService.flush();

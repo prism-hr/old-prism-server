@@ -67,7 +67,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getUsersForResourceAndRoles(Resource<?> resource, PrismRole... roleIds) {
+    public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -82,7 +82,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersForResourcesAndRoles(Set<Resource<?>> resources, PrismRole... roleIds) {
+    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -242,7 +242,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getResourceUsers(Resource<?> resource) {
+    public List<User> getResourceUsers(Resource resource) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -271,7 +271,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getBouncedOrUnverifiedUsers(Resource<?> resource, HashMultimap<PrismScope, Integer> administratorResources,
+    public List<User> getBouncedOrUnverifiedUsers(Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
             HashMultimap<PrismScope, PrismScope> expandedScopes, UserListFilterDTO userListFilterDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
@@ -301,7 +301,7 @@ public class UserDAO {
                 .list();
     }
 
-    public User getBouncedOrUnverifiedUser(Integer userId, Resource<?> resource, HashMultimap<PrismScope, Integer> administratorResources,
+    public User getBouncedOrUnverifiedUser(Integer userId, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
             HashMultimap<PrismScope, PrismScope> expandedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
@@ -315,7 +315,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getUsersWithAction(Resource<?> resource, PrismAction... actions) {
+    public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("userRole.user")) //
@@ -408,7 +408,7 @@ public class UserDAO {
                 .executeUpdate();
     }
 
-    private void appendAdministratorResourceConditions(Criteria criteria, Resource<?> resource, HashMultimap<PrismScope, Integer> administratorResources,
+    private void appendAdministratorResourceConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
             HashMultimap<PrismScope, PrismScope> expandedScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         String resourceReference = resourceScope.getLowerCamelName();

@@ -55,17 +55,17 @@ public class CustomizationService {
         return entityService.getById(configurationType.getDefinitionClass(), id);
     }
 
-    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource<?> resource, WorkflowDefinition definition) {
+    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource resource, WorkflowDefinition definition) {
         PrismOpportunityType opportunityType = getConfiguredOpportunityType(resource, null);
         return getConfiguration(configurationType, resource, opportunityType, definition);
     }
 
-    public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource<?> resource) {
+    public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource) {
         PrismOpportunityType opportunityType = getConfiguredOpportunityType(resource, null);
         return customizationDAO.getActiveConfigurationVersion(configurationType, resource, opportunityType);
     }
 
-    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             WorkflowDefinition definition) {
         return customizationDAO.getConfiguration(configurationType, resource, opportunityType, definition);
     }
@@ -80,8 +80,8 @@ public class CustomizationService {
     }
 
     public WorkflowConfigurationRepresentation getConfigurationRepresentation(
-            PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
-        Resource<?> configuredResource = getConfiguredResource(resource);
+            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
+        Resource configuredResource = getConfiguredResource(resource);
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
 
         WorkflowConfiguration<?> configuration = getConfiguration(configurationType, configuredResource, configuredOpportunityType, definition);
@@ -90,14 +90,14 @@ public class CustomizationService {
         return representation;
     }
 
-    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource<?> resource) {
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource) {
         PrismOpportunityType opportunityType = getConfiguredOpportunityType(resource, null);
         return getConfigurationRepresentations(configurationType, resource, resource.getResourceScope(), opportunityType);
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(
-            PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
-        Resource<?> configuredResource = getConfiguredResource(resource);
+            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
+        Resource configuredResource = getConfiguredResource(resource);
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
         List<WorkflowConfiguration<?>> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, configuredOpportunityType,
                 definition);
@@ -105,20 +105,20 @@ public class CustomizationService {
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(
-            PrismConfiguration configurationType, Resource<?> resource, PrismScope scope, PrismOpportunityType opportunityType) {
-        Resource<?> configuredResource = getConfiguredResource(resource);
+            PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType) {
+        Resource configuredResource = getConfiguredResource(resource);
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
         List<WorkflowConfiguration<?>> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope,
                 configuredOpportunityType, false);
         return parseRepresentations(configurationType, configurations);
     }
 
-    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource<?> resource,
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource,
             PrismScope scope, PrismOpportunityType opportunityType, Enum<?> category) {
         return getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category, false);
     }
 
-    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsConfigurationMode(PrismConfiguration configurationType, Resource<?> resource, PrismScope scope,
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsConfigurationMode(PrismConfiguration configurationType, Resource resource, PrismScope scope,
             PrismOpportunityType opportunityType, Enum<?> category) {
         return getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category, true);
     }
@@ -134,7 +134,7 @@ public class CustomizationService {
     }
 
     public WorkflowConfiguration<?> getConfigurationWithOrWithoutVersion(
-            PrismConfiguration configurationType, Resource<?> resource, Enum<?> definitionId, Integer configurationVersion) {
+            PrismConfiguration configurationType, Resource resource, Enum<?> definitionId, Integer configurationVersion) {
         WorkflowPropertyDefinition definition = (WorkflowPropertyDefinition) getDefinitionById(configurationType, definitionId);
 
         WorkflowPropertyConfiguration configuration;
@@ -148,7 +148,7 @@ public class CustomizationService {
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsWithOrWithoutVersion(
-            PrismConfiguration configurationType, Resource<?> resource, Integer configurationVersion) {
+            PrismConfiguration configurationType, Resource resource, Integer configurationVersion) {
         if (configurationVersion == null) {
             return getConfigurationRepresentations(configurationType, resource);
         } else {
@@ -160,30 +160,30 @@ public class CustomizationService {
         return customizationDAO.listDefinitions(configurationType, scope);
     }
 
-    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId) {
         customizationDAO.restoreDefaultConfiguration(configurationType, resource, opportunityType, definitionId);
     }
 
-    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismScope scope, PrismOpportunityType opportunityType) {
+    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType) {
         customizationDAO.restoreDefaultConfiguration(configurationType, resource, scope, opportunityType);
     }
 
-    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId) throws Exception {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, opportunityType, definitionId);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
-    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismScope scope, PrismOpportunityType opportunityType)
+    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType)
             throws Exception {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, scope, opportunityType);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
-    public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource<?> resource, PrismScope scope,
+    public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope,
             PrismOpportunityType opportunityType, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws Exception {
         List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
 
@@ -197,7 +197,7 @@ public class CustomizationService {
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
-    public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws Exception {
 
         createConfigurationGroup(configurationType, resource, opportunityType, definitionId, workflowConfigurationGroupDTO);
@@ -205,7 +205,7 @@ public class CustomizationService {
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
-    public void createConfigurationGroup(PrismConfiguration configurationType, Resource<?> resource, PrismScope scope, PrismOpportunityType opportunityType,
+    public void createConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType,
             List<? extends WorkflowConfigurationDTO> valueDTOs) {
         if (configurationType.isVersioned()) {
             createOrUpdateConfigurationGroupVersion(configurationType, resource, scope, opportunityType, valueDTOs);
@@ -214,7 +214,7 @@ public class CustomizationService {
         }
     }
 
-    public void createConfigurationGroup(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public void createConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws Exception {
         if (configurationType.isVersioned()) {
             createOrUpdateConfigurationGroupVersion(configurationType, resource, opportunityType, definitionId, workflowConfigurationGroupDTO);
@@ -237,13 +237,13 @@ public class CustomizationService {
         return entityService.list(DisplayPropertyConfiguration.class);
     }
 
-    public void createOrUpdateConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public void createOrUpdateConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) {
         WorkflowConfiguration<?> configuration = createConfiguration(configurationType, resource, opportunityType, workflowConfigurationDTO);
         entityService.createOrUpdate(configuration);
     }
 
-    public WorkflowConfiguration<?> createOrUpdateConfigurationUser(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    public WorkflowConfiguration<?> createOrUpdateConfigurationUser(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) throws Exception {
         WorkflowConfiguration<?> configuration = createConfiguration(configurationType, resource, opportunityType, workflowConfigurationDTO);
         resourceService.executeUpdate(resource,
@@ -251,15 +251,15 @@ public class CustomizationService {
         return entityService.createOrUpdate(configuration);
     }
 
-    public boolean isWorkflowConfigurationEnabled(Resource<?> resource, PrismWorkflowPropertyDefinition definition) {
+    public boolean isWorkflowConfigurationEnabled(Resource resource, PrismWorkflowPropertyDefinition definition) {
         WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) getConfigurationWithVersion(WORKFLOW_PROPERTY, definition,
                 resource.getWorkflowPropertyConfigurationVersion());
         return configuration != null && BooleanUtils.isTrue(configuration.getEnabled());
     }
 
-    private List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource<?> resource,
+    private List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource,
             PrismScope scope, PrismOpportunityType opportunityType, Enum<?> category, boolean configurationMode) {
-        Resource<?> configuredResource = getConfiguredResource(resource);
+        Resource configuredResource = getConfiguredResource(resource);
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
         if (configurationType.isCategorizable()) {
             List<WorkflowConfiguration<?>> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope,
@@ -270,7 +270,7 @@ public class CustomizationService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+    private <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) {
         T definition = (T) entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
         WorkflowConfiguration<T> configuration = customizationMapper.getWorkflowConfiguration(workflowConfigurationDTO);
@@ -281,7 +281,7 @@ public class CustomizationService {
         return configuration;
     }
 
-    private Resource<?> getConfiguredResource(Resource<?> resource) {
+    private Resource getConfiguredResource(Resource resource) {
         return resource.getResourceScope().ordinal() > PROJECT.ordinal() ? resource.getParentResource() : resource;
     }
 
@@ -291,7 +291,7 @@ public class CustomizationService {
         } else {
             WorkflowConfiguration<?> stereotype = configurations.get(0);
 
-            Resource<?> stereotypeResource = stereotype.getResource();
+            Resource stereotypeResource = stereotype.getResource();
             PrismOpportunityType stereotypeOpportunityType = stereotype.getOpportunityType();
 
             return configurations.stream()
@@ -303,7 +303,7 @@ public class CustomizationService {
     }
 
     private void createOrUpdateConfigurationGroup(
-            PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             List<? extends WorkflowConfigurationDTO> valueDTOs) {
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
             createOrUpdateConfiguration(configurationType, resource, opportunityType, valueDTO);
@@ -311,21 +311,21 @@ public class CustomizationService {
     }
 
     private void createOrUpdateConfigurationGroupVersion(
-            PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> valueDTOs) {
         restoreDefaultConfiguration(configurationType, resource, opportunityType, definitionId);
         createOrUpdateConfigurationGroupVersion(configurationType, resource, opportunityType, valueDTOs);
     }
 
     private void createOrUpdateConfigurationGroupVersion(
-            PrismConfiguration configurationType, Resource<?> resource, PrismScope scope,
+            PrismConfiguration configurationType, Resource resource, PrismScope scope,
             PrismOpportunityType opportunityType, List<? extends WorkflowConfigurationDTO> valueDTOs) {
         restoreDefaultConfiguration(configurationType, resource, scope, opportunityType);
         createOrUpdateConfigurationGroupVersion(configurationType, resource, opportunityType, valueDTOs);
     }
 
     private void createOrUpdateConfigurationGroupVersion(
-            PrismConfiguration configurationType, Resource<?> resource, PrismOpportunityType opportunityType,
+            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             List<? extends WorkflowConfigurationDTO> valueDTOs) {
         Integer version = null;
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
@@ -347,9 +347,9 @@ public class CustomizationService {
         }
     }
 
-    private PrismOpportunityType getConfiguredOpportunityType(Resource<?> resource, PrismOpportunityType opportunityType) {
+    private PrismOpportunityType getConfiguredOpportunityType(Resource resource, PrismOpportunityType opportunityType) {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ResourceOpportunity<?> resourceOpportunity = (ResourceOpportunity<?>) resource;
+            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
             return PrismOpportunityType.valueOf(resourceOpportunity.getOpportunityType().getName());
         }
         return opportunityType;

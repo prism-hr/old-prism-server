@@ -138,9 +138,9 @@ public class ApplicationMapper {
         ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, null, ApplicationRepresentationClient.class, overridingRoles);
         representation.setPossibleThemes(advertService.getAdvertThemes(application.getAdvert()));
 
-        Resource<?> parent = application.getParentResource();
+        Resource parent = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
-            ResourceOpportunity<?> opportunity = (ResourceOpportunity<?>) parent;
+            ResourceOpportunity opportunity = (ResourceOpportunity) parent;
             List<ImportedEntityResponse> studyOptions = resourceService.getStudyOptions(opportunity).stream()
                     .map(studyOption -> (ImportedEntityResponse) importedEntityMapper.getImportedEntityRepresentation(studyOption))
                     .collect(Collectors.toList());
@@ -179,9 +179,9 @@ public class ApplicationMapper {
         representation.setUserInstitutionIdentity(userMapper.getUserInstitutionIdentityRepresentation(application.getUser(), application.getInstitution(),
                 STUDY_APPLICANT));
 
-        ResourceParent<?> parentResource = application.getParentResource();
+        ResourceParent parentResource = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            ResourceStudyOptionInstance resourceStudyOptionInstance = resourceService.getFirstStudyOptionInstance((ResourceOpportunity<?>) parentResource,
+            ResourceStudyOptionInstance resourceStudyOptionInstance = resourceService.getFirstStudyOptionInstance((ResourceOpportunity) parentResource,
                     application.getProgramDetail().getStudyOption());
             representation.setResourceStudyOptionInstance(resourceStudyOptionInstance == null ? null : resourceMapper
                     .getResourceStudyOptionInstanceRepresentation(resourceStudyOptionInstance));

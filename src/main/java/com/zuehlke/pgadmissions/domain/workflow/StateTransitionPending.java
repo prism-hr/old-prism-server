@@ -147,7 +147,7 @@ public class StateTransitionPending extends WorkflowResourceExecution {
         this.action = action;
     }
 
-    public StateTransitionPending withResource(Resource<?> resource) {
+    public StateTransitionPending withResource(Resource resource) {
         setResource(resource);
         return this;
     }

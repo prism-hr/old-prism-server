@@ -128,9 +128,9 @@ public class ApplicationSectionService {
 
         PrismOpportunityType prismOpportunityType = programDetailDTO.getOpportunityType();
         if (prismOpportunityType == null) {
-            ResourceParent<?> parent = (ResourceParent<?>) application.getParentResource();
+            ResourceParent parent = (ResourceParent) application.getParentResource();
             if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
-                ImportedEntitySimple opportunityType = ((ResourceOpportunity<?>) parent).getOpportunityType();
+                ImportedEntitySimple opportunityType = ((ResourceOpportunity) parent).getOpportunityType();
                 setOpportunityType(application, programDetail, opportunityType);
             } else {
                 application.setOpportunityCategory(programDetailDTO.getOpportunityCategory());

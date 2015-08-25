@@ -10,20 +10,20 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
-public class ResourceDetailsEvaluator implements ResourceCompletenessEvaluator<ResourceParent<?>> {
+public class ResourceDetailsEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {
 
     @Inject
     private AdvertService advertService;
 
     @Override
-    public boolean evaluate(ResourceParent<?> resource) {
+    public boolean evaluate(ResourceParent resource) {
         if (resource.getClass().equals(Institution.class)) {
             return verifySummary(resource) && ((Institution) resource).getLogoImage() != null;
         }
         return verifySummary(resource);
     }
 
-    private boolean verifySummary(ResourceParent<?> resource) {
+    private boolean verifySummary(ResourceParent resource) {
         Advert advert = resource.getAdvert();
         return !(advert.getSummary() == null || advert.getTelephone() == null || advertService.getBackgroundImage(advert) == null);
     }

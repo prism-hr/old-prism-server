@@ -128,7 +128,7 @@ public class NotificationPropertyLoader {
     }
 
     public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws Exception {
-        Resource<?> resource = notificationDefinitionModelDTO.getResource();
+        Resource resource = notificationDefinitionModelDTO.getResource();
         String url = buildRedirectionUrl(resource, notificationDefinitionModelDTO.getTransitionAction(), notificationDefinitionModelDTO.getUser());
         return buildRedirectionControl(url, linkLabel, declineLinkLabel);
     }
@@ -144,8 +144,8 @@ public class NotificationPropertyLoader {
         return Joiner.on(", ").join(assigneeStrings);
     }
 
-    public String buildRedirectionUrl(Resource<?> resource, PrismAction actionId, User user) {
-        Resource<?> operative = (Resource<?>) PrismReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
+    public String buildRedirectionUrl(Resource resource, PrismAction actionId, User user) {
+        Resource operative = (Resource) PrismReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
         return applicationApiUrl + "/mail/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
     }

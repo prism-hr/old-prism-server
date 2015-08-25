@@ -62,7 +62,7 @@ public class NotificationDAO {
                 .executeUpdate();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualRequestDefinitions(Resource<?> resource, LocalDate baseline, List<Integer> exclusions) {
+    public List<UserNotificationDefinitionDTO> getIndividualRequestDefinitions(Resource resource, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -96,7 +96,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource<?> resource, Action action, List<Integer> exclusions, Set<User> userExclusions) {
+    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, List<Integer> exclusions, Set<User> userExclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class) //
                 .setProjection(Projections.projectionList() //
@@ -132,7 +132,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualReminderDefinitions(Resource<?> resource, LocalDate baseline, List<Integer> exclusions) {
+    public List<UserNotificationDefinitionDTO> getIndividualReminderDefinitions(Resource resource, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -166,7 +166,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getSyndicatedRequestDefinitions(Resource<?> resource, LocalDate baseline, List<Integer> exclusions) {
+    public List<UserNotificationDefinitionDTO> getSyndicatedRequestDefinitions(Resource resource, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -201,7 +201,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getSyndicatedUpdateDefinitions(Resource<?> resource, Action action, User invoker, LocalDate baseline, List<Integer> exclusions) {
+    public List<UserNotificationDefinitionDTO> getSyndicatedUpdateDefinitions(Resource resource, Action action, User invoker, LocalDate baseline, List<Integer> exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(CommentState.class) //
                 .setProjection(Projections.projectionList() //
@@ -256,7 +256,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public UserNotification getUserNotification(Resource<?> resource, User user, NotificationDefinition notificationDefinition) {
+    public UserNotification getUserNotification(Resource resource, User user, NotificationDefinition notificationDefinition) {
         return (UserNotification) sessionFactory.getCurrentSession().createCriteria(UserNotification.class)
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource))
                 .add(Restrictions.eq("user", user))
@@ -264,7 +264,7 @@ public class NotificationDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getRecentSyndicatedUserNotifications(Resource<?> resource, User user, LocalDate baseline) {
+    public List<Integer> getRecentSyndicatedUserNotifications(Resource resource, User user, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserNotification.class)
                 .setProjection(Projections.property("id")) //
                 .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //

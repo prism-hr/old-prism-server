@@ -318,7 +318,7 @@ public class Advert implements UniqueEntity {
     }
 
     public boolean isImported() {
-        ResourceOpportunity<?> resource = getResourceOpportunity();
+        ResourceOpportunity resource = getResourceOpportunity();
         return resource == null ? false : resource.getImportedCode() != null;
     }
 
@@ -327,21 +327,19 @@ public class Advert implements UniqueEntity {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public ResourceParent<?> getResource() {
+    public ResourceParent getResource() {
         return ObjectUtils.firstNonNull(getResourceOpportunity(), department, institution);
     }
 
-    public void setResource(Resource<?> resource) {
+    public void setResource(Resource resource) {
         this.institution = resource.getInstitution();
         this.department = resource.getDepartment();
         this.program = resource.getProgram();
         this.project = resource.getProject();
     }
 
-    @SuppressWarnings("unchecked")
-    public ResourceOpportunity<?> getResourceOpportunity() {
-        return ObjectUtils.firstNonNull(project, program);
+    public ResourceOpportunity getResourceOpportunity() {
+        return (ResourceOpportunity) ObjectUtils.firstNonNull(project, program);
     }
 
     public boolean isAdvertOfScope(PrismScope scope) {

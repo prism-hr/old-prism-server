@@ -38,11 +38,10 @@ import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.workflow.user.ProgramReassignmentProcessor;
 
 @Entity
 @Table(name = "program")
-public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
+public class Program extends ResourceOpportunity {
 
     @Id
     @GeneratedValue
@@ -86,7 +85,7 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
     @ManyToOne
     @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
     private ImportedEntitySimple opportunityType;
-    
+
     @Column(name = "opportunity_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismOpportunityCategory opportunityCategory;
@@ -573,7 +572,7 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
         return adverts;
     }
 
-    public Program withParentResource(Resource<?> parentResource) {
+    public Program withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
     }
@@ -662,15 +661,10 @@ public class Program extends ResourceOpportunity<ProgramReassignmentProcessor> {
     public String getOpportunityCategories() {
         return null;
     }
-    
+
     @Override
     public void setOpportunityCategories(String opportunityCategories) {
         return;
-    }
-    
-    @Override
-    public Class<ProgramReassignmentProcessor> getUserReassignmentProcessor() {
-        return ProgramReassignmentProcessor.class;
     }
 
     @Override

@@ -75,13 +75,12 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
-import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
 @Service
 @Transactional
 public class UserService {
 
-    private HashMultimap<Class<? extends UserAssignment<?>>, String> userAssignments = HashMultimap.create();
+    private HashMultimap<Class<? extends UniqueEntity>, String> userAssignments = HashMultimap.create();
 
     @Inject
     private UserDAO userDAO;
@@ -134,11 +133,11 @@ public class UserService {
             if (entityClass != null) {
                 Set<String> userProperties = getUserAssignments(entityClass, null);
                 boolean isUserAssignment = !userProperties.isEmpty();
-                if (UserAssignment.class.isAssignableFrom(entityClass)) {
+                if (UserAssignment.class.isAssignableFrom(entityClass) || Resource.class.isAssignableFrom(entityClass)) {
                     if (!isUserAssignment) {
                         throw new Exception(entityClass.getSimpleName() + " is not a user assignment. It must not have a user reassignment module");
                     }
-                    userAssignments.putAll((Class<? extends UserAssignment<?>>) entityClass, userProperties);
+                    userAssignments.putAll((Class<? extends UniqueEntity>) entityClass, userProperties);
                 } else if (isUserAssignment) {
                     throw new Exception(entityClass.getSimpleName() + " is a user assignment. It must have a user reassignment module");
                 }
@@ -172,7 +171,7 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource<?> resource, List<PrismRole> roles)
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, List<PrismRole> roles)
             throws Exception {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.assignUserRoles(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
@@ -198,7 +197,7 @@ public class UserService {
         });
     }
 
-    public Set<String> getUserProperties(Class<? extends UserAssignment<?>> userAssignmentClass) {
+    public Set<String> getUserProperties(Class<? extends UniqueEntity> userAssignmentClass) {
         return userAssignments.get(userAssignmentClass);
     }
 
@@ -292,11 +291,11 @@ public class UserService {
         return userDAO.getLinkedUserAccounts(user);
     }
 
-    public List<User> getUsersForResourceAndRoles(Resource<?> resource, PrismRole... roleIds) {
+    public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
         return userDAO.getUsersForResourceAndRoles(resource, roleIds);
     }
 
-    public List<User> getUsersForResourcesAndRoles(Set<Resource<?>> resources, PrismRole... roleIds) {
+    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
         return userDAO.getUsersForResourcesAndRoles(resources, roleIds);
     }
 
@@ -361,7 +360,7 @@ public class UserService {
         return Lists.newArrayList();
     }
 
-    public List<User> getResourceUsers(Resource<?> resource) {
+    public List<User> getResourceUsers(Resource resource) {
         return userDAO.getResourceUsers(resource);
     }
 
@@ -381,7 +380,7 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public List<User> getBouncedOrUnverifiedUsers(Resource<?> resource, UserListFilterDTO userListFilterDTO) {
+    public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
         HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
         if (!administratorResources.isEmpty()) {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
@@ -390,7 +389,7 @@ public class UserService {
         return Lists.<User> newArrayList();
     }
 
-    public void correctBouncedOrUnverifiedUser(Resource<?> resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
+    public void correctBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
         HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
 
@@ -411,7 +410,7 @@ public class UserService {
         }
     }
 
-    public List<User> getUsersWithAction(Resource<?> resource, PrismAction... actions) {
+    public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
         return userDAO.getUsersWithAction(resource, actions);
     }
 
@@ -491,7 +490,7 @@ public class UserService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends UserAssignment<?> & UniqueEntity> boolean mergeUserAssignment(T oldAssignment, User newUser, String userProperty) {
+    public <T extends UniqueEntity> boolean mergeUserAssignment(T oldAssignment, User newUser, String userProperty) {
         EntitySignature newSignature;
         try {
             newSignature = oldAssignment.getEntitySignature().clone();
@@ -514,14 +513,20 @@ public class UserService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void mergeUsers(User oldUser, User newUser) {
-        Set<Class<? extends PrismUserReassignmentProcessor>> calledProcessors = Sets.newHashSet();
-        for (Entry<Class<? extends UserAssignment<?>>, String> userAssignmentEntry : userAssignments.entries()) {
-            UserAssignment<?> userAssignment = BeanUtils.instantiate(userAssignmentEntry.getKey());
-            Class<? extends PrismUserReassignmentProcessor> processor = userAssignment.getUserReassignmentProcessor();
-            if (!calledProcessors.contains(processor)) {
+        for (Entry<Class<? extends UniqueEntity>, String> userAssignmentEntry : userAssignments.entries()) {
+            Class<? extends UniqueEntity> userAssignmentClass = userAssignmentEntry.getKey();
+            if (UserAssignment.class.isAssignableFrom(userAssignmentClass)) {
+                UserAssignment<?> userAssignment = BeanUtils.instantiate((Class<? extends UserAssignment<?>>) userAssignmentClass);
                 applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAssignmentEntry.getValue());
-                calledProcessors.add(processor);
+            } else if (Resource.class.isAssignableFrom(userAssignmentClass)) {
+                Resource resource = BeanUtils.instantiate((Class<? extends Resource>) userAssignmentClass);
+                resourceService.getResourcesByUser(resource.getResourceScope(), oldUser).forEach(resourceAssigment -> {
+                    resourceService.reassignResource(resource, newUser, userAssignmentEntry.getValue());
+                });
+            } else {
+                throw new Error("Attempted to merge invalid role assignment");
             }
         }
     }

@@ -15,17 +15,16 @@ public abstract class ResourceOpportunityAttribute implements UniqueEntity {
 
     public abstract void setProject(Project project);
 
-    @SuppressWarnings("unchecked")
-    public ResourceParent<?> getResource() {
+    public ResourceParent getResource() {
         return ObjectUtils.firstNonNull(getProject(), getProgram());
     }
 
-    public void setResource(ResourceParent<?> resource) {
+    public void setResource(ResourceParent resource) {
         PrismReflectionUtils.invokeMethod(this, "set" + resource.getResourceScope().getUpperCamelName(), resource);
     }
 
     public EntitySignature getEntitySignature() {
-        ResourceParent<?> resource = getResource();
+        ResourceParent resource = getResource();
         return new EntitySignature().addProperty(resource.getResourceScope().getLowerCamelName(), resource);
     }
 

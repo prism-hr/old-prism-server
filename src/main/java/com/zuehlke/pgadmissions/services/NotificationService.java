@@ -92,12 +92,12 @@ public class NotificationService {
         return entityService.getByProperty(NotificationDefinition.class, "id", id);
     }
 
-    public Integer getReminderInterval(Resource<?> resource, User user, NotificationDefinition definition) {
+    public Integer getReminderInterval(Resource resource, User user, NotificationDefinition definition) {
         NotificationConfiguration configuration = getNotificationConfiguration(resource, user, definition);
         return configuration == null ? 1 : configuration.getReminderInterval();
     }
 
-    public NotificationConfiguration getNotificationConfiguration(Resource<?> resource, User user, NotificationDefinition definition) {
+    public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
         return (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, resource, definition);
     }
 
@@ -116,7 +116,7 @@ public class NotificationService {
         notificationDAO.deleteObsoleteNotificationConfigurations(getWorkflowDefinitions());
     }
 
-    public void sendWorkflowNotifications(Resource<?> resource, Comment comment) {
+    public void sendWorkflowNotifications(Resource resource, Comment comment) {
         User author = systemService.getSystem().getUser();
         LocalDate baseline = new LocalDate();
         Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, author, baseline);
@@ -126,7 +126,7 @@ public class NotificationService {
 
     public void sendIndividualRequestReminders(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {
         User author = systemService.getSystem().getUser();
-        Resource<?> resource = resourceService.getById(resourceScope, resourceId);
+        Resource resource = resourceService.getById(resourceScope, resourceId);
 
         List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
         List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualReminderDefinitions(resource, baseline, exclusions);
@@ -153,7 +153,7 @@ public class NotificationService {
 
     public void sendSyndicatedRequestNotifications(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {
         System system = systemService.getSystem();
-        Resource<?> resource = resourceService.getById(resourceScope, resourceId);
+        Resource resource = resourceService.getById(resourceScope, resourceId);
 
         List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getSyndicatedRequestDefinitions(resource, baseline, exclusions);
@@ -187,7 +187,7 @@ public class NotificationService {
 
     public void sendSyndicatedUpdateNotifications(PrismScope resourceScope, Integer resourceId, Comment transitionComment, LocalDate baseline) {
         System system = systemService.getSystem();
-        Resource<?> resource = resourceService.getById(resourceScope, resourceId);
+        Resource resource = resourceService.getById(resourceScope, resourceId);
 
         Action action = transitionComment.getAction();
         User invoker = transitionComment.getActionOwner();
@@ -292,7 +292,7 @@ public class NotificationService {
         return (List<PrismNotificationDefinition>) (List<?>) customizationService.getDefinitions(PrismConfiguration.NOTIFICATION, scope);
     }
 
-    public void resetNotifications(Resource<?> resource) {
+    public void resetNotifications(Resource resource) {
         resource.setLastRemindedRequestIndividual(null);
         resource.setLastRemindedRequestSyndicated(null);
         resource.setLastNotifiedUpdateSyndicated(null);
@@ -316,7 +316,7 @@ public class NotificationService {
         notificationDAO.resetNotifications(user, individualDefinitions);
     }
 
-    private Set<User> sendIndividualRequestNotifications(Resource<?> resource, Comment comment, User author, LocalDate baseline) {
+    private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
         Set<User> recipients = Sets.newHashSet();
 
         List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
@@ -339,7 +339,7 @@ public class NotificationService {
         return recipients;
     }
 
-    private void sendIndividualUpdateNotifications(Resource<?> resource, Comment comment, User author, Set<User> userExclusions) {
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> userExclusions) {
         List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
         List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), exclusions, userExclusions);
 
@@ -369,7 +369,7 @@ public class NotificationService {
         applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
     }
 
-    public void createOrUpdateUserNotification(Resource<?> resource, User user, NotificationDefinition definition, LocalDate baseline) {
+    public void createOrUpdateUserNotification(Resource resource, User user, NotificationDefinition definition, LocalDate baseline) {
         entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(user).withNotificationDefinition(definition)
                 .withLastNotifiedDate(baseline));
     }

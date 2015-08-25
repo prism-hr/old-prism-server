@@ -60,7 +60,7 @@ public class ApplicationExecutor implements ActionExecutor {
         if (isCompleteAction) {
             BeanPropertyBindingResult errors = applicationService.validateApplication(application);
             if (errors.hasErrors()) {
-                throw new PrismValidationException("Application not completed", errors);
+                throw new PrismValidationException("ApplicationTemplate not completed", errors);
             }
 
             application.setRetain(commentDTO.getApplicationRetain());

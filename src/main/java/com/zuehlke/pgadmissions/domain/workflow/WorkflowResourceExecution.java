@@ -17,8 +17,7 @@ public abstract class WorkflowResourceExecution extends WorkflowResource {
     public abstract void setResume(Resume resume);
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Resource<?> getResource() {
+    public Resource getResource() {
         return firstNonNull(super.getResource(), getApplication(), getResume());
     }
 

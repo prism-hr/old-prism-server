@@ -531,7 +531,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment withResource(Resource<?> resource) {
+    public Comment withResource(Resource resource) {
         setResource(resource);
         return this;
     }

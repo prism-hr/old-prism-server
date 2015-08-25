@@ -86,13 +86,16 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProject
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWithdrawn;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.resume.PrismResumeCompleteConcealed;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.resume.PrismResumeCompletePublished;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.resume.PrismResumeIncomplete;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.system.PrismSystemRunning;
 
 public enum PrismState {
     
-    RESUME_INCOMPLETE(PrismStateGroup.RESUME_INCOMPLETE, null, null, null),
-    RESUME_COMPLETE_PUBLISHED(PrismStateGroup.RESUME_COMPLETE, null, null, null),
-    RESUME_COMPLETE_CONCEALED(PrismStateGroup.RESUME_COMPLETE, null, null, null),
+    RESUME_INCOMPLETE(PrismStateGroup.RESUME_INCOMPLETE, null, null, PrismResumeIncomplete.class),
+    RESUME_COMPLETE_PUBLISHED(PrismStateGroup.RESUME_COMPLETE, null, null, PrismResumeCompletePublished.class),
+    RESUME_COMPLETE_CONCEALED(PrismStateGroup.RESUME_COMPLETE, null, null, PrismResumeCompleteConcealed.class),
     RESUME_RETIRED(PrismStateGroup.RESUME_RETIRED, null, null, null), 
     
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,

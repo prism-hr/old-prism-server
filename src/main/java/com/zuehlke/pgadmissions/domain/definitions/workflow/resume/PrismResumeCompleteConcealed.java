@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.resume.PrismR
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
-public class PrismResumeCompletedConcealed extends PrismWorkflowState {
+public class PrismResumeCompleteConcealed extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {

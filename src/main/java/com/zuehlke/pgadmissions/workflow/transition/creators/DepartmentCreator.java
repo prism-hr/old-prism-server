@@ -31,7 +31,7 @@ public class DepartmentCreator implements ResourceCreator<DepartmentDTO> {
     private ResourceCreatorUtils resourceCreatorUtils;
 
     @Override
-    public Resource<?> create(User user, DepartmentDTO newResource) {
+    public Resource create(User user, DepartmentDTO newResource) {
         Institution institution = resourceCreatorUtils.getParentResource(newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();

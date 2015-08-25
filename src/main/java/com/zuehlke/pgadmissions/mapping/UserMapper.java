@@ -77,7 +77,7 @@ public class UserMapper {
         return representation;
     }
 
-    public List<UserRepresentationUnverified> getUserUnverifiedRepresentations(Resource<?> resource, UserListFilterDTO filterDTO) {
+    public List<UserRepresentationUnverified> getUserUnverifiedRepresentations(Resource resource, UserListFilterDTO filterDTO) {
         String noDiagnosis = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem()).loadLazy(SYSTEM_NO_DIAGNOSTIC_INFORMATION);
 
         List<User> users = userService.getBouncedOrUnverifiedUsers(resource, filterDTO);

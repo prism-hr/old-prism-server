@@ -142,13 +142,13 @@ public class DocumentService {
         }
     }
 
-    public List<Document> getResourceOwnerDocuments(Resource<?> resource) {
+    public List<Document> getResourceOwnerDocuments(Resource resource) {
         return documentDAO.getResourceOwnerDocuments(resource);
     }
 
     public void validateDownload(Document document) {
         User user = userService.getCurrentUser();
-        Resource<?> resource = document.getResource();
+        Resource resource = document.getResource();
         if (!user.getId().equals(document.getUser().getId())) {
             Action viewEditAction = actionService.getViewEditAction(resource);
             actionService.validateViewEditAction(resource, viewEditAction, user);

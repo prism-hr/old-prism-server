@@ -26,15 +26,14 @@ import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.workflow.user.SystemReassignmentProcessor;
 
 @Entity
 @Table(name = "system")
-public class System extends Resource<SystemReassignmentProcessor> {
+public class System extends Resource {
 
     @Id
     private Integer id;
-    
+
     @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", unique = true)
@@ -447,11 +446,6 @@ public class System extends Resource<SystemReassignmentProcessor> {
 
     public boolean isDocumentExportEnabled() {
         return !(amazonAccessKey == null || amazonSecretKey == null);
-    }
-
-    @Override
-    public Class<SystemReassignmentProcessor> getUserReassignmentProcessor() {
-        return SystemReassignmentProcessor.class;
     }
 
     @Override

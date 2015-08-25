@@ -145,7 +145,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             errors.pushNestedPath("programDetail");
             LocalDate startDate = programDetail.getStartDate();
 
-            ResourceOpportunity<?> opportunity = (ResourceOpportunity<?>) application.getParentResource();
+            ResourceOpportunity opportunity = (ResourceOpportunity) application.getParentResource();
             ResourceStudyOption studyOption = resourceService.getStudyOption(opportunity, programDetail.getStudyOption());
 
             if (studyOption == null) {
@@ -206,9 +206,13 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
         if (personalDetail != null) {
             ApplicationDemographic demographic = personalDetail.getDemographic();
-
-            validateRequiredConstraint(demographic.getEthnicity(), "personalDetail", "ethnicity", configuration, errors);
-            validateRequiredConstraint(demographic.getDisability(), "personalDetail", "disability", configuration, errors);
+            if (demographic == null) {
+                setValidationMessage("personalDetail", "ethnicity", errors);
+                setValidationMessage("personalDetail", "disability", errors);
+            } else {
+                validateRequiredConstraint(demographic.getEthnicity(), "personalDetail", "ethnicity", configuration, errors);
+                validateRequiredConstraint(demographic.getDisability(), "personalDetail", "disability", configuration, errors);
+            }
         }
     }
 
@@ -264,13 +268,17 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     private void validateRequiredConstraint(Object object, String parentProperty, String property, WorkflowPropertyConfiguration configuration, Errors errors) {
         if (BooleanUtils.isTrue(configuration.getEnabled())) {
             if (BooleanUtils.isTrue(configuration.getRequired()) && object == null) {
-                errors.pushNestedPath(parentProperty);
-                errors.rejectValue(property, "notNull");
-                errors.popNestedPath();
+                setValidationMessage(parentProperty, property, errors);
             }
         } else if (object != null) {
             throw new Error();
         }
+    }
+
+    private void setValidationMessage(String parentProperty, String property, Errors errors) {
+        errors.pushNestedPath(parentProperty);
+        errors.rejectValue(property, "notNull");
+        errors.popNestedPath();
     }
 
 }

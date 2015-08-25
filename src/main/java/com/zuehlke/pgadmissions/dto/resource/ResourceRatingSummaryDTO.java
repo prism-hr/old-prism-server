@@ -4,7 +4,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public class ResourceRatingSummaryDTO {
 
-    private Resource<?> resource;
+    private Resource resource;
 
     private Long ratingCount;
 
@@ -12,11 +12,11 @@ public class ResourceRatingSummaryDTO {
 
     private Double ratingAverage;
 
-    public Resource<?> getResource() {
+    public Resource getResource() {
         return resource;
     }
 
-    public void setResource(Resource<?> resource) {
+    public void setResource(Resource resource) {
         this.resource = resource;
     }
 

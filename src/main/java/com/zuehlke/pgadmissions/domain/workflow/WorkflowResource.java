@@ -37,18 +37,17 @@ public abstract class WorkflowResource implements UniqueEntity {
 
     public abstract void setProject(Project project);
 
-    @SuppressWarnings("unchecked")
-    public Resource<?> getResource() {
+    public Resource getResource() {
         return firstNonNull(getSystem(), getInstitution(), getDepartment(), getProgram(), getProject());
     }
 
-    public void setResource(Resource<?> resource) {
+    public void setResource(Resource resource) {
         invokeMethod(this, "set" + resource.getResourceScope().getUpperCamelName(), resource);
     }
 
     @Override
     public EntitySignature getEntitySignature() {
-        Resource<?> resource = getResource();
+        Resource resource = getResource();
         return new EntitySignature().addProperty(resource.getResourceScope().getLowerCamelName(), resource);
     }
 

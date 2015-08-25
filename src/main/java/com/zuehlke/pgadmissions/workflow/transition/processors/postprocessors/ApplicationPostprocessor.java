@@ -125,7 +125,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         entityService.flush();
 
         scopeService.getParentScopesDescending(APPLICATION, INSTITUTION).forEach(scope -> {
-            ResourceParent<?> parent = (ResourceParent<?>) application.getEnclosingResource(scope);
+            ResourceParent parent = (ResourceParent) application.getEnclosingResource(scope);
             ResourceRatingSummaryDTO parentRatingSummary = applicationService.getApplicationRatingSummary(parent);
             Integer ratingCount = parentRatingSummary.getRatingCount().intValue();
             Integer ratingApplications = parentRatingSummary.getRatingResources().intValue();

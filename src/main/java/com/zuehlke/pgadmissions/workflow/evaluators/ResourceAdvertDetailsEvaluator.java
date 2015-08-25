@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 
 @Component
-public class ResourceAdvertDetailsEvaluator implements ResourceCompletenessEvaluator<ResourceParent<?>> {
+public class ResourceAdvertDetailsEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {
 
     @Override
-    public boolean evaluate(ResourceParent<?> resource) {
+    public boolean evaluate(ResourceParent resource) {
         return resource.getAdvert().getDescription() != null;
     }
 

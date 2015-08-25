@@ -177,7 +177,7 @@ public class ResourceState extends ResourceStateDefinition {
         this.primaryState = primaryState;
     }
 
-    public ResourceState withResource(Resource<?> resource) {
+    public ResourceState withResource(Resource resource) {
         setResource(resource);
         return this;
     }

@@ -219,7 +219,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         this.systemDefault = systemDefault;
     }
 
-    public WorkflowPropertyConfiguration withResource(Resource<?> resource) {
+    public WorkflowPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }

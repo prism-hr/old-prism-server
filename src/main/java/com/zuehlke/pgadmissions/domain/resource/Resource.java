@@ -15,13 +15,11 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
-public abstract class Resource<T extends PrismUserReassignmentProcessor> implements UniqueEntity, UserAssignment<T> {
+public abstract class Resource implements UniqueEntity {
 
     public abstract Integer getId();
 
@@ -95,7 +93,7 @@ public abstract class Resource<T extends PrismUserReassignmentProcessor> impleme
 
     public abstract Integer getWorkflowPropertyConfigurationVersion();
 
-    public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion);
+    public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion);
 
     public abstract String getSequenceIdentifier();
 
@@ -124,28 +122,28 @@ public abstract class Resource<T extends PrismUserReassignmentProcessor> impleme
     }
 
     @SuppressWarnings("unchecked")
-    public <V extends Resource<?>> V getParentResource() {
+    public <T extends Resource> T getParentResource() {
         switch (getResourceScope()) {
         case SYSTEM:
-            return (V) this;
+            return (T) this;
         case INSTITUTION:
-            return (V) getSystem();
+            return (T) getSystem();
         case DEPARTMENT:
-            return (V) getInstitution();
+            return (T) getInstitution();
         case PROGRAM:
-            return (V) ObjectUtils.firstNonNull(getDepartment(), getInstitution());
+            return (T) ObjectUtils.firstNonNull(getDepartment(), getInstitution());
         case PROJECT:
-            return (V) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
+            return (T) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
         case APPLICATION:
-            return (V) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
+            return (T) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
         case RESUME:
-            return (V) getSystem();
+            return (T) getSystem();
         default:
             throw new UnsupportedOperationException();
         }
     }
 
-    public void setParentResource(Resource<?> parentResource) {
+    public void setParentResource(Resource parentResource) {
         if (parentResource.getId() != null) {
             setProject(parentResource.getProject());
             setProgram(parentResource.getProgram());
@@ -159,8 +157,8 @@ public abstract class Resource<T extends PrismUserReassignmentProcessor> impleme
         return valueOf(getClass().getSimpleName().toUpperCase());
     }
 
-    public Resource<?> getEnclosingResource(PrismScope resourceScope) {
-        return (Resource<?>) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
+    public Resource getEnclosingResource(PrismScope resourceScope) {
+        return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
     }
 
     public boolean sameAs(Object object) {
@@ -170,15 +168,10 @@ public abstract class Resource<T extends PrismUserReassignmentProcessor> impleme
         if (getClass() != object.getClass()) {
             return false;
         }
-        final Resource<?> other = (Resource<?>) object;
+        final Resource other = (Resource) object;
         Integer id = getId();
         Integer otherId = other.getId();
         return id != null && otherId != null && id.equals(otherId);
-    }
-
-    @Override
-    public boolean isResourceUserAssignmentProperty() {
-        return false;
     }
 
     @Override

@@ -6,11 +6,10 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
-import com.zuehlke.pgadmissions.workflow.user.PrismUserReassignmentProcessor;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
-public abstract class ResourceOpportunity<T extends PrismUserReassignmentProcessor> extends ResourceParentDivision<T>implements
+public abstract class ResourceOpportunity extends ResourceParentDivision implements
         ResourceOpportunityDefinition<Advert, ImportedEntitySimple, ResourceStudyOption> {
 
     public abstract Department getDepartment();

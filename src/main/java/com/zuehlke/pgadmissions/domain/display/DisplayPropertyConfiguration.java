@@ -165,7 +165,7 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayP
         this.systemDefault = systemDefault;
     }
 
-    public DisplayPropertyConfiguration withResource(Resource<?> resource) {
+    public DisplayPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }

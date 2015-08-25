@@ -19,7 +19,7 @@ public class ResourceStudyLocation extends ResourceOpportunityAttribute {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "program_id", insertable = false, updatable = false)
     private Program program;
@@ -67,7 +67,7 @@ public class ResourceStudyLocation extends ResourceOpportunityAttribute {
         this.studyLocation = studyLocation;
     }
 
-    public ResourceStudyLocation withResource(ResourceParent<?> resource) {
+    public ResourceStudyLocation withResource(ResourceParent resource) {
         setResource(resource);
         return this;
     }

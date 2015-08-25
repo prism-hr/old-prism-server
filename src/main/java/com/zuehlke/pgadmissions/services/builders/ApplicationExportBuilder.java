@@ -297,7 +297,7 @@ public class ApplicationExportBuilder {
             applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
-            throw new Error("Application in state " + applicationExport.getState().getState().name() + " cannot be exported");
+            throw new Error("ApplicationTemplate in state " + applicationExport.getState().getState().name() + " cannot be exported");
         }
 
         applicationTp.setProgramme(buildProgrammeOccurence(applicationExport));

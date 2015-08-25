@@ -160,7 +160,7 @@ public class ResourceCondition extends WorkflowResourceExecution {
         this.partnerMode = partnerMode;
     }
 
-    public ResourceCondition withResource(Resource<?> resource) {
+    public ResourceCondition withResource(Resource resource) {
         setResource(resource);
         return this;
     }

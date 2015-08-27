@@ -952,13 +952,21 @@ public class ResourceService {
             ResourceParent parent = (ResourceParent) resourceOpportunity.getEnclosingResource(scope);
             String opportunityCategories = parent.getOpportunityCategories();
             if (opportunityCategories == null) {
-                parent.setOpportunityCategories(opportunityCategory.name());
+                opportunityCategories = opportunityCategory.name();
+                setOpportunityCategories(parent, opportunityCategories);
             } else {
                 Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
                 opportunityCategoriesSplit.add(opportunityCategories);
-                parent.setOpportunityCategories(Joiner.on("|").join(opportunityCategoriesSplit));
+                
+                opportunityCategories = Joiner.on("|").join(opportunityCategoriesSplit);
+                setOpportunityCategories(parent, opportunityCategories);
             }
         }
+    }
+
+    public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
+        parent.setOpportunityCategories(opportunityCategories);
+        parent.getAdvert().setOpportunityCategories(opportunityCategories);
     }
 
 }

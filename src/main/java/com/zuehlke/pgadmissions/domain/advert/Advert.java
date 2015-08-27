@@ -73,6 +73,9 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @ManyToOne
     @JoinColumn(name = "imported_opportunity_type_id")
     private ImportedEntitySimple opportunityType;
+    
+    @Column(name = "opportunity_category")
+    private String opportunityCategories;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -215,6 +218,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setOpportunityType(ImportedEntitySimple opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public String getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     public String getName() {

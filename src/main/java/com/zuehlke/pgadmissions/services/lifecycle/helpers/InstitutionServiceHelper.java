@@ -1,25 +1,5 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.social.UncategorizedApiException;
-import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.Location;
-import org.springframework.social.facebook.api.Page;
-import org.springframework.social.facebook.connect.FacebookServiceProvider;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
@@ -34,6 +14,24 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
+import jersey.repackaged.com.google.common.base.Objects;
+import org.apache.commons.lang3.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.social.UncategorizedApiException;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.Location;
+import org.springframework.social.facebook.api.Page;
+import org.springframework.social.facebook.connect.FacebookServiceProvider;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
@@ -45,7 +43,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
     @Value("${auth.facebook.clientId}")
     private String facebookClientId;
-    
+
     @Inject
     private ImportedEntityService importedEntityService;
 
@@ -54,7 +52,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
     @Inject
     private InstitutionUcasScraper institutionUcasScraper;
-    
+
     @Inject
     private SystemService systemService;
 
@@ -111,9 +109,9 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             AddressAdvertDTO address = new AddressAdvertDTO();
             advertDTO.setAddress(address);
 
-            String summary = Stream.of(facebookPage.getAbout(), facebookPage.getDescription())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.joining("\n\n"));
+
+            String summary = createSummary(facebookPage, ucasInstitutionData.getSummary());
+
             advertDTO.setSummary(summary);
             advertDTO.setTelephone(ObjectUtils.firstNonNull(ucasInstitutionData.getTelephone(), facebookPage.getPhone()));
             advertDTO.setHomepage(ObjectUtils.firstNonNull(ucasInstitutionData.getHomepage(), facebookPage.getWebsite()));
@@ -145,12 +143,43 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
                 address.getDomicile().setId(domiciles.get(0).getId());
             }
 
+            if(isShuttingDown()) {
+                return;
+            }
+
             try {
                 institutionService.createInstitution(system.getUser(), institutionDTO, facebookId, facebookPage);
             } catch (WorkflowDuplicateResourceException e) {
                 logger.error("Could not import institution: " + importedInstitution.getName(), e);
             }
         }
+    }
+
+    private String createSummary(Page facebookPage, String ucasSummary) {
+        if (ucasSummary != null && ucasSummary.length() > 10) {
+            return ucasSummary;
+        }
+        String about = facebookPage.getAbout();
+        String description = facebookPage.getDescription();
+        if (description == null) {
+            return about;
+        }
+        if (about != null && about.length() > 100 && !about.toLowerCase().contains("facebook")) {
+            return about;
+        }
+
+        List<String> paragraphs = Stream.of(description.split("\n\n")).filter(p -> !p.toLowerCase().contains("facebook")).collect(Collectors.toList());
+        if (paragraphs.isEmpty()) {
+            return Objects.firstNonNull(about, ucasSummary);
+        }
+        String summaryBuilder = paragraphs.get(0);
+        for (String paragraph : paragraphs.subList(1, paragraphs.size())) {
+            if ((summaryBuilder + "\n\n" + paragraph).length() > 1000) {
+                return summaryBuilder;
+            }
+            summaryBuilder += "\n\n" + paragraph;
+        }
+        return summaryBuilder;
     }
 
 }

@@ -168,10 +168,10 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
     }
 
-    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> advertIds) {
+    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> resourceIds) {
         HashMultimap<Integer, PrismStudyOption> options = HashMultimap.create();
-        if (CollectionUtils.isNotEmpty(advertIds)) {
-            advertDAO.getAdvertStudyOptions(resourceScope, advertIds).forEach(option -> {
+        if (CollectionUtils.isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertStudyOptions(resourceScope, resourceIds).forEach(option -> {
                 options.put(option.getAdvertId(), PrismStudyOption.valueOf(option.getStudyOption()));
             });
         }

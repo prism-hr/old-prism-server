@@ -103,6 +103,7 @@ public class AdvertMapper {
     }
     
     public AdvertRepresentationExtended getAdvertRepresentationExtended(AdvertDTO advert) {
+        AdvertRepresentationExtended representation = new AdvertRepresentationExtended();
         
         return null;
     }

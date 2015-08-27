@@ -146,7 +146,7 @@ public class AdvertMapper {
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
         ResourceStandardDTO resource = null;
-        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
+        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
             ResourceStandardDTO thisResource = advert.getEnclosingResource(scope);
             if (thisResource == null) {
                 continue;
@@ -159,7 +159,7 @@ public class AdvertMapper {
             }
         }
 
-        representation.setOpportunityType(PrismOpportunityType.valueOf(advert.getOpportunityType()));
+        representation.setOpportunityType(advert.getOpportunityType() != null ? PrismOpportunityType.valueOf(advert.getOpportunityType()) : null);
         representation.setName(advert.getName());
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());
@@ -336,7 +336,7 @@ public class AdvertMapper {
     }
 
     private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Collection<AdvertCompetence> competences) {
-        return competences.stream().<AdvertCompetenceRepresentation> map(competence -> new AdvertCompetenceRepresentation().withName(competence.getName())
+        return competences.stream().<AdvertCompetenceRepresentation>map(competence -> new AdvertCompetenceRepresentation().withName(competence.getName())
                 .withDescription(competence.getValue().getDescription()).withImportance(competence.getImportance())).collect(Collectors.toList());
     }
 

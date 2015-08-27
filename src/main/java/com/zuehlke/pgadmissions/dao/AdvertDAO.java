@@ -211,7 +211,7 @@ public class AdvertDAO {
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".instanceGroups", "instanceGroup", JoinType.INNER_JOIN) //
                 .createAlias("instanceGroup.studyOption", "studyOption", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("id", advertIds)) //
+                .add(Restrictions.in(resourceReference + ".id", advertIds)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
                 .list();
     }

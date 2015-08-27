@@ -127,14 +127,14 @@ public class AdvertMapper {
 
         Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
         adverts.forEach(advert -> {
-            Integer advertId = advert.getAdvertId();
             PrismScope scope = advert.getScope();
             if (scope.equals(PROGRAM)) {
-                projects.add(advertId);
+                programs.add(advert.getProgramId());
             } else if (scope.equals(PROJECT)) {
-                programs.add(advertId);
+                programs.add(advert.getProgramId());
+                projects.add(advert.getProjectId());
             }
-            index.put(advertId, getAdvertRepresentationExtended(advert));
+            index.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
         });
 
         HashMultimap<Integer, PrismStudyOption> programStudyOptions = advertService.getAdvertStudyOptions(PROGRAM, programs);

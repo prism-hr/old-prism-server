@@ -1,12 +1,17 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.valueOf;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,7 +21,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
@@ -28,14 +35,21 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
@@ -49,8 +63,12 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationE
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertSubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 
@@ -98,6 +116,113 @@ public class AdvertMapper {
         representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
 
         representation.setName(advert.getName());
+        return representation;
+    }
+
+    public List<AdvertRepresentationExtended> getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
+        List<AdvertDTO> adverts = advertService.getAdverts(query);
+
+        List<Integer> projects = Lists.newArrayList();
+        List<Integer> programs = Lists.newArrayList();
+
+        Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
+        adverts.forEach(advert -> {
+            Integer advertId = advert.getAdvertId();
+            PrismScope scope = advert.getScope();
+            if (scope.equals(PROGRAM)) {
+                projects.add(advertId);
+            } else if (scope.equals(PROJECT)) {
+                programs.add(advertId);
+            }
+            index.put(advertId, getAdvertRepresentationExtended(advert));
+        });
+
+        HashMultimap<Integer, PrismStudyOption> programStudyOptions = advertService.getAdvertStudyOptions(PROGRAM, programs);
+        HashMultimap<Integer, PrismStudyOption> projectStudyOptions = advertService.getAdvertStudyOptions(PROJECT, projects);
+
+        PrismActionCondition actionCondition = query.getActionCondition();
+        List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
+        for (Integer advert : index.keySet()) {
+            AdvertRepresentationExtended representation = index.get(advert);
+            representation.setConditions(newArrayList(new ResourceConditionRepresentation().withActionCondition(actionCondition).withPartnerMode(true)));
+
+            Set<PrismStudyOption> studyOptions = projectStudyOptions.get(advert);
+            studyOptions = isEmpty(studyOptions) ? programStudyOptions.get(advert) : studyOptions;
+
+            if (!isEmpty(studyOptions)) {
+                representation.setStudyOptions(newArrayList(studyOptions));
+            }
+
+            representations.add(representation);
+        }
+
+        return representations;
+    }
+
+    public AdvertRepresentationExtended getAdvertRepresentationExtended(AdvertDTO advert) {
+        AdvertRepresentationExtended representation = new AdvertRepresentationExtended();
+
+        representation.setId(advert.getId());
+        representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
+                .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
+
+        ResourceStandardDTO resource = null;
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
+            ResourceStandardDTO thisResource = advert.getEnclosingResource(scope);
+            if (thisResource == null) {
+                continue;
+            } else if (resource == null) {
+                ResourceRepresentationSimple resourceRepresentation = getAdvertResourceRepresentation(thisResource);
+                representation.setResource(resourceRepresentation);
+                resource = thisResource;
+            } else {
+                PrismReflectionUtils.setProperty(representation, scope.getLowerCamelName(), getAdvertResourceRepresentation(thisResource));
+            }
+        }
+
+        representation.setOpportunityType(PrismOpportunityType.valueOf(advert.getOpportunityType()));
+        representation.setName(advert.getName());
+        representation.setSummary(advert.getSummary());
+        representation.setDescription(advert.getDescription());
+        representation.setHomepage(advert.getHomepage());
+        representation.setApplyHomepage(advert.getApplyHomepage());
+        representation.setTelephone(advert.getTelephone());
+
+        representation.setAddress(new AddressAdvertRepresentation().withAddressLine1(advert.getAddressLine1()).withAddressLine2(advert.getAddressLine2())
+                .withAddressTown(advert.getAddressTown()).withAddressRegion(advert.getAddressRegion()).withAddressCode(advert.getAddressCode())
+                .withDomicile(new ImportedAdvertDomicileResponse().withId(advert.getAddressDomicileId()).withName(advert.getAddressDomicileName()))
+                .withGoogleId(advert.getAddressGoogleId())
+                .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()).withLongitude(advert.getAddressCoordinateLongitude())));
+
+        String feeCurrency = advert.getFeeCurrency();
+        String payCurrency = advert.getPayCurrency();
+        if (!(feeCurrency == null && payCurrency == null)) {
+            AdvertFinancialDetailsRepresentation financialDetailsRepresentation = new AdvertFinancialDetailsRepresentation();
+            if (feeCurrency != null) {
+                PrismDurationUnit feeInterval = advert.getFeeInterval();
+                AdvertFinancialDetailRepresentation feeRepresentation = new AdvertFinancialDetailRepresentation().withCurrency(feeCurrency).withInterval(feeInterval);
+
+                boolean byYear = feeInterval.equals(YEAR);
+                feeRepresentation.setMinimum(byYear ? advert.getFeeYearMinimum() : advert.getFeeMonthMinimum());
+                feeRepresentation.setMaximum(byYear ? advert.getFeeYearMaximum() : advert.getFeeMonthMaximum());
+                financialDetailsRepresentation.setFee(feeRepresentation);
+            }
+
+            if (payCurrency != null) {
+                PrismDurationUnit payInterval = advert.getPayInterval();
+                AdvertFinancialDetailRepresentation payRepresentation = new AdvertFinancialDetailRepresentation().withCurrency(payCurrency).withInterval(payInterval);
+
+                boolean byYear = payInterval.equals(YEAR);
+                payRepresentation.setMinimum(byYear ? advert.getPayYearMinimum() : advert.getPayMonthMinimum());
+                payRepresentation.setMaximum(byYear ? advert.getPayYearMaximum() : advert.getPayMonthMaximum());
+                financialDetailsRepresentation.setFee(payRepresentation);
+            }
+
+            representation.setFinancialDetails(financialDetailsRepresentation);
+        }
+
+        representation.setClosingDate(new AdvertClosingDateRepresentation().withClosingDate(advert.getClosingDate()));
+        representation.setSequenceIdentifier(advert.getSequenceIdentifier());
         return representation;
     }
 
@@ -248,6 +373,15 @@ public class AdvertMapper {
 
     private ImportedAdvertDomicileResponse getAdvertDomicileRepresentation(ImportedAdvertDomicile domicile) {
         return new ImportedAdvertDomicileResponse().withId(domicile.getId()).withName(domicile.getName()).withCurrency(domicile.getCurrency());
+    }
+
+    private ResourceRepresentationSimple getAdvertResourceRepresentation(ResourceStandardDTO resource) {
+        PrismScope resourceScope = resource.getScope();
+        ResourceRepresentationSimple resourceRepresentation = new ResourceRepresentationSimple().withScope(resourceScope).withId(resource.getId()).withName(resource.getName());
+        if (resourceScope.equals(INSTITUTION)) {
+            resourceRepresentation.setLogoImage(new DocumentRepresentation().withId(resource.getLogoImage()));
+        }
+        return resourceRepresentation;
     }
 
 }

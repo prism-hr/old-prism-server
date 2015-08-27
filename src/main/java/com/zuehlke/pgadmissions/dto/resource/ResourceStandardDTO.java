@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
@@ -169,6 +170,10 @@ public class ResourceStandardDTO implements Comparable<Object> {
             }
         }
         return null;
+    }
+
+    public Integer getLogoImage() {
+        return getScope().equals(INSTITUTION) ? institutionLogoImageId : null;
     }
 
     public ResourceStandardDTO getParentResource() {

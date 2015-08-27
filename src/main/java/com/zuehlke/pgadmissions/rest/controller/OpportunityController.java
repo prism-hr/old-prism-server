@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -38,8 +37,7 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentationExtended> getAdverts(OpportunitiesQueryDTO query) {
-        List<Advert> adverts = advertService.getAdverts(query);
-        return adverts.stream().map(advertMapper::getAdvertRepresentationExtended).collect(Collectors.toList());
+        return advertMapper.getAdvertExtendedRepresentations(query);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}")

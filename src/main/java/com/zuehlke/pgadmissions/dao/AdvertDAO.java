@@ -177,7 +177,7 @@ public class AdvertDAO {
         appendIndustryConstraint(criteria, queryDTO);
         appendFunctionConstraint(criteria, queryDTO);
 
-        appendOpportunityTypeConstraint(criteria, queryDTO);
+        appendOpportunityTypeConstraint(criteria, scope, queryDTO);
         appendStudyOptionConstraint(queryDTO, criteria);
 
         appendFeeConstraint(criteria, queryDTO);
@@ -201,7 +201,7 @@ public class AdvertDAO {
                 .setMaxResults(25) //
                 .list();
     }
-    
+
     public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> advertIds) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (List<AdvertStudyOptionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
@@ -214,7 +214,7 @@ public class AdvertDAO {
                 .add(Restrictions.in("id", advertIds)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
                 .list();
-    } 
+    }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user, HashMultimap<PrismScope, PrismState> scopes, List<Integer> advertsRecentlyAppliedFor) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
@@ -442,25 +442,36 @@ public class AdvertDAO {
         }
     }
 
-    private void appendOpportunityTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Collection<PrismOpportunityType> opportunityTypes = queryDTO.getOpportunityTypes();
-        if (opportunityTypes == null) {
-            opportunityTypes = Lists.newLinkedList();
-            if (queryDTO.getOpportunityCategories() != null) {
-                for (PrismOpportunityCategory category : queryDTO.getOpportunityCategories()) {
-                    for (PrismOpportunityType opportunityType : PrismOpportunityType.getOpportunityTypes(category)) {
-                        opportunityTypes.add(opportunityType);
+    private void appendOpportunityTypeConstraint(Criteria criteria, PrismScope scope, OpportunitiesQueryDTO queryDTO) {
+        if (ResourceOpportunity.class.isAssignableFrom(scope.getResourceClass())) {
+            Collection<PrismOpportunityType> opportunityTypes = queryDTO.getOpportunityTypes();
+            if (opportunityTypes == null) {
+                opportunityTypes = Lists.newLinkedList();
+                if (queryDTO.getOpportunityCategories() != null) {
+                    for (PrismOpportunityCategory category : queryDTO.getOpportunityCategories()) {
+                        for (PrismOpportunityType opportunityType : PrismOpportunityType.getOpportunityTypes(category)) {
+                            opportunityTypes.add(opportunityType);
+                        }
                     }
                 }
             }
-        }
 
-        Disjunction opportunityTypeConstraint = Restrictions.disjunction();
-        for (PrismOpportunityType opportunityType : opportunityTypes) {
-            opportunityTypeConstraint.add(Restrictions.eq("opportunityType.name", opportunityType.name()));
+            Disjunction opportunityTypeConstraint = Restrictions.disjunction();
+            for (PrismOpportunityType opportunityType : opportunityTypes) {
+                opportunityTypeConstraint.add(Restrictions.eq("opportunityType.name", opportunityType.name()));
 
+            }
+            criteria.add(opportunityTypeConstraint);
+        } else {
+            List<PrismOpportunityCategory> opportunityCategories = queryDTO.getOpportunityCategories();
+            if (CollectionUtils.isNotEmpty(opportunityCategories)) {
+                Junction categoriesConstraint = Restrictions.disjunction();
+                opportunityCategories.forEach(category -> {
+                    categoriesConstraint.add(Restrictions.ilike("advert.opportunityCategories", category.name(), MatchMode.ANYWHERE));
+                });
+                criteria.add(categoriesConstraint);
+            }
         }
-        criteria.add(opportunityTypeConstraint);
     }
 
     private void appendStudyOptionConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {

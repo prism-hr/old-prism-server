@@ -39,7 +39,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
 		System system = systemService.getSystem();
 
 		AdvertDTO advertDTO = newResource.getAdvert();
-		Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName());
+		Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName(), user);
 
 		ImportedInstitution importedInstitution = Optional.ofNullable(newResource.getImportedInstitutionId())
 				.map(id -> importedEntityService.getById(ImportedInstitution.class, id)).orElse(null);

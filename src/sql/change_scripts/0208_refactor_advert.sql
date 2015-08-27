@@ -1,7 +1,12 @@
 alter table advert
-	add column imported_opportunity_type_id int(10) unsigned,
+	add column imported_opportunity_type_id int(10) unsigned after project_id,
 	add index (imported_opportunity_type_id, sequence_identifier),
 	add foreign key (imported_opportunity_type_id) references imported_entity (id)
+;
+
+alter table advert
+	add column opportunity_category varchar(255) after imported_opportunity_type_id,
+	add index (opportunity_category, sequence_identifier)
 ;
 
 update advert inner join project
@@ -46,4 +51,3 @@ set advert.user_id = project.user_id
 alter table advert
 	modify column user_id int(10) unsigned not null
 ;
-

@@ -25,7 +25,7 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
     private String googleId;
 
     @Embedded
-    private AddressCoordinates addressCoordinates;
+    private AddressCoordinates coordinates;
 
     @Override
     public ImportedAdvertDomicile getDomicile() {
@@ -47,12 +47,12 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
 
     @Override
     public AddressCoordinates getCoordinates() {
-        return addressCoordinates;
+        return coordinates;
     }
 
     @Override
     public void setCoordinates(AddressCoordinates location) {
-        this.addressCoordinates = location;
+        this.coordinates = location;
     }
 
     public AddressAdvert withDomicile(ImportedAdvertDomicile domicile) {
@@ -65,8 +65,8 @@ public class AddressAdvert extends GeocodableLocation implements AddressDefiniti
         return this;
     }
 
-    public AddressAdvert withLocation(AddressCoordinates location) {
-        this.addressCoordinates = location;
+    public AddressAdvert withCoordinates(AddressCoordinates coordinates) {
+        this.coordinates = coordinates;
         return this;
     }
 

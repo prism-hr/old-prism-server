@@ -61,7 +61,7 @@ public class WorkflowDAOUtils {
     public static Junction getResourceStateActionConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("stateAction.actionCondition")) //
-                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
+                .add(Restrictions.eqProperty("advertCondition.actionCondition", "stateAction.actionCondition"));
     }
 
     public static Junction getSimilarUserRestriction(String searchTerm) {

@@ -16,6 +16,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
@@ -26,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -146,7 +146,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             LocalDate startDate = programDetail.getStartDate();
 
             ResourceOpportunity opportunity = (ResourceOpportunity) application.getParentResource();
-            ResourceStudyOption studyOption = resourceService.getStudyOption(opportunity, programDetail.getStudyOption());
+            AdvertStudyOption studyOption = resourceService.getStudyOption(opportunity, programDetail.getStudyOption());
 
             if (studyOption == null) {
                 List<ImportedEntitySimple> otherStudyOptions = resourceService.getStudyOptions(opportunity);

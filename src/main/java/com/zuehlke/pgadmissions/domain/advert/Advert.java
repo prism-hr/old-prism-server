@@ -27,9 +27,9 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
@@ -45,6 +46,10 @@ public class Advert implements UniqueEntity {
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -61,6 +66,13 @@ public class Advert implements UniqueEntity {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_opportunity_type_id")
+    private ImportedEntitySimple opportunityType;
+
+    @Column(name = "opportunity_categories")
+    private String opportunityCategories;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -145,9 +157,17 @@ public class Advert implements UniqueEntity {
     @OneToMany(mappedBy = "advert")
     private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
 
-    @OrderBy(clause = "sequence_identifier desc")
+    @OrderBy(clause = "partner_mode, action_condition")
     @OneToMany(mappedBy = "advert")
-    private Set<Application> applications = Sets.newHashSet();
+    private Set<AdvertCondition> conditions = Sets.newHashSet();
+
+    @OrderBy(clause = "imported_study_option_id, start_date")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertStudyOption> studyOptions = Sets.newHashSet();
+
+    @OrderBy(clause = "study_location")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertStudyLocation> studyLocations = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -155,6 +175,14 @@ public class Advert implements UniqueEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Institution getInstitution() {
@@ -187,6 +215,22 @@ public class Advert implements UniqueEntity {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public ImportedEntitySimple getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(ImportedEntitySimple opportunityType) {
+        this.opportunityType = opportunityType;
+    }
+
+    public String getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     public String getName() {
@@ -315,6 +359,18 @@ public class Advert implements UniqueEntity {
 
     public Set<AdvertClosingDate> getClosingDates() {
         return closingDates;
+    }
+
+    public Set<AdvertCondition> getConditions() {
+        return conditions;
+    }
+
+    public Set<AdvertStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public Set<AdvertStudyLocation> getStudyLocations() {
+        return studyLocations;
     }
 
     public boolean isImported() {

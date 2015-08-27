@@ -8,6 +8,8 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertReprese
 public class AdvertRepresentationSimple {
 
     private Integer id;
+    
+    private String name;
 
     private String summary;
 
@@ -41,6 +43,14 @@ public class AdvertRepresentationSimple {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSummary() {

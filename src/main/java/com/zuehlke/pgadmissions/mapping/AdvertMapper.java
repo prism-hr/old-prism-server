@@ -16,7 +16,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
@@ -26,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
@@ -34,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
-import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -139,15 +136,6 @@ public class AdvertMapper {
     public List<ImportedAdvertDomicileResponse> getAdvertDomicileRepresentations() {
         List<ImportedAdvertDomicile> importedAdvertDomiciles = advertService.getAdvertDomiciles();
         return importedAdvertDomiciles.stream().map(this::getAdvertDomicileRepresentation).collect(Collectors.toList());
-    }
-
-    public List<AdvertRepresentationExtended> getRecommendedAdvertRepresentations(Application application) {
-        List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
-        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(application.getUser());
-        for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
-            representations.add(getAdvertRepresentationExtended(advertRecommendation.getAdvert()));
-        }
-        return representations;
     }
 
     public AddressAdvertRepresentation getAdvertAddressRepresentation(Advert advert) {

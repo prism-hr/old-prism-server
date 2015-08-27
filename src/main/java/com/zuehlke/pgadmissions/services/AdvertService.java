@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -46,9 +47,13 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCondition;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyLocation;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
@@ -60,12 +65,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
@@ -79,7 +84,9 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -108,6 +115,9 @@ public class AdvertService {
     private ResourceService resourceService;
 
     @Inject
+    private ScopeService scopeService;
+
+    @Inject
     private StateService stateService;
 
     @Inject
@@ -131,32 +141,24 @@ public class AdvertService {
         return advertDAO.getAdvert(resourceScope, resourceId);
     }
 
-    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO) {
+    public List<com.zuehlke.pgadmissions.dto.AdvertDTO> getAdverts(OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
-            if (resource.getInstitution() != null) {
-                queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
+            for (PrismScope resourceScope : scopeService.getParentScopesDescending(PROJECT, INSTITUTION)) {
+                Resource enclosing = resource.getEnclosingResource(resourceScope);
+                if (enclosing != null) {
+                    PrismReflectionUtils.setProperty(queryDTO, pluralize(resourceScope.getLowerCamelName()), new Integer[] { enclosing.getId() });
+                    break;
+                }
             }
         }
 
-        // FIXME case where resourceId is supplied
-        List<Integer> adverts = advertDAO.getAdverts(getAdvertScopes(), queryDTO);
-
-        if (adverts.isEmpty()) {
-            return Lists.newArrayList();
-        } else {
-            Integer[] programs = queryDTO.getPrograms();
-            return advertDAO.getActiveAdverts(adverts, programs != null && programs.length == 1);
-        }
+        return advertDAO.getAdvertsForApplicant(getAdvertScopes(), queryDTO);
     }
 
-    public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {
-        List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
-        return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
-    }
-
-    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO, String resourceName) {
+    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO, String resourceName, User user) {
         Advert advert = new Advert();
+        advert.setUser(user);
         advert.setName(resourceName);
         entityService.save(advert);
         updateAdvert(parentResource, advert, advertDTO, resourceName);
@@ -390,6 +392,10 @@ public class AdvertService {
 
     public List<Integer> getAdvertTargetResources(Advert advert, PrismScope resourceScope, boolean selected) {
         return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
+    }
+
+    public AdvertStudyOptionInstance getFirstStudyOptionInstance(Advert advert, ImportedEntitySimple studyOption) {
+        return advertDAO.getAdvertFirstStudyOptionInstance(advert, studyOption);
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
@@ -710,6 +716,60 @@ public class AdvertService {
             return detailDTO;
         }
         return null;
+    }
+
+    public void updateAdvertConditions(Advert advert, List<ResourceConditionDTO> conditions) {
+        Set<AdvertCondition> advertConditions = advert.getConditions();
+        advertConditions.clear();
+
+        advertDAO.deleteAdvertConditions(advert);
+        entityService.flush();
+
+        conditions.forEach(condition -> {
+            AdvertCondition advertCondition = new AdvertCondition().withAdvert(advert).withActionCondition(condition.getActionCondition())
+                    .withPartnerNode(condition.getPartnerMode());
+            entityService.save(advertCondition);
+            advertConditions.add(advertCondition);
+        });
+    }
+
+    public void updateAdvertStudyOptions(Advert advert, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
+        Set<AdvertStudyOption> advertStudyOptions = advert.getStudyOptions();
+        advertStudyOptions.clear();
+
+        advertDAO.deleteAdvertStudyOptionInstances(advert);
+        advertDAO.deleteAdvertStudyOptions(advert);
+        entityService.flush();
+
+        LocalDate applicationClose = advertDAO.getAdvertCloseDate(advert);
+        studyOptions.stream().forEach(studyOption -> {
+            if (applicationClose == null || applicationClose.isAfter(baseline)) {
+                AdvertStudyOption advertStudyOption = new AdvertStudyOption().withAdvert(advert).withStudyOption(studyOption).withApplicationStartDate(baseline)
+                        .withApplicationCloseDate(applicationClose);
+                entityService.save(advertStudyOption);
+                advertStudyOptions.add(advertStudyOption);
+            }
+        });
+    }
+
+    public void updateAdvertStudyLocations(Advert advert, List<String> studyLocations) {
+        Set<AdvertStudyLocation> advertStudyLocations = advert.getStudyLocations();
+        advertStudyLocations.clear();
+
+        advertDAO.deleteAdvertLocations(advert);
+        entityService.flush();
+
+        studyLocations.forEach(studyLocation -> {
+            AdvertStudyLocation advertStudyLocation = new AdvertStudyLocation().withAdvert(advert).withStudyLocation(studyLocation);
+            entityService.save(advertStudyLocation);
+            advertStudyLocations.add(advertStudyLocation);
+        });
+    }
+
+    public void deleteElapsedAdvertStudyOptions() {
+        LocalDate baseline = new LocalDate();
+        advertDAO.deleteElapsedStudyOptionInstances(baseline);
+        advertDAO.deleteElapsedStudyOptions(baseline);
     }
 
     private AdvertClosingDate getNextAdvertClosingDate(Advert advert) {

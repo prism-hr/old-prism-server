@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -12,11 +17,17 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
 public class OpportunitiesQueryDTO {
 
+    private Integer resourceId;
+
+    private PrismAction actionId;
+    
     @NotNull
-    private List<PrismOpportunityCategory> programCategories;
+    private List<PrismOpportunityCategory> opportunityCategories;
 
     private String keyword;
     
@@ -61,17 +72,29 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLon;
 
     private String lastSequenceIdentifier;
-
-    private Integer resourceId;
-
-    private PrismAction actionId;
-
-    public List<PrismOpportunityCategory> getProgramCategories() {
-        return programCategories;
+    
+    public final Integer getResourceId() {
+        return resourceId;
     }
 
-    public void setProgramCategories(List<PrismOpportunityCategory> programCategories) {
-        this.programCategories = programCategories;
+    public final void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public final PrismAction getActionId() {
+        return actionId;
+    }
+
+    public final void setActionId(PrismAction actionId) {
+        this.actionId = actionId;
+    }
+
+    public List<PrismOpportunityCategory> getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     public String getKeyword() {
@@ -249,25 +272,21 @@ public class OpportunitiesQueryDTO {
     public final void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
     }
-
-    public final Integer getResourceId() {
-        return resourceId;
-    }
-
-    public final void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public final PrismAction getActionId() {
-        return actionId;
-    }
-
-    public final void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
-    }
-
+    
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
+    }
+    
+    public ResourceDTO getParentResource() {
+        PrismScope[] resourceScopes = PrismScope.values();
+        for (int i = INSTITUTION.ordinal(); i <= PROJECT.ordinal(); i++) {
+            PrismScope resourceScope = resourceScopes[i];
+            Integer[] resourceIds = (Integer[]) getProperty(this, pluralize(resourceScope.getLowerCamelName()));
+            if (resourceIds.length == 1) {
+                return new ResourceDTO().withScope(resourceScope).withId(resourceIds[0]);
+            }
+        }
+        return null;
     }
 
 }

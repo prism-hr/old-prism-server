@@ -96,6 +96,17 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
         public void setPartnerMode(Boolean partnerMode) {
             this.partnerMode = partnerMode;
         }
+        
+        public ResourceConditionDTO withActionCondition(PrismActionCondition actionCondition) {
+            this.actionCondition = actionCondition;
+            return this;
+        }
+
+        public ResourceConditionDTO withPartnerMode() {
+            this.partnerMode = true;
+            return this;
+        }
+        
     }
 
 }

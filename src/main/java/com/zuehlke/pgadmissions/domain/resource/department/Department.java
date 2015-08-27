@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentDivision;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -142,10 +141,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "department_id")
-    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "department")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -404,11 +399,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }
-
-    @Override
-    public Set<ResourceCondition> getResourceConditions() {
-        return resourceConditions;
     }
 
     @Override

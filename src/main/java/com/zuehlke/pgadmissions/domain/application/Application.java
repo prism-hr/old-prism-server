@@ -63,7 +63,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
@@ -290,10 +289,6 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id")
-    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
@@ -684,11 +679,6 @@ public class Application extends Resource {
     @Override
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
-    }
-
-    @Override
-    public Set<ResourceCondition> getResourceConditions() {
-        return resourceConditions;
     }
 
     public Set<Comment> getComments() {

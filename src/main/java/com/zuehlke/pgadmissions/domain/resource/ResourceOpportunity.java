@@ -1,8 +1,7 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.util.Set;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
@@ -10,7 +9,7 @@ import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 public abstract class ResourceOpportunity extends ResourceParentDivision implements
-        ResourceOpportunityDefinition<Advert, ImportedEntitySimple, ResourceStudyOption> {
+        ResourceOpportunityDefinition<Advert, ImportedEntitySimple, AdvertStudyOption> {
 
     public abstract Department getDepartment();
 
@@ -21,12 +20,6 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
 
     @Override
     public abstract void setRequirePositionDefinition(Boolean requirePositionDefinition);
-
-    @Override
-    public abstract ImportedEntitySimple getOpportunityType();
-
-    @Override
-    public abstract void setOpportunityType(ImportedEntitySimple opportunityType);
 
     public abstract PrismOpportunityCategory getOpportunityCategory();
 
@@ -39,22 +32,6 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
     public abstract Integer getDurationMaximum();
 
     public abstract void setDurationMaximum(Integer maximum);
-
-    @Override
-    public abstract Set<ResourceStudyOption> getInstanceGroups();
-
-    @Override
-    public abstract void setInstanceGroups(Set<ResourceStudyOption> instanceGroups);
-
-    public abstract Set<ResourceStudyLocation> getStudyLocations();
-
-    public void addStudyOption(ResourceStudyOption instanceGroup) {
-        getInstanceGroups().add(instanceGroup);
-    }
-
-    public void addStudyLocation(ResourceStudyLocation studyLocation) {
-        getStudyLocations().add(studyLocation);
-    }
 
     @Override
     public EntitySignature getEntitySignature() {

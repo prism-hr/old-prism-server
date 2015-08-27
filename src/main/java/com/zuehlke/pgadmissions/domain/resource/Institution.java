@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.resource;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -146,10 +145,6 @@ public class Institution extends ResourceParent implements TargetEntity {
     @OneToOne
     @JoinColumn(name = "imported_institution_id", unique = true)
     private ImportedInstitution importedInstitution;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "institution_id")
-    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "institution")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -324,11 +319,6 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public void setOpportunityRatingAverage(BigDecimal opportunityRatingAverage) {
         this.opportunityRatingAverage = opportunityRatingAverage;
-    }
-
-    @Override
-    public Set<ResourceCondition> getResourceConditions() {
-        return resourceConditions;
     }
 
     @Override

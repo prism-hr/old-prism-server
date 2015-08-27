@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
@@ -73,40 +72,6 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
 
     public void setConditions(List<ResourceConditionDTO> conditions) {
         this.conditions = conditions;
-    }
-
-    public static class ResourceConditionDTO {
-
-        private PrismActionCondition actionCondition;
-
-        private Boolean partnerMode;
-
-        public PrismActionCondition getActionCondition() {
-            return actionCondition;
-        }
-
-        public void setActionCondition(PrismActionCondition actionCondition) {
-            this.actionCondition = actionCondition;
-        }
-
-        public Boolean getPartnerMode() {
-            return partnerMode;
-        }
-
-        public void setPartnerMode(Boolean partnerMode) {
-            this.partnerMode = partnerMode;
-        }
-        
-        public ResourceConditionDTO withActionCondition(PrismActionCondition actionCondition) {
-            this.actionCondition = actionCondition;
-            return this;
-        }
-
-        public ResourceConditionDTO withPartnerMode() {
-            this.partnerMode = true;
-            return this;
-        }
-        
     }
 
 }

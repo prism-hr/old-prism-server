@@ -84,10 +84,12 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
         this.studyLocations = studyLocations;
     }
 
+    @Override
     public Set<ResourceStudyOptionDTO> getInstanceGroups() {
         return instanceGroups;
     }
 
+    @Override
     public void setInstanceGroups(Set<ResourceStudyOptionDTO> instanceGroups) {
         this.instanceGroups = instanceGroups;
     }

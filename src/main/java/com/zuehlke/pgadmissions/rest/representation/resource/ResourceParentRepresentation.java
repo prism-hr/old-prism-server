@@ -11,8 +11,6 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     private List<PrismAction> partnerActions;
 
-    private List<ResourceConditionRepresentation> conditions;
-
     public AdvertRepresentationSimple getAdvert() {
         return advert;
     }
@@ -27,14 +25,6 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     public void setPartnerActions(List<PrismAction> partnerActions) {
         this.partnerActions = partnerActions;
-    }
-
-    public List<ResourceConditionRepresentation> getConditions() {
-        return conditions;
-    }
-
-    public void setConditions(List<ResourceConditionRepresentation> conditions) {
-        this.conditions = conditions;
     }
 
 }

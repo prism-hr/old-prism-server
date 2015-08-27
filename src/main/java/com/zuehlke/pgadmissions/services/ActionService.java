@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -78,7 +77,7 @@ public class ActionService {
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
         resource = resourceService.getOperativeResource(resource, action);
-        if (checkActionExecutable(resource, action, comment.getUser(), comment.getDeclinedResponse())) {
+        if (checkActionAvailable(resource, action, comment.getUser(), comment.getDeclinedResponse())) {
             return;
         }
         throw new WorkflowPermissionException(resource, action);
@@ -206,7 +205,7 @@ public class ActionService {
     }
 
     public void validateViewEditAction(Resource resource, Action action, User invoker) {
-        if (checkActionExecutable(resource, action, invoker, false)) {
+        if (checkActionAvailable(resource, action, invoker, false)) {
             return;
         }
         throw new WorkflowPermissionException(resource, action);
@@ -257,19 +256,10 @@ public class ActionService {
 
     public List<PrismAction> getPartnerActions(ResourceParent resource) {
         List<PrismActionCondition> actionConditions = resourceService.getActionConditions(resource);
-        return !actionConditions.isEmpty() ? actionDAO.getPartnerActions(resource, actionConditions) : Lists.newArrayList();
+        return !actionConditions.isEmpty() ?  actionDAO.getPartnerActions(resource, actionConditions) : Lists.newArrayList();
     }
 
-    public boolean checkActionExecutable(Resource resource, Action action, User user, boolean declinedResponse) {
-        boolean canExecute = true;
-        Set<PrismActionEnhancement> expectedActionEnhancements = getExpectedActionEnhancements(resource, action);
-        if (expectedActionEnhancements.size() > 0) {
-            canExecute = !getPermittedActionEnhancements(resource, user).stream().filter(ae -> ae.name().contains("VIEW_EDIT")).collect(Collectors.toList()).isEmpty();
-        }
-        return canExecute ? checkActionAvailable(resource, action, user, declinedResponse) : false;
-    }
-
-    private boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
+    public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
         if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
             return true;
         } else if (actionDAO.getPermittedUnsecuredAction(resource, action, userService.isCurrentUser(user)) != null) {
@@ -305,12 +295,6 @@ public class ActionService {
 
         return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
                 .withTransitionAction(transitionAction);
-    }
-
-    private Set<PrismActionEnhancement> getExpectedActionEnhancements(Resource resource, Action action) {
-        Set<PrismActionEnhancement> expected = Sets.newHashSet(actionDAO.getExpectedDefaultActionEnhancements(resource, action));
-        expected.addAll(actionDAO.getExpectedCustomActionEnhancements(resource, action));
-        return expected;
     }
 
 }

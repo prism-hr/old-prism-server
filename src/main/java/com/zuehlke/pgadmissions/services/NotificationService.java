@@ -62,6 +62,9 @@ public class NotificationService {
     private ActionService actionService;
 
     @Inject
+    private AdvertService advertService;
+
+    @Inject
     private CommentService commentService;
 
     @Inject
@@ -222,11 +225,10 @@ public class NotificationService {
         return notificationDAO.getRecommendationDefinitions(baseline);
     }
 
-    // FIXME reimplement with targeting data
     public void sendRecommendationNotification(Integer userId, LocalDate baseline, LocalDate lastRecommendedBaseline) {
         User user = userService.getById(userId);
 
-        List<AdvertRecommendationDTO> advertRecommendations = Lists.newArrayList();
+        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(user);
         if (!advertRecommendations.isEmpty()) {
             System system = systemService.getSystem();
             User author = system.getUser();

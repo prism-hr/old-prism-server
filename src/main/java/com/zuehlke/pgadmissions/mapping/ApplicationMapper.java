@@ -28,7 +28,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -57,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
@@ -181,7 +181,7 @@ public class ApplicationMapper {
 
         ResourceParent parentResource = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            AdvertStudyOptionInstance resourceStudyOptionInstance = advertService.getFirstStudyOptionInstance(parentResource.getAdvert(),
+            ResourceStudyOptionInstance resourceStudyOptionInstance = resourceService.getFirstStudyOptionInstance((ResourceOpportunity) parentResource,
                     application.getProgramDetail().getStudyOption());
             representation.setResourceStudyOptionInstance(resourceStudyOptionInstance == null ? null : resourceMapper
                     .getResourceStudyOptionInstanceRepresentation(resourceStudyOptionInstance));

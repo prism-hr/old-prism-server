@@ -105,8 +105,8 @@ public class InstitutionDAO {
                         .add(Projections.property("address.addressRegion"), "addressRegion") //
                         .add(Projections.property("address.addressCode"), "addressCode") //
                         .add(Projections.property("address.googleId"), "addressGoogleId") //
-                        .add(Projections.property("address.coordinates.latitude"), "addressCoordinateLatitude") //
-                        .add(Projections.property("address.coordinates.longitude"), "addressCoordinateLongitude")) //
+                        .add(Projections.property("address.addressCoordinates.latitude"), "addressCoordinateLatitude") //
+                        .add(Projections.property("address.addressCoordinates.longitude"), "addressCoordinateLongitude")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN);

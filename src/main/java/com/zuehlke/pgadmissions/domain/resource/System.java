@@ -108,6 +108,10 @@ public class System extends Resource {
     @OneToMany(mappedBy = "system")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "system_id")
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
     private Set<Institution> institutions = Sets.newHashSet();
 
@@ -372,6 +376,11 @@ public class System extends Resource {
     @Override
     public final Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
+    }
+
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+        return resourceConditions;
     }
 
     public final Set<Institution> getInstitutions() {

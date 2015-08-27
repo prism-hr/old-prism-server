@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.advert;
+package com.zuehlke.pgadmissions.domain.resource;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,16 +17,16 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import uk.co.alumeni.prism.api.model.resource.ResourceInstanceDefinition;
 
 @Entity
-@Table(name = "advert_study_option_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "advert_study_option_id", "business_year" }))
-public class AdvertStudyOptionInstance implements UniqueEntity, ResourceInstanceDefinition {
+@Table(name = "resource_study_option_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "business_year" }))
+public class ResourceStudyOptionInstance implements UniqueEntity, ResourceInstanceDefinition {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "advert_study_option_id", nullable = false)
-    private AdvertStudyOption studyOption;
+    @JoinColumn(name = "program_study_option_id", nullable = false)
+    private ResourceStudyOption studyOption;
 
     @Column(name = "application_start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -50,11 +50,11 @@ public class AdvertStudyOptionInstance implements UniqueEntity, ResourceInstance
         this.id = id;
     }
 
-    public final AdvertStudyOption getStudyOption() {
+    public final ResourceStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public final void setStudyOption(AdvertStudyOption studyOption) {
+    public final void setStudyOption(ResourceStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -98,27 +98,27 @@ public class AdvertStudyOptionInstance implements UniqueEntity, ResourceInstance
         this.identifier = identifier;
     }
 
-    public AdvertStudyOptionInstance withStudyOption(AdvertStudyOption studyOption) {
+    public ResourceStudyOptionInstance withStudyOption(ResourceStudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }
 
-    public AdvertStudyOptionInstance withApplicationStartDate(LocalDate applicationStartDate) {
+    public ResourceStudyOptionInstance withApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
         return this;
     }
 
-    public AdvertStudyOptionInstance withApplicationCloseDate(LocalDate applicationCloseDate) {
+    public ResourceStudyOptionInstance withApplicationCloseDate(LocalDate applicationCloseDate) {
         this.applicationCloseDate = applicationCloseDate;
         return this;
     }
 
-    public AdvertStudyOptionInstance withAcademicYear(String academicYear) {
+    public ResourceStudyOptionInstance withAcademicYear(String academicYear) {
         this.businessYear = academicYear;
         return this;
     }
 
-    public AdvertStudyOptionInstance withIdentifier(String identifier) {
+    public ResourceStudyOptionInstance withIdentifier(String identifier) {
         this.identifier = identifier;
         return this;
     }

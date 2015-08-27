@@ -46,7 +46,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentState;
@@ -67,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentDivision;
@@ -74,6 +74,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -92,12 +95,12 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
@@ -211,17 +214,13 @@ public class ResourceService {
             resource.setCreatedTimestamp(baseline);
             setResourceUpdated(resource, baseline);
 
-            boolean isResourceParent = ResourceParent.class.isAssignableFrom(resource.getClass());
-            if (isResourceParent) {
+            if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+                resource.getAdvert().setResource(resource);
                 ((ResourceParent) (resource)).setUpdatedTimestampSitemap(baseline);
             }
 
             entityService.save(resource);
             entityService.flush();
-
-            if (isResourceParent) {
-                resource.getAdvert().setResource(resource);
-            }
 
             Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
             if (workflowPropertyConfigurationVersion == null) {
@@ -480,59 +479,77 @@ public class ResourceService {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
     }
 
-    public AdvertStudyOption getStudyOption(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
-        AdvertStudyOption advertStudyOption = resource.getAdvert().getStudyOptions().stream().filter(aso -> aso.getStudyOption().getId() //
-                .equals(studyOption.getId())).findFirst().get();
+    public ResourceStudyOption getStudyOption(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
-            return advertStudyOption;
+            return resourceDAO.getResourceAttributeStrict(resource, ResourceStudyOption.class, "studyOption", studyOption);
         }
-
-        if (advertStudyOption == null) {
-            ResourceParent parent = resource.getParentResource();
-            if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
-                return getStudyOption((ResourceOpportunity) parent, studyOption);
-            }
-        }
-
-        return advertStudyOption;
+        return resourceDAO.getResourceAttribute(resource, ResourceStudyOption.class, "studyOption", studyOption);
     }
 
     public List<ImportedEntitySimple> getStudyOptions(ResourceOpportunity resource) {
-        List<ImportedEntitySimple> studyOptions = resource.getAdvert().getStudyOptions().stream().map(so -> so.getStudyOption()).collect(Collectors.toList());
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
-            return studyOptions;
-        }
-
-        if (studyOptions.isEmpty()) {
-            ResourceParent parent = resource.getParentResource();
-            if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
-                return getStudyOptions((ResourceOpportunity) parent);
+            List<ImportedEntitySimple> prismStudyOptions = Lists.newLinkedList();
+            List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
+            for (ResourceStudyOption studyOption : studyOptions) {
+                prismStudyOptions.add(studyOption.getStudyOption());
             }
+            return prismStudyOptions;
         }
 
-        return studyOptions;
+        List<ImportedEntitySimple> filteredStudyOptions = Lists.newLinkedList();
+        List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributes(resource, ResourceStudyOption.class,
+                "studyOption", "id");
+
+        PrismScope lastResourceScope = null;
+        for (ResourceStudyOption studyOption : studyOptions) {
+            PrismScope thisResourceScope = studyOption.getResource().getResourceScope();
+            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
+                break;
+            }
+            filteredStudyOptions.add(studyOption.getStudyOption());
+            lastResourceScope = thisResourceScope;
+        }
+
+        return filteredStudyOptions;
+    }
+
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
+        return resourceDAO.getFirstStudyOptionInstance(resource, studyOption);
     }
 
     public List<String> getStudyLocations(ResourceOpportunity resource) {
-        List<String> studyLocations = resource.getAdvert().getStudyLocations().stream().map(sl -> sl.getStudyLocation()).collect(Collectors.toList());
-        if (studyLocations.isEmpty()) {
-            Resource parent = resource.getParentResource();
-            if (ResourceParent.class.isAssignableFrom(parent.getClass())) {
-                return getStudyLocations(resource);
+        List<String> filteredStudylocations = Lists.newLinkedList();
+        List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource,
+                ResourceStudyLocation.class, "studyLocation", null);
+
+        PrismScope lastResourceScope = null;
+        for (ResourceStudyLocation studyLocation : studyLocations) {
+            PrismScope thisResourceScope = studyLocation.getResource().getResourceScope();
+            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
+                break;
             }
+            filteredStudylocations.add(studyLocation.getStudyLocation());
+            lastResourceScope = thisResourceScope;
         }
-        return studyLocations;
+
+        return filteredStudylocations;
     }
 
     public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
-        List<PrismActionCondition> actionConditions = resource.getAdvert().getConditions().stream().map(condition -> condition.getActionCondition()).collect(Collectors.toList());
-        if (actionConditions.isEmpty()) {
-            Resource parent = resource.getParentResource();
-            if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-                return getActionConditions((ResourceParent) parent);
+        List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
+        List<ResourceCondition> actionConditions = resourceDAO.getResourceConditions(resource);
+
+        PrismScope lastResourceScope = null;
+        for (ResourceCondition resourceCondition : actionConditions) {
+            PrismScope thisResourceScope = resourceCondition.getResource().getResourceScope();
+            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
+                break;
             }
+            filteredActionConditions.add(resourceCondition.getActionCondition());
+            lastResourceScope = thisResourceScope;
         }
-        return actionConditions;
+
+        return filteredActionConditions;
     }
 
     public <T extends ResourceParent, U extends ResourceParentDTO> void setResourceAttributes(T resource, U resourceDTO) {
@@ -559,6 +576,9 @@ public class ResourceService {
     }
 
     public void setResourceConditions(ResourceParent resource, List<ResourceConditionDTO> resourceConditions) {
+        resource.getResourceConditions().clear();
+        entityService.flush();
+
         if (resourceConditions == null) {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
@@ -581,16 +601,41 @@ public class ResourceService {
                 throw new UnsupportedOperationException("Resource type does not have conditions");
             }
         }
-        advertService.updateAdvertConditions(resource.getAdvert(), resourceConditions);
+
+        for (ResourceConditionDTO resourceCondition : resourceConditions) {
+            PrismActionCondition actionCondition = resourceCondition.getActionCondition();
+            resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(resourceCondition.getActionCondition())
+                    .withPartnerNode(actionCondition.equals(ACCEPT_APPLICATION) ? true : resourceCondition.getPartnerMode()));
+        }
     }
 
     public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
-        studyOptions = studyOptions == null ? newArrayList(importedEntityService.getByName(ImportedEntitySimple.class, FULL_TIME.name())) : studyOptions;
-        advertService.updateAdvertStudyOptions(resource.getAdvert(), studyOptions, baseline);
+        if (resource.getId() != null) {
+            resourceDAO.disableImportedResourceStudyOptionInstances(resource);
+            resourceDAO.disableImportedResourceStudyOptions(resource);
+            resource.getInstanceGroups().clear();
+        }
+
+        LocalDate close = getResourceEndDate(resource);
+        if (studyOptions == null) {
+            studyOptions = studyOptions == null ? newArrayList(importedEntityService.getByName(ImportedEntitySimple.class, FULL_TIME.name())) : studyOptions;
+        }
+
+        resource.getInstanceGroups().addAll(studyOptions.stream().filter(studyOption -> close == null || close.isAfter(baseline)).map(
+                studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline).withApplicationCloseDate(close))
+                .collect(Collectors.toList()));
     }
 
     public void setStudyLocations(ResourceOpportunity resource, List<String> studyLocations) {
-        advertService.updateAdvertStudyLocations(resource.getAdvert(), studyLocations);
+        resource.getStudyLocations().clear();
+        entityService.flush();
+
+        if (studyLocations != null) {
+            for (String studyLocation : studyLocations) {
+                resource.addStudyLocation(
+                        new ResourceStudyLocation().withResource(resource).withStudyLocation(studyLocation));
+            }
+        }
     }
 
     public <T extends ResourceParentDTO> void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) throws Exception {
@@ -605,7 +650,7 @@ public class ResourceService {
         if (!resource.getAdvert().isImported()) {
             ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class,
                     resourceDTO.getOpportunityType().name());
-            resource.getAdvert().setOpportunityType(opportunityType);
+            resource.setOpportunityType(opportunityType);
 
             List<ImportedEntitySimple> studyOptions = resourceDTO.getStudyOptions().stream().map(
                     studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId()))
@@ -638,6 +683,12 @@ public class ResourceService {
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
     }
 
+    public void deleteElapsedStudyOptions() {
+        LocalDate baseline = new LocalDate();
+        resourceDAO.deleteElapsedStudyOptionInstances(baseline);
+        resourceDAO.deleteElapsedStudyOptions(baseline);
+    }
+
     public Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {
@@ -647,6 +698,10 @@ public class ResourceService {
             }
         }
         return conditions;
+    }
+
+    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
+        return resourceDAO.getResourceEndDate(resource);
     }
 
     public <T extends ResourceParent> Integer getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
@@ -886,25 +941,19 @@ public class ResourceService {
 
     private void setResourceOpportunityType(ResourceOpportunity resourceOpportunity, ImportedEntitySimple opportunityType) {
         resourceOpportunity.setOpportunityType(opportunityType);
-        Advert advert = resourceOpportunity.getAdvert();
-        advert.setOpportunityType(opportunityType);
+
         PrismOpportunityCategory opportunityCategory = PrismOpportunityType.valueOf(opportunityType.getName()).getCategory();
         resourceOpportunity.setOpportunityCategory(opportunityCategory);
-        advert.setOpportunityCategories(opportunityCategory.name());
 
         for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             ResourceParent parent = (ResourceParent) resourceOpportunity.getEnclosingResource(scope);
             String opportunityCategories = parent.getOpportunityCategories();
             if (opportunityCategories == null) {
-                opportunityCategories = opportunityCategory.name();
-                parent.setOpportunityCategories(opportunityCategories);
-                parent.getAdvert().setOpportunityCategories(opportunityCategories);
+                parent.setOpportunityCategories(opportunityCategory.name());
             } else {
                 Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
                 opportunityCategoriesSplit.add(opportunityCategories);
-                opportunityCategories = Joiner.on("|").join(opportunityCategoriesSplit);
-                parent.setOpportunityCategories(opportunityCategories);
-                parent.getAdvert().setOpportunityCategories(opportunityCategories);
+                parent.setOpportunityCategories(Joiner.on("|").join(opportunityCategoriesSplit));
             }
         }
     }

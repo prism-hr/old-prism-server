@@ -43,7 +43,6 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
@@ -62,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
@@ -103,7 +103,7 @@ public class ApplicationService {
 
     @Inject
     private RoleService roleService;
-
+    
     @Inject
     private UserService userService;
 
@@ -158,7 +158,7 @@ public class ApplicationService {
 
         ImportedEntitySimple studyOption = importedEntityService.getById(ImportedEntitySimple.class, studyOptionId);
 
-        AdvertStudyOption resourceStudyOption = null;
+        ResourceStudyOption resourceStudyOption = null;
         Resource parentResource = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
             resourceStudyOption = resourceService.getStudyOption((ResourceOpportunity) application.getParentResource(), studyOption);
@@ -172,7 +172,7 @@ public class ApplicationService {
 
     }
 
-    public LocalDate getEarliestStartDate(AdvertStudyOption resourceStudyOption, LocalDate baseline) {
+    public LocalDate getEarliestStartDate(ResourceStudyOption resourceStudyOption, LocalDate baseline) {
         if (resourceStudyOption != null) {
             LocalDate applicationStartDate = resourceStudyOption.getApplicationStartDate();
             LocalDate applicationCloseDate = resourceStudyOption.getApplicationCloseDate();
@@ -188,14 +188,14 @@ public class ApplicationService {
         return new LocalDate().withDayOfWeek(MONDAY);
     }
 
-    public LocalDate getLatestStartDate(Application application, AdvertStudyOption advertStudyOption) {
-        if (advertStudyOption != null) {
-            LocalDate applicationStartDate = advertStudyOption.getApplicationStartDate();
-            LocalDate applicationCloseDate = advertStudyOption.getApplicationCloseDate();
+    public LocalDate getLatestStartDate(Application application, ResourceStudyOption resourceStudyOption) {
+        if (resourceStudyOption != null) {
+            LocalDate applicationStartDate = resourceStudyOption.getApplicationStartDate();
+            LocalDate applicationCloseDate = resourceStudyOption.getApplicationCloseDate();
 
             if (!(applicationStartDate == null || applicationCloseDate == null)) {
-                LocalDate closeDate = advertStudyOption.getApplicationCloseDate().plusMonths(
-                        valueOf(((ResourceOpportunity) advertStudyOption.getAdvert().getResource()).getOpportunityType().getName()).getDefaultStartBuffer());
+                LocalDate closeDate = resourceStudyOption.getApplicationCloseDate().plusMonths(
+                        valueOf(((ResourceOpportunity) resourceStudyOption.getResource()).getOpportunityType().getName()).getDefaultStartBuffer());
                 LocalDate latestStartDate = closeDate.withDayOfWeek(MONDAY);
                 return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
             }
@@ -407,7 +407,7 @@ public class ApplicationService {
         return resourceService.getResourceStateGroups(application).contains(PrismStateGroup.APPLICATION_APPROVED)
                 && !application.getState().equals(APPLICATION_APPROVED);
     }
-
+    
     public <T extends Application> void syncronizeApplicationRating(T application) {
         ResourceRatingSummaryDTO ratingSummary = getApplicationRatingSummary(application);
         application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());

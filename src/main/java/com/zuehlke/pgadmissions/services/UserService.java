@@ -135,11 +135,11 @@ public class UserService {
                 boolean isUserAssignment = !userProperties.isEmpty();
                 if (UserAssignment.class.isAssignableFrom(entityClass) || Resource.class.isAssignableFrom(entityClass)) {
                     if (!isUserAssignment) {
-                        throw new Exception(entityClass.getSimpleName() + " is not a user assignment. It must not have a user reassignment mechanism");
+                        throw new Exception(entityClass.getSimpleName() + " is not a user assignment. It must not have a user reassignment module");
                     }
                     userAssignments.putAll((Class<? extends UniqueEntity>) entityClass, userProperties);
                 } else if (isUserAssignment) {
-                    throw new Exception(entityClass.getSimpleName() + " is a user assignment. It must have a user reassignment mechanism");
+                    throw new Exception(entityClass.getSimpleName() + " is a user assignment. It must have a user reassignment module");
                 }
             }
         }

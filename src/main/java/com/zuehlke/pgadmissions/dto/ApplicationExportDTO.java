@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 public class ApplicationExportDTO {
@@ -19,7 +19,7 @@ public class ApplicationExportDTO {
     
     private User primarySupervisor;
     
-    private AdvertStudyOptionInstance exportAdvertInstance;
+    private ResourceStudyOptionInstance exportProgramInstance;
     
     private List<ApplicationReferenceDTO> applicationReferences;
 
@@ -43,8 +43,8 @@ public class ApplicationExportDTO {
         return primarySupervisor;
     }
 
-    public final AdvertStudyOptionInstance getExportAdvertInstance() {
-        return exportAdvertInstance;
+    public final ResourceStudyOptionInstance getExportProgramInstance() {
+        return exportProgramInstance;
     }
 
     public final List<ApplicationReferenceDTO> getApplicationReferences() {
@@ -75,8 +75,8 @@ public class ApplicationExportDTO {
         this.primarySupervisor = primarySupervisor;
     }
 
-    public final void setExportAdvertInstance(AdvertStudyOptionInstance exportProgramInstance) {
-        this.exportAdvertInstance = exportProgramInstance;
+    public final void setExportProgramInstance(ResourceStudyOptionInstance exportProgramInstance) {
+        this.exportProgramInstance = exportProgramInstance;
     }
 
     public ApplicationExportDTO withApplication(Application application) {
@@ -104,8 +104,8 @@ public class ApplicationExportDTO {
         return this;
     }
     
-    public ApplicationExportDTO withExportAdvertInstance(AdvertStudyOptionInstance exportAdvertInstance) {
-        this.exportAdvertInstance = exportAdvertInstance;
+    public ApplicationExportDTO withExportProgramInstance(ResourceStudyOptionInstance exportProgramInstance) {
+        this.exportProgramInstance = exportProgramInstance;
         return this;
     }
     

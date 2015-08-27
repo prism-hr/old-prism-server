@@ -44,7 +44,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -58,6 +57,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
@@ -346,6 +346,7 @@ public class ResourceMapper {
         representation.setUserRoles(roleMapper.getResourceUserRoleRepresentations(resource));
 
         representation.setWorkflowConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
+        representation.setConditions(getResourceConditionRepresentations(resource));
         return representation;
     }
 
@@ -361,7 +362,6 @@ public class ResourceMapper {
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         representation.setPartnerActions(actionService.getPartnerActions(resource));
-        representation.setConditions(getResourceConditionRepresentations(resource));
         return representation;
     }
 
@@ -516,14 +516,14 @@ public class ResourceMapper {
         return index;
     }
 
-    public ResourceStudyOptionInstanceRepresentation getResourceStudyOptionInstanceRepresentation(AdvertStudyOptionInstance resourceStudyOptionInstance) {
+    public ResourceStudyOptionInstanceRepresentation getResourceStudyOptionInstanceRepresentation(ResourceStudyOptionInstance resourceStudyOptionInstance) {
         return new ResourceStudyOptionInstanceRepresentation().withApplicationStartDate(resourceStudyOptionInstance.getApplicationStartDate())
                 .withApplicationCloseDate(resourceStudyOptionInstance.getApplicationCloseDate())
                 .withBusinessYear(resourceStudyOptionInstance.getBusinessYear()).withIdentifier(resourceStudyOptionInstance.getIdentifier());
     }
 
-    public <T extends ResourceParent> List<ResourceConditionRepresentation> getResourceConditionRepresentations(T resource) {
-        return resource.getAdvert().getConditions().stream()
+    public List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
+        return resource.getResourceConditions().stream()
                 .map(condition -> new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
                         .withPartnerMode(condition.getPartnerMode()))
                 .collect(Collectors.toList());

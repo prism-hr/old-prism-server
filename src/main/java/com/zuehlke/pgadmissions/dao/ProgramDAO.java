@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -20,11 +21,11 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.advert.AdvertStudyLocation;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
@@ -36,12 +37,14 @@ public class ProgramDAO {
 
     public Program getProgramByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setFetchMode("studyOptions", FetchMode.JOIN) //
                 .add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
 
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setFetchMode("studyOptions", FetchMode.JOIN) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("importedCode", importedCode)) //
                 .uniqueResult();
@@ -78,7 +81,7 @@ public class ProgramDAO {
                 .setProjection(Projections.groupProperty("studyDetail.studyDivision")) //
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("studyDetail.studyLocation", location)) //
-                .add(Subqueries.in(location, DetachedCriteria.forClass(AdvertStudyLocation.class) //
+                .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceStudyLocation.class) //
                         .setProjection(Projections.property("studyLocation")) //
                         .add(Restrictions.eq("program", program)))) //
                 .list();
@@ -90,7 +93,7 @@ public class ProgramDAO {
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("studyDetail.studyLocation", location)) //
                 .add(Restrictions.eq("studyDetail.studyDivision", division)) //
-                .add(Subqueries.in(location, DetachedCriteria.forClass(AdvertStudyLocation.class) //
+                .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceStudyLocation.class) //
                         .setProjection(Projections.property("studyLocation")) //
                         .add(Restrictions.eq("program", program)))) //
                 .list();

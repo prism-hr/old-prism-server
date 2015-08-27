@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.advert;
+package com.zuehlke.pgadmissions.domain.resource;
 
 import java.util.Set;
 
@@ -16,22 +16,29 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
 
 @Entity
-@Table(name = "advert_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "imported_study_option_id" }) })
-public class AdvertStudyOption implements UniqueEntity, ResourceInstanceGroupDefinition<ImportedEntitySimple, AdvertStudyOptionInstance> {
+@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "imported_study_option_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "imported_study_option_id" }) })
+public class ResourceStudyOption extends ResourceOpportunityAttribute implements
+        ResourceInstanceGroupDefinition<ImportedEntitySimple, ResourceStudyOptionInstance> {
+
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "advert_id")
-    private Advert advert;
+    @JoinColumn(name = "program_id", insertable = false, updatable = false)
+    private Program program;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id", insertable = false, updatable = false)
+    private Project project;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "imported_study_option_id", nullable = false)
@@ -46,7 +53,7 @@ public class AdvertStudyOption implements UniqueEntity, ResourceInstanceGroupDef
     private LocalDate applicationCloseDate;
 
     @OneToMany(mappedBy = "studyOption")
-    private Set<AdvertStudyOptionInstance> instances = Sets.newHashSet();
+    private Set<ResourceStudyOptionInstance> instances = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -55,13 +62,25 @@ public class AdvertStudyOption implements UniqueEntity, ResourceInstanceGroupDef
     public void setId(Integer id) {
         this.id = id;
     }
-    
-    public Advert getAdvert() {
-        return advert;
+
+    @Override
+    public Program getProgram() {
+        return program;
     }
-    
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
+
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    @Override
+    public Project getProject() {
+        return project;
+    }
+
+    @Override
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     @Override
@@ -91,38 +110,55 @@ public class AdvertStudyOption implements UniqueEntity, ResourceInstanceGroupDef
     }
 
     @Override
-    public Set<AdvertStudyOptionInstance> getInstances() {
+    public Set<ResourceStudyOptionInstance> getInstances() {
         return instances;
     }
 
     @Override
-    public void setInstances(Set<AdvertStudyOptionInstance> instances) {
+    public void setInstances(Set<ResourceStudyOptionInstance> instances) {
         this.instances = instances;
     }
 
-    public AdvertStudyOption withAdvert(Advert advert) {
-        this.advert = advert;
+    public ResourceStudyOption withResource(ResourceParent resource) {
+        setResource(resource);
         return this;
     }
 
-    public AdvertStudyOption withStudyOption(ImportedEntitySimple studyOption) {
+    public ResourceStudyOption withStudyOption(ImportedEntitySimple studyOption) {
         this.studyOption = studyOption;
         return this;
     }
 
-    public AdvertStudyOption withApplicationStartDate(LocalDate applicationStartDate) {
+    public ResourceStudyOption withApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
         return this;
     }
 
-    public AdvertStudyOption withApplicationCloseDate(LocalDate applicationCloseDate) {
+    public ResourceStudyOption withApplicationCloseDate(LocalDate applicationCloseDate) {
         this.applicationCloseDate = applicationCloseDate;
         return this;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getResource(), studyOption);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceStudyOption other = (ResourceStudyOption) object;
+        return Objects.equal(getResource(), other.getResource()) && Objects.equal(studyOption, other.getStudyOption());
+    }
+
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addExclusion("advert", advert).addProperty("studyOption", studyOption);
+        return super.getEntitySignature().addProperty("studyOption", studyOption);
     }
 
 }

@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -37,14 +38,21 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.workflow.user.AdvertReassignmentProcessor;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
-public class Advert implements UniqueEntity {
+public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentProcessor> {
 
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -61,6 +69,10 @@ public class Advert implements UniqueEntity {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_opportunity_type_id")
+    private ImportedEntitySimple opportunityType;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -157,6 +169,14 @@ public class Advert implements UniqueEntity {
         this.id = id;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Institution getInstitution() {
         return institution;
     }
@@ -187,6 +207,14 @@ public class Advert implements UniqueEntity {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public ImportedEntitySimple getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(ImportedEntitySimple opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public String getName() {
@@ -352,6 +380,16 @@ public class Advert implements UniqueEntity {
 
     public boolean hasConvertedPay() {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
+    }
+
+    @Override
+    public Class<AdvertReassignmentProcessor> getUserReassignmentProcessor() {
+        return AdvertReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return true;
     }
 
     @Override

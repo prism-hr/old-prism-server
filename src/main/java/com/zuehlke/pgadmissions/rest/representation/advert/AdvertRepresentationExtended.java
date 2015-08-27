@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -11,15 +12,19 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private UserRepresentationSimple user;
 
-    private ResourceRepresentationSimple resource;
-
     private ResourceRepresentationSimple institution;
 
     private ResourceRepresentationSimple department;
+    
+    private ResourceRepresentationSimple program;
+    
+    private ResourceRepresentationSimple resource;
 
     private List<ResourceConditionRepresentation> conditions;
 
     private PrismOpportunityType opportunityType;
+    
+    private List<PrismStudyOption> studyOptions;
 
     private String name;
 
@@ -30,15 +35,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
-
-    public ResourceRepresentationSimple getResource() {
-        return resource;
-    }
-
-    public void setResource(ResourceRepresentationSimple resource) {
-        this.resource = resource;
-    }
-
+    
     public ResourceRepresentationSimple getInstitution() {
         return institution;
     }
@@ -55,6 +52,22 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.department = department;
     }
 
+    public ResourceRepresentationSimple getProgram() {
+        return program;
+    }
+
+    public void setProgram(ResourceRepresentationSimple program) {
+        this.program = program;
+    }
+
+    public ResourceRepresentationSimple getResource() {
+        return resource;
+    }
+
+    public void setResource(ResourceRepresentationSimple resource) {
+        this.resource = resource;
+    }
+
     public List<ResourceConditionRepresentation> getConditions() {
         return conditions;
     }
@@ -69,6 +82,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
     public String getName() {

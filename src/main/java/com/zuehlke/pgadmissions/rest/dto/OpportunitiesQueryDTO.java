@@ -1,10 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -17,8 +12,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
 public class OpportunitiesQueryDTO {
 
@@ -33,7 +26,7 @@ public class OpportunitiesQueryDTO {
     private Integer[] programs;
 
     private Integer[] projects;
-    
+
     @NotNull
     private PrismActionCondition actionCondition;
 
@@ -276,18 +269,6 @@ public class OpportunitiesQueryDTO {
 
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
-    }
-
-    public ResourceDTO getParentResource() {
-        PrismScope[] resourceScopes = PrismScope.values();
-        for (int i = INSTITUTION.ordinal(); i <= PROJECT.ordinal(); i++) {
-            PrismScope resourceScope = resourceScopes[i];
-            Integer[] resourceIds = (Integer[]) getProperty(this, pluralize(resourceScope.getLowerCamelName()));
-            if (resourceIds.length == 1) {
-                return new ResourceDTO().withScope(resourceScope).withId(resourceIds[0]);
-            }
-        }
-        return null;
     }
 
 }

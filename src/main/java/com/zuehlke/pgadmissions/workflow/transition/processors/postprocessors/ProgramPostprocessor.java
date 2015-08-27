@@ -35,7 +35,7 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
 
         if (comment.isResourceEndorsementComment()) {
-            resourceService.synchronizeResourceRating(resource, comment);
+            resourceService.synchronizeResourceEndorsement(resource, comment);
         }
     }
 

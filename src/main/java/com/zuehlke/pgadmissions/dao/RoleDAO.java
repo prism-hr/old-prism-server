@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 
 @Repository
@@ -122,6 +123,16 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.id", prismRole)) //
                 .uniqueResult();
+    }
+
+    public List<UserRole> getUserRoles(User user, List<PrismRole> roles) {
+        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.in("role.id", roles)) //
+                .addOrder(Order.asc("scope.ordinal")) //
+                .list();
     }
 
     public List<User> getRoleUsers(Resource resource, Role... roles) {
@@ -272,6 +283,14 @@ public class RoleDAO {
                 .add(Restrictions.isNotNull("action.creationScope")) //
                 .add(Restrictions.eq("roleTransition.roleTransitionType", CREATE)) //
                 .add(Restrictions.eq("roleTransition.restrictToActionOwner", true)) //
+                .list();
+    }
+
+    public List<PrismRole> getEndorserRoles() {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias("stateAction", "stateAction") //
+                .add(Restrictions.eq("stateAction.action.id", RESOURCE_ENDORSE)) //
                 .list();
     }
 

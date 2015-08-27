@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
@@ -71,6 +72,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
@@ -112,6 +114,9 @@ public class AdvertService {
 
     @Inject
     private ResourceService resourceService;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private StateService stateService;
@@ -416,6 +421,22 @@ public class AdvertService {
         return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
     }
 
+    public void synchronizeAdvertEndorsement(Advert advert, User user) {
+        List<Advert> targetAdverts = Lists.newArrayList();
+        for (UserRole userRole : roleService.getEndorserUserRoles(user)) {
+            Resource userResource = userRole.getResource();
+            if (userResource.getResourceScope().equals(SYSTEM)) {
+                advertDAO.endorseForAdvertTargets(advert);
+                break;
+            }
+            targetAdverts.add(advert);
+        }
+
+        if (!targetAdverts.isEmpty()) {
+            advertDAO.endorseForAdvertTargets(advert, targetAdverts);
+        }
+    }
+
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {
@@ -500,7 +521,7 @@ public class AdvertService {
 
     private AdvertTargetAdvert createAdvertTargetAdvert(Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
         return new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
-                .withSelected(selected);
+                .withSelected(selected).withEndorsed(false);
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {

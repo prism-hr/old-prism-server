@@ -159,7 +159,9 @@ public class AdvertMapper {
             }
         }
 
-        representation.setOpportunityType(advert.getOpportunityType() != null ? PrismOpportunityType.valueOf(advert.getOpportunityType()) : null);
+        String opportunityType = advert.getOpportunityType();
+        representation.setOpportunityType(opportunityType != null ? PrismOpportunityType.valueOf(opportunityType) : null);
+        
         representation.setName(advert.getName());
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());

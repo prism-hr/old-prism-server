@@ -14,13 +14,13 @@ import com.zuehlke.pgadmissions.services.RoleService;
 @Component
 public class CreateResolver implements RoleTransitionResolver {
 
-	@Inject
-	private RoleService roleService;
-	
-	@Override
+    @Inject
+    private RoleService roleService;
+
+    @Override
     public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-	    roleService.getOrCreateUserRole(transitionUserRole);
-	    comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), CREATE);
+        roleService.getOrCreateUserRole(transitionUserRole);
+        comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), CREATE);
     }
 
 }

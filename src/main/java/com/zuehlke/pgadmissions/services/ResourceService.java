@@ -802,7 +802,7 @@ public class ResourceService {
             Set<String> commentUserProperties = userService.getUserProperties(Comment.class);
             Set<String> commentAssignedUserUserProperties = userService.getUserProperties(CommentAssignedUser.class);
             Set<String> documentUserProperties = userService.getUserProperties(Document.class);
-            
+
             userService.mergeUserAssignment(resource.getAdvert(), newUser, userProperty);
 
             for (Comment oldComment : commentService.getResourceOwnerComments(resource)) {
@@ -852,7 +852,7 @@ public class ResourceService {
         return null;
     }
 
-    public <T extends ResourceParent> void synchronizeResourceRating(T resource, Comment comment) {
+    public <T extends ResourceParent> void synchronizeResourceEndorsement(T resource, Comment comment) {
         ResourceRatingSummaryDTO ratingSummary = resourceDAO.getResourceRatingSummary(resource);
         resource.setOpportunityRatingCount(ratingSummary.getRatingCount().intValue());
         resource.setOpportunityRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
@@ -865,6 +865,14 @@ public class ResourceService {
             parent.setOpportunityRatingCount(parentRatingSummary.getRatingCount().intValue());
             parent.setOpportunityRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
         });
+
+        if (comment.getRating().compareTo(new BigDecimal(3)) > 0) {
+            advertService.synchronizeAdvertEndorsement(resource.getAdvert(), comment.getUser());
+        }
+    }
+
+    public List<ResourceRepresentationIdentity> getResourcesNotYetEndorsedFor(ResourceParent resource) {
+        return resourceDAO.getResourcesNotYetEndorsedFor(resource);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {
@@ -957,7 +965,7 @@ public class ResourceService {
             } else {
                 Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
                 opportunityCategoriesSplit.add(opportunityCategories);
-                
+
                 opportunityCategories = Joiner.on("|").join(opportunityCategoriesSplit);
                 setOpportunityCategories(parent, opportunityCategories);
             }

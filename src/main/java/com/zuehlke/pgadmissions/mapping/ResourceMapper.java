@@ -362,6 +362,15 @@ public class ResourceMapper {
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         representation.setPartnerActions(actionService.getPartnerActions(resource));
+
+        List<ResourceRepresentationIdentity> resourcesNotYetEndorsedFor = Lists.newLinkedList();
+        for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            resourceService.getResourcesNotYetEndorsedFor(resource).forEach(resourceNotYetEndorsedFor -> {
+                resourcesNotYetEndorsedFor.add(resourceNotYetEndorsedFor.withScope(scope));
+            });
+        }
+
+        representation.setResourcesNotYetEndorsedFor(resourcesNotYetEndorsedFor);
         return representation;
     }
 

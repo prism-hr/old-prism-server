@@ -28,6 +28,9 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     @Column(name = "selected", nullable = false)
     private Boolean selected;
 
+    @Column(name = "endorsed", nullable = false)
+    private Boolean endorsed;
+
     public Integer getId() {
         return id;
     }
@@ -60,6 +63,14 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         this.selected = selected;
     }
 
+    public Boolean getEndorsed() {
+        return endorsed;
+    }
+
+    public void setEndorsed(Boolean endorsed) {
+        this.endorsed = endorsed;
+    }
+
     @Override
     public Integer getValueId() {
         return value.getId();
@@ -85,4 +96,9 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         return this;
     }
 
+    public AdvertTargetAdvert withEndorsed(Boolean endorsed) {
+        this.endorsed = endorsed;
+        return this;
+    }
+    
 }

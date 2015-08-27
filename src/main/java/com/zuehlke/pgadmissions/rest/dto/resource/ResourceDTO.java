@@ -41,7 +41,7 @@ public class ResourceDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, scope);
+        return Objects.hashCode(scope, id);
     }
 
     @Override

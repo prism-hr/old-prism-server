@@ -486,4 +486,27 @@ public class ActionDAO {
                 .list();
     }
 
+    public List<PrismActionEnhancement> getExpectedDefaultActionEnhancements(Resource resource, Action action) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("stateAction.actionEnhancement"))
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReference, resourceReference)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .list();
+    }
+
+    public List<PrismActionEnhancement> getExpectedCustomActionEnhancements(Resource resource, Action action) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement"))
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReference, resourceReference)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .list();
+    }
+
 }

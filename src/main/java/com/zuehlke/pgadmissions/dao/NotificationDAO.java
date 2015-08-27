@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getCommentExclusionsConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;

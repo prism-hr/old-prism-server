@@ -2,11 +2,10 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.PrismServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper;
 
 public enum PrismMaintenanceTask {
 
-    SYSTEM_INDEX_IMPORTED_DATA(TargetingServiceHelper.class),
+//    SYSTEM_INDEX_IMPORTED_DATA(TargetingServiceHelper.class),
     SYSTEM_IMPORT_UCAS_INSTITUTION(InstitutionServiceHelper.class);
 //    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ResourceServiceHelper.class),
 //    SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class),

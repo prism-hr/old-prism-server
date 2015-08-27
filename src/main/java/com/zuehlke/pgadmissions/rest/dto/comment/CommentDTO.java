@@ -31,8 +31,10 @@ public class CommentDTO {
     private String content;
 
     private PrismState transitionState;
-    
+
     private BigDecimal rating;
+
+    private Boolean applicationIdentified;
 
     private PrismYesNoUnsureResponse applicationEligible;
 
@@ -136,6 +138,14 @@ public class CommentDTO {
 
     public void setTransitionState(PrismState transitionState) {
         this.transitionState = transitionState;
+    }
+
+    public Boolean getApplicationIdentified() {
+        return applicationIdentified;
+    }
+
+    public void setApplicationIdentified(Boolean applicationIdentified) {
+        this.applicationIdentified = applicationIdentified;
     }
 
     public PrismYesNoUnsureResponse getApplicationEligible() {

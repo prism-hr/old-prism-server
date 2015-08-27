@@ -71,6 +71,7 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PROVIDED_REVIEW_OUTCOME(false, APPLICATION, ApplicationProvidedReviewResolver.class), //
     APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationUpdateInterviewAvailabilityResolver.class), //
     APPLICATION_PURGED_OUTCOME(false, APPLICATION, ApplicationPurgedResolver.class), //
+    APPLICATION_IDENTIFIED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
 
     PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
     PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //

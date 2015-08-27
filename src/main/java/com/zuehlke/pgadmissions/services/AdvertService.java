@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -423,7 +424,7 @@ public class AdvertService {
 
     public void synchronizeAdvertEndorsement(Advert advert, User user) {
         List<Advert> targetAdverts = Lists.newArrayList();
-        for (UserRole userRole : roleService.getEndorserUserRoles(user)) {
+        for (UserRole userRole : roleService.getActionPerformerUserRoles(user, RESOURCE_ENDORSE.getActions())) {
             Resource userResource = userRole.getResource();
             if (userResource.getResourceScope().equals(SYSTEM)) {
                 advertDAO.endorseForAdvertTargets(advert);
@@ -435,6 +436,22 @@ public class AdvertService {
         if (!targetAdverts.isEmpty()) {
             advertDAO.endorseForAdvertTargets(advert, targetAdverts);
         }
+    }
+
+    public void identifyForAdverts(User user, List<Integer> adverts) {
+        advertDAO.identifyForAdverts(user, adverts);
+    }
+
+    public List<Integer> getAdvertsUserIdentifiedFor(User user) {
+        return advertDAO.getAdvertsUserIdentifiedFor(user);
+    }
+
+    public List<Integer> getAdvertSelectedTargetAdverts(Advert advert) {
+        return advertDAO.getAdvertSelectedTargetAdverts(advert);
+    }
+
+    public List<Integer> getAdvertsToIdentifyUserFor(User user, List<Integer> adverts) {
+        return advertDAO.getAdvertsToIdentifyUserFor(user, adverts);
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
@@ -735,7 +752,7 @@ public class AdvertService {
         }
     }
 
-    public AdvertFinancialDetailDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
+    private AdvertFinancialDetailDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
         if (detail != null) {
             AdvertFinancialDetailDTO detailDTO = new AdvertFinancialDetailDTO();
             detailDTO.setCurrency(newCurrency);

@@ -66,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
@@ -714,21 +715,27 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public List<ResourceRepresentationIdentity> getResourcesNotYetEndorsedFor(ResourceParent resource) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<ResourceRepresentationIdentity>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
+    public List<ResourceIdentityDTO> getResourcesNotYetEndorsedFor(ResourceParent resource) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String resourceReference = resourceScope.getLowerCamelName();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference + ".id").as("id")) //
                         .add(Projections.property(resourceReference + ".name").as("name")) //
-                        .add(Projections.property("institution.logoImage.id").as("logoImage"))) //
-                .createAlias("value." + resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias("value.institution", "institution", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("advert", resource.getAdvert())) //
+                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId"))) //
+                .createAlias("value", "value", JoinType.INNER_JOIN) //
+                .createAlias("value." + resourceReference, resourceReference, JoinType.INNER_JOIN);
+
+        if (resourceScope.equals(DEPARTMENT)) {
+            criteria.createAlias("value.institution", "institution", JoinType.INNER_JOIN);
+        }
+
+        return (List<ResourceIdentityDTO>) criteria.add(Restrictions.eq("advert", resource.getAdvert())) //
                 .add(Restrictions.eq("selected", true)) //
                 .add(Restrictions.eq("endorsed", false)) //
                 .addOrder(Order.asc(resourceReference + ".name")) //
-                .addOrder(Order.asc(resourceReference + ".id")) //                
-                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationIdentity.class)) //
+                .addOrder(Order.asc(resourceReference + ".id")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceIdentityDTO.class)) //
                 .list();
     }
 

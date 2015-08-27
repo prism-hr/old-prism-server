@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementAction
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Collection;
@@ -20,6 +19,7 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -65,12 +65,8 @@ public class RoleDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -89,7 +85,6 @@ public class RoleDAO {
                         .add(getPartnerUserRoleConstraint(resourceScope, "stateActionAssignment"))) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .list();
     }
 
@@ -286,11 +281,11 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<PrismRole> getEndorserRoles() {
+    public List<PrismRole> getActionPerformerRoles(PrismAction... actions) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("stateAction", "stateAction") //
-                .add(Restrictions.eq("stateAction.action.id", RESOURCE_ENDORSE)) //
+                .add(Restrictions.in("stateAction.action.id", actions)) //
                 .list();
     }
 

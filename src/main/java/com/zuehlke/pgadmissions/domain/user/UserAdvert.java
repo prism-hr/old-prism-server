@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.user;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,6 +28,9 @@ public class UserAdvert implements UniqueEntity, UserAssignment<UserAdvertReassi
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
+    
+    @Column(name = "identified", nullable = false)
+    private Boolean identified;
 
     public Integer getId() {
         return id;
@@ -52,6 +56,14 @@ public class UserAdvert implements UniqueEntity, UserAssignment<UserAdvertReassi
         this.advert = advert;
     }
 
+    public Boolean getIdentified() {
+        return identified;
+    }
+
+    public void setIdentified(Boolean identified) {
+        this.identified = identified;
+    }
+
     public UserAdvert withUser(User user) {
         this.user = user;
         return this;
@@ -62,6 +74,11 @@ public class UserAdvert implements UniqueEntity, UserAssignment<UserAdvertReassi
         return this;
     }
 
+    public UserAdvert withIdentified(Boolean identified) {
+        this.identified = identified;
+        return this;
+    }
+    
     @Override
     public Class<UserAdvertReassignmentProcessor> getUserReassignmentProcessor() {
         return UserAdvertReassignmentProcessor.class;

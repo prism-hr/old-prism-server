@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -28,6 +10,19 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
+import org.apache.commons.lang3.ObjectUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class InstitutionUcasScraper {
@@ -131,7 +126,9 @@ public class InstitutionUcasScraper {
             homepage = Optional.ofNullable(contactElement.select("li.provider_contact_web").first()).map(e -> e.getElementsByTag("a").first().text()).orElse(null);
         }
 
-        return new UcasInstitutionData(addressDTO, telephone, homepage);
+        String summary = Optional.ofNullable(document.getElementById("marketing")).map(e -> e.text()).orElse(null);
+
+        return new UcasInstitutionData(addressDTO, telephone, homepage, summary);
     }
 
     private Document getInstitutionHtmlDocument(int ucasId) throws IOException {
@@ -146,10 +143,13 @@ public class InstitutionUcasScraper {
 
         private String homepage;
 
-        public UcasInstitutionData(AddressAdvertDTO address, String telephone, String homepage) {
+        private String summary;
+
+        public UcasInstitutionData(AddressAdvertDTO address, String telephone, String homepage, String summary) {
             this.address = address;
             this.telephone = telephone;
             this.homepage = homepage;
+            this.summary = summary;
         }
 
         public AddressAdvertDTO getAddress() {
@@ -162,6 +162,10 @@ public class InstitutionUcasScraper {
 
         public String getHomepage() {
             return homepage;
+        }
+
+        public String getSummary() {
+            return summary;
         }
     }
 

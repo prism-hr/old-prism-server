@@ -512,12 +512,12 @@ public class AdvertDAO {
             
             if (resourceScope.equals(DEPARTMENT)) {
                 resourcesConstraint.add(Restrictions.conjunction() //
-                        .add(Restrictions.in("targetAdvert.department", resources))
+                        .add(Restrictions.in("targetAdvert.department.id", resources))
                         .add(Restrictions.isNull("targetAdvert.project"))
                         .add(Restrictions.isNull("targetAdvert.program")));
             } else if (resourceScope.equals(INSTITUTION)) {
                 resourcesConstraint.add(Restrictions.conjunction() //
-                        .add(Restrictions.in("targetAdvert.institution", resources))
+                        .add(Restrictions.in("targetAdvert.institution.id", resources))
                         .add(Restrictions.isNull("targetAdvert.project"))
                         .add(Restrictions.isNull("targetAdvert.program"))
                         .add(Restrictions.isNull("targetAdvert.department")));

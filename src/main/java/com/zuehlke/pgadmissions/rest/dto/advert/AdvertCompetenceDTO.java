@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-import org.hibernate.validator.constraints.Range;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Range;
 
 public class AdvertCompetenceDTO {
 

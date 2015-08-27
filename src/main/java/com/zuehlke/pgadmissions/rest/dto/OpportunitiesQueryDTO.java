@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -12,25 +17,40 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
 public class OpportunitiesQueryDTO {
 
+    private Integer resourceId;
+
+    private PrismAction actionId;
+
+    private Integer[] institutions;
+
+    private Integer[] departments;
+
+    private Integer[] programs;
+
+    private Integer[] projects;
+    
     @NotNull
-    private List<PrismOpportunityCategory> programCategories;
+    private PrismActionCondition actionCondition;
+
+    @NotNull
+    private List<PrismOpportunityCategory> opportunityCategories;
 
     private String keyword;
-    
+
     private List<PrismAdvertIndustry> industries;
-    
+
     private List<PrismAdvertFunction> functions;
-    
+
     private List<String> themes;
 
     private List<PrismOpportunityType> opportunityTypes;
 
     private List<PrismStudyOption> studyOptions;
-    
-    private List<PrismActionCondition> actionConditions;
 
     private Integer minFee;
 
@@ -44,14 +64,6 @@ public class OpportunitiesQueryDTO {
 
     private Integer maxDuration;
 
-    private Integer[] institutions;
-
-    private Integer[] departments;
-
-    private Integer[] programs;
-
-    private Integer[] projects;
-
     private BigDecimal neLat;
 
     private BigDecimal neLon;
@@ -62,16 +74,68 @@ public class OpportunitiesQueryDTO {
 
     private String lastSequenceIdentifier;
 
-    private Integer resourceId;
-
-    private PrismAction actionId;
-
-    public List<PrismOpportunityCategory> getProgramCategories() {
-        return programCategories;
+    public final Integer getResourceId() {
+        return resourceId;
     }
 
-    public void setProgramCategories(List<PrismOpportunityCategory> programCategories) {
-        this.programCategories = programCategories;
+    public final void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public final PrismAction getActionId() {
+        return actionId;
+    }
+
+    public final void setActionId(PrismAction actionId) {
+        this.actionId = actionId;
+    }
+
+    public final Integer[] getInstitutions() {
+        return institutions;
+    }
+
+    public final void setInstitutions(Integer[] institutions) {
+        this.institutions = institutions;
+    }
+
+    public final Integer[] getDepartments() {
+        return departments;
+    }
+
+    public final void setDepartments(Integer[] departments) {
+        this.departments = departments;
+    }
+
+    public final Integer[] getPrograms() {
+        return programs;
+    }
+
+    public final void setPrograms(Integer[] programs) {
+        this.programs = programs;
+    }
+
+    public final Integer[] getProjects() {
+        return projects;
+    }
+
+    public final void setProjects(Integer[] projects) {
+        this.projects = projects;
+    }
+
+    public List<PrismOpportunityCategory> getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
+    }
+
+    public PrismActionCondition getActionCondition() {
+        return actionCondition;
+    }
+
+    public void setActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
     }
 
     public String getKeyword() {
@@ -122,14 +186,6 @@ public class OpportunitiesQueryDTO {
         this.studyOptions = studyOptions;
     }
 
-    public List<PrismActionCondition> getActionConditions() {
-        return actionConditions;
-    }
-
-    public void setActionConditions(List<PrismActionCondition> actionConditions) {
-        this.actionConditions = actionConditions;
-    }
-
     public final Integer getMinFee() {
         return minFee;
     }
@@ -178,38 +234,6 @@ public class OpportunitiesQueryDTO {
         this.maxDuration = maxDuration;
     }
 
-    public final Integer[] getInstitutions() {
-        return institutions;
-    }
-
-    public final void setInstitutions(Integer[] institutions) {
-        this.institutions = institutions;
-    }
-
-    public final Integer[] getDepartments() {
-        return departments;
-    }
-
-    public final void setDepartments(Integer[] departments) {
-        this.departments = departments;
-    }
-
-    public final Integer[] getPrograms() {
-        return programs;
-    }
-
-    public final void setPrograms(Integer[] programs) {
-        this.programs = programs;
-    }
-
-    public final Integer[] getProjects() {
-        return projects;
-    }
-
-    public final void setProjects(Integer[] projects) {
-        this.projects = projects;
-    }
-
     public BigDecimal getNeLat() {
         return neLat;
     }
@@ -250,24 +274,20 @@ public class OpportunitiesQueryDTO {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
     }
 
-    public final Integer getResourceId() {
-        return resourceId;
-    }
-
-    public final void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public final PrismAction getActionId() {
-        return actionId;
-    }
-
-    public final void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
-    }
-
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
+    }
+
+    public ResourceDTO getParentResource() {
+        PrismScope[] resourceScopes = PrismScope.values();
+        for (int i = INSTITUTION.ordinal(); i <= PROJECT.ordinal(); i++) {
+            PrismScope resourceScope = resourceScopes[i];
+            Integer[] resourceIds = (Integer[]) getProperty(this, pluralize(resourceScope.getLowerCamelName()));
+            if (resourceIds.length == 1) {
+                return new ResourceDTO().withScope(resourceScope).withId(resourceIds[0]);
+            }
+        }
+        return null;
     }
 
 }

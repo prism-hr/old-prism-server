@@ -2,12 +2,14 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -131,23 +133,26 @@ public class AdvertService {
         return advertDAO.getAdvert(resourceScope, resourceId);
     }
 
-    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO) {
+    public List<com.zuehlke.pgadmissions.dto.AdvertDTO> getAdverts(OpportunitiesQueryDTO queryDTO) {
+        PrismScope[] scopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
-            if (resource.getInstitution() != null) {
-                queryDTO.setInstitutions(new Integer[] { resource.getInstitution().getId() });
+            for (PrismScope resourceScope : scopes) {
+                Resource enclosing = resource.getEnclosingResource(resourceScope);
+                if (enclosing != null) {
+                    setProperty(queryDTO, pluralize(resourceScope.getLowerCamelName()), new Integer[] { enclosing.getId() });
+                    break;
+                }
             }
         }
 
-        // FIXME case where resourceId is supplied
-        List<Integer> adverts = advertDAO.getAdverts(getAdvertScopes(), queryDTO);
-
-        if (adverts.isEmpty()) {
-            return Lists.newArrayList();
-        } else {
-            Integer[] programs = queryDTO.getPrograms();
-            return advertDAO.getActiveAdverts(adverts, programs != null && programs.length == 1);
+        List<Integer> adverts = Lists.newArrayList();
+        scopes = queryDTO.getActionCondition().equals(ACCEPT_PROJECT) ? new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION } : scopes;
+        for (PrismScope scope : scopes) {
+            adverts.addAll(advertDAO.getFileredAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO));
         }
+
+        return adverts.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(adverts);
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {

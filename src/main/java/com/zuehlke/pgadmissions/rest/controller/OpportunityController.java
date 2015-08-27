@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -38,7 +39,7 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentationExtended> getAdverts(OpportunitiesQueryDTO query) {
-        List<Advert> adverts = advertService.getAdverts(query);
+        List<AdvertDTO> adverts = advertService.getAdverts(query);
         return adverts.stream().map(advertMapper::getAdvertRepresentationExtended).collect(Collectors.toList());
     }
 

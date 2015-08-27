@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -86,7 +87,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user", targetEntity = Application.class)
     private Set<Resume> resumes = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "user")
     private Set<Application> applications = Sets.newHashSet();
 
@@ -104,6 +105,9 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<System> systems = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Advert> adverts = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<ApplicationSupervisor> applicationSupervisors = Sets.newHashSet();
@@ -143,7 +147,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<UserProgram> userPrograms = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "user")
     private Set<UserAdvert> userAdverts = Sets.newHashSet();
 
@@ -246,7 +250,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     public Set<Resume> getResumes() {
         return resumes;
     }
-    
+
     public Set<Application> getApplications() {
         return applications;
     }
@@ -269,6 +273,10 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<System> getSystems() {
         return systems;
+    }
+
+    public Set<Advert> getAdverts() {
+        return adverts;
     }
 
     public Set<ApplicationSupervisor> getApplicationSupervisors() {
@@ -318,7 +326,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     public Set<UserProgram> getUserPrograms() {
         return userPrograms;
     }
-    
+
     public Set<UserAdvert> getUserAdverts() {
         return userAdverts;
     }

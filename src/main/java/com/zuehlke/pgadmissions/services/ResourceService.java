@@ -802,6 +802,8 @@ public class ResourceService {
             Set<String> commentUserProperties = userService.getUserProperties(Comment.class);
             Set<String> commentAssignedUserUserProperties = userService.getUserProperties(CommentAssignedUser.class);
             Set<String> documentUserProperties = userService.getUserProperties(Document.class);
+            
+            userService.mergeUserAssignment(resource.getAdvert(), newUser, userProperty);
 
             for (Comment oldComment : commentService.getResourceOwnerComments(resource)) {
                 for (String commentUserProperty : commentUserProperties) {
@@ -941,6 +943,7 @@ public class ResourceService {
 
     private void setResourceOpportunityType(ResourceOpportunity resourceOpportunity, ImportedEntitySimple opportunityType) {
         resourceOpportunity.setOpportunityType(opportunityType);
+        resourceOpportunity.getAdvert().setOpportunityType(opportunityType);
 
         PrismOpportunityCategory opportunityCategory = PrismOpportunityType.valueOf(opportunityType.getName()).getCategory();
         resourceOpportunity.setOpportunityCategory(opportunityCategory);

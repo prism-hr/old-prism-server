@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -58,6 +60,8 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -146,10 +150,14 @@ public class AdvertService {
             }
         }
 
+        PrismActionCondition actionCondition = queryDTO.getActionCondition();
+        actionCondition = actionCondition == null ? ACCEPT_APPLICATION : actionCondition;
+        queryDTO.setActionCondition(actionCondition);
+
         List<Integer> adverts = Lists.newArrayList();
-        scopes = queryDTO.getActionCondition().equals(ACCEPT_PROJECT) ? new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION } : scopes;
+        scopes = actionCondition.equals(ACCEPT_PROJECT) ? new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION } : scopes;
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getFileredAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO));
+            adverts.addAll(advertDAO.getFilteredAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO));
         }
 
         return adverts.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(adverts);
@@ -160,8 +168,19 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
     }
 
-    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO, String resourceName) {
+    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> advertIds) {
+        HashMultimap<Integer, PrismStudyOption> options = HashMultimap.create();
+        if (CollectionUtils.isNotEmpty(advertIds)) {
+            advertDAO.getAdvertStudyOptions(resourceScope, advertIds).forEach(option -> {
+                options.put(option.getAdvertId(), PrismStudyOption.valueOf(option.getStudyOption()));
+            });
+        }
+        return options;
+    }
+
+    public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO, String resourceName, User user) {
         Advert advert = new Advert();
+        advert.setUser(user);
         advert.setName(resourceName);
         entityService.save(advert);
         updateAdvert(parentResource, advert, advertDTO, resourceName);

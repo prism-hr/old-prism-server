@@ -5,10 +5,11 @@ import java.math.BigDecimal;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 
-public class AdvertDTO {
+public class AdvertDTO extends ResourceStandardDTO {
 
-    private Integer id;
+    private Integer advertId;
 
     private String userFirstName;
 
@@ -18,35 +19,13 @@ public class AdvertDTO {
 
     private String userAccountImageUrl;
 
-    private Integer institutionId;
-
-    private String institutionName;
-
-    private Integer institutionLogoImageId;
-
-    private Integer departmentId;
-
-    private String departmentName;
-
-    private Integer programId;
-
-    private String programName;
-
-    private Integer projectId;
-
-    private String projectName;
-
     private String opportunityType;
-    
-    private String opportunityCategory;
 
     private String name;
 
     private String summary;
 
     private String description;
-
-    private Integer backgroundImageId;
 
     private String homepage;
 
@@ -70,7 +49,7 @@ public class AdvertDTO {
 
     private String addressGoogleId;
 
-    private BigDecimal addresCoordinateLatitude;
+    private BigDecimal addressCoordinateLatitude;
 
     private BigDecimal addressCoordinateLongitude;
 
@@ -102,12 +81,12 @@ public class AdvertDTO {
 
     private String sequenceIdentifier;
 
-    public Integer getId() {
-        return id;
+    public Integer getAdvertId() {
+        return advertId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setAdvertId(Integer advertId) {
+        this.advertId = advertId;
     }
 
     public String getUserFirstName() {
@@ -142,92 +121,12 @@ public class AdvertDTO {
         this.userAccountImageUrl = userAccountImageUrl;
     }
 
-    public Integer getInstitutionId() {
-        return institutionId;
-    }
-
-    public void setInstitutionId(Integer institutionId) {
-        this.institutionId = institutionId;
-    }
-
-    public String getInstitutionName() {
-        return institutionName;
-    }
-
-    public void setInstitutionName(String institutionName) {
-        this.institutionName = institutionName;
-    }
-
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
-    }
-
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
-    }
-
-    public Integer getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
-
-    public Integer getProgramId() {
-        return programId;
-    }
-
-    public void setProgramId(Integer programId) {
-        this.programId = programId;
-    }
-
-    public String getProgramName() {
-        return programName;
-    }
-
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
-
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
     public String getOpportunityType() {
         return opportunityType;
     }
 
     public void setOpportunityType(String opportunityType) {
         this.opportunityType = opportunityType;
-    }
-
-    public String getOpportunityCategory() {
-        return opportunityCategory;
-    }
-
-    public void setOpportunityCategory(String opportunityCategory) {
-        this.opportunityCategory = opportunityCategory;
     }
 
     public String getName() {
@@ -252,14 +151,6 @@ public class AdvertDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getBackgroundImageId() {
-        return backgroundImageId;
-    }
-
-    public void setBackgroundImageId(Integer backgroundImageId) {
-        this.backgroundImageId = backgroundImageId;
     }
 
     public String getHomepage() {
@@ -350,12 +241,12 @@ public class AdvertDTO {
         this.addressGoogleId = addressGoogleId;
     }
 
-    public BigDecimal getAddresCoordinateLatitude() {
-        return addresCoordinateLatitude;
+    public BigDecimal getAddressCoordinateLatitude() {
+        return addressCoordinateLatitude;
     }
 
-    public void setAddresCoordinateLatitude(BigDecimal addressCoordinateLatitude) {
-        this.addresCoordinateLatitude = addressCoordinateLatitude;
+    public void setAddressCoordinateLatitude(BigDecimal addressCoordinateLatitude) {
+        this.addressCoordinateLatitude = addressCoordinateLatitude;
     }
 
     public BigDecimal getAddressCoordinateLongitude() {

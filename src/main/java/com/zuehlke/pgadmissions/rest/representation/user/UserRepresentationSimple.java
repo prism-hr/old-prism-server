@@ -72,4 +72,29 @@ public class UserRepresentationSimple extends UserRepresentation {
         this.portraitImageId = portraitImageId;
     }
 
+    public UserRepresentationSimple withFirstName(String firstName) {
+        setFirstName(firstName);
+        return this;
+    }
+
+    public UserRepresentationSimple withLastName(String lastName) {
+        setLastName(lastName);
+        return this;
+    }
+
+    public UserRepresentationSimple withEmail(String email) {
+        setEmail(email);
+        return this;
+    }
+
+    public UserRepresentationSimple withAccountProfileUrl(String accountProfileUrl) {
+        this.accountProfileUrl = accountProfileUrl;
+        return this;
+    }
+
+    public UserRepresentationSimple withAccountImageUrl(String accountImageUrl) {
+        this.accountImageUrl = accountImageUrl;
+        return this;
+    }
+
 }

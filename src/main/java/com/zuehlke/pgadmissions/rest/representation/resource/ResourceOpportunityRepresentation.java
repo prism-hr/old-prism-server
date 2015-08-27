@@ -1,14 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
+import java.util.List;
 
 public class ResourceOpportunityRepresentation extends ResourceParentDivisionRepresentation {
 
     private PrismOpportunityType opportunityType;
+
+    private PrismOpportunityCategory opportunityCategory;
 
     private List<ImportedEntityResponse> studyOptions;
 
@@ -24,6 +26,14 @@ public class ResourceOpportunityRepresentation extends ResourceParentDivisionRep
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
+    }
+
+    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
     }
 
     public List<ImportedEntityResponse> getStudyOptions() {

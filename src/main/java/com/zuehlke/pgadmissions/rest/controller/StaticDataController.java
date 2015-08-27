@@ -32,7 +32,7 @@ public class StaticDataController {
         staticData.putAll(staticDataService.getSimpleProperties());
         staticData.putAll(staticDataService.getFilterProperties());
         staticData.putAll(staticDataService.getConfigurations());
-        staticData.putAll(staticDataService.getProgramCategories());
+        staticData.putAll(staticDataService.getOpportunityCategories());
         staticData.putAll(staticDataService.getActionConditions());
         staticData.putAll(staticDataService.getRequiredSections());
         return staticData;

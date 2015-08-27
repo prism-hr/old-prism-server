@@ -120,7 +120,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resourceReference, resource)); //
 
-        if (!exclusions.isEmpty()) {
+        if (!userExclusions.isEmpty()) {
             criteria.add(Restrictions.not( //
                     Restrictions.in("userRole.user", userExclusions))); //
         }

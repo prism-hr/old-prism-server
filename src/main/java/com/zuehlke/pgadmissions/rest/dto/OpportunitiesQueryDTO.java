@@ -1,35 +1,30 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class OpportunitiesQueryDTO {
 
     @NotNull
-    private List<PrismOpportunityCategory> programCategories;
+    private List<PrismOpportunityCategory> opportunityCategories;
 
     private String keyword;
-    
+
     private List<PrismAdvertIndustry> industries;
-    
+
     private List<PrismAdvertFunction> functions;
-    
+
     private List<String> themes;
 
     private List<PrismOpportunityType> opportunityTypes;
 
     private List<PrismStudyOption> studyOptions;
-    
+
     private List<PrismActionCondition> actionConditions;
 
     private Integer minFee;
@@ -66,12 +61,12 @@ public class OpportunitiesQueryDTO {
 
     private PrismAction actionId;
 
-    public List<PrismOpportunityCategory> getProgramCategories() {
-        return programCategories;
+    public List<PrismOpportunityCategory> getOpportunityCategories() {
+        return opportunityCategories;
     }
 
-    public void setProgramCategories(List<PrismOpportunityCategory> programCategories) {
-        this.programCategories = programCategories;
+    public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     public String getKeyword() {

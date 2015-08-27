@@ -1,16 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Set;
 
 public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
         ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType, ResourceStudyOptionDTO> {

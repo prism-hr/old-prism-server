@@ -5,7 +5,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
-public class ProgramCategoryRepresentation {
+public class OpportunityCategoryRepresentation {
 
     private PrismOpportunityCategory id;
 

@@ -127,7 +127,7 @@ public class AdvertDAO {
                 .createAlias("advert.categories.themes", "theme", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
-                        Restrictions.disjunction() //
+                        Restrictions.conjunction() //
                                 .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
                                 .add(Restrictions.eq("resourceCondition.actionCondition", queryDTO.getActionCondition())));
 

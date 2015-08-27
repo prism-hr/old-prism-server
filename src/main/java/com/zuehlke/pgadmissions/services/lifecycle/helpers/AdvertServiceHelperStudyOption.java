@@ -6,14 +6,14 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
-public class ResourceServiceHelper extends PrismServiceHelperAbstract {
+public class AdvertServiceHelperStudyOption extends PrismServiceHelperAbstract {
 
     @Inject
-    private ResourceService resourceService;
-    
+    private AdvertService advertService;
+
     private AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     @Override
@@ -25,11 +25,11 @@ public class ResourceServiceHelper extends PrismServiceHelperAbstract {
     public AtomicBoolean getShuttingDown() {
         return shuttingDown;
     }
-    
+
     private void deleteElapsedStudyOptions() {
         if (!isShuttingDown()) {
-            resourceService.deleteElapsedStudyOptions();
+            advertService.deleteElapsedAdvertStudyOptions();
         }
     }
-    
+
 }

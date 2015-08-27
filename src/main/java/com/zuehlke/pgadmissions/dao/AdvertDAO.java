@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAdvert;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.AdvertStudyOptionDTO;
@@ -146,12 +147,21 @@ public class AdvertDAO {
                 .createAlias("advert.categories.themes", "theme", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
-                        Restrictions.disjunction() //
+                        Restrictions.conjunction() //
                                 .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
-                                .add(Restrictions.eq("resourceCondition.actionCondition", queryDTO.getActionCondition()))) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("advertTarget.selected", true)) //
-                .createAlias("advertTarget.advert", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
+                                .add(Restrictions.eq("resourceCondition.actionCondition", queryDTO.getActionCondition()))); //
+
+        boolean narrowed = queryDTO.isNarrowed();
+        if (narrowed) {
+            criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN, //
+                    Restrictions.conjunction() //
+                            .add(Restrictions.eq("advertTarget.selected", true)) //
+                            .add(Restrictions.eq("advertTarget.endorsed", true))) //
+                    .createAlias("advertTarget.advert", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
+        } else {
+            criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN, //
+                    Restrictions.eq("advertTarget.selected", true));
+        }
 
         Class<? extends Resource> resourceClass = scope.getResourceClass();
         boolean opportunityScope = ResourceOpportunity.class.isAssignableFrom(resourceClass);
@@ -192,10 +202,14 @@ public class AdvertDAO {
             appendDurationConstraint(criteria, resourceReference, queryDTO);
         }
 
-        appendResourcesConstraint(criteria, INSTITUTION, queryDTO.getInstitutions());
-        appendResourcesConstraint(criteria, DEPARTMENT, queryDTO.getDepartments());
-        appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms());
-        appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects());
+        if (narrowed) {
+            appendResourcesConstraint(criteria, INSTITUTION, queryDTO.getInstitutions());
+            appendResourcesConstraint(criteria, DEPARTMENT, queryDTO.getDepartments());
+            appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms());
+            appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects());
+        } else {
+            criteria.add(Restrictions.isNull("advertTarget"));
+        }
 
         String lastSequenceIdentifier = queryDTO.getLastSequenceIdentifier();
         if (lastSequenceIdentifier != null) {
@@ -421,6 +435,42 @@ public class AdvertDAO {
                         + "and value in (:values)") //
                 .setParameterList("values", targetAdverts) //
                 .executeUpdate();
+    }
+
+    public void identifyForAdverts(User user, List<Integer> adverts) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update UserAdvert "
+                        + "set identified = true "
+                        + "where user = :user "
+                        + "and advert.id in (:adverts)") //
+                .setParameter("user", user) //
+                .setParameterList("adverts", adverts) //
+                .executeUpdate();
+    }
+
+    public List<Integer> getAdvertsUserIdentifiedFor(User user) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAdvert.class) //
+                .setProjection(Projections.property("advert.id")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("identified", true)) //
+                .list();
+    }
+
+    public List<Integer> getAdvertSelectedTargetAdverts(Advert advert) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
+                .setProjection(Projections.property("value.id")) //
+                .add(Restrictions.eq("advert", advert)) //
+                .add(Restrictions.eq("selected", true)) //
+                .list();
+    }
+
+    public List<Integer> getAdvertsToIdentifyUserFor(User user, List<Integer> adverts) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAdvert.class) //
+                .setProjection(Projections.property("advert.id")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .add(Restrictions.eq("identified", false)) //
+                .list();
     }
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

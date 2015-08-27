@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
@@ -104,7 +105,7 @@ public class RoleService {
             for (PrismRole role : roles) {
                 comment.addAssignedUser(user, getById(role), transitionType);
             }
-            
+
             actionService.executeUserAction(resource, action, comment);
             notificationService.sendInvitationNotifications(comment);
         }
@@ -247,8 +248,8 @@ public class RoleService {
         return roleDAO.getRolesByScopes(prismScope);
     }
 
-    public List<UserRole> getEndorserUserRoles(User user) {
-        return roleDAO.getUserRoles(user, roleDAO.getEndorserRoles());
+    public List<UserRole> getActionPerformerUserRoles(User user, PrismAction... actions) {
+        return actions == null ? Lists.newArrayList() : roleDAO.getUserRoles(user, roleDAO.getActionPerformerRoles(actions));
     }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {

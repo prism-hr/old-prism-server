@@ -270,5 +270,9 @@ public class OpportunitiesQueryDTO {
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
     }
+    
+    public boolean isNarrowed() {
+        return !(institutions == null && departments == null && programs == null && projects == null);
+    }
 
 }

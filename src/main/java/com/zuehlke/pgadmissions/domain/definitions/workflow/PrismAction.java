@@ -50,6 +50,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_RESERVE(getDefaultProcessApplicationActionDefinition()), //
     APPLICATION_COMMENT(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE(getDefaultViewEditApplicationActionDefinition()), //
+    APPLICATION_COMPLETE_IDENTIFICATION_STATE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE_VALIDATION_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE_VERIFICATION_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE_REFERENCE_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //

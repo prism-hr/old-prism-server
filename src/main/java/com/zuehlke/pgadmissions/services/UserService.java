@@ -553,12 +553,12 @@ public class UserService {
         if (departments.isEmpty()) {
             Institution institution = institutionService.getInstitutionByImportedProgram(importedProgram);
             if (institution != null) {
-                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(institution.getAdvert()));
+                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(institution.getAdvert()).withIdentified(false));
             }
         } else {
             departments.forEach(department -> {
-                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getAdvert()));
-                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getInstitution().getAdvert()));
+                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getAdvert()).withIdentified(false));
+                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getInstitution().getAdvert()).withIdentified(false));
             });
         }
     }

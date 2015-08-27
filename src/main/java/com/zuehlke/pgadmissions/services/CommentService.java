@@ -108,10 +108,6 @@ public class CommentService {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
     }
 
-    public List<Integer> getComments(Resource resource, PrismAction[] actions) {
-        return commentDAO.getComments(resource, actions);
-    }
-
     public boolean isCommentOwner(Comment comment, User user) {
         Integer userId = user.getId();
         User ownerDelegate = comment.getDelegateUser();

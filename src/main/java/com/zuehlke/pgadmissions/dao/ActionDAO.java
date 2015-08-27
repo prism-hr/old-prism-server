@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActi
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
@@ -63,12 +62,8 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -80,7 +75,6 @@ public class ActionDAO {
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -110,12 +104,8 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -126,7 +116,6 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -152,12 +141,8 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -175,7 +160,6 @@ public class ActionDAO {
                         .add(getPartnerUserRoleConstraint(resourceScope, "stateActionAssignment"))) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .addOrder(Order.asc(resourceIdReference))
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.desc("primaryState")) //
@@ -278,12 +262,8 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -296,7 +276,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .list();
     }
 
@@ -308,12 +287,8 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -326,7 +301,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .list();
     }
 
@@ -338,12 +312,8 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -355,7 +325,6 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .list();
     }
 
@@ -367,12 +336,8 @@ public class ActionDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("comment.user", user)) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -385,7 +350,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
-                .add(getEndorsementActionResolution("action.id", "comment.id"))
                 .list();
     }
 

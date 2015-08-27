@@ -366,7 +366,7 @@ public class ResourceMapper {
         List<ResourceRepresentationIdentity> resourcesNotYetEndorsedFor = Lists.newLinkedList();
         for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             resourceService.getResourcesNotYetEndorsedFor(resource).forEach(resourceNotYetEndorsedFor -> {
-                resourcesNotYetEndorsedFor.add(resourceNotYetEndorsedFor.withScope(scope));
+                resourcesNotYetEndorsedFor.add(getResourceRepresentation(scope, resourceNotYetEndorsedFor, ResourceRepresentationIdentity.class));
             });
         }
 

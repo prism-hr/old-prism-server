@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementAction
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 
 import java.util.List;
@@ -323,12 +322,8 @@ public class UserDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
+                        getEndorsementActionResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".comments", "comment", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("comment.user", "userRole.user")) //
-                                .add(Restrictions.in("comment.action.id", RESOURCE_ENDORSE.getActions())))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
@@ -339,7 +334,6 @@ public class UserDAO {
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
                 .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
-                .add(getEndorsementActionResolution("stateAction.action.id", "comment.id"))
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //

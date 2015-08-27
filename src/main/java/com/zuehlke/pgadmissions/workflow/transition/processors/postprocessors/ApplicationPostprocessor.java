@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
@@ -13,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
@@ -21,6 +23,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.ListUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
@@ -34,11 +37,14 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -52,6 +58,9 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private CommentService commentService;
@@ -75,6 +84,10 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     public void process(Application resource, Comment comment) {
         if (comment.isProjectCreateApplicationComment()) {
             synchronizeProjectSupervisors(resource);
+        }
+
+        if (comment.isApplicationIdentifiedComment()) {
+            synchronizeUserAdverts(resource, comment);
         }
 
         if (comment.isApplicationProvideReferenceComment()) {
@@ -107,6 +120,34 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         for (User supervisorUser : supervisorUsers) {
             application.getSupervisors().add(
                     new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true).withLastUpdatedTimestamp(new DateTime()));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void synchronizeUserAdverts(Application application, Comment comment) {
+        User applicant = application.getUser();
+
+        List<Integer> targetAdverts = advertService.getAdvertSelectedTargetAdverts(application.getAdvert());
+        List<Integer> targetAdvertsMatched = advertService.getAdvertsToIdentifyUserFor(applicant, targetAdverts);
+
+        if (!(targetAdverts.isEmpty() || targetAdvertsMatched.isEmpty())) {
+            List<Integer> targetAdvertsToProvideIdentificationFor = Lists.newArrayList();
+            for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(), APPLICATION_COMPLETE_IDENTIFICATION_STATE)) {
+                Resource userResource = userRole.getResource();
+                if (userResource.getResourceScope().equals(SYSTEM)) {
+                    targetAdvertsToProvideIdentificationFor = ListUtils.intersection(targetAdverts, targetAdvertsMatched);
+                    break;
+                }
+
+                Integer advertId = userRole.getResource().getAdvert().getId();
+                if (targetAdverts.contains(advertId) && targetAdvertsMatched.contains(advertId)) {
+                    targetAdvertsToProvideIdentificationFor.add(advertId);
+                }
+            }
+
+            if (!targetAdvertsToProvideIdentificationFor.isEmpty()) {
+                advertService.identifyForAdverts(applicant, targetAdvertsToProvideIdentificationFor);
+            }
         }
     }
 

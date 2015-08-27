@@ -86,6 +86,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
@@ -871,7 +872,7 @@ public class ResourceService {
         }
     }
 
-    public List<ResourceRepresentationIdentity> getResourcesNotYetEndorsedFor(ResourceParent resource) {
+    public List<ResourceIdentityDTO> getResourcesNotYetEndorsedFor(ResourceParent resource) {
         return resourceDAO.getResourcesNotYetEndorsedFor(resource);
     }
 

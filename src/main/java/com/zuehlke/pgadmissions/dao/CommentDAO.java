@@ -89,14 +89,6 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getComments(Resource resource, PrismAction[] actions) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.in("action.id", actions)) //
-                .list();
-    }
-
     public List<User> getAppointmentInvitees(Comment comment) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.groupProperty("user")) //

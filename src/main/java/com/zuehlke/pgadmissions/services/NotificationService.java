@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_IMPORT_ERROR_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
@@ -63,9 +62,6 @@ public class NotificationService {
 
     @Inject
     private AdvertService advertService;
-
-    @Inject
-    private CommentService commentService;
 
     @Inject
     private UserService userService;
@@ -128,9 +124,7 @@ public class NotificationService {
         User author = systemService.getSystem().getUser();
         Resource resource = resourceService.getById(resourceScope, resourceId);
 
-        List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
-        List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualReminderDefinitions(resource, baseline, exclusions);
-
+        List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualReminderDefinitions(resource, baseline);
         for (UserNotificationDefinitionDTO reminder : reminders) {
             User user = userService.getById(reminder.getUserId());
 
@@ -155,9 +149,7 @@ public class NotificationService {
         System system = systemService.getSystem();
         Resource resource = resourceService.getById(resourceScope, resourceId);
 
-        List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
-        List<UserNotificationDefinitionDTO> requests = notificationDAO.getSyndicatedRequestDefinitions(resource, baseline, exclusions);
-
+        List<UserNotificationDefinitionDTO> requests = notificationDAO.getSyndicatedRequestDefinitions(resource, baseline);
         if (requests.size() > 0) {
             User author = system.getUser();
             PrismAction transitionActionId = PrismAction.valueOf("SYSTEM_VIEW_" + resource.getResourceScope().name() + "_LIST");
@@ -192,9 +184,7 @@ public class NotificationService {
         Action action = transitionComment.getAction();
         User invoker = transitionComment.getActionOwner();
 
-        List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateDefinitions(resource, action, invoker, baseline, exclusions);
-
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateDefinitions(resource, action, invoker, baseline);
         if (updates.size() > 0) {
             Set<User> requested = Sets.newHashSet();
 
@@ -319,8 +309,7 @@ public class NotificationService {
     private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
         Set<User> recipients = Sets.newHashSet();
 
-        List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
-        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline, exclusions);
+        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline);
 
         if (requests.size() > 0) {
             for (UserNotificationDefinitionDTO request : requests) {
@@ -340,8 +329,7 @@ public class NotificationService {
     }
 
     private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> userExclusions) {
-        List<Integer> exclusions = commentService.getComments(resource, RESOURCE_ENDORSE.getActions());
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), exclusions, userExclusions);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), userExclusions);
 
         if (updates.size() > 0) {
             PrismAction transitionActionId = actionService.getViewEditAction(resource).getId();

@@ -30,8 +30,10 @@ public class CommentRepresentation {
     private PrismState state;
 
     private PrismState transitionState;
-    
+
     private BigDecimal rating;
+
+    private Boolean applicationIdentified;
 
     private PrismYesNoUnsureResponse applicationEligible;
 
@@ -129,6 +131,14 @@ public class CommentRepresentation {
 
     public void setTransitionState(PrismState transitionState) {
         this.transitionState = transitionState;
+    }
+
+    public Boolean getApplicationIdentified() {
+        return applicationIdentified;
+    }
+
+    public void setApplicationIdentified(Boolean applicationIdentified) {
+        this.applicationIdentified = applicationIdentified;
     }
 
     public PrismYesNoUnsureResponse getApplicationEligible() {
@@ -314,9 +324,14 @@ public class CommentRepresentation {
         this.transitionState = transitionState;
         return this;
     }
-    
+
     public CommentRepresentation withRating(BigDecimal rating) {
         this.rating = rating;
+        return this;
+    }
+
+    public CommentRepresentation withApplicationIdentified(Boolean applicationIdentification) {
+        this.applicationIdentified = applicationIdentification;
         return this;
     }
 
@@ -384,7 +399,7 @@ public class CommentRepresentation {
         this.competences = competences;
         return this;
     }
-    
+
     public CommentRepresentation withAppointmentTimeslots(List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
         return this;

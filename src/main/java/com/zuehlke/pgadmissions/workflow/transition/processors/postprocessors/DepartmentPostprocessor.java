@@ -36,7 +36,7 @@ public class DepartmentPostprocessor implements ResourceProcessor<Department> {
         }
 
         if (comment.isResourceEndorsementComment()) {
-            resourceService.synchronizeResourceRating(resource, comment);
+            resourceService.synchronizeResourceEndorsement(resource, comment);
         }
     }
 

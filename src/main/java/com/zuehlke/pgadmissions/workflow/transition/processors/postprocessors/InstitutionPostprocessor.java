@@ -18,7 +18,7 @@ public class InstitutionPostprocessor implements ResourceProcessor<Institution> 
     @Override
     public void process(Institution resource, Comment comment) {
         if (comment.isResourceEndorsementComment()) {
-            resourceService.synchronizeResourceRating(resource, comment);
+            resourceService.synchronizeResourceEndorsement(resource, comment);
         }
     }
 

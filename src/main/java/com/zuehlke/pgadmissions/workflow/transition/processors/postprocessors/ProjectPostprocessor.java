@@ -60,7 +60,7 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
         }
         
         if (comment.isResourceEndorsementComment()) {
-            resourceService.synchronizeResourceRating(resource, comment);
+            resourceService.synchronizeResourceEndorsement(resource, comment);
         }
     }
 

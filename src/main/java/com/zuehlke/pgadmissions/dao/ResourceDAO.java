@@ -44,6 +44,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -333,7 +334,7 @@ public class ResourceDAO {
                         .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
-    
+
     public List<Resource> getResourcesByUser(PrismScope prismScope, User user) {
         return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(prismScope.getResourceClass()) //
                 .add(Restrictions.eq("user", user)) //
@@ -713,6 +714,24 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
+    public List<ResourceRepresentationIdentity> getResourcesNotYetEndorsedFor(ResourceParent resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (List<ResourceRepresentationIdentity>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty(resourceReference + ".id").as("id")) //
+                        .add(Projections.property(resourceReference + ".name").as("name")) //
+                        .add(Projections.property("institution.logoImage.id").as("logoImage"))) //
+                .createAlias("value." + resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias("value.institution", "institution", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("advert", resource.getAdvert())) //
+                .add(Restrictions.eq("selected", true)) //
+                .add(Restrictions.eq("endorsed", false)) //
+                .addOrder(Order.asc(resourceReference + ".name")) //
+                .addOrder(Order.asc(resourceReference + ".id")) //                
+                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationIdentity.class)) //
+                .list();
+    }
+
     private Criteria getResourcesCriteria(PrismScope filterScope, List<Integer> filerResourceIds,
             PrismScope resourceScope, List<PrismScope> parentScopes, Projection... customColumns) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass());
@@ -767,7 +786,7 @@ public class ResourceDAO {
                             .add(Restrictions.isNull("advertTarget.id"))
                             .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"))
                             .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VERIFICATION.ordinal(), APPLICATION_RESERVED.ordinal()))
-                            .add(Restrictions.in("state.id", new PrismState[]{APPLICATION_APPROVAL, APPLICATION_REJECTED}))); //
+                            .add(Restrictions.in("state.id", new PrismState[] { APPLICATION_APPROVAL, APPLICATION_REJECTED }))); //
         }
     }
 
@@ -780,7 +799,7 @@ public class ResourceDAO {
                             .add(Restrictions.isNull("advertTarget.id"))
                             .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"))
                             .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VERIFICATION.ordinal(), APPLICATION_RESERVED.ordinal()))
-                            .add(Restrictions.in("state.id", new PrismState[]{APPLICATION_APPROVAL, APPLICATION_REJECTED}))); //
+                            .add(Restrictions.in("state.id", new PrismState[] { APPLICATION_APPROVAL, APPLICATION_REJECTED }))); //
         }
     }
 

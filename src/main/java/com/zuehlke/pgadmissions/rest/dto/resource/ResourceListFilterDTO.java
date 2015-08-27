@@ -7,6 +7,7 @@ import org.apache.commons.lang.BooleanUtils;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ResourceListFilterDTO {
     
@@ -21,6 +22,8 @@ public class ResourceListFilterDTO {
     private Boolean urgentOnly;
     
     private Boolean targetOnly;
+    
+    private PrismAction actionId;
 
     private List<ResourceListFilterConstraintDTO> constraints;
     
@@ -72,6 +75,14 @@ public class ResourceListFilterDTO {
         this.targetOnly = targetOnly;
     }
     
+    public PrismAction getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(PrismAction actionId) {
+        this.actionId = actionId;
+    }
+
     public final List<ResourceListFilterConstraintDTO> getConstraints() {
         return constraints;
     }

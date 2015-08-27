@@ -102,6 +102,7 @@ public enum PrismState {
             PrismApplicationUnsubmitted.class),
     APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationUnsubmittedPendingCompletion.class),
+    APPLICATION_IDENTIFICATION(PrismStateGroup.APPLICATION_IDENTIFICATION, APPLICATION_ESCALATE_DURATION, null, PrismApplicationValidation.class),
     APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, APPLICATION_CLOSING_DATE, PrismApplicationValidation.class),
     APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationValidationPendingCompletion.class),

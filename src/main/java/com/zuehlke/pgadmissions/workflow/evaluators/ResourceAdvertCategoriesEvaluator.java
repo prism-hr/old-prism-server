@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.workflow.evaluators;
 
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import org.springframework.stereotype.Component;
 
 @Component
 public class ResourceAdvertCategoriesEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {

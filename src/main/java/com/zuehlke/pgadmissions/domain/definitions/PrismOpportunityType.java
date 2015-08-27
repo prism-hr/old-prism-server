@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
-public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>,PrismLocalizableDefinition {
+public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>, PrismLocalizableDefinition {
 
     STUDY_UNDERGRADUATE(STUDY, 36, 48, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3), //
     STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3), //
@@ -61,7 +61,7 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     }
 
     private PrismOpportunityType(PrismOpportunityCategory category, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
-            PrismProgramStartType defaultStartType, Integer defaultStartMonth, Integer defaultStartWeek, Integer defaultStartDay, Integer defaultStartDelay,
+            PrismProgramStartType defaultStartType,  Integer defaultStartMonth, Integer defaultStartWeek, Integer defaultStartDay, Integer defaultStartDelay, 
             Integer defaultStartBuffer) {
         this.category = category;
         this.defaultMinimumDurationMonth = defaultMinimumDurationMonth;

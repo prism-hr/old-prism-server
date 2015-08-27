@@ -60,8 +60,8 @@ public class ActionDAO {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -90,8 +90,7 @@ public class ActionDAO {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -108,8 +107,8 @@ public class ActionDAO {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -150,8 +149,8 @@ public class ActionDAO {
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -194,8 +193,7 @@ public class ActionDAO {
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -203,7 +201,7 @@ public class ActionDAO {
                 .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM)) //
-                        .add(Restrictions.isNotNull("advertCondition.id")))
+                        .add(Restrictions.isNotNull("resourceCondition.id")))
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isNull("stateActionAssignment.id"));
 
@@ -224,8 +222,7 @@ public class ActionDAO {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -236,8 +233,8 @@ public class ActionDAO {
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM)) //
-                        .add(Restrictions.eq("advertCondition.actionCondition", ACCEPT_APPLICATION)) //
-                        .add(Restrictions.in("advertCondition.partnerMode", Lists.newArrayList(new Boolean(true), new Boolean(!userLoggedIn))))) //
+                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
+                        .add(Restrictions.in("resourceCondition.partnerMode", Lists.newArrayList(new Boolean(true), new Boolean(!userLoggedIn))))) //
                 .uniqueResult();
     }
 
@@ -278,8 +275,8 @@ public class ActionDAO {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.actionEnhancement")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -308,8 +305,8 @@ public class ActionDAO {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.actionEnhancement")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -338,8 +335,8 @@ public class ActionDAO {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -367,8 +364,8 @@ public class ActionDAO {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -471,45 +468,21 @@ public class ActionDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action.id")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("stateAction.actionCondition", "advertCondition.actionCondition")) //
+                        Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("advertCondition.actionCondition", ACCEPT_APPLICATION)) //
-                        .add(Restrictions.eq("advertCondition.partnerMode", true)));
+                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
+                        .add(Restrictions.eq("resourceCondition.partnerMode", true)));
 
         if (!actionConditions.isEmpty()) {
-            criteria.add(Restrictions.in("advertCondition.actionCondition", actionConditions));
+            criteria.add(Restrictions.in("resourceCondition.actionCondition", actionConditions));
         }
 
         return (List<PrismAction>) criteria //
                 .addOrder(Order.asc("stateAction.action.id")) //
-                .list();
-    }
-
-    public List<PrismActionEnhancement> getExpectedDefaultActionEnhancements(Resource resource, Action action) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("stateAction.actionEnhancement"))
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resourceReference)) //
-                .add(Restrictions.eq("stateAction.action", action)) //
-                .list();
-    }
-
-    public List<PrismActionEnhancement> getExpectedCustomActionEnhancements(Resource resource, Action action) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement"))
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resourceReference)) //
-                .add(Restrictions.eq("stateAction.action", action)) //
                 .list();
     }
 

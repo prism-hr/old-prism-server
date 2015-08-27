@@ -49,6 +49,10 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
 
     public abstract Set<Advert> getAdverts();
 
+    public void addResourceCondition(ResourceCondition resourceCondition) {
+        getResourceConditions().add(resourceCondition);
+    }
+
     @Override
     public EntitySignature getEntitySignature() {
         return new EntitySignature().addProperty("name", getName());

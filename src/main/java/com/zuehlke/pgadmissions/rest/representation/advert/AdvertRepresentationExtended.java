@@ -21,6 +21,8 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private PrismOpportunityType opportunityType;
 
+    private String name;
+
     public UserRepresentationSimple getUser() {
         return user;
     }
@@ -67,6 +69,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

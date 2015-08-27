@@ -29,7 +29,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -41,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
@@ -266,21 +266,21 @@ public class ImportedEntityService {
     // DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
     //
     // if (transientCloseDate.isAfter(baseline)) {
-    // AdvertStudyOption transientProgramStudyOption = new
-    // AdvertStudyOption().withResource(persistentProgram).withStudyOption(studyOption)
+    // ResourceStudyOption transientProgramStudyOption = new
+    // ResourceStudyOption().withResource(persistentProgram).withStudyOption(studyOption)
     // .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate);
     //
-    // AdvertStudyOption persistentProgramStudyOption =
+    // ResourceStudyOption persistentProgramStudyOption =
     // mergeProgramStudyOption(transientProgramStudyOption, baseline);
     // persistentProgram.getStudyOptions().add(persistentProgramStudyOption);
     //
-    // AdvertStudyOptionInstance transientProgramStudyOptionInstance = new
-    // AdvertStudyOptionInstance()
+    // ResourceStudyOptionInstance transientProgramStudyOptionInstance = new
+    // ResourceStudyOptionInstance()
     // .withStudyOption(persistentProgramStudyOption).withApplicationStartDate(transientStartDate)
     // .withApplicationCloseDate(transientCloseDate).withAcademicYear(Integer.toString(transientStartDate.getYear()))
     // .withIdentifier(occurrence.getIdentifier());
     //
-    // AdvertStudyOptionInstance persistentProgramStudyOptionInstance =
+    // ResourceStudyOptionInstance persistentProgramStudyOptionInstance =
     // entityService.createOrUpdate(transientProgramStudyOptionInstance);
     // persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
     // }
@@ -443,8 +443,8 @@ public class ImportedEntityService {
     // }
     // }
 
-    private AdvertStudyOption mergeProgramStudyOption(AdvertStudyOption transientProgramStudyOption, LocalDate baseline) throws DeduplicationException {
-        AdvertStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
+    private ResourceStudyOption mergeProgramStudyOption(ResourceStudyOption transientProgramStudyOption, LocalDate baseline) throws DeduplicationException {
+        ResourceStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
             entityService.save(transientProgramStudyOption);

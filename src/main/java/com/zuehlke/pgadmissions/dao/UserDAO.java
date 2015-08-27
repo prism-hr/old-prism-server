@@ -278,7 +278,7 @@ public class UserDAO {
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        appendAdministratorAdvertConditions(criteria, resource, administratorResources, expandedScopes);
+        appendAdministratorResourceConditions(criteria, resource, administratorResources, expandedScopes);
 
         if (userListFilterDTO.isInvalidOnly()) {
             criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));
@@ -308,7 +308,7 @@ public class UserDAO {
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        appendAdministratorAdvertConditions(criteria, resource, administratorResources, expandedScopes);
+        appendAdministratorResourceConditions(criteria, resource, administratorResources, expandedScopes);
 
         return (User) criteria.add(getUserAccountUnverifiedDisjunction()) //
                 .add(Restrictions.eq("user.id", userId)) //
@@ -320,8 +320,8 @@ public class UserDAO {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("userRole.user")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.conditions", "advertCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -408,7 +408,7 @@ public class UserDAO {
                 .executeUpdate();
     }
 
-    private void appendAdministratorAdvertConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
+    private void appendAdministratorResourceConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
             HashMultimap<PrismScope, PrismScope> expandedScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         String resourceReference = resourceScope.getLowerCamelName();

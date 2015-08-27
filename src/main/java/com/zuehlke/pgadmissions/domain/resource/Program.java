@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import java.math.BigDecimal;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,6 +23,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -156,6 +158,19 @@ public class Program extends ResourceOpportunity {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id")
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id")
+    private Set<ResourceStudyOption> instanceGroups = Sets.newHashSet();
+
+    @OrderBy(clause = "study_location")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id")
+    private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -506,6 +521,21 @@ public class Program extends ResourceOpportunity {
     }
 
     @Override
+    public Set<ResourceStudyOption> getInstanceGroups() {
+        return instanceGroups;
+    }
+
+    @Override
+    public void setInstanceGroups(Set<ResourceStudyOption> instanceGroups) {
+        this.instanceGroups = instanceGroups;
+    }
+
+    @Override
+    public Set<ResourceStudyLocation> getStudyLocations() {
+        return studyLocations;
+    }
+
+    @Override
     public Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
@@ -513,6 +543,11 @@ public class Program extends ResourceOpportunity {
     @Override
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
+    }
+
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+        return resourceConditions;
     }
 
     public Set<Project> getProjects() {
@@ -579,6 +614,11 @@ public class Program extends ResourceOpportunity {
 
     public Program withAdvert(Advert advert) {
         this.advert = advert;
+        return this;
+    }
+
+    public Program withOpportunityType(ImportedEntitySimple opportunityType) {
+        this.opportunityType = opportunityType;
         return this;
     }
 

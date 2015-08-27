@@ -103,6 +103,8 @@ public abstract class Resource implements UniqueEntity {
 
     public abstract Set<ResourcePreviousState> getResourcePreviousStates();
 
+    public abstract Set<ResourceCondition> getResourceConditions();
+
     public abstract Set<Comment> getComments();
 
     public abstract Set<UserRole> getUserRoles();

@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -114,12 +113,7 @@ public class RoleService {
         if (roleDAO.getRolesForResourceStrict(resource, user).isEmpty()) {
             throw new PrismForbiddenException("User has no role within given resource");
         }
-
         resource.setUser(user);
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            ((ResourceParent) resource).getAdvert().setUser(user);
-        }
-
         resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
     }
 

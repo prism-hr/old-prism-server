@@ -25,23 +25,32 @@ public class OpportunitiesQueryDTO {
     private Integer resourceId;
 
     private PrismAction actionId;
+
+    private Integer[] institutions;
+
+    private Integer[] departments;
+
+    private Integer[] programs;
+
+    private Integer[] projects;
     
+    @NotNull
+    private PrismActionCondition actionCondition;
+
     @NotNull
     private List<PrismOpportunityCategory> opportunityCategories;
 
     private String keyword;
-    
+
     private List<PrismAdvertIndustry> industries;
-    
+
     private List<PrismAdvertFunction> functions;
-    
+
     private List<String> themes;
 
     private List<PrismOpportunityType> opportunityTypes;
 
     private List<PrismStudyOption> studyOptions;
-    
-    private List<PrismActionCondition> actionConditions;
 
     private Integer minFee;
 
@@ -55,14 +64,6 @@ public class OpportunitiesQueryDTO {
 
     private Integer maxDuration;
 
-    private Integer[] institutions;
-
-    private Integer[] departments;
-
-    private Integer[] programs;
-
-    private Integer[] projects;
-
     private BigDecimal neLat;
 
     private BigDecimal neLon;
@@ -72,7 +73,7 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLon;
 
     private String lastSequenceIdentifier;
-    
+
     public final Integer getResourceId() {
         return resourceId;
     }
@@ -89,12 +90,52 @@ public class OpportunitiesQueryDTO {
         this.actionId = actionId;
     }
 
+    public final Integer[] getInstitutions() {
+        return institutions;
+    }
+
+    public final void setInstitutions(Integer[] institutions) {
+        this.institutions = institutions;
+    }
+
+    public final Integer[] getDepartments() {
+        return departments;
+    }
+
+    public final void setDepartments(Integer[] departments) {
+        this.departments = departments;
+    }
+
+    public final Integer[] getPrograms() {
+        return programs;
+    }
+
+    public final void setPrograms(Integer[] programs) {
+        this.programs = programs;
+    }
+
+    public final Integer[] getProjects() {
+        return projects;
+    }
+
+    public final void setProjects(Integer[] projects) {
+        this.projects = projects;
+    }
+
     public List<PrismOpportunityCategory> getOpportunityCategories() {
         return opportunityCategories;
     }
 
     public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
+    }
+
+    public PrismActionCondition getActionCondition() {
+        return actionCondition;
+    }
+
+    public void setActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
     }
 
     public String getKeyword() {
@@ -145,14 +186,6 @@ public class OpportunitiesQueryDTO {
         this.studyOptions = studyOptions;
     }
 
-    public List<PrismActionCondition> getActionConditions() {
-        return actionConditions;
-    }
-
-    public void setActionConditions(List<PrismActionCondition> actionConditions) {
-        this.actionConditions = actionConditions;
-    }
-
     public final Integer getMinFee() {
         return minFee;
     }
@@ -201,38 +234,6 @@ public class OpportunitiesQueryDTO {
         this.maxDuration = maxDuration;
     }
 
-    public final Integer[] getInstitutions() {
-        return institutions;
-    }
-
-    public final void setInstitutions(Integer[] institutions) {
-        this.institutions = institutions;
-    }
-
-    public final Integer[] getDepartments() {
-        return departments;
-    }
-
-    public final void setDepartments(Integer[] departments) {
-        this.departments = departments;
-    }
-
-    public final Integer[] getPrograms() {
-        return programs;
-    }
-
-    public final void setPrograms(Integer[] programs) {
-        this.programs = programs;
-    }
-
-    public final Integer[] getProjects() {
-        return projects;
-    }
-
-    public final void setProjects(Integer[] projects) {
-        this.projects = projects;
-    }
-
     public BigDecimal getNeLat() {
         return neLat;
     }
@@ -272,11 +273,11 @@ public class OpportunitiesQueryDTO {
     public final void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
     }
-    
+
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
     }
-    
+
     public ResourceDTO getParentResource() {
         PrismScope[] resourceScopes = PrismScope.values();
         for (int i = INSTITUTION.ordinal(); i <= PROJECT.ordinal(); i++) {

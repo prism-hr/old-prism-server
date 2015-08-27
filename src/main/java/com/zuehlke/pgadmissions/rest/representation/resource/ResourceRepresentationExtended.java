@@ -29,6 +29,8 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     private List<WorkflowPropertyConfigurationRepresentation> workflowConfigurations;
 
+    private List<ResourceConditionRepresentation> conditions;
+
     public List<ActionRepresentationExtended> getActions() {
         return actions;
     }
@@ -59,6 +61,14 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     public void setWorkflowConfigurations(List<WorkflowPropertyConfigurationRepresentation> workflowConfigurations) {
         this.workflowConfigurations = workflowConfigurations;
+    }
+
+    public List<ResourceConditionRepresentation> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(List<ResourceConditionRepresentation> conditions) {
+        this.conditions = conditions;
     }
 
 }

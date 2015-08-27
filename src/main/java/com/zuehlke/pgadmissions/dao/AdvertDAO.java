@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Competence;
@@ -41,16 +43,18 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 
-// FIXME adverts for applying to institution and/or department directly
 @Repository
 @SuppressWarnings("unchecked")
 public class AdvertDAO {
@@ -65,63 +69,128 @@ public class AdvertDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getAdverts(HashMultimap<PrismScope, PrismState> scopes, OpportunitiesQueryDTO queryDTO) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .setProjection(Projections.groupProperty("id")) //
+    public List<AdvertDTO> getAdverts(List<Integer> adverts) {
+        return (List<AdvertDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.property("user.firstName").as("userFirstName")) //
+                        .add(Projections.property("user.LastName").as("userLastName")) //
+                        .add(Projections.property("primaryExternalAccount.accountProfileUrl").as("userAccountProfileUrl")) //
+                        .add(Projections.property("primaryExternalAccount.accountImageUrl").as("userAccountImageUrl")) //
+                        .add(Projections.property("institution.id").as("institutionId")) //
+                        .add(Projections.property("institution.name").as("institutionName")) //
+                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
+                        .add(Projections.property("department.id").as("departmentId")) //
+                        .add(Projections.property("department.name").as("departmentName")) //
+                        .add(Projections.property("program.id").as("programId")) //
+                        .add(Projections.property("program.name").as("programName")) //
+                        .add(Projections.property("project.id").as("projectId")) //
+                        .add(Projections.property("project.name").as("projectName")) //
+                        .add(Projections.property("opportunityType.name").as("opportunityType")) //
+                        .add(Projections.property("opportunityCategory").as("opportunityCategory")) //
+                        .add(Projections.property("name").as("name")) //
+                        .add(Projections.property("summary").as("summary")) //
+                        .add(Projections.property("description").as("description")) //
+                        .add(Projections.property("backgroundImage.id").as("backgroundImageId")) //
+                        .add(Projections.property("homepage").as("homepage")) //
+                        .add(Projections.property("applyHomepage").as("applyHomepage")) //
+                        .add(Projections.property("telephone").as("telephone")) //
+                        .add(Projections.property("address.addressLine1").as("addressLine1")) //
+                        .add(Projections.property("address.addressLine2").as("addressLine2")) //
+                        .add(Projections.property("address.addressTown").as("addressTown")) //
+                        .add(Projections.property("address.addressRegion").as("addressRegion")) //
+                        .add(Projections.property("address.addressCode").as("addressCode")) //
+                        .add(Projections.property("domicile.name").as("addressDomicileName")) //
+                        .add(Projections.property("address.googleId").as("addressGoogleId")) //
+                        .add(Projections.property("address.coordinates.latitude").as("addressCoordinateLatitude")) //
+                        .add(Projections.property("address.coordinates.longitude").as("addressCoordinateLongitude")) //
+                        .add(Projections.property("fee.currencyAtLocale").as("feeCurrency")) //
+                        .add(Projections.property("fee.interval").as("feeInterval")) //
+                        .add(Projections.property("fee.monthMinimumAtLocale").as("feeMonthMinimum")) //
+                        .add(Projections.property("fee.monthMaximumAtLocale").as("feeMonthMaximum")) //
+                        .add(Projections.property("fee.yearMinimumAtLocale").as("feeYearMinimum")) //
+                        .add(Projections.property("fee.yearMaximumAtLocale").as("feeYearMaximum")) //
+                        .add(Projections.property("pay.currencyAtLocale").as("payCurrency")) //
+                        .add(Projections.property("pay.interval").as("payInterval")) //
+                        .add(Projections.property("pay.monthMinimumAtLocale").as("payMonthMinimum")) //
+                        .add(Projections.property("pay.monthMaximumAtLocale").as("payMonthMaximum")) //
+                        .add(Projections.property("pay.yearMinimumAtLocale").as("payYearMinimum")) //
+                        .add(Projections.property("pay.yearMaximumAtLocale").as("payYearMaximum")) //
+                        .add(Projections.property("closingDate").as("closingDate")) //
+                        .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.INNER_JOIN) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("opportunityType", "opportunityType", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", adverts)) //
+                .addOrder(Order.desc("sequenceIdentifier")) //
+                .setMaxResults(25) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class))
+                .list();
+    }
+
+    public List<Integer> getFileredAdverts(PrismScope scope, Collection<PrismState> activeStates, OpportunitiesQueryDTO queryDTO) {
+        String resourceReference = scope.getLowerCamelName();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.functions", "function", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.themes", "theme", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.resourceStates", "programState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.resourceConditions", "programCondition", JoinType.LEFT_OUTER_JOIN, //
-                        getResourceConditionConstraint("programCondition")) //
-                .createAlias("program.institution", "programInstitution", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.department", "programDepartment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.opportunityType", "programOpportunityType", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.instanceGroups", "programInstanceGroups", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("programInstanceGroups.studyOption", "programStudyOption", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.resourceStates", "projectState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.resourceConditions", "projectCondition", JoinType.LEFT_OUTER_JOIN, //
-                        getResourceConditionConstraint("projectCondition")) //
-                .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.institution", "projectInstitution", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.department", "projectDepartment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.opportunityType", "projectOpportunityType", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.instanceGroups", "projectInstanceGroups", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("projectInstanceGroups.studyOption", "projectStudyOption", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.userRoles", "projectUserRole", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.in("projectUserRole.role.id", Arrays.asList(PROJECT_SUPERVISOR_GROUP))) //
-                .createAlias("projectUserRole.user", "projectUser", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("program.id")) //
-                                .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.state.id", scopes.get(PROGRAM)))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("project.id")) //
-                                .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.state.id", scopes.get(PROJECT)))));
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
+                        Restrictions.disjunction() //
+                                .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
+                                .add(Restrictions.eq("resourceCondition.actionCondition", queryDTO.getActionCondition())));
+
+        Class<? extends Resource> resourceClass = scope.getResourceClass();
+        boolean opportunityScope = ResourceOpportunity.class.isAssignableFrom(resourceClass);
+        if (opportunityScope) {
+            criteria.createAlias("opportunityType", "opportunityType", JoinType.INNER_JOIN) //
+                    .createAlias(resourceReference + ".instanceGroups", "resourceStudyOption", JoinType.INNER_JOIN) //
+                    .createAlias("resourceStudyOption", "studyOption", JoinType.INNER_JOIN);
+        }
+
+        boolean projectScope = resourceClass.equals(Projection.class);
+        if (projectScope) {
+            criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.LEFT_OUTER_JOIN,
+                    Restrictions.in("userRole.role.id", asList(PROJECT_SUPERVISOR_GROUP)))
+                    .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN);
+        }
+
+        criteria.add(Restrictions.in("state.id", activeStates));
 
         appendLocationConstraint(criteria, queryDTO);
         appendKeywordConstraint(queryDTO, criteria);
+
+        if (projectScope) {
+            appendSupervisorConstraint(queryDTO, criteria);
+        }
 
         appendIndustryConstraint(criteria, queryDTO);
         appendFunctionConstraint(criteria, queryDTO);
 
         appendOpportunityTypeConstraint(criteria, queryDTO);
         appendStudyOptionConstraint(queryDTO, criteria);
-        appendActionConditionConstraint(queryDTO, criteria);
 
         appendFeeConstraint(criteria, queryDTO);
         appendPayConstraint(criteria, queryDTO);
-        appendDurationConstraint(criteria, queryDTO);
 
-        appendInstitutionsConstraint(criteria, queryDTO);
-        appendDepartmentsConstraint(queryDTO, criteria);
-        appendProgramsConstraint(queryDTO, criteria);
-        appendProjectsConstraint(queryDTO, criteria);
+        if (opportunityScope) {
+            appendDurationConstraint(criteria, resourceReference, queryDTO);
+        }
+
+        appendResourcesConstraint(criteria, INSTITUTION, queryDTO.getInstitutions());
+        appendResourcesConstraint(criteria, DEPARTMENT, queryDTO.getDepartments());
+        appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms());
+        appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects());
 
         String lastSequenceIdentifier = queryDTO.getLastSequenceIdentifier();
         if (lastSequenceIdentifier != null) {
@@ -130,23 +199,6 @@ public class AdvertDAO {
 
         return (List<Integer>) criteria.addOrder(Order.desc("sequenceIdentifier")) //
                 .setMaxResults(25) //
-                .list();
-    }
-
-    public List<Advert> getActiveAdverts(List<Integer> adverts, boolean prioritizeProgram) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class);
-
-        if (prioritizeProgram) {
-            criteria.createAlias("program", "program", JoinType.LEFT_OUTER_JOIN);
-        }
-
-        criteria.add(Restrictions.in("id", adverts));
-
-        if (prioritizeProgram) {
-            criteria.addOrder(Order.desc("program.id"));
-        }
-
-        return (List<Advert>) criteria.addOrder(Order.desc("sequenceIdentifier")) //
                 .list();
     }
 
@@ -260,7 +312,10 @@ public class AdvertDAO {
                 .createAlias("project", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program", "project", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .add(getInstitutionConstraint(institution)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("project.institution", institution)) //
+                        .add(Restrictions.eq("program.institution", institution)) //
+                        .add(Restrictions.eq("institution.id", institution.getId()))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("fee.currencySpecified", currency)) //
                         .add(Restrictions.eq("pay.currencySpecified", currency))) //
@@ -331,12 +386,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    private Junction getResourceConditionConstraint(String tableReference) {
-        return Restrictions.disjunction() //
-                .add(Restrictions.eq(tableReference + ".partnerMode", true)) //
-                .add(Restrictions.eq(tableReference + ".actionCondition", ACCEPT_APPLICATION));
-    }
-
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.getNeLat() != null) {
             criteria.add(Restrictions.between("address.location.latitude", queryDTO.getSwLat(), queryDTO.getNeLat())) //
@@ -348,20 +397,20 @@ public class AdvertDAO {
         String keyword = queryDTO.getKeyword();
         if (keyword != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.ilike("theme.value", MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("program.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("project.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("programDepartment.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("programInstitution.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectProgram.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectDepartment.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectInstitution.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectUser.firstName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectUser.lastName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectUser.email", keyword, MatchMode.ANYWHERE))); //
+                    .add(Restrictions.ilike("advert.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("advert.summary", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("advert.description", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("theme.value", MatchMode.ANYWHERE))); //
+        }
+    }
+
+    private void appendSupervisorConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+        String keyword = queryDTO.getKeyword();
+        if (keyword != null) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.ilike("user.firstName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.lastName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.email", keyword, MatchMode.ANYWHERE))); //
         }
     }
 
@@ -383,8 +432,8 @@ public class AdvertDAO {
         Collection<PrismOpportunityType> opportunityTypes = queryDTO.getOpportunityTypes();
         if (opportunityTypes == null) {
             opportunityTypes = Lists.newLinkedList();
-            if (queryDTO.getProgramCategories() != null) {
-                for (PrismOpportunityCategory category : queryDTO.getProgramCategories()) {
+            if (queryDTO.getOpportunityCategories() != null) {
+                for (PrismOpportunityCategory category : queryDTO.getOpportunityCategories()) {
                     for (PrismOpportunityType opportunityType : PrismOpportunityType.getOpportunityTypes(category)) {
                         opportunityTypes.add(opportunityType);
                     }
@@ -394,9 +443,7 @@ public class AdvertDAO {
 
         Disjunction opportunityTypeConstraint = Restrictions.disjunction();
         for (PrismOpportunityType opportunityType : opportunityTypes) {
-            opportunityTypeConstraint
-                    .add(Restrictions.eq("programOpportunityType.type", opportunityType))
-                    .add(Restrictions.eq("projectOpportunityType.type", opportunityType));
+            opportunityTypeConstraint.add(Restrictions.eq("opportunityType.name", opportunityType.name()));
 
         }
         criteria.add(opportunityTypeConstraint);
@@ -407,74 +454,32 @@ public class AdvertDAO {
         if (CollectionUtils.isNotEmpty(studyOptions)) {
             Disjunction studyOptionConstraint = Restrictions.disjunction();
             for (PrismStudyOption studyOption : studyOptions) {
-                studyOptionConstraint
-                        .add(Restrictions.eq("programStudyOption.type", studyOption))
-                        .add(Restrictions.eq("projectStudyOption.type", studyOption));
+                studyOptionConstraint.add(Restrictions.eq("studyOption.name", studyOption.name()));
             }
             criteria.add(studyOptionConstraint);
         }
     }
 
-    private void appendActionConditionConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
-        List<PrismActionCondition> actionConditions = queryDTO.getActionConditions();
-        if (CollectionUtils.isNotEmpty(actionConditions)) {
-            Disjunction actionConditionConstraint = Restrictions.disjunction();
-            for (PrismActionCondition actionCondition : actionConditions) {
-                actionConditionConstraint //
-                        .add(Restrictions.eq("programCondition.actionCondition", actionCondition)) //
-                        .add(Restrictions.eq("projectCondition.actionCondition", actionCondition)); //
-            }
-            criteria.add(actionConditionConstraint);
-        }
-
-    }
-
     private void appendFeeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        appendRangeConstraint(criteria, "fee.monthMinimumAtLocale", "fee.monthMaximumAtLocale", queryDTO.getMinFee(), queryDTO.getMaxFee(), true);
+        appendRangeConstraint(criteria, "advert.fee.monthMinimumAtLocale", "advert.fee.monthMaximumAtLocale", queryDTO.getMinFee(), queryDTO.getMaxFee(), true);
     }
 
     private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        appendRangeConstraint(criteria, "pay.monthMinimumAtLocale", "pay.monthMaximumAtLocale", queryDTO.getMinSalary(), queryDTO.getMaxSalary(), true);
+        appendRangeConstraint(criteria, "advert.pay.monthMinimumAtLocale", "advert.pay.monthMaximumAtLocale", queryDTO.getMinSalary(), queryDTO.getMaxSalary(), true);
     }
 
-    private void appendDurationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendDurationConstraint(Criteria criteria, String resourceReference, OpportunitiesQueryDTO queryDTO) {
         Junction disjunction = Restrictions.disjunction();
-        appendRangeConstraint(disjunction, "program.durationMinimum", "program.durationMaximum", queryDTO.getMinDuration(), queryDTO.getMaxDuration(), false);
-        appendRangeConstraint(disjunction, "project.durationMinimum", "project.durationMaximum", queryDTO.getMinDuration(), queryDTO.getMaxDuration(), false);
+        String lo = resourceReference + ".durationMinimum";
+        String hi = resourceReference + ".durationMaximum";
+        appendRangeConstraint(disjunction, lo, hi, queryDTO.getMinDuration(), queryDTO.getMaxDuration(), false);
         criteria.add(disjunction);
     }
 
-    private void appendInstitutionsConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Integer[] institutions = queryDTO.getInstitutions();
-        if (institutions != null) {
+    private void appendResourcesConstraint(Criteria criteria, PrismScope resourceScope, Integer[] resources) {
+        if (resources != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.in("programInstitution.id", institutions)) //
-                    .add(Restrictions.in("projectInstitution.id", institutions))); //
-        }
-    }
-
-    private void appendDepartmentsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
-        Integer[] departments = queryDTO.getDepartments();
-        if (departments != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.in("programDepartment.id", departments)) //
-                    .add(Restrictions.in("projectDepartment.id", departments)));
-        }
-    }
-
-    private void appendProgramsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
-        Integer[] programs = queryDTO.getPrograms();
-        if (programs != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.in("program.id", programs)) //
-                    .add(Restrictions.in("projectProgram.id", programs)));
-        }
-    }
-
-    private void appendProjectsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
-        Integer[] projects = queryDTO.getProjects();
-        if (projects != null) {
-            criteria.add(Restrictions.in("project.id", projects));
+                    .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources))); //
         }
     }
 
@@ -506,13 +511,6 @@ public class AdvertDAO {
             conjunction.add(Restrictions.le(hiColumn, loValue != null && loValue > hiValue ? loValue : decimal ? new BigDecimal(hiValue) : hiValue));
         }
         return conjunction;
-    }
-
-    private Junction getInstitutionConstraint(Institution institution) {
-        return Restrictions.disjunction() //
-                .add(Restrictions.eq("project.institution", institution)) //
-                .add(Restrictions.eq("program.institution", institution)) //
-                .add(Restrictions.eq("institution.id", institution.getId()));
     }
 
 }

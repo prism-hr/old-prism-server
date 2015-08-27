@@ -1,11 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.FULL_TIME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -50,8 +54,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -93,12 +95,12 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
@@ -487,8 +489,7 @@ public class ResourceService {
     public List<ImportedEntitySimple> getStudyOptions(ResourceOpportunity resource) {
         if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
             List<ImportedEntitySimple> prismStudyOptions = Lists.newLinkedList();
-            List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource,
-                    ResourceStudyOption.class, "studyOption", "id");
+            List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
             for (ResourceStudyOption studyOption : studyOptions) {
                 prismStudyOptions.add(studyOption.getStudyOption());
             }
@@ -579,23 +580,32 @@ public class ResourceService {
         entityService.flush();
 
         if (resourceConditions == null) {
-            List<PrismResourceCondition> defaultResourceConditions;
-            if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-                PrismOpportunityType opportunityType = PrismOpportunityType.valueOf(((ResourceOpportunity) resource).getOpportunityType().getName());
-                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope(), opportunityType);
-            } else {
-                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resource.getResourceScope());
+            resourceConditions = Lists.newArrayList();
+            switch (resource.getResourceScope()) {
+            case INSTITUTION:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withPartnerMode());
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withPartnerMode());
+                break;
+            case DEPARTMENT:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withPartnerMode());
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withPartnerMode());
+                break;
+            case PROGRAM:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withPartnerMode());
+                break;
+            case PROJECT:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withPartnerMode());
+                break;
+            default:
+                throw new UnsupportedOperationException("Resource type does not have conditions");
             }
+        }
 
-            for (PrismResourceCondition defaultResourceCondition : defaultResourceConditions) {
-                resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(defaultResourceCondition.getActionCondition())
-                        .withPartnerNode(defaultResourceCondition.isPartnerMode()));
-            }
-        } else {
-            for (ResourceParentDTO.ResourceConditionDTO resourceCondition : resourceConditions) {
-                resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(resourceCondition.getActionCondition())
-                        .withPartnerNode(resourceCondition.getPartnerMode()));
-            }
+        for (ResourceConditionDTO resourceCondition : resourceConditions) {
+            PrismActionCondition actionCondition = resourceCondition.getActionCondition();
+            resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(resourceCondition.getActionCondition())
+                    .withPartnerNode(actionCondition.equals(ACCEPT_APPLICATION) ? true : resourceCondition.getPartnerMode()));
         }
     }
 
@@ -608,16 +618,12 @@ public class ResourceService {
 
         LocalDate close = getResourceEndDate(resource);
         if (studyOptions == null) {
-            List<PrismStudyOption> prismStudyOptions = PrismOpportunityType
-                    .valueOf(resource.getOpportunityType().getName()).getDefaultStudyOptions();
-            studyOptions = prismStudyOptions.stream().map(prismStudyOption -> importedEntityService
-                    .getByName(ImportedEntitySimple.class, prismStudyOption.name())).collect(Collectors.toList());
+            studyOptions = studyOptions == null ? newArrayList(importedEntityService.getByName(ImportedEntitySimple.class, FULL_TIME.name())) : studyOptions;
         }
 
-        List<ResourceStudyOption> resourceStudyOptions = studyOptions.stream().filter(studyOption -> close == null || close.isAfter(baseline)).map(
+        resource.getInstanceGroups().addAll(studyOptions.stream().filter(studyOption -> close == null || close.isAfter(baseline)).map(
                 studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline).withApplicationCloseDate(close))
-                .collect(Collectors.toList());
-        resource.getInstanceGroups().addAll(resourceStudyOptions);
+                .collect(Collectors.toList()));
     }
 
     public void setStudyLocations(ResourceOpportunity resource, List<String> studyLocations) {

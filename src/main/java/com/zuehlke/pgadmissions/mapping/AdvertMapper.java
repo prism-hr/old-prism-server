@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
@@ -99,6 +100,11 @@ public class AdvertMapper {
 
         representation.setName(advert.getName());
         return representation;
+    }
+    
+    public AdvertRepresentationExtended getAdvertRepresentationExtended(AdvertDTO advert) {
+        
+        return null;
     }
 
     public <T extends AdvertRepresentationSimple> T getAdvertRepresentation(Advert advert, Class<T> returnType) {

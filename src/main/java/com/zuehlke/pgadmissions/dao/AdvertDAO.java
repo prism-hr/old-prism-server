@@ -129,7 +129,10 @@ public class AdvertDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
                         Restrictions.disjunction() //
                                 .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
-                                .add(Restrictions.eq("resourceCondition.actionCondition", queryDTO.getActionCondition())));
+                                .add(Restrictions.eq("resourceCondition.actionCondition", queryDTO.getActionCondition()))) //
+                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("advertTarget.selected", true)) //
+                .createAlias("advertTarget.advert", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
 
         Class<? extends Resource> resourceClass = scope.getResourceClass();
         boolean opportunityScope = ResourceOpportunity.class.isAssignableFrom(resourceClass);
@@ -486,8 +489,22 @@ public class AdvertDAO {
 
     private void appendResourcesConstraint(Criteria criteria, PrismScope resourceScope, Integer[] resources) {
         if (resources != null) {
-            criteria.add(Restrictions.disjunction() //
+            Junction resourcesConstraint = Restrictions.disjunction();
+            criteria.add(resourcesConstraint //
                     .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources))); //
+            
+            if (resourceScope.equals(DEPARTMENT)) {
+                resourcesConstraint.add(Restrictions.conjunction() //
+                        .add(Restrictions.in("targetAdvert.department.id", resources))
+                        .add(Restrictions.isNull("targetAdvert.project"))
+                        .add(Restrictions.isNull("targetAdvert.program")));
+            } else if (resourceScope.equals(INSTITUTION)) {
+                resourcesConstraint.add(Restrictions.conjunction() //
+                        .add(Restrictions.in("targetAdvert.institution.id", resources))
+                        .add(Restrictions.isNull("targetAdvert.project"))
+                        .add(Restrictions.isNull("targetAdvert.program"))
+                        .add(Restrictions.isNull("targetAdvert.department")));
+            }
         }
     }
 

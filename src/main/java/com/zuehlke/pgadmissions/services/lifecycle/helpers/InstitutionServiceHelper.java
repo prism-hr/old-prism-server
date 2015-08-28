@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
@@ -26,8 +27,10 @@ import org.springframework.social.facebook.api.Page;
 import org.springframework.social.facebook.connect.FacebookServiceProvider;
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -63,7 +66,13 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
         System system = systemService.getSystem();
 
         FacebookServiceProvider facebookServiceProvider = new FacebookServiceProvider(facebookClientId, facebookAppSecret, null);
-        AccessGrant accessGrant = facebookServiceProvider.getOAuthOperations().authenticateClient();
+        AccessGrant accessGrant;
+        try {
+            accessGrant = facebookServiceProvider.getOAuthOperations().authenticateClient();
+        } catch (ResourceAccessException e) {
+            logger.error("Could not obtain Facebook token due to: " + e.getMessage());
+            return;
+        }
         Facebook facebookApi = facebookServiceProvider.getApi(accessGrant.getAccessToken());
 
         List<ImportedInstitution> unimportedUcasInstitutions = importedEntityService.getUnimportedUcasInstitutions();
@@ -103,6 +112,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             institutionDTO.setParentResource(new ResourceDTO().withId(system.getId()).withScope(PrismScope.SYSTEM));
             institutionDTO.setCurrency("GBP");
             institutionDTO.setBusinessYearStartMonth(10);
+            institutionDTO.setOpportunityCategories(Collections.singletonList(PrismOpportunityCategory.STUDY));
             institutionDTO.setImportedInstitutionId(importedInstitution.getId());
             institutionDTO.setName(importedInstitution.getName());
             institutionDTO.setAdvert(advertDTO);
@@ -143,7 +153,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
                 address.getDomicile().setId(domiciles.get(0).getId());
             }
 
-            if(isShuttingDown()) {
+            if (isShuttingDown()) {
                 return;
             }
 

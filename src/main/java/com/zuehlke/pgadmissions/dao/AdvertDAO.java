@@ -156,8 +156,7 @@ public class AdvertDAO {
         if (narrowed) {
             criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN, //
                     Restrictions.conjunction() //
-                            .add(Restrictions.eq("advertTarget.selected", true)) //
-                            .add(Restrictions.eq("advertTarget.endorsed", true))) //
+                            .add(Restrictions.eq("advertTarget.selected", true))) //
                     .createAlias("advertTarget.advert", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
         } else {
             criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN);
@@ -595,13 +594,11 @@ public class AdvertDAO {
             if (resourceScope.equals(DEPARTMENT)) {
                 resourcesConstraint.add(Restrictions.conjunction() //
                         .add(Restrictions.in("targetAdvert.department.id", resources))
-                        .add(Restrictions.eq("advertTarget.endorsed", true))
                         .add(Restrictions.isNull("targetAdvert.project"))
                         .add(Restrictions.isNull("targetAdvert.program")));
             } else if (resourceScope.equals(INSTITUTION)) {
                 resourcesConstraint.add(Restrictions.conjunction() //
                         .add(Restrictions.in("targetAdvert.institution.id", resources))
-                        .add(Restrictions.eq("advertTarget.endorsed", true))
                         .add(Restrictions.isNull("targetAdvert.project"))
                         .add(Restrictions.isNull("targetAdvert.program"))
                         .add(Restrictions.isNull("targetAdvert.department")));

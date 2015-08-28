@@ -328,7 +328,7 @@ public class SystemService {
             Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction()).withPartnershipState(prismAction.getPartnershipState())
-                    .withPartnershipState(prismAction.getPartnershipTransitionState()).withScope(scope);
+                    .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 

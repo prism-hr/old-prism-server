@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.project;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_REENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
@@ -32,6 +34,20 @@ public class PrismProjectApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_ENDORSE) //
                 .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
+                .withTransitions(PROJECT_ENDORSE_TRANSITION));
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROJECT_UNENDORSE) //
+                .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
+                .withTransitions(PROJECT_ENDORSE_TRANSITION));
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROJECT_REENDORSE) //
                 .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //

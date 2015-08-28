@@ -528,7 +528,7 @@ public class AdvertService {
             targetsDTO.getResources().stream().forEach(targetDTO -> {
                 AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, false);
                 entityService.createOrUpdate(target);
-                newTargetValues.add(advert.getId());
+                newTargetValues.add(target.getValueId());
                 adverts.add(target);
             });
         }
@@ -537,16 +537,16 @@ public class AdvertService {
             targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
                 AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, true);
                 entityService.createOrUpdate(target);
-                newTargetValues.add(advert.getId());
+                newTargetValues.add(target.getValueId());
                 adverts.add(target);
             });
         }
 
-//        if (newTargetValues.isEmpty()) {
-//            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
-//        } else {
-//            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
-//        }
+        if (newTargetValues.isEmpty()) {
+            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
+        } else {
+            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
+        }
     }
 
     private AdvertTargetAdvert createAdvertTargetAdvert(Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {

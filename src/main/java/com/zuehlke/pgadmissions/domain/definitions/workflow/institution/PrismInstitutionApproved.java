@@ -8,6 +8,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_REENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
@@ -69,6 +71,20 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_ENDORSE) //
                 .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_INSTITUTION_TASK_REQUEST) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION) //
+                .withTransitions(INSTITUTION_ENDORSE_TRANSITION));
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(INSTITUTION_UNENDORSE) //
+                .withNotification(SYSTEM_INSTITUTION_TASK_REQUEST) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION) //
+                .withTransitions(INSTITUTION_ENDORSE_TRANSITION));
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(INSTITUTION_REENDORSE) //
                 .withNotification(SYSTEM_INSTITUTION_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION) //

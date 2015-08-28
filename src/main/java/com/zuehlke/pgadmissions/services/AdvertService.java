@@ -542,22 +542,16 @@ public class AdvertService {
             });
         }
 
-        if (newTargetValues.isEmpty()) {
-            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
-        } else {
-            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
-        }
+//        if (newTargetValues.isEmpty()) {
+//            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
+//        } else {
+//            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
+//        }
     }
 
     private AdvertTargetAdvert createAdvertTargetAdvert(Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
-        AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
-                .withSelected(selected);
-
-        if (selected) {
-            target.setPartnershipState(ENDORSEMENT_PENDING);
-        }
-
-        return target;
+        return new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
+                .withSelected(selected).withPartnershipState(ENDORSEMENT_PENDING);
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {

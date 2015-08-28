@@ -101,4 +101,10 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         return this;
     }
 
+
+    public AdvertTargetAdvert withPartnershipState(PrismPartnershipState partnershipState) {
+        this.partnershipState = partnershipState;
+        return this;
+    }
+    
 }

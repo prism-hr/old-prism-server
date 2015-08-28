@@ -702,7 +702,7 @@ public class ResourceDAO {
 
         return (List<ResourceIdentityDTO>) criteria.add(Restrictions.eq("advert", resource.getAdvert())) //
                 .add(Restrictions.eq("selected", true)) //
-                .add(Restrictions.eqOrIsNull("partnershipState")) //
+                .add(Restrictions.isNull("partnershipState")) //
                 .addOrder(Order.asc(resourceReference + ".name")) //
                 .addOrder(Order.asc(resourceReference + ".id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceIdentityDTO.class)) //

@@ -159,8 +159,7 @@ public class AdvertDAO {
                             .add(Restrictions.eq("advertTarget.endorsed", true))) //
                     .createAlias("advertTarget.advert", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
         } else {
-            criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN, //
-                    Restrictions.eq("advertTarget.selected", true));
+            criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN);
         }
 
         Class<? extends Resource> resourceClass = scope.getResourceClass();
@@ -208,7 +207,7 @@ public class AdvertDAO {
             appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms());
             appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects());
         } else {
-            criteria.add(Restrictions.isNull("advertTarget"));
+            criteria.add(Restrictions.isNull("advertTarget.id"));
         }
 
         String lastSequenceIdentifier = queryDTO.getLastSequenceIdentifier();

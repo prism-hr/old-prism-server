@@ -235,15 +235,16 @@ public class RoleDAO {
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(partnerResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.partnerMode", true)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(WorkflowDAOUtils.getPartnerUserRoleConstraint(partnerScope, "stateActionAssignment"))
-                .add(Restrictions.eq(partnerResourceReference + ".user", user)) //
+                .add(getPartnerUserRoleConstraint(partnerScope, "stateActionAssignment"))
+                .add(Restrictions.eq("userRole.user", user)) //
                 .addOrder(Order.asc("scope.ordinal")) //
                 .setMaxResults(1) //
                 .uniqueResult();

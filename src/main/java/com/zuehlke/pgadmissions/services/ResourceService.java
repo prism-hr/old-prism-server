@@ -867,9 +867,7 @@ public class ResourceService {
             parent.setOpportunityRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
         });
 
-        if (comment.getRating().compareTo(new BigDecimal(3)) > 0) {
-            advertService.synchronizeAdvertEndorsement(resource.getAdvert(), comment.getUser());
-        }
+        advertService.synchronizeAdvertEndorsement(resource.getAdvert(), comment.getUser());
     }
 
     public List<ResourceIdentityDTO> getResourcesNotYetEndorsedFor(ResourceParent resource) {

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
@@ -65,7 +66,7 @@ public class RoleDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionResolution()) //
+                        getEndorsementActionJoinResolution()) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -84,6 +85,7 @@ public class RoleDAO {
                                 .add(Restrictions.eq("stateActionAssignment.partnerMode", false))) //
                         .add(getPartnerUserRoleConstraint(resourceScope, "stateActionAssignment"))) //
                 .add(getResourceStateActionConstraint()) //
+                .add(getEndorsementActionFilterResolution())
                 .add(getUserEnabledConstraint(user)) //
                 .list();
     }

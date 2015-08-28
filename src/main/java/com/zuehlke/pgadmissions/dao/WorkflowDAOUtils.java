@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -75,10 +78,18 @@ public class WorkflowDAOUtils {
     }
 
     // FIXME - unendorse action
-    public static Junction getEndorsementActionResolution() {
-        return Restrictions.conjunction() //
-                .add(Restrictions.eq("advertTarget.selected", true)) //
-                .add(Restrictions.eq("advertTarget.endorsed", false));
+    public static Criterion getEndorsementActionJoinResolution() {
+        return Restrictions.eq("advertTarget.selected", true);
+    }
+
+    public static Junction getEndorsementActionFilterResolution() {
+        PrismAction[] endorseActions = RESOURCE_ENDORSE.getActions();
+        return Restrictions.disjunction() //
+                .add(Restrictions.not( //
+                        Restrictions.in("stateAction.action.id", endorseActions))) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.in("stateAction.action.id", endorseActions))
+                        .add(Restrictions.eq("advertTarget.endorsed", false)));
     }
 
 }

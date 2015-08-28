@@ -4,6 +4,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_IMPORT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_REENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST;
@@ -45,6 +47,20 @@ public class PrismProgramApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_ENDORSE) //
                 .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
+                .withTransitions(PROGRAM_ENDORSE_TRANSITION));
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROGRAM_UNENDORSE) //
+                .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
+                .withTransitions(PROGRAM_ENDORSE_TRANSITION));
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROGRAM_REENDORSE) //
                 .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //

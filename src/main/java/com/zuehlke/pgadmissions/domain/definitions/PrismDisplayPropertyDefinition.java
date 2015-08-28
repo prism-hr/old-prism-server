@@ -1372,9 +1372,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Currency"),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The currency that your organization typically does business in"),
     SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Minimum Hourly Wage"),
-    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_HINT(
-            SYSTEM_HTML_RESOURCE_PARENT,
-            "Tell us what is the minimum wage that your organization would pay staff and/or work experience personnel. We need to know this so that we can verify that you meet sector requirements for the treatment of work experience personnel"),
+    SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Tell us what is the minimum wage that your organization would pay staff and/or work experience personnel. We need to know this so that we can verify that you meet sector requirements for the treatment of work experience personel"),
+    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_CATEGORIES_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Opportunity Categories"),
+    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_CATEGORIES_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Tell us which opportunity categories are you planning to advertise in future."),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Logo"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Upload the logo for your institution."),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_RATING_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Rating"),

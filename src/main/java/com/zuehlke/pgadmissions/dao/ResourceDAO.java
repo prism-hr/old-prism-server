@@ -726,7 +726,7 @@ public class ResourceDAO {
                 .createAlias("value", "value", JoinType.INNER_JOIN) //
                 .createAlias("value." + resourceReference, resourceReference, JoinType.INNER_JOIN);
 
-        if (resourceScope.equals(DEPARTMENT)) {
+        if (!resourceScope.equals(INSTITUTION)) {
             criteria.createAlias("value.institution", "institution", JoinType.INNER_JOIN);
         }
 

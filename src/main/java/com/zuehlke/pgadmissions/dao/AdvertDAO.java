@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
@@ -399,6 +400,16 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
+    public void deleteAdvertTargetAdverts(Advert advert, List<Integer> newValues) {
+        sessionFactory.getCurrentSession().createQuery(
+                "delete AdvertTargetAdvert "
+                        + "where advert = :advert "
+                        + "and value.id not in (:newValues)")
+                .setParameter("advert", advert) //
+                .setParameterList("newValues", newValues) //
+                .executeUpdate();
+    }
+
     public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
                 .setProjection(Projections.property("id")) //
@@ -418,20 +429,22 @@ public class AdvertDAO {
                 .list();
     }
 
-    public void endorseForAdvertTargets(Advert advert) {
+    public void endorseForAdvertTargets(Advert advert, PrismPartnershipState partnershipState) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTargetAdvert "
-                        + "set endorsed = true "
+                        + "set partnershipState = :partnershipState "
                         + "where selected = true") //
+                .setParameter("partnershipState", partnershipState) //
                 .executeUpdate();
     }
 
-    public void endorseForAdvertTargets(Advert advert, List<Advert> targetAdverts) {
+    public void endorseForAdvertTargets(Advert advert, List<Advert> targetAdverts, PrismPartnershipState partnershipState) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTargetAdvert "
-                        + "set endorsed = true "
+                        + "set partnershipState = :partnershipState "
                         + "where selected = true "
                         + "and value in (:values)") //
+                .setParameter("partnershipState", partnershipState) //
                 .setParameterList("values", targetAdverts) //
                 .executeUpdate();
     }

@@ -2,12 +2,16 @@ package com.zuehlke.pgadmissions.domain.advert;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 
 @Entity
 @Table(name = "advert_target_advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "target_advert_id" }) })
@@ -28,8 +32,9 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     @Column(name = "selected", nullable = false)
     private Boolean selected;
 
-    @Column(name = "endorsed", nullable = false)
-    private Boolean endorsed;
+    @Column(name = "partnership_state")
+    @Enumerated(EnumType.STRING)
+    private PrismPartnershipState partnershipState;
 
     public Integer getId() {
         return id;
@@ -63,12 +68,12 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         this.selected = selected;
     }
 
-    public Boolean getEndorsed() {
-        return endorsed;
+    public PrismPartnershipState getPartnershipState() {
+        return partnershipState;
     }
 
-    public void setEndorsed(Boolean endorsed) {
-        this.endorsed = endorsed;
+    public void setPartnershipState(PrismPartnershipState partnershipState) {
+        this.partnershipState = partnershipState;
     }
 
     @Override
@@ -96,9 +101,4 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         return this;
     }
 
-    public AdvertTargetAdvert withEndorsed(Boolean endorsed) {
-        this.endorsed = endorsed;
-        return this;
-    }
-    
 }

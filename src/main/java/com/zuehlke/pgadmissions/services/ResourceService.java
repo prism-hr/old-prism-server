@@ -866,8 +866,6 @@ public class ResourceService {
             parent.setOpportunityRatingCount(parentRatingSummary.getRatingCount().intValue());
             parent.setOpportunityRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
         });
-
-        advertService.synchronizeAdvertEndorsement(resource.getAdvert(), comment.getUser());
     }
 
     public List<ResourceIdentityDTO> getResourcesNotYetEndorsedFor(ResourceParent resource) {
@@ -957,16 +955,18 @@ public class ResourceService {
 
         for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             ResourceParent parent = (ResourceParent) resourceOpportunity.getEnclosingResource(scope);
-            String opportunityCategories = parent.getOpportunityCategories();
-            if (opportunityCategories == null) {
-                opportunityCategories = opportunityCategory.name();
-                setOpportunityCategories(parent, opportunityCategories);
-            } else {
-                Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
-                opportunityCategoriesSplit.add(opportunityCategories);
-
-                opportunityCategories = Joiner.on("|").join(opportunityCategoriesSplit);
-                setOpportunityCategories(parent, opportunityCategories);
+            if (parent != null) {
+                String opportunityCategories = parent.getOpportunityCategories();
+                if (opportunityCategories == null) {
+                    opportunityCategories = opportunityCategory.name();
+                    setOpportunityCategories(parent, opportunityCategories);
+                } else {
+                    Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
+                    opportunityCategoriesSplit.add(opportunityCategories);
+    
+                    opportunityCategories = Joiner.on("|").join(opportunityCategoriesSplit);
+                    setOpportunityCategories(parent, opportunityCategories);
+                }
             }
         }
     }

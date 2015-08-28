@@ -2,9 +2,13 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PrismActionGroup.RESOURCE_ENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_ENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_ENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_ENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -63,6 +67,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -422,22 +427,6 @@ public class AdvertService {
         return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
     }
 
-    public void synchronizeAdvertEndorsement(Advert advert, User user) {
-        List<Advert> targetAdverts = Lists.newArrayList();
-        for (UserRole userRole : roleService.getActionPerformerUserRoles(user, RESOURCE_ENDORSE.getActions())) {
-            Resource userResource = userRole.getResource();
-            if (userResource.getResourceScope().equals(SYSTEM)) {
-                advertDAO.endorseForAdvertTargets(advert);
-                break;
-            }
-            targetAdverts.add(userResource.getAdvert());
-        }
-
-        if (!targetAdverts.isEmpty()) {
-            advertDAO.endorseForAdvertTargets(advert, targetAdverts);
-        }
-    }
-
     public void identifyForAdverts(User user, List<Integer> adverts) {
         advertDAO.identifyForAdverts(user, adverts);
     }
@@ -452,6 +441,25 @@ public class AdvertService {
 
     public List<Integer> getAdvertsToIdentifyUserFor(User user, List<Integer> adverts) {
         return advertDAO.getAdvertsToIdentifyUserFor(user, adverts);
+    }
+
+    public void recordPartnershipStateTransition(Resource resource, Comment comment) {
+        if (comment.isPartnershipStateTransitionComment()) {
+            List<Advert> targetAdverts = Lists.newArrayList();
+            for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(),
+                    new PrismAction[] { PROJECT_ENDORSE, PROGRAM_ENDORSE, DEPARTMENT_ENDORSE, INSTITUTION_ENDORSE })) {
+                Resource userResource = userRole.getResource();
+                if (userResource.getResourceScope().equals(SYSTEM)) {
+                    advertDAO.endorseForAdvertTargets(resource.getAdvert(), comment.getAction().getPartnershipTransitionState());
+                    break;
+                }
+                targetAdverts.add(userResource.getAdvert());
+            }
+
+            if (!targetAdverts.isEmpty()) {
+                advertDAO.endorseForAdvertTargets(resource.getAdvert(), targetAdverts, comment.getAction().getPartnershipTransitionState());
+            }
+        }
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
@@ -502,10 +510,6 @@ public class AdvertService {
         } else {
             advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
             targets.getSubjectAreas().clear();
-
-            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
-            targets.getAdverts().clear();
-
             entityService.flush();
         }
 
@@ -518,11 +522,13 @@ public class AdvertService {
             });
         }
 
+        List<Integer> newTargetValues = Lists.newArrayList();
         Set<AdvertTargetAdvert> adverts = targets.getAdverts();
         if (targetsDTO.getResources() != null) {
             targetsDTO.getResources().stream().forEach(targetDTO -> {
                 AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, false);
-                entityService.save(target);
+                entityService.createOrUpdate(target);
+                newTargetValues.add(advert.getId());
                 adverts.add(target);
             });
         }
@@ -531,14 +537,27 @@ public class AdvertService {
             targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
                 AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, true);
                 entityService.createOrUpdate(target);
+                newTargetValues.add(advert.getId());
                 adverts.add(target);
             });
+        }
+
+        if (newTargetValues.isEmpty()) {
+            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
+        } else {
+            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
         }
     }
 
     private AdvertTargetAdvert createAdvertTargetAdvert(Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
-        return new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
-                .withSelected(selected).withEndorsed(false);
+        AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
+                .withSelected(selected);
+
+        if (selected) {
+            target.setPartnershipState(ENDORSEMENT_PENDING);
+        }
+
+        return target;
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {

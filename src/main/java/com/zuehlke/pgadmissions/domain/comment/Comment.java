@@ -775,6 +775,10 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return false;
     }
 
+    public boolean isPartnershipStateTransitionComment() {
+        return action.getPartnershipState() != null;
+    }
+
     public boolean isCreateComment() {
         return action.getActionCategory().equals(CREATE_RESOURCE);
     }
@@ -828,7 +832,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     public boolean isResourceEndorsementComment() {
         return !action.getId().getScope().equals(APPLICATION) && rating != null;
     }
-    
+
     public boolean isApplicationIdentifiedComment() {
         return action.getId().equals(APPLICATION_COMPLETE_IDENTIFICATION_STATE);
     }

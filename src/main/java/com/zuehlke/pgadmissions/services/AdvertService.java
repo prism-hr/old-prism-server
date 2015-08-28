@@ -430,7 +430,7 @@ public class AdvertService {
                 advertDAO.endorseForAdvertTargets(advert);
                 break;
             }
-            targetAdverts.add(advert);
+            targetAdverts.add(userResource.getAdvert());
         }
 
         if (!targetAdverts.isEmpty()) {

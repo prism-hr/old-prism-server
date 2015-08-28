@@ -25,6 +25,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_CREATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_ENDORSE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreatorApproved;
@@ -70,7 +71,8 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_INSTITUTION_TASK_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
-                .withNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION));
+                .withNotifications(INSTITUTION_ADMINISTRATOR_GROUP, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION) //
+                .withTransitions(INSTITUTION_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_IMPORT_DEPARTMENT) //

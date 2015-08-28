@@ -76,17 +76,17 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_EXPORT(getDefaultResourceActionDefinitionSystemInvocation(EXPORT_RESOURCE, APPLICATION) //
             .withVisibleAction() //
             .withRedactions(getDefaultApplicationActionRedactions())), //
-            APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-            APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(getDefaultRateApplicationActionDefinition()), //
-            APPLICATION_PROVIDE_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
-            APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinition()), //
-            APPLICATION_PURGE(getDefaultResourceActionDefinitionSystemInvocation(PURGE_RESOURCE, APPLICATION)), //
-            APPLICATION_REVERSE_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-            APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-            APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
-            APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
-            APPLICATION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(APPLICATION)), //
-            APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(getDefaultRateApplicationActionDefinition()), //
+    APPLICATION_PROVIDE_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
+    APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinition()), //
+    APPLICATION_PURGE(getDefaultResourceActionDefinitionSystemInvocation(PURGE_RESOURCE, APPLICATION)), //
+    APPLICATION_REVERSE_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
+    APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
+    APPLICATION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(APPLICATION)), //
+    APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
 
     PROJECT_ENDORSE(getDefaultPartnerReviewActionDefinition(PROJECT, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
     PROJECT_UNENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
@@ -116,9 +116,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROGRAM)), //
 
-    DEPARTMENT_ENDORSE(getDefaultPartnerReviewActionDefinition(PROJECT, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
-    DEPARTMENT_UNENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
-    DEPARTMENT_REENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
+    DEPARTMENT_ENDORSE(getDefaultPartnerReviewActionDefinition(DEPARTMENT, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
+    DEPARTMENT_UNENDORSE(getDefaultPartnerActionDefinition(DEPARTMENT, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
+    DEPARTMENT_REENDORSE(getDefaultPartnerActionDefinition(DEPARTMENT, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     DEPARTMENT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
@@ -133,9 +133,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(DEPARTMENT)), //
 
-    INSTITUTION_ENDORSE(getDefaultPartnerReviewActionDefinition(PROJECT, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
-    INSTITUTION_UNENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
-    INSTITUTION_REENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
+    INSTITUTION_ENDORSE(getDefaultPartnerReviewActionDefinition(INSTITUTION, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
+    INSTITUTION_UNENDORSE(getDefaultPartnerActionDefinition(INSTITUTION, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
+    INSTITUTION_REENDORSE(getDefaultPartnerActionDefinition(INSTITUTION, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_CORRECT(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //

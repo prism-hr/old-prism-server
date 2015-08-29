@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedSupervisionResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationEscalatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationExportedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationIdentifiedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewAvailabilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewFeedbackResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedReferenceResolver;
@@ -71,7 +72,7 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PROVIDED_REVIEW_OUTCOME(false, APPLICATION, ApplicationProvidedReviewResolver.class), //
     APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationUpdateInterviewAvailabilityResolver.class), //
     APPLICATION_PURGED_OUTCOME(false, APPLICATION, ApplicationPurgedResolver.class), //
-    APPLICATION_IDENTIFIED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
+    APPLICATION_IDENTIFIED_OUTCOME(false, APPLICATION, ApplicationIdentifiedResolver.class), //
 
     PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
     PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //

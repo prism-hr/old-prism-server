@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.workflow.notification.property;
 
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
@@ -10,8 +12,12 @@ public class ApplicationOpportunityTypeBuilder implements NotificationPropertyBu
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getPropertyLoader().loadLazy(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITY_TYPE_"
-                + propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getOpportunityType().name()));
+        Resource resource = propertyLoader.getNotificationDefinitionModelDTO().getResource();
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getParentResource().getClass())) {
+            return propertyLoader.getPropertyLoader().loadLazy(PrismOpportunityType
+                    .valueOf(propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getOpportunityType().name()).getDisplayProperty());
+        }
+        return null;
     }
 
 }

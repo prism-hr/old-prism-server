@@ -207,11 +207,11 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         if (personalDetail != null) {
             ApplicationDemographic demographic = personalDetail.getDemographic();
             if (demographic == null) {
-                setValidationMessage("personalDetail", "ethnicity", errors);
-                setValidationMessage("personalDetail", "disability", errors);
+                setValidationMessage("personalDetail.demographic", "ethnicity", errors);
+                setValidationMessage("personalDetail.demographic", "disability", errors);
             } else {
-                validateRequiredConstraint(demographic.getEthnicity(), "personalDetail", "ethnicity", configuration, errors);
-                validateRequiredConstraint(demographic.getDisability(), "personalDetail", "disability", configuration, errors);
+                validateRequiredConstraint(demographic.getEthnicity(), "personalDetail.demographic", "ethnicity", configuration, errors);
+                validateRequiredConstraint(demographic.getDisability(), "personalDetail.demographic", "disability", configuration, errors);
             }
         }
     }

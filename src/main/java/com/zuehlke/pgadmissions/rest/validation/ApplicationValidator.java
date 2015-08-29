@@ -139,7 +139,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             LocalDate startDate = programDetail.getStartDate();
 
             ResourceParent parentResource = application.getParentResource();
-            boolean isOpportunity = ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())
+            boolean isOpportunity = ResourceOpportunity.class.isAssignableFrom(parentResource.getClass());
             ResourceStudyOption studyOption = resourceService.getStudyOption(parentResource, programDetail.getStudyOption());
 
             if (studyOption == null) {

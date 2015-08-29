@@ -87,7 +87,7 @@ public class InstitutionDAO {
         Disjunction searchCriterion = Restrictions.disjunction();
 
         if (searchTerm != null) {
-            searchCriterion.add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE));
+            searchCriterion.add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE));
         }
         if (googleIds != null && googleIds.length > 0) {
             searchCriterion.add(Restrictions.in("googleId", googleIds));

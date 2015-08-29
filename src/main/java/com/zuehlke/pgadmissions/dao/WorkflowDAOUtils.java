@@ -69,10 +69,10 @@ public class WorkflowDAOUtils {
     public static Junction getSimilarUserRestriction(String alias, String searchTerm) {
         alias = StringUtils.isEmpty(alias) ? "" : alias + ".";
         return Restrictions.disjunction() //
-                .add(Restrictions.ilike(alias + "firstName", searchTerm, MatchMode.START)) //
-                .add(Restrictions.ilike(alias + "lastName", searchTerm, MatchMode.START)) //
-                .add(Restrictions.ilike(alias + "fullName", searchTerm, MatchMode.START)) //
-                .add(Restrictions.ilike(alias + "email", searchTerm, MatchMode.START));
+                .add(Restrictions.like(alias + "firstName", searchTerm, MatchMode.START)) //
+                .add(Restrictions.like(alias + "lastName", searchTerm, MatchMode.START)) //
+                .add(Restrictions.like(alias + "fullName", searchTerm, MatchMode.START)) //
+                .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
     }
 
     public static Criterion getEndorsementActionJoinResolution() {

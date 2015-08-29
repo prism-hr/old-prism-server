@@ -133,13 +133,13 @@ public class ResourceController {
         return resourceService.getDisplayProperties(resource, propertiesScope);
     }
 
+    // FIXME api now provided to get counts for tabs. Need to send that.
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
-
         return resourceMapper.getResourceListRowRepresentations(resourceScope, resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
     }
 

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.PrismConstants.LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
@@ -297,7 +297,7 @@ public class UserDAO {
         }
 
         return (List<User>) criteria.addOrder(Order.desc("user.id")) //
-                .setMaxResults(LIST_PAGE_ROW_COUNT) //
+                .setMaxResults(RESOURCE_LIST_PAGE_ROW_COUNT) //
                 .list();
     }
 

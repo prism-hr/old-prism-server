@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -270,9 +271,14 @@ public class OpportunitiesQueryDTO {
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
     }
-    
+
     public boolean isNarrowed() {
         return !(institutions == null && departments == null && programs == null && projects == null);
+    }
+
+    public OpportunitiesQueryDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        opportunityCategories = Lists.newArrayList(opportunityCategory);
+        return this;
     }
 
 }

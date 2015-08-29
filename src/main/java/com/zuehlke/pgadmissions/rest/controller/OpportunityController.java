@@ -35,9 +35,10 @@ public class OpportunityController {
     @Inject
     private ApplicationService applicationService;
 
+    // FIXME api now provided to get counts for tabs. Need to send that.
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentationExtended> getAdverts(OpportunitiesQueryDTO query) {
-        return advertMapper.getAdvertExtendedRepresentations(query);
+        return advertMapper.getAdvertExtendedRepresentations(advertService.getAdvertList(query), query.getActionCondition());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}")

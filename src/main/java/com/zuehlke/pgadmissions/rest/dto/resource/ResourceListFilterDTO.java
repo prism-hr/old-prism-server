@@ -10,9 +10,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ResourceListFilterDTO {
-    
+
     private PrismOpportunityCategory opportunityCategory;
-    
+
     private PrismFilterMatchMode matchMode;
 
     private PrismFilterSortOrder sortOrder;
@@ -20,13 +20,13 @@ public class ResourceListFilterDTO {
     private String valueString;
 
     private Boolean urgentOnly;
-    
+
     private Boolean targetOnly;
-    
+
     private PrismAction actionId;
 
     private List<ResourceListFilterConstraintDTO> constraints;
-    
+
     public PrismOpportunityCategory getOpportunityCategory() {
         return opportunityCategory;
     }
@@ -74,7 +74,7 @@ public class ResourceListFilterDTO {
     public void setTargetOnly(Boolean targetOnly) {
         this.targetOnly = targetOnly;
     }
-    
+
     public PrismAction getActionId() {
         return actionId;
     }
@@ -91,8 +91,8 @@ public class ResourceListFilterDTO {
         this.constraints = constraints;
     }
 
-    public ResourceListFilterDTO withConstraints(List<ResourceListFilterConstraintDTO> constraints) {
-        this.constraints = constraints;
+    public ResourceListFilterDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
         return this;
     }
 
@@ -116,6 +116,11 @@ public class ResourceListFilterDTO {
         return this;
     }
 
+    public ResourceListFilterDTO withConstraints(List<ResourceListFilterConstraintDTO> constraints) {
+        this.constraints = constraints;
+        return this;
+    }
+
     public void addConstraint(ResourceListFilterConstraintDTO constraint) {
         constraints.add(constraint);
     }
@@ -123,7 +128,7 @@ public class ResourceListFilterDTO {
     public boolean isUrgentOnly() {
         return BooleanUtils.toBoolean(urgentOnly);
     }
-    
+
     public boolean isTargetOnly() {
         return BooleanUtils.toBoolean(targetOnly);
     }

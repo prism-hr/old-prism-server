@@ -238,9 +238,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
-            Integer recordsToRetrieve) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
+    public List<Integer> getAssignedResources(User user, PrismScope scope, ResourceListFilterDTO filter, Junction conditions, String sequenceIdentifier, Integer maxRecords) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
@@ -251,21 +250,21 @@ public class ResourceDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN);
 
-        appendResourceListTargetCriterion(scopeId, criteria, filter, false);
+        appendResourceListTargetCriterion(scope, criteria, filter, false);
 
         criteria.add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
+        appendResourceListFilterCriterion(scope, criteria, conditions, filter);
+        appendResourceListLimitCriterion(criteria, filter, sequenceIdentifier, maxRecords);
         return (List<Integer>) criteria.list();
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
-        String parentResourceReference = parentScopeId.getLowerCamelName();
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScope, ResourceListFilterDTO filter, Junction conditions,
+            String sequenceIdentifier, Integer maxRecords) {
+        String parentResourceReference = parentScope.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -287,15 +286,15 @@ public class ResourceDAO {
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
+        appendResourceListLimitCriterion(criteria, filter, sequenceIdentifier, maxRecords);
         return (List<Integer>) criteria.list();
     }
 
-    public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, PrismScope partnerScopeId, ResourceListFilterDTO filter, Junction conditions,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
-        String partnerResourceReference = partnerScopeId.getLowerCamelName();
+    public List<Integer> getAssignedPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, Junction conditions,
+            String sequenceIdentifier, Integer maxRecords) {
+        String partnerResourceReference = partnerScope.getLowerCamelName();
 
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
@@ -311,15 +310,15 @@ public class ResourceDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN);
 
-        appendResourceListTargetCriterion(scopeId, criteria, filter, true);
+        appendResourceListTargetCriterion(scope, criteria, filter, true);
 
         criteria.add(Restrictions.eq("userRole.user", user)) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
+        appendResourceListFilterCriterion(scope, criteria, conditions, filter);
+        appendResourceListLimitCriterion(criteria, filter, sequenceIdentifier, maxRecords);
         return (List<Integer>) criteria.list();
     }
 

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import javax.inject.Inject;
@@ -31,6 +32,13 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
         PrismOpportunityCategory opportunityCategory = newResource.getOpportunityCategory();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
             opportunityCategory = opportunityCategory == null ? ((ResourceOpportunity) parentResource).getOpportunityCategory() : opportunityCategory;
+        } else {
+            String opportunityCategories = parentResource.getOpportunityCategories();
+            if (opportunityCategories == null) {
+                opportunityCategory = opportunityCategory == null ? WORK : opportunityCategory;
+            } else {
+                opportunityCategory = PrismOpportunityCategory.valueOf(opportunityCategories.split("\\|")[0]);
+            }
         }
 
         return new Application().withScope(APPLICATION).withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert())

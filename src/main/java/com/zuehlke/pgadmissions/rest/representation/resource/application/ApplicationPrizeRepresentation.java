@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public class ApplicationPrizeRepresentation extends ApplicationSectionRepresentation {
@@ -78,5 +79,11 @@ public class ApplicationPrizeRepresentation extends ApplicationSectionRepresenta
         this.awardDate = awardDate;
         return this;
     }
+    
+    public ApplicationPrizeRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
 
 }

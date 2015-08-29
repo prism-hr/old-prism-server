@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
+
 public class ApplicationAdditionalInformationRepresentation extends ApplicationSectionRepresentation {
 
     private String convictionsText;
@@ -16,5 +18,11 @@ public class ApplicationAdditionalInformationRepresentation extends ApplicationS
         this.convictionsText = convictionsText;
         return this;
     }
+    
+    public ApplicationAdditionalInformationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
 
 }

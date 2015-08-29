@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
@@ -125,5 +126,11 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         this.endDate = endDate;
         return this;
     }
+    
+    public ApplicationEmploymentPositionRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
     
 }

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -128,4 +129,9 @@ public class ApplicationLanguageQualificationRepresentation extends ApplicationS
         return this;
     }
 
+    public ApplicationLanguageQualificationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
 }

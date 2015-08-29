@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 
 public class ApplicationAddressRepresentation extends ApplicationSectionRepresentation {
@@ -33,5 +35,11 @@ public class ApplicationAddressRepresentation extends ApplicationSectionRepresen
         this.contactAddress = contactAddress;
         return this;
     }
+    
+    public ApplicationAddressRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
 
 }

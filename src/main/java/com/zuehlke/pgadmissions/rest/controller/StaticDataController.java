@@ -63,7 +63,7 @@ public class StaticDataController {
     @RequestMapping(method = RequestMethod.GET, value = "/institutions/{institutionId}/importedPrograms", params = "q")
     public List<ImportedProgramResponse> searchImportedPrograms(
             @PathVariable Integer institutionId, @RequestParam String q, @RequestParam Optional<Boolean> restrictToInstitution) {
-        return staticDataService.searchImportedPrograms(institutionId, q, restrictToInstitution.orElse(false));
+        return staticDataService.getImportedPrograms(institutionId, q, restrictToInstitution.orElse(false));
     }
 
 }

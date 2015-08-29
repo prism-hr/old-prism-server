@@ -168,7 +168,8 @@ public class ImportedEntityDAO {
                         .add(Restrictions.like("institution.name", token, MatchMode.ANYWHERE)));
             }
         }
-        return criteria.addOrder(Order.asc("name")).setMaxResults(10).list();
+        return criteria.add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("name")).setMaxResults(10).list();
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getImportedEntityMappings(Institution institution,

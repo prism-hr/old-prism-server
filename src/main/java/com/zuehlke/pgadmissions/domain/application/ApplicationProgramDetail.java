@@ -32,7 +32,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     private ImportedEntitySimple opportunityType;
 
     @ManyToOne
-    @JoinColumn(name = "imported_study_option_id", nullable = false)
+    @JoinColumn(name = "imported_study_option_id")
     private ImportedEntitySimple studyOption;
 
     @Column(name = "start_date")
@@ -40,7 +40,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     private LocalDate startDate;
 
     @ManyToOne
-    @JoinColumn(name = "imported_referral_source_id", nullable = false)
+    @JoinColumn(name = "imported_referral_source_id")
     private ImportedEntitySimple referralSource;
 
     @Column(name = "last_updated_timestamp")
@@ -134,11 +134,11 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.application = application;
         return this;
     }
-    
+
     public PrismStudyOption getStudyOptionDisplay() {
         return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getName());
     }
-    
+
     public String getReferralSourceDisplay() {
         return referralSource == null ? null : referralSource.getName();
     }

@@ -139,7 +139,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getFilteredAdverts(PrismScope scope, Collection<PrismState> activeStates, OpportunitiesQueryDTO queryDTO) {
+    public List<Integer> getFilteredAdverts(PrismScope scope, Collection<PrismState> activeStates, OpportunitiesQueryDTO queryDTO, Integer maxRecords) {
         String resourceReference = scope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("advert.id")) //
@@ -217,9 +217,13 @@ public class AdvertDAO {
             criteria.add(Restrictions.lt(resourceReference + ".sequenceIdentifier", lastSequenceIdentifier));
         }
 
-        return (List<Integer>) criteria.addOrder(Order.desc(resourceReference + ".sequenceIdentifier")) //
-                .setMaxResults(25) //
-                .list();
+        criteria.addOrder(Order.desc(resourceReference + ".sequenceIdentifier"));
+
+        if (maxRecords != null) {
+            criteria.setMaxResults(maxRecords);
+        }
+
+        return criteria.list();
     }
 
     public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> advertIds) {

@@ -50,9 +50,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_CATEGORY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_CATEGORY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
@@ -61,7 +61,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_FINANCIAL_DETAILS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
@@ -443,7 +442,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM OPPORTUNITY CATEGORY *********************
      */
 
-    SYSTEM_OPPORTUNITY_CATEGORY_STUDY(SYSTEM_OPPORTUNITY_CATEGORY, "Research Study"),
+    SYSTEM_OPPORTUNITY_CATEGORY_STUDY(SYSTEM_OPPORTUNITY_CATEGORY, "Study"),
     SYSTEM_OPPORTUNITY_CATEGORY_FUNDING(SYSTEM_OPPORTUNITY_CATEGORY, "Scholarship Funding"),
     SYSTEM_OPPORTUNITY_CATEGORY_EXPERIENCE(SYSTEM_OPPORTUNITY_CATEGORY, "Work Experience"),
     SYSTEM_OPPORTUNITY_CATEGORY_WORK(SYSTEM_OPPORTUNITY_CATEGORY, "Employment"),
@@ -1401,7 +1400,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Department Name"),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The Name or your Department."),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_IMPORTED_PROGRAMS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Programs"),
-    SYSTEM_RESOURCE_PARENT_DEPARTMENT_IMPORTED_PROGRAMS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "???"),
+    SYSTEM_RESOURCE_PARENT_DEPARTMENT_IMPORTED_PROGRAMS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Link the programs that your department offers so that we identify your students when they sign up"),
     SYSTEM_RESOURCE_PARENT_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Title"),
     SYSTEM_RESOURCE_PARENT_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The title of your opportunity."),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_SUMMARY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Summary"),
@@ -1465,18 +1464,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Restore Default"),
 
     /*
-     * *************** SYSTEM RESOURCE TARGETS *********************
-     */
-
-    SYSTEM_RESOURCE_TARGETS_INSTITUTIONS_LABEL(SYSTEM_RESOURCE_TARGETS, "Institutions"),
-    SYSTEM_RESOURCE_TARGETS_INSTITUTIONS_HINT(SYSTEM_RESOURCE_TARGETS, "???"),
-    SYSTEM_RESOURCE_TARGETS_DEPARTMENTS_LABEL(SYSTEM_RESOURCE_TARGETS, "Departments"),
-    SYSTEM_RESOURCE_TARGETS_DEPARTMENTS_HINT(SYSTEM_RESOURCE_TARGETS, "???"),
-    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREAS_LABEL(SYSTEM_RESOURCE_TARGETS, "Subject Areas"),
-    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREAS_HINT(SYSTEM_RESOURCE_TARGETS,
-            "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
-
-    /*
      * *************** SYSTEM RESOURCE COMPETENCES *********************
      */
 
@@ -1502,7 +1489,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_LABEL(SYSTEM_RESOURCE_ADVERT, "Functions"),
     SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_HINT(SYSTEM_RESOURCE_ADVERT, "Specify the job functions that your advert is relevant to."),
     SYSTEM_ADVERT_CATEGORIES_THEMES_LABEL(SYSTEM_RESOURCE_ADVERT, "Themes"),
-    SYSTEM_ADVERT_CATEGORIES_THEMES_HINT(SYSTEM_RESOURCE_ADVERT, "???"),
+    SYSTEM_ADVERT_CATEGORIES_THEMES_HINT(SYSTEM_RESOURCE_ADVERT, "Specify any themes specific to your own organization that your advert is relevant to."),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_LABEL(SYSTEM_RESOURCE_ADVERT, "Closing Date"),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_HINT(SYSTEM_RESOURCE_ADVERT, "The closing date for applications."),
 

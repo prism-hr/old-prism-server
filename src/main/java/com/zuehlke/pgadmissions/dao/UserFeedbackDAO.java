@@ -33,7 +33,7 @@ public class UserFeedbackDAO {
 		}
 
 		return (List<UserFeedback>) criteria.addOrder(Order.desc("sequenceIdentifier")) //
-		        .setMaxResults(PrismConstants.LIST_PAGE_ROW_COUNT) //
+		        .setMaxResults(PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT) //
 		        .list();
 	}
 

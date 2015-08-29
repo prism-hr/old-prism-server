@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -154,10 +156,8 @@ public class AdvertDAO {
 
         boolean narrowed = queryDTO.isNarrowed();
         if (narrowed) {
-            criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN, //
-                    Restrictions.conjunction() //
-                            .add(Restrictions.eq("advertTarget.selected", true))) //
-                    .createAlias("advertTarget.advert", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
         } else {
             criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN);
         }
@@ -207,7 +207,9 @@ public class AdvertDAO {
             appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms());
             appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects());
         } else {
-            criteria.add(Restrictions.isNull("advertTarget.id"));
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.isNull("advertTarget.id")) //
+                    .add(Restrictions.eq("advertTarget.selected", false)));
         }
 
         String lastSequenceIdentifier = queryDTO.getLastSequenceIdentifier();
@@ -432,7 +434,9 @@ public class AdvertDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTargetAdvert "
                         + "set partnershipState = :partnershipState "
-                        + "where selected = true") //
+                        + "where advert = :advert "
+                        + "and selected = true") //
+                .setParameter("advert", advert) //
                 .setParameter("partnershipState", partnershipState) //
                 .executeUpdate();
     }
@@ -441,8 +445,10 @@ public class AdvertDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTargetAdvert "
                         + "set partnershipState = :partnershipState "
-                        + "where selected = true "
+                        + "where advert = :advert "
+                        + "and selected = true "
                         + "and value in (:values)") //
+                .setParameter("advert", advert) //
                 .setParameter("partnershipState", partnershipState) //
                 .setParameterList("values", targetAdverts) //
                 .executeUpdate();
@@ -587,23 +593,29 @@ public class AdvertDAO {
 
     private void appendResourcesConstraint(Criteria criteria, PrismScope resourceScope, Integer[] resources) {
         if (resources != null) {
-            Junction resourcesConstraint = Restrictions.disjunction();
-            criteria.add(resourcesConstraint //
-                    .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources))); //
+            Junction resourcesConstraint = Restrictions.disjunction() //
+                    .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources));
 
-            if (resourceScope.equals(DEPARTMENT)) {
-                resourcesConstraint.add(Restrictions.conjunction() //
-                        .add(Restrictions.in("targetAdvert.department.id", resources))
-                        .add(Restrictions.isNull("targetAdvert.project"))
-                        .add(Restrictions.isNull("targetAdvert.program")));
-            } else if (resourceScope.equals(INSTITUTION)) {
-                resourcesConstraint.add(Restrictions.conjunction() //
-                        .add(Restrictions.in("targetAdvert.institution.id", resources))
-                        .add(Restrictions.isNull("targetAdvert.project"))
-                        .add(Restrictions.isNull("targetAdvert.program"))
-                        .add(Restrictions.isNull("targetAdvert.department")));
+            if (newArrayList(DEPARTMENT, INSTITUTION).contains(resourceScope)) {
+                resourcesConstraint.add(getPartnerResourcesConstraint(resourceScope, resources));
             }
+
+            criteria.add(resourcesConstraint);
         }
+    }
+
+    private Junction getPartnerResourcesConstraint(PrismScope resourceScope, Integer[] resources) {
+        Junction constraint = Restrictions.conjunction() //
+                .add(Restrictions.eq("advertTarget.partnershipState", ENDORSEMENT_PROVIDED))
+                .add(Restrictions.in("targetAdvert." + resourceScope.getLowerCamelName() + ".id", resources))
+                .add(Restrictions.isNull("targetAdvert.project"))
+                .add(Restrictions.isNull("targetAdvert.program"));
+
+        if (resourceScope.equals(INSTITUTION)) {
+            constraint.add(Restrictions.isNull("targetAdvert.department"));
+        }
+
+        return constraint;
     }
 
     private void appendRangeConstraint(Criteria criteria, String loColumn, String hiColumn, Integer loValue, Integer hiValue, boolean decimal) {

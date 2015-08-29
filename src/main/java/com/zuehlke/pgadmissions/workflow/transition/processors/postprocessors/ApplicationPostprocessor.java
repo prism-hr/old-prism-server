@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
@@ -132,7 +132,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
         if (!(targetAdverts.isEmpty() || targetAdvertsMatched.isEmpty())) {
             List<Integer> targetAdvertsToProvideIdentificationFor = Lists.newArrayList();
-            for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(), APPLICATION_COMPLETE_IDENTIFICATION_STATE)) {
+            for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(), APPLICATION_COMPLETE_IDENTIFICATION_STAGE)) {
                 Resource userResource = userRole.getResource();
                 if (userResource.getResourceScope().equals(SYSTEM)) {
                     targetAdvertsToProvideIdentificationFor = ListUtils.intersection(targetAdverts, targetAdvertsMatched);

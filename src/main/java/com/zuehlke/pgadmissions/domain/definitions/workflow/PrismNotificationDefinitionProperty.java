@@ -116,6 +116,7 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_PARENT_RESOURCE_TITLE(APPLICATION_GLOBAL, true, ApplicationParentResourceTitleBuilder.class), //
     APPLICATION_PARENT_RESOURCE_CODE(APPLICATION_GLOBAL, true, ApplicationParentResourceCodeBuilder.class), //
     APPLICATION_OPPORTUNITY_TYPE(APPLICATION_GLOBAL, true, ApplicationOpportunityTypeBuilder.class), //
+    APPLICATION_OPPORTUNITY_CATEGORY(APPLICATION_GLOBAL, true, ApplicationOpportunityTypeBuilder.class), //
     APPLICATION_INTERVIEW_DATE_TIME(APPLICATION_INTERVIEW_SCHEDULED, true, ApplicationInterviewDateTimeBuilder.class), //
     APPLICATION_INTERVIEW_TIME_ZONE(APPLICATION_INTERVIEW_SCHEDULED, true, ApplicationInterviewTimeZoneBuilder.class), //
     APPLICATION_INTERVIEWER_INSTRUCTIONS(APPLICATION_INTERVIEW_SCHEDULED, true, ApplicationInterviewerInstructionsBuilder.class), //

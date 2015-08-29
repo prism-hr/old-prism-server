@@ -299,7 +299,7 @@ public class StaticDataService {
         return importedPrograms.stream().map(importedEntityMapper::getImportedProgramSimpleRepresentation).collect(Collectors.toList());
     }
 
-    public List<ImportedProgramResponse> searchImportedPrograms(Integer institutionId, String searchQuery, Boolean restrictToInstitution) {
+    public List<ImportedProgramResponse> getImportedPrograms(Integer institutionId, String searchTerm, Boolean restrictToInstitution) {
         Institution institution = institutionService.getById(institutionId);
         ImportedInstitution importedInstitution = null;
         if (restrictToInstitution) {
@@ -308,7 +308,7 @@ public class StaticDataService {
             }
             importedInstitution = institution.getImportedInstitution();
         }
-        List<ImportedProgram> importedPrograms = importedEntityService.getImportedPrograms(importedInstitution, searchQuery);
+        List<ImportedProgram> importedPrograms = importedEntityService.getImportedPrograms(importedInstitution, searchTerm);
         return importedPrograms.stream().map(program -> importedEntityMapper.getImportedProgramRepresentation(program, institution))
                 .collect(Collectors.toList());
     }

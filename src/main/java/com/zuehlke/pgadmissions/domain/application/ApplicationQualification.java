@@ -30,7 +30,7 @@ public class ApplicationQualification extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "imported_program_id", nullable = false)
+    @JoinColumn(name = "imported_program_id")
     private ImportedProgram program;
 
     @Column(name = "start_date", nullable = false)
@@ -184,7 +184,7 @@ public class ApplicationQualification extends ApplicationSection {
         this.completed = completed;
         return this;
     }
-    
+
     public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat);
     }

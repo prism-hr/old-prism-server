@@ -389,17 +389,17 @@ public class UserDAO {
 
     public void deleteUserProgram(User user, ImportedProgram importedProgram) {
         sessionFactory.getCurrentSession()
-                .createSQLQuery("delete UserProgram " //
+                .createQuery("delete UserProgram " //
                         + "where user = :user " //
-                        + "and program = :program") //
+                        + "and program = :importedProgram") //
                 .setParameter("user", user) //
-                .setParameter("program", importedProgram) //
+                .setParameter("importedProgram", importedProgram) //
                 .executeUpdate();
     }
 
     public void deleteUserAdvert(User user) {
         sessionFactory.getCurrentSession()
-                .createSQLQuery("delete UserAdvert " //
+                .createQuery("delete UserAdvert " //
                         + "where user = :user") //
                 .setParameter("user", user) //
                 .executeUpdate();

@@ -321,7 +321,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> T getResourceAttribute(ResourceOpportunity resource, Class<T> attributeClass, String attributeName,
+    public <T> T getResourceAttribute(ResourceParent resource, Class<T> attributeClass, String attributeName,
             Object attributeValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass)
                 .add(Restrictions.disjunction().add(Restrictions.eq("project", resource.getProject()))
@@ -330,7 +330,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq(attributeName, attributeValue)).setMaxResults(1).uniqueResult();
     }
 
-    public <T> T getResourceAttributeStrict(ResourceOpportunity resource, Class<T> attributeClass,
+    public <T> T getResourceAttributeStrict(ResourceParent resource, Class<T> attributeClass,
             String attributeName, Object attributeValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //

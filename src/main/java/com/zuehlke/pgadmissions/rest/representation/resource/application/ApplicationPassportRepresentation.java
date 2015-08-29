@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public class ApplicationPassportRepresentation extends ApplicationSectionRepresentation {
@@ -43,7 +44,7 @@ public class ApplicationPassportRepresentation extends ApplicationSectionReprese
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
     }
-    
+
     public ApplicationPassportRepresentation withNumber(String number) {
         this.number = number;
         return this;
@@ -53,15 +54,20 @@ public class ApplicationPassportRepresentation extends ApplicationSectionReprese
         this.name = name;
         return this;
     }
-    
+
     public ApplicationPassportRepresentation withIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
         return this;
     }
-    
+
     public ApplicationPassportRepresentation withExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
         return this;
-    }  
-    
+    }
+
+    public ApplicationPassportRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+
 }

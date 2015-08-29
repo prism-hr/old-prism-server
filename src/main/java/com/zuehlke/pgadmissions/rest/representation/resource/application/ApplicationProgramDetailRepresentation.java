@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
@@ -50,5 +51,11 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
         this.referralSource = referralSource;
         return this;
     }
+    
+    public ApplicationProgramDetailRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
 
 }

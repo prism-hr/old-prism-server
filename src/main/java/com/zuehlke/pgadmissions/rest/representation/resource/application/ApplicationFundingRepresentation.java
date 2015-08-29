@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -125,6 +126,11 @@ public class ApplicationFundingRepresentation extends ApplicationSectionRepresen
 
     public ApplicationFundingRepresentation withDocument(DocumentRepresentation document) {
         this.document = document;
+        return this;
+    }
+
+    public ApplicationFundingRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
 

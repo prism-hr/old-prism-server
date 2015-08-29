@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
@@ -141,5 +143,11 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.comment = comment;
         return this;
     }
+    
+    public ApplicationRefereeRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
 
 }

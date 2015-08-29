@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ApplicationDocumentRepresentation extends ApplicationSectionRepresentation {
@@ -56,6 +58,11 @@ public class ApplicationDocumentRepresentation extends ApplicationSectionReprese
 
     public ApplicationDocumentRepresentation withCoveringLetter(DocumentRepresentation coveringLetter) {
         this.coveringLetter = coveringLetter;
+        return this;
+    }
+
+    public ApplicationDocumentRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
 

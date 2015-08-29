@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationSupervisorRepresentation extends ApplicationSectionRepresentation {
@@ -48,5 +50,11 @@ public class ApplicationSupervisorRepresentation extends ApplicationSectionRepre
         this.acceptedSupervision = acceptedSupervision;
         return this;
     }
+    
+    public ApplicationSupervisorRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+    
     
 }

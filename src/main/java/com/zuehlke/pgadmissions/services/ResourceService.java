@@ -476,7 +476,7 @@ public class ResourceService {
     }
 
     public List<String> getStudyLocations(ResourceOpportunity resource) {
-        List<String> filteredStudylocations = Lists.newLinkedList();
+        List<String> filteredStudyLocations = Lists.newLinkedList();
         List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource,
                 ResourceStudyLocation.class, "studyLocation", null);
 
@@ -486,11 +486,11 @@ public class ResourceService {
             if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
                 break;
             }
-            filteredStudylocations.add(studyLocation.getStudyLocation());
+            filteredStudyLocations.add(studyLocation.getStudyLocation());
             lastResourceScope = thisResourceScope;
         }
 
-        return filteredStudylocations;
+        return filteredStudyLocations;
     }
 
     public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
@@ -920,7 +920,7 @@ public class ResourceService {
                 } else {
                     Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
                     opportunityCategoriesSplit.add(opportunityCategories);
-    
+
                     opportunityCategories = Joiner.on("|").join(opportunityCategoriesSplit);
                     setOpportunityCategories(parent, opportunityCategories);
                 }

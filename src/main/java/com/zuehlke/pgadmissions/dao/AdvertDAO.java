@@ -387,7 +387,7 @@ public class AdvertDAO {
 
     public List<Competence> searchCompetences(String q) {
         return sessionFactory.getCurrentSession().createCriteria(Competence.class)
-                .add(Restrictions.ilike("name", q, MatchMode.ANYWHERE))
+                .add(Restrictions.like("name", q, MatchMode.ANYWHERE))
                 .list();
     }
 
@@ -495,10 +495,10 @@ public class AdvertDAO {
         String keyword = queryDTO.getKeyword();
         if (keyword != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.ilike("advert.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("advert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("advert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("theme.value", MatchMode.ANYWHERE))); //
+                    .add(Restrictions.like("advert.name", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("advert.summary", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("advert.description", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("theme.value", MatchMode.ANYWHERE))); //
         }
     }
 
@@ -506,9 +506,9 @@ public class AdvertDAO {
         String keyword = queryDTO.getKeyword();
         if (keyword != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.ilike("user.firstName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("user.lastName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("user.email", keyword, MatchMode.ANYWHERE))); //
+                    .add(Restrictions.like("user.firstName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("user.lastName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("user.email", keyword, MatchMode.ANYWHERE))); //
         }
     }
 
@@ -551,7 +551,7 @@ public class AdvertDAO {
             if (CollectionUtils.isNotEmpty(opportunityCategories)) {
                 Junction categoriesConstraint = Restrictions.disjunction();
                 opportunityCategories.forEach(category -> {
-                    categoriesConstraint.add(Restrictions.ilike("advert.opportunityCategories", category.name(), MatchMode.ANYWHERE));
+                    categoriesConstraint.add(Restrictions.like("advert.opportunityCategories", category.name(), MatchMode.ANYWHERE));
                 });
                 criteria.add(categoriesConstraint);
             }

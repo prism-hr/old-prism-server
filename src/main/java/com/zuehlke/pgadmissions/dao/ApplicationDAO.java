@@ -314,8 +314,8 @@ public class ApplicationDAO {
                 .setProjection(Projections.property("application.id")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))) //
+                        .add(Restrictions.like("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("user.email", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
 

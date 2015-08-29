@@ -301,8 +301,8 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentResourceScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.ilike("code", searchTerm, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))) //
+                        .add(Restrictions.like("code", searchTerm, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
 
@@ -514,7 +514,7 @@ public class ResourceDAO {
                 Projections.property("address.addressRegion").as("addressRegion"), Projections.property("address.addressCode").as("addressCode"),
                 Projections.property("address.googleId").as("addressGoogleId"), Projections.property("address.addressCoordinates.latitude").as("addressCoordinateLatitude"),
                 Projections.property("address.addressCoordinates.longitude").as("addressCoordinateLongitude"))
-                        .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE)) //
                         .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                         .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
                         .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN); //
@@ -543,7 +543,7 @@ public class ResourceDAO {
                         .add(Restrictions.eq("action.creationScope.id", creationScope));
 
         if (searchTerm != null) {
-            criteria.add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)); //
+            criteria.add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE)); //
         }
 
         criteria.add(Restrictions.disjunction() //
@@ -795,7 +795,7 @@ public class ResourceDAO {
                 break;
             case DEPARTMENT:
             case INSTITUTION:
-                criteria.add(Restrictions.ilike("opportunityCategories", opportunityCategory.name(), ANYWHERE));
+                criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), ANYWHERE));
                 break;
             default:
                 break;

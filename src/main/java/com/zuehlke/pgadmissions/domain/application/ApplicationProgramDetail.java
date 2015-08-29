@@ -28,7 +28,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
+    @JoinColumn(name = "imported_opportunity_type_id")
     private ImportedEntitySimple opportunityType;
 
     @ManyToOne

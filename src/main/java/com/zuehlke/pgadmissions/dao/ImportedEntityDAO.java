@@ -54,13 +54,13 @@ public class ImportedEntityDAO {
 
     public <T extends ImportedEntity<?, ?>> List<T> searchByName(Class<T> entityClass, String searchTerm) {
         return sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
+                .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE)) //
                 .list();
     }
 
     public <T extends ImportedEntity<?, ?>> List<T> getSimilarImportedEntities(Class<T> entityClass, String searchTerm) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(entityClass)
-                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE))
+                .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE))
                 .add(Restrictions.eq("enabled", true))
                 .list();
     }
@@ -160,12 +160,12 @@ public class ImportedEntityDAO {
                 .createAlias("institution", "institution", JoinType.INNER_JOIN);
         for (String token : tokens) {
             if (importedInstitution != null) {
-                criteria.add(Restrictions.ilike("name", token, MatchMode.ANYWHERE))
+                criteria.add(Restrictions.like("name", token, MatchMode.ANYWHERE))
                         .add(Restrictions.eq("institution", importedInstitution));
             } else {
                 criteria.add(Restrictions.disjunction()
-                        .add(Restrictions.ilike("name", token, MatchMode.ANYWHERE))
-                        .add(Restrictions.ilike("institution.name", token, MatchMode.ANYWHERE)));
+                        .add(Restrictions.like("name", token, MatchMode.ANYWHERE))
+                        .add(Restrictions.like("institution.name", token, MatchMode.ANYWHERE)));
             }
         }
         return criteria.addOrder(Order.asc("name")).setMaxResults(10).list();

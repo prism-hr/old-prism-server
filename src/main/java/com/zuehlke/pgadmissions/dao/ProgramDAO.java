@@ -70,7 +70,7 @@ public class ProgramDAO {
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.not( //
                         Restrictions.in("state.id", Arrays.asList(PROGRAM_REJECTED, PROGRAM_WITHDRAWN, PROGRAM_DISABLED_COMPLETED)))) //
-                .add(Restrictions.ilike("name", searchTerm, MatchMode.ANYWHERE)) //
+                .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE)) //
                 .addOrder(Order.desc("name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
                 .list();

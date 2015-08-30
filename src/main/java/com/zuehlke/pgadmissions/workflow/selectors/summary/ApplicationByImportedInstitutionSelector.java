@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.selectors.summary;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -19,7 +19,7 @@ public class ApplicationByImportedInstitutionSelector implements PrismResourceSu
     private ApplicationService applicationService;
 
     @Override
-    public List<Integer> getPossible(PrismScope scope, Resource parent, Set<Integer> importedEntities) {
+    public List<Integer> getPossible(PrismScope scope, Resource parent, Collection<Integer> importedEntities) {
         return applicationService.getApplicationsByImportedInstitution((ResourceParent) parent, importedEntities);
     }
 

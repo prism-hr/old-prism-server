@@ -425,8 +425,20 @@ public class ApplicationService {
         return applicationDAO.getApplicationsByImportedInstitution(parent, importedInstitutions);
     }
     
+    public List<Integer> getApplicationsByImportedQualificationType(ResourceParent parent, Collection<Integer> importedQualificationTypes) {
+        return applicationDAO.getApplicationsByImportedQualificationType(parent, importedQualificationTypes);
+    }
+    
     public List<Integer> getApplicationsByImportedSubjectArea(ResourceParent parent, Collection<Integer> importedSubjectAreas) {
         return applicationDAO.getApplicationsByImportedSubjectArea(parent, importedSubjectAreas);
+    }
+ 
+    public List<Integer> getApplicationsByImportedFundingSource(ResourceParent parent, Collection<Integer> importedFundingSources) {
+        return applicationDAO.getApplicationsByImportedFundingSource(parent, importedFundingSources);
+    }
+    
+    public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {
+        return applicationDAO.getApplicationsByImportedRejectionReason(parent, importedRejectionReasons);
     }
     
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {

@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_USERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,6 +48,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -461,11 +464,27 @@ public class ResourceMapper {
     public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints) {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
+        HashMultimap<PrismImportedEntity, Integer> transformedConstraints = HashMultimap.create();
+        if (constraints != null) {
+            HashMultimap<PrismImportedEntity, Integer> constraintsToTransform = HashMultimap.create();
+            constraints.forEach(constraint -> {
+                PrismImportedEntity importedEntityType = constraint.getEntityType();
+                if (importedEntityType.getFilterSelector() != null) {
+                    constraintsToTransform.put(importedEntityType, constraint.getEntityId());
+                }
+            });
+            
+            constraintsToTransform.keySet().forEach(constraint -> {
+                constraintsToTransform.putAll(constraint,
+                        applicationContext.getBean(constraint.getFilterSelector()).getPossible(APPLICATION, resource, constraintsToTransform.get(constraint)));
+            });
+        }
+
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
-        List<ApplicationProcessingSummaryDTO> yearSummaries = getApplicationProcessingSummariesByYear(resource, constraints);
-        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = getApplicationProcessingSummariesByMonth(resource, constraints);
-        LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> weekSummaries = getApplicationProcessingSummariesByWeek(resource,
-                constraints);
+        List<ApplicationProcessingSummaryDTO> yearSummaries = getApplicationProcessingSummariesByYear(resource, constraints, transformedConstraints);
+        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = getApplicationProcessingSummariesByMonth(resource, constraints, transformedConstraints);
+        LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> weekSummaries = getApplicationProcessingSummariesByWeek(resource, constraints,
+                transformedConstraints);
 
         for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
             String applicationYear = yearSummary.getApplicationYear();
@@ -502,14 +521,14 @@ public class ResourceMapper {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(
-            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints) {
-        return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
+            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
+        return applicationService.getApplicationProcessingSummariesByYear(resource, constraints, transformedConstraints);
     }
 
     public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(
-            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints) {
+            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints, transformedConstraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
             index.put(processingSummary.getApplicationYear(), processingSummary);
         }
@@ -517,9 +536,9 @@ public class ResourceMapper {
     }
 
     public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(
-            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints) {
+            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
         LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints, transformedConstraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
             index.put(new ResourceProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
         }

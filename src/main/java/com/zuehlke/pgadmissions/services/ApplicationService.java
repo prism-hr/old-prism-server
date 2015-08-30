@@ -20,6 +20,7 @@ import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
@@ -48,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -379,18 +382,18 @@ public class ApplicationService {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
-        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints);
+            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
+        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints, transformedConstraints);
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
-        return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints);
+            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
+        return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints, transformedConstraints);
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints) {
-        return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
+            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
+        return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints, transformedConstraints);
     }
 
     public boolean isCanViewEqualOpportunitiesData(Application application, User user) {
@@ -414,6 +417,18 @@ public class ApplicationService {
         application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
     }
 
+    public List<Integer> getApplicationsByImportedProgram(ResourceParent parent, Collection<Integer> importedPrograms) {
+        return applicationDAO.getApplicationsByImportedProgram(parent, importedPrograms);
+    }
+    
+    public List<Integer> getApplicationsByImportedInstitution(ResourceParent parent, Collection<Integer> importedInstitutions) {
+        return applicationDAO.getApplicationsByImportedInstitution(parent, importedInstitutions);
+    }
+    
+    public List<Integer> getApplicationsByImportedSubjectArea(ResourceParent parent, Collection<Integer> importedSubjectAreas) {
+        return applicationDAO.getApplicationsByImportedSubjectArea(parent, importedSubjectAreas);
+    }
+    
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
         ResourceParent parentResource = (ResourceParent) application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {

@@ -44,6 +44,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -319,13 +320,13 @@ public class ApplicationDAO {
                         .add(Restrictions.like("user.email", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
-
+    
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedProgram(ResourceParent parent, Collection<Integer> importedPrograms) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
                 .add(Restrictions.in("program.id", importedPrograms)) //
                 .list();
     }
@@ -336,10 +337,22 @@ public class ApplicationDAO {
                 .setProjection(Projections.groupProperty("application.id")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
                 .add(Restrictions.in("program.institution.id", importedInstitutions)) //
                 .list();
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsByImportedQualificationType(ResourceParent parent, Collection<Integer> importedQualificationTypes) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.in("program.qualificationType.id", importedQualificationTypes)) //
+                .list();
+    }
+
 
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedSubjectArea(ResourceParent parent, Collection<Integer> importedSubjectAreas) {
@@ -348,8 +361,28 @@ public class ApplicationDAO {
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .createAlias("programSubjectAreas", "subjectArea", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
                 .add(Restrictions.in("subjectArea.id", importedSubjectAreas)) //
+                .list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsByImportedFundingSource(ResourceParent parent, Collection<Integer> importedFundingSources) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFunding.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.in("fundingSource.id", importedFundingSources)) //
+                .list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.in("rejectionReason.id", importedRejectionReasons)) //
                 .list();
     }
 

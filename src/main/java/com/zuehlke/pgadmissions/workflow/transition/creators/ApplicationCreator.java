@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import javax.inject.Inject;
@@ -17,7 +16,6 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
-// FIXME: send opportunity category from client for department or institution
 @Component
 public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
 
@@ -33,12 +31,7 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
             opportunityCategory = opportunityCategory == null ? ((ResourceOpportunity) parentResource).getOpportunityCategory() : opportunityCategory;
         } else {
-            String opportunityCategories = parentResource.getOpportunityCategories();
-            if (opportunityCategories == null) {
-                opportunityCategory = opportunityCategory == null ? WORK : opportunityCategory;
-            } else {
-                opportunityCategory = PrismOpportunityCategory.valueOf(opportunityCategories.split("\\|")[0]);
-            }
+            opportunityCategory = newResource.getOpportunityCategory();
         }
 
         return new Application().withScope(APPLICATION).withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert())

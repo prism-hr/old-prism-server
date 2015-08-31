@@ -673,10 +673,9 @@ public class ResourceDAO {
                 .list();
     }
 
-    public ResourceParent getActiveResourceByName(PrismScope resourceScope, User user, String name, Collection<PrismState> activeStates) {
+    public ResourceParent getActiveResourceByName(PrismScope resourceScope, String name, Collection<PrismState> activeStates) {
         return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("name", name)) //
                 .add(Restrictions.in("resourceState.state.id", activeStates)) //
                 .addOrder(Order.asc("id")) //

@@ -61,6 +61,8 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.OpportunityCategoryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
@@ -68,7 +70,6 @@ import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 @Service
 @Transactional
@@ -283,11 +284,11 @@ public class StaticDataService {
         return staticData;
     }
 
-    public List<ImportedEntityResponse> getImportedInstitutions(Integer institutionId, Integer domicileId) {
+    public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer institutionId, Integer domicileId) {
         Institution institution = institutionService.getById(institutionId);
         ImportedEntitySimple domicile = entityService.getById(ImportedEntitySimple.class, domicileId);
         List<ImportedInstitution> importedInstitutions = importedEntityService.getEnabledImportedInstitutions(institution, domicile);
-
+        
         return importedInstitutions.stream().map(importedEntityMapper::getImportedInstitutionSimpleRepresentation).collect(Collectors.toList());
     }
 
@@ -299,7 +300,7 @@ public class StaticDataService {
         return importedPrograms.stream().map(importedEntityMapper::getImportedProgramSimpleRepresentation).collect(Collectors.toList());
     }
 
-    public List<ImportedProgramResponse> getImportedPrograms(Integer institutionId, String searchTerm, Boolean restrictToInstitution) {
+    public List<ImportedProgramRepresentation> getImportedPrograms(Integer institutionId, String searchTerm, Boolean restrictToInstitution) {
         Institution institution = institutionService.getById(institutionId);
         ImportedInstitution importedInstitution = null;
         if (restrictToInstitution) {

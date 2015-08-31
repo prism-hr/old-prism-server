@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.zuehlke.pgadmissions.PrismConstants.MAX_BATCH_INSERT_SIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_QUALIFICATION_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
@@ -42,12 +43,15 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMappi
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
@@ -60,6 +64,9 @@ public class ImportedEntityService {
 
     @Inject
     private ImportedEntityDAO importedEntityDAO;
+
+    @Inject
+    private DepartmentService departmentService;
 
     @Inject
     private EntityService entityService;
@@ -185,22 +192,32 @@ public class ImportedEntityService {
         return getFilteredImportedEntityMappings(mappings);
     }
 
-    public ImportedProgram getOrCreateImportedProgram(Institution institution, ImportedProgramDTO importedProgramDTO) {
+    public ImportedProgram getOrCreateImportedProgram(Institution institution, ImportedProgramDTO importedProgramDTO) throws Exception {
+        ImportedProgram importedProgram = null;
         Integer importedProgramId = importedProgramDTO.getId();
         if (importedProgramId == null) {
             ImportedInstitution importedInstitution = getOrCreateImportedInstitution(institution, importedProgramDTO.getInstitution());
-            ImportedProgram importedProgram = importedEntityDAO.getImportedProgramByName(importedInstitution, importedProgramDTO.getName());
+            importedProgram = importedEntityDAO.getImportedProgramByName(importedInstitution, importedProgramDTO.getName());
             if (importedProgram == null) {
-                return createImportedProgram(institution, importedInstitution, importedProgramDTO);
+                importedProgram = createImportedProgram(institution, importedInstitution, importedProgramDTO);
             } else {
                 createImportedProgramMapping(institution, importedProgram);
                 return importedProgram;
             }
         } else {
-            ImportedProgram importedProgram = getById(ImportedProgram.class, importedProgramDTO.getId());
+            importedProgram = getById(ImportedProgram.class, importedProgramDTO.getId());
             createImportedProgramMapping(institution, importedProgram);
             return importedProgram;
         }
+
+        DepartmentInvitationDTO departmentDTO = importedProgramDTO.getDepartment();
+        if (departmentDTO != null) {
+            departmentDTO.getDepartment().setParentResource(new ResourceDTO().withScope(INSTITUTION).withId(institution.getId()));
+            Department department = departmentService.inviteDepartment(departmentDTO);
+            department.getImportedPrograms().add(importedProgram);
+        }
+
+        return importedProgram;
     }
 
     @SuppressWarnings("unchecked")

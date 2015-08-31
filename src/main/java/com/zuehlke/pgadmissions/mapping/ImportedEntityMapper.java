@@ -31,6 +31,8 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -43,7 +45,6 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaResponse;
 
 @Service
@@ -135,8 +136,10 @@ public class ImportedEntityMapper {
                 advertDomicile.getCurrency());
     }
 
-    public ImportedEntityResponse getImportedInstitutionSimpleRepresentation(ImportedInstitution importedInstitution) {
-        return getImportedEntitySimpleRepresentation(importedInstitution, null, ImportedInstitutionResponse.class);
+    public ImportedInstitutionRepresentation getImportedInstitutionSimpleRepresentation(ImportedInstitution importedInstitution) {
+        ImportedInstitutionRepresentation representation = getImportedEntitySimpleRepresentation(importedInstitution, null, ImportedInstitutionRepresentation.class);
+        representation.setRequiresDepartment(importedInstitution.getInstitution() != null);
+        return representation;
     }
 
     public ImportedInstitutionResponse getImportedInstitutionRepresentation(ImportedInstitution importedInstitution, Institution institution) {
@@ -170,10 +173,11 @@ public class ImportedEntityMapper {
         return getImportedEntitySimpleRepresentation(program, null, ImportedEntityResponse.class);
     }
 
-    public ImportedProgramResponse getImportedProgramRepresentation(ImportedProgram program, Institution institution) {
-        ImportedProgramResponse representation = getImportedEntitySimpleRepresentation(program, institution, ImportedProgramResponse.class);
+    public ImportedProgramRepresentation getImportedProgramRepresentation(ImportedProgram program, Institution institution) {
+        ImportedProgramRepresentation representation = getImportedEntitySimpleRepresentation(program, institution, ImportedProgramRepresentation.class);
 
-        representation.setInstitution(getImportedInstitutionRepresentation(program.getInstitution(), institution));
+        ImportedInstitution importedInstitution = program.getInstitution();
+        representation.setInstitution(getImportedInstitutionRepresentation(importedInstitution, institution));
 
         ImportedEntitySimple qualificationType = program.getQualificationType();
         representation.setQualificationType(qualificationType == null ? null : getImportedEntitySimpleRepresentation(qualificationType, institution,
@@ -182,6 +186,7 @@ public class ImportedEntityMapper {
         PrismQualificationLevel level = program.getLevel();
         representation.setLevel(level == null ? null : level.getUcasLevel());
         representation.setQualification(program.getQualification());
+        representation.setRequiresDepartment(importedInstitution.getInstitution() != null && program.getDeparments().isEmpty());
 
         return representation;
     }

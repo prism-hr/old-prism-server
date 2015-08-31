@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.services.StaticDataService;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
 
 @RestController
 @RequestMapping("/api/static")
@@ -51,7 +52,7 @@ public class StaticDataController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/institutions/{institutionId}/importedInstitutions")
-    public List<ImportedEntityResponse> getImportedInstitutions(@PathVariable Integer institutionId, @RequestParam Integer importedDomicileId) {
+    public List<ImportedInstitutionRepresentation> getImportedInstitutions(@PathVariable Integer institutionId, @RequestParam Integer importedDomicileId) {
         return staticDataService.getImportedInstitutions(institutionId, importedDomicileId);
     }
 
@@ -61,7 +62,7 @@ public class StaticDataController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/institutions/{institutionId}/importedPrograms", params = "q")
-    public List<ImportedProgramResponse> searchImportedPrograms(
+    public List<ImportedProgramRepresentation> searchImportedPrograms(
             @PathVariable Integer institutionId, @RequestParam String q, @RequestParam Optional<Boolean> restrictToInstitution) {
         return staticDataService.getImportedPrograms(institutionId, q, restrictToInstitution.orElse(false));
     }

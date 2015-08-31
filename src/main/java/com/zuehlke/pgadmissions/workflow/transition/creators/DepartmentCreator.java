@@ -42,7 +42,7 @@ public class DepartmentCreator implements ResourceCreator<DepartmentDTO> {
 
         departmentService.setImportedPrograms(department, newResource.getImportedPrograms());
         resourceService.setResourceAttributes(department, newResource);
-        String opportunityCategories = newResource.getOpportunityCategories().stream().map(c -> c.toString()).collect(Collectors.joining("|"));
+        String opportunityCategories = newResource.getOpportunityCategories().stream().map(c -> c.name()).collect(Collectors.joining("|"));
         resourceService.setOpportunityCategories(department, opportunityCategories);
         return department;
     }

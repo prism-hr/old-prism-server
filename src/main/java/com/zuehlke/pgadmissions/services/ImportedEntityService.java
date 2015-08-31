@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static com.zuehlke.pgadmissions.PrismConstants.MAX_BATCH_INSERT_SIZE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_QUALIFICATION_TYPE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
@@ -67,6 +68,9 @@ public class ImportedEntityService {
     private ImportedSubjectAreaIndex importedSubjectAreaIndex;
 
     @Inject
+    private InstitutionService institutionService;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public <T extends ImportedEntity<?, ?>> T getById(Class<T> clazz, Object id) {
@@ -112,10 +116,18 @@ public class ImportedEntityService {
 
     public Map<Integer, Integer> getImportedUcasInstitutions() {
         Map<Integer, Integer> references = Maps.newHashMap();
-        List<ImportedInstitution> institutions = importedEntityDAO.getImportedUcasInstitutions();
-        for (ImportedInstitution institution : institutions) {
+        importedEntityDAO.getImportedUcasInstitutions().forEach(institution -> {
             references.put(institution.getUcasId(), institution.getId());
-        }
+        });
+        return references;
+    }
+
+    public Map<String, Integer> getImportedQualificationTypesByUclCode() {
+        Map<String, Integer> references = Maps.newHashMap();
+        Institution institution = institutionService.getUclInstitution();
+        importedEntityDAO.getEnabledImportedEntityMappings(institution, IMPORTED_QUALIFICATION_TYPE).forEach(mapping -> {
+            references.put(mapping.getCode(), (Integer) mapping.getImportedEntity().getId());
+        });
         return references;
     }
 

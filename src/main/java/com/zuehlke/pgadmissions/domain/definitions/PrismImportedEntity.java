@@ -208,6 +208,13 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumns(new String[] { "application.id" }) 
                     .withSelector(ApplicationByImportedSubjectAreaSelector.class),
             true),
+    IMPORTED_QUALIFICATION_TYPE(getImportedEntitySimpleImportDefinition(),
+            getImportedEntitySimpleImportInsertDefinition(),
+            getImportedEntitySimpleMappingInsertDefinition(),
+            new PrismImportedEntityReportDefinition() //
+                    .withColumns(new String[] { "application.id" }) 
+                    .withSelector(ApplicationByImportedQualificationType.class), 
+            true),
     @SuppressWarnings({ "unchecked", "rawtypes" })
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedProgram.class)
@@ -234,13 +241,6 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumns(new String[] { "application.id" }) 
                     .withSelector(ApplicationByImportedProgramSelector.class), 
             false),
-    IMPORTED_QUALIFICATION_TYPE(getImportedEntitySimpleImportDefinition(),
-            getImportedEntitySimpleImportInsertDefinition(),
-            getImportedEntitySimpleMappingInsertDefinition(),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" }) 
-                    .withSelector(ApplicationByImportedQualificationType.class), 
-            true),
     IMPORTED_REFERRAL_SOURCE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),

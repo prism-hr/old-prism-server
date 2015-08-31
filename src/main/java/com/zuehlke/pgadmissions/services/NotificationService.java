@@ -244,21 +244,21 @@ public class NotificationService {
                     .withDataImportErrorMessage(errorMessage));
         }
     }
-
-    public void sendInvitationNotifications(User user, User invitee) {
-        System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_INVITATION_NOTIFICATION);
-        sendNotification(definition, new NotificationDefinitionModelDTO().withUser(invitee).withAuthor(system.getUser()).withInvoker(user).withResource(system)
-                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
-    }
-
+    
     public void sendInvitationNotifications(Comment comment) {
         for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
             User invitee = assignee.getUser();
             if (assignee.getRoleTransitionType() == CREATE && invitee.getUserAccount() == null) {
-                sendInvitationNotifications(comment.getUser(), invitee);
+                sendInvitationNotification(comment.getUser(), invitee);
             }
         }
+    }
+    
+    public void sendInvitationNotification(User user, User invitee) {
+        System system = systemService.getSystem();
+        NotificationDefinition definition = getById(SYSTEM_INVITATION_NOTIFICATION);
+        sendNotification(definition, new NotificationDefinitionModelDTO().withUser(invitee).withAuthor(system.getUser()).withInvoker(user).withResource(system)
+                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
     }
 
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {

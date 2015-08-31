@@ -259,7 +259,7 @@ public class UserService {
             UserAccount account = user.getUserAccount();
             if (account == null) {
                 User superAdmin = getUserByEmail("systemUserEmail");
-                notificationService.sendInvitationNotifications(superAdmin, user);
+                notificationService.sendInvitationNotification(superAdmin, user);
             } else {
                 String newPassword = EncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);

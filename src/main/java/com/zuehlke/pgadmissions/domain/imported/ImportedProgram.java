@@ -41,7 +41,7 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     private ImportedInstitution institution;
 
     @ManyToOne
-    @JoinColumn(name = "imported_qualification_type_id")
+    @JoinColumn(name = "imported_qualification_type_id", nullable = false)
     private ImportedEntitySimple qualificationType;
 
     @Enumerated(EnumType.STRING)

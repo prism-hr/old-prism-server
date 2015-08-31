@@ -1,11 +1,15 @@
 package com.zuehlke.pgadmissions.services.helpers.extractors;
 
 import static com.zuehlke.pgadmissions.PrismConstants.NULL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.OTHER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.POSTGRADUATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.UNDERGRADUATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel.getByUcasLevel;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
+import static java.util.Arrays.asList;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
@@ -38,23 +43,31 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
         List<String> rows = Lists.newLinkedList();
         if (!definitions.isEmpty()) {
             boolean systemImport = definitions.get(0).getClass().equals(ImportedProgramImportDTO.class);
-            Map<Integer, Integer> importedInstitutionsByUcasId = importedEntityService.getImportedUcasInstitutions();
+
+            Map<Integer, Integer> importedInstitutionsByUcasId = null;
+            Map<String, Integer> importedQualificationTypesByUclCode = null;
             if (systemImport) {
                 importedInstitutionsByUcasId = importedEntityService.getImportedUcasInstitutions();
+                importedQualificationTypesByUclCode = importedEntityService.getImportedQualificationTypesByUclCode();
             }
 
             for (ImportedProgramRequest definition : definitions) {
                 List<String> cells = Lists.newLinkedList();
 
                 if (systemImport) {
-                    Integer ucasId = definition.getInstitution();
-                    Integer institution = importedInstitutionsByUcasId.get(ucasId);
+                    Integer institution = getImportedInstitution(definition, importedInstitutionsByUcasId);
                     if (institution == null) {
-                        logger.error("No imported institution for ucas institution: " + ucasId);
+                        logger.error("No imported institution for ucas institution: " + definition.getInstitution());
                         continue;
                     }
+
+                    Integer qualificationType = getImportedQualification(definition, importedQualificationTypesByUclCode);
+                    if (qualificationType == null) {
+                        logger.error("No imported qualification type for ucas qualification: " + definition.getQualification());
+                    }
+
                     cells.add(prepareIntegerForSqlInsert(institution));
-                    cells.add(NULL);
+                    cells.add(prepareIntegerForSqlInsert(qualificationType));
                     cells.add(prepareStringForSqlInsert(getByUcasLevel(definition.getLevel()).name()));
                     cells.add(prepareStringForSqlInsert(definition.getQualification()));
                 } else {
@@ -96,6 +109,37 @@ public class ImportedProgramExtractor<T extends ImportedProgramRequest> implemen
             }
         }
         return rows;
+    }
+
+    private Integer getImportedInstitution(ImportedProgramRequest definition, Map<Integer, Integer> importedInstitutionsByUcasId) {
+        Integer ucasId = definition.getInstitution();
+        Integer institution = importedInstitutionsByUcasId.get(ucasId);
+        return institution;
+    }
+
+    private Integer getImportedQualification(ImportedProgramRequest definition, Map<String, Integer> importedQualificationTypesByUclCode) {
+        String qualification = definition.getQualification();
+        PrismQualificationLevel level = getByUcasLevel(definition.getLevel());
+
+        if (level.equals(OTHER) || level.name().startsWith("HE_LEVEL")) {
+            return importedQualificationTypesByUclCode.get("6");
+        } else if (level.equals(POSTGRADUATE) && qualification.equals("Qualification PhD")) {
+            return importedQualificationTypesByUclCode.get("PHD");
+        } else if (level.equals(POSTGRADUATE) && qualification.equals("Qualification MPhil")) {
+            return importedQualificationTypesByUclCode.get("MPHIL");
+        } else if (level.equals(POSTGRADUATE)) {
+            return importedQualificationTypesByUclCode.get("MSTCRD");
+        } else if (level.equals(UNDERGRADUATE) && asList("Qualification MEng", "Qualification MEng (Hons)").contains(qualification)) {
+            return importedQualificationTypesByUclCode.get("DEGHONMENG");
+        } else if (level.equals(UNDERGRADUATE) && asList("Qualification MSci", "Qualification MSci (Hons)").contains(qualification)) {
+            return importedQualificationTypesByUclCode.get("DEGHONMSCI");
+        } else if (level.equals(UNDERGRADUATE) && (qualification.startsWith("Qualification M") || qualification.startsWith("Qualification IPM"))) {
+            return importedQualificationTypesByUclCode.get("MSTPAS");
+        } else if (level.equals(UNDERGRADUATE)) {
+            return importedQualificationTypesByUclCode.get("DEGHON");
+        }
+
+        return null;
     }
 
 }

@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IM
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -22,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
+import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedProgramDefinition;
@@ -77,6 +81,11 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
     
     @OneToMany(mappedBy = "program")
     private Set<ImportedProgramSubjectArea> programSubjectAreas = Sets.newHashSet();
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "department_imported_program", joinColumns = { @JoinColumn(name = "imported_program_id", nullable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "department_id", nullable = false) })
+    private Set<Department> deparments = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -206,6 +215,10 @@ public class ImportedProgram extends ImportedEntity<Integer, ImportedProgramMapp
 
     public Set<ImportedProgramSubjectArea> getProgramSubjectAreas() {
         return programSubjectAreas;
+    }
+
+    public Set<Department> getDeparments() {
+        return deparments;
     }
 
     public ImportedProgram withInstitution(ImportedInstitution institution) {

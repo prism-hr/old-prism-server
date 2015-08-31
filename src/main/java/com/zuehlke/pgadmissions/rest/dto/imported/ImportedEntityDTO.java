@@ -25,4 +25,9 @@ public class ImportedEntityDTO {
         this.name = name;
     }
 
+    public ImportedEntityDTO withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
 }

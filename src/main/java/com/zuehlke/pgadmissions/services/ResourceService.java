@@ -195,16 +195,14 @@ public class ResourceService {
     public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T resourceDTO) {
         PrismScope creationScope = action.getCreationScope().getId();
 
-        ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext
-                .getBean(creationScope.getResourceCreator());
+        ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
         Resource resource = resourceCreator.create(user, resourceDTO);
 
         resource.setWorkflowPropertyConfigurationVersion(resourceDTO.getWorkflowPropertyConfigurationVersion());
 
-        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action)
-                .withDeclinedResponse(false).withCreatedTimestamp(new DateTime())
+        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
-
+        
         return actionService.executeUserAction(resource, action, comment);
     }
 
@@ -856,10 +854,10 @@ public class ResourceService {
         resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
     }
 
-    public ResourceParent getActiveResourceByName(PrismScope resourceScope, User user, String name) {
+    public ResourceParent getActiveResourceByName(PrismScope resourceScope, String name) {
         Class<? extends Resource> resourceClass = resourceScope.getResourceClass();
         if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return resourceDAO.getActiveResourceByName(resourceScope, user, name, stateService.getActiveResourceStates(resourceScope));
+            return resourceDAO.getActiveResourceByName(resourceScope, name, stateService.getActiveResourceStates(resourceScope));
         }
         return null;
     }

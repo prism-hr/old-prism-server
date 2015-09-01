@@ -102,11 +102,12 @@ public class DepartmentService {
 
     public void synchronizeImportedSubjectAreas(Department department) {
         departmentDAO.deleteDepartmentImportedSubjectAreas(department);
+        entityService.flush();
 
         List<DepartmentImportedSubjectAreaDTO> subjectAreas = departmentDAO.getImportedSubjectAreas(department);
         if (!subjectAreas.isEmpty()) {
             List<String> rows = Lists.newArrayList();
-            for (DepartmentImportedSubjectAreaDTO subjectAreaDTO : departmentDAO.getImportedSubjectAreas(department)) {
+            for (DepartmentImportedSubjectAreaDTO subjectAreaDTO : subjectAreas) {
                 List<String> columns = Lists.newLinkedList();
                 columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getDepartment()));
                 columns.add(prepareIntegerForSqlInsert(subjectAreaDTO.getSubjectArea()));

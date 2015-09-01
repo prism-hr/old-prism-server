@@ -45,15 +45,15 @@ public class DepartmentDAO {
     public List<DepartmentImportedSubjectAreaDTO> getImportedSubjectAreas(Department department) {
         return (List<DepartmentImportedSubjectAreaDTO>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id"), "id") //
-                        .add(Projections.groupProperty("programSubjectArea.id"), "subjectArea") //
+                        .add(Projections.groupProperty("id"), "department") //
+                        .add(Projections.groupProperty("programSubjectArea.subjectArea.id"), "subjectArea") //
                         .add(Projections.sum("programSubjectArea.relationStrength"), "programRelationStrength") //
                         .add(Projections.property("institutionSubjectArea.relationStrength"), "institutionRelationStrength")) //
                 .createAlias("importedPrograms", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.programSubjectAreas", "programSubjectArea", JoinType.INNER_JOIN) //
                 .createAlias("program.institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("institution.institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN) //
-                .add(Restrictions.eqProperty("programSubjectArea.id", "institutionSubjectArea.id"))
+                .add(Restrictions.eqProperty("programSubjectArea.subjectArea.id", "institutionSubjectArea.subjectArea.id"))
                 .add(Restrictions.eq("id", department.getId())) //
                 .setResultTransformer(Transformers.aliasToBean(DepartmentImportedSubjectAreaDTO.class)) //
                 .list();

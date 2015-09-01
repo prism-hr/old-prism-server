@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
@@ -96,6 +96,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 
 @Service
 @Transactional
@@ -173,26 +174,23 @@ public class AdvertService {
         return adverts.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(adverts);
     }
 
-    public Map<PrismOpportunityCategory, Integer> getAdvertListSummary(OpportunitiesQueryDTO queryDTO) {
-        if (queryDTO.getOpportunityCategories().isEmpty()) {
-            PrismActionCondition actionCondition = queryDTO.getActionCondition();
-            PrismScope[] scopes = actionCondition.equals(ACCEPT_APPLICATION) ? new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }
-                    : new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION };
-            Map<PrismOpportunityCategory, Integer> summary = Maps.newHashMap();
-            for (PrismOpportunityCategory opportunityCategory : PrismOpportunityCategory.values()) {
-                summary.put(opportunityCategory, getVisibleAdverts(queryDTO.withOpportunityCategory(opportunityCategory), scopes, null).size());
-            }
-            return summary;
-        }
-        return null;
-    }
-
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {
         List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
         return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
     }
 
-    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> resourceIds) {
+    public HashMultimap<Integer, ResourceConditionRepresentation> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        HashMultimap<Integer, ResourceConditionRepresentation> conditions = HashMultimap.create();
+        if (CollectionUtils.isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertActionConditions(resourceScope, resourceIds).forEach(condition -> {
+                conditions.put(condition.getAdvertId(),
+                        new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition()).withPartnerMode(condition.getPartnerMode()));
+            });
+        }
+        return conditions;
+    }
+
+    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         HashMultimap<Integer, PrismStudyOption> options = HashMultimap.create();
         if (CollectionUtils.isNotEmpty(resourceIds)) {
             advertDAO.getAdvertStudyOptions(resourceScope, resourceIds).forEach(option -> {
@@ -475,7 +473,7 @@ public class AdvertService {
         }
     }
 
-    private List<Integer> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes, Integer maxRecords) {
+    public List<Integer> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes, Integer maxRecords) {
         List<Integer> adverts = Lists.newArrayList();
         for (PrismScope scope : scopes) {
             adverts.addAll(advertDAO.getFilteredAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO, maxRecords));

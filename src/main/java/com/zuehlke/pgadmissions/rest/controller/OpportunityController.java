@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -35,10 +36,11 @@ public class OpportunityController {
     @Inject
     private ApplicationService applicationService;
 
-    // FIXME api now provided to get counts for tabs. Need to send that.
+    // FIXME: Show number of adverts in each tabbed list.
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentationExtended> getAdverts(OpportunitiesQueryDTO query) {
-        return advertMapper.getAdvertExtendedRepresentations(advertService.getAdvertList(query), query.getActionCondition());
+         AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
+         return representation.getRows();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}")

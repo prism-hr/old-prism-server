@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -70,9 +71,11 @@ import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ListSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
@@ -81,6 +84,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentati
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceCountRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
@@ -183,13 +187,15 @@ public class ResourceMapper {
     @Inject
     private ApplicationContext applicationContext;
 
-    public List<ResourceListRowRepresentation> getResourceListRowRepresentations(PrismScope resourceScope, List<ResourceListRowDTO> rows) {
+    public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceIdentifier) throws Exception {
         DateTime baseline = new DateTime();
-        List<ResourceListRowRepresentation> representations = Lists.newArrayListWithCapacity(rows.size());
+        List<ResourceListRowRepresentation> representations = Lists.newArrayList();
 
-        for (ResourceListRowDTO row : rows) {
+        User user = userService.getCurrentUser();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier).forEach(row -> {
             ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
-            representation.setScope(resourceScope);
+            representation.setScope(scope);
             representation.setId(row.getResourceId());
 
             Integer institutionId = row.getInstitutionId();
@@ -197,7 +203,7 @@ public class ResourceMapper {
             Integer programId = row.getProgramId();
             Integer projectId = row.getProjectId();
 
-            if (resourceScope.equals(INSTITUTION)) {
+            if (scope.equals(INSTITUTION)) {
                 representation.setName(row.getInstitutionName());
                 setInstitutionLogoImage(row, representation);
             } else {
@@ -210,21 +216,21 @@ public class ResourceMapper {
                 }
             }
 
-            if (resourceScope.equals(DEPARTMENT)) {
+            if (scope.equals(DEPARTMENT)) {
                 representation.setName(row.getDepartmentName());
             } else if (departmentId != null) {
                 representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
                         .withId(departmentId).withName(row.getDepartmentName()));
             }
 
-            if (resourceScope.equals(PROGRAM)) {
+            if (scope.equals(PROGRAM)) {
                 representation.setName(row.getProgramName());
             } else if (programId != null) {
                 representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
                         .withId(programId).withName(row.getProgramName()));
             }
 
-            if (resourceScope.equals(PROJECT)) {
+            if (scope.equals(PROJECT)) {
                 representation.setName(row.getProjectName());
             } else if (projectId != null) {
                 representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
@@ -262,9 +268,9 @@ public class ResourceMapper {
             representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
             representation.setActions(actions);
             representations.add(representation);
-        }
+        });
 
-        return representations;
+        return new ResourceListRepresentation().withRows(representations).withSummaries(getResourceListSummaryRepresentations(user, scope, parentScopes, filter));
     }
 
     public ResourceRepresentationLocation getResourceRepresentationLocation(Resource resource) {
@@ -474,7 +480,7 @@ public class ResourceMapper {
                     constraintsToTransform.put(importedEntityType, constraint.getEntityId());
                 }
             });
-            
+
             constraintsToTransform.keySet().forEach(constraint -> {
                 constraintsToTransform.putAll(constraint,
                         applicationContext.getBean(constraint.getFilterSelector()).getPossible(APPLICATION, resource, constraintsToTransform.get(constraint)));
@@ -685,8 +691,8 @@ public class ResourceMapper {
         if (resourceClass.equals(Application.class)) {
             representation.setApplicationIdentified(((Application) resource).getIdentified());
         }
-        
-        if (ResourceParent.class.isAssignableFrom(resourceClass) && !hasRedactions(resource, overridingRoles)) {
+
+        if (ResourceParent.class.isAssignableFrom(resourceClass) && actionService.getRedactions(resource, userService.getCurrentUser(), overridingRoles).isEmpty()) {
             representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
             representation.setOpportunityRatingAverage(((ResourceParent) resource).getOpportunityRatingAverage());
         }
@@ -840,9 +846,14 @@ public class ResourceMapper {
         return incompleteSections;
     }
 
-    private boolean hasRedactions(Resource resource, List<PrismRole> overridingRoles) {
-        User user = userService.getCurrentUser();
-        return !actionService.getRedactions(resource, user, overridingRoles).isEmpty();
+    public List<ListSummaryRepresentation> getResourceListSummaryRepresentations(User user, PrismScope scope, List<PrismScope> parentScopes,
+            ResourceListFilterDTO filter) {
+        List<ListSummaryRepresentation> representations = Lists.newArrayList();
+        for (PrismOpportunityCategory opportunityCategory : PrismOpportunityCategory.values()) {
+            representations.add(new ListSummaryRepresentation().withOpportunityCategory(opportunityCategory)
+                    .withRowCount(resourceService.getAssignedResources(user, scope, parentScopes, filter.withOpportunityCategory(opportunityCategory)).size()));
+        }
+        return representations;
     }
 
     private static class ResourceProcessingMonth {

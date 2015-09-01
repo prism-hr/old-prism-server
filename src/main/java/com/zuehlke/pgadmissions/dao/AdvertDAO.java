@@ -55,6 +55,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAdvert;
+import com.zuehlke.pgadmissions.dto.AdvertActionConditionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.AdvertStudyOptionDTO;
@@ -226,7 +227,22 @@ public class AdvertDAO {
         return criteria.list();
     }
 
-    public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> advertIds) {
+    public List<AdvertActionConditionDTO> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("resourceCondition.actionCondition").as("actionCondition")) //
+                        .add(Projections.property("resourceCondition.partnerMode").as("partnerMode"))) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
+                .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertActionConditionDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (List<AdvertStudyOptionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
@@ -235,7 +251,7 @@ public class AdvertDAO {
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".instanceGroups", "instanceGroup", JoinType.INNER_JOIN) //
                 .createAlias("instanceGroup.studyOption", "studyOption", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", advertIds)) //
+                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
                 .list();
     }

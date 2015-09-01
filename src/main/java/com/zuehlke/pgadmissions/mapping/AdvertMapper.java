@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -96,38 +96,58 @@ public class AdvertMapper {
     }
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
-        List<Integer> projects = Lists.newArrayList();
-        List<Integer> programs = Lists.newArrayList();
+        PrismScope[] opportunityScopes = new PrismScope[] { PROJECT, PROGRAM };
+        PrismScope[] partnerScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
         advertService.getAdvertList(query).forEach(advert -> {
             PrismScope scope = advert.getScope();
-            if (scope.equals(PROGRAM)) {
-                programs.add(advert.getProgramId());
-            } else if (scope.equals(PROJECT)) {
-                programs.add(advert.getProgramId());
-                projects.add(advert.getProjectId());
+            for (PrismScope advertScope : partnerScopes) {
+                if (advertScope.ordinal() >= scope.ordinal()) {
+                    ResourceStandardDTO enclosingResourceDTO = advert.getEnclosingResource(advertScope);
+                    if (enclosingResourceDTO != null) {
+                        resources.put(advertScope, enclosingResourceDTO.getId());
+                    }
+                }
             }
             index.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
         });
 
-        HashMultimap<Integer, PrismStudyOption> programStudyOptions = advertService.getAdvertStudyOptions(PROGRAM, programs);
-        HashMultimap<Integer, PrismStudyOption> projectStudyOptions = advertService.getAdvertStudyOptions(PROJECT, projects);
+        Map<PrismScope, HashMultimap<Integer, PrismStudyOption>> studyOptionIndex = Maps.newHashMap();
+        for (PrismScope opportunityScope : opportunityScopes) {
+            studyOptionIndex.put(opportunityScope, advertService.getAdvertStudyOptions(opportunityScope, resources.get(opportunityScope)));
+        }
+
+        Map<PrismScope, HashMultimap<Integer, ResourceConditionRepresentation>> actionConditionIndex = Maps.newHashMap();
+        for (PrismScope partnerScope : partnerScopes) {
+            actionConditionIndex.put(partnerScope, advertService.getAdvertActionConditions(partnerScope, resources.get(partnerScope)));
+        }
 
         List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
-        for (Integer advert : index.keySet()) {
+        index.keySet().forEach(advert -> {
             AdvertRepresentationExtended representation = index.get(advert);
-            representation.setConditions(newArrayList(new ResourceConditionRepresentation().withActionCondition(query.getActionCondition()).withPartnerMode(true)));
 
-            Set<PrismStudyOption> studyOptions = projectStudyOptions.get(advert);
-            studyOptions = isEmpty(studyOptions) ? programStudyOptions.get(advert) : studyOptions;
+            Set<PrismStudyOption> studyOptions = null;
+            for (PrismScope opportunityScope : opportunityScopes) {
+                studyOptions = studyOptionIndex.get(opportunityScope).get(advert);
+                if (CollectionUtils.isNotEmpty(studyOptions)) {
+                    representation.setStudyOptions(newArrayList(studyOptions));
+                    break;
+                }
+            }
 
-            if (!isEmpty(studyOptions)) {
-                representation.setStudyOptions(newArrayList(studyOptions));
+            Set<ResourceConditionRepresentation> actionConditions = null;
+            for (PrismScope partnerScope : partnerScopes) {
+                actionConditions = actionConditionIndex.get(partnerScope).get(advert);
+                if (CollectionUtils.isNotEmpty(actionConditions)) {
+                    representation.setConditions(newArrayList(actionConditions));
+                    break;
+                }
             }
 
             representations.add(representation);
-        }
+        });
 
         return new AdvertListRepresentation().withRows(representations).withSummaries(getAdvertListSummaryRepresentations(query));
     }

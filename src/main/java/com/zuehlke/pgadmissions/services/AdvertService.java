@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +96,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 
 @Service
 @Transactional
@@ -177,7 +179,18 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, getAdvertScopes(), advertsRecentlyAppliedFor);
     }
 
-    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, List<Integer> resourceIds) {
+    public HashMultimap<Integer, ResourceConditionRepresentation> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        HashMultimap<Integer, ResourceConditionRepresentation> conditions = HashMultimap.create();
+        if (CollectionUtils.isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertActionConditions(resourceScope, resourceIds).forEach(condition -> {
+                conditions.put(condition.getAdvertId(),
+                        new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition()).withPartnerMode(condition.getPartnerMode()));
+            });
+        }
+        return conditions;
+    }
+
+    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         HashMultimap<Integer, PrismStudyOption> options = HashMultimap.create();
         if (CollectionUtils.isNotEmpty(resourceIds)) {
             advertDAO.getAdvertStudyOptions(resourceScope, resourceIds).forEach(option -> {

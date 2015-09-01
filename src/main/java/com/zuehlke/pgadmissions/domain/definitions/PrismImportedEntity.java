@@ -1,62 +1,25 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.imported.mapping.*;
+import com.zuehlke.pgadmissions.mapping.helpers.*;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
+import com.zuehlke.pgadmissions.services.helpers.extractors.*;
+import com.zuehlke.pgadmissions.workflow.selectors.summary.*;
+import org.apache.commons.lang3.ObjectUtils;
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAdvertDomicileMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedLanguageQualificationTypeMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedSubjectAreaMapping;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedAdvertDomicileTransformer;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedAgeRangeTransformer;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedInstitutionTransformer;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedLanguageQualificationTypeTransformer;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedProgramTransformer;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedSubjectAreaTransformer;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAdvertDomicileExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimpleExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedInstitutionExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedLanguageQualificationTypeExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedProgramExtractor;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedSubjectAreaExtractor;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedFundingSource;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedInstitutionSelector;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedProgramSelector;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedQualificationType;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedRejectionReasonSelector;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedSubjectAreaSelector;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.PrismResourceSummarySelector;
-
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+import static com.google.common.base.CaseFormat.*;
 
 public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.enums.PrismImportedEntity> {
 
@@ -106,26 +69,26 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_domicile_id" }),            
+                    .withColumns(new String[] { "application_personal_detail.imported_domicile_id" }),
             true),
     IMPORTED_ETHNICITY(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_ethnicity_id" }),            
+                    .withColumns(new String[] { "application_personal_detail.imported_ethnicity_id" }),
             true),
     IMPORTED_FUNDING_SOURCE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" }) 
-                    .withSelector(ApplicationByImportedFundingSource.class), 
+                    .withColumns(new String[] { "application.id" })
+                    .withSelector(ApplicationByImportedFundingSource.class),
             true),
     IMPORTED_GENDER(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_gender_id" }),  
+                    .withColumns(new String[] { "application_personal_detail.imported_gender_id" }),
             true),
     @SuppressWarnings({ "unchecked", "rawtypes" })
     IMPORTED_INSTITUTION(new PrismImportedEntityImportDefinition()
@@ -138,6 +101,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withPivotColumn("name")
                     .withColumn("ucas_id")
                     .withColumn("facebook_id")
+                    .withColumn("hesa_id")
                     .withColumn("indexed")
                     .withColumn("enabled")
                     .withExtractor((Class) ImportedInstitutionExtractor.class),
@@ -145,8 +109,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withMappingClass(ImportedInstitutionMapping.class)
                     .withTable("imported_institution_mapping"),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" }) 
-                    .withSelector(ApplicationByImportedInstitutionSelector.class), 
+                    .withColumns(new String[] { "application.id" })
+                    .withSelector(ApplicationByImportedInstitutionSelector.class),
             false),
     IMPORTED_LANGUAGE_QUALIFICATION_TYPE(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedLanguageQualificationType.class)
@@ -170,13 +134,13 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withMappingClass(ImportedLanguageQualificationTypeMapping.class)
                     .withTable("imported_language_qualification_type_mapping"),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_language_qualification.imported_language_qualification_type_id" }), 
+                    .withColumns(new String[] { "application_language_qualification.imported_language_qualification_type_id" }),
             true),
     IMPORTED_NATIONALITY(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_nationality_id1", "application_personal_detail.imported_nationality_id2" }), 
+                    .withColumns(new String[] { "application_personal_detail.imported_nationality_id1", "application_personal_detail.imported_nationality_id2" }),
             true),
     IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition()
             .withEntityNameClass(PrismOpportunityType.class),
@@ -205,15 +169,15 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withMappingClass(ImportedSubjectAreaMapping.class)
                     .withTable("imported_subject_area_mapping"),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" }) 
+                    .withColumns(new String[] { "application.id" })
                     .withSelector(ApplicationByImportedSubjectAreaSelector.class),
             true),
     IMPORTED_QUALIFICATION_TYPE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" }) 
-                    .withSelector(ApplicationByImportedQualificationType.class), 
+                    .withColumns(new String[] { "application.id" })
+                    .withSelector(ApplicationByImportedQualificationType.class),
             true),
     @SuppressWarnings({ "unchecked", "rawtypes" })
     IMPORTED_PROGRAM(new PrismImportedEntityImportDefinition()
@@ -238,8 +202,8 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withMappingClass(ImportedProgramMapping.class)
                     .withTable("imported_program_mapping"),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" }) 
-                    .withSelector(ApplicationByImportedProgramSelector.class), 
+                    .withColumns(new String[] { "application.id" })
+                    .withSelector(ApplicationByImportedProgramSelector.class),
             false),
     IMPORTED_REFERRAL_SOURCE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
@@ -251,15 +215,15 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" }) 
-                    .withSelector(ApplicationByImportedRejectionReasonSelector.class), 
+                    .withColumns(new String[] { "application.id" })
+                    .withSelector(ApplicationByImportedRejectionReasonSelector.class),
             true),
     IMPORTED_STUDY_OPTION(getImportedEntitySimpleImportDefinition()
             .withEntityNameClass(PrismStudyOption.class),
             getImportedEntitySimpleImportInsertDefinition(),
             getImportedEntitySimpleMappingInsertDefinition(),
             new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_program_detail.imported_study_option_id" }), 
+                    .withColumns(new String[] { "application_program_detail.imported_study_option_id" }),
             true),
     IMPORTED_TITLE(getImportedEntitySimpleImportDefinition(),
             getImportedEntitySimpleImportInsertDefinition(),
@@ -390,7 +354,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     public String[] getFilterColumns() {
         return reportDefinition == null ? null : reportDefinition.getColumns();
     }
-    
+
     public Class<? extends PrismResourceSummarySelector> getFilterSelector() {
         return reportDefinition == null ? null : reportDefinition.getSelector();
     }
@@ -537,11 +501,11 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
         }
 
     }
-    
+
     private static class PrismImportedEntityReportDefinition {
-        
+
         private String[] columns;
-        
+
         private Class<? extends PrismResourceSummarySelector> selector;
 
         public String[] getColumns() {
@@ -551,17 +515,17 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
         public Class<? extends PrismResourceSummarySelector> getSelector() {
             return selector;
         }
-        
+
         public PrismImportedEntityReportDefinition withColumns(String[] columns) {
             this.columns = columns;
             return this;
         }
-        
+
         public PrismImportedEntityReportDefinition withSelector(Class<? extends PrismResourceSummarySelector> selector) {
             this.selector = selector;
             return this;
         }
-        
+
     }
-    
+
 }

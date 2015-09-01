@@ -1,20 +1,25 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
+import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
-
 public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
 
     @Min(1)
-    @Max(999999999)
+    @Max(10000)
     private Integer ucasId;
 
     @Size(max = 20)
     private String facebookId;
 
+    @Min(1)
+    @Max(10000)
+    private Integer hesaId;
+
+    @Min(0)
     private Integer studentsNumber;
 
     public ImportedInstitutionImportDTO() {
@@ -43,6 +48,14 @@ public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
 
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
+    }
+
+    public Integer getHesaId() {
+        return hesaId;
+    }
+
+    public void setHesaId(Integer hesaId) {
+        this.hesaId = hesaId;
     }
 
     public Integer getStudentsNumber() {

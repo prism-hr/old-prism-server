@@ -43,7 +43,7 @@ public class InstitutionUcasScraper {
         List<ImportedInstitutionImportDTO> nonUcasInstitutions = institutions.stream().filter(i -> i.getUcasId() == null).collect(Collectors.toList());
         TreeMap<Integer, ImportedInstitutionImportDTO> ucasInstitutions = new TreeMap<>(institutions.stream()
                 .filter(i -> i.getUcasId() != null)
-                .collect(Collectors.toMap(o -> ((ImportedInstitutionImportDTO) o).getUcasId(), i -> i)));
+                .collect(Collectors.toMap(o -> o.getUcasId(), i -> i)));
 
         TreeMap<Integer, ImportedInstitutionImportDTO> newInstitutionMap = new TreeMap<>();
         Set<Integer> encounteredUcasIds = new HashSet<>();

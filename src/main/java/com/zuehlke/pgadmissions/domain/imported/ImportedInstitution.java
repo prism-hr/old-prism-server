@@ -46,6 +46,9 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Column(name = "facebook_id")
     private String facebookId;
 
+    @Column(name = "hesa_id")
+    private Integer hesaId;
+
     @Column(name = "indexed", nullable = false)
     private Boolean indexed;
 
@@ -115,6 +118,14 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
         this.facebookId = facebookId;
     }
 
+    public Integer getHesaId() {
+        return hesaId;
+    }
+
+    public void setHesaId(Integer hesaId) {
+        this.hesaId = hesaId;
+    }
+
     @Override
     public Boolean getIndexed() {
         return indexed;
@@ -147,7 +158,7 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     public Set<ImportedInstitutionSubjectArea> getInstitutionSubjectAreas() {
         return institutionSubjectAreas;
     }
-    
+
     public Set<ImportedProgram> getPrograms() {
         return programs;
     }

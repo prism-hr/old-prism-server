@@ -1,23 +1,20 @@
 package com.zuehlke.pgadmissions.services.indices;
 
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
-import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.STOP_WORDS;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.dto.TokenizedStringDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.tokenize;
+import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.STOP_WORDS;
 
 @Service
 @Transactional
@@ -40,7 +37,6 @@ public class ImportedSubjectAreaIndex {
     @Inject
     private ImportedEntityService importedEntityService;
 
-    @PostConstruct
     public void index() {
         List<ImportedSubjectArea> subjectAreas = importedEntityService.getImportedSubjectAreas();
         for (ImportedSubjectArea subjectArea : subjectAreas) {

@@ -1,17 +1,18 @@
 package com.zuehlke.pgadmissions.utils;
 
-import static com.zuehlke.pgadmissions.PrismConstants.NULL;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanString;
-import static java.math.RoundingMode.HALF_UP;
-import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
+import com.google.common.base.Joiner;
+import org.apache.commons.lang.BooleanUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.commons.lang.BooleanUtils;
-
-import com.google.common.base.Joiner;
+import static com.zuehlke.pgadmissions.PrismConstants.NULL;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanString;
+import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
 public class PrismQueryUtils {
 
@@ -28,7 +29,7 @@ public class PrismQueryUtils {
     }
 
     public static String prepareIntegerForSqlInsert(Integer value) {
-        return value == null ? NULL : "'" + escapeSql(value.toString()) + "'";
+        return value == null ? NULL : escapeSql(value.toString());
     }
 
     public static String prepareIntegerForSqlInsert(BigInteger value) {
@@ -41,6 +42,10 @@ public class PrismQueryUtils {
 
     public static String prepareBooleanForSqlInsert(boolean value) {
         return cleanString(new Integer(BooleanUtils.toInteger(value)).toString());
+    }
+
+    public static String generateOnDuplicateUpdateClause(String[] columns) {
+        return Stream.of(columns).map(c -> c + " = values(" + c + ")").collect(Collectors.joining(",\n"));
     }
 
 }

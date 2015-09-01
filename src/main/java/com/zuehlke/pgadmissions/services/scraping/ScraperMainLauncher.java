@@ -1,30 +1,29 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
-
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class ScraperMainLauncher {
 
@@ -60,6 +59,12 @@ public class ScraperMainLauncher {
                 break;
             case "applyCodeMappings":
                 applyCodeMapping(args[1]);
+            case "institutionHesaIds":
+                try (InputStreamReader hesaDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
+                     InputStreamReader institutionReader = new InputStreamReader(new FileInputStream(args[2]), Charsets.UTF_8);
+                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[3]), Charsets.UTF_8)) {
+                    associateInstitutionsWithHesaIds(hesaDataReader, institutionReader, writer);
+                }
         }
     }
 
@@ -122,7 +127,7 @@ public class ScraperMainLauncher {
         TreeMap<String, ImportedSubjectAreaRequest> subjectAreas = new TreeMap<>();
         Map<String, String> codeMap = new HashMap<>();
         try (BufferedReader mapReader = new BufferedReader(new InputStreamReader(new FileInputStream(
-                "C:\\Users\\Pojebe\\prism\\repo\\prism-server\\docs\\JACS\\JACS_3_to_2_aliases.txt"), Charsets.UTF_8))) {
+                "docs/JACS/JACS_3_to_2_aliases.txt"), Charsets.UTF_8))) {
             String line = mapReader.readLine();
             while (line != null) {
                 String[] split = line.split(" -> ");
@@ -149,5 +154,54 @@ public class ScraperMainLauncher {
                 writer.writeNext(new String[]{code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code))});
             }
         }
+    }
+
+    private static void associateInstitutionsWithHesaIds(InputStreamReader hesaDataReader, InputStreamReader institutionReader, OutputStreamWriter writer) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        CollectionType listType = objectMapper.getTypeFactory().constructCollectionType(List.class, ImportedInstitutionImportDTO.class);
+        List<ImportedInstitutionImportDTO> institutions = objectMapper.readValue(institutionReader, listType);
+
+        CSVReader hesaCsvReader = new CSVReader(hesaDataReader, ';');
+        hesaCsvReader.readNext();
+        hesaCsvReader.readNext();
+        String[] line = hesaCsvReader.readNext();
+        while (line != null) {
+            if (!line[0].isEmpty()) {
+                String[] arr = line[0].split(" ", 2);
+                Integer hesaId = Integer.parseInt(arr[0]);
+                String hesaName = arr[1];
+                List<ImportedInstitutionImportDTO> matchedInstitutions = institutions.stream()
+                .filter(i -> i.getDomicile() == 527)
+                .filter(i -> {
+                    String name = i.getName();
+                    return hesaName.equals(name) || hesaName.contains(name) || name.contains(hesaName);
+                }).collect(Collectors.toList());
+
+                if (matchedInstitutions.isEmpty()) {
+                    System.out.println("Could not match institution with name: " + hesaName);
+                } else if (matchedInstitutions.size() > 1) {
+                    System.out.println("To many matched institutions for: " + hesaName + ", matches: " + matchedInstitutions.stream().map(i -> i.getName()).collect(Collectors.joining(",")));
+                } else {
+                    matchedInstitutions.get(0).setHesaId(hesaId);
+                }
+            }
+            line = hesaCsvReader.readNext();
+        }
+
+
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jg = jsonFactory.createGenerator(writer);
+        jg.setCodec(objectMapper);
+        jg.setPrettyPrinter(new DefaultPrettyPrinter());
+        jg.writeStartArray();
+
+        for (ImportedInstitutionImportDTO importedInstitutionImportDTO : institutions) {
+            jg.writeObject(importedInstitutionImportDTO);
+        }
+
+        jg.writeEndArray();
+        jg.close();
     }
 }

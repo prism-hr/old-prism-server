@@ -1,19 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -131,9 +130,9 @@ public class EntityDAO {
 
     public void executeBulkInsertUpdate(String table, String columns, String inserts, String updates) {
         sessionFactory.getCurrentSession().createSQLQuery(
-                "insert into " + table + " (" + columns + ") "
-                        + "values " + inserts + " "
-                        + "on duplicate key update " + updates)
+                "insert into " + table + " (" + columns + ")\n"
+                        + "values\n" + inserts + " "
+                        + "\non duplicate key update " + updates)
                 .executeUpdate();
     }
 

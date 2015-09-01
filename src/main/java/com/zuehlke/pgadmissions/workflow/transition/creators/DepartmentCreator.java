@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -10,10 +16,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.util.stream.Collectors;
 
 @Component
 public class DepartmentCreator implements ResourceCreator<DepartmentDTO> {

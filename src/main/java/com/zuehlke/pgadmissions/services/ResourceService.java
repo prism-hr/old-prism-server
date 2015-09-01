@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.FULL_TIME;

@@ -1,9 +1,15 @@
 package com.zuehlke.pgadmissions.services.lifecycle;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
+import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,14 +18,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-
-import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
-import static java.util.concurrent.Executors.newFixedThreadPool;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
 
 @Service
 public class LifeCycleService {
@@ -52,10 +54,10 @@ public class LifeCycleService {
     private SystemService systemService;
 
     @Inject
-    private ApplicationContext applicationContext;
+    private ImportedSubjectAreaIndex importedSubjectAreaIndex;
 
     @Inject
-    private ImportedSubjectAreaIndex importedSubjectAreaIndex;
+    private ApplicationContext applicationContext;
 
     @PostConstruct
     public void startup() throws Exception {
@@ -84,6 +86,7 @@ public class LifeCycleService {
         if (BooleanUtils.isTrue(initializeData)) {
             systemService.initializeSystemData();
         }
+
         importedSubjectAreaIndex.index();
 
         if (BooleanUtils.isTrue(maintain)) {

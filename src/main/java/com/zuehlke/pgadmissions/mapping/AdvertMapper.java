@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mapping;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.valueOf;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -35,9 +36,9 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
@@ -49,8 +50,10 @@ import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ListSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
@@ -58,6 +61,7 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepr
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertSubjectAreaRepresentation;
@@ -91,6 +95,43 @@ public class AdvertMapper {
         return getAdvertRepresentation(advert, AdvertRepresentationSimple.class);
     }
 
+    public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
+        List<Integer> projects = Lists.newArrayList();
+        List<Integer> programs = Lists.newArrayList();
+
+        Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
+        advertService.getAdvertList(query).forEach(advert -> {
+            PrismScope scope = advert.getScope();
+            if (scope.equals(PROGRAM)) {
+                programs.add(advert.getProgramId());
+            } else if (scope.equals(PROJECT)) {
+                programs.add(advert.getProgramId());
+                projects.add(advert.getProjectId());
+            }
+            index.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
+        });
+
+        HashMultimap<Integer, PrismStudyOption> programStudyOptions = advertService.getAdvertStudyOptions(PROGRAM, programs);
+        HashMultimap<Integer, PrismStudyOption> projectStudyOptions = advertService.getAdvertStudyOptions(PROJECT, projects);
+
+        List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
+        for (Integer advert : index.keySet()) {
+            AdvertRepresentationExtended representation = index.get(advert);
+            representation.setConditions(newArrayList(new ResourceConditionRepresentation().withActionCondition(query.getActionCondition()).withPartnerMode(true)));
+
+            Set<PrismStudyOption> studyOptions = projectStudyOptions.get(advert);
+            studyOptions = isEmpty(studyOptions) ? programStudyOptions.get(advert) : studyOptions;
+
+            if (!isEmpty(studyOptions)) {
+                representation.setStudyOptions(newArrayList(studyOptions));
+            }
+
+            representations.add(representation);
+        }
+
+        return new AdvertListRepresentation().withRows(representations).withSummaries(getAdvertListSummaryRepresentations(query));
+    }
+
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
@@ -116,44 +157,6 @@ public class AdvertMapper {
 
         representation.setName(advert.getName());
         return representation;
-    }
-
-    public List<AdvertRepresentationExtended> getAdvertExtendedRepresentations(List<AdvertDTO> adverts, PrismActionCondition actionCondition) {
-
-        List<Integer> projects = Lists.newArrayList();
-        List<Integer> programs = Lists.newArrayList();
-
-        Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
-        adverts.forEach(advert -> {
-            PrismScope scope = advert.getScope();
-            if (scope.equals(PROGRAM)) {
-                programs.add(advert.getProgramId());
-            } else if (scope.equals(PROJECT)) {
-                programs.add(advert.getProgramId());
-                projects.add(advert.getProjectId());
-            }
-            index.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
-        });
-
-        HashMultimap<Integer, PrismStudyOption> programStudyOptions = advertService.getAdvertStudyOptions(PROGRAM, programs);
-        HashMultimap<Integer, PrismStudyOption> projectStudyOptions = advertService.getAdvertStudyOptions(PROJECT, projects);
-
-        List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
-        for (Integer advert : index.keySet()) {
-            AdvertRepresentationExtended representation = index.get(advert);
-            representation.setConditions(newArrayList(new ResourceConditionRepresentation().withActionCondition(actionCondition).withPartnerMode(true)));
-
-            Set<PrismStudyOption> studyOptions = projectStudyOptions.get(advert);
-            studyOptions = isEmpty(studyOptions) ? programStudyOptions.get(advert) : studyOptions;
-
-            if (!isEmpty(studyOptions)) {
-                representation.setStudyOptions(newArrayList(studyOptions));
-            }
-
-            representations.add(representation);
-        }
-
-        return representations;
     }
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(AdvertDTO advert) {
@@ -381,6 +384,18 @@ public class AdvertMapper {
             resourceRepresentation.setLogoImage(new DocumentRepresentation().withId(resource.getLogoImage()));
         }
         return resourceRepresentation;
+    }
+
+    public List<ListSummaryRepresentation> getAdvertListSummaryRepresentations(OpportunitiesQueryDTO queryDTO) {
+        PrismScope[] scopes = queryDTO.getActionCondition().equals(ACCEPT_APPLICATION) ? new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }
+                : new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION };
+
+        List<ListSummaryRepresentation> representations = Lists.newArrayList();
+        for (PrismOpportunityCategory opportunityCategory : PrismOpportunityCategory.values()) {
+            representations.add(new ListSummaryRepresentation().withOpportunityCategory(opportunityCategory)
+                    .withRowCount(advertService.getVisibleAdverts(queryDTO.withOpportunityCategory(opportunityCategory), scopes, null).size()));
+        }
+        return representations;
     }
 
 }

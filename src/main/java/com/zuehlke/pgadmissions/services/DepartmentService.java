@@ -60,25 +60,20 @@ public class DepartmentService {
         return entityService.getById(Department.class, id);
     }
 
-    public Department inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) throws Exception {
+    public void inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) throws Exception {
         DepartmentDTO departmentDTO = departmentInvitationDTO.getDepartment();
         Institution institution = institutionService.getById(departmentDTO.getParentResource().getId());
 
-        Department department = null;
         if (institution != null) {
             ActionOutcomeDTO outcome = resourceService.createResource(institution.getUser(), actionService.getById(INSTITUTION_CREATE_DEPARTMENT), departmentDTO);
-            if (outcome == null) {
-                department = null;
-            } else {
-                department = (Department) outcome.getResource();
+            if (outcome != null) {
                 UserDTO user = departmentInvitationDTO.getDepartmentUser();
                 if (user != null) {
-                    userService.getOrCreateUserWithRoles(user.getFirstName(), user.getLastName(), user.getEmail(), department, asList(DEPARTMENT_ADMINISTRATOR));
+                    userService.getOrCreateUserWithRoles(user.getFirstName(), user.getLastName(), user.getEmail(), (Department) outcome.getResource(),
+                            asList(DEPARTMENT_ADMINISTRATOR));
                 }
             }
         }
-
-        return department;
     }
 
     public void setImportedPrograms(Department department, List<ImportedEntityDTO> importedProgramDTOs) {

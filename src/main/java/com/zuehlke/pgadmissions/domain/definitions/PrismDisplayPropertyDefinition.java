@@ -1261,7 +1261,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_SUMMARY_HEADER(SYSTEM_RESOURCE_SECTION, "Summary"),
     SYSTEM_RESOURCE_DETAILS_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Upload personalized images and content to increase the interest in your advert"),
     SYSTEM_RESOURCE_DEPARTMENT_PROGRAMS_HEADER(SYSTEM_RESOURCE_SECTION, "Programs"),
-    SYSTEM_RESOURCE_DEPARTMENT_PROGRAMS_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Complete your programs section"),
+    SYSTEM_RESOURCE_DEPARTMENT_PROGRAMS_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Assign your department's programs, so that we can find compatible candidates for your adverts"),
     SYSTEM_RESOURCE_ADVERT_HEADER(SYSTEM_RESOURCE_SECTION, "Advert"),
     SYSTEM_RESOURCE_ADVERT_DETAILS_INCOMPLETE(SYSTEM_RESOURCE_SECTION, "Complete your advert, to help candidates understand whether they wish to apply"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(SYSTEM_RESOURCE_SECTION, "Search Categories"),

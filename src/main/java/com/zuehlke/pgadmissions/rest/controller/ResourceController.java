@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
@@ -133,14 +134,15 @@ public class ResourceController {
         return resourceService.getDisplayProperties(resource, propertiesScope);
     }
 
-    // FIXME api now provided to get counts for tabs. Need to send that.
+    // FIXME: Show number of resources in each tabbed list.
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
-        return resourceMapper.getResourceListRowRepresentations(resourceScope, resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier));
+        ResourceListRepresentation representation = resourceMapper.getResourceListRepresentation(resourceScope, filterDTO, lastSequenceIdentifier);
+        return representation.getRows();
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "type=report")

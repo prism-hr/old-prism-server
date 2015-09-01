@@ -202,7 +202,7 @@ public class ResourceService {
 
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
-        
+
         return actionService.executeUserAction(resource, action, comment);
     }
 
@@ -379,9 +379,8 @@ public class ResourceService {
         return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceScope, baseline, rangeStart, rangeClose);
     }
 
-    public List<ResourceListRowDTO> getResourceList(PrismScope scope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
-        User user = userService.getCurrentUser();
-        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, String lastSequenceIdentifier)
+            throws Exception {
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
 
         int maxRecords = RESOURCE_LIST_PAGE_ROW_COUNT;
@@ -409,17 +408,6 @@ public class ResourceService {
         }
 
         return Lists.newArrayList();
-    }
-
-    public Map<PrismOpportunityCategory, Integer> getResourceListSummary(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter) {
-        if (filter.getOpportunityCategory() == null) {
-            Map<PrismOpportunityCategory, Integer> summary = Maps.newHashMap();
-            for (PrismOpportunityCategory opportunityCategory : PrismOpportunityCategory.values()) {
-                summary.put(opportunityCategory, getAssignedResources(user, scope, parentScopes, filter.withOpportunityCategory(opportunityCategory)).size());
-            }
-            return summary;
-        }
-        return null;
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scope, List<PrismScope> parentScopes) {

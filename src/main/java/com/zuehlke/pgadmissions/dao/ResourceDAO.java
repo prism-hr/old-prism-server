@@ -144,22 +144,20 @@ public class ResourceDAO {
     }
 
     public void deleteResourceState(Resource resource, State state) {
-        sessionFactory.getCurrentSession()
-                .createQuery( //
-                        "delete ResourceState " //
-                                + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
-                                + "and state = :state") //
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceState " //
+                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
+                        + "and state = :state") //
                 .setParameter("resource", resource) //
                 .setParameter("state", state) //
                 .executeUpdate();
     }
 
     public void deleteSecondaryResourceState(Resource resource, State state) {
-        sessionFactory.getCurrentSession()
-                .createQuery( //
-                        "delete ResourceState " //
-                                + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
-                                + "and state = :state " + "and primaryState is false") //
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceState " //
+                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
+                        + "and state = :state " + "and primaryState is false") //
                 .setParameter("resource", resource) //
                 .setParameter("state", state) //
                 .executeUpdate();
@@ -238,7 +236,7 @@ public class ResourceDAO {
                     .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
                     .list();
         }
-        
+
         return Collections.emptyList();
     }
 

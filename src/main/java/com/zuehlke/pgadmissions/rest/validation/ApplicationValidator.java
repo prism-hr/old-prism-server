@@ -1,6 +1,28 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import com.zuehlke.pgadmissions.domain.application.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -12,20 +34,6 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 
 @Component
 public class ApplicationValidator extends LocalValidatorFactoryBean implements Validator {

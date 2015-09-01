@@ -243,6 +243,7 @@ public class ResourceMapper {
             userRepresentation.setAccountImageUrl(row.getUserAccountImageUrl());
             representation.setUser(userRepresentation);
 
+            representation.setApplicationIdentified(row.getApplicationIdentified());
             representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
 
             representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
@@ -680,7 +681,12 @@ public class ResourceMapper {
         setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
         setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
 
-        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && !hasRedactions(resource, overridingRoles)) {
+        Class<T> resourceClass = (Class<T>) resource.getClass();
+        if (resourceClass.equals(Application.class)) {
+            representation.setApplicationIdentified(((Application) resource).getIdentified());
+        }
+        
+        if (ResourceParent.class.isAssignableFrom(resourceClass) && !hasRedactions(resource, overridingRoles)) {
             representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
             representation.setOpportunityRatingAverage(((ResourceParent) resource).getOpportunityRatingAverage());
         }

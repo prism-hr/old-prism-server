@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -164,78 +165,81 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-            Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier,
-            Integer maxRecords, boolean hasRedactions) {
-        if (assignedResources.isEmpty()) {
-            return Collections.emptyList();
-        }
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, Set<Integer> assignedResources, ResourceListFilterDTO filter,
+            String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
+        if (CollectionUtils.isNotEmpty(assignedResources)) {
+            String scopeName = scopeId.getLowerCamelName();
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass(), scopeName);
 
-        String scopeName = scopeId.getLowerCamelName();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass(), scopeName);
+            ProjectionList projectionList = Projections.projectionList();
 
-        ProjectionList projectionList = Projections.projectionList();
+            List<String> parentScopeNames = Lists.newLinkedList();
+            for (PrismScope parentScopeId : parentScopeIds) {
+                String parentScopeName = parentScopeId.getLowerCamelName();
+                projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
 
-        List<String> parentScopeNames = Lists.newLinkedList();
-        for (PrismScope parentScopeId : parentScopeIds) {
-            String parentScopeName = parentScopeId.getLowerCamelName();
-            projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
+                if (!parentScopeId.equals(SYSTEM)) {
+                    projectionList.add(Projections.property(parentScopeName + ".name"), parentScopeName + "Name");
+                }
 
-            if (!parentScopeId.equals(SYSTEM)) {
-                projectionList.add(Projections.property(parentScopeName + ".name"), parentScopeName + "Name");
+                if (parentScopeId.equals(INSTITUTION)) {
+                    projectionList.add(Projections.property(parentScopeName + ".logoImage.id"),
+                            parentScopeName + "LogoImageId");
+                }
+
+                parentScopeNames.add(parentScopeName);
             }
 
-            if (parentScopeId.equals(INSTITUTION)) {
-                projectionList.add(Projections.property(parentScopeName + ".logoImage.id"),
-                        parentScopeName + "LogoImageId");
+            boolean applicationScope = scopeId.equals(APPLICATION);
+            projectionList.add(Projections.property("id"), scopeName + "Id");
+            if (!applicationScope) {
+                projectionList.add(Projections.property("name"), scopeName + "Name");
             }
 
-            parentScopeNames.add(parentScopeName);
+            projectionList.add(Projections.property("code"), "code") //
+                    .add(Projections.property("user.id"), "userId") //
+                    .add(Projections.property("user.firstName"), "userFirstName") //
+                    .add(Projections.property("user.firstName2"), "userFirstName2") //
+                    .add(Projections.property("user.firstName3"), "userFirstName3") //
+                    .add(Projections.property("user.lastName"), "userLastName") //
+                    .add(Projections.property("user.email"), "userEmail") //
+                    .add(Projections.property("primaryExternalAccount.accountImageUrl"), "userAccountImageUrl");
+
+            if (!hasRedactions) {
+                if (applicationScope) {
+                    projectionList.add(Projections.property("identified"), "applicationIdentified");
+                }
+                projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage");
+            }
+
+            projectionList.add(Projections.property("state.id"), "stateId") //
+                    .add(Projections.property("createdTimestamp"), "createdTimestamp") //
+                    .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
+                    .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
+
+            if (!applicationScope) {
+                projectionList.add(Projections.property("advertIncompleteSection"), "advertIncompleteSection");
+            }
+
+            criteria.setProjection(projectionList);
+            for (String parentScopeName : parentScopeNames) {
+                criteria.createAlias(parentScopeName, parentScopeName, JoinType.LEFT_OUTER_JOIN);
+            }
+
+            criteria.setProjection(projectionList) //
+                    .createAlias("user", "user", JoinType.INNER_JOIN) //
+                    .createAlias("state", "state", JoinType.INNER_JOIN)
+                    .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
+                    .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
+
+            criteria.add(Restrictions.in("id", assignedResources));
+
+            return appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
+                    .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
+                    .list();
         }
-
-        projectionList.add(Projections.property("id"), scopeName + "Id");
-        if (!scopeId.equals(APPLICATION)) {
-            projectionList.add(Projections.property("name"), scopeName + "Name");
-        }
-
-        projectionList.add(Projections.property("code"), "code") //
-                .add(Projections.property("user.id"), "userId") //
-                .add(Projections.property("user.firstName"), "userFirstName") //
-                .add(Projections.property("user.firstName2"), "userFirstName2") //
-                .add(Projections.property("user.firstName3"), "userFirstName3") //
-                .add(Projections.property("user.lastName"), "userLastName") //
-                .add(Projections.property("user.email"), "userEmail") //
-                .add(Projections.property("primaryExternalAccount.accountImageUrl"), "userAccountImageUrl");
-
-        if (!hasRedactions) {
-            projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage");
-        }
-
-        projectionList.add(Projections.property("state.id"), "stateId") //
-                .add(Projections.property("createdTimestamp"), "createdTimestamp") //
-                .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
-                .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
-
-        if (!scopeId.equals(APPLICATION)) {
-            projectionList.add(Projections.property("advertIncompleteSection"), "advertIncompleteSection");
-        }
-
-        criteria.setProjection(projectionList);
-        for (String parentScopeName : parentScopeNames) {
-            criteria.createAlias(parentScopeName, parentScopeName, JoinType.LEFT_OUTER_JOIN);
-        }
-
-        criteria.setProjection(projectionList) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN)
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
-
-        criteria.add(Restrictions.in("id", assignedResources));
-
-        return appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
-                .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
-                .list();
+        
+        return Collections.emptyList();
     }
 
     public List<Integer> getAssignedResources(User user, PrismScope scope, ResourceListFilterDTO filter, Junction conditions, String sequenceIdentifier, Integer maxRecords) {

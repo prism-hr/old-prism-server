@@ -26,6 +26,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private boolean raisesUrgentFlag;
 
     private boolean raisesUpdateFlag;
+    
+    private Boolean applicationIdentified;
 
     private BigDecimal applicationRatingAverage;
 
@@ -97,6 +99,14 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     public void setRaisesUpdateFlag(boolean raisesUpdateFlag) {
         this.raisesUpdateFlag = raisesUpdateFlag;
+    }
+
+    public Boolean getApplicationIdentified() {
+        return applicationIdentified;
+    }
+
+    public void setApplicationIdentified(Boolean applicationIdentified) {
+        this.applicationIdentified = applicationIdentified;
     }
 
     public BigDecimal getApplicationRatingAverage() {

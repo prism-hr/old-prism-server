@@ -146,6 +146,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             }
 
             if (!targetAdvertsToProvideIdentificationFor.isEmpty()) {
+                application.setIdentified(true);
                 advertService.identifyForAdverts(applicant, targetAdvertsToProvideIdentificationFor);
             }
         }

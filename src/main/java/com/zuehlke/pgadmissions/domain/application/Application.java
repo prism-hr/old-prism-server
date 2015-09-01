@@ -200,6 +200,9 @@ public class Application extends Resource {
     @Lob
     @Column(name = "secondary_theme")
     private String secondaryTheme;
+    
+    @Column(name = "identified")
+    private Boolean identified;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -598,6 +601,14 @@ public class Application extends Resource {
 
     public void setSecondaryTheme(String secondaryTheme) {
         this.secondaryTheme = secondaryTheme;
+    }
+
+    public Boolean getIdentified() {
+        return identified;
+    }
+
+    public void setIdentified(Boolean identified) {
+        this.identified = identified;
     }
 
     public Integer getApplicationRatingCount() {

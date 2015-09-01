@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSq
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
+import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -43,13 +44,14 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMappi
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
@@ -194,6 +196,7 @@ public class ImportedEntityService {
 
     public ImportedProgram getOrCreateImportedProgram(Institution institution, ImportedProgramDTO importedProgramDTO) throws Exception {
         ImportedProgram importedProgram = null;
+        
         Integer importedProgramId = importedProgramDTO.getId();
         if (importedProgramId == null) {
             ImportedInstitution importedInstitution = getOrCreateImportedInstitution(institution, importedProgramDTO.getInstitution());
@@ -210,11 +213,12 @@ public class ImportedEntityService {
             return importedProgram;
         }
 
-        DepartmentInvitationDTO departmentDTO = importedProgramDTO.getDepartment();
-        if (departmentDTO != null) {
-            departmentDTO.getDepartment().setParentResource(new ResourceDTO().withScope(INSTITUTION).withId(institution.getId()));
-            Department department = departmentService.inviteDepartment(departmentDTO);
-            department.getImportedPrograms().add(importedProgram);
+        DepartmentInvitationDTO departmentInvitationDTO = importedProgramDTO.getDepartment();
+        if (departmentInvitationDTO != null) {
+            DepartmentDTO departmentDTO = departmentInvitationDTO.getDepartment();
+            departmentDTO.setParentResource(new ResourceDTO().withScope(INSTITUTION).withId(institution.getId()));
+            departmentDTO.setImportedPrograms(asList(new ImportedEntityDTO().withId(importedProgram.getId())));
+            departmentService.inviteDepartment(departmentInvitationDTO);
         }
 
         return importedProgram;

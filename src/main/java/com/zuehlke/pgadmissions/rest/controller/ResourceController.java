@@ -195,7 +195,6 @@ public class ResourceController {
             @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
-
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
         return userMapper.getUserRepresentationSimple(user);

@@ -100,10 +100,9 @@ public class ActionMapper {
 
     private <T extends ActionRepresentation> T getActionRepresentation(PrismAction action, Class<T> returnType) {
         T representation = BeanUtils.instantiate(returnType);
-
         representation.setId(action);
         representation.setCategory(action.getActionCategory());
-
+        representation.setDeclinable(action.isDeclinableAction());
         return representation;
     }
 

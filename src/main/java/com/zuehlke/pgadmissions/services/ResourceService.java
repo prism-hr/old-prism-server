@@ -35,8 +35,6 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -127,8 +125,6 @@ import jersey.repackaged.com.google.common.collect.Sets;
 @Transactional
 public class ResourceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceService.class);
-    
     @Value("${system.id}")
     private Integer systemId;
 
@@ -390,16 +386,16 @@ public class ResourceService {
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
 
         if (!resourceIds.isEmpty()) {
-            boolean hasRedactions = actionService.hasRedactions(user, scope); 
+            boolean hasRedactions = actionService.hasRedactions(user, scope);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, sequenceId, RESOURCE_LIST_PAGE_ROW_COUNT, hasRedactions);
-            
+
             Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
             Set<Integer> filteredResourceIds = rowIndex.keySet();
 
             LinkedHashMultimap<Integer, PrismState> secondaryStates = stateService.getSecondaryResourceStates(scope, filteredResourceIds);
             LinkedHashMultimap<Integer, ActionDTO> permittedActions = actionService.getPermittedActions(scope, filteredResourceIds, user);
             HashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, resourceIds);
-            
+
             rowIndex.keySet().forEach(resourceId -> {
                 ResourceListRowDTO row = rowIndex.get(resourceId);
                 row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));

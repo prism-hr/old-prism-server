@@ -34,10 +34,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -203,7 +200,7 @@ public class ResourceMapper {
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<EntityOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
         processRowDescriptors(resources, resourceIds, summaries);
-        
+
         resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds).forEach(row -> {
             ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
             representation.setScope(scope);

@@ -664,7 +664,7 @@ public class ApplicationSectionService {
 
     private void setOpportunityType(Application application, ApplicationProgramDetail programDetail, ImportedEntitySimple opportunityType) {
         programDetail.setOpportunityType(opportunityType);
-        application.setOpportunityCategory(PrismOpportunityType.valueOf(opportunityType.getName()).getCategory());
+        application.setOpportunityCategories(PrismOpportunityType.valueOf(opportunityType.getName()).getCategory().name());
     }
 
 }

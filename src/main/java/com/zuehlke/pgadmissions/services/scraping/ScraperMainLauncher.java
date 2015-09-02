@@ -1,7 +1,20 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -13,17 +26,10 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
 
 public class ScraperMainLauncher {
 
@@ -37,34 +43,34 @@ public class ScraperMainLauncher {
 
         ProgramUcasScraper programScraper = new ProgramUcasScraper();
         switch (args[0]) {
-            case "facebookDefinitions":
-                getFacebookDefinitions();
-                break;
-            case "subjectAreas":
-                importSubjectAreas(args[1]);
-                break;
-            case "institutions":
-                InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
-                try (InputStreamReader initialDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
-                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8)) {
-                    institutionScraper.scrape(initialDataReader, writer);
-                }
-                break;
-            case "programs":
-                programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1]), Charsets.UTF_8));
-                break;
-            case "processPrograms":
-                programScraper.processProgramDescriptors(new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8),
-                        new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8));
-                break;
-            case "applyCodeMappings":
-                applyCodeMapping(args[1]);
-            case "institutionHesaIds":
-                try (InputStreamReader hesaDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
-                     InputStreamReader institutionReader = new InputStreamReader(new FileInputStream(args[2]), Charsets.UTF_8);
-                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[3]), Charsets.UTF_8)) {
-                    associateInstitutionsWithHesaIds(hesaDataReader, institutionReader, writer);
-                }
+        case "facebookDefinitions":
+            getFacebookDefinitions();
+            break;
+        case "subjectAreas":
+            importSubjectAreas(args[1]);
+            break;
+        case "institutions":
+            InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
+            try (InputStreamReader initialDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
+                    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8)) {
+                institutionScraper.scrape(initialDataReader, writer);
+            }
+            break;
+        case "programs":
+            programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1]), Charsets.UTF_8));
+            break;
+        case "processPrograms":
+            programScraper.processProgramDescriptors(new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8),
+                    new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8));
+            break;
+        case "applyCodeMappings":
+            applyCodeMapping(args[1]);
+        case "institutionHesaIds":
+            try (InputStreamReader hesaDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
+                    InputStreamReader institutionReader = new InputStreamReader(new FileInputStream(args[2]), Charsets.UTF_8);
+                    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[3]), Charsets.UTF_8)) {
+                associateInstitutionsWithHesaIds(hesaDataReader, institutionReader, writer);
+            }
         }
     }
 
@@ -151,7 +157,7 @@ public class ScraperMainLauncher {
         try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), Charsets.UTF_8))) {
             for (String code : subjectAreas.keySet()) {
                 ImportedSubjectAreaRequest area = subjectAreas.get(code);
-                writer.writeNext(new String[]{code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code))});
+                writer.writeNext(new String[] { code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code)) });
             }
         }
     }
@@ -173,16 +179,17 @@ public class ScraperMainLauncher {
                 Integer hesaId = Integer.parseInt(arr[0]);
                 String hesaName = arr[1];
                 List<ImportedInstitutionImportDTO> matchedInstitutions = institutions.stream()
-                .filter(i -> i.getDomicile() == 527)
-                .filter(i -> {
-                    String name = i.getName();
-                    return hesaName.equals(name) || hesaName.contains(name) || name.contains(hesaName);
-                }).collect(Collectors.toList());
+                        .filter(i -> i.getDomicile() == 527)
+                        .filter(i -> {
+                            String name = i.getName();
+                            return hesaName.equals(name) || hesaName.contains(name) || name.contains(hesaName);
+                        }).collect(Collectors.toList());
 
                 if (matchedInstitutions.isEmpty()) {
                     System.out.println("Could not match institution with name: " + hesaName);
                 } else if (matchedInstitutions.size() > 1) {
-                    System.out.println("To many matched institutions for: " + hesaName + ", matches: " + matchedInstitutions.stream().map(i -> i.getName()).collect(Collectors.joining(",")));
+                    System.out.println(
+                            "To many matched institutions for: " + hesaName + ", matches: " + matchedInstitutions.stream().map(i -> i.getName()).collect(Collectors.joining(",")));
                 } else {
                     matchedInstitutions.get(0).setHesaId(hesaId);
                 }
@@ -190,6 +197,7 @@ public class ScraperMainLauncher {
             line = hesaCsvReader.readNext();
         }
 
+        hesaCsvReader.close();
 
         JsonFactory jsonFactory = new JsonFactory();
         JsonGenerator jg = jsonFactory.createGenerator(writer);

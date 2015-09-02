@@ -6,7 +6,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -50,14 +49,14 @@ public class Resume extends Application {
         return this;
     }
 
-    public Resume withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
-        setOpportunityCategory(opportunityCategory);
+    public Resume withOpportunityCategories(String opportunityCategories) {
+        setOpportunityCategories(opportunityCategories);
         return this;
     }
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("user", getUser()).addProperty("opportunityCategory", getOpportunityCategory()).addExclusion("state.id", RESUME_RETIRED);
+        return new EntitySignature().addProperty("user", getUser()).addProperty("opportunityCategories", getOpportunityCategories()).addExclusion("state.id", RESUME_RETIRED);
     }
 
 }

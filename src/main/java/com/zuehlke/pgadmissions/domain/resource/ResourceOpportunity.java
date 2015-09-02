@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.resource;
 import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
@@ -27,10 +26,6 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
 
     @Override
     public abstract void setOpportunityType(ImportedEntitySimple opportunityType);
-
-    public abstract PrismOpportunityCategory getOpportunityCategory();
-
-    public abstract void setOpportunityCategory(PrismOpportunityCategory opportunityCategory);
 
     public abstract Integer getDurationMinimum();
 

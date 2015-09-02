@@ -9,13 +9,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static org.hibernate.criterion.MatchMode.ANYWHERE;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -62,6 +60,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
@@ -163,9 +162,9 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, Set<Integer> assignedResources, ResourceListFilterDTO filter,
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, Collection<Integer> resourceIds, ResourceListFilterDTO filter,
             String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
-        if (CollectionUtils.isNotEmpty(assignedResources)) {
+        if (CollectionUtils.isNotEmpty(resourceIds)) {
             String scopeName = scopeId.getLowerCamelName();
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass(), scopeName);
 
@@ -230,7 +229,7 @@ public class ResourceDAO {
                     .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
                     .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
 
-            criteria.add(Restrictions.in("id", assignedResources));
+            criteria.add(Restrictions.in("id", resourceIds));
 
             return appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
                     .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
@@ -240,9 +239,11 @@ public class ResourceDAO {
         return Collections.emptyList();
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scope, ResourceListFilterDTO filter, Junction conditions, String sequenceIdentifier, Integer maxRecords) {
+    public List<EntityOpportunityCategoryDTO> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, Junction conditions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
-                .setProjection(Projections.groupProperty("id")) //
+                .setProjection(getResourceOpportunityCategoryProjection()) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
@@ -260,16 +261,18 @@ public class ResourceDAO {
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(scope, criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, sequenceIdentifier, maxRecords);
-        return (List<Integer>) criteria.list();
+        return (List<EntityOpportunityCategoryDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(EntityOpportunityCategoryDTO.class)) //
+                .list();
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScope, ResourceListFilterDTO filter, Junction conditions,
-            String sequenceIdentifier, Integer maxRecords) {
+    public List<EntityOpportunityCategoryDTO> getResources(User user, PrismScope scopeId, PrismScope parentScope, ResourceListFilterDTO filter, Junction conditions) {
         String parentResourceReference = parentScope.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
-                .setProjection(Projections.groupProperty("id")) //
+                .setProjection(getResourceOpportunityCategoryProjection()) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
@@ -288,16 +291,18 @@ public class ResourceDAO {
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, sequenceIdentifier, maxRecords);
-        return (List<Integer>) criteria.list();
+        return (List<EntityOpportunityCategoryDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(EntityOpportunityCategoryDTO.class)) //
+                .list();
     }
 
-    public List<Integer> getAssignedPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, Junction conditions,
-            String sequenceIdentifier, Integer maxRecords) {
+    public List<EntityOpportunityCategoryDTO> getPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, Junction conditions) {
         String partnerResourceReference = partnerScope.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
-                .setProjection(Projections.groupProperty("id")) //
+                .setProjection(getResourceOpportunityCategoryProjection()) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -310,7 +315,11 @@ public class ResourceDAO {
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.partnerMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN);
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.ne("action.scope.id", APPLICATION)) //
+                        .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value")));
 
         appendResourceListTargetCriterion(scope, criteria, filter, true);
 
@@ -320,8 +329,9 @@ public class ResourceDAO {
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(scope, criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, sequenceIdentifier, maxRecords);
-        return (List<Integer>) criteria.list();
+        return (List<EntityOpportunityCategoryDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(EntityOpportunityCategoryDTO.class)) //
+                .list();
     }
 
     public List<Integer> getResourcesByMatchingEnclosingResources(PrismScope parentResourceScope, String searchTerm) {
@@ -780,16 +790,13 @@ public class ResourceDAO {
 
     private static void appendResourceListTargetCriterion(PrismScope scopeId, Criteria criteria, ResourceListFilterDTO filter, boolean partnerMode) {
         if (scopeId.equals(APPLICATION) && filter.isTargetOnly()) {
-            criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN)
-                    .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN);
-
             if (!partnerMode) {
                 criteria.createAlias("advert", "advert", JoinType.INNER_JOIN) //
                         .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN);
             }
 
             criteria.createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                    .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value")); //
+                    .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"));
         }
     }
 
@@ -800,19 +807,7 @@ public class ResourceDAO {
 
         PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();
         if (opportunityCategory != null) {
-            switch (scopeId) {
-            case APPLICATION:
-            case PROGRAM:
-            case PROJECT:
-                criteria.add(Restrictions.eq("opportunityCategory", opportunityCategory));
-                break;
-            case DEPARTMENT:
-            case INSTITUTION:
-                criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), ANYWHERE));
-                break;
-            default:
-                break;
-            }
+            criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name()));
         }
 
         if (conditions != null) {
@@ -856,6 +851,12 @@ public class ResourceDAO {
             enclosedScopeExclusion.add(Restrictions.isNull(enclosedScopeReference + ".id"));
         }
         return enclosedScopeExclusion;
+    }
+    
+    private static ProjectionList getResourceOpportunityCategoryProjection() {
+        return Projections.projectionList() //
+                .add(Projections.groupProperty("id").as("id")) //
+                .add(Projections.property("opportunityCategories").as("opportunityCategories"));
     }
 
 }

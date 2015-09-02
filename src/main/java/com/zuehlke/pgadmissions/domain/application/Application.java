@@ -55,7 +55,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -130,8 +129,7 @@ public class Application extends Resource {
     private Advert advert;
 
     @Column(name = "opportunity_category", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismOpportunityCategory opportunityCategory;
+    private String opportunityCategories;
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -200,7 +198,7 @@ public class Application extends Resource {
     @Lob
     @Column(name = "secondary_theme")
     private String secondaryTheme;
-    
+
     @Column(name = "identified")
     private Boolean identified;
 
@@ -408,12 +406,14 @@ public class Application extends Resource {
         this.advert = advert;
     }
 
-    public PrismOpportunityCategory getOpportunityCategory() {
-        return opportunityCategory;
+    @Override
+    public String getOpportunityCategories() {
+        return opportunityCategories;
     }
 
-    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
-        this.opportunityCategory = opportunityCategory;
+    @Override
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     @Override
@@ -781,8 +781,8 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
-        this.opportunityCategory = opportunityCategory;
+    public Application withOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
         return this;
     }
 

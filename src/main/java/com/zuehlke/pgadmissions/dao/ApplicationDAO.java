@@ -50,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
@@ -76,12 +75,12 @@ public class ApplicationDAO {
     @Inject
     private FreeMarkerConfig freemarkerConfig;
 
-    public Application getPreviousSubmittedApplication(User user, PrismOpportunityCategory opportunityCategory) {
+    public Application getPreviousSubmittedApplication(User user, String opportunityCategories) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .add(Restrictions.eq("user", user));
 
-        if (opportunityCategory != null) {
-            criteria.add(Restrictions.eq("opportunityCategory", opportunityCategory));
+        if (opportunityCategories != null) {
+            criteria.add(Restrictions.eq("opportunityCategories", opportunityCategories));
         }
 
         return (Application) criteria.add(Restrictions.isNotNull("submittedTimestamp")) //
@@ -209,7 +208,7 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<PrismWorkflowPropertyDefinition> getApplicationWorkflowPropertyDefinitions(Set<Integer> applicationIds) {
+    public List<PrismWorkflowPropertyDefinition> getApplicationWorkflowPropertyDefinitions(Collection<Integer> applicationIds) {
         return (List<PrismWorkflowPropertyDefinition>) sessionFactory.getCurrentSession().createCriteria(WorkflowPropertyConfiguration.class) //
                 .setProjection(Projections.groupProperty("definition.id")) //
                 .add(Subqueries.propertyIn("version", //
@@ -221,7 +220,7 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications, String columns) {
+    public List<ApplicationReportListRowDTO> getApplicationReport(Collection<Integer> applicationIds, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //
                         + "from ApplicationTemplate as application " + "join application.user as user " //
@@ -248,7 +247,7 @@ public class ApplicationDAO {
                         + "where application.id in :assignedApplications " //
                         + "group by application.id " //
                         + "order by application.sequenceIdentifier desc") //
-                .setParameterList("assignedApplications", assignedApplications) //
+                .setParameterList("assignedApplications", applicationIds) //
                 .setParameter("provideReferenceAction", PrismAction.APPLICATION_PROVIDE_REFERENCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
@@ -320,7 +319,7 @@ public class ApplicationDAO {
                         .add(Restrictions.like("user.email", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedProgram(ResourceParent parent, Collection<Integer> importedPrograms) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
@@ -341,7 +340,7 @@ public class ApplicationDAO {
                 .add(Restrictions.in("program.institution.id", importedInstitutions)) //
                 .list();
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedQualificationType(ResourceParent parent, Collection<Integer> importedQualificationTypes) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
@@ -352,7 +351,6 @@ public class ApplicationDAO {
                 .add(Restrictions.in("program.qualificationType.id", importedQualificationTypes)) //
                 .list();
     }
-
 
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedSubjectArea(ResourceParent parent, Collection<Integer> importedSubjectAreas) {
@@ -365,7 +363,7 @@ public class ApplicationDAO {
                 .add(Restrictions.in("subjectArea.id", importedSubjectAreas)) //
                 .list();
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedFundingSource(ResourceParent parent, Collection<Integer> importedFundingSources) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFunding.class) //
@@ -375,7 +373,7 @@ public class ApplicationDAO {
                 .add(Restrictions.in("fundingSource.id", importedFundingSources)) //
                 .list();
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //

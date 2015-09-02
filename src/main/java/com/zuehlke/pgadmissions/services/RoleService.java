@@ -140,20 +140,15 @@ public class RoleService {
         return false;
     }
 
-    public List<PrismRole> getRoles(User user) {
-        return roleDAO.getRoles(user);
-    }
-
     public List<PrismRole> getRolesOverridingRedactions(Resource resource) {
         User user = userService.getCurrentUser();
         PrismScope resourceScope = resource.getResourceScope();
         List<Integer> resourceIds = Lists.newArrayList(resource.getId());
-        return getRolesOverridingRedactions(resourceScope, resourceIds, user);
+        return getRolesOverridingRedactions(user, resourceScope, resourceIds);
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, List<Integer> resourceIds) {
-        User user = userService.getCurrentUser();
-        return getRolesOverridingRedactions(resourceScope, resourceIds, user);
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return roleDAO.getRolesOverridingRedactions(user, resourceScope, resourceIds, scopeService.getParentScopesDescending(resourceScope, SYSTEM));
     }
 
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
@@ -245,11 +240,19 @@ public class RoleService {
     }
 
     public List<PrismRole> getRolesByScope(PrismScope prismScope) {
-        return roleDAO.getRolesByScopes(prismScope);
+        return roleDAO.getRolesByScope(prismScope);
+    }
+
+    public List<PrismRole> getRolesByScope(User user, PrismScope prismScope) {
+        return roleDAO.getRolesByScope(user, prismScope);
     }
 
     public List<UserRole> getActionPerformerUserRoles(User user, PrismAction... actions) {
         return actions == null ? Lists.newArrayList() : roleDAO.getUserRoles(user, roleDAO.getActionPerformerRoles(actions));
+    }
+
+    public List<PrismRole> getRolesWithRedactions(PrismScope resourceScope) {
+        return roleDAO.getRolesWithRedactions(resourceScope);
     }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
@@ -330,10 +333,6 @@ public class RoleService {
 
             applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
         }
-    }
-
-    private List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, Collection<Integer> resourceIds, User user) {
-        return roleDAO.getRolesOverridingRedactions(resourceScope, resourceIds, scopeService.getParentScopesDescending(resourceScope, SYSTEM), user);
     }
 
 }

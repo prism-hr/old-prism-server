@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_ENDORSE;
@@ -82,6 +81,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
+import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
@@ -151,27 +151,26 @@ public class AdvertService {
         return advertDAO.getAdvert(resourceScope, resourceId);
     }
 
-    public List<com.zuehlke.pgadmissions.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO queryDTO) {
+    public List<com.zuehlke.pgadmissions.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<Integer> advertIds) {
         PrismScope[] scopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
-        if (queryDTO.isResourceAction()) {
-            Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
+        if (query.isResourceAction()) {
+            Resource resource = resourceService.getById(query.getActionId().getScope(), query.getResourceId());
             for (PrismScope resourceScope : scopes) {
                 Resource enclosing = resource.getEnclosingResource(resourceScope);
                 if (enclosing != null) {
-                    setProperty(queryDTO, pluralize(resourceScope.getLowerCamelName()), new Integer[] { enclosing.getId() });
+                    setProperty(query, pluralize(resourceScope.getLowerCamelName()), new Integer[] { enclosing.getId() });
                     break;
                 }
             }
         }
 
-        PrismActionCondition actionCondition = queryDTO.getActionCondition();
+        PrismActionCondition actionCondition = query.getActionCondition();
         actionCondition = actionCondition == null ? ACCEPT_APPLICATION : actionCondition;
-        queryDTO.setActionCondition(actionCondition);
+        query.setActionCondition(actionCondition);
 
         scopes = actionCondition.equals(ACCEPT_PROJECT) ? new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION } : scopes;
-        List<Integer> adverts = getVisibleAdverts(queryDTO, scopes, ADVERT_LIST_PAGE_ROW_COUNT);
 
-        return adverts.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(adverts);
+        return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {
@@ -473,10 +472,10 @@ public class AdvertService {
         }
     }
 
-    public List<Integer> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes, Integer maxRecords) {
-        List<Integer> adverts = Lists.newArrayList();
+    public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
+        Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getFilteredAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO, maxRecords));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO));
         }
         return adverts;
     }

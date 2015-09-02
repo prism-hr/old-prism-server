@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.dto;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
-public class ActionDTO {
+public class ActionDTO implements Comparable<ActionDTO> {
 
     private Integer resourceId;
 
@@ -44,7 +44,7 @@ public class ActionDTO {
     public void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(resourceId, actionId);
@@ -60,6 +60,16 @@ public class ActionDTO {
         }
         final ActionDTO other = (ActionDTO) object;
         return Objects.equal(resourceId, other.getResourceId()) && Objects.equal(actionId, other.getActionId());
+    }
+
+    @Override
+    public int compareTo(ActionDTO otherActionDTO) {
+        int resourceComparison = resourceId.compareTo(otherActionDTO.getResourceId());
+        if (resourceComparison == 0) {
+            int urgentComparison = raisesUrgentFlag.compareTo(otherActionDTO.getRaisesUrgentFlag());
+            return urgentComparison == 0 ? actionId.name().compareTo(otherActionDTO.getActionId().name()) : urgentComparison;
+        }
+        return resourceComparison;
     }
 
 }

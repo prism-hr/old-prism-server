@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -70,6 +71,8 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId") //
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
@@ -102,6 +105,8 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
@@ -138,6 +143,8 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId") //
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
@@ -170,6 +177,8 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
@@ -205,6 +214,8 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .createAlias("comment." + resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
@@ -288,7 +299,7 @@ public class NotificationDAO {
                 .executeUpdate();
     }
 
-    public void resetNotificationsSyndicated(PrismScope resourceScope, Set<Integer> assignedResources) {
+    public void resetNotificationsSyndicated(PrismScope resourceScope, Collection<Integer> assignedResources) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + resourceScope.getResourceClass().getSimpleName() + " " //
                         + "set lastRemindedRequestIndividual = null, " //

@@ -29,7 +29,7 @@ public class ResumeService {
 
     public void prepopulateResume(Resume resume) {
         User user = resume.getUser();
-        Resume templateResume = resumeDAO.getPreviousCompletedResume(resume.getUser(), resume.getOpportunityCategory());
+        Resume templateResume = resumeDAO.getPreviousCompletedResume(resume.getUser(), resume.getOpportunityCategories());
         templateResume = templateResume == null ? resumeDAO.getPreviousCompletedResume(user, null) : templateResume;
 
         if (templateResume != null) {

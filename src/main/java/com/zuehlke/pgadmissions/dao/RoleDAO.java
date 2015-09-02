@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
@@ -42,16 +43,8 @@ public class RoleDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<PrismRole> getRoles(User user) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("role.id")) //
-                .add(Restrictions.eq("user", user)) //
-                .list();
-    }
-
-    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, Collection<Integer> resourceIds, Collection<PrismScope> parentScopes, User user) {
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope resourceScope, Collection<Integer> resourceIds, Collection<PrismScope> parentScopes) {
         String resourceReference = resourceScope.getLowerCamelName();
-        String resourceIdReference = resourceReference + ".id";
 
         Junction resourceConstraint = Restrictions.disjunction() //
                 .add(Restrictions.eqProperty(resourceReference, "userRole." + resourceReference));
@@ -63,7 +56,6 @@ public class RoleDAO {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
@@ -76,8 +68,7 @@ public class RoleDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .add(Restrictions.in(resourceIdReference, resourceIds)) //
+                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -265,10 +256,18 @@ public class RoleDAO {
         return (List<UserRole>) criteria.list();
     }
 
-    public List<PrismRole> getRolesByScopes(PrismScope prismScope) {
+    public List<PrismRole> getRolesByScope(PrismScope prismScope) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(Role.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq("scope.id", prismScope)) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesByScope(User user, PrismScope prismScope) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property("role.id")) //
+                .add(Restrictions.isNotNull(prismScope.getLowerCamelName())) //
+                .add(Restrictions.eq("user", user)) //
                 .list();
     }
 
@@ -289,6 +288,14 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("stateAction", "stateAction") //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesWithRedactions(PrismScope resourceScope) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class) //
+                .setProjection(Projections.groupProperty("role.id").as("id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("role.scope.id", resourceScope))
                 .list();
     }
 

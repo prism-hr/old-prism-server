@@ -223,7 +223,7 @@ public class ApplicationDAO {
     public List<ApplicationReportListRowDTO> getApplicationReport(Collection<Integer> applicationIds, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //
-                        + "from ApplicationTemplate as application " + "join application.user as user " //
+                        + "from Application as application " + "join application.user as user " //
                         + "left join application.personalDetail as personalDetail " //
                         + "left join personalDetail.firstNationality as nationality " //
                         + "left join personalDetail.domicile as domicile " //

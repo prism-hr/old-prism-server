@@ -100,8 +100,7 @@ public class ResourceController {
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public ResourceRepresentationExtended getResource(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public ResourceRepresentationExtended getResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceMapper.getResourceRepresentationClient(resource);
     }
@@ -109,8 +108,7 @@ public class ResourceController {
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=simple")
     @PreAuthorize("permitAll")
-    public ResourceRepresentationSimple getResourceSimple(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public ResourceRepresentationSimple getResourceSimple(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceMapper.getResourceRepresentationSimple(resource);
     }
@@ -118,17 +116,14 @@ public class ResourceController {
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=location")
     @PreAuthorize("permitAll")
-    public ResourceRepresentationLocation getResourceLocation(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public ResourceRepresentationLocation getResourceLocation(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceMapper.getResourceRepresentationLocation(resource);
     }
 
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
-            @PathVariable Integer resourceId,
-            @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope propertiesScope) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getDisplayProperties(resource, propertiesScope);

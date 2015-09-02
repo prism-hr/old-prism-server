@@ -12,6 +12,8 @@ public class ActionDTO implements Comparable<ActionDTO> {
     private Boolean raisesUrgentFlag;
 
     private Boolean primaryState;
+    
+    private Boolean declinable;
 
     public Integer getResourceId() {
         return resourceId;
@@ -43,6 +45,14 @@ public class ActionDTO implements Comparable<ActionDTO> {
 
     public void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
+    }
+
+    public Boolean getDeclinable() {
+        return declinable;
+    }
+
+    public void setDeclinable(Boolean declinable) {
+        this.declinable = declinable;
     }
 
     @Override

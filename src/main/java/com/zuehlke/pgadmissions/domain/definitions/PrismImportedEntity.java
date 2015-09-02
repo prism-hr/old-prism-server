@@ -99,7 +99,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withTable("imported_institution")
                     .withPivotColumn("imported_domicile_id")
                     .withPivotColumn("name")
-                    .withColumn("ucas_id")
+                    .withColumn("ucas_ids")
                     .withColumn("facebook_id")
                     .withColumn("hesa_id")
                     .withColumn("indexed")

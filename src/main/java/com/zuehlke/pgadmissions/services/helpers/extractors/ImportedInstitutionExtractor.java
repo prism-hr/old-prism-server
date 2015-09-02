@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.zuehlke.pgadmissions.PrismConstants.NULL;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
@@ -25,7 +28,11 @@ public class ImportedInstitutionExtractor<T extends ImportedInstitutionRequest> 
                 cells.add(prepareStringForSqlInsert(definition.getName()));
 
                 if (systemImport) {
-                    cells.add(prepareIntegerForSqlInsert(((ImportedInstitutionImportDTO) definition).getUcasId()));
+                    List<Integer> ucasIds = ((ImportedInstitutionImportDTO) definition).getUcasIds();
+                    String ucasIdsString = Optional.ofNullable(ucasIds)
+                            .map(ids -> ids.stream().map(Objects::toString).collect(Collectors.joining("|")))
+                            .orElse(null);
+                    cells.add(prepareStringForSqlInsert(ucasIdsString));
                     cells.add(prepareStringForSqlInsert(((ImportedInstitutionImportDTO) definition).getFacebookId()));
                     cells.add(prepareIntegerForSqlInsert(((ImportedInstitutionImportDTO) definition).getHesaId()));
                 } else {

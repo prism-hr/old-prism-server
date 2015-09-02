@@ -5,12 +5,11 @@ import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
 
-    @Min(1)
-    @Max(10000)
-    private Integer ucasId;
+    private List<Integer> ucasIds;
 
     @Size(max = 20)
     private String facebookId;
@@ -34,12 +33,12 @@ public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
         super(name, code);
     }
 
-    public Integer getUcasId() {
-        return ucasId;
+    public List<Integer> getUcasIds() {
+        return ucasIds;
     }
 
-    public void setUcasId(Integer ucasId) {
-        this.ucasId = ucasId;
+    public void setUcasIds(List<Integer> ucasIds) {
+        this.ucasIds = ucasIds;
     }
 
     public String getFacebookId() {
@@ -66,8 +65,8 @@ public class ImportedInstitutionImportDTO extends ImportedInstitutionRequest {
         this.studentsNumber = studentsNumber;
     }
 
-    public ImportedInstitutionImportDTO withUcasId(Integer ucasId) {
-        this.ucasId = ucasId;
+    public ImportedInstitutionImportDTO withUcasIds(final List<Integer> ucasIds) {
+        this.ucasIds = ucasIds;
         return this;
     }
 

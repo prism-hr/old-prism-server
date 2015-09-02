@@ -1,23 +1,14 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.isValidUcasCodeFormat;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,15 +23,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.utils.PrismTargetingUtils.isValidUcasCodeFormat;
 
 @Service
 public class ProgramUcasScraper {
@@ -50,6 +44,10 @@ public class ProgramUcasScraper {
     private static String HOST = "http://search.ucas.com";
 
     private static Pattern programNamePattern = Pattern.compile("(.+)\\s+\\(([A-Z0-9]{4})\\)( : Taught at \\d+ locations)?");
+
+    private Set<String> campuses = new HashSet<>();
+
+    private Set<String> locations = new HashSet<>();
 
     private static URIBuilder newURIBuilder(String string) {
         try {
@@ -139,7 +137,7 @@ public class ProgramUcasScraper {
                     .select("li.subjectsearchsteparea")
                     .stream()
                     .flatMap(area -> area.select("input[name=\"flt99\"]").stream())
-                    .<Pair<Element, String>> flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
+                    .<Pair<Element, String>>flatMap(input -> years.stream().map(year -> ImmutablePair.of(input, year)))
                     .map(pair -> newURIBuilder(uriBase).addParameter(pair.getLeft().attr("name"), pair.getLeft().attr("value"))
                             .addParameter("AvailableIn", pair.getRight()).toString())
                     .collect(Collectors.toList());
@@ -195,6 +193,18 @@ public class ProgramUcasScraper {
 
             Integer ucasProgramId = Integer.parseInt(courseResult.id().replace("result-", "").replace("course-", ""));
 
+            Set<String> campuses;
+            Element locationGroupElement = courseResult.getElementsByClass("locationgrouplinks").first();
+            if (locationGroupElement != null) {
+                campuses = locationGroupElement.getElementsByTag("span").stream().map(span -> span.text()).collect(Collectors.toSet());
+            } else {
+                String campus = courseResult.select(".courseinfovenue").text();
+                if (campus.length() == 0) {
+                    campus = "Main Site";
+                }
+                campuses = Collections.singleton(campus);
+            }
+
             String qualification = courseResult.select(".courseinfooutcome").text();
             String level = extractProgramLevelFromQualificationElement(courseResult.select(".resultbottomarea .coursequalarea").first());
             String programUrl = courseResult.select("div.coursenamearea a").first().attr("href");
@@ -206,7 +216,7 @@ public class ProgramUcasScraper {
                 Set<String> jacsCodes = deriveJacsCodes(courseCode);
                 ImportedProgramImportDTO program = new ImportedProgramImportDTO(programName).withInstitution(Integer.parseInt(ucasInstitutionId))
                         .withLevel(level).withQualification(qualification).withUcasSubjects(Sets.newHashSet(subjectId)).withWeight(1)
-                        .withCode(courseCode).withJacsCodes(jacsCodes);
+                        .withCode(courseCode).withJacsCodes(jacsCodes).withCampuses(campuses);
                 ImportedProgramScrapeDescriptor programDescriptor = new ImportedProgramScrapeDescriptor(program, ucasProgramId);
                 programs.put(programMapKey, programDescriptor);
             } else {

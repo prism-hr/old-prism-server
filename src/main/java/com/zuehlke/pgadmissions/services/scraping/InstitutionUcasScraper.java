@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -28,6 +10,19 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
+import org.apache.commons.lang3.ObjectUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class InstitutionUcasScraper {
@@ -40,10 +35,14 @@ public class InstitutionUcasScraper {
 
         CollectionType listType = objectMapper.getTypeFactory().constructCollectionType(List.class, ImportedInstitutionImportDTO.class);
         List<ImportedInstitutionImportDTO> institutions = objectMapper.readValue(initialDataReader, listType);
-        List<ImportedInstitutionImportDTO> nonUcasInstitutions = institutions.stream().filter(i -> i.getUcasId() == null).collect(Collectors.toList());
-        TreeMap<Integer, ImportedInstitutionImportDTO> ucasInstitutions = new TreeMap<>(institutions.stream()
-                .filter(i -> i.getUcasId() != null)
-                .collect(Collectors.toMap(o -> o.getUcasId(), i -> i)));
+        List<ImportedInstitutionImportDTO> nonUcasInstitutions = institutions.stream().filter(i -> i.getUcasIds() == null).collect(Collectors.toList());
+        List<ImportedInstitutionImportDTO> ucasInstitutionList = institutions.stream().filter(i -> i.getUcasIds() != null).collect(Collectors.toList());
+        TreeMap<Integer, ImportedInstitutionImportDTO> ucasInstitutions = new TreeMap<>();
+        for (ImportedInstitutionImportDTO ucasInstitution : ucasInstitutionList) {
+            for (Integer ucasId : ucasInstitution.getUcasIds()) {
+                ucasInstitutions.put(ucasId, ucasInstitution);
+            }
+        }
 
         TreeMap<Integer, ImportedInstitutionImportDTO> newInstitutionMap = new TreeMap<>();
         Set<Integer> encounteredUcasIds = new HashSet<>();
@@ -60,7 +59,7 @@ public class InstitutionUcasScraper {
                 String name = nameElement.text();
                 ImportedInstitutionImportDTO institution = ucasInstitutions.get(ucasId);
                 if (institution == null) {
-                    institution = new ImportedInstitutionImportDTO(name).withUcasId(ucasId);
+                    institution = new ImportedInstitutionImportDTO(name).withUcasIds(Collections.singletonList(ucasId));
                     newInstitutionMap.put(ucasId, institution);
                 }
                 Element numberOfStudentsElement = html.getElementsByClass("numberofstudents").first();
@@ -100,7 +99,8 @@ public class InstitutionUcasScraper {
         jg.close();
     }
 
-    public UcasInstitutionData getInstitutionData(int ucasId) {
+    public UcasInstitutionData getInstitutionData(String ucasIds) {
+        int ucasId = Integer.parseInt(ucasIds.split("\\|", 2)[0]);
         Document document = null;
         try {
             document = getInstitutionHtmlDocument(ucasId);

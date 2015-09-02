@@ -257,8 +257,8 @@ public class ImportedEntityDAO {
 
     public List<ImportedInstitution> getImportedUcasInstitutions() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
-                .add(Restrictions.isNotNull("ucasId"))
-                .addOrder(Order.asc("ucasId"))
+                .add(Restrictions.isNotNull("ucasIds"))
+                .addOrder(Order.asc("ucasIds"))
                 .list();
     }
 
@@ -497,7 +497,7 @@ public class ImportedEntityDAO {
     public List<ImportedInstitution> getUnimportedUcasInstitutions() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)
                 .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.isNotNull("ucasId"))
+                .add(Restrictions.isNotNull("ucasIds"))
                 .add(Restrictions.isNull("institution.id"))
                 .list();
     }

@@ -40,8 +40,8 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "ucas_id", unique = true)
-    private Integer ucasId;
+    @Column(name = "ucas_ids", unique = true)
+    private String ucasIds;
 
     @Column(name = "facebook_id")
     private String facebookId;
@@ -102,12 +102,12 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
         this.name = name;
     }
 
-    public Integer getUcasId() {
-        return ucasId;
+    public String getUcasIds() {
+        return ucasIds;
     }
 
-    public void setUcasId(Integer ucasId) {
-        this.ucasId = ucasId;
+    public void setUcasIds(String ucasIds) {
+        this.ucasIds = ucasIds;
     }
 
     public String getFacebookId() {
@@ -178,8 +178,8 @@ public class ImportedInstitution extends ImportedEntity<Integer, ImportedInstitu
         return this;
     }
 
-    public ImportedInstitution withUcasId(Integer ucasId) {
-        this.ucasId = ucasId;
+    public ImportedInstitution withUcasIds(final String ucasIds) {
+        this.ucasIds = ucasIds;
         return this;
     }
 

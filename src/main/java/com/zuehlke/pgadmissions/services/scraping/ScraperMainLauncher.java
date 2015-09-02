@@ -1,20 +1,7 @@
 package com.zuehlke.pgadmissions.services.scraping;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -24,12 +11,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedSubjectAreaImportDTO;
-
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedSubjectAreaRequest;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class ScraperMainLauncher {
 
@@ -43,35 +40,86 @@ public class ScraperMainLauncher {
 
         ProgramUcasScraper programScraper = new ProgramUcasScraper();
         switch (args[0]) {
-        case "facebookDefinitions":
-            getFacebookDefinitions();
-            break;
-        case "subjectAreas":
-            importSubjectAreas(args[1]);
-            break;
-        case "institutions":
-            InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
-            try (InputStreamReader initialDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
-                    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8)) {
-                institutionScraper.scrape(initialDataReader, writer);
-            }
-            break;
-        case "programs":
-            programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1]), Charsets.UTF_8));
-            break;
-        case "processPrograms":
-            programScraper.processProgramDescriptors(new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8),
-                    new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8));
-            break;
-        case "applyCodeMappings":
-            applyCodeMapping(args[1]);
-        case "institutionHesaIds":
-            try (InputStreamReader hesaDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
-                    InputStreamReader institutionReader = new InputStreamReader(new FileInputStream(args[2]), Charsets.UTF_8);
-                    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[3]), Charsets.UTF_8)) {
-                associateInstitutionsWithHesaIds(hesaDataReader, institutionReader, writer);
+            case "facebookDefinitions":
+                getFacebookDefinitions();
+                break;
+            case "subjectAreas":
+                importSubjectAreas(args[1]);
+                break;
+            case "institutions":
+                InstitutionUcasScraper institutionScraper = new InstitutionUcasScraper();
+                try (InputStreamReader initialDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
+                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8)) {
+                    institutionScraper.scrape(initialDataReader, writer);
+                }
+                break;
+            case "programs":
+                programScraper.scrape(new OutputStreamWriter(new FileOutputStream(args[1]), Charsets.UTF_8));
+                break;
+            case "processPrograms":
+                programScraper.processProgramDescriptors(new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8),
+                        new OutputStreamWriter(new FileOutputStream(args[2]), Charsets.UTF_8));
+                break;
+            case "applyCodeMappings":
+                applyCodeMapping(args[1]);
+                break;
+            case "institutionHesaIds":
+                try (InputStreamReader hesaDataReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
+                     InputStreamReader institutionReader = new InputStreamReader(new FileInputStream(args[2]), Charsets.UTF_8);
+                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[3]), Charsets.UTF_8)) {
+                    associateInstitutionsWithHesaIds(hesaDataReader, institutionReader, writer);
+                }
+                break;
+            case "campuses":
+                try (InputStreamReader institutionReader = new InputStreamReader(new FileInputStream(args[1]), Charsets.UTF_8);
+                     InputStreamReader programReader = new InputStreamReader(new FileInputStream(args[2]), Charsets.UTF_8);
+                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(args[3]), Charsets.UTF_8)) {
+                    extractInstitutionsAndCampuses(institutionReader, programReader, writer);
+                }
+                break;
+        }
+
+    }
+
+    private static void extractInstitutionsAndCampuses(InputStreamReader institutionReader, InputStreamReader programReader, OutputStreamWriter writer) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        CollectionType listType = objectMapper.getTypeFactory().constructCollectionType(List.class, ImportedInstitutionImportDTO.class);
+        List<ImportedInstitutionImportDTO> institutionList = objectMapper.readValue(institutionReader, listType);
+        institutionList = institutionList.stream().filter(i -> i.getUcasIds() != null).collect(Collectors.toList());
+        Map<Integer, ImportedInstitutionImportDTO> institutions = new HashMap<>();
+        for(ImportedInstitutionImportDTO institution : institutionList) {
+            for (Integer ucasId : institution.getUcasIds()) {
+                institutions.put(ucasId, institution);
             }
         }
+
+        listType = objectMapper.getTypeFactory().constructCollectionType(List.class, ProgramUcasScraper.ImportedProgramScrapeDescriptor.class);
+        List<ProgramUcasScraper.ImportedProgramScrapeDescriptor> programs = objectMapper.readValue(programReader, listType);
+
+        TreeMap<Integer, Multiset<String>> campusesByInstitutions = new TreeMap<>();
+        for (ProgramUcasScraper.ImportedProgramScrapeDescriptor programDescriptor : programs) {
+            ImportedProgramImportDTO program = programDescriptor.getProgram();
+            Integer institutionId = program.getInstitution();
+            if (!campusesByInstitutions.containsKey(institutionId)) {
+                campusesByInstitutions.put(institutionId, HashMultiset.create());
+            }
+            Multiset<String> campuses = campusesByInstitutions.get(institutionId);
+            campuses.addAll(program.getCampuses());
+        }
+
+        CSVWriter campusesWriter = new CSVWriter(writer, ';');
+        for (Integer institutionId : institutions.keySet()) {
+            ImportedInstitutionImportDTO institution = institutions.get(institutionId);
+            Multiset<String> campuses = campusesByInstitutions.get(institutionId);
+            if (campuses != null) {
+                for (String campus : campuses.elementSet()) {
+                    campusesWriter.writeNext(new String[]{institution.getName(), campus, Integer.toString(campuses.count(campus))});
+                }
+            }
+        }
+        campusesWriter.flush();
     }
 
     private static void importSubjectAreas(String filename) throws IOException {
@@ -157,7 +205,7 @@ public class ScraperMainLauncher {
         try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), Charsets.UTF_8))) {
             for (String code : subjectAreas.keySet()) {
                 ImportedSubjectAreaRequest area = subjectAreas.get(code);
-                writer.writeNext(new String[] { code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code)) });
+                writer.writeNext(new String[]{code, area.getName(), Strings.nullToEmpty(area.getDescription()), Strings.nullToEmpty(codeMap.get(code))});
             }
         }
     }
@@ -211,5 +259,28 @@ public class ScraperMainLauncher {
 
         jg.writeEndArray();
         jg.close();
+    }
+
+    private static final class CampusDescriptor {
+
+        private String name;
+
+        private Integer programsCount = 0;
+
+        public CampusDescriptor(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Integer getProgramsCount() {
+            return programsCount;
+        }
+
+        public void incrementProgramCount() {
+            programsCount++;
+        }
     }
 }

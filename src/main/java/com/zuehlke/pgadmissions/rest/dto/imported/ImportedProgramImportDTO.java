@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
-import java.util.Set;
-
 import uk.co.alumeni.prism.api.model.imported.request.ImportedProgramRequest;
+
+import java.util.Set;
 
 public class ImportedProgramImportDTO extends ImportedProgramRequest {
 
@@ -11,6 +11,8 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
     private Set<String> jacsCodes;
 
     private Set<Integer> ucasSubjects;
+
+    private Set<String> campuses;
 
     public ImportedProgramImportDTO() {
         return;
@@ -48,6 +50,14 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
         this.ucasSubjects = ucasSubjects;
     }
 
+    public Set<String> getCampuses() {
+        return campuses;
+    }
+
+    public void setCampuses(Set<String> campuses) {
+        this.campuses = campuses;
+    }
+
     public ImportedProgramImportDTO withWeight(Integer weight) {
         this.weight = weight;
         return this;
@@ -75,6 +85,11 @@ public class ImportedProgramImportDTO extends ImportedProgramRequest {
 
     public ImportedProgramImportDTO withUcasSubjects(Set<Integer> ucasSubjects) {
         this.ucasSubjects = ucasSubjects;
+        return this;
+    }
+
+    public ImportedProgramImportDTO withCampuses(final Set<String> campuses) {
+        this.campuses = campuses;
         return this;
     }
 

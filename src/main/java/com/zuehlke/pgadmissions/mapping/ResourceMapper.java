@@ -129,8 +129,6 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 @Transactional
 public class ResourceMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceMapper.class);
-
     @Value("${application.url}")
     private String applicationUrl;
 
@@ -195,9 +193,6 @@ public class ResourceMapper {
     private ApplicationContext applicationContext;
 
     public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceIdentifier) throws Exception {
-        StopWatch watch = new StopWatch();
-        watch.start();
-        
         DateTime baseline = new DateTime();
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
 
@@ -208,10 +203,8 @@ public class ResourceMapper {
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<EntityOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
         processRowDescriptors(resources, resourceIds, summaries);
-
-        logger.info("Got resource Ids: " + watch.getTime());
         
-        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds, watch).forEach(row -> {
+        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds).forEach(row -> {
             ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
             representation.setScope(scope);
             representation.setId(row.getResourceId());
@@ -287,8 +280,6 @@ public class ResourceMapper {
             representation.setActions(actions);
             representations.add(representation);
         });
-        
-        logger.info("Got resource Representations: " + watch.getTime());
 
         return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries));
     }

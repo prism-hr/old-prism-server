@@ -56,6 +56,10 @@ public abstract class Resource implements UniqueEntity {
     public abstract Advert getAdvert();
 
     public abstract void setAdvert(Advert advert);
+    
+    public abstract String getOpportunityCategories();
+
+    public abstract void setOpportunityCategories(String opportunityCategories);
 
     public abstract Application getApplication();
 

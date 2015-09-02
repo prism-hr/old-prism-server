@@ -1,18 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-
 public class ListSummaryRepresentation {
 
-    private PrismOpportunityCategory opportunityCategory;
-    
+    private String opportunityCategory;
+
     private Integer rowCount;
 
-    public PrismOpportunityCategory getOpportunityCategory() {
+    public String getOpportunityCategory() {
         return opportunityCategory;
     }
 
-    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+    public void setOpportunityCategory(String opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
     }
 
@@ -23,8 +21,8 @@ public class ListSummaryRepresentation {
     public void setRowCount(Integer rowCount) {
         this.rowCount = rowCount;
     }
-    
-    public ListSummaryRepresentation withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+
+    public ListSummaryRepresentation withOpportunityCategory(String opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
         return this;
     }
@@ -33,5 +31,5 @@ public class ListSummaryRepresentation {
         this.rowCount = rowCount;
         return this;
     }
-    
+
 }

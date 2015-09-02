@@ -11,10 +11,6 @@ import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 public abstract class ResourceParent extends Resource implements ResourceParentDefinition<Advert> {
 
-    public abstract String getOpportunityCategories();
-
-    public abstract void setOpportunityCategories(String opportunityCategories);
-
     public abstract String getAdvertIncompleteSection();
 
     public abstract void setAdvertIncompleteSection(String advertIncompleteSection);

@@ -13,6 +13,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
+import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
@@ -32,7 +34,10 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -65,6 +70,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
@@ -75,7 +81,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ListSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
@@ -123,6 +128,8 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 @Service
 @Transactional
 public class ResourceMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResourceMapper.class);
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -188,12 +195,23 @@ public class ResourceMapper {
     private ApplicationContext applicationContext;
 
     public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceIdentifier) throws Exception {
+        StopWatch watch = new StopWatch();
+        watch.start();
+        
         DateTime baseline = new DateTime();
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
 
         User user = userService.getCurrentUser();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier).forEach(row -> {
+
+        Set<Integer> resourceIds = Sets.newHashSet();
+        Map<String, Integer> summaries = Maps.newHashMap();
+        Set<EntityOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
+        processRowDescriptors(resources, resourceIds, summaries);
+
+        logger.info("Got resource Ids: " + watch.getTime());
+        
+        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds, watch).forEach(row -> {
             ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
             representation.setScope(scope);
             representation.setId(row.getResourceId());
@@ -269,8 +287,10 @@ public class ResourceMapper {
             representation.setActions(actions);
             representations.add(representation);
         });
+        
+        logger.info("Got resource Representations: " + watch.getTime());
 
-        return new ResourceListRepresentation().withRows(representations).withSummaries(getResourceListSummaryRepresentations(user, scope, parentScopes, filter));
+        return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries));
     }
 
     public ResourceRepresentationLocation getResourceRepresentationLocation(Resource resource) {
@@ -394,7 +414,7 @@ public class ResourceMapper {
         }
 
         representation.setOpportunityType(PrismOpportunityType.valueOf(resource.getOpportunityType().getName()));
-        representation.setOpportunityCategory(resource.getOpportunityCategory());
+        representation.setOpportunityCategory(PrismOpportunityCategory.valueOf(resource.getOpportunityCategories()));
         representation.setStudyOptions(studyOptions);
         representation.setStudyLocations(resourceService.getStudyLocations(resource));
         representation.setDurationMinimum(resource.getDurationMinimum());
@@ -844,16 +864,6 @@ public class ResourceMapper {
             }
         }
         return incompleteSections;
-    }
-
-    public List<ListSummaryRepresentation> getResourceListSummaryRepresentations(User user, PrismScope scope, List<PrismScope> parentScopes,
-            ResourceListFilterDTO filter) {
-        List<ListSummaryRepresentation> representations = Lists.newArrayList();
-        for (PrismOpportunityCategory opportunityCategory : PrismOpportunityCategory.values()) {
-            representations.add(new ListSummaryRepresentation().withOpportunityCategory(opportunityCategory)
-                    .withRowCount(resourceService.getAssignedResources(user, scope, parentScopes, filter.withOpportunityCategory(opportunityCategory)).size()));
-        }
-        return representations;
     }
 
     private static class ResourceProcessingMonth {

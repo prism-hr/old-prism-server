@@ -10,8 +10,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,7 +30,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -92,8 +89,7 @@ public class Project extends ResourceOpportunity {
     private ImportedEntitySimple opportunityType;
 
     @Column(name = "opportunity_category", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismOpportunityCategory opportunityCategory;
+    private String opportunityCategories;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -304,13 +300,13 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public PrismOpportunityCategory getOpportunityCategory() {
-        return opportunityCategory;
+    public String getOpportunityCategories() {
+        return opportunityCategories;
     }
 
     @Override
-    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
-        this.opportunityCategory = opportunityCategory;
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     @Override
@@ -641,16 +637,6 @@ public class Project extends ResourceOpportunity {
     public Project withCode(String code) {
         this.code = code;
         return this;
-    }
-
-    @Override
-    public String getOpportunityCategories() {
-        return null;
-    }
-
-    @Override
-    public void setOpportunityCategories(String opportunityCategories) {
-        return;
     }
 
     @Override

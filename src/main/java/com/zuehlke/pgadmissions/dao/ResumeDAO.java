@@ -13,7 +13,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -23,12 +22,12 @@ public class ResumeDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public Resume getPreviousCompletedResume(User user, PrismOpportunityCategory opportunityCategory) {
+    public Resume getPreviousCompletedResume(User user, String opportunityCategories) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Resume.class) //
                 .add(Restrictions.eq("user", user));
 
-        if (opportunityCategory != null) {
-            criteria.add(Restrictions.eq("opportunityCategory", opportunityCategory));
+        if (opportunityCategories != null) {
+            criteria.add(Restrictions.eq("opportunityCategories", opportunityCategories));
         }
 
         return (Resume) criteria.add(Restrictions.isNotNull("submittedTimestamp")) //

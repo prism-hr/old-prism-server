@@ -14,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -244,7 +245,7 @@ public class NotificationService {
                     .withDataImportErrorMessage(errorMessage));
         }
     }
-    
+
     public void sendInvitationNotifications(Comment comment) {
         for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
             User invitee = assignee.getUser();
@@ -253,7 +254,7 @@ public class NotificationService {
             }
         }
     }
-    
+
     public void sendInvitationNotification(User user, User invitee) {
         System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_INVITATION_NOTIFICATION);
@@ -292,9 +293,9 @@ public class NotificationService {
         notificationDAO.resetNotifications(user);
         for (PrismScope scope : PrismScope.values()) {
             List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-            Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
-            if (!assignedResources.isEmpty()) {
-                notificationDAO.resetNotificationsSyndicated(scope, assignedResources);
+            List<Integer> resourceIds = resourceService.getResources(user, scope, parentScopes).stream().map(a -> a.getId()).collect(Collectors.toList());
+            if (!resourceIds.isEmpty()) {
+                notificationDAO.resetNotificationsSyndicated(scope, resourceIds);
             }
         }
     }

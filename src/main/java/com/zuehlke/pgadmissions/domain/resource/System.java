@@ -222,6 +222,16 @@ public class System extends Resource {
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
+    
+    @Override
+    public String getOpportunityCategories() {
+        return null;
+    }
+    
+    @Override
+    public void setOpportunityCategories(String opportunityCategories) {
+        return;
+    }
 
     @Override
     public Application getApplication() {

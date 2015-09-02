@@ -32,7 +32,7 @@ public class ResumeCreator implements ResourceCreator<ApplicationDTO> {
     public Resource create(User user, ApplicationDTO newResource) {
         ResourceDTO parentResourceDTO = newResource.getParentResource();
         ResourceParent parentResource = (ResourceParent) resourceService.getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
-        Resume resume = new Resume().withScope(RESUME).withUser(user).withParentResource(parentResource).withOpportunityCategory(newResource.getOpportunityCategory());
+        Resume resume = new Resume().withScope(RESUME).withUser(user).withParentResource(parentResource).withOpportunityCategories(newResource.getOpportunityCategory().name());
 
         Resume persistentResume = entityService.getDuplicateEntity(resume);
         if (persistentResume != null) {

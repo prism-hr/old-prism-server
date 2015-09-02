@@ -25,7 +25,7 @@ public class StaticDataController {
     private HesaDataImporter hesaDataImporter;
 
     @RequestMapping(value = "hesa", method = RequestMethod.GET)
-    public void importHesa() {
+    public void importHesa() throws Exception {
         hesaDataImporter.importHesaData();
     }
 

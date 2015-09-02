@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -54,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -106,7 +105,7 @@ public class ApplicationService {
 
     @Inject
     private RoleService roleService;
-    
+
     @Inject
     private UserService userService;
 
@@ -269,15 +268,15 @@ public class ApplicationService {
     public DataTable getApplicationReport(ResourceListFilterDTO filter) throws Exception {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
 
-        PrismScope scopeId = PrismScope.APPLICATION;
+        PrismScope scopeId = APPLICATION;
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(APPLICATION, SYSTEM);
 
         User user = userService.getCurrentUser();
-        resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
-        Set<Integer> assignedApplications = resourceService.getAssignedResources(user, scopeId, parentScopeIds, filter);
+        boolean hasRedactions = actionService.hasRedactions(user, scopeId);
 
+        resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
+        List<Integer> assignedApplications = resourceService.getResources(user, scopeId, parentScopeIds, filter).stream().map(a -> a.getId()).collect(Collectors.toList());
         List<PrismWorkflowPropertyDefinition> workflowPropertyDefinitions = applicationDAO.getApplicationWorkflowPropertyDefinitions(assignedApplications);
-        List<PrismActionRedactionType> redactions = actionService.getRedactions(APPLICATION, assignedApplications, user);
 
         DataTable dataTable = new DataTable();
 
@@ -286,7 +285,7 @@ public class ApplicationService {
         List<String> columnAccessors = Lists.newLinkedList();
         for (PrismReportColumn column : PrismReportColumn.values()) {
             if ((column.getDefinitions().isEmpty() || !Collections.disjoint(column.getDefinitions(), workflowPropertyDefinitions))
-                    && (redactions.isEmpty() || Collections.disjoint(redactions, column.getRedactions()))) {
+                    && !(hasRedactions && column.isHasRedactions())) {
                 headers.add(new ColumnDescription(column.getAccessor(), TEXT, loader.loadLazy(column.getTitle())));
                 columns.add(column);
                 columnAccessors.add(column.getColumnAccessor());
@@ -327,7 +326,7 @@ public class ApplicationService {
 
     public void prepopulateApplication(Application application) {
         User user = application.getUser();
-        Application templateApplication = applicationDAO.getPreviousSubmittedApplication(user, application.getOpportunityCategory());
+        Application templateApplication = applicationDAO.getPreviousSubmittedApplication(user, application.getOpportunityCategories());
         templateApplication = templateApplication == null ? applicationDAO.getPreviousSubmittedApplication(user, null) : templateApplication;
 
         if (templateApplication != null) {
@@ -410,7 +409,7 @@ public class ApplicationService {
         return resourceService.getResourceStateGroups(application).contains(PrismStateGroup.APPLICATION_APPROVED)
                 && !application.getState().equals(APPLICATION_APPROVED);
     }
-    
+
     public <T extends Application> void syncronizeApplicationRating(T application) {
         ResourceRatingSummaryDTO ratingSummary = getApplicationRatingSummary(application);
         application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
@@ -420,27 +419,27 @@ public class ApplicationService {
     public List<Integer> getApplicationsByImportedProgram(ResourceParent parent, Collection<Integer> importedPrograms) {
         return applicationDAO.getApplicationsByImportedProgram(parent, importedPrograms);
     }
-    
+
     public List<Integer> getApplicationsByImportedInstitution(ResourceParent parent, Collection<Integer> importedInstitutions) {
         return applicationDAO.getApplicationsByImportedInstitution(parent, importedInstitutions);
     }
-    
+
     public List<Integer> getApplicationsByImportedQualificationType(ResourceParent parent, Collection<Integer> importedQualificationTypes) {
         return applicationDAO.getApplicationsByImportedQualificationType(parent, importedQualificationTypes);
     }
-    
+
     public List<Integer> getApplicationsByImportedSubjectArea(ResourceParent parent, Collection<Integer> importedSubjectAreas) {
         return applicationDAO.getApplicationsByImportedSubjectArea(parent, importedSubjectAreas);
     }
- 
+
     public List<Integer> getApplicationsByImportedFundingSource(ResourceParent parent, Collection<Integer> importedFundingSources) {
         return applicationDAO.getApplicationsByImportedFundingSource(parent, importedFundingSources);
     }
-    
+
     public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {
         return applicationDAO.getApplicationsByImportedRejectionReason(parent, importedRejectionReasons);
     }
-    
+
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {
         ResourceParent parentResource = (ResourceParent) application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {

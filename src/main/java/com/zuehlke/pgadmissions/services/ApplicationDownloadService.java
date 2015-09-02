@@ -81,7 +81,7 @@ public class ApplicationDownloadService {
             pdfDocument.open();
 
             HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
-            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(APPLICATION, Lists.newArrayList(applicationIds));
+            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(userService.getCurrentUser(), APPLICATION, Lists.newArrayList(applicationIds));
             HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers = Maps.newHashMap();
 
             for (Integer applicationId : applicationIds) {

@@ -111,7 +111,7 @@ public class ActionService {
         return actionDAO.getCustomActionEnhancements(resource, actionId, user);
     }
 
-    public HashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Set<Integer> resourceIds) {
+    public HashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         HashMultimap<Integer, ActionDTO> creationActions = HashMultimap.create();
         for (ActionDTO resourceListActionDTO : actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, APPLICATION)) {
             creationActions.put(resourceListActionDTO.getResourceId(), resourceListActionDTO);
@@ -182,19 +182,15 @@ public class ActionService {
         return actionRedactions;
     }
 
-    public boolean hasRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
-        return !getRedactions(resourceScope, resourceIds, user).isEmpty();
-    }
+    public boolean hasRedactions(User user, PrismScope resourceScope) {
+        if (roleService.getPermissionScope(user).ordinal() >= resourceScope.ordinal()) {
+            List<PrismRole> userRoles = roleService.getRolesByScope(user, resourceScope);
+            List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
 
-    public List<PrismActionRedactionType> getRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
-        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope, Lists.newArrayList(resourceIds));
-        if (rolesOverridingRedactions.isEmpty()) {
-            List<PrismRole> roleIds = roleService.getRoles(user);
-            if (!(resourceIds.isEmpty() || roleIds.isEmpty())) {
-                return actionDAO.getRedactions(resourceScope, resourceIds, roleIds);
-            }
+            userRoles.removeAll(rolesWithRedactions);
+            userRoles.isEmpty();
         }
-        return Lists.newArrayList();
+        return false;
     }
 
     public List<Action> getCustomizableActions() {

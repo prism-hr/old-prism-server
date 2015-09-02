@@ -18,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -459,7 +461,7 @@ public class AdvertService {
     public void recordPartnershipStateTransition(Resource resource, Comment comment) {
         if (comment.isPartnershipStateTransitionComment()) {
             List<Advert> targetAdverts = Lists.newArrayList();
-            PrismPartnershipState partnershipTransitionState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
+            PrismPartnershipState partnershipTransitionState = isFalse(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
             for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(),
                     new PrismAction[] { PROJECT_ENDORSE, PROGRAM_ENDORSE, DEPARTMENT_ENDORSE, INSTITUTION_ENDORSE })) {
                 Resource userResource = userRole.getResource();

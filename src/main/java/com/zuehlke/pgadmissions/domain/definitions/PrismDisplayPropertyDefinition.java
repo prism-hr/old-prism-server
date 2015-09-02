@@ -62,6 +62,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_FINANCIAL_DETAILS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
@@ -89,6 +90,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DASHBOARD(SYSTEM_GLOBAL, "Dashboard"),
     SYSTEM_DIVISIONS(SYSTEM_GLOBAL, "Divisions"),
     SYSTEM_OPPORTUNITY(SYSTEM_GLOBAL, "Opportunity"),
+    SYSTEM_REGISTER_CONNECT(SYSTEM_GLOBAL, "Register & Connect"),
     SYSTEM_PROMOTED_BY(SYSTEM_GLOBAL, "Promoted by"),
     SYSTEM_OPPORTUNITIES(SYSTEM_GLOBAL, "Opportunities"),
     SYSTEM_DEADLINE(SYSTEM_GLOBAL, "Deadline"),
@@ -114,6 +116,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_TIME_FORMAT(SYSTEM_GLOBAL, "HH:mm"),
     SYSTEM_YES(SYSTEM_GLOBAL, "Yes"),
     SYSTEM_NO(SYSTEM_GLOBAL, "No"),
+    SYSTEM_LOWER_IN(SYSTEM_GLOBAL, "in"),
     SYSTEM_VALUE_PROVIDED(SYSTEM_GLOBAL, "Provided"),
     SYSTEM_VALUE_NOT_PROVIDED(SYSTEM_GLOBAL, "Not Provided"),
     SYSTEM_VALUE_SPECIFIED(SYSTEM_GLOBAL, "Specified"),
@@ -1478,6 +1481,28 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_CONFIGURATION_OVERRIDE_LOCAL_VERSIONS_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Override Local Versions"),
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Restore Default"),
 
+    /*
+     * *************** SYSTEM RESOURCE TARGETS *********************
+     */
+
+    SYSTEM_RESOURCE_TARGETS_INSTITUTIONS_LABEL(SYSTEM_RESOURCE_TARGETS, "Targeted Institutions"),
+    SYSTEM_RESOURCE_TARGETS_DEPARTMENTS_LABEL(SYSTEM_RESOURCE_TARGETS, "Targeted Departments"),
+    SYSTEM_RESOURCE_TARGETS_UNIVERSITY_PIN_LABEL(SYSTEM_RESOURCE_TARGETS, "Targeted Departments"),
+    SYSTEM_RESOURCE_TARGETS_COLLEGE_PIN_LABEL(SYSTEM_RESOURCE_TARGETS, "Targeted Departments"),
+    SYSTEM_RESOURCE_TARGETS_FURTHER_DETAILS(SYSTEM_RESOURCE_TARGETS, "Further Details"),
+    SYSTEM_RESOURCE_TARGETS_MAP_VIEW_HEADER(SYSTEM_RESOURCE_TARGETS, "Map View"),
+    SYSTEM_RESOURCE_TARGETS_ORGANIZATION_VIEW_HEADER(SYSTEM_RESOURCE_TARGETS, "Institution Details"),
+    SYSTEM_RESOURCE_TARGETS_SELECTED(SYSTEM_RESOURCE_TARGETS, "Selected Targets"),
+    SYSTEM_RESOURCE_TARGETS_ADD_MORE(SYSTEM_RESOURCE_TARGETS, "Add More Targets"),
+    SYSTEM_RESOURCE_TARGETS_TARGET(SYSTEM_RESOURCE_TARGETS, "Target"),
+    SYSTEM_RESOURCE_TARGETS_TARGET_INSTITUTION(SYSTEM_RESOURCE_TARGETS, "Target Institution"),
+    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREA_SEARCH_LABEL(SYSTEM_RESOURCE_TARGETS, "Search by Subject Area"),
+    SYSTEM_RESOURCE_TARGETS_SUBJECT_AREA_SEARCH_HINT(SYSTEM_RESOURCE_TARGETS, "e.g. Medicine, Computer Science"), 
+    SYSTEM_RESOURCE_TARGETS_ORGANIZATION_SEARCH_LABEL(SYSTEM_RESOURCE_TARGETS, "Search by Institution/Department Name"),
+    SYSTEM_RESOURCE_TARGETS_ORGANIZATION_SEARCH_HINT(SYSTEM_RESOURCE_TARGETS, "e.g. University of Oxford, University College London"),
+    SYSTEM_RESOURCE_TARGETS_INSTRUCTION(SYSTEM_RESOURCE_TARGETS, "Search for targets by subject area or by keying in the name of an Institution or Department that you know"),
+    SYSTEM_RESOURCE_TARGETS_INSTRUCTION_WARNING(SYSTEM_RESOURCE_TARGETS, "Target organizations will be able to see all of your selected targets"),
+    
     /*
      * *************** SYSTEM RESOURCE COMPETENCES *********************
      */

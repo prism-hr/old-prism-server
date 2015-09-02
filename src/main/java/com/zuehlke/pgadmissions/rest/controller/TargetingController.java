@@ -58,7 +58,7 @@ public class TargetingController {
             @RequestParam(required = false) List<Integer> institutions, @RequestParam(required = false) List<Integer> departments,
             @RequestParam(required = false) Boolean allDepartments) {
         boolean allDepartmentsPrimitive = BooleanUtils.isTrue(allDepartments);
-        if (allDepartmentsPrimitive && (CollectionUtils.isEmpty(institutions) || institutions.size() > 1) || CollectionUtils.isNotEmpty(departments)) {
+        if (allDepartmentsPrimitive && (CollectionUtils.isEmpty(institutions) || institutions.size() > 1 || CollectionUtils.isNotEmpty(departments))) {
             throw new Error("Invalid targeting request, check our API terms and conditions");
         }
         return resourceMapper.getResourceTargetingRepresentations(advertService.getById(advertId), subjectAreas, institutions, departments, allDepartmentsPrimitive);

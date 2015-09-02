@@ -184,7 +184,8 @@ public class ActionDAO {
                         .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
-                        .add(Projections.max("primaryState"), "primaryState")) //
+                        .add(Projections.max("primaryState"), "primaryState") //
+                        .add(Projections.property("action.declinableAction"), "declinable")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //

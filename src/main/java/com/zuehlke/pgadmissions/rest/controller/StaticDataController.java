@@ -1,18 +1,25 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.services.StaticDataService;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.HesaDataImporter;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.*;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @RestController
 @RequestMapping("/api/static")

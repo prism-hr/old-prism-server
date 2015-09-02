@@ -57,8 +57,6 @@ import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcess
 public class DocumentService {
 
     private static Logger logger = LoggerFactory.getLogger(DocumentService.class);
-
-    private AmazonS3 amazonClient;
     
     @Value("${context.environment}")
     private String contextEnvironment;
@@ -292,8 +290,7 @@ public class DocumentService {
     }
     
     private AmazonS3 getAmazonClient() throws IntegrationException {
-        amazonClient = amazonClient == null ? new AmazonS3Client(systemService.getAmazonCredentials()) : amazonClient;
-        return amazonClient;
+        return new AmazonS3Client(systemService.getAmazonCredentials());
     }
 
     private String getFileName(Part upload) {

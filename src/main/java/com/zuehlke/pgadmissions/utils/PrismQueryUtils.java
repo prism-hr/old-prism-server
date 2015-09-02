@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.utils;
 
-import com.google.common.base.Joiner;
-import org.apache.commons.lang.BooleanUtils;
+import static com.zuehlke.pgadmissions.PrismConstants.NULL;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanString;
+import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -9,10 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.zuehlke.pgadmissions.PrismConstants.NULL;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanString;
-import static java.math.RoundingMode.HALF_UP;
-import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
+import org.apache.commons.lang.BooleanUtils;
+
+import com.google.common.base.Joiner;
 
 public class PrismQueryUtils {
 

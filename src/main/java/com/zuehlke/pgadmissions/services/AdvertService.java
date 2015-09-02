@@ -19,7 +19,6 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -39,7 +38,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;

@@ -93,6 +93,7 @@ public class ActionMapper {
         representation.setId(action.getActionId());
         representation.setRaisesUrgentFlag(action.getRaisesUrgentFlag());
         representation.setPrimaryState(action.getPrimaryState());
+        representation.setDeclinable(action.getDeclinable());
 
         return representation;
     }

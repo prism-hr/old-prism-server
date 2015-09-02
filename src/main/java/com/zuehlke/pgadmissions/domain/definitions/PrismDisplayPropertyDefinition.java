@@ -41,6 +41,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_OPPORTUNITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
@@ -1446,9 +1447,20 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_CATEGORIES_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Tell us which opportunity categories are you planning to advertise in future."),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Logo"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_LOGO_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Upload the logo for your institution."),
-    SYSTEM_RESOURCE_PARENT_INSTITUTION_RATING_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Rating"),
-    SYSTEM_RESOURCE_PARENT_INSTITUTION_RATING_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Tell us how do you rate this opportunity."),
+    SYSTEM_RESOURCE_PARENT_RATING_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Rate Employer"),
+    SYSTEM_RESOURCE_PARENT_RATING_HINT(SYSTEM_HTML_RESOURCE_PARENT, "To help your students decide whether to pursue work experience or employment with this employer, tell us how you rate them."),
+    SYSTEM_RESOURCE_PARENT_PROVIDE_ENDORSEMENT_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Endorse Employer"),
+    SYSTEM_RESOURCE_PARENT_PROVIDE_ENDORSEMENT_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Confirm that you are happy to endorse this employer. Please be aware that declining this request will mean that your students cannot see their advert."),
 
+    /*
+     * *************** SYSTEM HTML RESOURCE OPPORTUNITY *********************
+     */
+    
+    SYSTEM_RESOURCE_OPPORTUNITY_RATING_LABEL(SYSTEM_HTML_RESOURCE_OPPORTUNITY, "Rate Opportunity"),
+    SYSTEM_RESOURCE_OPPORTUNITY_RATING_HINT(SYSTEM_HTML_RESOURCE_OPPORTUNITY, "To help your students decide whether to pursue this opportunity, tell us how you rate it."),
+    SYSTEM_RESOURCE_OPPORTUNITY_PROVIDE_ENDORSEMENT_LABEL(SYSTEM_HTML_RESOURCE_OPPORTUNITY, "Endorse Opportunity"),
+    SYSTEM_RESOURCE_OPPORTUNITY_PROVIDE_ENDORSEMENT_HINT(SYSTEM_HTML_RESOURCE_OPPORTUNITY, "Confirm that you are happy to endorse this opportunity. Please be aware that declining this request will mean that your students cannot apply for it."),
+    
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
      */

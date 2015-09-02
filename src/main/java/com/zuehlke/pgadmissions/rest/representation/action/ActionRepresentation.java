@@ -9,6 +9,8 @@ public class ActionRepresentation {
     private PrismAction id;
 
     private PrismActionCategory category;
+    
+    private Boolean declinable;
 
     public PrismAction getId() {
         return id;
@@ -24,6 +26,14 @@ public class ActionRepresentation {
 
     public void setCategory(PrismActionCategory category) {
         this.category = category;
+    }
+
+    public Boolean getDeclinable() {
+        return declinable;
+    }
+
+    public void setDeclinable(Boolean declinable) {
+        this.declinable = declinable;
     }
 
     @Override

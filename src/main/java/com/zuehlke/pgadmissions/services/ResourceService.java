@@ -728,7 +728,7 @@ public class ResourceService {
                 : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
 
-    public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments) {
+    public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments, boolean allDepartments) {
         PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION, SYSTEM };
         List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
         List<Integer> targetInstitutions = advertService.getAdvertTargetResources(advert, INSTITUTION, true);
@@ -736,14 +736,11 @@ public class ResourceService {
         ResourceTargetListDTO targets = new ResourceTargetListDTO(advert);
         if (CollectionUtils.isNotEmpty(subjectAreas)) {
             Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-            Map<Integer, BigDecimal> subjectAreaInstitutions = importedEntityService.getImportedInstitutionsBySubjectAreas(subjectAreasLookup).stream()
+            Map<Integer, BigDecimal> subjectAreaInstitutions = institutionService.getInstitutionsBySubjectAreas(subjectAreasLookup).stream()
                     .collect(Collectors.toMap(institution -> (institution.getResourceId()), institution -> (institution.getTargetingRelevance())));
 
             List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, institutionScopes, subjectAreaInstitutions.keySet(), institutionStates);
-            subjectAreaTargets.forEach(target -> {
-                target.setTargetingRelevance(subjectAreaInstitutions.get(target.getId()));
-                addResourceTarget(targets, target, targetInstitutions);
-            });
+            addResourceTargets(subjectAreaTargets, subjectAreaInstitutions, targets, targetInstitutions);
         }
 
         if (CollectionUtils.isNotEmpty(institutions)) {
@@ -754,12 +751,24 @@ public class ResourceService {
         if (hasDepartments) {
             List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, institutionStates);
             addResourceTargets(targets, resourceDAO.getResourceTargets(advert, institutionScopes, departmentInstitutions, institutionStates), targetInstitutions);
-        }
 
-        if (hasDepartments) {
             List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
             List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
             addResourceTargets(targets, resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
+        }
+
+        if (allDepartments) {
+            Integer institution = institutions.get(0);
+            Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
+            Map<Integer, BigDecimal> subjectAreaDepartments = departmentService.getDepartmentsBySubjectAreas(institution, subjectAreasLookup).stream()
+                    .collect(Collectors.toMap(department -> (department.getResourceId()), department -> (department.getTargetingRelevance())));
+
+            departments = departmentService.getDepartments(institution);
+            List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
+            List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
+
+            List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates);
+            addResourceTargets(subjectAreaTargets, subjectAreaDepartments, targets, targetDepartments);
         }
 
         return targets.keySet();
@@ -926,6 +935,14 @@ public class ResourceService {
     private void addResourceTargets(ResourceTargetListDTO targets, List<ResourceTargetDTO> newTargets, List<Integer> targetResources) {
         newTargets.forEach(newTarget -> {
             addResourceTarget(targets, newTarget, targetResources);
+        });
+    }
+
+    private void addResourceTargets(List<ResourceTargetDTO> subjectAreaTargets, Map<Integer, BigDecimal> subjectAreaIndex, ResourceTargetListDTO targets,
+            List<Integer> targetResources) {
+        subjectAreaTargets.forEach(target -> {
+            target.setTargetingRelevance(subjectAreaIndex.get(target.getId()));
+            addResourceTarget(targets, target, targetResources);
         });
     }
 

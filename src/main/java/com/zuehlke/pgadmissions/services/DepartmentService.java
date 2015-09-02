@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlIn
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.DepartmentImportedSubjectAreaDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
@@ -58,6 +60,10 @@ public class DepartmentService {
 
     public Department getById(Integer id) {
         return entityService.getById(Department.class, id);
+    }
+    
+    public List<Integer> getDepartments(Integer institution) {
+        return departmentDAO.getDepartments(institution);
     }
 
     public void inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) throws Exception {
@@ -118,6 +124,10 @@ public class DepartmentService {
 
     public List<Department> getDepartmentsByImportedProgram(ImportedProgram importedProgram) {
         return departmentDAO.getDepartmentsByImportedProgram(importedProgram);
+    }
+    
+    public List<ResourceTargetRelevanceDTO> getDepartmentsBySubjectAreas(Integer institution, Collection<Integer> subjectAreas) {
+        return departmentDAO.getDepartmentsBySubjectAreas(institution, subjectAreas);
     }
 
 }

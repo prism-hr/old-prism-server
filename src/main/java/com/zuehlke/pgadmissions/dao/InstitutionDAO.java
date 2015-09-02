@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 
 import freemarker.template.Template;
 
@@ -137,6 +139,18 @@ public class InstitutionDAO {
                 .createAlias("importedInstitution.programs", "importedProgram", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("importedProgram.id", importedProgram.getId())) //
                 .uniqueResult();
+    }
+    
+    public List<ResourceTargetRelevanceDTO> getInstitutionsBySubjectAreas(Collection<Integer> subjectAreas) {
+        return (List<ResourceTargetRelevanceDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id"), "resourceId") //
+                        .add(Projections.sum("institutionSubjectArea.relationStrength"), "targetingRelevance")) //
+                .createAlias("importedInstitution", "importedInstitution", JoinType.INNER_JOIN) //
+                .createAlias("importedInstitution.institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN)
+                .add(Restrictions.in("institutionSubjectArea.subjectArea.id", subjectAreas)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceTargetRelevanceDTO.class))
+                .list();
     }
 
 }

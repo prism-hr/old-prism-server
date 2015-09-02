@@ -167,6 +167,9 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @OneToMany(mappedBy = "department")
     private Set<Advert> adverts = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "department")
+    private Set<DepartmentImportedSubjectArea> departmentSubjectAreas = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "department_imported_program", joinColumns = { @JoinColumn(name = "department_id", nullable = false) }, inverseJoinColumns = {
@@ -442,6 +445,10 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @Override
     public Set<Advert> getAdverts() {
         return adverts;
+    }
+    
+    public Set<DepartmentImportedSubjectArea> getDepartmentSubjectAreas() {
+        return departmentSubjectAreas;
     }
 
     public Set<ImportedProgram> getImportedPrograms() {

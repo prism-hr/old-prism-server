@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntitySimpleMapp
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -342,18 +341,6 @@ public class ImportedEntityDAO {
                 .addOrder(Order.asc("subjectArea.id")) //
                 .addOrder(Order.desc("relationStrength")) //
                 .setResultTransformer(Transformers.aliasToBean(ImportedInstitutionSubjectAreaDTO.class)) //
-                .list();
-    }
-
-    public List<ResourceTargetRelevanceDTO> getImportedInstitutionsBySubjectAreas(Collection<Integer> subjectAreas) {
-        return (List<ResourceTargetRelevanceDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id"), "resourceId") //
-                        .add(Projections.sum("institutionSubjectArea.relationStrength"), "targetingRelevance")) //
-                .createAlias("importedInstitution", "importedInstitution", JoinType.INNER_JOIN) //
-                .createAlias("importedInstitution.institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN)
-                .add(Restrictions.in("institutionSubjectArea.subjectArea.id", subjectAreas)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceTargetRelevanceDTO.class))
                 .list();
     }
 

@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,8 +55,13 @@ public class TargetingController {
     @ResponseBody
     @RequestMapping(value = "/targetResources", method = RequestMethod.GET)
     public List<ResourceRepresentationTarget> getTargetResources(@RequestParam Integer advertId, @RequestParam(required = false) List<Integer> subjectAreas,
-            @RequestParam(required = false) List<Integer> institutions, @RequestParam(required = false) List<Integer> departments) {
-        return resourceMapper.getResourceTargetingRepresentations(advertService.getById(advertId), subjectAreas, institutions, departments);
+            @RequestParam(required = false) List<Integer> institutions, @RequestParam(required = false) List<Integer> departments,
+            @RequestParam(required = false) Boolean allDepartments) {
+        boolean allDepartmentsPrimitive = BooleanUtils.isTrue(allDepartments);
+        if (allDepartmentsPrimitive && (CollectionUtils.isEmpty(institutions) || institutions.size() > 1) || CollectionUtils.isNotEmpty(departments)) {
+            throw new Error("Invalid targeting request, check our API terms and conditions");
+        }
+        return resourceMapper.getResourceTargetingRepresentations(advertService.getById(advertId), subjectAreas, institutions, departments, allDepartmentsPrimitive);
     }
 
 }

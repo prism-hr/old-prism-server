@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -17,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -70,6 +72,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -456,18 +459,19 @@ public class AdvertService {
     public void recordPartnershipStateTransition(Resource resource, Comment comment) {
         if (comment.isPartnershipStateTransitionComment()) {
             List<Advert> targetAdverts = Lists.newArrayList();
+            PrismPartnershipState partnershipTransitionState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
             for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(),
                     new PrismAction[] { PROJECT_ENDORSE, PROGRAM_ENDORSE, DEPARTMENT_ENDORSE, INSTITUTION_ENDORSE })) {
                 Resource userResource = userRole.getResource();
                 if (userResource.getResourceScope().equals(SYSTEM)) {
-                    advertDAO.endorseForAdvertTargets(resource.getAdvert(), comment.getAction().getPartnershipTransitionState());
+                    advertDAO.endorseForAdvertTargets(resource.getAdvert(), partnershipTransitionState);
                     break;
                 }
                 targetAdverts.add(userResource.getAdvert());
             }
 
             if (!targetAdverts.isEmpty()) {
-                advertDAO.endorseForAdvertTargets(resource.getAdvert(), targetAdverts, comment.getAction().getPartnershipTransitionState());
+                advertDAO.endorseForAdvertTargets(resource.getAdvert(), targetAdverts, partnershipTransitionState);
             }
         }
     }

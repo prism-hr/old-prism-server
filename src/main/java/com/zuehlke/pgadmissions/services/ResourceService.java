@@ -31,7 +31,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
@@ -387,34 +386,26 @@ public class ResourceService {
     }
 
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, String sequenceId,
-            Collection<Integer> resourceIds, StopWatch watch) throws Exception {
+            Collection<Integer> resourceIds) throws Exception {
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
 
         if (!resourceIds.isEmpty()) {
-            boolean hasRedactions = actionService.hasRedactions(user, scope);
-            logger.info("Got create redactions: " + watch.getTime());
-            
-            HashMultimap<Integer, ActionDTO> creations = actionService.getCreateResourceActions(scope, resourceIds);
-            logger.info("Got create resource actions: " + watch.getTime());
-            
+            boolean hasRedactions = actionService.hasRedactions(user, scope); 
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, sequenceId, RESOURCE_LIST_PAGE_ROW_COUNT, hasRedactions);
-            logger.info("Got resource list: " + watch.getTime());
             
             Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
             Set<Integer> filteredResourceIds = rowIndex.keySet();
 
             LinkedHashMultimap<Integer, PrismState> secondaryStates = stateService.getSecondaryResourceStates(scope, filteredResourceIds);
-            logger.info("Got secondary states: " + watch.getTime());
-            
             LinkedHashMultimap<Integer, ActionDTO> permittedActions = actionService.getPermittedActions(scope, filteredResourceIds, user);
-            logger.info("Got Actions: " + watch.getTime());
+            HashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, resourceIds);
             
             rowIndex.keySet().forEach(resourceId -> {
                 ResourceListRowDTO row = rowIndex.get(resourceId);
                 row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
 
                 List<ActionDTO> actions = Lists.newLinkedList(permittedActions.get(resourceId));
-                actions.addAll(creations.get(resourceId));
+                actions.addAll(creationActions.get(resourceId));
                 row.setActions(actions);
             });
             return rows;

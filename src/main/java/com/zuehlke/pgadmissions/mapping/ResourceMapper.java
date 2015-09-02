@@ -292,8 +292,8 @@ public class ResourceMapper {
     }
 
     public List<ResourceRepresentationTarget> getResourceTargetingRepresentations(Advert currentAdvert, List<Integer> subjectAreas, List<Integer> institutions,
-            List<Integer> departments) {
-        return resourceService.getResourceTargets(currentAdvert, subjectAreas, institutions, departments).stream().map(this::getResourceRepresentationTargeting)
+            List<Integer> departments, boolean allDepartments) {
+        return resourceService.getResourceTargets(currentAdvert, subjectAreas, institutions, departments, allDepartments).stream().map(this::getResourceRepresentationTargeting)
                 .collect(Collectors.toList());
     }
 

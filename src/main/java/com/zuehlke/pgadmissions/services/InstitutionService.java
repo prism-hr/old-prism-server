@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
@@ -119,19 +121,8 @@ public class InstitutionService {
                 : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
-    private void changeInstitutionCurrency(Institution institution, String newCurrency) throws Exception {
-        List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
-        for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
-            advertService.updateFinancialDetails(advertWithFeesAndPays, newCurrency);
-        }
-        institution.setCurrency(newCurrency);
-    }
-
-    private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth)
-            throws Exception {
-        institution.setBusinessYearStartMonth(businessYearStartMonth);
-        Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
-        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
+    public List<ResourceTargetRelevanceDTO> getInstitutionsBySubjectAreas(Collection<Integer> subjectAreas) {
+        return institutionDAO.getInstitutionsBySubjectAreas(subjectAreas);
     }
 
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
@@ -178,6 +169,21 @@ public class InstitutionService {
 
     public Institution getInstitutionByImportedProgram(ImportedProgram importedProgram) {
         return institutionDAO.getInstitutionByImportedProgram(importedProgram);
+    }
+
+    private void changeInstitutionCurrency(Institution institution, String newCurrency) throws Exception {
+        List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
+        for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
+            advertService.updateFinancialDetails(advertWithFeesAndPays, newCurrency);
+        }
+        institution.setCurrency(newCurrency);
+    }
+
+    private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth)
+            throws Exception {
+        institution.setBusinessYearStartMonth(businessYearStartMonth);
+        Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
+        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
 
 }

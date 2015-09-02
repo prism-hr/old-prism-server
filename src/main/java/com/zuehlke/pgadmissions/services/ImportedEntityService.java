@@ -46,7 +46,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
@@ -359,10 +358,6 @@ public class ImportedEntityService {
 
     public List<ImportedInstitutionSubjectAreaDTO> getImportedInstitutionSubjectAreas(ImportedInstitution institution) {
         return importedEntityDAO.getImportedInstitutionSubjectAreas(institution);
-    }
-
-    public List<ResourceTargetRelevanceDTO> getImportedInstitutionsBySubjectAreas(Collection<Integer> subjectAreas) {
-        return importedEntityDAO.getImportedInstitutionsBySubjectAreas(subjectAreas);
     }
 
     public List<SubjectAreaRepresentation> getSimilarImportedSubjectAreas(String searchTerm) {

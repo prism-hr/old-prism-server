@@ -396,7 +396,7 @@ public class AdvertMapper {
 
     private List<ResourceRepresentationTarget> getAdvertResourceRepresentations(Advert advert, boolean selected) {
         return resourceMapper.getResourceTargetingRepresentations(advert, null, advertService.getAdvertTargetResources(advert, INSTITUTION, selected),
-                advertService.getAdvertTargetResources(advert, DEPARTMENT, selected));
+                advertService.getAdvertTargetResources(advert, DEPARTMENT, selected), false);
     }
 
     private ImportedAdvertDomicileResponse getAdvertDomicileRepresentation(ImportedAdvertDomicile domicile) {

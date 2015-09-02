@@ -1,17 +1,20 @@
 package com.zuehlke.pgadmissions.mapping.helpers;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import org.springframework.stereotype.Component;
-import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
-
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+
+import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
 
 @Component
 public class ImportedInstitutionTransformer<T extends ImportedInstitutionRequest> implements ImportedEntityTransformer<T, ImportedInstitution> {

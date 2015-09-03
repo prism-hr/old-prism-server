@@ -32,12 +32,14 @@ import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mapping.ScopeMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
+import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
@@ -61,6 +63,9 @@ public class UserController {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private ScopeMapper scopeMapper;
 
     @Inject
     private UserMapper userMapper;
@@ -168,6 +173,12 @@ public class UserController {
     @RequestMapping(value = "/suggestion", method = RequestMethod.GET, params = "searchTerm")
     public List<UserRepresentationSimple> getSimilarUsers(@RequestParam String searchTerm) {
         return userService.getSimilarUsers(searchTerm);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/actionSummary", method = RequestMethod.GET, params = "permissionScope")
+    public List<ScopeActionSummaryRepresentation> getScopeActionSummaryRepresentation(@RequestParam PrismScope permissionScope) {
+        return scopeMapper.getScopeActionSummaryRepresentations(userService.getCurrentUser(), permissionScope);
     }
 
     @PreAuthorize("isAuthenticated()")

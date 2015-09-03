@@ -55,9 +55,6 @@ public class UserMapper {
     private UserService userService;
 
     @Inject
-    private ScopeMapper scopeMapper;
-
-    @Inject
     private SystemService systemService;
 
     @Inject
@@ -73,7 +70,6 @@ public class UserMapper {
 
         PrismScope permissionScope = roleService.getPermissionScope(user);
         representation.setPermissionScope(permissionScope);
-        representation.setScopeActionSummaries(scopeMapper.getScopeActionSummaryRepresentations(user, permissionScope));
 
         representation.setParentUser(user.getEmail());
         representation.setLinkedUsers(userService.getLinkedUserAccounts(user));

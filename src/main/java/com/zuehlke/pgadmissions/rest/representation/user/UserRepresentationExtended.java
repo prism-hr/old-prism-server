@@ -4,15 +4,12 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private Boolean sendApplicationRecommendationNotification;
 
     private PrismScope permissionScope;
-
-    private List<ScopeActionSummaryRepresentation> scopeActionSummaries;
 
     private String parentUser;
 
@@ -36,14 +33,6 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     public void setPermissionScope(PrismScope permissionScope) {
         this.permissionScope = permissionScope;
-    }
-
-    public List<ScopeActionSummaryRepresentation> getScopeActionSummaries() {
-        return scopeActionSummaries;
-    }
-
-    public void setScopeActionSummaries(List<ScopeActionSummaryRepresentation> scopeActionSummaries) {
-        this.scopeActionSummaries = scopeActionSummaries;
     }
 
     public String getParentUser() {

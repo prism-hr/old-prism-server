@@ -112,6 +112,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.institution.Resourc
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ResourceListFilterService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
@@ -176,6 +177,9 @@ public class ResourceMapper {
     private UserMapper userMapper;
 
     @Inject
+    private ResourceListFilterService resourceListFilterService;
+    
+    @Inject
     private ResourceService resourceService;
 
     @Inject
@@ -199,6 +203,7 @@ public class ResourceMapper {
 
         Set<Integer> resourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
+        filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
         processRowDescriptors(resources, resourceIds, summaries);
 
@@ -378,6 +383,32 @@ public class ResourceMapper {
         User currentUser = userService.getCurrentUser();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
         return getResourceRepresentationStandard(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource));
+    }
+
+    public <T extends ResourceStandardDTO> ResourceRepresentationStandard getResourceRepresentationStandard(T resource) {
+        ResourceRepresentationStandard representation = new ResourceRepresentationStandard().withScope(resource.getScope()).withId(resource.getId());
+        ResourceStandardDTO project = resource.getEnclosingResource(PROJECT);
+        if (project != null) {
+            representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT).withId(resource.getProjectId()));
+        }
+
+        ResourceStandardDTO program = resource.getEnclosingResource(PROGRAM);
+        if (program != null) {
+            representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM).withId(resource.getProgramId()));
+        }
+
+        ResourceStandardDTO department = resource.getEnclosingResource(DEPARTMENT);
+        if (department != null) {
+            representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(resource.getDepartmentId()));
+        }
+
+        ResourceStandardDTO institution = resource.getEnclosingResource(INSTITUTION);
+        if (institution != null) {
+            representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION).withId(resource.getInstitutionId())
+                    .withLogoImage(documentMapper.getDocumentRepresentation(resource.getInstitutionLogoImageId())));
+        }
+
+        return representation;
     }
 
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType,

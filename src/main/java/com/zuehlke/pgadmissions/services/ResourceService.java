@@ -159,9 +159,6 @@ public class ResourceService {
     private NotificationService notificationService;
 
     @Inject
-    private ResourceListFilterService resourceListFilterService;
-
-    @Inject
     private RoleService roleService;
 
     @Inject
@@ -386,8 +383,6 @@ public class ResourceService {
 
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, String sequenceId,
             Collection<Integer> resourceIds) throws Exception {
-        filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
-
         if (!resourceIds.isEmpty()) {
             boolean hasRedactions = actionService.hasRedactions(user, scope);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, sequenceId, RESOURCE_LIST_PAGE_ROW_COUNT, hasRedactions);
@@ -707,7 +702,7 @@ public class ResourceService {
     }
 
     public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments, boolean allDepartments) {
-        PrismScope[] institutionScopes = new PrismScope[]{INSTITUTION, SYSTEM};
+        PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION, SYSTEM };
         List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
         List<Integer> targetInstitutions = advertService.getAdvertTargetResources(advert, INSTITUTION, true);
 
@@ -732,7 +727,7 @@ public class ResourceService {
 
             List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
             List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
-            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, new PrismScope[]{DEPARTMENT, INSTITUTION}, departments, departmentStates), targetDepartments);
+            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
         }
 
         if (allDepartments) {
@@ -749,14 +744,14 @@ public class ResourceService {
                 List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
                 List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
 
-                List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, new PrismScope[]{DEPARTMENT, INSTITUTION}, departments, departmentStates);
+                List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates);
                 addResourceTargets(subjectAreaTargets, subjectAreaDepartments, targets, targetDepartments);
             }
         }
 
         return targets.keySet();
     }
-    
+
     public ResourceStandardDTO getResourceWithParents(Resource resource, List<PrismScope> parentScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         return resourceDAO.getParentResources(SYSTEM, systemId, resourceScope, resource.getId(), parentScopes);
@@ -865,16 +860,16 @@ public class ResourceService {
     }
 
     public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns,
-            Junction condition, Class<T> responseClass) {
-        Set<T> resources = Sets.newHashSet(resourceDAO.getResources(user, scope, filter, columns, condition, responseClass));
-
-        for (PrismScope parentScopeId : parentScopes) {
-            resources.addAll(resourceDAO.getResources(user, scope, parentScopeId, filter, columns, condition, responseClass));
-        }
+            Junction conditions, Class<T> responseClass) {
+        Set<T> resources = Sets.newHashSet(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass));
 
         if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScopeId : parentScopes) {
+                resources.addAll(resourceDAO.getResources(user, scope, parentScopeId, filter, columns, conditions, responseClass));
+            }
+
             for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
-                resources.addAll(resourceDAO.getPartnerResources(user, scope, partnerScopeId, filter, columns, condition, responseClass));
+                resources.addAll(resourceDAO.getPartnerResources(user, scope, partnerScopeId, filter, columns, conditions, responseClass));
             }
         }
 

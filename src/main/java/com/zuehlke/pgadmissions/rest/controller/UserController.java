@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.mapping.ScopeMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
@@ -40,6 +41,7 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
 import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
@@ -63,6 +65,9 @@ public class UserController {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private ApplicationMapper applicationMapper;
 
     @Inject
     private ScopeMapper scopeMapper;
@@ -179,6 +184,12 @@ public class UserController {
     @RequestMapping(value = "/actionSummary", method = RequestMethod.GET, params = "permissionScope")
     public List<ScopeActionSummaryRepresentation> getScopeActionSummaryRepresentation(@RequestParam PrismScope permissionScope) {
         return scopeMapper.getScopeActionSummaryRepresentations(userService.getCurrentUser(), permissionScope);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/interviewSummary", method = RequestMethod.GET, params = "permissionScope")
+    public List<ApplicationAppointmentRepresentation> getApplicationInterviewSummaryRepresentation() {
+        return applicationMapper.getApplicationAppointmentRepresentations(userService.getCurrentUser());
     }
 
     @PreAuthorize("isAuthenticated()")

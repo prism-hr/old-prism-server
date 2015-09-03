@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -176,5 +177,40 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     public void setParentResource(ResourceRepresentationSimple parentResource) {
         setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
+    
+    public ResourceRepresentationStandard withScope(PrismScope scope) {
+        setScope(scope);
+        return this;
+    }
 
+    public ResourceRepresentationStandard withId(Integer id) {
+        setId(id);
+        return this;
+    }
+    
+    public ResourceRepresentationStandard withCode(String code) {
+        setCode(code);
+        return this;
+    }
+    
+    public ResourceRepresentationStandard withProject(ResourceRepresentationSimple project) {
+        this.project = project;
+        return this;
+    }
+
+    public ResourceRepresentationStandard withProgram(ResourceRepresentationSimple program) {
+        this.program = program;
+        return this;
+    }
+    
+    public ResourceRepresentationStandard withDepartment(ResourceRepresentationSimple department) {
+        this.department = department;
+        return this;
+    }
+
+    public ResourceRepresentationStandard withInstitution(ResourceRepresentationSimple institution) {
+        this.institution = institution;
+        return this;
+    }
+    
 }

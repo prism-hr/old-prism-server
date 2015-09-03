@@ -1,11 +1,41 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.valueOf;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
+import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.*;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
+import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -27,32 +57,24 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.*;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertSubjectAreaRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
+
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.valueOf;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
-import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
-import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 
 @Service
 @Transactional

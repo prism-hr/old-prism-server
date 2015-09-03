@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-
-import java.util.List;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 

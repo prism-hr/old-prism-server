@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.mapping.ActionMapper;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.services.DepartmentService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,9 @@ public class DepartmentController {
     @Inject
     private DepartmentService departmentService;
 
+    @Inject
+    private ActionMapper actionMapper;
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{departmentId}/importedPrograms", method = RequestMethod.PUT)
     public void updateImportedPrograms(@PathVariable Integer departmentId,
@@ -26,8 +32,9 @@ public class DepartmentController {
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/invite", method = RequestMethod.POST)
-    public void inviteDepartment(@Valid @RequestBody DepartmentInvitationDTO departmentInvitationDTO){
-        departmentService.inviteDepartment(departmentInvitationDTO);
+    public ActionOutcomeRepresentation inviteDepartment(@Valid @RequestBody DepartmentInvitationDTO departmentInvitationDTO){
+        ActionOutcomeDTO actionOutcomeDTO = departmentService.inviteDepartment(departmentInvitationDTO);
+        return actionMapper.getActionOutcomeRepresentation(actionOutcomeDTO);
     }
 
 }

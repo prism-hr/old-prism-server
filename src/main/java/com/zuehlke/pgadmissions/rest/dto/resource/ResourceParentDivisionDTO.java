@@ -4,8 +4,11 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDivisionDefinition;
 
+import javax.validation.Valid;
+
 public class ResourceParentDivisionDTO extends ResourceParentDTO implements ResourceParentDivisionDefinition<AdvertDTO> {
 
+    @Valid
     private ResourceDTO parentResource;
 
     private String importedCode;

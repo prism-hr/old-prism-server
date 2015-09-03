@@ -1,25 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.DEPARTMENT_COMMENT_UPDATED_IMPORTED_PROGRAMS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
-import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
@@ -32,6 +12,21 @@ import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.DEPARTMENT_COMMENT_UPDATED_IMPORTED_PROGRAMS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
 
 @Service
 @Transactional
@@ -61,12 +56,12 @@ public class DepartmentService {
     public Department getById(Integer id) {
         return entityService.getById(Department.class, id);
     }
-    
+
     public List<Integer> getDepartments(Integer institution) {
         return departmentDAO.getDepartments(institution);
     }
 
-    public void inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) throws Exception {
+    public void inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) {
         DepartmentDTO departmentDTO = departmentInvitationDTO.getDepartment();
         Institution institution = institutionService.getById(departmentDTO.getParentResource().getId());
 
@@ -75,7 +70,7 @@ public class DepartmentService {
             if (outcome != null) {
                 UserDTO user = departmentInvitationDTO.getDepartmentUser();
                 if (user != null) {
-                    userService.getOrCreateUserWithRoles(user.getFirstName(), user.getLastName(), user.getEmail(), (Department) outcome.getResource(),
+                    userService.getOrCreateUserWithRoles(user.getFirstName(), user.getLastName(), user.getEmail(), outcome.getResource(),
                             asList(DEPARTMENT_ADMINISTRATOR));
                 }
             }
@@ -95,7 +90,7 @@ public class DepartmentService {
         }
     }
 
-    public void updateImportedPrograms(Integer departmentId, List<ImportedEntityDTO> importedPrograms) throws Exception {
+    public void updateImportedPrograms(Integer departmentId, List<ImportedEntityDTO> importedPrograms) {
         Department department = getById(departmentId);
         setImportedPrograms(department, importedPrograms);
         resourceService.executeUpdate(department, DEPARTMENT_COMMENT_UPDATED_IMPORTED_PROGRAMS);
@@ -125,7 +120,7 @@ public class DepartmentService {
     public List<Department> getDepartmentsByImportedProgram(ImportedProgram importedProgram) {
         return departmentDAO.getDepartmentsByImportedProgram(importedProgram);
     }
-    
+
     public List<ResourceTargetRelevanceDTO> getDepartmentsBySubjectAreas(Integer institution, Collection<Integer> subjectAreas) {
         return departmentDAO.getDepartmentsBySubjectAreas(institution, subjectAreas);
     }

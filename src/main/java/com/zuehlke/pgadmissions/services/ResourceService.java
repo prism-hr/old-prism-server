@@ -342,7 +342,7 @@ public class ResourceService {
         entityService.flush();
     }
 
-    public Comment executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
+    public Comment executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 

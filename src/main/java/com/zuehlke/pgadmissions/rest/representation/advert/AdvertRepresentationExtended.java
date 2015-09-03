@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
@@ -15,15 +15,17 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     private ResourceRepresentationSimple institution;
 
     private ResourceRepresentationSimple department;
-    
+
     private ResourceRepresentationSimple program;
-    
+
     private ResourceRepresentationSimple resource;
 
     private List<ResourceConditionRepresentation> conditions;
 
+    private List<AdvertCompetenceRepresentation> competences;
+
     private PrismOpportunityType opportunityType;
-    
+
     private List<PrismStudyOption> studyOptions;
 
     private String name;
@@ -35,7 +37,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     public void setUser(UserRepresentationSimple user) {
         this.user = user;
     }
-    
+
     public ResourceRepresentationSimple getInstitution() {
         return institution;
     }
@@ -74,6 +76,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setConditions(List<ResourceConditionRepresentation> conditions) {
         this.conditions = conditions;
+    }
+
+    public List<AdvertCompetenceRepresentation> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(List<AdvertCompetenceRepresentation> competences) {
+        this.competences = competences;
     }
 
     public PrismOpportunityType getOpportunityType() {

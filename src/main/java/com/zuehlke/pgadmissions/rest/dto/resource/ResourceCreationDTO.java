@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 
+import javax.validation.constraints.NotNull;
+
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "scope")
 @JsonSubTypes({
         @Type(value = ApplicationDTO.class, name = "RESUME"),
@@ -17,6 +19,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 })
 public abstract class ResourceCreationDTO {
 
+    @NotNull
     private PrismScope scope;
 
     public PrismScope getScope() {

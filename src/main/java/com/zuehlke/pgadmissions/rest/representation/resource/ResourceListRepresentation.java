@@ -9,12 +9,22 @@ public class ResourceListRepresentation extends ListRepresentation<ResourceListR
 
     private List<ResourceListRowRepresentation> rows;
 
+    private List<ListSummaryRepresentation> urgentSummaries;
+
     public List<ResourceListRowRepresentation> getRows() {
         return rows;
     }
 
     public void setRows(List<ResourceListRowRepresentation> rows) {
         this.rows = rows;
+    }
+
+    public List<ListSummaryRepresentation> getUrgentSummaries() {
+        return urgentSummaries;
+    }
+
+    public void setUrgentSummaries(List<ListSummaryRepresentation> urgentSummaries) {
+        this.urgentSummaries = urgentSummaries;
     }
 
     public ResourceListRepresentation withRows(List<ResourceListRowRepresentation> rows) {
@@ -24,6 +34,11 @@ public class ResourceListRepresentation extends ListRepresentation<ResourceListR
 
     public ResourceListRepresentation withSummaries(List<ListSummaryRepresentation> summaries) {
         setSummaries(summaries);
+        return this;
+    }
+
+    public ResourceListRepresentation withUrgentSummaries(List<ListSummaryRepresentation> urgentSummaries) {
+        setUrgentSummaries(urgentSummaries);
         return this;
     }
 

@@ -25,7 +25,7 @@ public class ScopeDAO {
                 .addOrder(Order.desc("ordinal")) //
                 .list();
     }
-
+    
     public List<PrismScope> getEnclosingScopesDescending(PrismScope prismScope, PrismScope finalScope) {
         return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
                 .setProjection(Projections.property("id")) //

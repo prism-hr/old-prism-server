@@ -11,6 +11,8 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private PrismScope permissionScope;
 
+    private List<PrismScope> scopesWithUrgentTasks;
+
     private String parentUser;
 
     private List<String> linkedUsers;
@@ -33,6 +35,14 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     public void setPermissionScope(PrismScope permissionScope) {
         this.permissionScope = permissionScope;
+    }
+
+    public List<PrismScope> getScopesWithUrgentTasks() {
+        return scopesWithUrgentTasks;
+    }
+
+    public void setScopesWithUrgentTasks(List<PrismScope> scopesWithUrgentTasks) {
+        this.scopesWithUrgentTasks = scopesWithUrgentTasks;
     }
 
     public String getParentUser() {
@@ -66,4 +76,5 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
     public void setRequiredFeedbackRoleCategory(PrismRoleCategory requiredFeedbackRoleCategory) {
         this.requiredFeedbackRoleCategory = requiredFeedbackRoleCategory;
     }
+
 }

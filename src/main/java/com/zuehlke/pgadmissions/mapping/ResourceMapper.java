@@ -112,7 +112,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.institution.Resourc
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ResourceListFilterService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
@@ -175,9 +174,6 @@ public class ResourceMapper {
 
     @Inject
     private UserMapper userMapper;
-
-    @Inject
-    private ResourceListFilterService resourceListFilterService;
     
     @Inject
     private ResourceService resourceService;
@@ -203,7 +199,6 @@ public class ResourceMapper {
 
         Set<Integer> resourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
         processRowDescriptors(resources, resourceIds, summaries);
 

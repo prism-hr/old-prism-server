@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
 import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
@@ -66,6 +68,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
@@ -438,6 +441,10 @@ public class ApplicationService {
 
     public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {
         return applicationDAO.getApplicationsByImportedRejectionReason(parent, importedRejectionReasons);
+    }
+
+    public List<ApplicationAppointmentDTO> getApplicationAppointments(User user) {
+        return newLinkedList(newLinkedHashSet(applicationDAO.getApplicationsAppointments(user)));
     }
 
     private LocalDate getRecommendedStartDate(Application application, LocalDate earliest, LocalDate latest, LocalDate baseline) {

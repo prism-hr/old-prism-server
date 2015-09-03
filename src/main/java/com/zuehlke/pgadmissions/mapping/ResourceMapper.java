@@ -67,7 +67,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
@@ -118,6 +118,7 @@ import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.PrismListUtils;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
@@ -198,7 +199,7 @@ public class ResourceMapper {
 
         Set<Integer> resourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        Set<EntityOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
+        Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
         processRowDescriptors(resources, resourceIds, summaries);
 
         resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds).forEach(row -> {
@@ -278,7 +279,12 @@ public class ResourceMapper {
             representations.add(representation);
         });
 
-        return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries));
+        Map<String, Integer> urgentSummaries = Maps.newHashMap();
+        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(r -> BooleanUtils.isTrue(r.getRaisesUrgentFlag())).collect(Collectors.toSet());
+        PrismListUtils.processRowSummaries(urgentResources, urgentSummaries);
+
+        return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries))
+                .withUrgentSummaries(getSummaryRepresentations(urgentSummaries));
     }
 
     public ResourceRepresentationLocation getResourceRepresentationLocation(Resource resource) {

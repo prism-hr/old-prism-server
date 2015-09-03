@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -32,6 +33,7 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExten
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserFeedbackService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -54,6 +56,9 @@ public class UserMapper {
     private UserService userService;
 
     @Inject
+    private ScopeService scopeService;
+
+    @Inject
     private SystemService systemService;
 
     @Inject
@@ -65,9 +70,11 @@ public class UserMapper {
 
     public UserRepresentationExtended getUserRepresentationExtended(User user) {
         UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
-
         representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
-        representation.setPermissionScope(roleService.getPermissionScope(user));
+
+        PrismScope permissionScope = roleService.getPermissionScope(user);
+        representation.setPermissionScope(permissionScope);
+        representation.setScopesWithUrgentTasks(scopeService.getScopesWithUrgentTasks(user, permissionScope));
 
         representation.setParentUser(user.getEmail());
         representation.setLinkedUsers(userService.getLinkedUserAccounts(user));

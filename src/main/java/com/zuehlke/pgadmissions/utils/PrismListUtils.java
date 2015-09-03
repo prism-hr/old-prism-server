@@ -6,13 +6,19 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.rest.representation.ListSummaryRepresentation;
 
 public class PrismListUtils {
 
-    public static void processRowDescriptors(Set<EntityOpportunityCategoryDTO> entities, Set<Integer> entityIds, Map<String, Integer> summaries) {
-        entities.forEach(entity -> {
+    public static <T extends EntityOpportunityCategoryDTO> void processRowSummaries(Set<T> entities, Map<String, Integer> summaries) {
+        processRowDescriptors(entities, null, summaries);
+    }
+
+    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Map<String, Integer> summaries) {
+        entityIds = entityIds == null ? Sets.newHashSet() : entityIds;
+        for (T entity : entities) {
             entityIds.add(entity.getId());
             String opportunityCategories = entity.getOpportunityCategories();
             if (opportunityCategories != null) {
@@ -21,7 +27,7 @@ public class PrismListUtils {
                     summaries.put(opportunityCategory, summary == null ? 1 : summary + 1);
                 }
             }
-        });
+        }
 
         summaries.put("ALL", entityIds.size());
     }

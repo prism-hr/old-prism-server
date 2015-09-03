@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -14,7 +15,9 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ScopeDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 
 @Service
 @Transactional
@@ -25,6 +28,9 @@ public class ScopeService {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private ResourceService resourceService;
 
     @Inject
     private StateService stateService;
@@ -71,6 +77,18 @@ public class ScopeService {
         }
 
         return enclosedScopes;
+    }
+
+    public List<PrismScope> getScopesWithUrgentTasks(User user, PrismScope permissionScope) {
+        List<PrismScope> urgentScopes = Lists.newArrayList();
+        List<PrismScope> visibleScopes = getEnclosingScopesDescending(APPLICATION, permissionScope);
+        visibleScopes.forEach(scope -> {
+            if (resourceService.getResources(user, scope, visibleScopes.stream().filter(vs -> vs.ordinal() < scope.ordinal()).collect(Collectors.toList()),
+                    new ResourceListFilterDTO().withUrgentOnly(true)).size() > 0) {
+                urgentScopes.add(scope);
+            }
+        });
+        return urgentScopes;
     }
 
 }

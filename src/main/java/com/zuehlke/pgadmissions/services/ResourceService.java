@@ -86,7 +86,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
@@ -410,29 +410,12 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public Set<EntityOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes) {
+    public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes) {
         return getResources(user, scope, parentScopes, null, null, null, null);
     }
 
-    public Set<EntityOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter) {
+    public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter) {
         return getResources(user, scope, parentScopes, filter, getFilterConditions(scope, filter), null, null);
-    }
-
-    public Set<EntityOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition,
-            String sequenceIdentifier, Integer maxRecords) {
-        Set<EntityOpportunityCategoryDTO> assigned = Sets.newHashSet(resourceDAO.getResources(user, scope, filter, condition));
-
-        for (final PrismScope parentScopeId : parentScopes) {
-            assigned.addAll(resourceDAO.getResources(user, scope, parentScopeId, filter, condition));
-        }
-
-        if (!scope.equals(SYSTEM)) {
-            for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
-                assigned.addAll(resourceDAO.getPartnerResources(user, scope, partnerScopeId, filter, condition));
-            }
-        }
-
-        return assigned;
     }
 
     @SuppressWarnings("unchecked")
@@ -869,6 +852,23 @@ public class ResourceService {
         return resourceDAO.getResourcesNotYetEndorsedFor(resource);
     }
 
+    private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition,
+            String sequenceIdentifier, Integer maxRecords) {
+        Set<ResourceOpportunityCategoryDTO> resources = Sets.newHashSet(resourceDAO.getResources(user, scope, filter, condition));
+
+        for (PrismScope parentScopeId : parentScopes) {
+            resources.addAll(resourceDAO.getResources(user, scope, parentScopeId, filter, condition));
+        }
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+                resources.addAll(resourceDAO.getPartnerResources(user, scope, partnerScopeId, filter, condition));
+            }
+        }
+
+        return resources;
+    }
+    
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {
         String transitionStateSelection = Joiner.on("|").join(stateService.getCurrentStates(resource));
 

@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 public class DepartmentInvitationDTO {
 

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -46,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -149,6 +151,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityCategoryDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> activeStates, OpportunitiesQueryDTO queryDTO) {
+        PrismActionCondition actionCondition = queryDTO.getActionCondition();
         String resourceReference = scope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -163,7 +166,7 @@ public class AdvertDAO {
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
-                                .add(Restrictions.eq("resourceCondition.actionCondition", queryDTO.getActionCondition()))); //
+                                .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition))); //
 
         boolean narrowed = queryDTO.isNarrowed();
         if (narrowed) {
@@ -213,10 +216,10 @@ public class AdvertDAO {
         }
 
         if (narrowed) {
-            appendResourcesConstraint(criteria, INSTITUTION, queryDTO.getInstitutions());
-            appendResourcesConstraint(criteria, DEPARTMENT, queryDTO.getDepartments());
-            appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms());
-            appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects());
+            appendResourcesConstraint(criteria, INSTITUTION, queryDTO.getInstitutions(), actionCondition);
+            appendResourcesConstraint(criteria, DEPARTMENT, queryDTO.getDepartments(), actionCondition);
+            appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms(), actionCondition);
+            appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects(), actionCondition);
         } else {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.isNull("advertTarget.id")) //
@@ -611,12 +614,12 @@ public class AdvertDAO {
         criteria.add(disjunction);
     }
 
-    private void appendResourcesConstraint(Criteria criteria, PrismScope resourceScope, Integer[] resources) {
+    private void appendResourcesConstraint(Criteria criteria, PrismScope resourceScope, Integer[] resources, PrismActionCondition actionCondition) {
         if (resources != null) {
             Junction resourcesConstraint = Restrictions.disjunction() //
                     .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources));
 
-            if (newArrayList(DEPARTMENT, INSTITUTION).contains(resourceScope)) {
+            if (actionCondition.equals(ACCEPT_APPLICATION) && newArrayList(DEPARTMENT, INSTITUTION).contains(resourceScope)) {
                 resourcesConstraint.add(getPartnerResourcesConstraint(resourceScope, resources));
             }
 

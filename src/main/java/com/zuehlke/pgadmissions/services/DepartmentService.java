@@ -65,7 +65,7 @@ public class DepartmentService {
         return departmentDAO.getDepartments(institution);
     }
 
-    public void inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) {
+    public ActionOutcomeDTO inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) {
         DepartmentDTO departmentDTO = departmentInvitationDTO.getDepartment();
 
         Institution institution = institutionService.getById(departmentDTO.getParentResource().getId());
@@ -86,7 +86,9 @@ public class DepartmentService {
                             asList(DEPARTMENT_ADMINISTRATOR));
                 }
             }
+            return outcome;
         }
+        return null;
     }
 
     public void setImportedPrograms(Department department, List<ImportedEntityDTO> importedProgramDTOs) {

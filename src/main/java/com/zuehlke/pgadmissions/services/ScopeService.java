@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,6 +81,7 @@ public class ScopeService {
     }
 
     public List<PrismScope> getScopesWithUrgentTasks(User user, PrismScope permissionScope) {
+        permissionScope = permissionScope.equals(SYSTEM) ? PrismScope.INSTITUTION : permissionScope;
         List<PrismScope> urgentScopes = Lists.newArrayList();
         List<PrismScope> visibleScopes = getEnclosingScopesDescending(APPLICATION, permissionScope);
         visibleScopes.forEach(scope -> {

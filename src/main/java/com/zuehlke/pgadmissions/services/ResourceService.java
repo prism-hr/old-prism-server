@@ -178,7 +178,7 @@ public class ResourceService {
 
     @Inject
     private InstitutionService institutionService;
-    
+
     @Inject
     private ResourceListFilterService resourceListFilterService;
 
@@ -855,6 +855,7 @@ public class ResourceService {
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter) {
+        filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         return getResources(user, scope, parentScopes, filter, getFilterConditions(scope, filter));
     }
 
@@ -864,7 +865,6 @@ public class ResourceService {
 
     public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns,
             Junction conditions, Class<T> responseClass) {
-        filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         Set<T> resources = Sets.newHashSet(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass));
 
         if (!scope.equals(SYSTEM)) {

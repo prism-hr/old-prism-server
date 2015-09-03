@@ -36,11 +36,10 @@ public class OpportunityController {
     @Inject
     private ApplicationService applicationService;
 
-    // FIXME: Show number of adverts in each tabbed list.
     @RequestMapping(method = RequestMethod.GET)
-    public List<AdvertRepresentationExtended> getAdverts(OpportunitiesQueryDTO query) {
-         AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
-         return representation.getRows();
+    public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
+        AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
+        return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}")

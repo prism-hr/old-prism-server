@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExten
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
 import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserFeedbackService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -56,7 +55,7 @@ public class UserMapper {
     private UserService userService;
 
     @Inject
-    private ScopeService scopeService;
+    private ScopeMapper scopeMapper;
 
     @Inject
     private SystemService systemService;
@@ -74,7 +73,7 @@ public class UserMapper {
 
         PrismScope permissionScope = roleService.getPermissionScope(user);
         representation.setPermissionScope(permissionScope);
-        representation.setScopesWithUrgentTasks(scopeService.getScopesWithUrgentTasks(user, permissionScope));
+        representation.setScopeActionSummaries(scopeMapper.getScopeActionSummaryRepresentations(user, permissionScope));
 
         representation.setParentUser(user.getEmail());
         representation.setLinkedUsers(userService.getLinkedUserAccounts(user));

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
@@ -11,7 +12,7 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private PrismScope permissionScope;
 
-    private List<PrismScope> scopesWithUrgentTasks;
+    private List<ScopeActionSummaryRepresentation> scopeActionSummaries;
 
     private String parentUser;
 
@@ -37,12 +38,12 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
         this.permissionScope = permissionScope;
     }
 
-    public List<PrismScope> getScopesWithUrgentTasks() {
-        return scopesWithUrgentTasks;
+    public List<ScopeActionSummaryRepresentation> getScopeActionSummaries() {
+        return scopeActionSummaries;
     }
 
-    public void setScopesWithUrgentTasks(List<PrismScope> scopesWithUrgentTasks) {
-        this.scopesWithUrgentTasks = scopesWithUrgentTasks;
+    public void setScopeActionSummaries(List<ScopeActionSummaryRepresentation> scopeActionSummaries) {
+        this.scopeActionSummaries = scopeActionSummaries;
     }
 
     public String getParentUser() {

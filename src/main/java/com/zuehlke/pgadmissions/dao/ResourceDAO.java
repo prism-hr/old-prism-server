@@ -60,7 +60,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
@@ -239,9 +238,9 @@ public class ResourceDAO {
         return Collections.emptyList();
     }
 
-    public List<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, Junction conditions) {
+    public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
-                .setProjection(getResourceOpportunityCategoryProjection()) //
+                .setProjection(columns) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -261,16 +260,17 @@ public class ResourceDAO {
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(scope, criteria, conditions, filter);
-        return (List<ResourceOpportunityCategoryDTO>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(ResourceOpportunityCategoryDTO.class)) //
+        return (List<T>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
-    public List<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scopeId, PrismScope parentScope, ResourceListFilterDTO filter, Junction conditions) {
+    public <T> List<T> getResources(User user, PrismScope scopeId, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns,
+            Junction conditions, Class<T> responseClass) {
         String parentResourceReference = parentScope.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
-                .setProjection(getResourceOpportunityCategoryProjection()) //
+                .setProjection(columns) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -291,16 +291,17 @@ public class ResourceDAO {
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
-        return (List<ResourceOpportunityCategoryDTO>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(ResourceOpportunityCategoryDTO.class)) //
+        return (List<T>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
-
-    public List<ResourceOpportunityCategoryDTO> getPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, Junction conditions) {
+    
+    public <T> List<T> getPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, ProjectionList columns,
+            Junction conditions, Class<T> responseClass) {
         String partnerResourceReference = partnerScope.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
-                .setProjection(getResourceOpportunityCategoryProjection()) //
+                .setProjection(columns) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -316,7 +317,8 @@ public class ResourceDAO {
                         Restrictions.eq("stateActionAssignment.partnerMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, 
+                        Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ne("action.scope.id", APPLICATION)) //
                         .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value")));
@@ -329,8 +331,8 @@ public class ResourceDAO {
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(scope, criteria, conditions, filter);
-        return (List<ResourceOpportunityCategoryDTO>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(ResourceOpportunityCategoryDTO.class)) //
+        return (List<T>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
@@ -851,13 +853,6 @@ public class ResourceDAO {
             enclosedScopeExclusion.add(Restrictions.isNull(enclosedScopeReference + ".id"));
         }
         return enclosedScopeExclusion;
-    }
-
-    private static ProjectionList getResourceOpportunityCategoryProjection() {
-        return Projections.projectionList() //
-                .add(Projections.groupProperty("id").as("id")) //
-                .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
-                .add(Projections.property("opportunityCategories").as("opportunityCategories"));
     }
 
 }

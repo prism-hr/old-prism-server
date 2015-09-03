@@ -8,17 +8,21 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.zuehlke.pgadmissions.dao.ScopeDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation.ActionSummaryRepresentation;
 
 @Service
 @Transactional
@@ -80,17 +84,27 @@ public class ScopeService {
         return enclosedScopes;
     }
 
-    public List<PrismScope> getScopesWithUrgentTasks(User user, PrismScope permissionScope) {
-        permissionScope = permissionScope.equals(SYSTEM) ? PrismScope.INSTITUTION : permissionScope;
-        List<PrismScope> urgentScopes = Lists.newArrayList();
+    public Multimap<PrismScope, ActionSummaryRepresentation> getScopeActionSummaries(User user, PrismScope permissionScope) {
+        permissionScope = getEffectivePermissionsScope(permissionScope);
+        LinkedHashMultimap<PrismScope, ActionSummaryRepresentation> summaries = LinkedHashMultimap.create();
+        
         List<PrismScope> visibleScopes = getEnclosingScopesDescending(APPLICATION, permissionScope);
         visibleScopes.forEach(scope -> {
-            if (resourceService.getResources(user, scope, visibleScopes.stream().filter(vs -> vs.ordinal() < scope.ordinal()).collect(Collectors.toList()),
-                    new ResourceListFilterDTO().withUrgentOnly(true)).size() > 0) {
-                urgentScopes.add(scope);
-            }
+            summaries.putAll(scope, resourceService.getResources(user, scope, visibleScopes.stream()
+                    .filter(as -> as.ordinal() < scope.ordinal())
+                    .collect(Collectors.toList()),
+                    new ResourceListFilterDTO().withUrgentOnly(true), //
+                    Projections.projectionList() //
+                            .add(Projections.groupProperty("stateAction.action.id").as("action")) //
+                            .add(Projections.countDistinct("id").as("actionCount")),
+                    ActionSummaryRepresentation.class));
         });
-        return urgentScopes;
+        return summaries;
+    }
+
+    private PrismScope getEffectivePermissionsScope(PrismScope permissionScope) {
+        permissionScope = permissionScope.equals(SYSTEM) ? PrismScope.INSTITUTION : permissionScope;
+        return permissionScope;
     }
 
 }

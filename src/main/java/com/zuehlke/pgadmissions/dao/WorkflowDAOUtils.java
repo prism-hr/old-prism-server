@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -88,6 +90,13 @@ public class WorkflowDAOUtils {
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.ne("action.scope.id", APPLICATION)) //
                                 .add(Restrictions.eqProperty("ownerAdvert.advert", "advertTarget.value"))));
+    }
+
+    public static ProjectionList getResourceOpportunityCategoryProjection() {
+        return Projections.projectionList() //
+                .add(Projections.groupProperty("id").as("id")) //
+                .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
+                .add(Projections.property("opportunityCategories").as("opportunityCategories"));
     }
 
 }

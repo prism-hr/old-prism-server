@@ -79,9 +79,8 @@ public class RoleService {
         return persistentUserRole;
     }
 
-    public void assignUserRoles(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
+    public void assignUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
         if (roles.length > 0) {
-            User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
 
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
@@ -178,9 +177,9 @@ public class RoleService {
         entityService.flush();
     }
 
-    public void deleteUserRoles(Resource resource, User user) throws Exception {
+    public void deleteUserRoles(User invoker, Resource resource, User user) throws Exception {
         List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
-        assignUserRoles(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
+        assignUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
     public PrismScope getPermissionScope(User user) {

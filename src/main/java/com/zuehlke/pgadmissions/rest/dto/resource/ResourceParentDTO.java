@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition<AdvertDTO> {
@@ -20,7 +19,6 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     private String name;
 
     @Valid
-    @NotNull
     private AdvertDTO advert;
 
     private List<ResourceConditionDTO> conditions;

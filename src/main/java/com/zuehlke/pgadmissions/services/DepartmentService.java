@@ -2,12 +2,14 @@ package com.zuehlke.pgadmissions.services;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.DepartmentImportedSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
@@ -19,6 +21,8 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.DEPARTMENT_COMMENT_UPDATED_IMPORTED_PROGRAMS;
@@ -63,14 +67,22 @@ public class DepartmentService {
 
     public void inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) {
         DepartmentDTO departmentDTO = departmentInvitationDTO.getDepartment();
+
         Institution institution = institutionService.getById(departmentDTO.getParentResource().getId());
+        List<PrismOpportunityCategory> opportunityCategories = Stream.of(institution.getOpportunityCategories().split("\\|"))
+                .map(c -> PrismOpportunityCategory.valueOf(c))
+                .collect(Collectors.toList());
+
+        AdvertDTO advertDTO = new AdvertDTO();
+        departmentDTO.setAdvert(advertDTO);
+        departmentDTO.setOpportunityCategories(opportunityCategories);
 
         if (institution != null) {
             ActionOutcomeDTO outcome = resourceService.createResource(institution.getUser(), actionService.getById(INSTITUTION_CREATE_DEPARTMENT), departmentDTO);
             if (outcome != null) {
                 UserDTO user = departmentInvitationDTO.getDepartmentUser();
                 if (user != null) {
-                    userService.getOrCreateUserWithRoles(user.getFirstName(), user.getLastName(), user.getEmail(), outcome.getResource(),
+                    userService.getOrCreateUserWithRoles(institution.getUser(), user.getFirstName(), user.getLastName(), user.getEmail(), outcome.getResource(),
                             asList(DEPARTMENT_ADMINISTRATOR));
                 }
             }

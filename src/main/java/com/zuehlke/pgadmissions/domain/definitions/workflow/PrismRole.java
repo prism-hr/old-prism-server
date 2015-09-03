@@ -15,7 +15,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
-// FIXME: generalise concept of supervisor for employment
 public enum PrismRole implements PrismLocalizableDefinition {
 
     RESUME_CREATOR(APPLICANT, RESUME), //

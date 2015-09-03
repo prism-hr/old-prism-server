@@ -21,6 +21,7 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -65,11 +66,15 @@ import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDemographicRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDocumentRepresentation;
@@ -235,6 +240,26 @@ public class ApplicationMapper {
                 .withRefereeType(reference.getRefereeType()).withJobEmployer(reference.getJobEmployer()).withJobTitle(reference.getJobTitle())
                 .withAddress(getAddressApplicationRepresentation(reference.getAddress(), institution)).withPhone(reference.getPhone())
                 .withSkype(reference.getSkype()).withComment(getApplicationReferenceRepresentation(referenceComment, overridingRoles));
+    }
+
+    public List<ApplicationAppointmentRepresentation> getApplicationAppointmentRepresentations(User user) {
+        LocalDate baseline = new LocalDate();
+        List<ApplicationAppointmentRepresentation> representations = Lists.newLinkedList();
+
+        applicationService.getApplicationAppointments(user).forEach(appointment -> {
+            ResourceRepresentationStandard representation = resourceMapper.getResourceRepresentationStandard(appointment);
+            representation.setCode(appointment.getCode());
+
+            LocalDateTime interviewDateTime = appointment.getInterviewDateTime();
+            if (interviewDateTime.toLocalDate().isAfter(baseline)) {
+                representations.add(new ApplicationAppointmentRepresentation().withApplication(representation)
+                        .withAppointment(new CommentInterviewAppointmentRepresentation().withInterviewDateTime(interviewDateTime)
+                                .withInterviewTimeZone(appointment.getInterviewTimeZone()).withInterviewDuration(appointment.getInterviewDuration()))
+                        .withInstruction(new CommentInterviewInstructionRepresentation().withInterviewLocation(appointment.getInterviewLocation())));
+            }
+        });
+
+        return representations;
     }
 
     private <T extends ApplicationRepresentationSimple> T getApplicationRepresentation(Application application, Institution institution, Class<T> returnType,

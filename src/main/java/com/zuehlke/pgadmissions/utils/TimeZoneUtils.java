@@ -188,8 +188,7 @@ public class TimeZoneUtils {
         private final String displayName;
         private final String standardDisplayName;
 
-        public TimeZoneWithDisplayNames(TimeZone timeZone, String displayName,
-                                        String standardDisplayName) {
+        public TimeZoneWithDisplayNames(TimeZone timeZone, String displayName, String standardDisplayName) {
             this.timeZone = timeZone;
             this.displayName = displayName;
             this.standardDisplayName = standardDisplayName;
@@ -213,8 +212,7 @@ public class TimeZoneUtils {
         private final String olsonName;
         private final String windowsDisplayName;
 
-        public TimeZoneMapping(String windowsStandardName, String olsonName,
-                               String windowsDisplayName) {
+        public TimeZoneMapping(String windowsStandardName, String olsonName, String windowsDisplayName) {
             this.windowsStandardName = windowsStandardName;
             this.olsonName = olsonName;
             this.windowsDisplayName = windowsDisplayName;

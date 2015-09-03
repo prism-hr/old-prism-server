@@ -3,8 +3,10 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EXPORT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
@@ -56,7 +58,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropert
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
@@ -381,6 +385,42 @@ public class ApplicationDAO {
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
                 .add(Restrictions.in("rejectionReason.id", importedRejectionReasons)) //
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ApplicationAppointmentDTO> getApplicationsAppointments(User user) {
+        return (List<ApplicationAppointmentDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("institution.id").as("institutionId")) //
+                        .add(Projections.property("institution.name").as("institutionName")) //
+                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
+                        .add(Projections.property("department.id").as("departmentId")) //
+                        .add(Projections.property("department.name").as("departmentName")) //                        
+                        .add(Projections.property("program.id").as("programId")) //
+                        .add(Projections.property("program.name").as("programName")) //                         
+                        .add(Projections.property("project.id").as("projectId")) //
+                        .add(Projections.property("project.name").as("projectName")) //
+                        .add(Projections.groupProperty("application.id").as("applicationId")) //
+                        .add(Projections.property("application.code").as("applicationCode")) //
+                        .add(Projections.groupProperty("comment.interviewAppointment.interviewDateTime").as("interviewDateTime")) //
+                        .add(Projections.property("comment.interviewAppointment.interviewTimeZone").as("interviewTimeZone")) //
+                        .add(Projections.property("comment.interviewAppointment.interviewDuration").as("interviewDuration")) //
+                        .add(Projections.property("comment.interviewInstruction.interviewLocation").as("interviewDuration")))
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("application.institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("application.department", "department", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("application.program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("application.project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("application.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("application.comments", "comment", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.in("role.id", APPLICATION_CONFIRMED_INTERVIEW_GROUP.getRoles())) //
+                .add(Restrictions.eq("resourceState.state.id", APPLICATION_INTERVIEW_PENDING_INTERVIEW)) //
+                .add(Restrictions.isNotNull("comment.interviewAppointment.interviewDateTime")) //
+                .addOrder(Order.asc("comment.interviewAppointment.interviewDateTime")) //
+                .addOrder(Order.asc("application.id")) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationAppointmentDTO.class)) //
                 .list();
     }
 

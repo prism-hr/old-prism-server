@@ -23,6 +23,7 @@ import static java.math.RoundingMode.HALF_UP;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -706,12 +707,12 @@ public class ResourceService {
     }
 
     public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments, boolean allDepartments) {
-        PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION, SYSTEM };
+        PrismScope[] institutionScopes = new PrismScope[]{INSTITUTION, SYSTEM};
         List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
         List<Integer> targetInstitutions = advertService.getAdvertTargetResources(advert, INSTITUTION, true);
 
         ResourceTargetListDTO targets = new ResourceTargetListDTO(advert);
-        if (CollectionUtils.isNotEmpty(subjectAreas)) {
+        if (!allDepartments && CollectionUtils.isNotEmpty(subjectAreas)) {
             Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
             Map<Integer, BigDecimal> subjectAreaInstitutions = institutionService.getInstitutionsBySubjectAreas(subjectAreasLookup).stream()
                     .collect(Collectors.toMap(institution -> (institution.getResourceId()), institution -> (institution.getTargetingRelevance())));
@@ -731,27 +732,31 @@ public class ResourceService {
 
             List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
             List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
-            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
+            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, new PrismScope[]{DEPARTMENT, INSTITUTION}, departments, departmentStates), targetDepartments);
         }
 
         if (allDepartments) {
             Integer institution = institutions.get(0);
-
-            Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-            Map<Integer, BigDecimal> subjectAreaDepartments = departmentService.getDepartmentsBySubjectAreas(institution, subjectAreasLookup).stream()
-                    .collect(Collectors.toMap(department -> (department.getResourceId()), department -> (department.getTargetingRelevance())));
+            Map<Integer, BigDecimal> subjectAreaDepartments = Collections.emptyMap();
+            if (!CollectionUtils.isEmpty(subjectAreas)) {
+                Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
+                subjectAreaDepartments = departmentService.getDepartmentsBySubjectAreas(institution, subjectAreasLookup).stream()
+                        .collect(Collectors.toMap(department -> (department.getResourceId()), department -> (department.getTargetingRelevance())));
+            }
 
             departments = departmentService.getDepartments(institution);
-            List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
-            List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
+            if (!departments.isEmpty()) {
+                List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
+                List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
 
-            List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates);
-            addResourceTargets(subjectAreaTargets, subjectAreaDepartments, targets, targetDepartments);
+                List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, new PrismScope[]{DEPARTMENT, INSTITUTION}, departments, departmentStates);
+                addResourceTargets(subjectAreaTargets, subjectAreaDepartments, targets, targetDepartments);
+            }
         }
 
         return targets.keySet();
     }
-
+    
     public ResourceStandardDTO getResourceWithParents(Resource resource, List<PrismScope> parentScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         return resourceDAO.getParentResources(SYSTEM, systemId, resourceScope, resource.getId(), parentScopes);

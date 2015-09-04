@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -24,8 +25,9 @@ public class OpportunitiesQueryDTO {
     @NotNull
     private PrismOpportunitiesTab tab;
 
-    @NotNull
-    private List<PrismOpportunityCategory> opportunityCategories;
+    private PrismOpportunityCategory opportunityCategory;
+
+    private PrismScope scope;
 
     private String keyword;
 
@@ -61,60 +63,68 @@ public class OpportunitiesQueryDTO {
 
     private String lastSequenceIdentifier;
 
-    public final Integer getResourceId() {
+    public Integer getResourceId() {
         return resourceId;
     }
 
-    public final void setResourceId(Integer resourceId) {
+    public void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
     }
 
-    public final PrismAction getActionId() {
+    public PrismAction getActionId() {
         return actionId;
     }
 
-    public final void setActionId(PrismAction actionId) {
+    public void setActionId(PrismAction actionId) {
         this.actionId = actionId;
     }
 
-    public final Integer[] getInstitutions() {
+    public Integer[] getInstitutions() {
         return institutions;
     }
 
-    public final void setInstitutions(Integer[] institutions) {
+    public void setInstitutions(Integer[] institutions) {
         this.institutions = institutions;
     }
 
-    public final Integer[] getDepartments() {
+    public Integer[] getDepartments() {
         return departments;
     }
 
-    public final void setDepartments(Integer[] departments) {
+    public void setDepartments(Integer[] departments) {
         this.departments = departments;
     }
 
-    public final Integer[] getPrograms() {
+    public Integer[] getPrograms() {
         return programs;
     }
 
-    public final void setPrograms(Integer[] programs) {
+    public void setPrograms(Integer[] programs) {
         this.programs = programs;
     }
 
-    public final Integer[] getProjects() {
+    public Integer[] getProjects() {
         return projects;
     }
 
-    public final void setProjects(Integer[] projects) {
+    public void setProjects(Integer[] projects) {
         this.projects = projects;
     }
 
-    public List<PrismOpportunityCategory> getOpportunityCategories() {
-        return opportunityCategories;
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
     }
 
-    public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
-        this.opportunityCategories = opportunityCategories;
+    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
+        this.opportunityCategory = opportunityCategory;
+    }
+
+    public PrismScope getScope() {
+        return scope;
+    }
+
+    public void setScope(PrismScope scope) {
+        this.scope = scope;
     }
 
     public PrismOpportunitiesTab getTab() {
@@ -173,51 +183,51 @@ public class OpportunitiesQueryDTO {
         this.studyOptions = studyOptions;
     }
 
-    public final Integer getMinFee() {
+    public Integer getMinFee() {
         return minFee;
     }
 
-    public final void setMinFee(Integer minFee) {
+    public void setMinFee(Integer minFee) {
         this.minFee = minFee;
     }
 
-    public final Integer getMaxFee() {
+    public Integer getMaxFee() {
         return maxFee;
     }
 
-    public final void setMaxFee(Integer maxFee) {
+    public void setMaxFee(Integer maxFee) {
         this.maxFee = maxFee;
     }
 
-    public final Integer getMinSalary() {
+    public Integer getMinSalary() {
         return minSalary;
     }
 
-    public final void setMinSalary(Integer minSalary) {
+    public void setMinSalary(Integer minSalary) {
         this.minSalary = minSalary;
     }
 
-    public final Integer getMaxSalary() {
+    public Integer getMaxSalary() {
         return maxSalary;
     }
 
-    public final void setMaxSalary(Integer maxSalary) {
+    public void setMaxSalary(Integer maxSalary) {
         this.maxSalary = maxSalary;
     }
 
-    public final Integer getMinDuration() {
+    public Integer getMinDuration() {
         return minDuration;
     }
 
-    public final void setMinDuration(Integer minDuration) {
+    public void setMinDuration(Integer minDuration) {
         this.minDuration = minDuration;
     }
 
-    public final Integer getMaxDuration() {
+    public Integer getMaxDuration() {
         return maxDuration;
     }
 
-    public final void setMaxDuration(Integer maxDuration) {
+    public void setMaxDuration(Integer maxDuration) {
         this.maxDuration = maxDuration;
     }
 
@@ -253,11 +263,11 @@ public class OpportunitiesQueryDTO {
         this.swLon = swLon;
     }
 
-    public final String getLastSequenceIdentifier() {
+    public String getLastSequenceIdentifier() {
         return lastSequenceIdentifier;
     }
 
-    public final void setLastSequenceIdentifier(String lastSequenceIdentifier) {
+    public void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
     }
 

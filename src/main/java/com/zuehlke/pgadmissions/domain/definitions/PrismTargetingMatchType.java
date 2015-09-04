@@ -5,6 +5,6 @@ public enum PrismTargetingMatchType {
     JACS,
     TOKEN,
     UCAS,
-    PARENT;
+    PARENT
 
 }

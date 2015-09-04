@@ -1,11 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunitiesTab;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -272,11 +278,11 @@ public class OpportunitiesQueryDTO {
         return !(institutions == null && departments == null && programs == null && projects == null);
     }
 
-    }
-
     public Integer[] getResources(PrismScope resourceScope) {
         if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
             return (Integer[]) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName() + "s");
         }
-        return null;
+        return null;   
+    }
+
 }

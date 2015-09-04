@@ -32,16 +32,13 @@ import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
-import com.zuehlke.pgadmissions.mapping.ScopeMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
-import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAppointmentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
@@ -65,12 +62,6 @@ public class UserController {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private ApplicationMapper applicationMapper;
-
-    @Inject
-    private ScopeMapper scopeMapper;
 
     @Inject
     private UserMapper userMapper;
@@ -181,15 +172,9 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/actionSummary", method = RequestMethod.GET, params = "permissionScope")
-    public List<ScopeActionSummaryRepresentation> getScopeActionSummaryRepresentation(@RequestParam PrismScope permissionScope) {
-        return scopeMapper.getScopeActionSummaryRepresentations(userService.getCurrentUser(), permissionScope);
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/interviewSummary", method = RequestMethod.GET, params = "permissionScope")
-    public List<ApplicationAppointmentRepresentation> getApplicationInterviewSummaryRepresentation() {
-        return applicationMapper.getApplicationAppointmentRepresentations(userService.getCurrentUser());
+    @RequestMapping(value = "/activity", method = RequestMethod.GET, params = "permissionScope")
+    public UserActivityRepresentation getActivitySummary(@RequestParam PrismScope permissionScope) {
+        return userMapper.getUserActivityRepresentation(userService.getCurrentUser(), permissionScope);
     }
 
     @PreAuthorize("isAuthenticated()")

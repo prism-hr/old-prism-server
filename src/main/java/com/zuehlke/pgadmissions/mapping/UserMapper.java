@@ -27,6 +27,9 @@ import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
+import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ScopeUpdateSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
@@ -56,6 +59,12 @@ public class UserMapper {
 
     @Inject
     private SystemService systemService;
+
+    @Inject
+    private ApplicationMapper applicationMapper;
+
+    @Inject
+    private ScopeMapper scopeMapper;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -157,6 +166,20 @@ public class UserMapper {
             representations.add(getUserRepresentationSimple(user.getUser()));
         }
         return representations;
+    }
+
+    public UserActivityRepresentation getUserActivityRepresentation(User user, PrismScope permissionScope) {
+        UserActivityRepresentation representation = new UserActivityRepresentation();
+
+        List<ScopeActionSummaryRepresentation> urgentSummaries = Lists.newLinkedList();
+        List<ScopeUpdateSummaryRepresentation> updateSummaries = Lists.newLinkedList();
+        scopeMapper.populateScopeSummaries(user, permissionScope, urgentSummaries, updateSummaries);
+
+        representation.setUrgentSummaries(urgentSummaries);
+        representation.setUpdateSummaries(updateSummaries);
+
+        representation.setAppointmentSummaries(applicationMapper.getApplicationAppointmentRepresentations(user));
+        return representation;
     }
 
     private List<String> getOathProviderRepresentations(User user) {

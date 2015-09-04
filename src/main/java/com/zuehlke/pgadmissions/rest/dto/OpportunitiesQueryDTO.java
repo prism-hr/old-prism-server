@@ -13,6 +13,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public class OpportunitiesQueryDTO {
 
@@ -279,6 +282,13 @@ public class OpportunitiesQueryDTO {
     public OpportunitiesQueryDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         opportunityCategories = Lists.newArrayList(opportunityCategory);
         return this;
+    }
+
+    public Integer[] getResources(PrismScope resourceScope) {
+        if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
+            return (Integer[]) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName() + "s");
+        }
+        return null;
     }
 
 }

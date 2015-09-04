@@ -1,18 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 import javax.validation.constraints.NotNull;
-
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class OpportunitiesQueryDTO {
 
@@ -29,7 +22,7 @@ public class OpportunitiesQueryDTO {
     private Integer[] projects;
 
     @NotNull
-    private PrismActionCondition actionCondition;
+    private PrismOpportunitiesTab tab;
 
     @NotNull
     private List<PrismOpportunityCategory> opportunityCategories;
@@ -124,12 +117,12 @@ public class OpportunitiesQueryDTO {
         this.opportunityCategories = opportunityCategories;
     }
 
-    public PrismActionCondition getActionCondition() {
-        return actionCondition;
+    public PrismOpportunitiesTab getTab() {
+        return tab;
     }
 
-    public void setActionCondition(PrismActionCondition actionCondition) {
-        this.actionCondition = actionCondition;
+    public void setTab(PrismOpportunitiesTab tab) {
+        this.tab = tab;
     }
 
     public String getKeyword() {
@@ -274,11 +267,6 @@ public class OpportunitiesQueryDTO {
 
     public boolean isNarrowed() {
         return !(institutions == null && departments == null && programs == null && projects == null);
-    }
-
-    public OpportunitiesQueryDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
-        opportunityCategories = Lists.newArrayList(opportunityCategory);
-        return this;
     }
 
 }

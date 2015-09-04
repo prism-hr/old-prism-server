@@ -1,53 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -55,26 +7,13 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
-import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
+import com.zuehlke.pgadmissions.domain.advert.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunitiesTab;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
@@ -89,17 +28,44 @@ import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.*;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 
 @Service
 @Transactional
@@ -166,12 +132,6 @@ public class AdvertService {
                 }
             }
         }
-
-        PrismActionCondition actionCondition = query.getActionCondition();
-        actionCondition = actionCondition == null ? ACCEPT_APPLICATION : actionCondition;
-        query.setActionCondition(actionCondition);
-
-        scopes = actionCondition.equals(ACCEPT_PROJECT) ? new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION } : scopes;
 
         return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
     }
@@ -478,8 +438,9 @@ public class AdvertService {
 
     public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
+        PrismActionCondition actionCondition = queryDTO.getTab() == PrismOpportunitiesTab.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, queryDTO));
         }
         return adverts;
     }

@@ -90,7 +90,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DASHBOARD(SYSTEM_GLOBAL, "Dashboard"),
     SYSTEM_DIVISIONS(SYSTEM_GLOBAL, "Divisions"),
     SYSTEM_OPPORTUNITY(SYSTEM_GLOBAL, "Opportunity"),
-    SYSTEM_REGISTER_CONNECT(SYSTEM_GLOBAL, "Register & Connect"),
+    SYSTEM_REGISTER_CONNECT(SYSTEM_GLOBAL, "Target this Organization"),
     SYSTEM_PROMOTED_BY(SYSTEM_GLOBAL, "Promoted by"),
     SYSTEM_OPPORTUNITIES(SYSTEM_GLOBAL, "Opportunities"),
     SYSTEM_DEADLINE(SYSTEM_GLOBAL, "Deadline"),

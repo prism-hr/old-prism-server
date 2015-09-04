@@ -93,7 +93,6 @@ public class DepartmentService {
             }
             return outcome;
         }
-        return null;
     }
 
     public void setImportedPrograms(Department department, List<ImportedEntityDTO> importedProgramDTOs) {

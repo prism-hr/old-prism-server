@@ -27,6 +27,7 @@ public class BranchResolver implements RoleTransitionResolver {
 		if (persistentRole != null) {
 			comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), CREATE);
 			roleService.getOrCreateUserRole(transitionUserRole);
+	        entityService.flush();
 		}
 	}
 

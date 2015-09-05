@@ -1,16 +1,21 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.UNVERIFIED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -28,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleC
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -72,6 +78,9 @@ public class RoleService {
     private ScopeService scopeService;
 
     @Inject
+    private StateService stateService;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public Role getById(PrismRole roleId) {
@@ -87,26 +96,35 @@ public class RoleService {
     }
 
     public UserRole getOrCreateUserRole(UserRole transientUserRole) {
-        UserRole persistentUserRole = entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
-        entityService.flush();
-        return persistentUserRole;
+        return entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
+    }
+
+    public Role getUnverifiedRole(Resource resource) {
+        return getById(PrismRole.getUnverifiedViewerRole(resource));
+    }
+
+    public void verifyUserRole(User invoker, Resource resource, User user, Boolean verify) {
+        Role role = getUnverifiedRole(resource);
+        if (role != null) {
+            UserRole userRole = getUserRole(resource, user, getUnverifiedRole(resource));
+            if (BooleanUtils.isTrue(verify)) {
+                assignUserRole(invoker, resource, user, CREATE, PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER"));
+            }
+            entityService.delete(userRole);
+        }
     }
 
     public void assignUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
         if (roles.length > 0) {
-            Action action = actionService.getViewEditAction(resource);
-
-            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
-
-            Comment comment = new Comment().withAction(action).withUser(invoker)
-                    .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
-                    .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-            for (PrismRole role : roles) {
-                comment.addAssignedUser(user, getById(role), transitionType);
+            PrismRole firstRole = roles[0];
+            if (asList(UNVERIFIED).contains(firstRole) && getVerifiedRoles(user, (ResourceParent) resource).isEmpty()) {
+                List<PrismState> activeStates = stateService.getActiveResourceStates(resource.getResourceScope());
+                if (containsAny(resource.getResourceStates().stream().map(rs -> rs.getState().getId()).collect(Collectors.toList()), activeStates)) {
+                    getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(getById(firstRole))).withAssignedTimestamp(new DateTime());
+                }
+            } else {
+                assignUserRole(invoker, resource, user, transitionType, roles);
             }
-
-            actionService.executeUserAction(resource, action, comment);
-            notificationService.sendInvitationNotifications(comment);
         }
     }
 
@@ -114,8 +132,8 @@ public class RoleService {
         if (roleDAO.getRolesForResourceStrict(resource, user).isEmpty()) {
             throw new PrismForbiddenException("User has no role within given resource");
         }
-        resource.setUser(user);
 
+        resource.setUser(user);
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             resource.getAdvert().setUser(user);
         }
@@ -254,6 +272,10 @@ public class RoleService {
         return roleDAO.getRolesWithRedactions(resourceScope);
     }
 
+    public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
+        return roleDAO.getVerifiedRoles(user, resource);
+    }
+
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
         for (RoleTransition roleTransition : roleTransitions) {
             List<User> users = getRoleTransitionUsers(resource, comment, roleTransition);
@@ -332,6 +354,21 @@ public class RoleService {
 
             applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
         }
+    }
+
+    private void assignUserRole(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
+        Action action = actionService.getViewEditAction(resource);
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+
+        Comment comment = new Comment().withAction(action).withUser(invoker)
+                .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
+        for (PrismRole role : roles) {
+            comment.addAssignedUser(user, getById(role), transitionType);
+        }
+
+        actionService.executeUserAction(resource, action, comment);
+        notificationService.sendInvitationNotifications(comment);
     }
 
 }

@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
@@ -123,7 +124,7 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                                            @RequestParam PrismScope propertiesScope) throws Exception {
+            @RequestParam PrismScope propertiesScope) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getDisplayProperties(resource, propertiesScope);
     }
@@ -131,7 +132,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResourceListRepresentation getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                   @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         ResourceListRepresentation representation = resourceMapper.getResourceListRepresentation(resourceScope, filterDTO, lastSequenceIdentifier);
@@ -141,7 +142,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
     @PreAuthorize("isAuthenticated()")
     public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest request,
-                          HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
@@ -156,7 +157,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
     @PreAuthorize("isAuthenticated()")
     public ResourceSummaryPlotRepresentation getPlot(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                                     @RequestParam(required = false) String filter) throws Exception {
+            @RequestParam(required = false) String filter) throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
         if (!(resource instanceof ResourceParent)) {
             throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
@@ -168,7 +169,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody Map<String, PrismRole> body) throws Exception {
+            @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -177,8 +178,8 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
-    public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+    public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role, @ModelAttribute ResourceDescriptor resourceDescriptor)
+            throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
         roleService.assignUserRoles(userService.getCurrentUser(), resource, user, DELETE, role);
@@ -187,12 +188,30 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
+            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(),
                 newUser.getLastName(), newUser.getEmail(), resource, userRolesRepresentation.getRoles());
         return userMapper.getUserRepresentationSimple(user);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/join", method = RequestMethod.POST)
+    @PreAuthorize("permitAll")
+    public UserRepresentationSimple addUnverifiedUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody UserDTO newUser) throws Exception {
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.createUnverifiedViewerUser(newUser, resource);
+        return userMapper.getUserRepresentationSimple(user);
+    }
+    
+    @RequestMapping(value = "{resourceId}/users/{userId}/verify", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestParam Boolean verify, @ModelAttribute ResourceDescriptor resourceDescriptor)
+            throws Exception {
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+        roleService.verifyUserRole(userService.getCurrentUser(), resource, user, verify);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
@@ -216,7 +235,7 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                     @Valid @RequestBody CommentDTO commentDTO) throws Exception {
+            @Valid @RequestBody CommentDTO commentDTO) throws Exception {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
         return actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
@@ -229,7 +248,7 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
     public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope targetScope,
-                                                                           @RequestParam PrismScope stopScope, @RequestParam Optional<String> searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @RequestParam PrismScope stopScope, @RequestParam Optional<String> searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, targetScope, stopScope, searchTerm.orElse(null));
     }
 
@@ -242,7 +261,7 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers/{userId}", method = RequestMethod.PUT)
     public void correctBouncedOrUnverifiedUser(@PathVariable Integer resourceId, @PathVariable Integer userId,
-                                               @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         userService.correctBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
     }

@@ -11,9 +11,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.Arrays.asList;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
@@ -46,10 +49,12 @@ public enum PrismRole implements PrismLocalizableDefinition {
     DEPARTMENT_ADMINISTRATOR(ADMINISTRATOR, DEPARTMENT), //
     DEPARTMENT_APPROVER(RECRUITER, DEPARTMENT), //
     DEPARTMENT_VIEWER(RECRUITER, DEPARTMENT), //
+    DEPARTMENT_VIEWER_UNVERIFIED(RECRUITER, INSTITUTION), //
 
     INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, INSTITUTION), //
     INSTITUTION_APPROVER(RECRUITER, INSTITUTION), //
     INSTITUTION_VIEWER(RECRUITER, INSTITUTION), //
+    INSTITUTION_VIEWER_UNVERIFIED(RECRUITER, INSTITUTION), //
 
     SYSTEM_ADMINISTRATOR(ADMINISTRATOR, SYSTEM);
 
@@ -68,6 +73,25 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     public PrismScope getScope() {
         return scope;
+    }
+
+    public static PrismRole getAdministratorRole(Resource resource) {
+        return valueOf(resource.getResourceScope().name() + "_ADMINISTRATOR");
+    }
+    
+    public static PrismRole getViewerRole(Resource resource) {
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            return valueOf(resource.getResourceScope().name() + "_VIEWER");
+        }
+        return null;
+    }
+    
+    public static PrismRole getUnverifiedViewerRole(Resource resource) {
+        PrismScope resourceScope = resource.getResourceScope();
+        if (asList(DEPARTMENT, INSTITUTION).contains(resourceScope)) {
+            return valueOf(resource.getResourceScope().name() + "_VIEWER_UNVERIFIED");
+        }
+        return null;
     }
 
     @Override

@@ -7,7 +7,9 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActi
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.UNVERIFIED;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
@@ -346,25 +347,6 @@ public class UserDAO {
                 .list();
     }
 
-    public UserConnection getUserConnection(User userRequested, User userConnected) {
-        return (UserConnection) sessionFactory.getCurrentSession().createCriteria(UserConnection.class) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("userRequested", userRequested)) //
-                                .add(Restrictions.eq("userConnected", userConnected))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("userConnected", userRequested)) //
-                                .add(Restrictions.eq("userRequested", userConnected)))) //
-                .uniqueResult();
-    }
-
-    public UserConnection getUserConnectionStrict(User userRequested, User userConnected) {
-        return (UserConnection) sessionFactory.getCurrentSession().createCriteria(UserConnection.class) //
-                .add(Restrictions.eq("userRequested", userRequested)) //
-                .add(Restrictions.eq("userConnected", userConnected)) //
-                .uniqueResult();
-    }
-
     public List<UserCompetenceDTO> getUserCompetences(User user) {
         return (List<UserCompetenceDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList() //
@@ -405,6 +387,24 @@ public class UserDAO {
                         + "where user = :user") //
                 .setParameter("user", user) //
                 .executeUpdate();
+    }
+
+    public List<UserRole> getUsersToVerifyForResource(Collection<Integer> departments, Collection<Integer> institutions) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property("user")) //
+                .add(Restrictions.in("role.id", UNVERIFIED.getRoles()));
+
+        if (!(departments == null && institutions == null)) {
+            if (!departments.isEmpty()) {
+                criteria.add(Restrictions.in("department.id", departments));
+            }
+
+            if (!institutions.isEmpty()) {
+                criteria.add(Restrictions.in("institution.id", institutions));
+            }
+        }
+
+        return criteria.list();
     }
 
     private void appendAdministratorResourceConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,

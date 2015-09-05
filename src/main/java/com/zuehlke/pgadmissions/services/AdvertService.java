@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING_IDENTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -67,9 +68,9 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
@@ -99,6 +100,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 
@@ -139,6 +141,9 @@ public class AdvertService {
 
     @Inject
     private AdvertMapper advertMapper;
+
+    @Inject
+    private UserService userService;
 
     @Inject
     private RestTemplate restTemplate;
@@ -450,11 +455,15 @@ public class AdvertService {
     public List<Integer> getAdvertsToIdentifyUserFor(User user, List<Integer> adverts) {
         return advertDAO.getAdvertsToIdentifyUserFor(user, adverts);
     }
+    
+    public void verifyTargetAdvertUser(Advert value, User valueUser) {
+        advertDAO.verifyAdvertTargetUser(value, valueUser);
+    }
 
     public void recordPartnershipStateTransition(Resource resource, Comment comment) {
         if (comment.isPartnershipStateTransitionComment()) {
             List<Advert> targetAdverts = Lists.newArrayList();
-            PrismPartnershipState partnershipTransitionState =  isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
+            PrismPartnershipState partnershipTransitionState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
             for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(),
                     new PrismAction[] { PROJECT_ENDORSE, PROGRAM_ENDORSE, DEPARTMENT_ENDORSE, INSTITUTION_ENDORSE })) {
                 Resource userResource = userRole.getResource();
@@ -540,11 +549,13 @@ public class AdvertService {
             });
         }
 
+        User user = userService.getCurrentUser();
+
         List<Integer> newTargetValues = Lists.newArrayList();
         Set<AdvertTargetAdvert> adverts = targets.getAdverts();
         if (targetsDTO.getResources() != null) {
             targetsDTO.getResources().stream().forEach(targetDTO -> {
-                AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, false);
+                AdvertTargetAdvert target = createAdvertTargetAdvert(user, advert, targetDTO, false);
                 entityService.createOrUpdate(target);
                 newTargetValues.add(target.getValueId());
                 adverts.add(target);
@@ -553,7 +564,7 @@ public class AdvertService {
 
         if (targetsDTO.getSelectedResources() != null) {
             targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
-                AdvertTargetAdvert target = createAdvertTargetAdvert(advert, targetDTO, true);
+                AdvertTargetAdvert target = createAdvertTargetAdvert(user, advert, targetDTO, true);
                 entityService.createOrUpdate(target);
                 newTargetValues.add(target.getValueId());
                 adverts.add(target);
@@ -567,9 +578,25 @@ public class AdvertService {
         }
     }
 
-    private AdvertTargetAdvert createAdvertTargetAdvert(Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
-        return new AdvertTargetAdvert().withAdvert(advert).withValue(resourceService.getById(targetDTO.getScope(), targetDTO.getId()).getAdvert())
-                .withSelected(selected).withPartnershipState(ENDORSEMENT_PENDING);
+    private AdvertTargetAdvert createAdvertTargetAdvert(User user, Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
+        ResourceParent targetResource = (ResourceParent) resourceService.getById(targetDTO.getScope(), targetDTO.getId());
+        AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withAdvertUser(user)
+                .withValue(targetResource.getAdvert()).withSelected(selected);
+
+        User targetUser = null;
+        UserDTO targetUserDTO = targetDTO.getUser();
+        if (targetUserDTO != null) {
+            targetUser = userService.createTargetUser(user, targetUserDTO, targetResource);
+            target.setValueUser(targetUser);
+        }
+        
+        if (!(targetUser == null && roleService.getVerifiedRoles(targetUser, targetResource).isEmpty())) {
+            target.setPartnershipState(ENDORSEMENT_PENDING_IDENTIFICATION);
+        } else {
+            target.setPartnershipState(ENDORSEMENT_PENDING);
+        }
+
+        return target;
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {

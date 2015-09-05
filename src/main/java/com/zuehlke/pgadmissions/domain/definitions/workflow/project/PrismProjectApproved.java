@@ -7,8 +7,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_VERIFIED_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_ENDORSE_TRANSITION;
@@ -35,21 +35,21 @@ public class PrismProjectApproved extends PrismWorkflowState {
                 .withAction(PROJECT_ENDORSE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withPartnerAssignments(PROJECT_VERIFIED_GROUP) //
                 .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
                 .withTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_UNENDORSE) //
                 .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withPartnerAssignments(PROJECT_VERIFIED_GROUP) //
                 .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
                 .withTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_REENDORSE) //
                 .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withPartnerAssignments(PROJECT_VERIFIED_GROUP) //
                 .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
                 .withTransitions(PROJECT_ENDORSE_TRANSITION));
 

@@ -133,12 +133,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @OneToMany(mappedBy = "user")
     private Set<UserInstitutionIdentity> institutionIdentities = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "userRequested")
-    private Set<UserConnection> requestedConnections = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "userConnected")
-    private Set<UserConnection> connectedConnections = Sets.newHashSet();
-
     @OneToMany(mappedBy = "user")
     private Set<UserCompetence> userCompetences = Sets.newHashSet();
 
@@ -305,14 +299,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<UserInstitutionIdentity> getInstitutionIdentities() {
         return institutionIdentities;
-    }
-
-    public Set<UserConnection> getRequestedConnections() {
-        return requestedConnections;
-    }
-
-    public Set<UserConnection> getConnectedConnections() {
-        return connectedConnections;
     }
 
     public Set<UserCompetence> getUserCompetences() {

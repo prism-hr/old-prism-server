@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementAction
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Collection;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleC
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -299,6 +301,16 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id").as("id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("role.scope.id", resourceScope))
+                .list();
+    }
+
+    public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
+        PrismScope resourceScope = resource.getResourceScope();
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .add(Restrictions.eq(resourceScope.getLowerCamelName(), resource))
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.ne("role.id", getUnverifiedViewerRole(resource))) //
                 .list();
     }
 

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
@@ -87,6 +88,9 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.isNull("action.partnershipState")) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eqProperty("action.partnershipState", "advertTarget.partnershipState")) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
+                                .add(Restrictions.eq("advertTarget.valueUser", "userRole.user")))
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.ne("action.scope.id", APPLICATION)) //
                                 .add(Restrictions.eqProperty("ownerAdvert.advert", "advertTarget.value"))));

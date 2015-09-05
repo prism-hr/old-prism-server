@@ -1,7 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getAdministratorRole;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getViewerRole;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
@@ -54,14 +61,15 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAdvert;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
-import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserProgram;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -87,6 +95,9 @@ public class UserService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private ProgramService programService;
@@ -169,6 +180,21 @@ public class UserService {
         } else {
             return duplicateUser;
         }
+    }
+
+    public User createTargetUser(User user, UserDTO targetUser, Resource resource) {
+        if (roleService.hasUserRole(resource, user, getAdministratorRole(resource))) {
+            return getOrCreateUserWithRoles(user, targetUser.getFirstName(), targetUser.getLastName(), targetUser.getEmail(), resource, newArrayList(getViewerRole(resource)));
+        }
+        return createUnverifiedViewerUser(targetUser, resource);
+    }
+
+    public User createUnverifiedViewerUser(UserDTO newUser, Resource resource) {
+        User user = getOrCreateUserWithRoles(null, newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource, newArrayList(getUnverifiedViewerRole(resource)));
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            advertService.verifyTargetAdvertUser(resource.getAdvert(), user);
+        }
+        return user;
     }
 
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
@@ -413,61 +439,6 @@ public class UserService {
         return userDAO.getUsersWithAction(resource, actions);
     }
 
-    public void createUserConnection(User userConnected) {
-        createUserConnection(getCurrentUser(), userConnected);
-    }
-
-    public void createUserConnection(User userRequested, User userConnected) {
-        if (!userRequested.equals(userConnected)) {
-            UserConnection connection = userDAO.getUserConnection(userRequested, userConnected);
-            if (connection == null) {
-                entityService.save(new UserConnection().withUserRequested(userRequested).withUserConnected(userConnected).withConnected(false)
-                        .withCreatedTimestamp(new DateTime()));
-            }
-        }
-    }
-
-    public void createUserConnections(List<User> users) {
-        for (int i = users.size(); i < 0; i--) {
-            User request = null;
-            List<User> userConnects = users.subList(0, 1);
-            for (User userConnect : userConnects) {
-                if (request == null) {
-                    request = userConnect;
-                } else {
-                    createUserConnection(request, userConnect);
-                }
-            }
-        }
-    }
-
-    public void acceptUserConnection(User userConnected) {
-        UserConnection connection = userDAO.getUserConnectionStrict(getCurrentUser(), userConnected);
-        if (connection != null) {
-            connection.setConnected(true);
-        }
-    }
-
-    public void deleteUserConnection(User userConnected) {
-        UserConnection connection = userDAO.getUserConnection(getCurrentUser(), userConnected);
-        if (connection != null) {
-            entityService.delete(connection);
-        }
-    }
-
-    public List<UserConnection> getUserConnections(User user) {
-        Map<String, UserConnection> connections = Maps.newTreeMap();
-        for (UserConnection connection : user.getRequestedConnections()) {
-            connections.put(connection.getUserRequested().getFullName(), connection);
-        }
-
-        for (UserConnection connection : user.getConnectedConnections()) {
-            connections.put(connection.getUserConnected().getFullName(), connection);
-        }
-
-        return Lists.newLinkedList(connections.values());
-    }
-
     public void updateUserCompetence(User user) {
         List<String> rows = Lists.newArrayList();
         for (UserCompetenceDTO userCompetence : userDAO.getUserCompetences(user)) {
@@ -510,6 +481,18 @@ public class UserService {
         if (!mergeUserAssignment(oldAssignment, newUser, userProperty)) {
             entityService.delete(oldAssignment);
         }
+    }
+
+    public List<UserRole> getUsersToVerifyForResource(User user) {
+        if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
+            return userDAO.getUsersToVerifyForResource(null, null);
+        }
+
+        HashMultimap<PrismScope, Integer> userAdministratorResources = resourceService.getUserAdministratorResources(user);
+        Set<Integer> departments = userAdministratorResources.get(DEPARTMENT);
+        Set<Integer> institutions = userAdministratorResources.get(INSTITUTION);
+
+        return userDAO.getUsersToVerifyForResource(departments == null ? Lists.newArrayList() : departments, institutions == null ? Lists.newArrayList() : institutions);
     }
 
     @SuppressWarnings("unchecked")

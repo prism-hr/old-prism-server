@@ -20,6 +20,8 @@ public class ResourceListFilterDTO {
     private String valueString;
 
     private Boolean urgentOnly;
+    
+    private Boolean updateOnly;
 
     private Boolean targetOnly;
 
@@ -67,6 +69,14 @@ public class ResourceListFilterDTO {
         this.urgentOnly = urgentOnly;
     }
 
+    public Boolean getUpdateOnly() {
+        return updateOnly;
+    }
+
+    public void setUpdateOnly(Boolean updateOnly) {
+        this.updateOnly = updateOnly;
+    }
+
     public Boolean getTargetOnly() {
         return targetOnly;
     }
@@ -100,6 +110,11 @@ public class ResourceListFilterDTO {
         this.urgentOnly = urgentOnly;
         return this;
     }
+    
+    public ResourceListFilterDTO withUpdateOnly(Boolean updateOnly) {
+        this.updateOnly = updateOnly;
+        return this;
+    }
 
     public ResourceListFilterDTO withMatchMode(PrismFilterMatchMode matchMode) {
         this.matchMode = matchMode;
@@ -127,6 +142,10 @@ public class ResourceListFilterDTO {
 
     public boolean isUrgentOnly() {
         return BooleanUtils.toBoolean(urgentOnly);
+    }
+    
+    public boolean isUpdateOnly() {
+        return BooleanUtils.toBoolean(updateOnly);
     }
 
     public boolean isTargetOnly() {

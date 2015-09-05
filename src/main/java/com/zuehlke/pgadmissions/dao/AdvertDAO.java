@@ -195,10 +195,7 @@ public class AdvertDAO {
         }
 
         if (narrowed) {
-            appendResourcesConstraint(criteria, INSTITUTION, queryDTO.getInstitutions(), actionCondition);
-            appendResourcesConstraint(criteria, DEPARTMENT, queryDTO.getDepartments(), actionCondition);
-            appendResourcesConstraint(criteria, PROGRAM, queryDTO.getPrograms(), actionCondition);
-            appendResourcesConstraint(criteria, PROJECT, queryDTO.getProjects(), actionCondition);
+            appendResourcesConstraint(criteria, scope, queryDTO.getResources(scope), actionCondition);
         } else {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.isNull("advertTarget.id")) //
@@ -585,13 +582,13 @@ public class AdvertDAO {
         criteria.add(disjunction);
     }
 
-    private void appendResourcesConstraint(Criteria criteria, PrismScope resourceScope, Integer[] resources, PrismActionCondition actionCondition) {
+    private void appendResourcesConstraint(Criteria criteria, PrismScope scope, Integer[] resources, PrismActionCondition actionCondition) {
         if (resources != null) {
             Junction resourcesConstraint = Restrictions.disjunction() //
-                    .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources));
+                    .add(Restrictions.in("advert." + scope.getLowerCamelName() + ".id", resources));
 
-            if (actionCondition.equals(ACCEPT_APPLICATION) && newArrayList(DEPARTMENT, INSTITUTION).contains(resourceScope)) {
-                resourcesConstraint.add(getPartnerResourcesConstraint(resourceScope, resources));
+            if (actionCondition.equals(ACCEPT_APPLICATION) && newArrayList(DEPARTMENT, INSTITUTION).contains(scope)) {
+                resourcesConstraint.add(getPartnerResourcesConstraint(scope, resources));
             }
 
             criteria.add(resourcesConstraint);

@@ -248,7 +248,7 @@ public class ApplicationMapper {
 
         applicationService.getApplicationAppointments(user).forEach(appointment -> {
             ResourceRepresentationStandard representation = resourceMapper.getResourceRepresentationStandard(appointment);
-            representation.setCode(appointment.getCode());
+            representation.setCode(appointment.getApplicationCode());
 
             LocalDateTime interviewDateTime = appointment.getInterviewDateTime();
             if (interviewDateTime.toLocalDate().isAfter(baseline)) {

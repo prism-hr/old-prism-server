@@ -295,7 +295,7 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
-    
+
     public <T> List<T> getPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, ProjectionList columns,
             Junction conditions, Class<T> responseClass) {
         String partnerResourceReference = partnerScope.getLowerCamelName();
@@ -317,8 +317,10 @@ public class ResourceDAO {
                         Restrictions.eq("stateActionAssignment.partnerMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, 
-                        Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState")) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
+                        Restrictions.disjunction() //
+                                .add(Restrictions.isNull("action.partnershipState")) //
+                                .add(Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState"))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ne("action.scope.id", APPLICATION)) //
                         .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value")));
@@ -805,6 +807,10 @@ public class ResourceDAO {
     private static void appendResourceListFilterCriterion(PrismScope scopeId, Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+        }
+
+        if (filter.isUpdateOnly()) {
+            criteria.add(Restrictions.ge("updatedTimestamp", new LocalDate().minusDays(1)));
         }
 
         PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();

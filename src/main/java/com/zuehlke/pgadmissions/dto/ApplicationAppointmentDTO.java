@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
 
 public class ApplicationAppointmentDTO extends ResourceStandardDTO {
 
-    private String code;
+    private String applicationCode;
     
     private LocalDateTime interviewDateTime;
 
@@ -18,14 +18,13 @@ public class ApplicationAppointmentDTO extends ResourceStandardDTO {
 
     private String interviewLocation;
     
-    public String getCode() {
-        return code;
+    public String getApplicationCode() {
+        return applicationCode;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setApplicationCode(String applicationCode) {
+        this.applicationCode = applicationCode;
     }
-
     public LocalDateTime getInterviewDateTime() {
         return interviewDateTime;
     }

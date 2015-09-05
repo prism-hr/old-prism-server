@@ -69,7 +69,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunitiesTab;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
@@ -473,7 +473,7 @@ public class AdvertService {
 
     public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
-        PrismActionCondition actionCondition = queryDTO.getTab() == PrismOpportunitiesTab.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
+        PrismActionCondition actionCondition = queryDTO.getContext() == PrismAdvertContext.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
         for (PrismScope scope : scopes) {
             adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, queryDTO));
         }

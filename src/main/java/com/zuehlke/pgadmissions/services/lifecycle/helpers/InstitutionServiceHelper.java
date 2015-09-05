@@ -1,5 +1,26 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.social.UncategorizedApiException;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.Location;
+import org.springframework.social.facebook.api.Page;
+import org.springframework.social.facebook.connect.FacebookServiceProvider;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
@@ -15,26 +36,8 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
-import jersey.repackaged.com.google.common.base.Objects;
-import org.apache.commons.lang3.ObjectUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.social.UncategorizedApiException;
-import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.Location;
-import org.springframework.social.facebook.api.Page;
-import org.springframework.social.facebook.connect.FacebookServiceProvider;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.ResourceAccessException;
 
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import jersey.repackaged.com.google.common.base.Objects;
 
 @Component
 public class InstitutionServiceHelper extends PrismServiceHelperAbstract {

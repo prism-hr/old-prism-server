@@ -7,17 +7,22 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Component
 public class ExhumeResolver implements RoleTransitionResolver {
 
-	@Inject
-	private RoleService roleService;
+    @Inject
+    private EntityService entityService;
 
-	@Override
-	public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		roleService.updateUserRole(userRole, transitionUserRole, comment);
-	}
+    @Inject
+    private RoleService roleService;
+
+    @Override
+    public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
+        roleService.updateUserRole(userRole, transitionUserRole, comment);
+        entityService.flush();
+    }
 
 }

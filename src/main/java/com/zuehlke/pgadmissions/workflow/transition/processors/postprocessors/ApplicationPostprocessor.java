@@ -6,11 +6,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITI
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -223,13 +220,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
-
-        if (!comment.getAssignedUsers().isEmpty()) {
-            List<User> connections = Lists.newLinkedList(roleService.getRoleUsers(application, APPLICATION_PRIMARY_SUPERVISOR));
-            connections.addAll(roleService.getRoleUsers(application, APPLICATION_SECONDARY_SUPERVISOR));
-            connections.addAll(roleService.getRoleUsers(application, APPLICATION_CREATOR));
-            userService.createUserConnections(connections);
-        }
     }
 
 }

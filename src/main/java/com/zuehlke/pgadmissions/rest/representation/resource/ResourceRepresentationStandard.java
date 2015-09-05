@@ -10,24 +10,13 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
-public class ResourceRepresentationStandard extends ResourceRepresentationSimple {
-
-    private UserRepresentationSimple user;
-
-    private ResourceRepresentationSimple institution;
-
-    private ResourceRepresentationSimple department;
-
-    private ResourceRepresentationSimple program;
-
-    private ResourceRepresentationSimple project;
+public class ResourceRepresentationStandard extends ResourceRepresentationActivity {
 
     private boolean raisesUrgentFlag;
 
     private boolean raisesUpdateFlag;
-    
+
     private Boolean applicationIdentified;
 
     private BigDecimal applicationRatingAverage;
@@ -39,52 +28,12 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     private List<StateRepresentationSimple> secondaryStates;
 
     private DateTime createdTimestamp;
-
+    
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
 
     private List<PrismScopeSectionDefinition> advertIncompleteSections;
-
-    public UserRepresentationSimple getUser() {
-        return user;
-    }
-
-    public void setUser(UserRepresentationSimple user) {
-        this.user = user;
-    }
-
-    public ResourceRepresentationSimple getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(ResourceRepresentationSimple institution) {
-        this.institution = institution;
-    }
-
-    public ResourceRepresentationSimple getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(ResourceRepresentationSimple department) {
-        this.department = department;
-    }
-
-    public ResourceRepresentationSimple getProgram() {
-        return program;
-    }
-
-    public void setProgram(ResourceRepresentationSimple program) {
-        this.program = program;
-    }
-
-    public ResourceRepresentationSimple getProject() {
-        return project;
-    }
-
-    public void setProject(ResourceRepresentationSimple project) {
-        this.project = project;
-    }
 
     public boolean isRaisesUrgentFlag() {
         return raisesUrgentFlag;
@@ -148,8 +97,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
 
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
-    }
-
+    }   
+    
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
@@ -177,7 +126,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
     public void setParentResource(ResourceRepresentationSimple parentResource) {
         setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
-    
+
     public ResourceRepresentationStandard withScope(PrismScope scope) {
         setScope(scope);
         return this;
@@ -187,30 +136,30 @@ public class ResourceRepresentationStandard extends ResourceRepresentationSimple
         setId(id);
         return this;
     }
-    
+
     public ResourceRepresentationStandard withCode(String code) {
         setCode(code);
         return this;
     }
-    
+
     public ResourceRepresentationStandard withProject(ResourceRepresentationSimple project) {
-        this.project = project;
+        setProject(project);
         return this;
     }
 
     public ResourceRepresentationStandard withProgram(ResourceRepresentationSimple program) {
-        this.program = program;
+        setProgram(program);
         return this;
     }
-    
+
     public ResourceRepresentationStandard withDepartment(ResourceRepresentationSimple department) {
-        this.department = department;
+        setDepartment(department);
         return this;
     }
 
     public ResourceRepresentationStandard withInstitution(ResourceRepresentationSimple institution) {
-        this.institution = institution;
+        setInstitution(institution);
         return this;
     }
-    
+
 }

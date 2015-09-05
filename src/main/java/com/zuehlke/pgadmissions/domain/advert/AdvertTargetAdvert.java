@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
 @Table(name = "advert_target_advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "target_advert_id" }) })
@@ -26,8 +27,16 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     private Advert advert;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User advertUser;
+
+    @ManyToOne
     @JoinColumn(name = "target_advert_id", nullable = false)
     private Advert value;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User valueUser;
 
     @Column(name = "selected", nullable = false)
     private Boolean selected;
@@ -52,12 +61,28 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         this.advert = advert;
     }
 
+    public User getAdvertUser() {
+        return advertUser;
+    }
+
+    public void setAdvertUser(User advertUser) {
+        this.advertUser = advertUser;
+    }
+
     public Advert getValue() {
         return value;
     }
 
     public void setValue(Advert value) {
         this.value = value;
+    }
+
+    public User getValueUser() {
+        return valueUser;
+    }
+
+    public void setValueUser(User valueUser) {
+        this.valueUser = valueUser;
     }
 
     public Boolean getSelected() {
@@ -91,6 +116,11 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         return this;
     }
 
+    public AdvertTargetAdvert withAdvertUser(User advertUser) {
+        this.advertUser = advertUser;
+        return this;
+    }
+
     public AdvertTargetAdvert withValue(Advert value) {
         this.value = value;
         return this;
@@ -101,10 +131,4 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         return this;
     }
 
-
-    public AdvertTargetAdvert withPartnershipState(PrismPartnershipState partnershipState) {
-        this.partnershipState = partnershipState;
-        return this;
-    }
-    
 }

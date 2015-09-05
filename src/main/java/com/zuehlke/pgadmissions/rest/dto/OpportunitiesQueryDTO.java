@@ -5,14 +5,13 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunitiesTab;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -32,7 +31,7 @@ public class OpportunitiesQueryDTO {
     private Integer[] projects;
 
     @NotNull
-    private PrismActionCondition actionCondition;
+    private PrismOpportunitiesTab tab;
 
     @NotNull
     private List<PrismOpportunityCategory> opportunityCategories;
@@ -127,12 +126,12 @@ public class OpportunitiesQueryDTO {
         this.opportunityCategories = opportunityCategories;
     }
 
-    public PrismActionCondition getActionCondition() {
-        return actionCondition;
+    public PrismOpportunitiesTab getTab() {
+        return tab;
     }
 
-    public void setActionCondition(PrismActionCondition actionCondition) {
-        this.actionCondition = actionCondition;
+    public void setTab(PrismOpportunitiesTab tab) {
+        this.tab = tab;
     }
 
     public String getKeyword() {
@@ -279,16 +278,11 @@ public class OpportunitiesQueryDTO {
         return !(institutions == null && departments == null && programs == null && projects == null);
     }
 
-    public OpportunitiesQueryDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
-        opportunityCategories = Lists.newArrayList(opportunityCategory);
-        return this;
-    }
-
     public Integer[] getResources(PrismScope resourceScope) {
         if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
             return (Integer[]) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName() + "s");
         }
-        return null;
+        return null;   
     }
 
 }

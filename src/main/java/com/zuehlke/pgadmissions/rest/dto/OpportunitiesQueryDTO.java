@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunitiesTab;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -31,7 +31,7 @@ public class OpportunitiesQueryDTO {
     private Integer[] projects;
 
     @NotNull
-    private PrismOpportunitiesTab tab;
+    private PrismAdvertContext context;
 
     @NotNull
     private List<PrismOpportunityCategory> opportunityCategories;
@@ -126,12 +126,12 @@ public class OpportunitiesQueryDTO {
         this.opportunityCategories = opportunityCategories;
     }
 
-    public PrismOpportunitiesTab getTab() {
-        return tab;
+    public PrismAdvertContext getContext() {
+        return context;
     }
 
-    public void setTab(PrismOpportunitiesTab tab) {
-        this.tab = tab;
+    public void setContext(PrismAdvertContext context) {
+        this.context = context;
     }
 
     public String getKeyword() {

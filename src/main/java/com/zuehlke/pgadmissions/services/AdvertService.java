@@ -69,6 +69,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunitiesTab;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
@@ -166,12 +167,6 @@ public class AdvertService {
                 }
             }
         }
-
-        PrismActionCondition actionCondition = query.getActionCondition();
-        actionCondition = actionCondition == null ? ACCEPT_APPLICATION : actionCondition;
-        query.setActionCondition(actionCondition);
-
-        scopes = actionCondition.equals(ACCEPT_PROJECT) ? new PrismScope[] { PROGRAM, DEPARTMENT, INSTITUTION } : scopes;
 
         return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
     }
@@ -478,8 +473,9 @@ public class AdvertService {
 
     public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
+        PrismActionCondition actionCondition = queryDTO.getTab() == PrismOpportunitiesTab.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), queryDTO));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, queryDTO));
         }
         return adverts;
     }

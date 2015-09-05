@@ -318,7 +318,9 @@ public class ResourceDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState")) //
+                        Restrictions.disjunction() //
+                                .add(Restrictions.isNull("action.partnershipState")) //
+                                .add(Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState"))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ne("action.scope.id", APPLICATION)) //
                         .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value")));

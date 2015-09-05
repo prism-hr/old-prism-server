@@ -82,8 +82,9 @@ public class DepartmentService {
         departmentDTO.setAdvert(advertDTO);
         departmentDTO.setOpportunityCategories(opportunityCategories);
 
+        ActionOutcomeDTO outcome = null;
         if (institution != null) {
-            ActionOutcomeDTO outcome = resourceService.createResource(institution.getUser(), actionService.getById(INSTITUTION_CREATE_DEPARTMENT), departmentDTO);
+            outcome = resourceService.createResource(institution.getUser(), actionService.getById(INSTITUTION_CREATE_DEPARTMENT), departmentDTO);
             if (outcome != null) {
                 UserDTO user = departmentInvitationDTO.getDepartmentUser();
                 if (user != null) {
@@ -91,9 +92,8 @@ public class DepartmentService {
                             asList(DEPARTMENT_ADMINISTRATOR));
                 }
             }
-            return outcome;
         }
-        return null;
+        return outcome;
     }
 
     public void setImportedPrograms(Department department, List<ImportedEntityDTO> importedProgramDTOs) {

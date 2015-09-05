@@ -158,6 +158,7 @@ public class ImportedEntityDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ImportedProgram.class)
                 .createAlias("institution", "institution", JoinType.INNER_JOIN);
         for (String token : tokens) {
+            token = token.replaceFirst("[^a-zA-Z]", "");
             if (importedInstitution != null) {
                 criteria.add(Restrictions.like("name", token, MatchMode.ANYWHERE))
                         .add(Restrictions.eq("institution", importedInstitution));

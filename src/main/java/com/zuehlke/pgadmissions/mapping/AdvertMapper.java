@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -97,8 +98,13 @@ public class AdvertMapper {
     }
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
+        StopWatch watch = new StopWatch();
+        watch.start();
+
         PrismScope[] opportunityScopes = new PrismScope[] { PROJECT, PROGRAM };
-        PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
+
+        PrismScope filterScope = query.getScope();
+        PrismScope[] parentScopes = filterScope == null ? new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION } : new PrismScope[] { filterScope };
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
@@ -180,7 +186,7 @@ public class AdvertMapper {
         }
 
         representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
-        representation.setCompetences( getAdvertCompetenceRepresentations(advert.getTargets().getCompetences()));
+        representation.setCompetences(getAdvertCompetenceRepresentations(advert.getTargets().getCompetences()));
 
         representation.setName(advert.getName());
         return representation;

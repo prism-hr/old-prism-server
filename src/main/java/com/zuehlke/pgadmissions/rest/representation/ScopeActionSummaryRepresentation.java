@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
@@ -42,7 +41,7 @@ public class ScopeActionSummaryRepresentation {
 
         private PrismAction action;
 
-        private Long actionCount;
+        private Integer actionCount;
 
         public PrismAction getAction() {
             return action;
@@ -52,29 +51,22 @@ public class ScopeActionSummaryRepresentation {
             this.action = action;
         }
 
-        public Long getActionCount() {
+        public Integer getActionCount() {
             return actionCount;
         }
 
-        public void setActionCount(Long actionCount) {
+        public void setActionCount(Integer actionCount) {
             this.actionCount = actionCount;
         }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(action);
+        
+        public ActionSummaryRepresentation withAction(PrismAction action) {
+            this.action = action;
+            return this;
         }
-
-        @Override
-        public boolean equals(Object object) {
-            if (object == null) {
-                return false;
-            }
-            if (getClass() != object.getClass()) {
-                return false;
-            }
-            ActionSummaryRepresentation other = (ActionSummaryRepresentation) object;
-            return action.equals(other.getAction());
+        
+        public ActionSummaryRepresentation withActionCount(Integer actionCount) {
+            this.actionCount = actionCount;
+            return this;
         }
 
     }

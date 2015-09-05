@@ -862,8 +862,12 @@ public class ResourceService {
     public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Class<T> resourceClass) {
         return getResources(user, scope, parentScopes, filter, columns, getFilterConditions(scope, filter), resourceClass);
     }
+    
+    private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {
+        return getResources(user, scope, parentScopes, filter, getResourceOpportunityCategoryProjection(), condition, ResourceOpportunityCategoryDTO.class);
+    }
 
-    public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns,
+    private <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns,
             Junction conditions, Class<T> responseClass) {
         Set<T> resources = Sets.newHashSet(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass));
 
@@ -878,10 +882,6 @@ public class ResourceService {
         }
 
         return resources;
-    }
-
-    private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {
-        return getResources(user, scope, parentScopes, filter, getResourceOpportunityCategoryProjection(), condition, ResourceOpportunityCategoryDTO.class);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

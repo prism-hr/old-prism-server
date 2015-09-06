@@ -3,8 +3,11 @@ package com.zuehlke.pgadmissions.domain.resource.department;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -34,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceEmailList;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentDivision;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -85,6 +89,16 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Embedded
+    @AttributeOverrides({ @AttributeOverride(name = "emailAddresses", column = @Column(name = "staff_email_list") ),
+            @AttributeOverride(name = "mailingList", column = @Column(name = "staff_email_list_group") ) })
+    private ResourceEmailList recruiterEmailList;
+
+    @Embedded
+    @AttributeOverrides({ @AttributeOverride(name = "emailAddresses", column = @Column(name = "student_email_list") ),
+            @AttributeOverride(name = "mailingList", column = @Column(name = "student_email_list_group") ) })
+    private ResourceEmailList applicantEmailList;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -167,7 +181,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @OneToMany(mappedBy = "department")
     private Set<Advert> adverts = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "department")
     private Set<DepartmentImportedSubjectArea> departmentSubjectAreas = Sets.newHashSet();
 
@@ -222,6 +236,26 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public ResourceEmailList getRecruiterEmailList() {
+        return recruiterEmailList;
+    }
+
+    @Override
+    public void setRecruiterEmailList(ResourceEmailList recruiterEmailList) {
+        this.recruiterEmailList = recruiterEmailList;
+    }
+
+    @Override
+    public ResourceEmailList getApplicantEmailList() {
+        return applicantEmailList;
+    }
+
+    @Override
+    public void setApplicantEmailList(ResourceEmailList applicantEmailList) {
+        this.applicantEmailList = applicantEmailList;
     }
 
     @Override
@@ -446,7 +480,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     public Set<Advert> getAdverts() {
         return adverts;
     }
-    
+
     public Set<DepartmentImportedSubjectArea> getDepartmentSubjectAreas() {
         return departmentSubjectAreas;
     }

@@ -1,15 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.DEPARTMENT_COMMENT_UPDATED_IMPORTED_PROGRAMS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
 import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -32,6 +34,8 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.DepartmentImportedSubjectAreaDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
@@ -46,6 +50,9 @@ public class DepartmentService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private EntityService entityService;
@@ -82,17 +89,31 @@ public class DepartmentService {
         departmentDTO.setAdvert(advertDTO);
         departmentDTO.setOpportunityCategories(opportunityCategories);
 
+        Department department = null;
+        UserDTO departmentUser = null;
         ActionOutcomeDTO outcome = null;
         if (institution != null) {
             outcome = resourceService.createResource(institution.getUser(), actionService.getById(INSTITUTION_CREATE_DEPARTMENT), departmentDTO);
             if (outcome != null) {
-                UserDTO user = departmentInvitationDTO.getDepartmentUser();
-                if (user != null) {
-                    userService.getOrCreateUserWithRoles(institution.getUser(), user.getFirstName(), user.getLastName(), user.getEmail(), outcome.getResource(),
-                            asList(DEPARTMENT_ADMINISTRATOR));
+                department = (Department) outcome.getResource();
+                departmentUser = departmentInvitationDTO.getDepartmentUser();
+                if (departmentUser != null) {
+                    userService.requestUser(departmentUser, department, DEPARTMENT_ADMINISTRATOR);
                 }
             }
         }
+
+        if (department != null) {
+            Integer advertId = departmentInvitationDTO.getAdvert();
+            if (advertId != null) {
+                Advert advert = advertService.getById(advertId);
+                if (advert != null) {
+                    AdvertTargetResourceDTO targetDTO = new AdvertTargetResourceDTO().withScope(DEPARTMENT).withId(department.getId()).withUser(departmentUser);
+                    advertService.updateTargets(advert, new AdvertTargetsDTO().withSelectedResources(newArrayList(targetDTO)));
+                }
+            }
+        }
+
         return outcome;
     }
 

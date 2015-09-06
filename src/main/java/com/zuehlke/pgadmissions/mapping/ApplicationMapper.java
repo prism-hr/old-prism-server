@@ -69,12 +69,11 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRe
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDemographicRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDocumentRepresentation;
@@ -95,6 +94,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStudyDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSupervisorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -242,17 +242,17 @@ public class ApplicationMapper {
                 .withSkype(reference.getSkype()).withComment(getApplicationReferenceRepresentation(referenceComment, overridingRoles));
     }
 
-    public List<ApplicationAppointmentRepresentation> getApplicationAppointmentRepresentations(User user) {
+    public List<AppointmentActivityRepresentation> getApplicationAppointmentRepresentations(User user) {
         LocalDate baseline = new LocalDate();
-        List<ApplicationAppointmentRepresentation> representations = Lists.newLinkedList();
+        List<AppointmentActivityRepresentation> representations = Lists.newLinkedList();
 
         applicationService.getApplicationAppointments(user).forEach(appointment -> {
-            ResourceRepresentationStandard representation = resourceMapper.getResourceRepresentationStandard(appointment);
-            representation.setCode(appointment.getApplicationCode());
+            ResourceRepresentationActivity application = resourceMapper.getResourceRepresentationActivity(appointment);
+            application.setCode(appointment.getApplicationCode());
 
             LocalDateTime interviewDateTime = appointment.getInterviewDateTime();
             if (interviewDateTime.toLocalDate().isAfter(baseline)) {
-                representations.add(new ApplicationAppointmentRepresentation().withApplication(representation)
+                representations.add(new AppointmentActivityRepresentation().withResource(application)
                         .withAppointment(new CommentInterviewAppointmentRepresentation().withInterviewDateTime(interviewDateTime)
                                 .withInterviewTimeZone(appointment.getInterviewTimeZone()).withInterviewDuration(appointment.getInterviewDuration()))
                         .withInstruction(new CommentInterviewInstructionRepresentation().withInterviewLocation(appointment.getInterviewLocation())));

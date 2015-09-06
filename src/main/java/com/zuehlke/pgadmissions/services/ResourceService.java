@@ -19,6 +19,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -71,6 +72,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceEmailList;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentDivision;
@@ -103,6 +105,8 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceEmailListsDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceEmailListsDTO.ResourceEmailListDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
@@ -245,21 +249,43 @@ public class ResourceService {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, Integer resourceId, CommentDTO commentDTO) throws Exception {
+        return executeAction(user, resourceId, commentDTO, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, Integer resourceId, CommentDTO commentDTO, String referralEmailAddress) throws Exception {
+        Resource operativeResource = null;
+        ActionOutcomeDTO actionOutcome = null;
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
-            return createResource(user, action, resourceDTO);
+            actionOutcome = createResource(user, action, resourceDTO);
+            operativeResource = actionOutcome.getResource().getParentResource();
         }
 
         Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
         if (actionExecutor != null) {
-            return applicationContext.getBean(actionExecutor).execute(resourceId, commentDTO);
+            actionOutcome = applicationContext.getBean(actionExecutor).execute(resourceId, commentDTO);
+            operativeResource = actionOutcome.getResource();
         }
 
-        throw new UnsupportedOperationException();
+        if (referralEmailAddress != null && ResourceParent.class.isAssignableFrom(operativeResource.getClass())) {
+            ResourceParent parent = (ResourceParent) operativeResource;
+
+            ResourceEmailList recruiterList = parent.getRecruiterEmailList();
+            if (processReferral(recruiterList, referralEmailAddress)) {
+                parent.setRecruiterEmailList(null);
+            }
+
+            ResourceEmailList applicantList = parent.getRecruiterEmailList();
+            if (processReferral(applicantList, referralEmailAddress)) {
+                parent.setApplicantEmailList(null);
+            }
+        }
+
+        return actionOutcome;
     }
 
     @SuppressWarnings("unchecked")
@@ -862,7 +888,46 @@ public class ResourceService {
     public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Class<T> resourceClass) {
         return getResources(user, scope, parentScopes, filter, columns, getFilterConditions(scope, filter), resourceClass);
     }
+
+    public void setResourceEmailLists(ResourceParent resource, ResourceEmailListsDTO resourceEmailListsDTO) {
+        boolean updatedResource = false;
+        ResourceEmailListDTO applicantListDTO = resourceEmailListsDTO.getApplicantEmailList();
+        if (applicantListDTO != null) {
+            ResourceEmailList applicantList = resource.getApplicantEmailList();
+            if (applicantList == null) {
+                applicantList = new ResourceEmailList();
+                resource.setApplicantEmailList(applicantList);
+            }
+            populateResourceEmailList(applicantListDTO, applicantList);
+            updatedResource = true;
+        }
+
+        ResourceEmailListDTO recruiterListDTO = resourceEmailListsDTO.getRecruiterEmailList();
+        if (recruiterListDTO != null) {
+            ResourceEmailList recruiterList = resource.getRecruiterEmailList();
+            if (recruiterList == null) {
+                recruiterList = new ResourceEmailList();
+                resource.setRecruiterEmailList(recruiterList);
+            }
+            populateResourceEmailList(recruiterListDTO, recruiterList);
+            updatedResource = true;
+        }
+
+        if (updatedResource) {
+            executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_EMAIL_LIST"));
+        }
+    }
     
+    public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
+        parent.setOpportunityCategories(opportunityCategories);
+        parent.getAdvert().setOpportunityCategories(opportunityCategories);
+    }
+    
+    private void populateResourceEmailList(ResourceEmailListDTO listDTO, ResourceEmailList list) {
+        list.setEmailAddresses(listDTO.getEmailAddresses());
+        list.setMailingList(listDTO.getMailingList());
+    }
+
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {
         return getResources(user, scope, parentScopes, filter, getResourceOpportunityCategoryProjection(), condition, ResourceOpportunityCategoryDTO.class);
     }
@@ -991,9 +1056,18 @@ public class ResourceService {
         }
     }
 
-    public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
-        parent.setOpportunityCategories(opportunityCategories);
-        parent.getAdvert().setOpportunityCategories(opportunityCategories);
+    private boolean processReferral(ResourceEmailList recruiterList, String referralEmailAddress) {
+        if (!(recruiterList == null || isTrue(recruiterList.getMailingList()))) {
+            List<String> addresses = Arrays.asList(recruiterList.getEmailAddresses().split("\\|"));
+            addresses.remove(referralEmailAddress);
+            if (addresses.isEmpty()) {
+                return true;
+            } else {
+                recruiterList.setEmailAddresses(Joiner.on("|").join(addresses));
+                return false;
+            }
+        }
+        return false;
     }
 
 }

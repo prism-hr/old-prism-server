@@ -4,7 +4,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getAdministratorRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -182,19 +181,25 @@ public class UserService {
         }
     }
 
-    public User createTargetUser(User user, UserDTO targetUser, Resource resource) {
-        if (roleService.hasUserRole(resource, user, getAdministratorRole(resource))) {
-            return getOrCreateUserWithRoles(user, targetUser.getFirstName(), targetUser.getLastName(), targetUser.getEmail(), resource, newArrayList(getViewerRole(resource)));
-        }
-        return createUnverifiedViewerUser(targetUser, resource);
+    public User requestUser(UserDTO newUserDTO, Resource resource) {
+        return requestUser(newUserDTO, resource, null);
     }
 
-    public User createUnverifiedViewerUser(UserDTO newUser, Resource resource) {
-        User user = getOrCreateUserWithRoles(null, newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource, newArrayList(getUnverifiedViewerRole(resource)));
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            advertService.verifyTargetAdvertUser(resource.getAdvert(), user);
+    public User requestUser(UserDTO newUserDTO, Resource resource, PrismRole targetRole) {
+        User user = getCurrentUser();
+        if ((user == null || !actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), user, false))) {
+            targetRole = getUnverifiedViewerRole(resource);
+        } else {
+            targetRole = targetRole == null ? getViewerRole(resource) : targetRole;
         }
-        return user;
+
+        User newUser = getOrCreateUserWithRoles(user, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, newArrayList(targetRole));
+
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            advertService.verifyTargetAdvertUser(resource.getAdvert(), newUser);
+        }
+
+        return newUser;
     }
 
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
@@ -483,16 +488,19 @@ public class UserService {
         }
     }
 
-    public List<UserRole> getUsersToVerifyForResource(User user) {
-        if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
-            return userDAO.getUsersToVerifyForResource(null, null);
+    public List<UserRole> getUsersToVerify(User user) {
+        HashMultimap<PrismScope, Integer> administratorResources = null;
+        boolean systemAdministrator = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
+        if (!systemAdministrator) {
+            administratorResources = resourceService.getUserAdministratorResources(user);
         }
 
-        HashMultimap<PrismScope, Integer> userAdministratorResources = resourceService.getUserAdministratorResources(user);
-        Set<Integer> departments = userAdministratorResources.get(DEPARTMENT);
-        Set<Integer> institutions = userAdministratorResources.get(INSTITUTION);
+        List<UserRole> userRoles = Lists.newLinkedList();
+        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+            userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
+        }
 
-        return userDAO.getUsersToVerifyForResource(departments == null ? Lists.newArrayList() : departments, institutions == null ? Lists.newArrayList() : institutions);
+        return userRoles;
     }
 
     @SuppressWarnings("unchecked")

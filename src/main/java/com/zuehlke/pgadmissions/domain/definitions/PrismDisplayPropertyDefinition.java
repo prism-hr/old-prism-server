@@ -1655,6 +1655,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated organization categories"),
     INSTITUTION_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated organization targets"),
     INSTITUTION_COMMENT_UPDATED_COMPETENCE(PROGRAM_COMMENT, "Updated organizations competences"),
+    INSTITUTION_COMMENT_UPDATED_EMAIL_LIST(INSTITUTION_COMMENT, "Updated email lists"),
 
     /*
      * *************** DEPARTMENT COMMENT *********************
@@ -1681,6 +1682,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     DEPARTMENT_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated division targets"),
     DEPARTMENT_COMMENT_UPDATED_COMPETENCE(PROGRAM_COMMENT, "Updated division competences"),
     DEPARTMENT_COMMENT_UPDATED_IMPORTED_PROGRAMS(PROGRAM_COMMENT, "Updated division programs"),
+    DEPARTMENT_COMMENT_UPDATED_EMAIL_LIST(DEPARTMENT_COMMENT, "Updated email lists"),
 
     /*
      * *************** PROGRAM COMMENT *********************
@@ -1707,6 +1709,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"),
     PROGRAM_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated program targets"),
     PROGRAM_COMMENT_UPDATED_COMPETENCE(PROGRAM_COMMENT, "Updated program competences"),
+    PROGRAM_COMMENT_UPDATED_EMAIL_LIST(PROGRAM_COMMENT, "Updated email lists"),
 
     /*
      * *************** PROJECT COMMENT *********************
@@ -1733,6 +1736,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PROJECT_COMMENT, "Updated position closing dates"),
     PROJECT_COMMENT_UPDATED_TARGET(PROJECT_COMMENT, "Updated position targets"),
     PROJECT_COMMENT_UPDATED_COMPETENCE(PROGRAM_COMMENT, "Updated position competences"),
+    PROJECT_COMMENT_UPDATED_EMAIL_LIST(PROJECT_COMMENT, "Updated email lists"),
 
     /*
      * *************** APPLICATION GLOBAL *********************

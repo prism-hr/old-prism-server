@@ -7,7 +7,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActi
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.UNVERIFIED;
 
 import java.util.Collection;
 import java.util.List;
@@ -389,22 +388,25 @@ public class UserDAO {
                 .executeUpdate();
     }
 
-    public List<UserRole> getUsersToVerifyForResource(Collection<Integer> departments, Collection<Integer> institutions) {
+    public List<UserRole> getUsersToVerify(PrismScope resourceScope, Collection<Integer> resources) {
+        String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property("user")) //
-                .add(Restrictions.in("role.id", UNVERIFIED.getRoles()));
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("role.id", PrismRole.getUnverifiedViewerRole(resourceScope)));
 
-        if (!(departments == null && institutions == null)) {
-            if (!departments.isEmpty()) {
-                criteria.add(Restrictions.in("department.id", departments));
-            }
-
-            if (!institutions.isEmpty()) {
-                criteria.add(Restrictions.in("institution.id", institutions));
-            }
+        if (resources == null) {
+            criteria.add(Restrictions.isNotNull(resourceReference));
+        } else {
+            criteria.add(Restrictions.in(resourceReference + ".id", resources)); //
         }
 
-        return criteria.list();
+        return criteria.addOrder(Order.asc(resourceReference + ".name")) //
+                .addOrder(Order.asc("user.lastName")) //
+                .addOrder(Order.asc("user.firstName")) //
+                .addOrder(Order.asc("id")) //
+                .list();
     }
 
     private void appendAdministratorResourceConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,

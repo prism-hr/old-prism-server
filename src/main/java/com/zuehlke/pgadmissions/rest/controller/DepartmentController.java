@@ -38,7 +38,7 @@ public class DepartmentController {
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/invite", method = RequestMethod.POST)
-    public ActionOutcomeRepresentation inviteDepartment(@Valid @RequestBody DepartmentInvitationDTO departmentInvitationDTO){
+    public ActionOutcomeRepresentation inviteDepartment(@Valid @RequestBody DepartmentInvitationDTO departmentInvitationDTO) {
         ActionOutcomeDTO actionOutcomeDTO = departmentService.inviteDepartment(departmentInvitationDTO);
         return actionMapper.getActionOutcomeRepresentation(actionOutcomeDTO);
     }

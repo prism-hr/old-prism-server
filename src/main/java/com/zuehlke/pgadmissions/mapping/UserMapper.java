@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
@@ -27,9 +30,8 @@ import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ScopeUpdateSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
@@ -169,17 +171,30 @@ public class UserMapper {
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(User user, PrismScope permissionScope) {
-        UserActivityRepresentation representation = new UserActivityRepresentation();
+        return new UserActivityRepresentation().withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, permissionScope))
+                .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user)).withConnectionActivities(getUnverifiedUserRepresentations(user));
+    }
 
-        List<ScopeActionSummaryRepresentation> urgentSummaries = Lists.newLinkedList();
-        List<ScopeUpdateSummaryRepresentation> updateSummaries = Lists.newLinkedList();
-        scopeMapper.populateScopeSummaries(user, permissionScope, urgentSummaries, updateSummaries);
+    private List<ConnectionActivityRepresentation> getUnverifiedUserRepresentations(User user) {
+        Map<String, ConnectionActivityRepresentation> representations = Maps.newLinkedHashMap();
+        userService.getUsersToVerify(user).forEach(userRole -> {
+            Resource resource = userRole.getResource();
+            String resourceCode = resource.getCode();
 
-        representation.setUrgentSummaries(urgentSummaries);
-        representation.setUpdateSummaries(updateSummaries);
+            List<UserRepresentationSimple> userRepresentations = null;
+            ConnectionActivityRepresentation representation = representations.get(resourceCode);
+            if (representation == null) {
+                userRepresentations = newLinkedList();
+                representation = new ConnectionActivityRepresentation().withResource(resourceMapper.getResourceRepresentationActivity(resource)).withUsers(userRepresentations);
+                representations.put(resourceCode, representation);
+            } else {
+                userRepresentations = representation.getUsers();
+            }
 
-        representation.setAppointmentSummaries(applicationMapper.getApplicationAppointmentRepresentations(user));
-        return representation;
+            userRepresentations.add(getUserRepresentationSimple(userRole.getUser()));
+        });
+
+        return newLinkedList(representations.values());
     }
 
     private List<String> getOathProviderRepresentations(User user) {

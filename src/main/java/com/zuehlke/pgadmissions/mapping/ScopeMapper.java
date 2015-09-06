@@ -16,42 +16,44 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ScopeActionSummaryRepresentation.ActionSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ScopeUpdateSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 
+import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.collect.Maps;
 
 @Service
 @Transactional
 public class ScopeMapper {
-    
+
+    @Inject
+    private ActionMapper actionMapper;
+
     @Inject
     private ResourceService resourceService;
 
     @Inject
     private ScopeService scopeService;
 
-    public void populateScopeSummaries(User user, PrismScope permissionScope, List<ScopeActionSummaryRepresentation> urgentSummaries,
-            List<ScopeUpdateSummaryRepresentation> updateSummaries) {
+    public List<ResourceActivityRepresentation> getResourceActivityRepresentation(User user, PrismScope permissionScope) {
         DateTime baseline = new DateTime().minusDays(1);
         permissionScope = permissionScope.equals(SYSTEM) ? PrismScope.INSTITUTION : permissionScope;
 
+        List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
         List<PrismScope> visibleScopes = scopeService.getEnclosingScopesDescending(APPLICATION, permissionScope);
         visibleScopes.forEach(scope -> {
             Set<Integer> updatedResources = Sets.newHashSet();
             Map<PrismAction, Integer> actionCounts = Maps.newLinkedHashMap();
 
-            Set<ResourceActionDTO> summaries = resourceService.getResources(user, scope, visibleScopes.stream()
+            Set<ResourceActionDTO> resourceActionDTOs = resourceService.getResources(user, scope, visibleScopes.stream()
                     .filter(as -> as.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     new ResourceListFilterDTO().withMatchMode(ANY).withUrgentOnly(true).withUpdateOnly(true), //
@@ -62,29 +64,25 @@ public class ScopeMapper {
                             .add(Projections.property("updatedTimestamp").as("updatedTimestamp")),
                     ResourceActionDTO.class);
 
-            for (ResourceActionDTO summary : summaries) {
-                PrismAction actionId = summary.getActionId();
+            for (ResourceActionDTO resourceActionDTO : resourceActionDTOs) {
+                PrismAction actionId = resourceActionDTO.getActionId();
                 Integer existingCount = actionCounts.get(actionId);
                 actionCounts.put(actionId, existingCount == null ? 1 : existingCount + 1);
 
-                if (summary.getUpdatedTimestamp().isAfter(baseline)) {
-                    updatedResources.add(summary.getResourceId());
+                if (resourceActionDTO.getUpdatedTimestamp().isAfter(baseline)) {
+                    updatedResources.add(resourceActionDTO.getResourceId());
                 }
             }
 
-            List<ActionSummaryRepresentation> actionSummaries = Lists.newLinkedList();
+            List<ActionActivityRepresentation> actions = Lists.newLinkedList();
             actionCounts.keySet().forEach(action -> {
-                actionSummaries.add(new ActionSummaryRepresentation().withAction(action).withActionCount(actionCounts.get(action)));
+                actions.add(new ActionActivityRepresentation().withAction(actionMapper.getActionRepresentation(action)).withUrgentCount(actionCounts.get(action)));
             });
 
-            if (!actionSummaries.isEmpty()) {
-                urgentSummaries.add(new ScopeActionSummaryRepresentation().withScope(scope).withActionSummaries(actionSummaries));
-            }
-
-            if (!updatedResources.isEmpty()) {
-                updateSummaries.add(new ScopeUpdateSummaryRepresentation().withScope(scope).withResourceCount(updatedResources.size()));
-            }
+            representations.add(new ResourceActivityRepresentation().withScope(scope).withUpdateCount(updatedResources.size()).withActions(actions));
         });
+
+        return representations;
     }
 
 }

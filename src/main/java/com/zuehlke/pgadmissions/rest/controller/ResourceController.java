@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceEmailListsDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
@@ -58,7 +59,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -66,9 +66,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RestController
 @RequestMapping("api/{resourceScope:resumes|applications|projects|programs|departments|institutions|systems}")
 public class ResourceController {
-
-    @Inject
-    private EntityService entityService;
 
     @Inject
     private ResourceService resourceService;
@@ -166,12 +163,19 @@ public class ResourceController {
         return resourceMapper.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
     }
 
+    @RequestMapping(value = "{resourceId}/emailLists", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void addEmailLists(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody ResourceEmailListsDTO body) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        resourceService.setResourceEmailLists((ResourceParent) resource, body);
+    }
+
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.assignUserRoles(userService.getCurrentUser(), resource, user, CREATE, role);
     }
@@ -189,27 +193,27 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(),
                 newUser.getLastName(), newUser.getEmail(), resource, userRolesRepresentation.getRoles());
         return userMapper.getUserRepresentationSimple(user);
     }
 
-    @RequestMapping(value = "{resourceId}/users/join", method = RequestMethod.POST)
+    @RequestMapping(value = "{resourceId}/users/request", method = RequestMethod.POST)
     @PreAuthorize("permitAll")
-    public UserRepresentationSimple addUnverifiedUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public UserRepresentationSimple requestUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody UserDTO newUser) throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        User user = userService.createUnverifiedViewerUser(newUser, resource);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.requestUser(newUser, resource);
         return userMapper.getUserRepresentationSimple(user);
     }
-    
+
     @RequestMapping(value = "{resourceId}/users/{userId}/verify", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestParam Boolean verify, @ModelAttribute ResourceDescriptor resourceDescriptor)
             throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.verifyUserRole(userService.getCurrentUser(), resource, user, verify);
     }
@@ -218,7 +222,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public void removeUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor)
             throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.deleteUserRoles(userService.getCurrentUser(), resource, user);
     }
@@ -227,7 +231,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public void setUserAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor)
             throws Exception {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
     }
@@ -235,14 +239,14 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @Valid @RequestBody CommentDTO commentDTO) throws Exception {
-        ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO);
+            @Valid @RequestBody CommentDTO commentDTO, @RequestParam(required = false) String referralEmailAddress) throws Exception {
+        ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), resourceId, commentDTO, referralEmailAddress);
         return actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
 
     @RequestMapping(value = "/{resourceId}/availableThemes", method = RequestMethod.GET)
     public Set<String> getAvailableThemes(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         return advertService.getAvailableAdvertThemes(resource.getAdvert(), null);
     }
 
@@ -272,7 +276,7 @@ public class ResourceController {
     }
 
     private Resource loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("Resource not found");
         }

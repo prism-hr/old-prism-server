@@ -248,7 +248,21 @@ begin
 			having count(id) > 1) duplicate_institution
 			on imported_institution_mapping.institution_id = duplicate_institution.institution_id
 				and imported_institution_mapping.domicile_id = duplicate_institution.domicile_id
-				and imported_institution_mapping.name = duplicate_institution.name;
+				and imported_institution_mapping.name = duplicate_institution.name
+				where id not in (
+						select min(id)
+						from imported_institution_mapping inner join (
+							select institution_id as institution_id,
+								domicile_id as domicile_id,
+								name as name,
+								count(id) as duplicate_count
+							from imported_institution_mapping
+							group by institution_id, domicile_id, name
+							having count(id) > 1) duplicate_institution
+							on imported_institution_mapping.institution_id = duplicate_institution.institution_id
+								and imported_institution_mapping.domicile_id = duplicate_institution.domicile_id
+								and imported_institution_mapping.name = duplicate_institution.name
+						group by imported_institution_mapping.name);
 
 	delete
 	from application_qualification

@@ -90,7 +90,7 @@ public class WorkflowDAOUtils {
                         .add(Restrictions.eqProperty("action.partnershipState", "advertTarget.partnershipState")) //
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
-                                .add(Restrictions.eq("advertTarget.valueUser", "userRole.user")))
+                                .add(Restrictions.eqProperty("advertTarget.valueUser", "userRole.user")))
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.ne("action.scope.id", APPLICATION)) //
                                 .add(Restrictions.eqProperty("ownerAdvert.advert", "advertTarget.value"))));

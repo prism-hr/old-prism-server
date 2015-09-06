@@ -64,4 +64,10 @@ public class TargetingController {
         return resourceMapper.getResourceTargetingRepresentations(advertService.getById(advertId), subjectAreas, institutions, departments, allDepartmentsPrimitive);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/targetResources/similar", method = RequestMethod.GET)
+    public List<ResourceRepresentationTarget> getSimilarTargetResources(@RequestParam Integer targetAdvertId) {
+        return resourceMapper.getSimilarResourceTargetingRepresentations(advertService.getById(targetAdvertId));
+    }
+
 }

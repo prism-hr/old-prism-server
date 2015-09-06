@@ -306,6 +306,10 @@ public class ResourceMapper {
                 .collect(Collectors.toList());
     }
 
+    public List<ResourceRepresentationTarget> getSimilarResourceTargetingRepresentations(Advert targetAdvert) {
+        return resourceService.getSimilarResourceTargets(targetAdvert).stream().map(this::getResourceRepresentationTargeting).collect(Collectors.toList());
+    }
+
     public ResourceRepresentationTarget getResourceRepresentationTargeting(ResourceTargetDTO resource) {
         ResourceRepresentationTarget representation = getResourceRepresentationLocation(resource, ResourceRepresentationTarget.class);
 

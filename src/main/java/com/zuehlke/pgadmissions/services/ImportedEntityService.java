@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
@@ -98,7 +99,7 @@ public class ImportedEntityService {
     }
 
     public <T extends ImportedEntity<?, ?>> List<T> getEnabledImportedEntities(Institution institution,
-                                                                               PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         List<T> entities = importedEntityDAO.getEnabledImportedEntitiesWithMappings(institution, prismImportedEntity);
         if (entities.isEmpty()) {
             entities = importedEntityDAO.getEnabledImportedEntities(prismImportedEntity);
@@ -190,7 +191,7 @@ public class ImportedEntityService {
     }
 
     public <T extends ImportedEntityMapping<?>> List<T> getEnabledImportedEntityMappings(Institution institution,
-                                                                                         PrismImportedEntity prismImportedEntity) {
+            PrismImportedEntity prismImportedEntity) {
         List<T> mappings = importedEntityDAO.getImportedEntityMappings(institution, prismImportedEntity);
         return getFilteredImportedEntityMappings(mappings);
     }
@@ -377,7 +378,7 @@ public class ImportedEntityService {
                         map.get(parentId).addChild(representation);
                     }
                     return map;
-                }, (map1, map2) -> {
+                } , (map1, map2) -> {
                     throw new UnsupportedOperationException();
                 });
 
@@ -385,12 +386,12 @@ public class ImportedEntityService {
     }
 
     public BigDecimal getMinimumImportedInstitutionSubjectAreaRelationStrength(Collection<Integer> institutions, Collection<Integer> subjectAreas,
-                                                                               Integer concentrationFactor, BigDecimal proliferationFactor) {
+            Integer concentrationFactor, BigDecimal proliferationFactor) {
         return importedEntityDAO.getMinimumImportedInstitutionSubjectAreaRelationStrength(institutions, subjectAreas, concentrationFactor, proliferationFactor);
     }
 
     public List<Integer> getImportedInstitutionSubjectAreas(Collection<Integer> subjectAreas, Integer concentrationFactor,
-                                                            BigDecimal proliferationFactor, BigDecimal minimumRelationStrength) {
+            BigDecimal proliferationFactor, BigDecimal minimumRelationStrength) {
         return importedEntityDAO.getImportedInstitutionSubjectAreas(subjectAreas, concentrationFactor, proliferationFactor, minimumRelationStrength);
     }
 
@@ -416,6 +417,10 @@ public class ImportedEntityService {
 
     public Set<Integer> getImportedSubjectAreaFamily(Integer... parents) {
         return getImportedSubjectAreaFamily(null, parents);
+    }
+
+    public List<Integer> getRelatedImportedSubjectAreas(ResourceParent resource) {
+        return importedEntityDAO.getRelatedImportedSubjectAreas(resource);
     }
 
     private Set<Integer> getImportedSubjectAreaFamily(Set<Integer> family, Integer... parents) {

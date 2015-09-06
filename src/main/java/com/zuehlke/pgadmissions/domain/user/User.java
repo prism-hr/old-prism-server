@@ -24,6 +24,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -144,6 +145,9 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<UserAdvert> userAdverts = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "valueUser")
+    private Set<AdvertTargetAdvert> advertTargetAdverts = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -315,6 +319,10 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<UserAdvert> getUserAdverts() {
         return userAdverts;
+    }
+    
+    public Set<AdvertTargetAdvert> getAdvertTargetAdverts() {
+        return advertTargetAdverts;
     }
 
     public User withId(Integer id) {

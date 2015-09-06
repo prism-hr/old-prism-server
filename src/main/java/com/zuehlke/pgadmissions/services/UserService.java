@@ -187,13 +187,14 @@ public class UserService {
 
     public User requestUser(UserDTO newUserDTO, Resource resource, PrismRole targetRole) {
         User user = getCurrentUser();
-        if ((user == null || !actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), user, false))) {
-            targetRole = getUnverifiedViewerRole(resource);
-        } else {
+        User userAuthority = resource.getParentResource().getUser();
+        if ((user.equals(userAuthority) && actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userAuthority, false))) {
             targetRole = targetRole == null ? getViewerRole(resource) : targetRole;
+        } else {
+            targetRole = getUnverifiedViewerRole(resource);
         }
 
-        User newUser = getOrCreateUserWithRoles(user, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, newArrayList(targetRole));
+        User newUser = getOrCreateUserWithRoles(userAuthority, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, newArrayList(targetRole));
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             advertService.verifyTargetAdvertUser(resource.getAdvert(), newUser);

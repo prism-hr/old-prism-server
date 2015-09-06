@@ -479,7 +479,7 @@ public class ActionDAO {
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement"))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("state.ActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .list();

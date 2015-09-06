@@ -33,7 +33,7 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> implements UserAssi
     private Advert value;
 
     @ManyToOne
-    @JoinColumn(name = "value_user_id")
+    @JoinColumn(name = "target_advert_user_id")
     private User valueUser;
 
     @Column(name = "selected", nullable = false)

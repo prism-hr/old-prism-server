@@ -14,7 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_DEPARTMENT_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_VERIFIED_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ENDORSER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
@@ -60,21 +60,21 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
                 .withAction(DEPARTMENT_ENDORSE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(SYSTEM_DEPARTMENT_TASK_REQUEST) //
-                .withPartnerAssignments(DEPARTMENT_VERIFIED_GROUP) //
+                .withPartnerAssignments(DEPARTMENT_ENDORSER_GROUP) //
                 .withNotifications(DEPARTMENT_ADMINISTRATOR_GROUP, SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION) //
                 .withTransitions(DEPARTMENT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_UNENDORSE) //
                 .withNotification(SYSTEM_DEPARTMENT_TASK_REQUEST) //
-                .withPartnerAssignments(DEPARTMENT_VERIFIED_GROUP) //
+                .withPartnerAssignments(DEPARTMENT_ENDORSER_GROUP) //
                 .withNotifications(DEPARTMENT_ADMINISTRATOR_GROUP, SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION) //
                 .withTransitions(DEPARTMENT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_REENDORSE) //
                 .withNotification(SYSTEM_DEPARTMENT_TASK_REQUEST) //
-                .withPartnerAssignments(DEPARTMENT_VERIFIED_GROUP) //
+                .withPartnerAssignments(DEPARTMENT_ENDORSER_GROUP) //
                 .withNotifications(DEPARTMENT_ADMINISTRATOR_GROUP, SYSTEM_DEPARTMENT_UPDATE_NOTIFICATION) //
                 .withTransitions(DEPARTMENT_ENDORSE_TRANSITION));
 

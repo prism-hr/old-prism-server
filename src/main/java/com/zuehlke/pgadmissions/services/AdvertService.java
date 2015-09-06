@@ -489,6 +489,53 @@ public class AdvertService {
         return adverts;
     }
 
+    public void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) {
+        AdvertTargets targets = advert.getTargets();
+        if (targets == null) {
+            targets = new AdvertTargets();
+            advert.setTargets(targets);
+        } else {
+            advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
+            targets.getSubjectAreas().clear();
+            entityService.flush();
+        }
+
+        Set<AdvertSubjectArea> subjectAreas = targets.getSubjectAreas();
+        if (targetsDTO.getSubjectAreas() != null) {
+            targetsDTO.getSubjectAreas().stream().forEach(targetDTO -> {
+                AdvertSubjectArea target = new AdvertSubjectArea().withAdvert(advert).withValue(entityService.getById(ImportedSubjectArea.class, targetDTO.getId()));
+                entityService.save(target);
+                subjectAreas.add(target);
+            });
+        }
+
+        User user = userService.getCurrentUser();
+
+        List<Integer> newTargetValues = Lists.newArrayList();
+        Set<AdvertTargetAdvert> adverts = targets.getAdverts();
+        if (targetsDTO.getResources() != null) {
+            targetsDTO.getResources().stream().forEach(targetDTO -> {
+                AdvertTargetAdvert target = createAdvertTargetAdvert(user, advert, targetDTO, false);
+                newTargetValues.add(target.getValueId());
+                adverts.add(target);
+            });
+        }
+
+        if (targetsDTO.getSelectedResources() != null) {
+            targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
+                AdvertTargetAdvert target = createAdvertTargetAdvert(user, advert, targetDTO, true);
+                newTargetValues.add(target.getValueId());
+                adverts.add(target);
+            });
+        }
+
+        if (newTargetValues.isEmpty()) {
+            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
+        } else {
+            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
+        }
+    }
+    
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {
@@ -529,55 +576,6 @@ public class AdvertService {
         });
     }
 
-    private void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) {
-        AdvertTargets targets = advert.getTargets();
-        if (targets == null) {
-            targets = new AdvertTargets();
-            advert.setTargets(targets);
-        } else {
-            advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
-            targets.getSubjectAreas().clear();
-            entityService.flush();
-        }
-
-        Set<AdvertSubjectArea> subjectAreas = targets.getSubjectAreas();
-        if (targetsDTO.getSubjectAreas() != null) {
-            targetsDTO.getSubjectAreas().stream().forEach(targetDTO -> {
-                AdvertSubjectArea target = new AdvertSubjectArea().withAdvert(advert).withValue(entityService.getById(ImportedSubjectArea.class, targetDTO.getId()));
-                entityService.save(target);
-                subjectAreas.add(target);
-            });
-        }
-
-        User user = userService.getCurrentUser();
-
-        List<Integer> newTargetValues = Lists.newArrayList();
-        Set<AdvertTargetAdvert> adverts = targets.getAdverts();
-        if (targetsDTO.getResources() != null) {
-            targetsDTO.getResources().stream().forEach(targetDTO -> {
-                AdvertTargetAdvert target = createAdvertTargetAdvert(user, advert, targetDTO, false);
-                entityService.createOrUpdate(target);
-                newTargetValues.add(target.getValueId());
-                adverts.add(target);
-            });
-        }
-
-        if (targetsDTO.getSelectedResources() != null) {
-            targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
-                AdvertTargetAdvert target = createAdvertTargetAdvert(user, advert, targetDTO, true);
-                entityService.createOrUpdate(target);
-                newTargetValues.add(target.getValueId());
-                adverts.add(target);
-            });
-        }
-
-        if (newTargetValues.isEmpty()) {
-            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
-        } else {
-            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
-        }
-    }
-
     private AdvertTargetAdvert createAdvertTargetAdvert(User user, Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
         ResourceParent targetResource = (ResourceParent) resourceService.getById(targetDTO.getScope(), targetDTO.getId());
         AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withAdvertUser(user)
@@ -586,7 +584,7 @@ public class AdvertService {
         User targetUser = null;
         UserDTO targetUserDTO = targetDTO.getUser();
         if (targetUserDTO != null) {
-            targetUser = userService.createTargetUser(user, targetUserDTO, targetResource);
+            targetUser = userService.requestUser(targetUserDTO, targetResource);
             target.setValueUser(targetUser);
         }
         
@@ -596,6 +594,7 @@ public class AdvertService {
             target.setPartnershipState(ENDORSEMENT_PENDING);
         }
 
+        entityService.createOrUpdate(target);
         return target;
     }
 

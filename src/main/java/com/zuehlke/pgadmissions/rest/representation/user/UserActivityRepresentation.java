@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.user;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
@@ -9,19 +10,17 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 
 public class UserActivityRepresentation {
 
-    private ResourcesActivityRepresentation resourceActivities;
+    private List<ResourceActivityRepresentation> resourceActivities;
 
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
-    private List<ConnectionActivityRepresentation> staffConnectionActivities;
+    private List<ConnectionActivityRepresentation> connectionActivities;
 
-    private List<ConnectionActivityRepresentation> partnerConnectionActivities;
-
-    public ResourcesActivityRepresentation getResourceActivities() {
+    public List<ResourceActivityRepresentation> getResourceActivities() {
         return resourceActivities;
     }
 
-    public void setResourceActivities(ResourcesActivityRepresentation resourceActivities) {
+    public void setResourceActivities(List<ResourceActivityRepresentation> resourceActivities) {
         this.resourceActivities = resourceActivities;
     }
 
@@ -33,80 +32,108 @@ public class UserActivityRepresentation {
         this.appointmentActivities = appointmentActivities;
     }
 
-    public List<ConnectionActivityRepresentation> getStaffConnectionActivities() {
-        return staffConnectionActivities;
+    public List<ConnectionActivityRepresentation> getConnectionActivities() {
+        return connectionActivities;
     }
 
-    public void setStaffConnectionActivities(List<ConnectionActivityRepresentation> connectionRepresentations) {
-        this.staffConnectionActivities = connectionRepresentations;
+    public void setConnectionActivities(List<ConnectionActivityRepresentation> connectionActivities) {
+        this.connectionActivities = connectionActivities;
     }
 
-    public List<ConnectionActivityRepresentation> getPartnerConnectionActivities() {
-        return partnerConnectionActivities;
+    public UserActivityRepresentation withResourceActivities(List<ResourceActivityRepresentation> resourceActivities) {
+        this.resourceActivities = resourceActivities;
+        return this;
     }
 
-    public void setPartnerConnectionActivities(List<ConnectionActivityRepresentation> partnerConnectionActivities) {
-        this.partnerConnectionActivities = partnerConnectionActivities;
+    public UserActivityRepresentation withAppointmentActivities(List<AppointmentActivityRepresentation> appointmentActivities) {
+        this.appointmentActivities = appointmentActivities;
+        return this;
     }
 
-    public static class ResourcesActivityRepresentation {
+    public UserActivityRepresentation withConnectionActivities(List<ConnectionActivityRepresentation> connectionActivities) {
+        this.connectionActivities = connectionActivities;
+        return this;
+    }
 
-        private List<ResourceActivityRepresentation> scopes;
+    public static class ResourceActivityRepresentation {
 
-        public List<ResourceActivityRepresentation> getScopes() {
-            return scopes;
+        private PrismScope scope;
+
+        private Integer updateCount;
+
+        private List<ActionActivityRepresentation> actions;
+
+        public PrismScope getScope() {
+            return scope;
         }
 
-        public void setScopes(List<ResourceActivityRepresentation> scopes) {
-            this.scopes = scopes;
+        public void setScope(PrismScope scope) {
+            this.scope = scope;
         }
 
-        public static class ResourceActivityRepresentation {
+        public Integer getUpdateCount() {
+            return updateCount;
+        }
 
-            private Integer updateCount;
+        public void setUpdateCount(Integer updateCount) {
+            this.updateCount = updateCount;
+        }
 
-            private List<ActionActivityRepresentation> actions;
+        public List<ActionActivityRepresentation> getActions() {
+            return actions;
+        }
 
-            public Integer getUpdateCount() {
-                return updateCount;
+        public void setActions(List<ActionActivityRepresentation> actions) {
+            this.actions = actions;
+        }
+
+        public static class ActionActivityRepresentation {
+
+            private ActionRepresentation action;
+
+            private Integer urgentCount;
+
+            public ActionRepresentation getAction() {
+                return action;
             }
 
-            public void setUpdateCount(Integer updateCount) {
-                this.updateCount = updateCount;
+            public void setAction(ActionRepresentation action) {
+                this.action = action;
             }
 
-            public List<ActionActivityRepresentation> getActions() {
-                return actions;
+            public Integer getUrgentCount() {
+                return urgentCount;
             }
 
-            public void setActions(List<ActionActivityRepresentation> actions) {
-                this.actions = actions;
+            public void setUrgentCount(Integer urgentCount) {
+                this.urgentCount = urgentCount;
             }
 
-            public static class ActionActivityRepresentation {
-
-                private ActionRepresentation action;
-
-                private Integer urgentCount;
-
-                public ActionRepresentation getAction() {
-                    return action;
-                }
-
-                public void setAction(ActionRepresentation action) {
-                    this.action = action;
-                }
-
-                public Integer getUrgentCount() {
-                    return urgentCount;
-                }
-
-                public void setUrgentCount(Integer urgentCount) {
-                    this.urgentCount = urgentCount;
-                }
-
+            public ActionActivityRepresentation withAction(ActionRepresentation action) {
+                this.action = action;
+                return this;
             }
 
+            public ActionActivityRepresentation withUrgentCount(Integer urgentCount) {
+                this.urgentCount = urgentCount;
+                return this;
+            }
+
+        }
+
+        public ResourceActivityRepresentation withScope(PrismScope scope) {
+            this.scope = scope;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withUpdateCount(Integer updateCount) {
+            this.updateCount = updateCount;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withActions(List<ActionActivityRepresentation> actions) {
+            this.actions = actions;
+            return this;
         }
 
     }
@@ -143,13 +170,28 @@ public class UserActivityRepresentation {
             this.instruction = instruction;
         }
 
+        public AppointmentActivityRepresentation withResource(ResourceRepresentationActivity resource) {
+            this.resource = resource;
+            return this;
+        }
+
+        public AppointmentActivityRepresentation withAppointment(CommentInterviewAppointmentRepresentation appointment) {
+            this.appointment = appointment;
+            return this;
+        }
+
+        public AppointmentActivityRepresentation withInstruction(CommentInterviewInstructionRepresentation instruction) {
+            this.instruction = instruction;
+            return this;
+        }
+
     }
 
     public static class ConnectionActivityRepresentation {
 
         private ResourceRepresentationActivity resource;
 
-        private List<UserRepresentationSimple> user;
+        private List<UserRepresentationSimple> users;
 
         public ResourceRepresentationActivity getResource() {
             return resource;
@@ -159,12 +201,22 @@ public class UserActivityRepresentation {
             this.resource = resource;
         }
 
-        public List<UserRepresentationSimple> getUser() {
-            return user;
+        public List<UserRepresentationSimple> getUsers() {
+            return users;
         }
 
-        public void setUser(List<UserRepresentationSimple> user) {
-            this.user = user;
+        public void setUsers(List<UserRepresentationSimple> users) {
+            this.users = users;
+        }
+
+        public ConnectionActivityRepresentation withResource(ResourceRepresentationActivity resource) {
+            this.resource = resource;
+            return this;
+        }
+
+        public ConnectionActivityRepresentation withUsers(List<UserRepresentationSimple> users) {
+            this.users = users;
+            return this;
         }
 
     }

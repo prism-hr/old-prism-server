@@ -1,13 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 
@@ -28,7 +25,7 @@ public class ResourceRepresentationStandard extends ResourceRepresentationActivi
     private List<StateRepresentationSimple> secondaryStates;
 
     private DateTime createdTimestamp;
-    
+
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
@@ -97,8 +94,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationActivi
 
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
-    }   
-    
+    }
+
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
@@ -121,45 +118,6 @@ public class ResourceRepresentationStandard extends ResourceRepresentationActivi
 
     public void setAdvertIncompleteSections(List<PrismScopeSectionDefinition> advertIncompleteSections) {
         this.advertIncompleteSections = advertIncompleteSections;
-    }
-
-    public void setParentResource(ResourceRepresentationSimple parentResource) {
-        setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
-    }
-
-    public ResourceRepresentationStandard withScope(PrismScope scope) {
-        setScope(scope);
-        return this;
-    }
-
-    public ResourceRepresentationStandard withId(Integer id) {
-        setId(id);
-        return this;
-    }
-
-    public ResourceRepresentationStandard withCode(String code) {
-        setCode(code);
-        return this;
-    }
-
-    public ResourceRepresentationStandard withProject(ResourceRepresentationSimple project) {
-        setProject(project);
-        return this;
-    }
-
-    public ResourceRepresentationStandard withProgram(ResourceRepresentationSimple program) {
-        setProgram(program);
-        return this;
-    }
-
-    public ResourceRepresentationStandard withDepartment(ResourceRepresentationSimple department) {
-        setDepartment(department);
-        return this;
-    }
-
-    public ResourceRepresentationStandard withInstitution(ResourceRepresentationSimple institution) {
-        setInstitution(institution);
-        return this;
     }
 
 }

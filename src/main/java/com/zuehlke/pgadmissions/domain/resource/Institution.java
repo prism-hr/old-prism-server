@@ -3,8 +3,11 @@ package com.zuehlke.pgadmissions.domain.resource;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -70,6 +73,16 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Embedded
+    @AttributeOverrides({ @AttributeOverride(name = "emailAddresses", column = @Column(name = "staff_email_list") ),
+            @AttributeOverride(name = "mailingList", column = @Column(name = "staff_email_list_group") ) })
+    private ResourceEmailList recruiterEmailList;
+
+    @Embedded
+    @AttributeOverrides({ @AttributeOverride(name = "emailAddresses", column = @Column(name = "student_email_list") ),
+            @AttributeOverride(name = "mailingList", column = @Column(name = "student_email_list_group") ) })
+    private ResourceEmailList applicantEmailList;
+    
     @OneToOne
     @JoinColumn(name = "logo_image_id")
     private Document logoImage;
@@ -234,6 +247,26 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+    
+    @Override
+    public ResourceEmailList getRecruiterEmailList() {
+        return recruiterEmailList;
+    }
+
+    @Override
+    public void setRecruiterEmailList(ResourceEmailList recruiterEmailList) {
+        this.recruiterEmailList = recruiterEmailList;
+    }
+
+    @Override
+    public ResourceEmailList getApplicantEmailList() {
+        return applicantEmailList;
+    }
+
+    @Override
+    public void setApplicantEmailList(ResourceEmailList applicantEmailList) {
+        this.applicantEmailList = applicantEmailList;
     }
 
     public Document getLogoImage() {

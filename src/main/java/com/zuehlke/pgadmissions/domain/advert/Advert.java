@@ -73,7 +73,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @ManyToOne
     @JoinColumn(name = "imported_opportunity_type_id")
     private ImportedEntitySimple opportunityType;
-    
+
     @Column(name = "opportunity_category")
     private String opportunityCategories;
 

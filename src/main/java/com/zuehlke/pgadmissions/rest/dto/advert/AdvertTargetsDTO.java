@@ -34,4 +34,9 @@ public class AdvertTargetsDTO {
         this.selectedResources = selectedResources;
     }
 
+    public AdvertTargetsDTO withSelectedResources(List<AdvertTargetResourceDTO> selectedResources) {
+        this.selectedResources = selectedResources;
+        return this;
+    }
+
 }

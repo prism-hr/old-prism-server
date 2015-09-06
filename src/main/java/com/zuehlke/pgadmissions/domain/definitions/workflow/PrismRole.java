@@ -87,9 +87,12 @@ public enum PrismRole implements PrismLocalizableDefinition {
     }
     
     public static PrismRole getUnverifiedViewerRole(Resource resource) {
-        PrismScope resourceScope = resource.getResourceScope();
+        return getUnverifiedViewerRole(resource.getResourceScope());
+    }
+
+    public static PrismRole getUnverifiedViewerRole(PrismScope resourceScope) {
         if (asList(DEPARTMENT, INSTITUTION).contains(resourceScope)) {
-            return valueOf(resource.getResourceScope().name() + "_VIEWER_UNVERIFIED");
+            return valueOf(resourceScope.name() + "_VIEWER_UNVERIFIED");
         }
         return null;
     }

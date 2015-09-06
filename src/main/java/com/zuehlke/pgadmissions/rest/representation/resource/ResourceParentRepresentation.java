@@ -9,6 +9,10 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     private AdvertRepresentationSimple advert;
 
+    private ResourceEmailListRepresentation recruiterEmailList;
+
+    private ResourceEmailListRepresentation applicantEmailList;
+
     private List<PrismAction> partnerActions;
 
     private List<ResourceRepresentationIdentity> resourcesNotYetEndorsedFor;
@@ -19,6 +23,22 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     public void setAdvert(AdvertRepresentationSimple advert) {
         this.advert = advert;
+    }
+
+    public ResourceEmailListRepresentation getRecruiterEmailList() {
+        return recruiterEmailList;
+    }
+
+    public void setRecruiterEmailList(ResourceEmailListRepresentation recruiterEmailList) {
+        this.recruiterEmailList = recruiterEmailList;
+    }
+
+    public ResourceEmailListRepresentation getApplicantEmailList() {
+        return applicantEmailList;
+    }
+
+    public void setApplicantEmailList(ResourceEmailListRepresentation applicantEmailList) {
+        this.applicantEmailList = applicantEmailList;
     }
 
     public List<PrismAction> getPartnerActions() {

@@ -1,19 +1,21 @@
 package com.zuehlke.pgadmissions.rest.dto.imported;
 
+import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
 
 public class ImportedProgramDTO extends ImportedEntityDTO {
 
     @NotNull
+    @Valid
     private ImportedInstitutionDTO institution;
-    
+
     @Valid
     private DepartmentInvitationDTO department;
 
     @NotNull
+    @Valid
     private ImportedEntityDTO qualificationType;
 
     public ImportedInstitutionDTO getInstitution() {

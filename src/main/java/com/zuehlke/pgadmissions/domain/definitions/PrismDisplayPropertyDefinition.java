@@ -1510,7 +1510,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TARGETS_SUBJECT_AREA_SEARCH_HINT(SYSTEM_RESOURCE_TARGETS, "e.g. Medicine, Computer Science"),
     SYSTEM_RESOURCE_TARGETS_ORGANIZATION_SEARCH_LABEL(SYSTEM_RESOURCE_TARGETS, "Search by Institution/Department Name"),
     SYSTEM_RESOURCE_TARGETS_ORGANIZATION_SEARCH_HINT(SYSTEM_RESOURCE_TARGETS, "e.g. University of Oxford, University College London"),
-    SYSTEM_RESOURCE_TARGETS_INSTRUCTION(SYSTEM_RESOURCE_TARGETS, "Search for targets by subject area or by keying in the name of an Institution or Department that you know"),
+    SYSTEM_RESOURCE_TARGETS_INSTRUCTION(SYSTEM_RESOURCE_TARGETS, "Search for targets by subject area, department or institution name."),
     SYSTEM_RESOURCE_TARGETS_INSTRUCTION_WARNING(SYSTEM_RESOURCE_TARGETS, "Target organizations will be able to see all of your selected targets"),
 
     /*

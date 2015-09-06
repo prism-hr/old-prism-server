@@ -13,10 +13,12 @@ import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.workflow.user.AdvertTargetAdvertReassignmentProcessor;
 
 @Entity
 @Table(name = "advert_target_advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "target_advert_id" }) })
-public class AdvertTargetAdvert extends AdvertTarget<Advert> {
+public class AdvertTargetAdvert extends AdvertTarget<Advert> implements UserAssignment<AdvertTargetAdvertReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -27,15 +29,11 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     private Advert advert;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User advertUser;
-
-    @ManyToOne
     @JoinColumn(name = "target_advert_id", nullable = false)
     private Advert value;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "value_user_id")
     private User valueUser;
 
     @Column(name = "selected", nullable = false)
@@ -59,14 +57,6 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
-    }
-
-    public User getAdvertUser() {
-        return advertUser;
-    }
-
-    public void setAdvertUser(User advertUser) {
-        this.advertUser = advertUser;
     }
 
     public Advert getValue() {
@@ -116,11 +106,6 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
         return this;
     }
 
-    public AdvertTargetAdvert withAdvertUser(User advertUser) {
-        this.advertUser = advertUser;
-        return this;
-    }
-
     public AdvertTargetAdvert withValue(Advert value) {
         this.value = value;
         return this;
@@ -129,6 +114,16 @@ public class AdvertTargetAdvert extends AdvertTarget<Advert> {
     public AdvertTargetAdvert withSelected(Boolean selected) {
         this.selected = selected;
         return this;
+    }
+    
+    @Override
+    public Class<AdvertTargetAdvertReassignmentProcessor> getUserReassignmentProcessor() {
+        return AdvertTargetAdvertReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
     }
 
 }

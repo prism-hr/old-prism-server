@@ -74,5 +74,5 @@ public class DepartmentDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceTargetRelevanceDTO.class))
                 .list();
     }
-
+    
 }

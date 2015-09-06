@@ -781,6 +781,11 @@ public class ResourceService {
         return targets.keySet();
     }
 
+    public Set<ResourceTargetDTO> getSimilarResourceTargets(Advert targetAdvert) {
+        List<Integer> relatedSubjectAreas = importedEntityService.getRelatedImportedSubjectAreas(targetAdvert.getInstitution());
+        return getResourceTargets(targetAdvert, relatedSubjectAreas, null, null, false);
+    }
+
     public ResourceStandardDTO getResourceWithParents(Resource resource, List<PrismScope> parentScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         return resourceDAO.getParentResources(SYSTEM, systemId, resourceScope, resource.getId(), parentScopes);
@@ -917,12 +922,12 @@ public class ResourceService {
             executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_EMAIL_LIST"));
         }
     }
-    
+
     public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
         parent.setOpportunityCategories(opportunityCategories);
         parent.getAdvert().setOpportunityCategories(opportunityCategories);
     }
-    
+
     private void populateResourceEmailList(ResourceEmailListDTO listDTO, ResourceEmailList list) {
         list.setEmailAddresses(listDTO.getEmailAddresses());
         list.setMailingList(listDTO.getMailingList());

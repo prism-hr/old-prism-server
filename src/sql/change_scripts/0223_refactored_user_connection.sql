@@ -2,11 +2,8 @@ drop table user_connection
 ;
 
 alter table advert_target_advert
-	add column advert_user_id int(10) unsigned after advert_id,
 	add column target_advert_user_id int(10) unsigned after target_advert_id,
-	add index (advert_user_id),
 	add index (target_advert_user_id),
-	add foreign key (advert_user_id) references user (id),
 	add foreign key (target_advert_user_id) references user (id)
 ;
 

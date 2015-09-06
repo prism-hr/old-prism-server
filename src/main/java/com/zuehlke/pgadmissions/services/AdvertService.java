@@ -455,7 +455,7 @@ public class AdvertService {
     public List<Integer> getAdvertsToIdentifyUserFor(User user, List<Integer> adverts) {
         return advertDAO.getAdvertsToIdentifyUserFor(user, adverts);
     }
-    
+
     public void verifyTargetAdvertUser(Advert value, User valueUser) {
         advertDAO.verifyAdvertTargetUser(value, valueUser);
     }
@@ -521,8 +521,9 @@ public class AdvertService {
             });
         }
 
-        if (targetsDTO.getSelectedResources() != null) {
-            targetsDTO.getSelectedResources().stream().forEach(targetDTO -> {
+        List<AdvertTargetResourceDTO> targetValuesDTO = targetsDTO.getSelectedResources();
+        if (targetValuesDTO != null) {
+            targetValuesDTO.stream().forEach(targetDTO -> {
                 AdvertTargetAdvert target = createAdvertTargetAdvert(user, advert, targetDTO, true);
                 newTargetValues.add(target.getValueId());
                 adverts.add(target);
@@ -535,7 +536,7 @@ public class AdvertService {
             advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
         }
     }
-    
+
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {
@@ -578,8 +579,7 @@ public class AdvertService {
 
     private AdvertTargetAdvert createAdvertTargetAdvert(User user, Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
         ResourceParent targetResource = (ResourceParent) resourceService.getById(targetDTO.getScope(), targetDTO.getId());
-        AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withAdvertUser(user)
-                .withValue(targetResource.getAdvert()).withSelected(selected);
+        AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withValue(targetResource.getAdvert()).withSelected(selected);
 
         User targetUser = null;
         UserDTO targetUserDTO = targetDTO.getUser();
@@ -587,8 +587,8 @@ public class AdvertService {
             targetUser = userService.requestUser(targetUserDTO, targetResource);
             target.setValueUser(targetUser);
         }
-        
-        if (!(targetUser == null && roleService.getVerifiedRoles(targetUser, targetResource).isEmpty())) {
+
+        if (targetUser != null && roleService.getVerifiedRoles(targetUser, targetResource).isEmpty()) {
             target.setPartnershipState(ENDORSEMENT_PENDING_IDENTIFICATION);
         } else {
             target.setPartnershipState(ENDORSEMENT_PENDING);

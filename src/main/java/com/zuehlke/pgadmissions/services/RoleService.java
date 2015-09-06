@@ -117,7 +117,7 @@ public class RoleService {
     public void assignUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
         if (roles.length > 0) {
             PrismRole firstRole = roles[0];
-            if (asList(UNVERIFIED).contains(firstRole) && getVerifiedRoles(user, (ResourceParent) resource).isEmpty()) {
+            if (asList(UNVERIFIED.getRoles()).contains(firstRole) && getVerifiedRoles(user, (ResourceParent) resource).isEmpty()) {
                 List<PrismState> activeStates = stateService.getActiveResourceStates(resource.getResourceScope());
                 if (containsAny(resource.getResourceStates().stream().map(rs -> rs.getState().getId()).collect(Collectors.toList()), activeStates)) {
                     getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(getById(firstRole))).withAssignedTimestamp(new DateTime());

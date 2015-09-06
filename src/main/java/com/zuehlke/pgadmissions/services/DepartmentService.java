@@ -80,10 +80,14 @@ public class DepartmentService {
     public ActionOutcomeDTO inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) {
         DepartmentDTO departmentDTO = departmentInvitationDTO.getDepartment();
 
+        List<PrismOpportunityCategory> opportunityCategories = Lists.newArrayList();
         Institution institution = institutionService.getById(departmentDTO.getParentResource().getId());
-        List<PrismOpportunityCategory> opportunityCategories = Stream.of(institution.getOpportunityCategories().split("\\|"))
-                .map(c -> PrismOpportunityCategory.valueOf(c))
-                .collect(Collectors.toList());
+        String opportunityCategoriesString = institution.getOpportunityCategories();
+        if (opportunityCategoriesString != null) {
+            opportunityCategories = Stream.of(institution.getOpportunityCategories().split("\\|"))
+                    .map(c -> PrismOpportunityCategory.valueOf(c))
+                    .collect(Collectors.toList());
+        }
 
         AdvertDTO advertDTO = new AdvertDTO();
         departmentDTO.setAdvert(advertDTO);

@@ -176,7 +176,7 @@ public class UserService {
     }
 
     public User requestUser(UserDTO newUserDTO, Resource resource, PrismRole targetRole) {
-        PrismRole actualRole;
+        PrismRole actualRole = null;
         User invoker = resource.getParentResource().getUser();
         if ((getCurrentUser().equals(invoker) && actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), invoker, false))) {
             actualRole = targetRole == null ? getViewerRole(resource) : targetRole;

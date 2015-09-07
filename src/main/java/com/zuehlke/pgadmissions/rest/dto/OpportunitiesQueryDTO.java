@@ -1,20 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class OpportunitiesQueryDTO {
 
@@ -22,13 +16,13 @@ public class OpportunitiesQueryDTO {
 
     private PrismAction actionId;
 
-    private Integer[] institutions;
+    private Integer institutionId;
 
-    private Integer[] departments;
+    private Integer departmentId;
 
-    private Integer[] programs;
+    private Integer programId;
 
-    private Integer[] projects;
+    private Integer projectId;
 
     @NotNull
     private PrismAdvertContext context;
@@ -87,36 +81,36 @@ public class OpportunitiesQueryDTO {
         this.actionId = actionId;
     }
 
-    public Integer[] getInstitutions() {
-        return institutions;
+    public Integer getInstitutionId() {
+        return institutionId;
     }
 
-    public void setInstitutions(Integer[] institutions) {
-        this.institutions = institutions;
+    public void setInstitutionId(Integer institutionId) {
+        this.institutionId = institutionId;
     }
 
-    public Integer[] getDepartments() {
-        return departments;
+    public Integer getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartments(Integer[] departments) {
-        this.departments = departments;
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
     }
 
-    public Integer[] getPrograms() {
-        return programs;
+    public Integer getProgramId() {
+        return programId;
     }
 
-    public void setPrograms(Integer[] programs) {
-        this.programs = programs;
+    public void setProgramId(Integer programId) {
+        this.programId = programId;
     }
 
-    public Integer[] getProjects() {
-        return projects;
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setProjects(Integer[] projects) {
-        this.projects = projects;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     public PrismOpportunityCategory getOpportunityCategory() {
@@ -284,14 +278,14 @@ public class OpportunitiesQueryDTO {
     }
 
     public boolean isNarrowed() {
-        return !(institutions == null && departments == null && programs == null && projects == null);
+        return  !(institutionId == null && departmentId == null && programId == null && projectId == null);
     }
 
-    public Integer[] getResources(PrismScope resourceScope) {
+    public Integer getResourceId(PrismScope resourceScope) {
         if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
-            return (Integer[]) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName() + "s");
+            return (Integer) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName() + "Id");
         }
-        return null;   
+        return null;
     }
 
 }

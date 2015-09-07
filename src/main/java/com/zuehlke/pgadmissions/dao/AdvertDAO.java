@@ -217,7 +217,7 @@ public class AdvertDAO {
         }
 
         if (narrowed) {
-            appendResourcesConstraint(criteria, scope, queryDTO.getResources(scope), actionCondition);
+            appendResourceConstraint(criteria, scope, queryDTO.getResourceId(scope), actionCondition);
         } else {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.isNull("advertTarget.id")) //
@@ -618,23 +618,23 @@ public class AdvertDAO {
         criteria.add(disjunction);
     }
 
-    private void appendResourcesConstraint(Criteria criteria, PrismScope scope, Integer[] resources, PrismActionCondition actionCondition) {
-        if (resources != null) {
+    private void appendResourceConstraint(Criteria criteria, PrismScope scope, Integer resourceId, PrismActionCondition actionCondition) {
+        if (resourceId != null) {
             Junction resourcesConstraint = Restrictions.disjunction() //
-                    .add(Restrictions.in("advert." + scope.getLowerCamelName() + ".id", resources));
+                    .add(Restrictions.eq("advert." + scope.getLowerCamelName() + ".id", resourceId));
 
             if (actionCondition.equals(ACCEPT_APPLICATION) && newArrayList(DEPARTMENT, INSTITUTION).contains(scope)) {
-                resourcesConstraint.add(getPartnerResourcesConstraint(scope, resources));
+                resourcesConstraint.add(getPartnerResourceConstraint(scope, resourceId));
             }
 
             criteria.add(resourcesConstraint);
         }
     }
 
-    private Junction getPartnerResourcesConstraint(PrismScope resourceScope, Integer[] resources) {
+    private Junction getPartnerResourceConstraint(PrismScope resourceScope, Integer resourceId) {
         Junction constraint = Restrictions.conjunction() //
                 .add(Restrictions.eq("advertTarget.partnershipState", ENDORSEMENT_PROVIDED))
-                .add(Restrictions.in("targetAdvert." + resourceScope.getLowerCamelName() + ".id", resources))
+                .add(Restrictions.eq("targetAdvert." + resourceScope.getLowerCamelName() + ".id", resourceId))
                 .add(Restrictions.isNull("targetAdvert.project"))
                 .add(Restrictions.isNull("targetAdvert.program"));
 

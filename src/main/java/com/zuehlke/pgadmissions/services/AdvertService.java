@@ -100,7 +100,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 
@@ -185,8 +185,8 @@ public class AdvertService {
         HashMultimap<Integer, ResourceConditionRepresentation> conditions = HashMultimap.create();
         if (CollectionUtils.isNotEmpty(resourceIds)) {
             advertDAO.getAdvertActionConditions(resourceScope, resourceIds).forEach(condition -> {
-                conditions.put(condition.getAdvertId(),
-                        new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition()).withPartnerMode(condition.getPartnerMode()));
+                conditions.put(condition.getAdvertId(), new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
+                        .withInternalMode(condition.getInternalMode()).withExternalMode(condition.getExternalMode()));
             });
         }
         return conditions;
@@ -582,7 +582,7 @@ public class AdvertService {
         AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withValue(targetResource.getAdvert()).withSelected(selected);
 
         User targetUser = null;
-        UserDTO targetUserDTO = targetDTO.getUser();
+        UserSimpleDTO targetUserDTO = targetDTO.getUser();
         if (targetUserDTO != null) {
             targetUser = userService.requestUser(targetUserDTO, targetResource);
             target.setValueUser(targetUser);

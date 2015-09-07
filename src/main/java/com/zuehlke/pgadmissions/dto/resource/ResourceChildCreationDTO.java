@@ -4,14 +4,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceChildCreationDTO extends ResourceStandardDTO {
 
-    private Boolean partnerMode;
+    private Boolean externalMode;
 
-    public Boolean getPartnerMode() {
-        return partnerMode;
+    public Boolean getExternalMode() {
+        return externalMode;
     }
 
-    public void setPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public void setExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
     }
 
     @Override

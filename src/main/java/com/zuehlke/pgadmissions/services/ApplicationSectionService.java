@@ -67,7 +67,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
@@ -87,6 +86,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 @Service
 @Transactional
@@ -173,7 +173,7 @@ public class ApplicationSectionService {
             supervisor = entityService.getByProperties(ApplicationSupervisor.class, ImmutableMap.of("application", application, "id", supervisorId));
         }
 
-        AssignedUserDTO userDTO = supervisorDTO.getUser();
+        UserDTO userDTO = supervisorDTO.getUser();
         User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
 
         supervisor.setUser(newUser);
@@ -480,7 +480,7 @@ public class ApplicationSectionService {
         }
 
         User oldUser = referee.getUser();
-        AssignedUserDTO userDTO = refereeDTO.getUser();
+        UserDTO userDTO = refereeDTO.getUser();
         User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         referee.setUser(newUser);
 

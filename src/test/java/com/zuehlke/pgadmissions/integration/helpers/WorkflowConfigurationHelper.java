@@ -283,7 +283,7 @@ public class WorkflowConfigurationHelper {
                 Role assignedRole = assignment.getRole();
                 logger.info("Verifying assignment: " + assignedRole.getId().toString());
 
-                if (BooleanUtils.isFalse(assignment.getPartnerMode())) {
+                if (BooleanUtils.isFalse(assignment.getExternalMode())) {
                     assertTrue(assignedRole.getScope().getOrdinal() <= state.getScope().getOrdinal());
                 }
             }

@@ -35,9 +35,9 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -86,7 +86,7 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.PUT)
-    public void updateUser(@RequestBody UserDTO userDTO) {
+    public void updateUser(@RequestBody UserSimpleDTO userDTO) {
         userService.updateUser(userDTO);
     }
 

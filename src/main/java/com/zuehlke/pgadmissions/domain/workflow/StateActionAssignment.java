@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
-@Table(name = "state_action_assignment", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id", "partner_mode" }) })
+@Table(name = "state_action_assignment", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id", "external_mode" }) })
 public class StateActionAssignment implements UniqueEntity {
 
     @Id
@@ -30,8 +30,8 @@ public class StateActionAssignment implements UniqueEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "partner_mode", nullable = false)
-    private Boolean partnerMode;
+    @Column(name = "external_mode", nullable = false)
+    private Boolean externalMode;
 
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
@@ -61,12 +61,12 @@ public class StateActionAssignment implements UniqueEntity {
         this.role = role;
     }
 
-    public Boolean getPartnerMode() {
-        return partnerMode;
+    public Boolean getExternalMode() {
+        return externalMode;
     }
 
-    public void setPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public void setExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
@@ -87,8 +87,8 @@ public class StateActionAssignment implements UniqueEntity {
         return this;
     }
 
-    public StateActionAssignment withPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public StateActionAssignment withExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
         return this;
     }
 
@@ -99,7 +99,7 @@ public class StateActionAssignment implements UniqueEntity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("stateAction", stateAction).addProperty("role", role).addProperty("partnerMode", partnerMode);
+        return new EntitySignature().addProperty("stateAction", stateAction).addProperty("role", role).addProperty("externalMode", externalMode);
     }
 
 }

@@ -21,6 +21,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -264,26 +265,20 @@ public class ResourceService {
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO);
             operativeResource = actionOutcome.getResource().getParentResource();
-        }
-
-        Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
-        if (actionExecutor != null) {
-            actionOutcome = applicationContext.getBean(actionExecutor).execute(resourceId, commentDTO);
-            operativeResource = actionOutcome.getResource();
+        } else if (commentDTO.isRequestUserAction()) {
+            operativeResource = getById(commentDTO.getAction().getScope(), resourceId);
+            userService.requestUser(commentDTO.getAssignedUsers().get(0).getUser(), operativeResource);
+            actionOutcome = new ActionOutcomeDTO().withTransitionAction(actionService.getViewEditAction(operativeResource)).withTransitionResource(operativeResource);
+        } else {
+            Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
+            if (actionExecutor != null) {
+                actionOutcome = applicationContext.getBean(actionExecutor).execute(resourceId, commentDTO);
+                operativeResource = actionOutcome.getResource();
+            }
         }
 
         if (referralEmailAddress != null && ResourceParent.class.isAssignableFrom(operativeResource.getClass())) {
-            ResourceParent parent = (ResourceParent) operativeResource;
-
-            ResourceEmailList recruiterList = parent.getRecruiterEmailList();
-            if (processReferral(recruiterList, referralEmailAddress)) {
-                parent.setRecruiterEmailList(null);
-            }
-
-            ResourceEmailList applicantList = parent.getRecruiterEmailList();
-            if (processReferral(applicantList, referralEmailAddress)) {
-                parent.setApplicantEmailList(null);
-            }
+            processReferral((ResourceParent) operativeResource, referralEmailAddress);
         }
 
         return actionOutcome;
@@ -570,29 +565,33 @@ public class ResourceService {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
             case INSTITUTION:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withPartnerMode());
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withPartnerMode());
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(false).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(false).withExternalMode(true));
                 break;
             case DEPARTMENT:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withPartnerMode());
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(false).withExternalMode(true));
                 break;
             case PROGRAM:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withPartnerMode());
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(false));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(false));
                 break;
             case PROJECT:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withPartnerMode());
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(false));
                 break;
             default:
                 throw new UnsupportedOperationException("Resource type does not have action conditions");
             }
         }
 
-        for (ResourceConditionDTO resourceCondition : resourceConditions) {
-            PrismActionCondition actionCondition = resourceCondition.getActionCondition();
-            resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(resourceCondition.getActionCondition())
-                    .withPartnerNode(actionCondition.equals(ACCEPT_APPLICATION) ? true : resourceCondition.getPartnerMode()));
-        }
+        resourceConditions.forEach(condition -> {
+            boolean internal = toBoolean(condition.getInternalMode());
+            boolean external = toBoolean(condition.getExternalMode());
+
+            if (internal || external) {
+                resource.addResourceCondition(
+                        new ResourceCondition().withResource(resource).withActionCondition(condition.getActionCondition()).withInternalMode(internal).withExternalMode(external));
+            }
+        });
     }
 
     public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
@@ -797,7 +796,7 @@ public class ResourceService {
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope,
             PrismScope creationScope, String searchTerm) {
         return resourceDAO.getResourcesWhichPermitChildResourceCreation(filterScope, filterResourceId, resourceScope,
-                scopeService.getParentScopesDescending(resourceScope, filterScope), creationScope, searchTerm, userService.isLoggedInSession());
+                scopeService.getParentScopesDescending(resourceScope, filterScope), creationScope, searchTerm);
     }
 
     public String generateResourceCode(Resource resource) {
@@ -1056,6 +1055,18 @@ public class ResourceService {
                     setOpportunityCategories(parent, opportunityCategories);
                 }
             }
+        }
+    }
+
+    private void processReferral(ResourceParent parent, String referralEmailAddress) {
+        ResourceEmailList recruiterList = parent.getRecruiterEmailList();
+        if (processReferral(recruiterList, referralEmailAddress)) {
+            parent.setRecruiterEmailList(null);
+        }
+
+        ResourceEmailList applicantList = parent.getRecruiterEmailList();
+        if (processReferral(applicantList, referralEmailAddress)) {
+            parent.setApplicantEmailList(null);
         }
     }
 

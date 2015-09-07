@@ -117,7 +117,7 @@ public class PrismStateAction {
 
     public PrismStateAction withPartnerAssignments(PrismRole... roles) {
         for (PrismRole role : roles) {
-            this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode());
+            this.assignments.add(new PrismStateActionAssignment().withRole(role).withExternalMode());
         }
         return this;
     }
@@ -128,13 +128,13 @@ public class PrismStateAction {
     }
 
     public PrismStateAction withPartnerAssignments(PrismRole role, PrismActionEnhancement actionEnhancement) {
-        this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode().withActionEnhancement(actionEnhancement));
+        this.assignments.add(new PrismStateActionAssignment().withRole(role).withExternalMode().withActionEnhancement(actionEnhancement));
         return this;
     }
 
     public PrismStateAction withPartnerAssignments(PrismRoleGroup roles, PrismActionEnhancement actionEnhancement) {
         for (PrismRole role : roles.getRoles()) {
-            this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode().withActionEnhancement(actionEnhancement));
+            this.assignments.add(new PrismStateActionAssignment().withRole(role).withExternalMode().withActionEnhancement(actionEnhancement));
         }
         return this;
     }

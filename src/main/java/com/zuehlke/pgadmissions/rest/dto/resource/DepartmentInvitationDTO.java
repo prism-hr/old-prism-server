@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-
 public class DepartmentInvitationDTO {
 
-    private Integer advert;
+    private Integer advertId;
 
     @NotNull
     @Valid
@@ -16,12 +16,12 @@ public class DepartmentInvitationDTO {
     @Valid
     private UserDTO departmentUser;
 
-    public Integer getAdvert() {
-        return advert;
+    public Integer getAdvertId() {
+        return advertId;
     }
 
-    public void setAdvert(Integer advert) {
-        this.advert = advert;
+    public void setAdvertId(Integer advertId) {
+        this.advertId = advertId;
     }
 
     public DepartmentDTO getDepartment() {

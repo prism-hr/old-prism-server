@@ -166,7 +166,7 @@ public class AdvertDAO {
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
                         Restrictions.conjunction() //
-                                .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
+                                .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                                 .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition))); //
 
         boolean narrowed = queryDTO.isNarrowed();
@@ -229,16 +229,14 @@ public class AdvertDAO {
     }
 
     public List<AdvertActionConditionDTO> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("advert.id").as("advertId")) //
                         .add(Projections.groupProperty("resourceCondition.actionCondition").as("actionCondition")) //
-                        .add(Projections.property("resourceCondition.partnerMode").as("partnerMode"))) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
-                .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
+                        .add(Projections.property("resourceCondition.internalMode").as("internalMode")) //
+                        .add(Projections.property("resourceCondition.externalMode").as("externalMode"))) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", resourceIds)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertActionConditionDTO.class)) //
                 .list();
     }

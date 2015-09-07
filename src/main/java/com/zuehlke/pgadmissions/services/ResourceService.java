@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.FULL_
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -578,6 +579,9 @@ public class ResourceService {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
             case INSTITUTION:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withPartnerMode());             
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withPartnerMode());
+                break;
             case DEPARTMENT:
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withPartnerMode());
                 break;
@@ -589,7 +593,7 @@ public class ResourceService {
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withPartnerMode());
                 break;
             default:
-                throw new UnsupportedOperationException("Resource type does not have conditions");
+                throw new UnsupportedOperationException("Resource type does not have action conditions");
             }
         }
 

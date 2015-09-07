@@ -177,7 +177,7 @@ public class ResourceController {
         PrismRole role = body.get("role");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.assignUserRoles(userService.getCurrentUser(), resource, user, CREATE, role);
+        roleService.modifyUserRoles(userService.getCurrentUser(), resource, user, CREATE, role);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
@@ -186,7 +186,7 @@ public class ResourceController {
             throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
-        roleService.assignUserRoles(userService.getCurrentUser(), resource, user, DELETE, role);
+        roleService.modifyUserRoles(userService.getCurrentUser(), resource, user, DELETE, role);
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
@@ -195,8 +195,8 @@ public class ResourceController {
             @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
-        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(),
-                newUser.getLastName(), newUser.getEmail(), resource, userRolesRepresentation.getRoles());
+        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
+                userRolesRepresentation.getRoles());
         return userMapper.getUserRepresentationSimple(user);
     }
 
@@ -215,7 +215,7 @@ public class ResourceController {
             throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.verifyUserRole(userService.getCurrentUser(), resource, user, verify);
+        userService.verifyUser(userService.getCurrentUser(), resource, user, verify);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)

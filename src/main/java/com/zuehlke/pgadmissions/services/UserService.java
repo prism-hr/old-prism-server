@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getViewerRole;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
@@ -14,6 +14,8 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSq
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.WordUtils.capitalize;
 
 import java.lang.reflect.Field;
@@ -54,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -69,6 +70,7 @@ import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserProgram;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -186,26 +188,40 @@ public class UserService {
     }
 
     public User requestUser(UserDTO newUserDTO, Resource resource, PrismRole targetRole) {
-        User user = getCurrentUser();
-        User userAuthority = resource.getParentResource().getUser();
-        if ((user.equals(userAuthority) && actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userAuthority, false))) {
-            targetRole = targetRole == null ? getViewerRole(resource) : targetRole;
+        PrismRole actualRole = null;
+        User invoker = resource.getParentResource().getUser();
+        if ((getCurrentUser().equals(invoker) && actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), invoker, false))) {
+            actualRole = targetRole == null ? getViewerRole(resource) : targetRole;
         } else {
-            targetRole = getUnverifiedViewerRole(resource);
+            actualRole = getUnverifiedViewerRole(resource);
         }
 
-        User newUser = getOrCreateUserWithRoles(userAuthority, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, newArrayList(targetRole));
-
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            advertService.verifyTargetAdvertUser(resource.getAdvert(), newUser);
+        User newUser = getOrCreateUserWithRoles(invoker, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, asList(actualRole));
+        if (targetRole.equals(actualRole)) {
+            verifyAdvertTargetUser(resource, newUser);
+        } else if (targetRole != null) {
+            roleService.getUserRole(resource, newUser, actualRole).setTargetRole(roleService.getById(targetRole));
         }
 
         return newUser;
     }
 
+    public void verifyUser(User invoker, Resource resource, User user, Boolean verify) {
+        Role role = roleService.getUnverifiedRole(resource);
+        if (role != null) {
+            UserRole userRole = roleService.getUserRole(resource, user, role);
+            if (isTrue(verify)) {
+                Role targetRole = userRole.getTargetRole();
+                roleService.modifyUserRole(invoker, resource, user, CREATE, targetRole == null ? getViewerRole(resource) : targetRole.getId());
+                verifyAdvertTargetUser(resource, user);
+            }
+            entityService.delete(userRole);
+        }
+    }
+
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.assignUserRoles(invoker, resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
+        roleService.modifyUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
 
@@ -552,6 +568,12 @@ public class UserService {
                 entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getAdvert()).withIdentified(false));
                 entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getInstitution().getAdvert()).withIdentified(false));
             });
+        }
+    }
+
+    private void verifyAdvertTargetUser(Resource resource, User user) {
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            advertService.verifyTargetAdvertUser(resource.getAdvert(), user);
         }
     }
 

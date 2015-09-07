@@ -152,7 +152,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityCategoryDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> activeStates, PrismActionCondition actionCondition,
-            OpportunitiesQueryDTO queryDTO) {
+            OpportunitiesQueryDTO query) {
         String resourceReference = scope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -169,7 +169,7 @@ public class AdvertDAO {
                                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                                 .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition))); //
 
-        boolean narrowed = queryDTO.isNarrowed();
+        boolean narrowed = query.isNarrowed();
         if (narrowed) {
             criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN) //
                     .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
@@ -194,30 +194,30 @@ public class AdvertDAO {
 
         criteria.add(Restrictions.in("state.id", activeStates));
 
-        appendLocationConstraint(criteria, queryDTO);
-        appendKeywordConstraint(queryDTO, criteria);
+        appendLocationConstraint(criteria, query);
+        appendKeywordConstraint(query, criteria);
 
         if (projectScope) {
-            appendSupervisorConstraint(queryDTO, criteria);
+            appendSupervisorConstraint(query, criteria);
         }
 
-        appendIndustryConstraint(criteria, queryDTO);
-        appendFunctionConstraint(criteria, queryDTO);
+        appendIndustryConstraint(criteria, query);
+        appendFunctionConstraint(criteria, query);
 
-        appendOpportunityTypeConstraint(criteria, scope, queryDTO);
+        appendOpportunityTypeConstraint(criteria, scope, query);
         if (opportunityScope) {
-            appendStudyOptionConstraint(queryDTO, criteria);
+            appendStudyOptionConstraint(query, criteria);
         }
 
-        appendFeeConstraint(criteria, queryDTO);
-        appendPayConstraint(criteria, queryDTO);
+        appendFeeConstraint(criteria, query);
+        appendPayConstraint(criteria, query);
 
         if (opportunityScope) {
-            appendDurationConstraint(criteria, resourceReference, queryDTO);
+            appendDurationConstraint(criteria, resourceReference, query);
         }
 
         if (narrowed) {
-            appendResourceConstraint(criteria, scope, queryDTO.getResourceId(scope), actionCondition);
+            appendResourceConstraint(criteria, scope, query.getResourceId(scope), actionCondition);
         } else {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.isNull("advertTarget.id")) //

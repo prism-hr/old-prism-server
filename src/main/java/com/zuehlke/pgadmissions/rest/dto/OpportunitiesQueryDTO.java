@@ -1,14 +1,20 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.*;
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.List;
 
 public class OpportunitiesQueryDTO {
 

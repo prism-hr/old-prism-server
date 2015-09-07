@@ -5,6 +5,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -68,9 +70,6 @@ public class ActionService {
 
     @Inject
     private StateService stateService;
-
-    @Inject
-    private UserService userService;
 
     public Action getById(PrismAction id) {
         return entityService.getById(Action.class, id);
@@ -268,7 +267,7 @@ public class ActionService {
     private boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
         if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
             return true;
-        } else if (actionDAO.getPermittedUnsecuredAction(resource, action, userService.isCurrentUser(user)) != null) {
+        } else if (isNotEmpty(actionDAO.getPermittedUnsecuredActions(resource.getResourceScope(), asList(resource.getId())))) {
             return true;
         } else if (actionDAO.getPermittedAction(resource, action, user) != null) {
             return true;

@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 public class ApplicationSupervisorDTO {
 
@@ -11,7 +11,7 @@ public class ApplicationSupervisorDTO {
 
     @NotNull
     @Valid
-    private AssignedUserDTO user;
+    private UserDTO user;
 
     private Boolean acceptedSupervision;
 
@@ -23,11 +23,11 @@ public class ApplicationSupervisorDTO {
         this.id = id;
     }
 
-    public AssignedUserDTO getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(AssignedUserDTO user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 

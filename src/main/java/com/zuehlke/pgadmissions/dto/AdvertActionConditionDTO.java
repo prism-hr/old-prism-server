@@ -8,7 +8,9 @@ public class AdvertActionConditionDTO {
 
     private PrismActionCondition actionCondition;
 
-    private Boolean partnerMode;
+    private Boolean internalMode;
+
+    private Boolean externalMode;
 
     public Integer getAdvertId() {
         return advertId;
@@ -26,12 +28,20 @@ public class AdvertActionConditionDTO {
         this.actionCondition = actionCondition;
     }
 
-    public Boolean getPartnerMode() {
-        return partnerMode;
+    public Boolean getInternalMode() {
+        return internalMode;
     }
 
-    public void setPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public void setInternalMode(Boolean internalMode) {
+        this.internalMode = internalMode;
+    }
+
+    public Boolean getExternalMode() {
+        return externalMode;
+    }
+
+    public void setExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
     }
 
 }

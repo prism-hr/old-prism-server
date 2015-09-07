@@ -61,8 +61,11 @@ public class ResourceCondition extends WorkflowResourceExecution {
     @Enumerated(EnumType.STRING)
     private PrismActionCondition actionCondition;
 
-    @Column(name = "partner_mode", nullable = false)
-    private Boolean partnerMode;
+    @Column(name = "internal_mode", nullable = false)
+    private Boolean internalMode;
+
+    @Column(name = "external_mode", nullable = false)
+    private Boolean externalMode;
 
     @Override
     public Integer getId() {
@@ -152,12 +155,20 @@ public class ResourceCondition extends WorkflowResourceExecution {
         this.actionCondition = actionCondition;
     }
 
-    public Boolean getPartnerMode() {
-        return partnerMode;
+    public Boolean getInternalMode() {
+        return internalMode;
     }
 
-    public void setPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public void setInternalMode(Boolean internalMode) {
+        this.internalMode = internalMode;
+    }
+
+    public Boolean getExternalMode() {
+        return externalMode;
+    }
+
+    public void setExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
     }
 
     public ResourceCondition withResource(Resource resource) {
@@ -170,8 +181,13 @@ public class ResourceCondition extends WorkflowResourceExecution {
         return this;
     }
 
-    public ResourceCondition withPartnerNode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public ResourceCondition withInternalMode(Boolean internalMode) {
+        this.internalMode = internalMode;
+        return this;
+    }
+
+    public ResourceCondition withExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
         return this;
     }
 

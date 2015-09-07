@@ -78,8 +78,8 @@ public class RoleDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(resourceConstraint) //
-                                .add(Restrictions.eq("stateActionAssignment.partnerMode", false))) //
-                        .add(getPartnerUserRoleConstraint(resourceScope, "stateActionAssignment"))) //
+                                .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
+                        .add(getPartnerUserRoleConstraint())) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getEndorsementActionFilterResolution())
                 .add(getUserEnabledConstraint(user)) //
@@ -230,18 +230,19 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("scope.id")) //
                 .createAlias(partnerResourceReference, partnerResourceReference, JoinType.INNER_JOIN) //
                 .createAlias(partnerResourceReference + ".advert", "advert", JoinType.INNER_JOIN)//
+                .createAlias(partnerResourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionAssignment.partnerMode", true)) //
+                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(getPartnerUserRoleConstraint(partnerScope, "stateActionAssignment"))
+                .add(getPartnerUserRoleConstraint())
                 .add(Restrictions.eq("userRole.user", user)) //
                 .addOrder(Order.asc("scope.ordinal")) //
                 .setMaxResults(1) //

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import org.joda.time.LocalDateTime;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
@@ -298,6 +301,10 @@ public class CommentDTO {
 
     public void setDocuments(List<FileDTO> documents) {
         this.documents = documents;
+    }
+
+    public boolean isRequestUserAction() {
+        return isNotEmpty(assignedUsers) && assignedUsers.size() == 1 && assignedUsers.get(0).getRole().equals(PrismRole.getUnverifiedViewerRole(action.getScope()));
     }
 
 }

@@ -46,7 +46,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceEmailListsDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
@@ -197,15 +196,6 @@ public class ResourceController {
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
-        return userMapper.getUserRepresentationSimple(user);
-    }
-
-    @RequestMapping(value = "{resourceId}/users/request", method = RequestMethod.POST)
-    @PreAuthorize("permitAll")
-    public UserRepresentationSimple requestUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody UserDTO newUser) throws Exception {
-        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
-        User user = userService.requestUser(newUser, resource);
         return userMapper.getUserRepresentationSimple(user);
     }
 

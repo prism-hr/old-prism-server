@@ -11,7 +11,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,7 +28,6 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -164,8 +162,8 @@ public class ActionDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(resourceConstraint) //
-                                .add(Restrictions.eq("stateActionAssignment.partnerMode", false))) //
-                        .add(getPartnerUserRoleConstraint(resourceScope, "stateActionAssignment"))) //
+                                .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
+                        .add(getPartnerUserRoleConstraint())) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
                 .add(getEndorsementActionFilterResolution())
@@ -209,27 +207,6 @@ public class ActionDAO {
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
-    }
-
-    public Action getPermittedUnsecuredAction(Resource resource, Action action, boolean userLoggedIn) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("stateAction.action")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
-                .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.isNull("stateActionAssignment.id")) //
-                .add(getResourceStateActionConstraint()) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM)) //
-                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                        .add(Restrictions.in("resourceCondition.partnerMode", Lists.newArrayList(new Boolean(true), new Boolean(!userLoggedIn))))) //
-                .uniqueResult();
     }
 
     public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
@@ -449,9 +426,7 @@ public class ActionDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                        .add(Restrictions.eq("resourceCondition.partnerMode", true)));
+                .add(Restrictions.eq("resourceCondition.externalMode", true));
 
         if (!actionConditions.isEmpty()) {
             criteria.add(Restrictions.in("resourceCondition.actionCondition", actionConditions));

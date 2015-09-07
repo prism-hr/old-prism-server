@@ -292,7 +292,7 @@ public class SystemInitialisationHelper {
 
         for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
-                    .withPartnerMode(stateActionAssignment.getPartnerMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
+                    .withExternalMode(stateActionAssignment.getExternalMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
             assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
         }
     }

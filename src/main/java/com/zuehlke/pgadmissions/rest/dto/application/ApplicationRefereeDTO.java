@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
@@ -18,7 +18,7 @@ public class ApplicationRefereeDTO {
 
     @NotNull
     @Valid
-    private AssignedUserDTO user;
+    private UserDTO user;
 
     @NotNull
     private PrismRefereeType refereeType;
@@ -49,11 +49,11 @@ public class ApplicationRefereeDTO {
         this.id = id;
     }
 
-    public AssignedUserDTO getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(AssignedUserDTO user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 

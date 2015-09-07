@@ -48,7 +48,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentCompetenceDTO;
@@ -56,6 +55,7 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.validation.CommentValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -175,7 +175,7 @@ public class CommentService {
     public void appendAssignedUsers(Comment comment, CommentDTO commentDTO) throws DeduplicationException {
         if (commentDTO.getAssignedUsers() != null) {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
-                AssignedUserDTO commentUserDTO = assignedUserDTO.getUser();
+                UserDTO commentUserDTO = assignedUserDTO.getUser();
                 User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
                 comment.getAssignedUsers().add(
                         new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));

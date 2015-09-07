@@ -7,20 +7,20 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceChildCreationRepresentation extends ResourceRepresentationIdentity {
 
-    private Boolean partnerMode;
+    private Boolean externalMode;
 
     private List<ResourceChildCreationRepresentation> childResources;
 
-    public void setPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public void setExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
     }
 
     public void setChildResources(List<ResourceChildCreationRepresentation> childResources) {
         this.childResources = childResources;
     }
 
-    public Boolean getPartnerMode() {
-        return partnerMode;
+    public Boolean getExternalMode() {
+        return externalMode;
     }
 
     public List<ResourceChildCreationRepresentation> getChildResources() {
@@ -42,8 +42,8 @@ public class ResourceChildCreationRepresentation extends ResourceRepresentationI
         return this;
     }
 
-    public ResourceChildCreationRepresentation withPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public ResourceChildCreationRepresentation withExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
         return this;
     }
 

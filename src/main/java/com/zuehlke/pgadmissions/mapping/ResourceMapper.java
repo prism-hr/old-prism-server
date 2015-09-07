@@ -619,7 +619,7 @@ public class ResourceMapper {
     public List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
         return resource.getResourceConditions().stream()
                 .map(condition -> new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
-                        .withPartnerMode(condition.getPartnerMode()))
+                        .withInternalMode(condition.getInternalMode()).withExternalMode(condition.getExternalMode()))
                 .collect(Collectors.toList());
     }
 
@@ -796,7 +796,6 @@ public class ResourceMapper {
         int level = 0;
         int depth = resources.keySet().size();
         Boolean isResourceUserCreation = null;
-        boolean isLoggedInSession = userService.isLoggedInSession();
 
         Map<T, ResourceChildCreationRepresentation> index = Maps.newHashMap();
         Set<ResourceChildCreationRepresentation> representations = Sets.newLinkedHashSet();
@@ -804,7 +803,7 @@ public class ResourceMapper {
             if (resourceEntry.getKey().ordinal() <= stopScope.ordinal()) {
                 for (T resource : resourceEntry.getValue()) {
                     isResourceUserCreation = isResourceUserCreation == null ? resource.getClass().equals(ResourceChildCreationDTO.class) : isResourceUserCreation;
-                    ResourceChildCreationRepresentation resourceChildCreationRepresentation = getResourceChildCreationRepresentation(resource, isLoggedInSession);
+                    ResourceChildCreationRepresentation resourceChildCreationRepresentation = getResourceChildCreationRepresentation(resource);
                     if (level == 0) {
                         representations.add(resourceChildCreationRepresentation);
                     } else {
@@ -823,16 +822,15 @@ public class ResourceMapper {
 
     private boolean checkNotResourceUserCreationDisabledLeaf(int level, int depth, Boolean isResourceUserCreation,
             ResourceChildCreationRepresentation resourceChildCreationRepresentation) {
-        return BooleanUtils.isTrue(isResourceUserCreation) && level == (depth - 1) && BooleanUtils.isFalse(resourceChildCreationRepresentation.getPartnerMode())
+        return BooleanUtils.isTrue(isResourceUserCreation) && level == (depth - 1) && BooleanUtils.isFalse(resourceChildCreationRepresentation.getExternalMode())
                 && isEmpty(resourceChildCreationRepresentation.getChildResources());
     }
 
-    private <T extends ResourceStandardDTO> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(T resource, boolean isLoggedInSession) {
+    private <T extends ResourceStandardDTO> ResourceChildCreationRepresentation getResourceChildCreationRepresentation(T resource) {
         ResourceChildCreationRepresentation representation = new ResourceChildCreationRepresentation() //
                 .withScope(resource.getScope()).withId(resource.getId()).withName(resource.getName());
         if (resource.getClass().equals(ResourceChildCreationDTO.class)) {
-            Boolean partnerMode = ((ResourceChildCreationDTO) resource).getPartnerMode();
-            representation.setPartnerMode(isLoggedInSession ? partnerMode != null : BooleanUtils.isTrue(partnerMode));
+            representation.setExternalMode(((ResourceChildCreationDTO) resource).getExternalMode());
         }
         return representation;
     }

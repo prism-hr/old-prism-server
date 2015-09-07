@@ -558,7 +558,7 @@ public class SystemService {
         for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getAssignments()) {
             Role role = roleService.getById(prismStateActionAssignment.getRole());
             StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
-                    .withPartnerMode(prismStateActionAssignment.getPartnerMode()).withActionEnhancement(prismStateActionAssignment.getActionEnhancement());
+                    .withExternalMode(prismStateActionAssignment.getExternalMode()).withActionEnhancement(prismStateActionAssignment.getActionEnhancement());
             entityService.save(assignment);
             stateAction.getStateActionAssignments().add(assignment);
         }

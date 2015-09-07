@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 
 public class AdvertTargetResourceDTO extends AdvertTargetDTO {
 
     private PrismScope scope;
 
-    private UserDTO user;
+    private UserSimpleDTO user;
 
     public PrismScope getScope() {
         return scope;
@@ -17,11 +17,11 @@ public class AdvertTargetResourceDTO extends AdvertTargetDTO {
         this.scope = scope;
     }
 
-    public UserDTO getUser() {
+    public UserSimpleDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(UserSimpleDTO user) {
         this.user = user;
     }
     
@@ -35,7 +35,7 @@ public class AdvertTargetResourceDTO extends AdvertTargetDTO {
         return this;
     }
     
-    public AdvertTargetResourceDTO withUser(UserDTO user) {
+    public AdvertTargetResourceDTO withUser(UserSimpleDTO user) {
         this.user = user;
         return this;
     }

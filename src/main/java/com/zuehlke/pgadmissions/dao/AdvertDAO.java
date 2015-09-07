@@ -152,7 +152,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityCategoryDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> activeStates, PrismActionCondition actionCondition,
-            OpportunitiesQueryDTO queryDTO) {
+            OpportunitiesQueryDTO query) {
         String resourceReference = scope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -166,10 +166,10 @@ public class AdvertDAO {
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
                         Restrictions.conjunction() //
-                                .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
+                                .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                                 .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition))); //
 
-        boolean narrowed = queryDTO.isNarrowed();
+        boolean narrowed = query.isNarrowed();
         if (narrowed) {
             criteria.createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN) //
                     .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN);
@@ -194,30 +194,30 @@ public class AdvertDAO {
 
         criteria.add(Restrictions.in("state.id", activeStates));
 
-        appendLocationConstraint(criteria, queryDTO);
-        appendKeywordConstraint(queryDTO, criteria);
+        appendLocationConstraint(criteria, query);
+        appendKeywordConstraint(query, criteria);
 
         if (projectScope) {
-            appendSupervisorConstraint(queryDTO, criteria);
+            appendSupervisorConstraint(query, criteria);
         }
 
-        appendIndustryConstraint(criteria, queryDTO);
-        appendFunctionConstraint(criteria, queryDTO);
+        appendIndustryConstraint(criteria, query);
+        appendFunctionConstraint(criteria, query);
 
-        appendOpportunityTypeConstraint(criteria, scope, queryDTO);
+        appendOpportunityTypeConstraint(criteria, scope, query);
         if (opportunityScope) {
-            appendStudyOptionConstraint(queryDTO, criteria);
+            appendStudyOptionConstraint(query, criteria);
         }
 
-        appendFeeConstraint(criteria, queryDTO);
-        appendPayConstraint(criteria, queryDTO);
+        appendFeeConstraint(criteria, query);
+        appendPayConstraint(criteria, query);
 
         if (opportunityScope) {
-            appendDurationConstraint(criteria, resourceReference, queryDTO);
+            appendDurationConstraint(criteria, resourceReference, query);
         }
 
         if (narrowed) {
-            appendResourcesConstraint(criteria, scope, queryDTO.getResources(scope), actionCondition);
+            appendResourcesConstraint(criteria, scope, query.getResources(scope), actionCondition);
         } else {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.isNull("advertTarget.id")) //
@@ -229,16 +229,14 @@ public class AdvertDAO {
     }
 
     public List<AdvertActionConditionDTO> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("advert.id").as("advertId")) //
                         .add(Projections.groupProperty("resourceCondition.actionCondition").as("actionCondition")) //
-                        .add(Projections.property("resourceCondition.partnerMode").as("partnerMode"))) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
-                .add(Restrictions.eq("resourceCondition.partnerMode", true)) //
+                        .add(Projections.property("resourceCondition.internalMode").as("internalMode")) //
+                        .add(Projections.property("resourceCondition.externalMode").as("externalMode"))) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", resourceIds)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertActionConditionDTO.class)) //
                 .list();
     }

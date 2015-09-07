@@ -6,7 +6,7 @@ public class PrismStateActionAssignment {
 
     private PrismRole role;
 
-    private Boolean partnerMode = false;
+    private Boolean externalMode = false;
 
     private PrismActionEnhancement actionEnhancement;
 
@@ -14,8 +14,8 @@ public class PrismStateActionAssignment {
         return role;
     }
 
-    public Boolean getPartnerMode() {
-        return partnerMode;
+    public Boolean getExternalMode() {
+        return externalMode;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
@@ -27,13 +27,13 @@ public class PrismStateActionAssignment {
         return this;
     }
 
-    public PrismStateActionAssignment withPartnerMode() {
-        this.partnerMode = true;
+    public PrismStateActionAssignment withExternalMode() {
+        this.externalMode = true;
         return this;
     }
     
-    public PrismStateActionAssignment withPartnerMode(Boolean partnerMode) {
-        this.partnerMode = partnerMode;
+    public PrismStateActionAssignment withExternalMode(Boolean externalMode) {
+        this.externalMode = externalMode;
         return this;
     }
 
@@ -44,7 +44,7 @@ public class PrismStateActionAssignment {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, partnerMode, actionEnhancement);
+        return Objects.hashCode(role, externalMode, actionEnhancement);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class PrismStateActionAssignment {
             return false;
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(partnerMode, other.getPartnerMode())
+        return Objects.equal(role, other.getRole()) && Objects.equal(externalMode, other.getExternalMode())
                 && Objects.equal(actionEnhancement, other.getActionEnhancement());
     }
 

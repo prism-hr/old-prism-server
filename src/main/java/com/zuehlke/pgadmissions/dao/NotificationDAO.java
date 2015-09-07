@@ -91,7 +91,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
+                .add(getUserRoleConstraint(resource)) //
                 .add(getEndorsementActionFilterResolution())
                 .add(Restrictions.isNull("userNotification.id")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -163,7 +163,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
+                .add(getUserRoleConstraint(resource)) //
                 .add(getEndorsementActionFilterResolution())
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -197,7 +197,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
+                .add(getUserRoleConstraint(resource)) //
                 .add(getEndorsementActionFilterResolution())
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //

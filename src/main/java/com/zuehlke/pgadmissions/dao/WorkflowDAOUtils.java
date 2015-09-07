@@ -15,22 +15,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 
 public class WorkflowDAOUtils {
 
-    public static Junction getUserRoleConstraint(Resource resource, String targetEntity) {
-        Junction constraint = Restrictions.disjunction() //
-                .add(Restrictions.conjunction() //
-                        .add(getUserRoleConstraint(resource)) //
-                        .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                .add(getPartnerUserRoleConstraint()); //
-        return constraint;
-    }
-
-    public static Junction getUserRoleConstraint(Resource resource, User user, String targetEntity) {
-        return Restrictions.conjunction() //
-                .add(getUserRoleConstraint(resource, targetEntity)) //
-                .add(getResourceStateActionConstraint()) //
-                .add(getUserEnabledConstraint(user));
-    }
-
     public static Junction getUserRoleConstraint(Resource resource) {
         return Restrictions.disjunction() //
                 .add(Restrictions.eq("userRole.application", resource.getApplication())) //
@@ -39,6 +23,22 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.eq("userRole.department", resource.getDepartment())) //
                 .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                 .add(Restrictions.eq("userRole.system", resource.getSystem()));
+    }
+    
+    public static Junction getUserRoleWithPartnerConstraint(Resource resource) {
+        Junction constraint = Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(getUserRoleConstraint(resource)) //
+                        .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
+                .add(getPartnerUserRoleConstraint()); //
+        return constraint;
+    }
+
+    public static Junction getUserRoleWithPartnerConstraint(Resource resource, User user) {
+        return Restrictions.conjunction() //
+                .add(getUserRoleWithPartnerConstraint(resource)) //
+                .add(getResourceStateActionConstraint()) //
+                .add(getUserEnabledConstraint(user));
     }
 
     public static Junction getPartnerUserRoleConstraint() {

@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementAction
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleWithPartnerConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
@@ -73,7 +73,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
-                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -117,7 +117,7 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -254,7 +254,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
     }
@@ -282,7 +282,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
     }
@@ -309,7 +309,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
     }
@@ -337,7 +337,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
+                .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
     }

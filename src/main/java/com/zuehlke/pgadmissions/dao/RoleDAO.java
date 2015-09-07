@@ -230,6 +230,7 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("scope.id")) //
                 .createAlias(partnerResourceReference, partnerResourceReference, JoinType.INNER_JOIN) //
                 .createAlias(partnerResourceReference + ".advert", "advert", JoinType.INNER_JOIN)//
+                .createAlias(partnerResourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
                         Restrictions.eq("advertTarget.selected", true)) //
                 .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //

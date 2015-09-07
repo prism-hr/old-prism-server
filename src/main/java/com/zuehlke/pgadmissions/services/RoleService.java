@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.UNVERIFIED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 
 import java.util.Collection;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -90,6 +88,10 @@ public class RoleService {
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return roleDAO.getUserRole(resource, user, role);
     }
+    
+    public UserRole getUserRole(Resource resource, User user, PrismRole role) {
+        return roleDAO.getUserRole(resource, user, role);
+    }
 
     public List<Role> getRoles() {
         return entityService.list(Role.class);
@@ -100,32 +102,36 @@ public class RoleService {
     }
 
     public Role getUnverifiedRole(Resource resource) {
-        return getById(PrismRole.getUnverifiedViewerRole(resource));
+        return getById(getUnverifiedViewerRole(resource));
     }
 
-    public void verifyUserRole(User invoker, Resource resource, User user, Boolean verify) {
-        Role role = getUnverifiedRole(resource);
-        if (role != null) {
-            UserRole userRole = getUserRole(resource, user, getUnverifiedRole(resource));
-            if (BooleanUtils.isTrue(verify)) {
-                assignUserRole(invoker, resource, user, CREATE, PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER"));
-            }
-            entityService.delete(userRole);
-        }
-    }
-
-    public void assignUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
+    public void modifyUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
         if (roles.length > 0) {
             PrismRole firstRole = roles[0];
-            if (asList(UNVERIFIED.getRoles()).contains(firstRole) && getVerifiedRoles(user, (ResourceParent) resource).isEmpty()) {
+            if (firstRole.equals(getUnverifiedViewerRole(resource)) && getVerifiedRoles(user, (ResourceParent) resource).isEmpty()) {
                 List<PrismState> activeStates = stateService.getActiveResourceStates(resource.getResourceScope());
                 if (containsAny(resource.getResourceStates().stream().map(rs -> rs.getState().getId()).collect(Collectors.toList()), activeStates)) {
                     getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(getById(firstRole))).withAssignedTimestamp(new DateTime());
                 }
             } else {
-                assignUserRole(invoker, resource, user, transitionType, roles);
+                modifyUserRole(invoker, resource, user, transitionType, roles);
             }
         }
+    }
+
+    public void modifyUserRole(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
+        Action action = actionService.getViewEditAction(resource);
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+
+        Comment comment = new Comment().withAction(action).withUser(invoker)
+                .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
+        for (PrismRole role : roles) {
+            comment.addAssignedUser(user, getById(role), transitionType);
+        }
+
+        actionService.executeUserAction(resource, action, comment);
+        notificationService.sendInvitationNotifications(comment);
     }
 
     public void setResourceOwner(Resource resource, User user) throws Exception {
@@ -210,7 +216,7 @@ public class RoleService {
 
     public void deleteUserRoles(User invoker, Resource resource, User user) throws Exception {
         List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
-        assignUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
+        modifyUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
     public PrismScope getPermissionScope(User user) {
@@ -354,21 +360,6 @@ public class RoleService {
 
             applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
         }
-    }
-
-    private void assignUserRole(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
-        Action action = actionService.getViewEditAction(resource);
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
-
-        Comment comment = new Comment().withAction(action).withUser(invoker)
-                .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
-                .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-        for (PrismRole role : roles) {
-            comment.addAssignedUser(user, getById(role), transitionType);
-        }
-
-        actionService.executeUserAction(resource, action, comment);
-        notificationService.sendInvitationNotifications(comment);
     }
 
 }

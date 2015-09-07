@@ -393,15 +393,7 @@ public class ResourceDAO {
 
     public List<ResourceCondition> getResourceConditions(ResourceParent resource) {
         return (List<ResourceCondition>) sessionFactory.getCurrentSession().createCriteria(ResourceCondition.class) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("project", resource.getProject())) //
-                        .add(Restrictions.eq("program", resource.getProgram()))
-                        .add(Restrictions.eq("department", resource.getDepartment())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
-                .addOrder(Order.desc("project")) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("department")) //
-                .addOrder(Order.desc("institution")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.asc("actionCondition")) //
                 .list();
     }

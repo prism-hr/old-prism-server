@@ -533,18 +533,9 @@ public class ResourceService {
 
     public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
         List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
-        List<ResourceCondition> actionConditions = resourceDAO.getResourceConditions(resource);
-
-        PrismScope lastResourceScope = null;
-        for (ResourceCondition resourceCondition : actionConditions) {
-            PrismScope thisResourceScope = resourceCondition.getResource().getResourceScope();
-            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
-                break;
-            }
-            filteredActionConditions.add(resourceCondition.getActionCondition());
-            lastResourceScope = thisResourceScope;
-        }
-
+        resourceDAO.getResourceConditions(resource).forEach(condition -> {
+            filteredActionConditions.add(condition.getActionCondition());
+        });
         return filteredActionConditions;
     }
 
@@ -579,7 +570,7 @@ public class ResourceService {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
             case INSTITUTION:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withPartnerMode());             
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withPartnerMode());
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withPartnerMode());
                 break;
             case DEPARTMENT:

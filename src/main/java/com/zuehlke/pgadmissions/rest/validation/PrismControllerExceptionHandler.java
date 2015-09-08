@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.exceptions.*;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -27,19 +29,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
-import com.zuehlke.pgadmissions.exceptions.PrismConflictException;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -66,7 +59,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(value = { PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class, PrismConflictException.class,
+    @ExceptionHandler(value = { PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class,
             BadCredentialsException.class, PrismForbiddenException.class })
     public final ResponseEntity<Object> handleResourceNotFoundException(Exception ex, WebRequest request) {
         request.removeAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);

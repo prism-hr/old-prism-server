@@ -354,7 +354,7 @@ public class NotificationService {
         message.setConfiguration(configuration);
         message.setModelDTO(modelDTO);
 
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource());
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(modelDTO.getResource());
         applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
     }
 

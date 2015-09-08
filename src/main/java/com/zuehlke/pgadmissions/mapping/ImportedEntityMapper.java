@@ -104,7 +104,7 @@ public class ImportedEntityMapper {
             ResourceDTO resourceDTO = new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId());
             PropertyLoader loader = loaders.get(resourceDTO);
             if (loader == null) {
-                loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+                loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
                 loaders.put(resourceDTO, loader);
             }
 

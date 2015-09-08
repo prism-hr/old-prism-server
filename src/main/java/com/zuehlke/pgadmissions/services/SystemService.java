@@ -103,6 +103,8 @@ public class SystemService {
 
     private static final Logger logger = LoggerFactory.getLogger(SystemService.class);
 
+    private PropertyLoader propertyLoader;
+    
     @Value("${application.url}")
     private String applicationUrl;
 
@@ -247,13 +249,18 @@ public class SystemService {
         entityService.clear();
     }
 
+    public void initializePropertyLoader() {
+        logger.info("Initializing default display property loader");
+        this.propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeEager(getSystem());
+    }
+
     @Transactional
     public void initializeSystemUser() throws Exception {
         System system = getSystem();
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(SYSTEM_STARTUP);
-            String content = applicationContext.getBean(PropertyLoader.class).localize(system).loadLazy(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
+            String content = applicationContext.getBean(PropertyLoader.class).localizeLazy(system).loadLazy(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
             Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
                     .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), CREATE);
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
@@ -305,6 +312,10 @@ public class SystemService {
         }
 
         return new BasicAWSCredentials(accessKey, secretKey);
+    }
+    
+    public PropertyLoader getPropertyLoader() {
+        return propertyLoader;
     }
 
     private void initializeScopeDefinitions() throws DeduplicationException {

@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -267,7 +268,7 @@ public class ResourceService {
             operativeResource = actionOutcome.getResource().getParentResource();
         } else if (commentDTO.isRequestUserAction()) {
             operativeResource = getById(commentDTO.getAction().getScope(), resourceId);
-            userService.requestUser(commentDTO.getAssignedUsers().get(0).getUser(), operativeResource);
+            userService.requestUser(commentDTO.getAssignedUsers().get(0).getUser(), operativeResource, getUnverifiedViewerRole(operativeResource));
             actionOutcome = new ActionOutcomeDTO().withTransitionAction(actionService.getViewEditAction(operativeResource)).withTransitionResource(operativeResource);
         } else {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
@@ -417,7 +418,7 @@ public class ResourceService {
 
             LinkedHashMultimap<Integer, PrismState> secondaryStates = stateService.getSecondaryResourceStates(scope, filteredResourceIds);
             LinkedHashMultimap<Integer, ActionDTO> permittedActions = actionService.getPermittedActions(scope, filteredResourceIds, user);
-            LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, resourceIds);
+            LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, resourceIds, APPLICATION);
 
             rowIndex.keySet().forEach(resourceId -> {
                 ResourceListRowDTO row = rowIndex.get(resourceId);

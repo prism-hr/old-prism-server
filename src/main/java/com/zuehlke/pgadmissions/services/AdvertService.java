@@ -494,17 +494,15 @@ public class AdvertService {
         if (targets == null) {
             targets = new AdvertTargets();
             advert.setTargets(targets);
-        } else if (refreshTargets) {
-            advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
-            targets.getSubjectAreas().clear();
-            entityService.flush();
         }
 
+        List<Integer> newSubjectAreaValues = Lists.newArrayList();
         Set<AdvertSubjectArea> subjectAreas = targets.getSubjectAreas();
         if (targetsDTO.getSubjectAreas() != null) {
             targetsDTO.getSubjectAreas().stream().forEach(targetDTO -> {
                 AdvertSubjectArea target = new AdvertSubjectArea().withAdvert(advert).withValue(entityService.getById(ImportedSubjectArea.class, targetDTO.getId()));
-                entityService.save(target);
+                entityService.getOrCreate(target);
+                newSubjectAreaValues.add(target.getValueId());
                 subjectAreas.add(target);
             });
         }
@@ -530,10 +528,18 @@ public class AdvertService {
             });
         }
 
-        if (newTargetValues.isEmpty()) {
-            advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
-        } else if (refreshTargets) {
-            advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
+        if (refreshTargets) {
+            if (newSubjectAreaValues.isEmpty()) {
+                advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
+            } else {
+                advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class, newTargetValues);
+            }
+
+            if (newTargetValues.isEmpty()) {
+                advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
+            } else {
+                advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class, newTargetValues);
+            }
         }
     }
 
@@ -602,7 +608,7 @@ public class AdvertService {
             persistentTarget.setValueUser(targetUser == null ? persistentTarget.getValueUser() : targetUser);
             persistentTarget.setSelected(selected);
         }
-        
+
         return persistentTarget;
     }
 

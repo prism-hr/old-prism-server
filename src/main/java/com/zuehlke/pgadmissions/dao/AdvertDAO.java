@@ -420,9 +420,9 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public void deleteAdvertTargetAdverts(Advert advert, List<Integer> newValues) {
+    public void deleteAdvertAttributes(Advert advert, Class<? extends AdvertAttribute<?>> attributeClass, List<Integer> newValues) {
         sessionFactory.getCurrentSession().createQuery(
-                "delete AdvertTargetAdvert "
+                "delete " + attributeClass.getSimpleName() + " "
                         + "where advert = :advert "
                         + "and value.id not in (:newValues)")
                 .setParameter("advert", advert) //
@@ -443,7 +443,8 @@ public class AdvertDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
                 .setProjection(Projections.property(resourceReference + ".id")) //
                 .createAlias("value", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert." + resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert." + resourceReference, resourceReference, JoinType.INNER_JOIN,
+                        Restrictions.eqProperty(resourceReference + ".advert.id", "targetAdvert.id")) //
                 .add(Restrictions.eq("advert", advert)) //
                 .add(Restrictions.eq("selected", selected)) //
                 .list();

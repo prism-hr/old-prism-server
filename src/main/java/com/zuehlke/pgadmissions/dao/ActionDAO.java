@@ -175,9 +175,18 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, boolean userLoggedIn) {
         String resourceReference = resourceScope.getLowerCamelName();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+
+        Junction visibilityConstraint = Restrictions.disjunction() //
+                .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM));
+        if (userLoggedIn) {
+            visibilityConstraint.add(Restrictions.isNotNull("resourceCondition.id"));
+        } else {
+            visibilityConstraint.add(Restrictions.eq("resourceCondition.externalMode", true));
+        }
+
+        return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
@@ -189,21 +198,11 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM)) //
-                        .add(Restrictions.isNotNull("resourceCondition.id")))
+                .add(visibilityConstraint) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .add(Restrictions.isNull("stateActionAssignment.id"));
-
-        for (PrismScope exclusion : exclusions) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.isNull("action.creationScope")) //
-                    .add(Restrictions.ne("action.creationScope.id", exclusion))); //
-        }
-
-        return (List<ActionDTO>) criteria.add(getResourceStateActionConstraint()) //
+                .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
+                .add(getResourceStateActionConstraint()) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();

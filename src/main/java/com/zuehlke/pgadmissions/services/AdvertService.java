@@ -18,7 +18,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.io.IOException;
@@ -167,7 +166,7 @@ public class AdvertService {
             for (PrismScope resourceScope : scopes) {
                 Resource enclosing = resource.getEnclosingResource(resourceScope);
                 if (enclosing != null) {
-                    setProperty(query, pluralize(resourceScope.getLowerCamelName()), new Integer[] { enclosing.getId() });
+                    query.setResourceId(resourceScope, resource.getId());
                     break;
                 }
             }

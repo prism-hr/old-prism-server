@@ -239,7 +239,7 @@ public class ApplicationService {
         if (referencesPending > 0) {
             DomicileUseDTO domicileUseDTO = importedEntityService.getMostUsedDomicile(institution);
 
-            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(application);
             String jobTitle = loader.loadLazy(SYSTEM_ROLE_APPLICATION_ADMINISTRATOR);
             String addressLineMock = loader.loadLazy(SYSTEM_ADDRESS_LINE_MOCK);
             String addressCodeMock = loader.loadLazy(SYSTEM_ADDRESS_CODE_MOCK);
@@ -269,7 +269,7 @@ public class ApplicationService {
     }
 
     public DataTable getApplicationReport(ResourceListFilterDTO filter) throws Exception {
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
 
         PrismScope scopeId = APPLICATION;
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(APPLICATION, SYSTEM);

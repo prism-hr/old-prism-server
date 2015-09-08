@@ -24,7 +24,7 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                 .add(Restrictions.eq("userRole.system", resource.getSystem()));
     }
-    
+
     public static Junction getUserRoleWithPartnerConstraint(Resource resource) {
         Junction constraint = Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
@@ -59,6 +59,7 @@ public class WorkflowDAOUtils {
     public static Junction getResourceStateActionConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("stateAction.actionCondition")) //
+                .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))
                         .add(Restrictions.disjunction() //

@@ -40,7 +40,7 @@ public class SystemMapper {
 
     public ResourceRepresentationRobot getRobotsRepresentation() {
         System system = systemService.getSystem();
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(system);
         return new ResourceRepresentationRobot(loader.loadLazy(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl).withSystem(
                 new ResourceRepresentationRobotMetadata().withId(system.getId()).withAuthor(system.getUser().getFullName()).withName(system.getName())
                         .withSummmary(loader.loadLazy(SYSTEM_DESCRIPTION)).withThumbnailUrl(resourceMapper.getResourceThumbnailUrlRobot(system))

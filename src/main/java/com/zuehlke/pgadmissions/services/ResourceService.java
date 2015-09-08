@@ -369,7 +369,7 @@ public class ResourceService {
         Action action = actionService.getViewEditAction(resource);
 
         Comment comment = new Comment().withUser(user).withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).localize(resource).loadLazy(messageIndex))
+                .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(resource).loadLazy(messageIndex))
                 .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
 
         for (CommentAssignedUser assignee : assignees) {
@@ -441,7 +441,7 @@ public class ResourceService {
 
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) throws Exception {
         Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
         for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.getProperties(propertiesScope)) {
             properties.put(prismDisplayPropertyDefinition, loader.loadEager(prismDisplayPropertyDefinition));
         }

@@ -625,7 +625,7 @@ public class ResourceMapper {
 
     @SuppressWarnings("unchecked")
     public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
 
         ResourceRepresentationRobot representation = new ResourceRepresentationRobot(loader.loadLazy(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl);
         setRobotResourceRepresentation(representation, resource);

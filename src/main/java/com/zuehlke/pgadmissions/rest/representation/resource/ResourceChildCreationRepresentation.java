@@ -1,26 +1,36 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
+import java.util.List;
+
 public class ResourceChildCreationRepresentation extends ResourceRepresentationIdentity {
+
+    private Boolean internalMode;
 
     private Boolean externalMode;
 
     private List<ResourceChildCreationRepresentation> childResources;
 
+    public Boolean getInternalMode() {
+        return internalMode;
+    }
+
+    public void setInternalMode(Boolean internalMode) {
+        this.internalMode = internalMode;
+    }
+
     public void setExternalMode(Boolean externalMode) {
         this.externalMode = externalMode;
     }
 
-    public void setChildResources(List<ResourceChildCreationRepresentation> childResources) {
-        this.childResources = childResources;
-    }
-
     public Boolean getExternalMode() {
         return externalMode;
+    }
+
+    public void setChildResources(List<ResourceChildCreationRepresentation> childResources) {
+        this.childResources = childResources;
     }
 
     public List<ResourceChildCreationRepresentation> getChildResources() {

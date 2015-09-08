@@ -238,7 +238,7 @@ public class AdvertService {
 
         AdvertTargetsDTO targetsDTO = advertDTO.getTargets();
         if (targetsDTO != null) {
-            updateTargets(advert, targetsDTO);
+            updateTargets(advert, targetsDTO, true);
         }
     }
 
@@ -285,7 +285,7 @@ public class AdvertService {
     public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
-        updateTargets(advert, targetsDTO);
+        updateTargets(advert, targetsDTO, true);
         executeUpdate(resource, "COMMENT_UPDATED_TARGET");
     }
 
@@ -489,12 +489,12 @@ public class AdvertService {
         return adverts;
     }
 
-    public void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) {
+    public void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO, boolean refreshTargets) {
         AdvertTargets targets = advert.getTargets();
         if (targets == null) {
             targets = new AdvertTargets();
             advert.setTargets(targets);
-        } else {
+        } else if (refreshTargets) {
             advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
             targets.getSubjectAreas().clear();
             entityService.flush();
@@ -532,7 +532,7 @@ public class AdvertService {
 
         if (newTargetValues.isEmpty()) {
             advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
-        } else {
+        } else if (refreshTargets) {
             advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
         }
     }

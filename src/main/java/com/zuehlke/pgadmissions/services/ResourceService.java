@@ -417,7 +417,7 @@ public class ResourceService {
 
             LinkedHashMultimap<Integer, PrismState> secondaryStates = stateService.getSecondaryResourceStates(scope, filteredResourceIds);
             LinkedHashMultimap<Integer, ActionDTO> permittedActions = actionService.getPermittedActions(scope, filteredResourceIds, user);
-            HashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, resourceIds);
+            LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, resourceIds);
 
             rowIndex.keySet().forEach(resourceId -> {
                 ResourceListRowDTO row = rowIndex.get(resourceId);

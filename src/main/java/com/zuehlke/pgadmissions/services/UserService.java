@@ -516,6 +516,10 @@ public class UserService {
 
         return userRoles;
     }
+    
+    public boolean isUserLoggedIn() {
+        return getCurrentUser() != null;
+    }
 
     @SuppressWarnings("unchecked")
     private void mergeUsers(User oldUser, User newUser) {

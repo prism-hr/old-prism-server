@@ -21,13 +21,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -726,37 +727,37 @@ public class ResourceService {
     }
 
     public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments, boolean allDepartments) {
-        PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION, SYSTEM };
+        PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION };
         List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
         List<Integer> targetInstitutions = advertService.getAdvertTargetResources(advert, INSTITUTION, true);
 
         ResourceTargetListDTO targets = new ResourceTargetListDTO(advert);
-        if (!allDepartments && CollectionUtils.isNotEmpty(subjectAreas)) {
+        if (!allDepartments && isNotEmpty(subjectAreas)) {
             Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
             Map<Integer, BigDecimal> subjectAreaInstitutions = institutionService.getInstitutionsBySubjectAreas(subjectAreasLookup).stream()
                     .collect(Collectors.toMap(institution -> (institution.getResourceId()), institution -> (institution.getTargetingRelevance())));
 
-            List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, institutionScopes, subjectAreaInstitutions.keySet(), institutionStates);
+            List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(institutionScopes, subjectAreaInstitutions.keySet(), institutionStates);
             addResourceTargets(subjectAreaTargets, subjectAreaInstitutions, targets, targetInstitutions);
         }
 
-        if (CollectionUtils.isNotEmpty(institutions)) {
-            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, institutionScopes, institutions, institutionStates), targetInstitutions);
+        if (isNotEmpty(institutions)) {
+            addResourceTargets(targets, resourceDAO.getResourceTargets(institutionScopes, institutions, institutionStates), targetInstitutions);
         }
 
-        boolean hasDepartments = CollectionUtils.isNotEmpty(departments);
+        boolean hasDepartments = isNotEmpty(departments);
         if (hasDepartments) {
             List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, institutionStates);
-            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, institutionScopes, departmentInstitutions, institutionStates), targetInstitutions);
+            addResourceTargets(targets, resourceDAO.getResourceTargets(institutionScopes, departmentInstitutions, institutionStates), targetInstitutions);
 
             List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
             List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
-            addResourceTargets(targets, resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
+            addResourceTargets(targets, resourceDAO.getResourceTargets(new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
         }
 
         if (allDepartments) {
             Integer institution = institutions.get(0);
-            Map<Integer, BigDecimal> subjectAreaDepartments = Collections.emptyMap();
+            Map<Integer, BigDecimal> subjectAreaDepartments = emptyMap();
             if (!CollectionUtils.isEmpty(subjectAreas)) {
                 Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
                 subjectAreaDepartments = departmentService.getDepartmentsBySubjectAreas(institution, subjectAreasLookup).stream()
@@ -768,7 +769,7 @@ public class ResourceService {
                 List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
                 List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
 
-                List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(advert, new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates);
+                List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates);
                 addResourceTargets(subjectAreaTargets, subjectAreaDepartments, targets, targetDepartments);
             }
         }
@@ -797,7 +798,7 @@ public class ResourceService {
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope,
             PrismScope creationScope, String searchTerm) {
         return resourceDAO.getResourcesWhichPermitChildResourceCreation(filterScope, filterResourceId, resourceScope,
-                scopeService.getParentScopesDescending(resourceScope, filterScope), creationScope, searchTerm);
+                scopeService.getParentScopesDescending(resourceScope, filterScope), creationScope, searchTerm, userService.isUserLoggedIn());
     }
 
     public String generateResourceCode(Resource resource) {

@@ -4,7 +4,17 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceChildCreationDTO extends ResourceStandardDTO {
 
+    private Boolean internalMode;
+
     private Boolean externalMode;
+
+    public Boolean getInternalMode() {
+        return internalMode;
+    }
+
+    public void setInternalMode(Boolean internalMode) {
+        this.internalMode = internalMode;
+    }
 
     public Boolean getExternalMode() {
         return externalMode;

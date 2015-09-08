@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 
 import javax.transaction.Transactional;
@@ -85,14 +84,8 @@ public class CustomizationMapper {
     }
 
     public NotificationDefinitionRepresentation getNotificationDefinitionRepresentation(NotificationDefinition definition) {
-        PrismConfiguration prismConfiguration = NOTIFICATION;
         PrismNotificationDefinition prismDefinition = definition.getId();
-        PrismNotificationDefinition prismReminderDefinition = prismDefinition.getReminderDefinition();
-
-        NotificationDefinitionRepresentation representation = new NotificationDefinitionRepresentation().withId(prismDefinition)
-                .withReminderId(prismReminderDefinition)
-                .withMinimumPermitted(prismReminderDefinition == null ? null : prismConfiguration.getMinimumPermitted())
-                .withMaximumPermitted(prismReminderDefinition == null ? null : prismConfiguration.getMaximumPermitted());
+        NotificationDefinitionRepresentation representation = new NotificationDefinitionRepresentation().withId(prismDefinition);
 
         for (PrismNotificationDefinitionPropertyCategory propertyCategory : prismDefinition.getPropertyCategories()) {
             representation.addPropertyCategory(propertyCategory);
@@ -126,8 +119,7 @@ public class CustomizationMapper {
     }
 
     public NotificationConfiguration getNotificationConfiguration(NotificationConfigurationDTO configurationDTO) {
-        return new NotificationConfiguration().withSubject(configurationDTO.getSubject()).withContent(configurationDTO.getContent())
-                .withReminderInterval(configurationDTO.getReminderInterval());
+        return new NotificationConfiguration().withSubject(configurationDTO.getSubject()).withContent(configurationDTO.getContent());
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(StateDurationConfigurationValueDTO configurationDTO) {
@@ -152,7 +144,7 @@ public class CustomizationMapper {
 
     public NotificationConfigurationRepresentation getNotificationConfigurationRepresentation(NotificationConfiguration configuration) {
         return new NotificationConfigurationRepresentation().withProperty(configuration.getDefinition().getId()).withSubject(configuration.getSubject())
-                .withContent(configuration.getContent()).withReminderInteger(configuration.getReminderInterval());
+                .withContent(configuration.getContent());
     }
 
     public StateDurationConfigurationRepresentation getStateDurationConfigurationRepresentation(StateDurationConfiguration configuration) {

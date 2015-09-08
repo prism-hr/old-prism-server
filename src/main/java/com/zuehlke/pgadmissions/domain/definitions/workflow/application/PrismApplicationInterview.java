@@ -11,8 +11,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
@@ -60,9 +58,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_ASSIGN_INTERVIEWERS) //
                 .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
-                .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
@@ -127,7 +123,6 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
                 .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
-                .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
                 .withNotifications(APPLICATION_CONFIRMED_INTERVIEW_GROUP, APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW) //
@@ -163,9 +158,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
                 .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
-                .withAssignments(APPLICATION_INTERVIEWER) //
-                .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+                .withAssignments(APPLICATION_INTERVIEWER);
     }
 
     public static PrismStateAction applicationUpdateInterviewAvailability() {

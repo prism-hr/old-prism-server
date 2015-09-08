@@ -4,8 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_RESERVE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_RESERVE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
@@ -37,10 +35,8 @@ public class PrismApplicationReserved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_RESERVE) //
                 .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_RESERVE_NOTIFICATION) //
-                .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_RESERVED_WAITING) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)));

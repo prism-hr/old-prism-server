@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -104,7 +103,7 @@ public class SystemService {
     private static final Logger logger = LoggerFactory.getLogger(SystemService.class);
 
     private PropertyLoader propertyLoader;
-    
+
     @Value("${application.url}")
     private String applicationUrl;
 
@@ -313,7 +312,7 @@ public class SystemService {
 
         return new BasicAWSCredentials(accessKey, secretKey);
     }
-    
+
     public PropertyLoader getPropertyLoader() {
         return propertyLoader;
     }
@@ -398,12 +397,6 @@ public class SystemService {
                     .withNotificationPurpose(prismNotificationDefinition.getNotificationPurpose()).withScope(scope);
             NotificationDefinition persistentNotificationTemplateDefinition = entityService.createOrUpdate(transientNotificationDefinition);
             definitions.put(prismNotificationDefinition, persistentNotificationTemplateDefinition);
-        }
-        HashMap<PrismNotificationDefinition, PrismReminderDefinition> requestReminderDefinitions = PrismNotificationDefinition.getReminderDefinitions();
-        for (PrismNotificationDefinition prismRequestDefinition : requestReminderDefinitions.keySet()) {
-            NotificationDefinition requestDefinition = definitions.get(prismRequestDefinition);
-            NotificationDefinition reminderDefinition = definitions.get(prismRequestDefinition.getReminderDefinition());
-            requestDefinition.setReminderDefinition(reminderDefinition);
         }
     }
 
@@ -511,8 +504,7 @@ public class SystemService {
             PrismOpportunityType opportunityType = prismNotificationDefinition.getScope().ordinal() > DEPARTMENT.ordinal() ? PrismOpportunityType
                     .getSystemOpportunityType() : null;
 
-            NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject)
-                    .withContent(content).withReminderInterval(prismNotificationDefinition.getDefaultReminderDuration());
+            NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject).withContent(content);
             customizationService.createOrUpdateConfiguration(NOTIFICATION, system, opportunityType, configurationDTO);
         }
     }

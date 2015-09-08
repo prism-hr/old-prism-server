@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PENDING_CORRECTION;
@@ -26,7 +24,6 @@ public class PrismProgramApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(programCompleteApproval()
                 .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
@@ -43,7 +40,6 @@ public class PrismProgramApproval extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
                 .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP) //
-                .withNotifications(PROGRAM_PARENT_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
                 .withNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                 .withTransitions(PROGRAM_APPROVE_TRANSITION);
     }

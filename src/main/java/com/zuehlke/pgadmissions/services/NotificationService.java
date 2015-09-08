@@ -3,12 +3,10 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_IMPORT_ERROR_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
@@ -32,13 +30,11 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserNotification;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -89,11 +85,6 @@ public class NotificationService {
         return entityService.getByProperty(NotificationDefinition.class, "id", id);
     }
 
-    public Integer getReminderInterval(Resource resource, User user, NotificationDefinition definition) {
-        NotificationConfiguration configuration = getNotificationConfiguration(resource, user, definition);
-        return configuration == null ? 1 : configuration.getReminderInterval();
-    }
-
     public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
         return (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, resource, definition);
     }
@@ -113,103 +104,16 @@ public class NotificationService {
         notificationDAO.deleteObsoleteNotificationConfigurations(getWorkflowDefinitions());
     }
 
-    public void sendWorkflowNotifications(Resource resource, Comment comment) {
+    public void sendIndividualWorkflowNotifications(Resource resource, Comment comment) {
         User author = systemService.getSystem().getUser();
         LocalDate baseline = new LocalDate();
         Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, author, baseline);
-        sendIndividualUpdateNotifications(resource, comment, author, exclusions);
+        sendIndividualUpdateNotifications(resource, comment, author, exclusions, baseline);
         entityService.flush();
     }
-
-    public void sendIndividualRequestReminders(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {
-        User author = systemService.getSystem().getUser();
-        Resource resource = resourceService.getById(resourceScope, resourceId);
-
-        List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualReminderDefinitions(resource, baseline);
-        for (UserNotificationDefinitionDTO reminder : reminders) {
-            User user = userService.getById(reminder.getUserId());
-
-            NotificationDefinition definition = getById(reminder.getNotificationDefinitionId());
-            UserNotification userNotification = notificationDAO.getUserNotification(resource, user, definition);
-            LocalDate lastNotifiedDate = userNotification.getLastNotifiedDate();
-
-            Integer reminderInterval = getReminderInterval(resource, user, definition);
-            LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
-
-            if ((lastExpectedReminder.isAfter(lastNotifiedDate) || lastExpectedReminder.equals(lastNotifiedDate))) {
-                sendNotification(definition.getReminderDefinition(), new NotificationDefinitionModelDTO().withUser(user).withAuthor(author)
-                        .withResource(resource).withTransitionAction(reminder.getActionId()));
-                createOrUpdateUserNotification(resource, user, definition, baseline);
-            }
-        }
-
-        resource.setLastRemindedRequestIndividual(baseline);
-    }
-
-    public void sendSyndicatedRequestNotifications(PrismScope resourceScope, Integer resourceId, LocalDate baseline) {
-        System system = systemService.getSystem();
-        Resource resource = resourceService.getById(resourceScope, resourceId);
-
-        List<UserNotificationDefinitionDTO> requests = notificationDAO.getSyndicatedRequestDefinitions(resource, baseline);
-        if (requests.size() > 0) {
-            User author = system.getUser();
-            PrismAction transitionActionId = PrismAction.valueOf("SYSTEM_VIEW_" + resource.getResourceScope().name() + "_LIST");
-
-            for (UserNotificationDefinitionDTO request : requests) {
-                User user = userService.getById(request.getUserId());
-
-                NotificationDefinition definition = getById(request.getNotificationDefinitionId());
-                UserNotification userNotification = notificationDAO.getUserNotification(system, user, definition);
-                LocalDate lastNotifiedDate = userNotification == null ? null : userNotification.getLastNotifiedDate();
-
-                Integer reminderInterval = getReminderInterval(resource, user, definition);
-                LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
-                boolean doSendReminder = lastExpectedReminder.equals(lastNotifiedDate);
-
-                if ((lastNotifiedDate == null || lastExpectedReminder.isAfter(lastNotifiedDate) || doSendReminder)) {
-                    NotificationDefinition sendDefinition = doSendReminder ? definition.getReminderDefinition() : definition;
-                    sendNotification(sendDefinition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
-                            .withTransitionAction(transitionActionId));
-                    createOrUpdateUserNotification(system, user, definition, baseline);
-                }
-            }
-        }
-
-        resource.setLastRemindedRequestSyndicated(baseline);
-    }
-
-    public void sendSyndicatedUpdateNotifications(PrismScope resourceScope, Integer resourceId, Comment transitionComment, LocalDate baseline) {
-        System system = systemService.getSystem();
-        Resource resource = resourceService.getById(resourceScope, resourceId);
-
-        Action action = transitionComment.getAction();
-        User invoker = transitionComment.getActionOwner();
-
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateDefinitions(resource, action, invoker, baseline);
-        if (updates.size() > 0) {
-            Set<User> requested = Sets.newHashSet();
-
-            User author = system.getUser();
-            PrismAction transitionActionId = PrismAction.valueOf("SYSTEM_VIEW_" + resource.getResourceScope().name() + "_LIST");
-
-            for (UserNotificationDefinitionDTO update : updates) {
-                User user = userService.getById(update.getUserId());
-
-                if (!requested.contains(user)) {
-                    List<Integer> requests = notificationDAO.getRecentSyndicatedUserNotifications(system, user, baseline);
-                    if (requests.isEmpty()) {
-                        NotificationDefinition definition = getById(update.getNotificationDefinitionId());
-                        sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
-                                .withTransitionAction(transitionActionId));
-                        createOrUpdateUserNotification(system, user, definition, baseline);
-                    } else {
-                        requested.add(user);
-                    }
-                }
-            }
-        }
-
-        resource.setLastNotifiedUpdateSyndicated(baseline);
+    
+    public void sendSyndicatedUserNotifications() {
+        
     }
 
     public List<Integer> getRecommendationDefinitions(LocalDate baseline) {
@@ -218,32 +122,20 @@ public class NotificationService {
 
     public void sendRecommendationNotification(Integer userId, LocalDate baseline, LocalDate lastRecommendedBaseline) {
         User user = userService.getById(userId);
-
         List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(user);
         if (!advertRecommendations.isEmpty()) {
             System system = systemService.getSystem();
             User author = system.getUser();
 
-            NotificationDefinition definition = getById(SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
+            NotificationDefinition definition = getById(SYSTEM_RECOMMENDATION_NOTIFICATION);
             sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
                     .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withAdvertRecommendations(advertRecommendations));
-
-            createOrUpdateUserNotification(system, user, definition, baseline);
         }
     }
 
     public void sendNotification(PrismNotificationDefinition notificationTemplateId, NotificationDefinitionModelDTO modelDTO) {
         NotificationDefinition notificationTemplate = getById(notificationTemplateId);
         sendNotification(notificationTemplate, modelDTO);
-    }
-
-    public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
-        System system = systemService.getSystem();
-        for (User user : userService.getUsersForResourceAndRoles(institution, INSTITUTION_ADMINISTRATOR)) {
-            NotificationDefinition template = getById(INSTITUTION_IMPORT_ERROR_NOTIFICATION);
-            sendNotification(template, new NotificationDefinitionModelDTO().withUser(user).withAuthor(system.getUser()).withResource(institution)
-                    .withDataImportErrorMessage(errorMessage));
-        }
     }
 
     public void sendInvitationNotifications(Comment comment) {
@@ -309,7 +201,6 @@ public class NotificationService {
 
     private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
         Set<User> recipients = Sets.newHashSet();
-
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline);
 
         if (requests.size() > 0) {
@@ -320,8 +211,8 @@ public class NotificationService {
                 sendNotification(definition,
                         new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(resource).withComment(comment)
                                 .withTransitionAction(request.getActionId()));
-                recipients.add(user);
 
+                recipients.add(user);
                 createOrUpdateUserNotification(resource, user, definition, baseline);
             }
         }
@@ -329,7 +220,7 @@ public class NotificationService {
         return recipients;
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> userExclusions) {
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> userExclusions, LocalDate baseline) {
         List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), userExclusions);
 
         if (updates.size() > 0) {
@@ -342,6 +233,8 @@ public class NotificationService {
                 sendNotification(definition,
                         new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(resource).withComment(comment)
                                 .withTransitionAction(transitionActionId));
+
+                createOrUpdateUserNotification(resource, user, definition, baseline);
             }
         }
     }

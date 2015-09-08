@@ -5,9 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_ADMINISTRATOR_GROUP;
@@ -40,10 +37,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_ASSIGN_REVIEWERS) //
                 .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
-                .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-                .withNotifications(APPLICATION_CREATOR, SYSTEM_APPLICATION_UPDATE_NOTIFICATION)
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REVIEW) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
@@ -89,9 +83,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_REVIEW) //
                 .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
-                .withAssignments(APPLICATION_REVIEWER) //
-                .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+                .withAssignments(APPLICATION_REVIEWER);
     }
 
     public static PrismStateAction applicationTerminateReview() {

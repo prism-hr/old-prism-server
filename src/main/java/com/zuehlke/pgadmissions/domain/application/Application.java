@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.application;
 
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
@@ -810,9 +811,21 @@ public class Application extends Resource {
         return submittedTimestamp != null;
     }
 
-    public String getParentResourceTitleDisplay() {
+    public String getParentResourceTitleDisplay(String at, String in) {
         ResourceParent parent = (ResourceParent) getParentResource();
-        return parent.getName();
+        if (parent instanceof Institution) {
+            return parent.getName();
+        } else if (parent instanceof Department || parent instanceof Program) {
+            return parent.getName() + SPACE + at + SPACE + institution.getName();
+        } else if (parent instanceof Project) {
+            Resource grandParent = parent.getParentResource();
+            if (grandParent instanceof Program) {
+                return parent.getName() + SPACE + in + SPACE + program.getName();
+            }
+            return parent.getName() + SPACE + at + SPACE + institution.getName();
+        }
+        
+        return null;
     }
 
     public String getParentResourceCodeDisplay() {

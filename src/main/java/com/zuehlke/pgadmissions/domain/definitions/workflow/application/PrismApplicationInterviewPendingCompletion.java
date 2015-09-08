@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP;
@@ -26,8 +25,7 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
         stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
 
         stateActions.add(applicationCompleteInterviewScheduled(state) //
-                .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
+                .withRaisesUrgentFlag()); //
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
         stateActions.add(PrismApplicationWorkflow.applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,

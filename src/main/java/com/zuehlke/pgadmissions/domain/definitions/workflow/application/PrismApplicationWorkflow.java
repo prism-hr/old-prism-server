@@ -17,9 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CORRECT_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
@@ -68,8 +66,7 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_COMMENT)
                 .withAssignments(APPLICATION_PARENT_VIEWER_GROUP) //
-                .withAssignments(APPLICATION_VIEWER_REFEREE) //
-                .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION); //
+                .withAssignments(APPLICATION_VIEWER_REFEREE); //
     }
 
     public static PrismStateAction applicationCommentWithViewerRecruiter() {
@@ -79,8 +76,7 @@ public class PrismApplicationWorkflow {
 
     public static PrismStateAction applicationCommentWithViewerRecruiterAndAdministrator() {
         return applicationCommentWithViewerRecruiter() //
-                .withAssignments(APPLICATION_ADMINISTRATOR) //
-                .withNotifications(APPLICATION_ADMINISTRATOR, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+                .withAssignments(APPLICATION_ADMINISTRATOR);
     }
 
     public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees) {
@@ -100,9 +96,7 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_CORRECT) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_CORRECT_REQUEST) //
                 .withAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withNotifications(INSTITUTION_ADMINISTRATOR, SYSTEM_APPLICATION_UPDATE_NOTIFICATION)
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
@@ -191,8 +185,6 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_UPLOAD_REFERENCE) //
                 .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-                .withNotifications(APPLICATION_CREATOR, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_UPLOAD_REFERENCE) //
@@ -284,7 +276,6 @@ public class PrismApplicationWorkflow {
 
     public static PrismStateAction applicationWithdrawSubmitted(PrismRoleGroup notifications, PrismRoleTransitionGroup... roleTransitions) {
         return applicationWithdrawAbstract() //
-                .withNotifications(notifications, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
                 .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
                         .withRoleTransitions(roleTransitions));
     }
@@ -292,7 +283,6 @@ public class PrismApplicationWorkflow {
     public static PrismStateAction applicationWithdrawSubmitted(PrismRoleGroup notifications, PrismStateTerminationGroup stateTerminations,
             PrismRoleTransitionGroup... roleTransitions) {
         return applicationWithdrawAbstract() //
-                .withNotifications(notifications, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
                 .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
                         .withStateTerminationsAndRoleTransitions(stateTerminations, roleTransitions));
     }
@@ -300,8 +290,7 @@ public class PrismApplicationWorkflow {
     private static PrismStateAction applicationCompleteStateAbstract(PrismAction action, PrismRoleGroup assignees) {
         return new PrismStateAction() //
                 .withAction(action) //
-                .withAssignments(assignees) //
-                .withNotifications(assignees, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+                .withAssignments(assignees);
     }
 
     private static PrismStateAction applicationEscalateAbstract() {

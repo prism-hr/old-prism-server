@@ -186,7 +186,7 @@ public class StateService {
         }
 
         if (notify) {
-            notificationService.sendWorkflowNotifications(resource, comment);
+            notificationService.sendIndividualWorkflowNotifications(resource, comment);
         }
 
         resourceService.postProcessResource(resource, comment);

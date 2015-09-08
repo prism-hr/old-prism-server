@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation.applicationCompleteValidation;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation.applicationUploadReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation.applicationWithdrawValidation;
@@ -19,8 +18,7 @@ public class PrismApplicationValidationPendingCompletion extends PrismWorkflowSt
         stateActions.add(applicationComment()); //
 
         stateActions.add(applicationCompleteValidation(state) //
-                .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
+                .withRaisesUrgentFlag()); //
 
         stateActions.add(applicationEmailCreator()); //
         stateActions.add(applicationEscalate()); //

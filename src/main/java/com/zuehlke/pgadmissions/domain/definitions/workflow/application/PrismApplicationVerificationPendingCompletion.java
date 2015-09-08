@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationVerification.applicationCompleteVerification;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationVerification.applicationTerminateVerification;
@@ -20,8 +19,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
         stateActions.add(applicationCommentWithViewerRecruiter()); //
 
         stateActions.add(applicationCompleteVerification(state) //
-                .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
+                .withRaisesUrgentFlag()); //
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //

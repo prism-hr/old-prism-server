@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_INTERVIEWEE_GROUP;
@@ -30,8 +29,7 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
         stateActions.add(applicationCompleteInterviewScheduling(state)); //
 
         stateActions.add(applicationConfirmInterviewArrangements() //
-                .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
+                .withRaisesUrgentFlag()); //
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 

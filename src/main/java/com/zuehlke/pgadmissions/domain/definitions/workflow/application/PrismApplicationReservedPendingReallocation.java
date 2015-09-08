@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReserved.applicationCompleteReserved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReserved.applicationEscalateReserved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReserved.applicationTerminateReserved;
@@ -21,8 +20,7 @@ public class PrismApplicationReservedPendingReallocation extends PrismWorkflowSt
         stateActions.add(applicationEscalateReserved()); //
 
         stateActions.add(applicationCompleteReserved(state) //
-                .withRaisesUrgentFlag() //
-                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST));
+                .withRaisesUrgentFlag());
 
         stateActions.add(applicationTerminateReserved());
         stateActions.add(applicationUploadReference(state));

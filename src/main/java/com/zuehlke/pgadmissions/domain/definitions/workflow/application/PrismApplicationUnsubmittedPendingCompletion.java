@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationUnsubmitted.applicationCompleteUnsubmitted;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
@@ -14,8 +13,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
     @Override
     protected void setStateActions() {
         stateActions.add(applicationCompleteUnsubmitted() //
-                .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_REQUEST)); //
+                .withRaisesUrgentFlag()); //
 
         stateActions.add(applicationEscalate(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)); //
         stateActions.add(applicationTerminateUnsubmitted());

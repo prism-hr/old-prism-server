@@ -117,6 +117,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_YES(SYSTEM_GLOBAL, "Yes"),
     SYSTEM_NO(SYSTEM_GLOBAL, "No"),
     SYSTEM_LOWER_IN(SYSTEM_GLOBAL, "in"),
+    SYSTEM_LOWER_AT(SYSTEM_GLOBAL, "at"),
     SYSTEM_VALUE_PROVIDED(SYSTEM_GLOBAL, "Provided"),
     SYSTEM_VALUE_NOT_PROVIDED(SYSTEM_GLOBAL, "Not Provided"),
     SYSTEM_VALUE_SPECIFIED(SYSTEM_GLOBAL, "Specified"),

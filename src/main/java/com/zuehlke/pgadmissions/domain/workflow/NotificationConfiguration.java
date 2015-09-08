@@ -68,9 +68,6 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "reminder_interval")
-    private Integer reminderInterval;
-
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
 
@@ -168,14 +165,6 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
         this.content = content;
     }
 
-    public Integer getReminderInterval() {
-        return reminderInterval;
-    }
-
-    public void setReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
-    }
-
     @Override
     public final Boolean getSystemDefault() {
         return systemDefault;
@@ -208,11 +197,6 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
 
     public NotificationConfiguration withContent(String content) {
         this.content = content;
-        return this;
-    }
-
-    public NotificationConfiguration withReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
         return this;
     }
 

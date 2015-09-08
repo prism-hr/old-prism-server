@@ -24,7 +24,7 @@ public enum PrismConfiguration {
     DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, DisplayPropertyConfigurationRepresentation.class,
             true, false, null, null, "_COMMENT_UPDATED_DISPLAY_PROPERTY", true, new String[] { "category", "id" }), //
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class,
-            false, false, 1, 28, "_COMMENT_UPDATED_NOTIFICATION", true, new String[] { "id" }), //
+            false, false, null, null, "_COMMENT_UPDATED_NOTIFICATION", true, new String[] { "id" }), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class,
             true, false, 1, 364, "_COMMENT_UPDATED_STATE_DURATION", true, new String[] { "id" }), //
     WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class,

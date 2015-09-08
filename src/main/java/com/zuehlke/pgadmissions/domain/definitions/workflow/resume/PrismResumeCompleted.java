@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.R
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_RESUME_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.RESUME_VIEW_AS_RECUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.RESUME_VIEW_EDIT_AS_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.RESUME_PROVIDE_REVIEW_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.RESUME_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.RESUME_REVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.RESUME_ASSIGN_REVIEWER_GROUP;
@@ -56,7 +55,6 @@ public class PrismResumeCompleted {
                 .withAction(RESUME_PROVIDE_REVIEW) //
                 .withRaisesUrgentFlag() //
                 .withAssignments(RESUME_REVIEWER) //
-                .withNotification(RESUME_PROVIDE_REVIEW_REQUEST) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(SYSTEM_VIEW_RESUME_LIST) //

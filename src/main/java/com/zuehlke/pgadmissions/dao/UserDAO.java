@@ -20,6 +20,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -407,6 +408,21 @@ public class UserDAO {
                 .addOrder(Order.asc("user.firstName")) //
                 .addOrder(Order.asc("id")) //
                 .list();
+    }
+    
+    public List<Integer> getUsersWithActionOrUpdatesForResourceScope(PrismScope resourceScope, PrismScope roleScope, DateTime baseline) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        String roleReference = roleScope.getLowerCamelName();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias(roleReference, roleReference, JoinType.INNER_JOIN);
+        
+        if (!roleScope.equals(resourceScope)) {
+            criteria.createAlias(roleReference + "." + resourceReference, resourceReference, JoinType.INNER_JOIN); //
+        }
+        
+        return null;
+                
     }
 
     private void appendAdministratorResourceConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,

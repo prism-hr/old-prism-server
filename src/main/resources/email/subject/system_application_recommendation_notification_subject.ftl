@@ -1,1 +1,0 @@
-${TEMPLATE_SYSTEM_TITLE} - Recommended Opportunities

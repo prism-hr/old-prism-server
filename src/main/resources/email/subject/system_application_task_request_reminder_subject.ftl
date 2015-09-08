@@ -1,1 +1,0 @@
-REMINDER: ${TEMPLATE_SYSTEM_TITLE} Applications Require your Attention

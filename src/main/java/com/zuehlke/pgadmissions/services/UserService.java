@@ -8,6 +8,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.get
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
@@ -33,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
@@ -516,9 +519,30 @@ public class UserService {
 
         return userRoles;
     }
-    
+
     public boolean isUserLoggedIn() {
         return getCurrentUser() != null;
+    }
+
+    public Set<Integer> getUsersForActivityNotification() {
+        Set<Integer> users = Sets.newHashSet();
+        DateTime baseline = new DateTime().minusDays(1);
+        LocalDate lastNotifiedBaseline = baseline.toLocalDate().minusDays(3);
+
+        List<PrismScope> resourceScopes = scopeService.getEnclosingScopesDescending(RESUME, SYSTEM);
+        int lastScopeIndex = (resourceScopes.size() - 1);
+        for (int i = 0; i <= lastScopeIndex; i++) {
+            PrismScope resourceScope = resourceScopes.get(i);
+            resourceScopes.subList(i, lastScopeIndex).forEach(roleScope -> {
+                users.addAll(userDAO.getUsersWithActivityForResourceScope(resourceScope, roleScope, baseline, lastNotifiedBaseline));
+                if (roleScope.ordinal() <= DEPARTMENT.ordinal()) {
+                    users.addAll(userDAO.getUsersWithActivityForPartnerResourceScope(resourceScope, roleScope, baseline, lastNotifiedBaseline));
+                }
+            });
+        }
+
+        users.addAll(userDAO.getUsersWithAppointmentsForApplications());
+        return users;
     }
 
     @SuppressWarnings("unchecked")

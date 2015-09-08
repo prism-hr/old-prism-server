@@ -389,6 +389,26 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Integer> getUserWithAppointmentsForApplications() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("application.institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("application.department", "department", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("application.program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("application.project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("application.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("application.comments", "comment", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("role.id", APPLICATION_CONFIRMED_INTERVIEW_GROUP.getRoles())) //
+                .add(Restrictions.eq("resourceState.state.id", APPLICATION_INTERVIEW_PENDING_INTERVIEW)) //
+                .add(Restrictions.isNotNull("comment.interviewAppointment.interviewDateTime")) //
+                .addOrder(Order.asc("comment.interviewAppointment.interviewDateTime")) //
+                .addOrder(Order.asc("application.id")) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationAppointmentDTO.class)) //
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<ApplicationAppointmentDTO> getApplicationsAppointments(User user) {
         return (List<ApplicationAppointmentDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
@@ -396,9 +416,9 @@ public class ApplicationDAO {
                         .add(Projections.property("institution.name").as("institutionName")) //
                         .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
                         .add(Projections.property("department.id").as("departmentId")) //
-                        .add(Projections.property("department.name").as("departmentName")) //                        
+                        .add(Projections.property("department.name").as("departmentName")) //
                         .add(Projections.property("program.id").as("programId")) //
-                        .add(Projections.property("program.name").as("programName")) //                         
+                        .add(Projections.property("program.name").as("programName")) //
                         .add(Projections.property("project.id").as("projectId")) //
                         .add(Projections.property("project.name").as("projectName")) //
                         .add(Projections.groupProperty("application.id").as("applicationId")) //

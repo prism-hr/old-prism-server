@@ -184,10 +184,6 @@ public class UserService {
         }
     }
 
-    public User requestUser(UserDTO newUserDTO, Resource resource) {
-        return requestUser(newUserDTO, resource, null);
-    }
-
     public User requestUser(UserDTO newUserDTO, Resource resource, PrismRole targetRole) {
         PrismRole actualRole = null;
         User invoker = resource.getParentResource().getUser();
@@ -198,10 +194,14 @@ public class UserService {
         }
 
         User newUser = getOrCreateUserWithRoles(invoker, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, asList(actualRole));
+
         if (targetRole.equals(actualRole)) {
             verifyAdvertTargetUser(resource, newUser);
         } else if (targetRole != null) {
-            roleService.getUserRole(resource, newUser, actualRole).setTargetRole(roleService.getById(targetRole));
+            UserRole newUserRole = roleService.getUserRole(resource, newUser, actualRole);
+            if (newUserRole.getTargetRole() == null) {
+                newUserRole.setTargetRole(roleService.getById(targetRole));
+            }
         }
 
         return newUser;
@@ -261,7 +261,7 @@ public class UserService {
         User userByEmail = getUserByEmail(userDTO.getEmail());
         if (userByEmail != null && !HibernateUtils.sameEntities(userByEmail, user)) {
             BeanPropertyBindingResult errors = new BeanPropertyBindingResult(userDTO, "userDTO");
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
             errors.rejectValue("email", null, propertyLoader.loadLazy(PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
             throw new PrismValidationException("Cannot update user", errors);
         }
@@ -515,6 +515,10 @@ public class UserService {
         }
 
         return userRoles;
+    }
+    
+    public boolean isUserLoggedIn() {
+        return getCurrentUser() != null;
     }
 
     @SuppressWarnings("unchecked")

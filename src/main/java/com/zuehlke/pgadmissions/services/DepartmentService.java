@@ -113,7 +113,7 @@ public class DepartmentService {
                 Advert advert = advertService.getById(advertId);
                 if (advert != null) {
                     AdvertTargetResourceDTO targetDTO = new AdvertTargetResourceDTO().withScope(DEPARTMENT).withId(department.getId()).withUser(departmentUser);
-                    advertService.updateTargets(advert, new AdvertTargetsDTO().withSelectedResources(newArrayList(targetDTO)));
+                    advertService.updateTargets(advert, new AdvertTargetsDTO().withSelectedResources(newArrayList(targetDTO)), false);
                 }
             }
         }

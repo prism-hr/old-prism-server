@@ -14,7 +14,7 @@ public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTa
 
     private static final long serialVersionUID = 6848775493494349499L;
 
-    private Map<ResourceTargetDTO, ResourceTargetDTO> byResourceScopeAndId = Maps.newHashMap();
+    private Map<ResourceTargetDTO, ResourceTargetDTO> index = Maps.newHashMap();
 
     private BigDecimal bLat;
 
@@ -34,12 +34,14 @@ public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTa
 
     @Override
     public ResourceTargetDTO put(ResourceTargetDTO key, ResourceTargetDTO value) {
-        ResourceTargetDTO valueOld = byResourceScopeAndId.get(key);
+        ResourceTargetDTO valueOld = index.get(key);
         if (valueOld == null) {
             value.setTargetingDistance(getHaversineDistance(bLat, bLon, value.getAddressCoordinateLatitude(), value.getAddressCoordinateLongitude()));
-            ResourceTargetDTO valueParent = byResourceScopeAndId.get(value.getParentResource());
+
+            ResourceTargetDTO valueParent = value.getParentResource();
+            index.get(valueParent);
             if (valueParent == null) {
-                byResourceScopeAndId.put(key, value);
+                index.put(key, value);
                 return super.put(key, value);
             }
             valueParent.getDepartments().add(value);

@@ -177,7 +177,7 @@ public class ApplicationExportService {
     }
 
     protected void localize(Application application) {
-        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
+        propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(application);
     }
 
     private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) throws Exception {

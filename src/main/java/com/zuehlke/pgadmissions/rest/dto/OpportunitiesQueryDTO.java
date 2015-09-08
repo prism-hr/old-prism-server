@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -289,9 +291,20 @@ public class OpportunitiesQueryDTO {
 
     public Integer getResourceId(PrismScope resourceScope) {
         if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
-            return (Integer) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName() + "Id");
+            return (Integer) getProperty(this, getResourceIdReference(resourceScope));
         }
         return null;
     }
+
+    public void setResourceId(PrismScope resourceScope, Integer resourceId) {
+        if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
+            PrismReflectionUtils.setProperty(this, getResourceIdReference(resourceScope), resourceId);
+        }
+    }
+    
+    private String getResourceIdReference(PrismScope resourceScope) {
+        return resourceScope.getLowerCamelName() + "Id";
+    }
+    
 
 }

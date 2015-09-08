@@ -19,6 +19,8 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -625,7 +627,7 @@ public class ResourceMapper {
 
     @SuppressWarnings("unchecked")
     public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
 
         ResourceRepresentationRobot representation = new ResourceRepresentationRobot(loader.loadLazy(SYSTEM_EXTERNAL_HOMEPAGE), applicationUrl);
         setRobotResourceRepresentation(representation, resource);
@@ -810,7 +812,7 @@ public class ResourceMapper {
                         index.get(resource.getParentResource()).addChildResource(resourceChildCreationRepresentation);
                     }
 
-                    if (!checkNotResourceUserCreationDisabledLeaf(level, depth, isResourceUserCreation, resourceChildCreationRepresentation)) {
+                    if (!isResourceCreationDisabledAtLeaf(level, depth, isResourceUserCreation, resourceChildCreationRepresentation)) {
                         index.put(resource, resourceChildCreationRepresentation);
                     }
                 }
@@ -820,9 +822,9 @@ public class ResourceMapper {
         return Lists.newArrayList(representations);
     }
 
-    private boolean checkNotResourceUserCreationDisabledLeaf(int level, int depth, Boolean isResourceUserCreation,
+    private boolean isResourceCreationDisabledAtLeaf(int level, int depth, Boolean isResourceUserCreation,
             ResourceChildCreationRepresentation resourceChildCreationRepresentation) {
-        return BooleanUtils.isTrue(isResourceUserCreation) && level == (depth - 1) && BooleanUtils.isFalse(resourceChildCreationRepresentation.getExternalMode())
+        return isTrue(isResourceUserCreation) && level == (depth - 1) && isFalse(resourceChildCreationRepresentation.getExternalMode())
                 && isEmpty(resourceChildCreationRepresentation.getChildResources());
     }
 

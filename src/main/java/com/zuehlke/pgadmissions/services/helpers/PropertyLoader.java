@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -35,11 +37,14 @@ public class PropertyLoader {
     @Inject
     private CustomizationService customizationService;
 
+    @Inject
+    private SystemService systemService;
+
     public String loadLazy(PrismDisplayPropertyDefinition property) {
         String value = properties.get(property);
         if (value == null) {
             PrismDisplayPropertyCategory category = property.getCategory();
-            properties.putAll(getDisplayProperties(resource, property.getCategory().getScope(), category, opportunityType));
+            properties.putAll(load(resource, property.getCategory().getScope(), opportunityType, category));
             value = properties.get(property);
         }
         return value;
@@ -48,27 +53,46 @@ public class PropertyLoader {
     public String loadEager(PrismDisplayPropertyDefinition property) {
         String value = properties.get(property);
         if (value == null) {
-            properties.putAll(getDisplayProperties(resource, property.getCategory().getScope(), null, opportunityType));
+            properties.putAll(load(resource, property.getCategory().getScope(), opportunityType, null));
             value = properties.get(property);
         }
         return value;
     }
 
-    public String load(PrismDisplayPropertyDefinition trueIndex, PrismDisplayPropertyDefinition falseIndex, boolean evaluation) throws Exception {
-        return evaluation ? loadLazy(trueIndex) : loadLazy(falseIndex);
+    public String loadLazy(PrismDisplayPropertyDefinition trueProperty, PrismDisplayPropertyDefinition falseProperty, boolean evaluation) throws Exception {
+        return evaluation ? loadLazy(trueProperty) : loadLazy(falseProperty);
     }
 
-    public PropertyLoader localize(Resource resource) {
+    public String loadEager(PrismDisplayPropertyDefinition trueProperty, PrismDisplayPropertyDefinition falseProperty, boolean evaluation) throws Exception {
+        return evaluation ? loadEager(trueProperty) : loadEager(falseProperty);
+    }
+
+    public PropertyLoader localizeLazy(Resource resource) {
+        if (resource.getResourceScope().equals(SYSTEM)) {
+            PropertyLoader loader = systemService.getPropertyLoader();
+            if (loader != null) {
+                return loader;
+            }
+        }
+        localize(resource);
+        return this;
+    }
+
+    public PropertyLoader localizeEager(Resource resource) {
+        localizeLazy(resource);
+        load(resource, resource.getResourceScope(), null, null);
+        return this;
+    }
+
+    private void localize(Resource resource) {
         this.resource = resource;
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
             this.opportunityType = PrismOpportunityType.valueOf(resourceOpportunity.getOpportunityType().getName());
         }
-        return this;
     }
 
-    private HashMap<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope scope, PrismDisplayPropertyCategory category,
-            PrismOpportunityType opportunityType) {
+    private HashMap<PrismDisplayPropertyDefinition, String> load(Resource resource, PrismScope scope, PrismOpportunityType opportunityType, PrismDisplayPropertyCategory category) {
         List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations(DISPLAY_PROPERTY, resource, scope, opportunityType, category);
         HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation value : values) {

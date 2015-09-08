@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
@@ -186,7 +187,7 @@ public class ResourceStandardDTO implements Comparable<Object> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getScope(), getId());
+        return Objects.hashCode(getId(), getScope());
     }
 
     @Override
@@ -220,18 +221,7 @@ public class ResourceStandardDTO implements Comparable<Object> {
     }
 
     protected <T extends ResourceStandardDTO> T getParentResource(Class<T> returnType) {
-        PrismScope scope = getScope();
-        PrismScope[] parentScopes = PrismScope.values();
-        for (int i = (parentScopes.length - 1); i >= 0; i--) {
-            PrismScope parentScope = parentScopes[i];
-            if (!parentScope.equals(scope)) {
-                T parentResource = getEnclosingResource(parentScope, returnType);
-                if (parentResource != null) {
-                    return parentResource;
-                }
-            }
-        }
-        return null;
+        return getParentResorce(getScope(), returnType);
     }
 
     protected <T extends ResourceStandardDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
@@ -279,6 +269,15 @@ public class ResourceStandardDTO implements Comparable<Object> {
             }
         }
         return null;
+    }
+    
+    private <T extends ResourceStandardDTO> T getParentResorce(PrismScope scope, Class<T> returnType) {
+        PrismScope parentScope = scope.getParentScope();
+        T parentResource = getEnclosingResource(parentScope, returnType);
+        if (parentResource == null && !parentScope.equals(SYSTEM)) {
+            return getParentResorce(parentScope.getParentScope(), returnType);
+        }
+        return parentResource;
     }
 
 }

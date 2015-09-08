@@ -121,7 +121,7 @@ public class RoleService {
 
     public void modifyUserRole(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
         Action action = actionService.getViewEditAction(resource);
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
 
         Comment comment = new Comment().withAction(action).withUser(invoker)
                 .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))

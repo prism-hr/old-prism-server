@@ -100,8 +100,8 @@ public class ActionService {
         return permittedActions;
     }
 
-    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, userService.getCurrentUser() != null);
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
+        return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, userService.getCurrentUser() != null, exclusions);
     }
 
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
@@ -112,9 +112,9 @@ public class ActionService {
         return actionDAO.getCustomActionEnhancements(resource, actionId, user);
     }
 
-    public LinkedHashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+    public LinkedHashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
         LinkedHashMultimap<Integer, ActionDTO> creationActions = LinkedHashMultimap.create();
-        for (ActionDTO resourceListActionDTO : getPermittedUnsecuredActions(resourceScope, resourceIds)) {
+        for (ActionDTO resourceListActionDTO : getPermittedUnsecuredActions(resourceScope, resourceIds, exclusions)) {
             creationActions.put(resourceListActionDTO.getResourceId(), resourceListActionDTO);
         }
         return creationActions;

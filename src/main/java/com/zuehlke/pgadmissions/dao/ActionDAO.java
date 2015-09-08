@@ -175,7 +175,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, boolean userLoggedIn) {
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, boolean userLoggedIn, PrismScope... exclusions) {
         String resourceReference = resourceScope.getLowerCamelName();
 
         Junction visibilityConstraint = Restrictions.disjunction() //
@@ -186,7 +186,7 @@ public class ActionDAO {
             visibilityConstraint.add(Restrictions.eq("resourceCondition.externalMode", true));
         }
 
-        return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
@@ -202,8 +202,13 @@ public class ActionDAO {
                 .add(visibilityConstraint) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
-                .add(getResourceStateActionConstraint()) //
-                .addOrder(Order.asc("action.id")) //
+                .add(getResourceStateActionConstraint());
+
+        for (PrismScope scope : exclusions) {
+            criteria.add(Restrictions.ne("action.creationScope.id", scope));
+        }
+
+        return (List<ActionDTO>) criteria.addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
     }

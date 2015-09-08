@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -71,6 +70,9 @@ public class ActionService {
     @Inject
     private StateService stateService;
 
+    @Inject
+    private UserService userService;
+
     public Action getById(PrismAction id) {
         return entityService.getById(Action.class, id);
     }
@@ -98,8 +100,8 @@ public class ActionService {
         return permittedActions;
     }
 
-    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Set<Integer> resourceIds, PrismScope... exclusions) {
-        return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, exclusions);
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
+        return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, userService.isUserLoggedIn(), exclusions);
     }
 
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
@@ -110,9 +112,9 @@ public class ActionService {
         return actionDAO.getCustomActionEnhancements(resource, actionId, user);
     }
 
-    public HashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        HashMultimap<Integer, ActionDTO> creationActions = HashMultimap.create();
-        for (ActionDTO resourceListActionDTO : actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, APPLICATION)) {
+    public LinkedHashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
+        LinkedHashMultimap<Integer, ActionDTO> creationActions = LinkedHashMultimap.create();
+        for (ActionDTO resourceListActionDTO : getPermittedUnsecuredActions(resourceScope, resourceIds, exclusions)) {
             creationActions.put(resourceListActionDTO.getResourceId(), resourceListActionDTO);
         }
         return creationActions;
@@ -267,7 +269,7 @@ public class ActionService {
     private boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
         if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
             return true;
-        } else if (isNotEmpty(actionDAO.getPermittedUnsecuredActions(resource.getResourceScope(), asList(resource.getId())))) {
+        } else if (isNotEmpty(getPermittedUnsecuredActions(resource.getResourceScope(), asList(resource.getId())))) {
             return true;
         } else if (actionDAO.getPermittedAction(resource, action, user) != null) {
             return true;

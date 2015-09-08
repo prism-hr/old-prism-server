@@ -160,7 +160,7 @@ public class ApplicationDownloadBuilder {
             String dateFormat = propertyLoader.loadLazy(SYSTEM_DATE_FORMAT);
 
             applicationDownloadBuilderHelper.addContentRowMedium(
-                    propertyLoader.load(APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL, APPLICATION_CONFIRMED_START_DATE,
+                    propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL, APPLICATION_CONFIRMED_START_DATE,
                             confirmedStartDate == null),
                     confirmedStartDate == null ? startDate.toString(dateFormat) : confirmedStartDate.toString(dateFormat), body);
 
@@ -226,7 +226,7 @@ public class ApplicationDownloadBuilder {
                             subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_EMAIL), user.getEmail(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_LABEL),
-                            propertyLoader.load(SYSTEM_YES, SYSTEM_NO, supervisor.getAcceptedSupervision()), subBody);
+                            propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, supervisor.getAcceptedSupervision()), subBody);
 
                     applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
                 }
@@ -316,12 +316,12 @@ public class ApplicationDownloadBuilder {
 
     private boolean addPassportHeader(ApplicationPersonalDetailRepresentation personalDetail, PdfPTable body) throws Exception {
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_LABEL),
-                propertyLoader.load(SYSTEM_YES, SYSTEM_NO, BooleanUtils.toBoolean(personalDetail.getVisaRequired())), body);
+                propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, BooleanUtils.toBoolean(personalDetail.getVisaRequired())), body);
 
         ApplicationPassportRepresentation passport = personalDetail.getPassport();
         if (passport != null) {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_LABEL),
-                    propertyLoader.load(SYSTEM_YES, SYSTEM_NO, true), body);
+                    propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, true), body);
             return true;
         }
         return false;
@@ -329,12 +329,12 @@ public class ApplicationDownloadBuilder {
 
     private boolean addLanguageQualificationHeader(ApplicationPersonalDetailRepresentation personalDetail, PdfPTable body) throws Exception {
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_LABEL),
-                propertyLoader.load(SYSTEM_YES, SYSTEM_NO, personalDetail.getFirstLanguageLocale()), body);
+                propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, personalDetail.getFirstLanguageLocale()), body);
 
         ApplicationLanguageQualificationRepresentation languageQualification = personalDetail.getLanguageQualification();
         if (languageQualification != null) {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_LABEL),
-                    propertyLoader.load(SYSTEM_YES, SYSTEM_NO, true), body);
+                    propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, true), body);
             return true;
         }
         return false;
@@ -440,12 +440,12 @@ public class ApplicationDownloadBuilder {
                 boolean completed = BooleanUtils.isTrue(qualification.getCompleted());
 
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_COMPLETED_LABEL),
-                        propertyLoader.load(SYSTEM_YES, SYSTEM_NO, completed), subBody);
+                        propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, completed), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(
-                        propertyLoader.load(APPLICATION_QUALIFICATION_CONFIRMED_RESULT_LABEL, APPLICATION_QUALIFICATION_EXPECTED_RESULT_LABEL, completed),
+                        propertyLoader.loadLazy(APPLICATION_QUALIFICATION_CONFIRMED_RESULT_LABEL, APPLICATION_QUALIFICATION_EXPECTED_RESULT_LABEL, completed),
                         qualification.getGrade(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(
-                        propertyLoader.load(APPLICATION_QUALIFICATION_CONFIRMED_AWARD_DATE_LABEL, APPLICATION_QUALIFICATION_EXPECTED_AWARD_DATE_LABEL,
+                        propertyLoader.loadLazy(APPLICATION_QUALIFICATION_CONFIRMED_AWARD_DATE_LABEL, APPLICATION_QUALIFICATION_EXPECTED_AWARD_DATE_LABEL,
                                 completed),
                         qualification.getAwardDate().toString(dateFormat), subBody);
 
@@ -484,7 +484,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_START_DATE_LABEL),
                         position.getStartDate().toString(dateFormat), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_CURRENT_LABEL),
-                        propertyLoader.load(SYSTEM_YES, SYSTEM_NO, position.getCurrent()), subBody);
+                        propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, position.getCurrent()), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL),
                         position.getEndDate().toString(dateFormat), subBody);
 
@@ -714,7 +714,7 @@ public class ApplicationDownloadBuilder {
         }
 
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.loadLazy(APPLICATION_PREVIOUS_APPLICATION),
-                propertyLoader.load(SYSTEM_YES, SYSTEM_NO, BooleanUtils.toBoolean(application.getPreviousApplication())), fontSize, table);
+                propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, BooleanUtils.toBoolean(application.getPreviousApplication())), fontSize, table);
 
         ApplicationProgramDetailRepresentation programDetail = application.getProgramDetail();
         if (programDetail != null) {

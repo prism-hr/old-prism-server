@@ -18,7 +18,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.io.IOException;
@@ -75,6 +74,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -167,7 +167,7 @@ public class AdvertService {
             for (PrismScope resourceScope : scopes) {
                 Resource enclosing = resource.getEnclosingResource(resourceScope);
                 if (enclosing != null) {
-                    setProperty(query, pluralize(resourceScope.getLowerCamelName()), new Integer[] { enclosing.getId() });
+                    query.setResourceId(resourceScope, resource.getId());
                     break;
                 }
             }
@@ -238,7 +238,7 @@ public class AdvertService {
 
         AdvertTargetsDTO targetsDTO = advertDTO.getTargets();
         if (targetsDTO != null) {
-            updateTargets(advert, targetsDTO);
+            updateTargets(advert, targetsDTO, true);
         }
     }
 
@@ -285,7 +285,7 @@ public class AdvertService {
     public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
-        updateTargets(advert, targetsDTO);
+        updateTargets(advert, targetsDTO, true);
         executeUpdate(resource, "COMMENT_UPDATED_TARGET");
     }
 
@@ -489,12 +489,12 @@ public class AdvertService {
         return adverts;
     }
 
-    public void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO) {
+    public void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO, boolean refreshTargets) {
         AdvertTargets targets = advert.getTargets();
         if (targets == null) {
             targets = new AdvertTargets();
             advert.setTargets(targets);
-        } else {
+        } else if (refreshTargets) {
             advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
             targets.getSubjectAreas().clear();
             entityService.flush();
@@ -532,7 +532,7 @@ public class AdvertService {
 
         if (newTargetValues.isEmpty()) {
             advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
-        } else {
+        } else if (refreshTargets) {
             advertDAO.deleteAdvertTargetAdverts(advert, newTargetValues);
         }
     }
@@ -579,23 +579,31 @@ public class AdvertService {
 
     private AdvertTargetAdvert createAdvertTargetAdvert(User user, Advert advert, AdvertTargetResourceDTO targetDTO, boolean selected) {
         ResourceParent targetResource = (ResourceParent) resourceService.getById(targetDTO.getScope(), targetDTO.getId());
-        AdvertTargetAdvert target = new AdvertTargetAdvert().withAdvert(advert).withValue(targetResource.getAdvert()).withSelected(selected);
+        AdvertTargetAdvert transientTarget = new AdvertTargetAdvert().withAdvert(advert).withValue(targetResource.getAdvert()).withSelected(selected);
 
         User targetUser = null;
         UserSimpleDTO targetUserDTO = targetDTO.getUser();
         if (targetUserDTO != null) {
-            targetUser = userService.requestUser(targetUserDTO, targetResource);
-            target.setValueUser(targetUser);
+            targetUser = userService.requestUser(targetUserDTO, targetResource, PrismRole.getViewerRole(targetResource));
+            transientTarget.setValueUser(targetUser);
         }
 
         if (targetUser != null && roleService.getVerifiedRoles(targetUser, targetResource).isEmpty()) {
-            target.setPartnershipState(ENDORSEMENT_PENDING_IDENTIFICATION);
+            transientTarget.setPartnershipState(ENDORSEMENT_PENDING_IDENTIFICATION);
         } else {
-            target.setPartnershipState(ENDORSEMENT_PENDING);
+            transientTarget.setPartnershipState(ENDORSEMENT_PENDING);
         }
 
-        entityService.createOrUpdate(target);
-        return target;
+        AdvertTargetAdvert persistentTarget = entityService.getDuplicateEntity(transientTarget);
+        if (persistentTarget == null) {
+            entityService.save(transientTarget);
+            persistentTarget = transientTarget;
+        } else {
+            persistentTarget.setValueUser(targetUser == null ? persistentTarget.getValueUser() : targetUser);
+            persistentTarget.setSelected(selected);
+        }
+        
+        return persistentTarget;
     }
 
     private void updateCompetences(Advert advert, List<AdvertCompetenceDTO> competenceDTOs) {

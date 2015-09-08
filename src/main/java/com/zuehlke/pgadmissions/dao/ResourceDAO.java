@@ -103,43 +103,6 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
-                .setProjection(Projections.groupProperty("id")) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("lastRemindedRequestIndividual")) //
-                        .add(Restrictions.lt("lastRemindedRequestIndividual", baseline))) //
-                .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
-                .list();
-    }
-
-    public List<Integer> getResourcesRequiringSyndicatedReminders(PrismScope resourceScope, LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
-                .setProjection(Projections.groupProperty("id")) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("lastRemindedRequestSyndicated")) //
-                        .add(Restrictions.lt("lastRemindedRequestSyndicated", baseline))) //
-                .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
-                .list();
-    }
-
-    public List<Integer> getResourceRequiringSyndicatedUpdates(PrismScope resourceScope, LocalDate baseline,
-            DateTime rangeStart, DateTime rangeClose) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("lastNotifiedUpdateSyndicated")) //
-                        .add(Restrictions.lt("lastNotifiedUpdateSyndicated", baseline))) //
-                .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
-                .list();
-    }
-
     public void deleteResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceState " //

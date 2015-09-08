@@ -396,18 +396,6 @@ public class ResourceService {
         return resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
     }
 
-    public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
-        return resourceDAO.getResourcesRequiringIndividualReminders(resourceScope, baseline);
-    }
-
-    public List<Integer> getResourcesRequiringSyndicatedReminders(PrismScope resourceScope, LocalDate baseline) {
-        return resourceDAO.getResourcesRequiringSyndicatedReminders(resourceScope, baseline);
-    }
-
-    public List<Integer> getResourcesRequiringSyndicatedUpdates(PrismScope resourceScope, LocalDate baseline, DateTime rangeStart, DateTime rangeClose) {
-        return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceScope, baseline, rangeStart, rangeClose);
-    }
-
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, String sequenceId,
             Collection<Integer> resourceIds) throws Exception {
         if (!resourceIds.isEmpty()) {

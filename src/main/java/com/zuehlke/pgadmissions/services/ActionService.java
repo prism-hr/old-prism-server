@@ -266,7 +266,7 @@ public class ActionService {
         return canExecute ? checkActionAvailable(resource, action, user, declinedResponse) : false;
     }
 
-    private boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
+    public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
         if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
             return true;
         } else if (isNotEmpty(getPermittedUnsecuredActions(resource.getResourceScope(), asList(resource.getId())))) {

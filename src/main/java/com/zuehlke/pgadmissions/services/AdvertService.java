@@ -532,7 +532,7 @@ public class AdvertService {
             if (newSubjectAreaValues.isEmpty()) {
                 advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
             } else {
-                advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class, newTargetValues);
+                advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class, newSubjectAreaValues);
             }
 
             if (newTargetValues.isEmpty()) {

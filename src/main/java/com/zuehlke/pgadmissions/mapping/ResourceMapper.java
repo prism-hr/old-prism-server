@@ -671,7 +671,7 @@ public class ResourceMapper {
     }
 
     private <T extends Resource> void validateViewEditAction(T resource) {
-        if(!actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false)){
+        if(!actionService.checkActionAvailable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false)){
             throw new PrismForbiddenException("No view/edit role for given resource");
         }
     }

@@ -101,7 +101,7 @@ public class ActionService {
     }
 
     public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
-        return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, userService.getCurrentUser() != null, exclusions);
+        return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, userService.isUserLoggedIn(), exclusions);
     }
 
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {

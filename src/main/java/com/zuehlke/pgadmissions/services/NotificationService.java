@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
@@ -39,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
@@ -56,9 +53,6 @@ public class NotificationService {
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private UserService userService;
@@ -114,23 +108,6 @@ public class NotificationService {
     
     public void sendSyndicatedUserNotifications() {
         
-    }
-
-    public List<Integer> getRecommendationDefinitions(LocalDate baseline) {
-        return notificationDAO.getRecommendationDefinitions(baseline);
-    }
-
-    public void sendRecommendationNotification(Integer userId, LocalDate baseline, LocalDate lastRecommendedBaseline) {
-        User user = userService.getById(userId);
-        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(user);
-        if (!advertRecommendations.isEmpty()) {
-            System system = systemService.getSystem();
-            User author = system.getUser();
-
-            NotificationDefinition definition = getById(SYSTEM_RECOMMENDATION_NOTIFICATION);
-            sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
-                    .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withAdvertRecommendations(advertRecommendations));
-        }
     }
 
     public void sendNotification(PrismNotificationDefinition notificationTemplateId, NotificationDefinitionModelDTO modelDTO) {

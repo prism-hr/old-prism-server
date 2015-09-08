@@ -3,10 +3,8 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 
 import java.util.Collection;
 import java.util.List;
@@ -131,21 +129,6 @@ public class NotificationDAO {
                 .add(getUserRoleConstraint(resource)) //
                 .add(getEndorsementActionFilterResolution())
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
-                .list();
-    }
-
-    public List<Integer> getRecommendationDefinitions(LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .setProjection(Projections.groupProperty("id")) //
-                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_RECOMMENDATION_NOTIFICATION)) //
-                .add(Restrictions.eq("userRole.role.id", APPLICATION_CREATOR)) //
-                .add(Restrictions.eq("userAccount.sendApplicationRecommendationNotification", true)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userNotification.id")) //
-                        .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
                 .list();
     }
 

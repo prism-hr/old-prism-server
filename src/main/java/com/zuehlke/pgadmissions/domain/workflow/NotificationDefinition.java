@@ -7,7 +7,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
@@ -34,10 +33,6 @@ public class NotificationDefinition extends WorkflowDefinition {
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
-
-    @OneToOne
-    @JoinColumn(name = "reminder_definition_id")
-    private NotificationDefinition reminderDefinition;
 
     @Override
     public PrismNotificationDefinition getId() {
@@ -72,14 +67,6 @@ public class NotificationDefinition extends WorkflowDefinition {
     @Override
     public void setScope(Scope scope) {
         this.scope = scope;
-    }
-
-    public NotificationDefinition getReminderDefinition() {
-        return reminderDefinition;
-    }
-
-    public void setReminderDefinition(NotificationDefinition reminderDefinition) {
-        this.reminderDefinition = reminderDefinition;
     }
 
     public NotificationDefinition withId(PrismNotificationDefinition id) {

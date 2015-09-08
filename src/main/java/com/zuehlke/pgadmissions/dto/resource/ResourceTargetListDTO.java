@@ -37,9 +37,7 @@ public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTa
         ResourceTargetDTO valueOld = index.get(key);
         if (valueOld == null) {
             value.setTargetingDistance(getHaversineDistance(bLat, bLon, value.getAddressCoordinateLatitude(), value.getAddressCoordinateLongitude()));
-
-            ResourceTargetDTO valueParent = value.getParentResource();
-            index.get(valueParent);
+            ResourceTargetDTO valueParent = index.get(value.getParentResource());
             if (valueParent == null) {
                 index.put(key, value);
                 return super.put(key, value);

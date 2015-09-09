@@ -418,7 +418,7 @@ public class AdvertService {
     public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
         return advertDAO.getAdvertTargetAdverts(advert, selected);
     }
-    
+
     public List<Integer> getAdvertSelectedTargetAdverts(Advert advert) {
         return advertDAO.getAdvertSelectedTargetAdverts(advert);
     }
@@ -448,7 +448,7 @@ public class AdvertService {
             advertDAO.endorseForAdvertTargets(advertTargets, partnershipTransitionState);
         }
     }
-    
+
     public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = queryDTO.getContext() == PrismAdvertContext.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
@@ -512,18 +512,24 @@ public class AdvertService {
         }
     }
 
-    public Set<Integer> getUserAdvertsUserCanIdentifyFor(Advert advert, User applicant, User user) {
-        Set<Integer> userAdverts = Sets.newHashSet();
+    public Set<Integer> getAdvertsUserCanIdentifyFor(Advert advert, User applicant, User user) {
+        Set<Integer> adverts = Sets.newHashSet();
         for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
-            userAdverts.addAll(advertDAO.getUserAdvertsUserCanIdentifyFor(advert, applicant, user, APPLICATION, partnerScope));
+            List<Integer> advertsPermitted = advertDAO.getAdvertsUserCanIdentifyFor(advert, applicant, user, APPLICATION, partnerScope);
+            if (!advertsPermitted.isEmpty()) {
+                if (partnerScope.equals(DEPARTMENT)) {
+                    adverts.addAll(advertDAO.getUserDeparmentInstitutionAdverts(applicant, advertsPermitted));
+                }   
+                adverts.addAll(advertsPermitted);
+            }
         }
-        return userAdverts;
+        return adverts;
     }
-    
-    public void identifyForUserAdverts(Collection<Integer> userAdverts) {
-        advertDAO.identifyForUserAdverts(userAdverts);
+
+    public void identifyForAdverts(User user, Collection<Integer> adverts) {
+        advertDAO.identifyForAdverts(user, adverts);
     }
-    
+
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {

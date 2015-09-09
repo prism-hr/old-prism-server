@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_SPECIFIED;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,6 +15,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.social.UncategorizedApiException;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.Location;
@@ -35,6 +39,7 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.services.scraping.InstitutionUcasScraper;
 
 import jersey.repackaged.com.google.common.base.Objects;
@@ -61,6 +66,9 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
     @Inject
     private SystemService systemService;
+    
+    @Inject
+    private ApplicationContext applicationContext;
 
     private AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
@@ -109,6 +117,8 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
                 logger.error("Could not read UCAS data for imported institution ID: " + importedInstitution.getId());
                 return;
             }
+            
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
 
             AdvertDTO advertDTO = new AdvertDTO();
             InstitutionDTO institutionDTO = new InstitutionDTO();
@@ -126,22 +136,24 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             String summary = createSummary(facebookPage, ucasInstitutionData.getSummary());
 
             advertDTO.setSummary(summary);
-            advertDTO.setTelephone(ObjectUtils.firstNonNull(ucasInstitutionData.getTelephone(), facebookPage.getPhone()));
-            advertDTO.setHomepage(ObjectUtils.firstNonNull(ucasInstitutionData.getHomepage(), facebookPage.getWebsite()));
+            
+            String placeholder = loader.loadLazy(SYSTEM_VALUE_NOT_SPECIFIED);
+            advertDTO.setTelephone(firstNonNull(ucasInstitutionData.getTelephone(), facebookPage.getPhone(), placeholder));
+            advertDTO.setHomepage(firstNonNull(ucasInstitutionData.getHomepage(), facebookPage.getWebsite(), placeholder));
 
             if (facebookPage.getLocation() != null) {
                 Location location = facebookPage.getLocation();
                 address.setDomicile(location.getCountry() != null ? new ImportedAdvertDomicileDTO().withName(location.getCountry()) : null);
-                address.setAddressLine1(location.getStreet());
-                address.setAddressCode(location.getZip());
-                address.setAddressTown(location.getCity());
+                address.setAddressLine1(firstNonNull(location.getStreet(), placeholder));
+                address.setAddressCode(firstNonNull(location.getZip(), placeholder));
+                address.setAddressTown(firstNonNull(location.getCity(), placeholder));
             }
 
             AddressAdvertDTO ucasAddress = ucasInstitutionData.getAddress();
             if (ucasAddress != null) {
-                address.setAddressLine1(ObjectUtils.firstNonNull(address.getAddressLine1(), ucasAddress.getAddressLine1()));
-                address.setAddressCode(ObjectUtils.firstNonNull(address.getAddressCode(), ucasAddress.getAddressCode()));
-                address.setAddressTown(ObjectUtils.firstNonNull(address.getAddressTown(), ucasAddress.getAddressTown()));
+                address.setAddressLine1(firstNonNull(address.getAddressLine1(), ucasAddress.getAddressLine1(), placeholder));
+                address.setAddressCode(firstNonNull(address.getAddressCode(), ucasAddress.getAddressCode(), placeholder));
+                address.setAddressTown(firstNonNull(address.getAddressTown(), ucasAddress.getAddressTown(), placeholder));
                 if (address.getDomicile() == null) {
                     address.setDomicile(ucasAddress.getDomicile());
                 }

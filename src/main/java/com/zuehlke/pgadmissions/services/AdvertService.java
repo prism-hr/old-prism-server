@@ -161,18 +161,6 @@ public class AdvertService {
     }
 
     public List<com.zuehlke.pgadmissions.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<Integer> advertIds) {
-        PrismScope[] scopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
-        if (query.isResourceAction()) {
-            Resource resource = resourceService.getById(query.getActionId().getScope(), query.getResourceId());
-            for (PrismScope resourceScope : scopes) {
-                Resource enclosing = resource.getEnclosingResource(resourceScope);
-                if (enclosing != null) {
-                    query.setResourceId(resourceScope, resource.getId());
-                    break;
-                }
-            }
-        }
-
         return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
     }
 

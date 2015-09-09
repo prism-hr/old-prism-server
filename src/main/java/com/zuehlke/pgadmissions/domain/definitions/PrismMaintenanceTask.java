@@ -1,16 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperDelete;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperExport;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.EmailBounceServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.PrismServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ResourceServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.TargetingServiceHelper;
 
 public enum PrismMaintenanceTask {

@@ -217,7 +217,7 @@ public class AdvertDAO {
         }
 
         if (narrowed) {
-            appendResourceConstraint(criteria, scope, query.getResourceId(scope), actionCondition);
+            appendResourceConstraint(criteria, query.getResourceScope(), query.getResourceId(), actionCondition);
         } else {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.isNull("advertTarget.id")) //
@@ -631,17 +631,9 @@ public class AdvertDAO {
     }
 
     private Junction getPartnerResourceConstraint(PrismScope resourceScope, Integer resourceId) {
-        Junction constraint = Restrictions.conjunction() //
+        return Restrictions.conjunction() //
                 .add(Restrictions.eq("advertTarget.partnershipState", ENDORSEMENT_PROVIDED))
-                .add(Restrictions.eq("targetAdvert." + resourceScope.getLowerCamelName() + ".id", resourceId))
-                .add(Restrictions.isNull("targetAdvert.project"))
-                .add(Restrictions.isNull("targetAdvert.program"));
-
-        if (resourceScope.equals(INSTITUTION)) {
-            constraint.add(Restrictions.isNull("targetAdvert.department"));
-        }
-
-        return constraint;
+                .add(Restrictions.eq("targetAdvert." + resourceScope.getLowerCamelName() + ".id", resourceId));
     }
 
     private void appendRangeConstraint(Criteria criteria, String loColumn, String hiColumn, Integer loValue, Integer hiValue, boolean decimal) {

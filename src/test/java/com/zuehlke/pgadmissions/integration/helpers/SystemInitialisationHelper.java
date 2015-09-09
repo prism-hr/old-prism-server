@@ -1,67 +1,29 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Set;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.services.*;
+import com.zuehlke.pgadmissions.utils.PrismFileUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.Scope;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.NotificationService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.ScopeService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.utils.PrismFileUtils;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static org.junit.Assert.*;
 
 @Service
 @Transactional
@@ -223,14 +185,11 @@ public class SystemInitialisationHelper {
             assertEquals(prismNotificationDefinition.getNotificationType(), definition.getNotificationType());
             assertEquals(prismNotificationDefinition.getNotificationPurpose(), definition.getNotificationPurpose());
             assertEquals(prismNotificationDefinition.getScope(), definition.getScope().getId());
-            assertEquals(prismNotificationDefinition.getReminderDefinition(), (definition.getReminderDefinition()) == null ? null : definition
-                    .getReminderDefinition().getId());
 
             NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, system, definition);
 
             assertEquals(configuration.getOpportunityType(), definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
             assertEquals(configuration.getDefinition(), definition);
-            assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
 
             assertEquals(PrismFileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject()),

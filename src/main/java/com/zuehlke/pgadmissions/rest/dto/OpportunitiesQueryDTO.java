@@ -1,6 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,11 +21,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public class OpportunitiesQueryDTO {
-
-    private Integer resourceId;
 
     private PrismAction actionId;
 
@@ -72,14 +74,6 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLon;
 
     private String lastSequenceIdentifier;
-
-    public Integer getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
-    }
 
     public PrismAction getActionId() {
         return actionId;
@@ -281,30 +275,37 @@ public class OpportunitiesQueryDTO {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
     }
 
-    public boolean isResourceAction() {
-        return !(resourceId == null || actionId == null);
-    }
-
     public boolean isNarrowed() {
-        return  !(institutionId == null && departmentId == null && programId == null && projectId == null);
+        return !(institutionId == null && departmentId == null && programId == null && projectId == null);
     }
 
-    public Integer getResourceId(PrismScope resourceScope) {
-        if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
-            return (Integer) getProperty(this, getResourceIdReference(resourceScope));
+    public Integer getResourceId() {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
+            Integer resourceId = (Integer) getProperty(this, getResourceIdReference(scope));
+            if (resourceId != null) {
+                return resourceId;
+            }
         }
         return null;
     }
 
     public void setResourceId(PrismScope resourceScope, Integer resourceId) {
         if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
-            PrismReflectionUtils.setProperty(this, getResourceIdReference(resourceScope), resourceId);
+            setProperty(this, getResourceIdReference(resourceScope), resourceId);
         }
     }
-    
+
+    public PrismScope getResourceScope() {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
+            if (getProperty(this, scope.getLowerCamelName() + "Id") != null) {
+                return scope;
+            }
+        }
+        return null;
+    }
+
     private String getResourceIdReference(PrismScope resourceScope) {
         return resourceScope.getLowerCamelName() + "Id";
     }
-    
 
 }

@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
@@ -53,6 +54,10 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "system_id")
+    private System system;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -178,6 +183,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public System getSystem() {
+        return system;
+    }
+
+    public void setSystem(System system) {
+        this.system = system;
     }
 
     public Institution getInstitution() {
@@ -371,6 +384,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     }
 
     public void setResource(Resource resource) {
+        this.system = resource.getSystem();
         this.institution = resource.getInstitution();
         this.department = resource.getDepartment();
         this.program = resource.getProgram();

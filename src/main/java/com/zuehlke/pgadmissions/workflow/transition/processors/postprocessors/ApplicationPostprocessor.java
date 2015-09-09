@@ -4,14 +4,12 @@ import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
@@ -20,7 +18,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.ListUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
@@ -34,10 +31,8 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -120,33 +115,9 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void synchronizeUserAdverts(Application application, Comment comment) {
-        User applicant = application.getUser();
-
-        List<Integer> targetAdverts = advertService.getAdvertSelectedTargetAdverts(application.getAdvert());
-        List<Integer> targetAdvertsMatched = advertService.getAdvertsToIdentifyUserFor(applicant, targetAdverts);
-
-        if (!(targetAdverts.isEmpty() || targetAdvertsMatched.isEmpty())) {
-            List<Integer> targetAdvertsToProvideIdentificationFor = Lists.newArrayList();
-            for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(), APPLICATION_COMPLETE_IDENTIFICATION_STAGE)) {
-                Resource userResource = userRole.getResource();
-                if (userResource.getResourceScope().equals(SYSTEM)) {
-                    targetAdvertsToProvideIdentificationFor = ListUtils.intersection(targetAdverts, targetAdvertsMatched);
-                    break;
-                }
-
-                Integer advertId = userRole.getResource().getAdvert().getId();
-                if (targetAdverts.contains(advertId) && targetAdvertsMatched.contains(advertId)) {
-                    targetAdvertsToProvideIdentificationFor.add(advertId);
-                }
-            }
-
-            if (!targetAdvertsToProvideIdentificationFor.isEmpty()) {
-                application.setIdentified(true);
-                advertService.identifyForAdverts(applicant, targetAdvertsToProvideIdentificationFor);
-            }
-        }
+        Set<Integer> userAdverts = advertService.getUserAdvertsUserCanIdentifyFor(application.getAdvert(), application.getUser(), comment.getUser());
+        advertService.identifyForUserAdverts(userAdverts);
     }
 
     private void synchronizeApplicationReferees(Application application, Comment comment) {

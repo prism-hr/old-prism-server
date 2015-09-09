@@ -2,15 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING_IDENTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -71,7 +68,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -84,7 +80,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
@@ -423,25 +418,17 @@ public class AdvertService {
     public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
         return advertDAO.getAdvertTargetAdverts(advert, selected);
     }
+    
+    public List<Integer> getAdvertSelectedTargetAdverts(Advert advert) {
+        return advertDAO.getAdvertSelectedTargetAdverts(advert);
+    }
 
     public List<Integer> getAdvertTargetResources(Advert advert, PrismScope resourceScope, boolean selected) {
         return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
     }
 
-    public void identifyForAdverts(User user, List<Integer> adverts) {
-        advertDAO.identifyForAdverts(user, adverts);
-    }
-
     public List<Integer> getAdvertsUserIdentifiedFor(User user) {
         return advertDAO.getAdvertsUserIdentifiedFor(user);
-    }
-
-    public List<Integer> getAdvertSelectedTargetAdverts(Advert advert) {
-        return advertDAO.getAdvertSelectedTargetAdverts(advert);
-    }
-
-    public List<Integer> getAdvertsToIdentifyUserFor(User user, List<Integer> adverts) {
-        return advertDAO.getAdvertsToIdentifyUserFor(user, adverts);
     }
 
     public void verifyTargetAdvertUser(Advert value, User valueUser) {
@@ -450,24 +437,18 @@ public class AdvertService {
 
     public void recordPartnershipStateTransition(Resource resource, Comment comment) {
         if (comment.isPartnershipStateTransitionComment()) {
-            List<Advert> targetAdverts = Lists.newArrayList();
             PrismPartnershipState partnershipTransitionState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
-            for (UserRole userRole : roleService.getActionPerformerUserRoles(comment.getUser(),
-                    new PrismAction[] { PROJECT_ENDORSE, PROGRAM_ENDORSE, DEPARTMENT_ENDORSE, INSTITUTION_ENDORSE })) {
-                Resource userResource = userRole.getResource();
-                if (userResource.getResourceScope().equals(SYSTEM)) {
-                    advertDAO.endorseForAdvertTargets(resource.getAdvert(), partnershipTransitionState);
-                    break;
-                }
-                targetAdverts.add(userResource.getAdvert());
+
+            User user = comment.getUser();
+            Set<Integer> advertTargets = Sets.newHashSet();
+            for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
+                advertTargets.addAll(advertDAO.getAdvertTargetsUserCanEndorseFor(resource.getAdvert(), user, resource.getResourceScope(), partnerScope));
             }
 
-            if (!targetAdverts.isEmpty()) {
-                advertDAO.endorseForAdvertTargets(resource.getAdvert(), targetAdverts, partnershipTransitionState);
-            }
+            advertDAO.endorseForAdvertTargets(advertTargets, partnershipTransitionState);
         }
     }
-
+    
     public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = queryDTO.getContext() == PrismAdvertContext.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
@@ -531,6 +512,18 @@ public class AdvertService {
         }
     }
 
+    public Set<Integer> getUserAdvertsUserCanIdentifyFor(Advert advert, User applicant, User user) {
+        Set<Integer> userAdverts = Sets.newHashSet();
+        for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
+            userAdverts.addAll(advertDAO.getUserAdvertsUserCanIdentifyFor(advert, applicant, user, APPLICATION, partnerScope));
+        }
+        return userAdverts;
+    }
+    
+    public void identifyForUserAdverts(Collection<Integer> userAdverts) {
+        advertDAO.identifyForUserAdverts(userAdverts);
+    }
+    
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();
         if (categories == null) {

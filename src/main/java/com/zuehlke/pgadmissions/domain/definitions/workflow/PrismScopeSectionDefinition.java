@@ -40,7 +40,9 @@ public enum PrismScopeSectionDefinition {
         requiredSections.putAll(INSTITUTION, getDefaultRequiredSections());
         requiredSections.putAll(DEPARTMENT, Lists.newArrayList(RESOURCE_DETAILS, DEPARTMENT_PROGRAMS, ADVERT_DETAILS, ADVERT_CATEGORIES, ADVERT_COMPETENCES, ADVERT_TARGETS));
         requiredSections.putAll(PROGRAM, getDefaultRequiredSections());
+        requiredSections.put(PROGRAM, ADVERT_COMPETENCES);
         requiredSections.putAll(PROJECT, getDefaultRequiredSections());
+        requiredSections.put(PROJECT, ADVERT_COMPETENCES);
     }
 
     private Class<? extends ResourceCompletenessEvaluator<?>> completenessEvaluator;
@@ -61,7 +63,7 @@ public enum PrismScopeSectionDefinition {
     }
 
     private static List<PrismScopeSectionDefinition> getDefaultRequiredSections() {
-        return Lists.newArrayList(RESOURCE_DETAILS, ADVERT_DETAILS, ADVERT_CATEGORIES, ADVERT_COMPETENCES, ADVERT_TARGETS);
+        return Lists.newArrayList(RESOURCE_DETAILS, ADVERT_DETAILS, ADVERT_CATEGORIES, ADVERT_TARGETS);
     }
 
     public static Set<PrismScopeSectionDefinition> getRequiredSections(PrismScope scope) {

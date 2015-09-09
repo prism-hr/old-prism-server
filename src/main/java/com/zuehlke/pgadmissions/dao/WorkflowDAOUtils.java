@@ -46,7 +46,7 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eqProperty("targetAdvert.department", "userRole.department"))
                         .add(Restrictions.eqProperty("targetAdvert.institution", "userRole.institution"))
-                        .add(Restrictions.eqProperty("resourceCondition.system", "userRole.system")))
+                        .add(Restrictions.eqProperty("targetAdvert.system", "userRole.system")))
                 .add(Restrictions.eq("stateActionAssignment.externalMode", true));
     }
 

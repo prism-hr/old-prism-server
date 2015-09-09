@@ -77,7 +77,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         if (comment.isProjectCreateApplicationComment()) {
             synchronizeProjectSupervisors(resource);
         }
-
+        
         if (comment.isApplicationIdentifiedComment()) {
             synchronizeUserAdverts(resource, comment);
         }
@@ -116,8 +116,11 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     }
 
     private void synchronizeUserAdverts(Application application, Comment comment) {
-        Set<Integer> userAdverts = advertService.getUserAdvertsUserCanIdentifyFor(application.getAdvert(), application.getUser(), comment.getUser());
-        advertService.identifyForUserAdverts(userAdverts);
+        User applicant = application.getUser();
+        Set<Integer> adverts = advertService.getAdvertsUserCanIdentifyFor(application.getAdvert(), applicant, comment.getUser());
+        if (!adverts.isEmpty()) {
+            advertService.identifyForAdverts(applicant, adverts);
+        }
     }
 
     private void synchronizeApplicationReferees(Application application, Comment comment) {

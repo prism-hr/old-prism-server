@@ -191,6 +191,11 @@ public class ResourceDAO {
                     .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
 
             criteria.add(Restrictions.in("id", resourceIds));
+            
+            PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();
+            if (opportunityCategory != null) {
+                criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
+            }
 
             return appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
                     .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
@@ -753,11 +758,6 @@ public class ResourceDAO {
 
         if (filter.isTargetOnly()) {
             criteria.add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"));
-        }
-
-        PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();
-        if (opportunityCategory != null) {
-            criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name()));
         }
 
         if (conditions != null) {

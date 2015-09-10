@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.APPLICANTS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
@@ -15,6 +16,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.io.IOException;
@@ -166,7 +168,7 @@ public class AdvertService {
 
     public HashMultimap<Integer, ResourceConditionRepresentation> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         HashMultimap<Integer, ResourceConditionRepresentation> conditions = HashMultimap.create();
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
+        if (isNotEmpty(resourceIds)) {
             advertDAO.getAdvertActionConditions(resourceScope, resourceIds).forEach(condition -> {
                 conditions.put(condition.getAdvertId(), new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
                         .withInternalMode(condition.getInternalMode()).withExternalMode(condition.getExternalMode()));
@@ -449,11 +451,12 @@ public class AdvertService {
         }
     }
 
-    public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
+    public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO query, PrismScope[] scopes) {
+        PrismAdvertContext context = query.getContext();
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
-        PrismActionCondition actionCondition = queryDTO.getContext() == PrismAdvertContext.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
+        PrismActionCondition actionCondition = context == APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, queryDTO));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query));
         }
         return adverts;
     }
@@ -519,7 +522,7 @@ public class AdvertService {
             if (!advertsPermitted.isEmpty()) {
                 if (partnerScope.equals(DEPARTMENT)) {
                     adverts.addAll(advertDAO.getUserDeparmentInstitutionAdverts(applicant, advertsPermitted));
-                }   
+                }
                 adverts.addAll(advertsPermitted);
             }
         }

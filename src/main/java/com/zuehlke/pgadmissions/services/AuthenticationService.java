@@ -137,7 +137,7 @@ public class AuthenticationService {
             getOrCreateUserAccount(user, registrationDTO.getPassword(), enableAccount);
         }
 
-        ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO);
+        ActionOutcomeDTO outcome = actionService.executeRegistrationAction(user, registrationDTO);
         if (outcome != null) {
             notificationService.sendRegistrationNotification(user, outcome);
         }

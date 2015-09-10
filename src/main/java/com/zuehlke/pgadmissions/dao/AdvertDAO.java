@@ -168,7 +168,7 @@ public class AdvertDAO {
                 .createAlias("advert.categories.functions", "function", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.categories.themes", "theme", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN, //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                                 .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition))); //
@@ -233,14 +233,16 @@ public class AdvertDAO {
     }
 
     public List<AdvertActionConditionDTO> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+        String resourceReference = resourceScope.getLowerCamelName();
+        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("advert.id").as("advertId")) //
+                        .add(Projections.groupProperty("id").as("advertId")) //
                         .add(Projections.groupProperty("resourceCondition.actionCondition").as("actionCondition")) //
                         .add(Projections.property("resourceCondition.internalMode").as("internalMode")) //
                         .add(Projections.property("resourceCondition.externalMode").as("externalMode"))) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("id", resourceIds)) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertActionConditionDTO.class)) //
                 .list();
     }
@@ -497,7 +499,7 @@ public class AdvertDAO {
                 .setProjection(Projections.groupProperty("userAdvert.advert.id")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAdverts", "userAdvert", JoinType.INNER_JOIN) //
-                .createAlias("resourcePreviousStates", "resourcePreviousState", JoinType.INNER_JOIN) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
@@ -518,7 +520,7 @@ public class AdvertDAO {
                 .add(Restrictions.eq("user", applicant)) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("stateAction.action.id", APPLICATION_COMPLETE_IDENTIFICATION_STAGE)) //
-                .add(Restrictions.eqProperty("stateAction.state", "resourcePreviousState.state")) //
+                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .list();
     }
 

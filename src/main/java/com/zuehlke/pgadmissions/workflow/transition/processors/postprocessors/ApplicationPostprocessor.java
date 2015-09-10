@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -50,9 +49,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private CommentService commentService;
@@ -76,10 +72,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     public void process(Application resource, Comment comment) {
         if (comment.isProjectCreateApplicationComment()) {
             synchronizeProjectSupervisors(resource);
-        }
-        
-        if (comment.isApplicationIdentifiedComment()) {
-            synchronizeUserAdverts(resource, comment);
         }
 
         if (comment.isApplicationProvideReferenceComment()) {
@@ -112,14 +104,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         for (User supervisorUser : supervisorUsers) {
             application.getSupervisors().add(
                     new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true).withLastUpdatedTimestamp(new DateTime()));
-        }
-    }
-
-    private void synchronizeUserAdverts(Application application, Comment comment) {
-        User applicant = application.getUser();
-        Set<Integer> adverts = advertService.getAdvertsUserCanIdentifyFor(application.getAdvert(), applicant, comment.getUser());
-        if (!adverts.isEmpty()) {
-            advertService.identifyForAdverts(applicant, adverts);
         }
     }
 

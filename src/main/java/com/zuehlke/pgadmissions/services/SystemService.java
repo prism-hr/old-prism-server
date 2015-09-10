@@ -516,12 +516,6 @@ public class SystemService {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                 Action action = actionService.getById(prismStateAction.getAction());
                 initializeStateAction(state, action, prismStateAction, true);
-
-                PrismAction prismActionOther = prismStateAction.getActionOther();
-                if (prismActionOther != null) {
-                    Action actionOther = actionService.getById(prismActionOther);
-                    initializeStateAction(state, actionOther, prismStateAction, false);
-                }
             }
         }
 

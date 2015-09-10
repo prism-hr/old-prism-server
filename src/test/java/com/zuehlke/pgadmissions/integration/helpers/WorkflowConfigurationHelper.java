@@ -153,8 +153,7 @@ public class WorkflowConfigurationHelper {
                 assertTrue(stateAction.getStateActionAssignments().isEmpty());
             }
 
-            if (stateAction.getRaisesUrgentFlag()
-                    && PrismState.getStateAction(stateAction.getState().getId(), stateAction.getAction().getId()).getActionOther() == null) {
+            if (stateAction.getRaisesUrgentFlag()) {
                 assertNotNull(stateAction.getNotificationDefinition());
             }
 

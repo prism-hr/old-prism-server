@@ -13,8 +13,6 @@ public class PrismStateAction {
 
     private PrismActionCondition actionCondition;
 
-    private PrismAction actionOther;
-
     private PrismActionEnhancement actionEnhancement;
 
     private PrismNotificationDefinition notification;
@@ -35,10 +33,6 @@ public class PrismStateAction {
 
     public PrismActionCondition getActionCondition() {
         return actionCondition;
-    }
-
-    public PrismAction getActionOther() {
-        return actionOther;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
@@ -73,11 +67,6 @@ public class PrismStateAction {
 
     public PrismStateAction withActionCondition(PrismActionCondition actionCondition) {
         this.actionCondition = actionCondition;
-        return this;
-    }
-
-    public PrismStateAction withActionOther(PrismAction actionOther) {
-        this.actionOther = actionOther;
         return this;
     }
 

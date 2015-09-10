@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
-
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -26,11 +16,16 @@ import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentOfferDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentPositionDetailDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
+
+import javax.inject.Inject;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 
 @Component
 public class ApplicationExecutor implements ActionExecutor {
@@ -51,8 +46,8 @@ public class ApplicationExecutor implements ActionExecutor {
     private UserService userService;
 
     @Override
-    public ActionOutcomeDTO execute(Integer resourceId, CommentDTO commentDTO) throws Exception {
-        Application application = entityService.getById(Application.class, resourceId);
+    public ActionOutcomeDTO execute(CommentDTO commentDTO) {
+        Application application = entityService.getById(Application.class, commentDTO.getResource().getId());
         PrismAction actionId = commentDTO.getAction();
 
         User user = userService.getById(commentDTO.getUser());

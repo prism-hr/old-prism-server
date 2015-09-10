@@ -1,14 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.RESUME_COMPLETE;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
-
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resume;
@@ -18,11 +9,15 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
+
+import javax.inject.Inject;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.RESUME_COMPLETE;
 
 @Component
 public class ResumeExecutor implements ActionExecutor {
@@ -43,8 +38,8 @@ public class ResumeExecutor implements ActionExecutor {
     private UserService userService;
 
     @Override
-    public ActionOutcomeDTO execute(Integer resourceId, CommentDTO commentDTO) throws Exception {
-        Resume resume = entityService.getById(Resume.class, resourceId);
+    public ActionOutcomeDTO execute(CommentDTO commentDTO) {
+        Resume resume = entityService.getById(Resume.class, commentDTO.getResource().getId());
         PrismAction actionId = commentDTO.getAction();
 
         User user = userService.getById(commentDTO.getUser());

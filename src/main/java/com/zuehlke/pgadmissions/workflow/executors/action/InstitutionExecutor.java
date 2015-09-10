@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -16,6 +12,9 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class InstitutionExecutor implements ActionExecutor {
@@ -33,15 +32,15 @@ public class InstitutionExecutor implements ActionExecutor {
     private UserService userService;
 
     @Override
-    public ActionOutcomeDTO execute(Integer resourceId, CommentDTO commentDTO) throws Exception {
+    public ActionOutcomeDTO execute(CommentDTO commentDTO) {
         User user = userService.getById(commentDTO.getUser());
-        Institution institution = institutionService.getById(resourceId);
+        Institution institution = institutionService.getById(commentDTO.getResource().getId());
 
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
         InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.getResource();
-        Comment comment = commentService.prepareProcessResourceComment(institution, user, action, institutionDTO, commentDTO);
+        Comment comment = commentService.prepareProcessResourceComment(institution, user, action, commentDTO);
         institutionService.update(institution, institutionDTO);
 
         return actionService.executeUserAction(institution, action, comment);

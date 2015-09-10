@@ -1,26 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.springframework.stereotype.Repository;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -30,8 +9,24 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
-
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.springframework.stereotype.Repository;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -64,7 +59,7 @@ public class InstitutionDAO {
                 .uniqueResult();
     }
 
-    public void changeInstitutionBusinessYear(Integer institutionId, Integer businessYearEndMonth) throws Exception {
+    public void changeInstitutionBusinessYear(Integer institutionId, Integer businessYearEndMonth) {
         String templateLocation;
 
         Map<String, Object> model = Maps.newHashMap();
@@ -77,12 +72,16 @@ public class InstitutionDAO {
             model.put("businessYearEndMonth", businessYearEndMonth);
         }
 
-        String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
-        Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
+        try {
+            String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
+            Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
 
-        sessionFactory.getCurrentSession().createSQLQuery( //
-                FreeMarkerTemplateUtils.processTemplateIntoString(template, model)) //
-                .executeUpdate();
+            sessionFactory.getCurrentSession().createSQLQuery( //
+                    FreeMarkerTemplateUtils.processTemplateIntoString(template, model)) //
+                    .executeUpdate();
+        } catch (IOException | TemplateException e) {
+            throw new Error("Could not change institution business year");
+        }
     }
 
     public List<ResourceTargetDTO> getInstitutions(List<PrismState> activeStates, String searchTerm, String[] googleIds) {
@@ -140,7 +139,7 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("importedProgram.id", importedProgram.getId())) //
                 .uniqueResult();
     }
-    
+
     public List<ResourceTargetRelevanceDTO> getInstitutionsBySubjectAreas(Collection<Integer> subjectAreas) {
         return (List<ResourceTargetRelevanceDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .setProjection(Projections.projectionList() //

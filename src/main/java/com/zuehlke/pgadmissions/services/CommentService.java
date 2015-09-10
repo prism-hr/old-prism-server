@@ -1,38 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ValidationUtils;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
-import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
-import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -49,15 +22,28 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentCompetenceDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.*;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.validation.CommentValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ValidationUtils;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
 
 @Service
 @Transactional
@@ -244,7 +230,7 @@ public class CommentService {
     }
 
     public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
-            DateTime baseline) {
+                                                    DateTime baseline) {
         Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
                 .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
         preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
@@ -292,11 +278,11 @@ public class CommentService {
         return commentDAO.getDeclinedSupervisors(comment);
     }
 
-    public <T extends ResourceParent, U extends ResourceParentDTO> Comment prepareProcessResourceComment(T resource, User user, Action action,
-            U resourceParentDTO, CommentDTO commentDTO) throws Exception {
+    public <T extends ResourceParent> Comment prepareProcessResourceComment(
+            T resource, User user, Action action, CommentDTO commentDTO) {
         String resourceScopeReference = resource.getResourceScope().name();
 
-        String commentContent = null;
+        String commentContent;
         if (action.getId().equals(PrismAction.valueOf(resourceScopeReference + "_VIEW_EDIT"))) {
             commentContent = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource)
                     .loadLazy(PrismDisplayPropertyDefinition.valueOf(resourceScopeReference + "_COMMENT_UPDATED"));

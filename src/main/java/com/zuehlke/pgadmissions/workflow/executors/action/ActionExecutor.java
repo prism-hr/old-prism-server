@@ -5,6 +5,6 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 
 public interface ActionExecutor {
 
-    ActionOutcomeDTO execute(Integer resourceId, CommentDTO commentDTO) throws Exception;
+    ActionOutcomeDTO execute(CommentDTO commentDTO);
 
 }

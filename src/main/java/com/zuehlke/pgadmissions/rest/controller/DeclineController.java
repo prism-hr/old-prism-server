@@ -36,7 +36,7 @@ public class DeclineController {
         commentDTO.setUser(user.getId());
         commentDTO.setAction(actionId);
         commentDTO.setDeclinedResponse(true);
-        resourceService.executeAction(user, resourceId, commentDTO);
+        resourceService.executeAction(user, commentDTO);
     }
 
     @RequestMapping(method = RequestMethod.GET)

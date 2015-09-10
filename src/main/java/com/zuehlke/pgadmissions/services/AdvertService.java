@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.APPLICANTS;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -131,7 +133,7 @@ public class AdvertService {
 
     public HashMultimap<Integer, ResourceConditionRepresentation> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         HashMultimap<Integer, ResourceConditionRepresentation> conditions = HashMultimap.create();
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
+        if (isNotEmpty(resourceIds)) {
             advertDAO.getAdvertActionConditions(resourceScope, resourceIds).forEach(condition -> {
                 conditions.put(condition.getAdvertId(), new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
                         .withInternalMode(condition.getInternalMode()).withExternalMode(condition.getExternalMode()));
@@ -414,11 +416,12 @@ public class AdvertService {
         }
     }
 
-    public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO queryDTO, PrismScope[] scopes) {
+    public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO query, PrismScope[] scopes) {
+        PrismAdvertContext context = query.getContext();
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
-        PrismActionCondition actionCondition = queryDTO.getContext() == PrismAdvertContext.APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
+        PrismActionCondition actionCondition = context == APPLICANTS ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, queryDTO));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query));
         }
         return adverts;
     }

@@ -114,7 +114,7 @@ public class ImportedEntityDAO {
             criteria.add(Restrictions.eq("importedEntity.type", prismImportedEntity));
         }
 
-        return (List<T>) appendMappedEntityRestriction(institution, "importedEntity", criteria) //
+        return (List<T>) appendMappedEntityRestriction(institution, criteria) //
                 .addOrder(Order.asc("importedEntity.name")) //
                 .list();
     }
@@ -133,7 +133,7 @@ public class ImportedEntityDAO {
                 .createAlias("importedEntity", "importedEntity", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("importedEntity.domicile", domicile)); //
 
-        return (List<ImportedInstitution>) appendMappedEntityRestriction(institution, "importedEntity", criteria) //
+        return (List<ImportedInstitution>) appendMappedEntityRestriction(institution, criteria) //
                 .addOrder(Order.asc("importedEntity.name")) //
                 .list();
     }
@@ -152,7 +152,7 @@ public class ImportedEntityDAO {
                 .createAlias("importedEntity", "importedEntity", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("importedEntity.institution", importedInstitution));
 
-        return (List<ImportedProgram>) appendMappedEntityRestriction(institution, "importedEntity", criteria)
+        return (List<ImportedProgram>) appendMappedEntityRestriction(institution, criteria)
                 .addOrder(Order.asc("importedEntity.name"))
                 .list();
     }
@@ -499,9 +499,8 @@ public class ImportedEntityDAO {
                 .setProjection(Projections.groupProperty("importedEntity"));
     }
 
-    private Criteria appendMappedEntityRestriction(Institution institution, String entityReference, Criteria criteria) {
+    private Criteria appendMappedEntityRestriction(Institution institution, Criteria criteria) {
         return criteria.add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.isNotNull("code")) //
                 .add(Restrictions.eq("enabled", true)); //
     }
 

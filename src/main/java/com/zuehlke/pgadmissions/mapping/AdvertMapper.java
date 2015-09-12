@@ -10,9 +10,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
+import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +43,14 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
@@ -180,11 +184,24 @@ public class AdvertMapper {
 
         Department department = resource.getDepartment();
         if (!(department == null || department.sameAs(resource))) {
-            representation.setDepartment(resourceMapper.getResourceRepresentationSimple(resource));
+            representation.setDepartment(resourceMapper.getResourceRepresentationSimple(department));
+        }
+
+        Program program = resource.getProgram();
+        if (!(program == null || program.sameAs(resource))) {
+            representation.setProgram(resourceMapper.getResourceRepresentationSimple(program));
         }
 
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             representation.setOpportunityType(valueOf(((ResourceOpportunity) resource).getOpportunityType().getName()));
+
+            String opportunityCategories = resource.getOpportunityCategories();
+            if (opportunityCategories != null) {
+                representation
+                        .setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(oc -> PrismOpportunityCategory.valueOf(oc)).collect(Collectors.toList()));
+            }
+
+            representation.setStudyOptions(resourceMapper.getResourceStudyOptionRepresentations((ResourceOpportunity) resource));
         }
 
         representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));

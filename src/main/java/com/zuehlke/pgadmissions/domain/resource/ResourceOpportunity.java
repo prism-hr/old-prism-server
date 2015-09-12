@@ -53,7 +53,9 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("institution", getInstitution()).addProperty("opportunityType", getOpportunityType());
+        return super.getEntitySignature()
+                .addProperty("institution", getInstitution())
+                .addProperty("opportunityType", getOpportunityType());
     }
 
 }

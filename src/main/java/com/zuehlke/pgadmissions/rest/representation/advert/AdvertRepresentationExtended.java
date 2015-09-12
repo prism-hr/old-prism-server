@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
@@ -25,6 +26,8 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     private List<AdvertCompetenceRepresentation> competences;
 
     private PrismOpportunityType opportunityType;
+    
+    private List<PrismOpportunityCategory> opportunityCategories;
 
     private List<PrismStudyOption> studyOptions;
 
@@ -92,6 +95,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public List<PrismOpportunityCategory> getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     public List<PrismStudyOption> getStudyOptions() {

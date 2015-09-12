@@ -848,10 +848,12 @@ public class Application extends Resource {
 
     @Override
     public EntitySignature getEntitySignature() {
-        Resource parentResource = getParentResource();
         return new EntitySignature()
                 .addProperty("user", user)
-                .addProperty(parentResource.getResourceScope().getLowerCamelName(), parentResource)
+                .addProperty("project", project)
+                .addProperty("program", program)
+                .addProperty("department", department)
+                .addProperty("institution", institution)
                 .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED)
                 .addExclusion("state.id", APPLICATION_APPROVED_PENDING_EXPORT)
                 .addExclusion("state.id", APPLICATION_APPROVED_PENDING_CORRECTION)

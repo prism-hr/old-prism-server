@@ -407,9 +407,12 @@ public class AdvertService {
             PrismPartnershipState partnershipTransitionState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
 
             User user = comment.getUser();
+            Advert advert = resource.getAdvert();
+            PrismScope resourceScope = resource.getResourceScope();
+            
             Set<Integer> advertTargets = Sets.newHashSet();
             for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
-                advertTargets.addAll(advertDAO.getAdvertTargetsUserCanEndorseFor(resource.getAdvert(), user, resource.getResourceScope(), partnerScope));
+                advertTargets.addAll(advertDAO.getAdvertTargetsUserCanEndorseFor(advert, user, resourceScope, partnerScope));
             }
 
             advertDAO.endorseForAdvertTargets(advertTargets, partnershipTransitionState);

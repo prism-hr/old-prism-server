@@ -110,7 +110,7 @@ public class AdvertMapper {
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<EntityOpportunityCategoryDTO> adverts = advertService.getVisibleAdverts(query, queryScopes);
-        processRowDescriptors(adverts, advertIds, summaries);
+        processRowDescriptors(adverts, advertIds, null, summaries);
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();

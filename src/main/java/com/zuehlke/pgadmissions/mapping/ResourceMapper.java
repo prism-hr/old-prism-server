@@ -55,6 +55,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
@@ -629,6 +630,10 @@ public class ResourceMapper {
                 .collect(Collectors.toList());
     }
 
+    public List<PrismStudyOption> getResourceStudyOptionRepresentations(ResourceOpportunity resource) {
+        return resourceService.getStudyOptions(resource).stream().map(studyOption -> PrismStudyOption.valueOf(studyOption.getName())).collect(Collectors.toList());
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
@@ -730,7 +735,7 @@ public class ResourceMapper {
     }
 
     private <T extends Resource> void validateViewEditAction(T resource) {
-        if(!actionService.checkActionAvailable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false)){
+        if (!actionService.checkActionAvailable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false)) {
             throw new PrismForbiddenException("No view/edit role for given resource");
         }
     }

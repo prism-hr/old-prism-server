@@ -674,8 +674,12 @@ public class Project extends ResourceOpportunity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("program", program).addExclusion("state.id", PROJECT_DISABLED_COMPLETED)
-                .addExclusion("state.id", PROJECT_REJECTED).addExclusion("state.id", PROJECT_WITHDRAWN);
+        return super.getEntitySignature()
+                .addProperty("program", getProgram())
+                .addProperty("department", getDepartment())
+                .addExclusion("state.id", PROJECT_DISABLED_COMPLETED)
+                .addExclusion("state.id", PROJECT_REJECTED)
+                .addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 
 }

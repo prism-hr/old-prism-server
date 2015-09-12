@@ -56,7 +56,10 @@ public class Resume extends Application {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("user", getUser()).addProperty("opportunityCategories", getOpportunityCategories()).addExclusion("state.id", RESUME_RETIRED);
+        return new EntitySignature()
+                .addProperty("user", getUser())
+                .addProperty("opportunityCategories", getOpportunityCategories())
+                .addExclusion("state.id", RESUME_RETIRED);
     }
 
 }

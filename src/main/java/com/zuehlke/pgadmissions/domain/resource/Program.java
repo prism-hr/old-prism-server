@@ -688,7 +688,9 @@ public class Program extends ResourceOpportunity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addExclusion("state.id", PROGRAM_REJECTED).addExclusion("state.id", PROGRAM_WITHDRAWN)
+        return super.getEntitySignature()
+                .addExclusion("state.id", PROGRAM_REJECTED)
+                .addExclusion("state.id", PROGRAM_WITHDRAWN)
                 .addExclusion("state.id", PROGRAM_DISABLED_COMPLETED);
     }
 

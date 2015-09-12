@@ -140,6 +140,7 @@ public class ActionDAO {
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState") //
+                        .add(Projections.min("stateActionAssignment.externalMode"), "onlyAsPartner") //
                         .add(Projections.property("action.declinableAction"), "declinable")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //

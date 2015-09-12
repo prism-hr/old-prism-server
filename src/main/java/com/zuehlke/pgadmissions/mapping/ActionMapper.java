@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.mapping;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
 import java.util.List;
@@ -54,16 +55,20 @@ public class ActionMapper {
 
     public List<ActionRepresentationExtended> getActionRepresentations(Resource resource, User user) {
         PrismScope scope = resource.getResourceScope();
-
         Set<ActionRepresentationExtended> representations = Sets.newLinkedHashSet();
+
+        boolean onlyAsPartner = true;
         List<ActionDTO> actions = actionService.getPermittedActions(resource, user);
         for (ActionDTO action : actions) {
+            onlyAsPartner = !onlyAsPartner ? false : isTrue(action.getOnlyAsPartner());
             representations.add(getActionRepresentationExtended(resource, action, user));
         }
 
-        List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()), APPLICATION);
-        for (ActionDTO publicAction : publicActions) {
-            representations.add(getActionRepresentationExtended(resource, publicAction, user));
+        if (!onlyAsPartner) {
+            List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()), APPLICATION);
+            for (ActionDTO publicAction : publicActions) {
+                representations.add(getActionRepresentationExtended(resource, publicAction, user));
+            }
         }
 
         return Lists.newLinkedList(representations);

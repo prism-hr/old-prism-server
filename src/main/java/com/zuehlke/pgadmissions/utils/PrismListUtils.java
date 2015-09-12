@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.utils;
 
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,18 +10,29 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.rest.representation.ListSummaryRepresentation;
 
 public class PrismListUtils {
 
     public static <T extends EntityOpportunityCategoryDTO> void processRowSummaries(Set<T> entities, Map<String, Integer> summaries) {
-        processRowDescriptors(entities, null, summaries);
+        processRowDescriptors(entities, null, null, summaries);
     }
 
-    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Map<String, Integer> summaries) {
+    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Set<Integer> onlyAsPartnerEntityIds,
+            Map<String, Integer> summaries) {
+        boolean processOnlyAsPartner = false;
         entityIds = entityIds == null ? Sets.newHashSet() : entityIds;
+        onlyAsPartnerEntityIds = onlyAsPartnerEntityIds == null ? Sets.newHashSet() : onlyAsPartnerEntityIds;
         for (T entity : entities) {
-            entityIds.add(entity.getId());
+            Integer entityId = entity.getId();
+            entityIds.add(entityId);
+            
+            processOnlyAsPartner = !processOnlyAsPartner ? entity.getClass().equals(ResourceOpportunityCategoryDTO.class) : processOnlyAsPartner;
+            if (processOnlyAsPartner && isTrue(((ResourceOpportunityCategoryDTO) entity).getOnlyAsPartner())) {
+                onlyAsPartnerEntityIds.add(entityId);
+            }
+            
             String opportunityCategories = entity.getOpportunityCategories();
             if (opportunityCategories != null) {
                 for (String opportunityCategory : entity.getOpportunityCategories().split("\\|")) {

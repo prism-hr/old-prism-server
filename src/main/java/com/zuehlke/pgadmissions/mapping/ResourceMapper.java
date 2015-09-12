@@ -204,11 +204,12 @@ public class ResourceMapper {
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
         Set<Integer> resourceIds = Sets.newHashSet();
+        Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
-        processRowDescriptors(resources, resourceIds, summaries);
+        processRowDescriptors(resources, resourceIds, onlyAsPartnerResourceIds, summaries);
 
-        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds).forEach(row -> {
+        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds, onlyAsPartnerResourceIds).forEach(row -> {
             ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
             representation.setScope(scope);
             representation.setId(row.getResourceId());

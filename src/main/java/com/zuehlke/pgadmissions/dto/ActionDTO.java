@@ -10,6 +10,8 @@ public class ActionDTO implements Comparable<ActionDTO> {
     private PrismAction actionId;
 
     private Boolean raisesUrgentFlag;
+    
+    private Boolean onlyAsPartner;
 
     private Boolean primaryState;
     
@@ -37,6 +39,14 @@ public class ActionDTO implements Comparable<ActionDTO> {
 
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+
+    public Boolean getOnlyAsPartner() {
+        return onlyAsPartner;
+    }
+
+    public void setOnlyAsPartner(Boolean onlyAsPartner) {
+        this.onlyAsPartner = onlyAsPartner;
     }
 
     public Boolean getPrimaryState() {

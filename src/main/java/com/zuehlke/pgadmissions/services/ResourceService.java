@@ -173,7 +173,7 @@ public class ResourceService {
         DateTime baseline = new DateTime();
         if (comment.isCreateComment()) {
             resource.setCreatedTimestamp(baseline);
-            setResourceUpdated(resource, baseline);
+            resource.setUpdatedTimestamp(baseline);
 
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
                 resource.getAdvert().setResource(resource);
@@ -183,6 +183,8 @@ public class ResourceService {
             entityService.save(resource);
             entityService.flush();
 
+            resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
+            
             Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
             if (workflowPropertyConfigurationVersion == null) {
                 workflowPropertyConfigurationVersion = customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
@@ -197,7 +199,8 @@ public class ResourceService {
             resource.setCode(generateResourceCode(resource));
             entityService.flush();
         } else if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
-            setResourceUpdated(resource, baseline);
+            resource.setUpdatedTimestamp(baseline);
+            resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
             entityService.flush();
         }
     }
@@ -946,11 +949,6 @@ public class ResourceService {
                 persistentResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
             }
         }
-    }
-
-    private <T extends Resource> void setResourceUpdated(T resource, DateTime baseline) {
-        resource.setUpdatedTimestamp(baseline);
-        resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
     }
 
     private void addResourceTargets(ResourceTargetListDTO targets, List<ResourceTargetDTO> newTargets, List<Integer> targetResources) {

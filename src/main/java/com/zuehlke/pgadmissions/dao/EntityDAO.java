@@ -102,7 +102,7 @@ public class EntityDAO {
     public void flush() {
         sessionFactory.getCurrentSession().flush();
     }
-
+    
     public void clear() {
         sessionFactory.getCurrentSession().clear();
     }

@@ -3,6 +3,13 @@ package com.zuehlke.pgadmissions.dao;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.EMPLOYERS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.UNIVERSITIES;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.LEARNING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
@@ -47,6 +54,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -198,6 +206,7 @@ public class AdvertDAO {
 
         criteria.add(Restrictions.in("state.id", activeStates));
 
+        appendContextConstraint(criteria, query);
         appendLocationConstraint(criteria, query);
         appendKeywordConstraint(query, criteria);
 
@@ -619,6 +628,20 @@ public class AdvertDAO {
         List<PrismAdvertFunction> functions = queryDTO.getFunctions();
         if (CollectionUtils.isNotEmpty(functions)) {
             criteria.add(Restrictions.in("function", functions));
+        }
+    }
+    
+    private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+        PrismAdvertContext context = queryDTO.getContext();
+        if (context.equals(EMPLOYERS)) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.like("advert.opportunityCategories", EXPERIENCE.name(), MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("advert.opportunityCategories", WORK.name(), MatchMode.ANYWHERE)));
+        } else if (context.equals(UNIVERSITIES)) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.like("advert.opportunityCategories", STUDY.name(), MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("advert.opportunityCategories", FUNDING.name(), MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("advert.opportunityCategories", LEARNING.name(), MatchMode.ANYWHERE)));
         }
     }
 

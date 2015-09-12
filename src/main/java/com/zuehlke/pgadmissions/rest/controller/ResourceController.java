@@ -92,6 +92,14 @@ public class ResourceController {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceMapper.getResourceRepresentationSimple(resource);
     }
+    
+    @Transactional
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=activity")
+    @PreAuthorize("permitAll")
+    public ResourceRepresentationActivity getResourceActivity(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationActivity(resource);
+    }
 
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=location")

@@ -31,7 +31,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
@@ -82,7 +82,7 @@ public class AuthenticationService {
     @Inject
     private EntityService entityService;
 
-    public String requestToken(HttpSession session, OauthProvider oauthProvider) {
+    public String requestToken(HttpSession session, PrismOauthProvider oauthProvider) {
         switch (oauthProvider) {
             case TWITTER:
                 TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
@@ -95,7 +95,7 @@ public class AuthenticationService {
         }
     }
 
-    public User getOrCreateUserAccountExternal(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
+    public User getOrCreateUserAccountExternal(PrismOauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();
         OauthUserDefinition oauthUserDefinition = getOauthUserDefinition(oauthProvider, oauthLoginDTO, session);
 
@@ -144,7 +144,7 @@ public class AuthenticationService {
         return user;
     }
 
-    public UserAccountExternal unlinkExternalAccount(OauthProvider oauthProvider) {
+    public UserAccountExternal unlinkExternalAccount(PrismOauthProvider oauthProvider) {
         User currentUser = userService.getCurrentUser();
         UserAccount userAccount = currentUser.getUserAccount();
         Set<UserAccountExternal> externalAccounts = userAccount.getExternalAccounts();
@@ -169,7 +169,7 @@ public class AuthenticationService {
         return userAccount.getPrimaryExternalAccount();
     }
 
-    private OauthUserDefinition getOauthUserDefinition(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
+    private OauthUserDefinition getOauthUserDefinition(PrismOauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthUserDefinition definition;
         switch (oauthProvider) {
             case FACEBOOK:
@@ -245,7 +245,7 @@ public class AuthenticationService {
                 .withAccountImageUrl(profile.getProfileImageUrl());
     }
 
-    private User oauthAssociateUser(User user, OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
+    private User oauthAssociateUser(User user, PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
         Preconditions.checkNotNull(user);
         User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
 
@@ -259,7 +259,7 @@ public class AuthenticationService {
         return oauthUser;
     }
 
-    private User oauthAssociateNewUser(OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition, HttpSession session) {
+    private User oauthAssociateNewUser(PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition, HttpSession session) {
         User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
         if (oauthUser == null) {
             oauthUser = userService.getUserByEmail(oauthUserDefinition.getEmail());
@@ -272,7 +272,7 @@ public class AuthenticationService {
         return oauthUser;
     }
 
-    private User oauthAuthenticate(OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
+    private User oauthAuthenticate(PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
         User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
         if (oauthUser == null) {
             throw new AccessDeniedException("Account is not associated with any user.");

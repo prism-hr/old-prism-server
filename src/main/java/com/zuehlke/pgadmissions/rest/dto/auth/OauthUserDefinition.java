@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto.auth;
 
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 
 public class OauthUserDefinition {
 
-    private OauthProvider oauthProvider;
+    private PrismOauthProvider oauthProvider;
 
     private String externalId;
 
@@ -18,7 +18,7 @@ public class OauthUserDefinition {
 
     private String accountImageUrl;
 
-    public OauthProvider getOauthProvider() {
+    public PrismOauthProvider getOauthProvider() {
         return oauthProvider;
     }
 
@@ -46,7 +46,7 @@ public class OauthUserDefinition {
         return accountImageUrl;
     }
 
-    public OauthUserDefinition withOauthProvider(final OauthProvider oauthProvider) {
+    public OauthUserDefinition withOauthProvider(final PrismOauthProvider oauthProvider) {
         this.oauthProvider = oauthProvider;
         return this;
     }

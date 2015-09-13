@@ -4,17 +4,17 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-public enum OauthProvider {
+public enum PrismOauthProvider {
 
     FACEBOOK("facebook", false), //
     LINKEDIN("linkedin", true), //
     GOOGLE("google", false), //
     TWITTER("twitter", false);
 
-    private static Map<String, OauthProvider> byNameMap = Maps.newHashMap();
+    private static Map<String, PrismOauthProvider> byNameMap = Maps.newHashMap();
 
     static {
-        for (OauthProvider provider : values()) {
+        for (PrismOauthProvider provider : values()) {
             byNameMap.put(provider.getName(), provider);
         }
 
@@ -24,7 +24,7 @@ public enum OauthProvider {
     
     private boolean publishAssociation;
 
-    private OauthProvider(String name, boolean publishAssociation) {
+    private PrismOauthProvider(String name, boolean publishAssociation) {
         this.name = name;
         this.publishAssociation = publishAssociation;
     }
@@ -37,7 +37,7 @@ public enum OauthProvider {
         return publishAssociation;
     }
 
-    public static OauthProvider getByName(String name) {
+    public static PrismOauthProvider getByName(String name) {
         return byNameMap.get(name);
     }
     

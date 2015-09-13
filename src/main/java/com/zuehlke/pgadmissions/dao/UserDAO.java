@@ -37,7 +37,7 @@ import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -239,7 +239,7 @@ public class UserDAO {
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN))
+                        Restrictions.eq("externalAccount.accountType", PrismOauthProvider.LINKEDIN))
                 .add(Restrictions.eqProperty("id", "parentUser.id")) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(Restrictions.disjunction() //
@@ -273,7 +273,7 @@ public class UserDAO {
                 .executeUpdate();
     }
 
-    public User getByExternalAccountId(OauthProvider oauthProvider, String externalId) {
+    public User getByExternalAccountId(PrismOauthProvider oauthProvider, String externalId) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.INNER_JOIN) //

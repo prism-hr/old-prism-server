@@ -19,7 +19,7 @@ create table imported_entity (
 	imported_entity_type varchar(50) not null,
 	name varchar(255) not null,
 	primary key (id),
-	unique index (imported_entity_type, name))
+	unique index (imported_entity_type, name))EN
 collate = utf8_general_ci
 engine = innodb
 ;

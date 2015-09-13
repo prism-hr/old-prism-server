@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 
 @Entity
 @Table(name = "user_account_external", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "external_account_type" }) })
@@ -29,7 +29,7 @@ public class UserAccountExternal implements UniqueEntity {
 
     @Column(name = "external_account_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private OauthProvider accountType;
+    private PrismOauthProvider accountType;
 
     @Column(name = "external_account_identifier", nullable = false)
     private String accountIdentifier;
@@ -58,11 +58,11 @@ public class UserAccountExternal implements UniqueEntity {
         this.userAccount = userAccount;
     }
 
-    public OauthProvider getAccountType() {
+    public PrismOauthProvider getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(OauthProvider accountType) {
+    public void setAccountType(PrismOauthProvider accountType) {
         this.accountType = accountType;
     }
 
@@ -95,7 +95,7 @@ public class UserAccountExternal implements UniqueEntity {
         return this;
     }
 
-    public UserAccountExternal withAccountType(final OauthProvider accountType) {
+    public UserAccountExternal withAccountType(final PrismOauthProvider accountType) {
         this.accountType = accountType;
         return this;
     }

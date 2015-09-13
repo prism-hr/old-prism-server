@@ -54,7 +54,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -301,7 +301,7 @@ public class UserService {
         return userDAO.getUserByActivationCode(activationCode);
     }
 
-    public User getByExternalAccountId(OauthProvider oauthProvider, String externalId) {
+    public User getByExternalAccountId(PrismOauthProvider oauthProvider, String externalId) {
         return userDAO.getByExternalAccountId(oauthProvider, externalId);
     }
 

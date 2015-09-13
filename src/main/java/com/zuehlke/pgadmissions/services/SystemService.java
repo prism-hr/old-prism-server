@@ -199,7 +199,7 @@ public class SystemService {
     public void initializeWorkflow() throws Exception {
         logger.info("Initializing scope definitions");
         verifyDefinition(Scope.class);
-        initializeScopeDefinitions();
+        initializeScopes();
 
         logger.info("Initializing role definitions");
         verifyDefinition(Role.class);
@@ -317,9 +317,10 @@ public class SystemService {
         return propertyLoader;
     }
 
-    private void initializeScopeDefinitions() throws DeduplicationException {
+    private void initializeScopes() throws DeduplicationException {
         for (PrismScope prismScope : PrismScope.values()) {
-            entityService.createOrUpdate(new Scope().withId(prismScope).withShortCode(prismScope.getShortCode()).withOrdinal(prismScope.ordinal()));
+            entityService.createOrUpdate(
+                    new Scope().withId(prismScope).withScopeCategory(prismScope.getScopeCategory()).withShortCode(prismScope.getShortCode()).withOrdinal(prismScope.ordinal()));
         }
     }
 

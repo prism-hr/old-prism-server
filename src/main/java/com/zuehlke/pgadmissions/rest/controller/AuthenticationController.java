@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
@@ -76,7 +76,7 @@ public class AuthenticationController {
     @RequestMapping(value = "/oauth/{provider}", method = RequestMethod.POST)
     public Map<String, Object> oauthLogin(@PathVariable String provider, @Valid @RequestBody OauthLoginDTO oauthLoginDTO, HttpServletRequest request,
             HttpServletResponse response) {
-        OauthProvider oauthProvider = OauthProvider.getByName(provider);
+        PrismOauthProvider oauthProvider = PrismOauthProvider.getByName(provider);
         User user = authenticationService.getOrCreateUserAccountExternal(oauthProvider, oauthLoginDTO, request.getSession());
         return generateTokenOrSuggestedDetails(user, request, response);
     }
@@ -89,7 +89,7 @@ public class AuthenticationController {
             @RequestParam(value = "oauth_verifier", required = false) String oAuthVerifier, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         if (oAuthToken == null) {
-            String authorizeUrl = authenticationService.requestToken(request.getSession(), OauthProvider.TWITTER);
+            String authorizeUrl = authenticationService.requestToken(request.getSession(), PrismOauthProvider.TWITTER);
             response.sendRedirect(authorizeUrl);
             return null;
         } else {
@@ -99,7 +99,7 @@ public class AuthenticationController {
             oauthLoginDTO.setOauthVerifier(oAuthVerifier);
             oauthLoginDTO.setActivationCode(activationCode);
 
-            User user = authenticationService.getOrCreateUserAccountExternal(OauthProvider.TWITTER, oauthLoginDTO, request.getSession());
+            User user = authenticationService.getOrCreateUserAccountExternal(PrismOauthProvider.TWITTER, oauthLoginDTO, request.getSession());
             return generateTokenOrSuggestedDetails(user, request, response);
         }
     }
@@ -107,7 +107,7 @@ public class AuthenticationController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/oauth/{provider}", method = RequestMethod.DELETE)
     public Map<String, String> unlinkExternalAccount(@PathVariable String provider) {
-        OauthProvider oauthProvider = OauthProvider.getByName(provider);
+        PrismOauthProvider oauthProvider = PrismOauthProvider.getByName(provider);
         UserAccountExternal newPrimaryExternalAccount = authenticationService.unlinkExternalAccount(oauthProvider);
         return Collections.singletonMap("primaryExternalAccount", newPrimaryExternalAccount != null ? newPrimaryExternalAccount.getAccountType().getName()
                 : null);

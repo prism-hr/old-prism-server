@@ -1,54 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.address.AddressApplication;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -68,25 +26,25 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDemographicDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import org.apache.commons.lang3.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 @Service
 @Transactional
@@ -116,7 +74,7 @@ public class ApplicationSectionService {
     @Autowired
     private DocumentService documentService;
 
-    public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws Exception {
+    public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
@@ -155,7 +113,7 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }
 
-    public void updateStudyDetail(Integer applicationId, ApplicationStudyDetailDTO studyDetailDTO) throws Exception {
+    public void updateStudyDetail(Integer applicationId, ApplicationStudyDetailDTO studyDetailDTO) {
         Application application = applicationService.getById(applicationId);
         application.setStudyDetail(new ApplicationStudyDetail().withStudyLocation(studyDetailDTO.getStudyLocation())
                 .withStudyDivision(studyDetailDTO.getStudyDivision()).withStudyArea(studyDetailDTO.getStudyArea())
@@ -163,7 +121,7 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_STUDY_DETAIL);
     }
 
-    public ApplicationSupervisor updateSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO) throws Exception {
+    public ApplicationSupervisor updateSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationSupervisor supervisor;
@@ -188,7 +146,7 @@ public class ApplicationSectionService {
         return supervisor;
     }
 
-    public void deleteSupervisor(Integer applicationId, Integer supervisorId) throws Exception {
+    public void deleteSupervisor(Integer applicationId, Integer supervisorId) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class,
@@ -198,7 +156,7 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR);
     }
 
-    public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws Exception {
+    public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
@@ -258,7 +216,7 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
 
-    public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws Exception {
+    public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationAddress address = application.getAddress();
@@ -288,8 +246,7 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
 
-    public ApplicationQualification updateQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO)
-            throws Exception {
+    public ApplicationQualification updateQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationQualification qualification;
@@ -334,7 +291,7 @@ public class ApplicationSectionService {
         return qualification;
     }
 
-    public void deleteQualification(Integer applicationId, Integer qualificationId) throws Exception {
+    public void deleteQualification(Integer applicationId, Integer qualificationId) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
@@ -352,8 +309,8 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
 
-    public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-            ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
+    public ApplicationEmploymentPosition updateEmploymentPosition(
+            Integer applicationId, Integer employmentPositionId, ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -389,7 +346,7 @@ public class ApplicationSectionService {
         return employmentPosition;
     }
 
-    public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) throws Exception {
+    public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
                 ImmutableMap.of("application", application, "id", employmentPositionId));
@@ -397,7 +354,7 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
-    public ApplicationFunding updateFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws Exception {
+    public ApplicationFunding updateFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationFunding funding;
@@ -431,14 +388,14 @@ public class ApplicationSectionService {
         return funding;
     }
 
-    public void deleteFunding(Integer applicationId, Integer fundingId) throws Exception {
+    public void deleteFunding(Integer applicationId, Integer fundingId) {
         Application application = applicationService.getById(applicationId);
         ApplicationFunding funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         application.getFundings().remove(funding);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
     }
 
-    public ApplicationPrize updatePrize(Integer applicationId, Integer prizeId, ApplicationPrizeDTO prizeDTO) throws Exception {
+    public ApplicationPrize updatePrize(Integer applicationId, Integer prizeId, ApplicationPrizeDTO prizeDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationPrize prize;
@@ -462,14 +419,14 @@ public class ApplicationSectionService {
         return prize;
     }
 
-    public void deletePrize(Integer applicationId, Integer prizeId) throws Exception {
+    public void deletePrize(Integer applicationId, Integer prizeId) {
         Application application = applicationService.getById(applicationId);
         ApplicationPrize prize = entityService.getByProperties(ApplicationPrize.class, ImmutableMap.of("application", application, "id", prizeId));
         application.getPrizes().remove(prize);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
     }
 
-    public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws Exception {
+    public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationReferee referee;
@@ -511,14 +468,14 @@ public class ApplicationSectionService {
         return referee;
     }
 
-    public void deleteReferee(Integer applicationId, Integer refereeId) throws Exception {
+    public void deleteReferee(Integer applicationId, Integer refereeId) {
         Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         application.getReferees().remove(referee);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
 
-    public void updateDocument(Integer applicationId, ApplicationDocumentDTO documentDTO) throws Exception {
+    public void updateDocument(Integer applicationId, ApplicationDocumentDTO documentDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationDocument document = application.getDocument();
@@ -544,7 +501,7 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
-    public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws Exception {
+    public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
@@ -628,7 +585,7 @@ public class ApplicationSectionService {
         to.setAddressCode(Strings.emptyToNull(from.getAddressCode()));
     }
 
-    private void executeUpdate(Application application, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
+    private void executeUpdate(Application application, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
         User userCurrent = userService.getCurrentUser();
         List<PrismActionEnhancement> userEnhancements = actionService.getPermittedActionEnhancements(application, userCurrent);
         List<PrismActionEnhancement> permittedEnhancements = Lists.newArrayList(APPLICATION_VIEW_EDIT_AS_CREATOR, APPLICATION_VIEW_EDIT_AS_APPROVER);

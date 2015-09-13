@@ -1,31 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.Collections;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -38,6 +12,25 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentation;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.AuthenticationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -68,7 +61,7 @@ public class AuthenticationController {
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public void submitRegistration(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO, HttpServletRequest request) throws Exception {
+    public void submitRegistration(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO, HttpServletRequest request) {
         authenticationService.registerUser(userRegistrationDTO, request.getSession());
     }
 

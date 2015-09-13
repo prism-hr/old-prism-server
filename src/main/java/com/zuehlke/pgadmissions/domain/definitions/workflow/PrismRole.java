@@ -1,22 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static java.util.Arrays.asList;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static java.util.Arrays.asList;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
@@ -67,25 +58,17 @@ public enum PrismRole implements PrismLocalizableDefinition {
         this.scope = scope;
     }
 
-    public PrismRoleCategory getRoleCategory() {
-        return roleCategory;
-    }
-
-    public PrismScope getScope() {
-        return scope;
-    }
-
     public static PrismRole getAdministratorRole(Resource resource) {
         return valueOf(resource.getResourceScope().name() + "_ADMINISTRATOR");
     }
-    
+
     public static PrismRole getViewerRole(Resource resource) {
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             return valueOf(resource.getResourceScope().name() + "_VIEWER");
         }
         return null;
     }
-    
+
     public static PrismRole getUnverifiedViewerRole(Resource resource) {
         return getUnverifiedViewerRole(resource.getResourceScope());
     }
@@ -97,6 +80,14 @@ public enum PrismRole implements PrismLocalizableDefinition {
         return null;
     }
 
+    public PrismRoleCategory getRoleCategory() {
+        return roleCategory;
+    }
+
+    public PrismScope getScope() {
+        return scope;
+    }
+
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ROLE_" + name());
@@ -104,10 +95,10 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     public enum PrismRoleCategory {
 
-        ADMINISTRATOR, //
-        RECRUITER, //
-        APPLICANT, //
-        REFEREE;
+        ADMINISTRATOR,
+        RECRUITER,
+        APPLICANT,
+        REFEREE
 
     }
 

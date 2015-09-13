@@ -1,44 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static com.zuehlke.pgadmissions.PrismConstants.MAX_BATCH_INSERT_SIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_QUALIFICATION_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareBooleanForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
-import static java.util.Arrays.asList;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedInstitutionMapping;
 import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedProgramMapping;
@@ -47,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.ImportedInstitutionSubjectAreaDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
@@ -57,8 +23,25 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.representation.SubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
-
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.google.common.collect.Sets.newHashSet;
+import static com.zuehlke.pgadmissions.PrismConstants.MAX_BATCH_INSERT_SIZE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_QUALIFICATION_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
+import static com.zuehlke.pgadmissions.utils.PrismStringUtils.cleanStringToLowerCase;
+import static java.util.Arrays.asList;
 
 @Service
 @Transactional
@@ -196,7 +179,7 @@ public class ImportedEntityService {
         return getFilteredImportedEntityMappings(mappings);
     }
 
-    public ImportedProgram getOrCreateImportedProgram(Institution institution, ImportedProgramDTO importedProgramDTO) throws Exception {
+    public ImportedProgram getOrCreateImportedProgram(Institution institution, ImportedProgramDTO importedProgramDTO) {
         ImportedProgram importedProgram = null;
 
         Integer importedProgramId = importedProgramDTO.getId();
@@ -283,8 +266,7 @@ public class ImportedEntityService {
 
     // public Integer mergeImportedProgram(Integer institutionId,
     // Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline,
-    // DateTime baselineTime)
-    // throws Exception {
+    // DateTime baselineTime) {
     // Institution institution = institutionService.getById(institutionId);
     // Programme programDefinition =
     // programInstanceDefinitions.iterator().next().getProgramme();
@@ -435,7 +417,7 @@ public class ImportedEntityService {
     }
 
     // private Program mergeProgram(Institution institution, Programme
-    // programDefinition, LocalDate baseline) throws DeduplicationException {
+    // programDefinition, LocalDate baseline) {
     // User proxyCreator = institution.getUser();
     // String transientTitle =
     // prepareStringForInsert(programDefinition.getName());
@@ -478,7 +460,7 @@ public class ImportedEntityService {
     // }
     // }
 
-    private ResourceStudyOption mergeProgramStudyOption(ResourceStudyOption transientProgramStudyOption, LocalDate baseline) throws DeduplicationException {
+    private ResourceStudyOption mergeProgramStudyOption(ResourceStudyOption transientProgramStudyOption, LocalDate baseline) {
         ResourceStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
@@ -502,7 +484,7 @@ public class ImportedEntityService {
 
     // // TODO: store study option mapping
     // private ImportedStudyOption mergeStudyOption(Institution institution,
-    // ModeOfAttendance modeOfAttendance) throws DeduplicationException {
+    // ModeOfAttendance modeOfAttendance) {
     // String externalCode = modeOfAttendance.getCode();
     // PrismStudyOption prismStudyOption =
     // PrismStudyOption.findValueFromString(externalCode);
@@ -566,7 +548,7 @@ public class ImportedEntityService {
 
     // TODO generalize for API creation
     // private void executeProgramImportAction(Program program, DateTime
-    // baselineTime) throws Exception {
+    // baselineTime) {
     // Comment lastImportComment = commentService.getLatestComment(program,
     // INSTITUTION_CREATE_PROGRAM, INSTITUTION_IMPORT_PROGRAM);
     // PrismAction actionId = lastImportComment == null ?

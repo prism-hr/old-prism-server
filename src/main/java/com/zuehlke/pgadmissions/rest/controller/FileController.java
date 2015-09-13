@@ -1,24 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -32,6 +13,19 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.EntityService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 
 @RestController
 @RequestMapping("/api")
@@ -48,7 +42,7 @@ public class FileController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents", method = RequestMethod.POST)
-    public Map<String, Object> uploadDocument(@RequestParam(value = "file-data") Part uploadStream) throws Exception {
+    public Map<String, Object> uploadDocument(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
         Document document = documentService.createDocument(uploadStream);
         return ImmutableMap.of("id", (Object) document.getId());
     }
@@ -65,14 +59,14 @@ public class FileController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents/blank", method = RequestMethod.GET)
-    public void downloadFile(HttpServletResponse response) throws Exception {
+    public void downloadFile(HttpServletResponse response) throws IOException {
         byte[] content = documentService.getSystemDocument("document/blank_qualification_explanation.pdf");
         sendFileToClient(response, new Document().withContent(content).withContentType("application/pdf").withFileName("explanation.pdf").withExported(false));
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents/{fileId}", method = RequestMethod.GET)
-    public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws Exception {
+    public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
         Document file = documentService.getById(documentId, DOCUMENT);
         if (file == null) {
             throw new ResourceNotFoundException("No document found");
@@ -83,7 +77,7 @@ public class FileController {
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET)
-    public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws Exception {
+    public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws IOException {
         Document file = documentService.getById(fileId, IMAGE);
         if (file == null) {
             throw new ResourceNotFoundException("No image found");
@@ -91,7 +85,7 @@ public class FileController {
         sendFileToClient(response, file);
     }
 
-    private void sendFileToClient(HttpServletResponse response, Document document) throws Exception {
+    private void sendFileToClient(HttpServletResponse response, Document document) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());

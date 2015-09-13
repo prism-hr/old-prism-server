@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.APPLICATION_DATA;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.APPLICATION_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.RESUME_WORKFLOW;
 
 public enum PrismWorkflowPropertyDefinition {
 
-    RESUME_ASSIGN_REVIEWER(RESUME_WORKFLOW, 1, 3, null, null, 1, 3, RESUME), //
-    
 	APPLICATION_STUDY_DETAIL(APPLICATION_DATA, null, null, false, null, null, null, APPLICATION), //
 	APPLICATION_THEME_PRIMARY(APPLICATION_DATA, 0, 10, null, null, 0, 0, APPLICATION), //
 	APPLICATION_THEME_SECONDARY(APPLICATION_DATA, 0, 10, null, null, 0, 0, APPLICATION), //

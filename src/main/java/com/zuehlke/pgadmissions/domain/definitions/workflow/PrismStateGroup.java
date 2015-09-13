@@ -5,17 +5,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
 public enum PrismStateGroup implements PrismLocalizableDefinition {
-
-    RESUME_INCOMPLETE(RESUME), //
-    RESUME_COMPLETE(RESUME), //
-    RESUME_RETIRED(RESUME), //
 
     APPLICATION_UNSUBMITTED(APPLICATION), //
     APPLICATION_IDENTIFICATION(APPLICATION), //

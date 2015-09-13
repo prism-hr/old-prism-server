@@ -28,7 +28,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Arrays;
@@ -39,13 +38,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
 public enum PrismAction implements PrismLocalizableDefinition {
-
-    RESUME_COMPLETE(getDefaultViewEditResourceActionDefinition(RESUME)), //
-    RESUME_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(RESUME)), //
-    RESUME_ASSIGN_REVIEWERS(getDefaultProcessResourceActionDefinitionVisible(RESUME)), //
-    RESUME_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(RESUME)), //
-    RESUME_PROVIDE_REVIEW(getDefaultReviewResourceActionDefinition(RESUME)), //
-    RESUME_RETIRE(getDefaultProcessResourceActionDefinitionVisible(RESUME)), //
 
     APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_ASSIGN_REVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
@@ -154,7 +146,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     SYSTEM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(SYSTEM)), //
     SYSTEM_CREATE_INSTITUTION(getDefaultCreateResourceActionDefinition(SYSTEM)), //
-    SYSTEM_CREATE_RESUME(getDefaultCreateResourceActionDefinition(SYSTEM)), //
     SYSTEM_IMPORT_INSTITUTION(getDefaultImportResourceActionDefinition(SYSTEM)), //
     SYSTEM_STARTUP(getDefaultResourceActionDefinitionVisible(INITIALISE_RESOURCE, SYSTEM)), //
     SYSTEM_MANAGE_ACCOUNT(getDefaultResourceActionDefinition(MANAGE_ACCOUNT, SYSTEM)), //
@@ -162,8 +153,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     SYSTEM_VIEW_DEPARTMENT_LIST(getDefaultSystemViewResourceListActionDefinition()), //
     SYSTEM_VIEW_PROGRAM_LIST(getDefaultSystemViewResourceListActionDefinition()), //
     SYSTEM_VIEW_PROJECT_LIST(getDefaultSystemViewResourceListActionDefinition()), //
-    SYSTEM_VIEW_APPLICATION_LIST(getDefaultSystemViewResourceListActionDefinition()), //
-    SYSTEM_VIEW_RESUME_LIST(getDefaultSystemViewResourceListActionDefinition());
+    SYSTEM_VIEW_APPLICATION_LIST(getDefaultSystemViewResourceListActionDefinition());
 
     private PrismActionDefinition actionDefinition;
 
@@ -371,12 +361,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     private static PrismActionDefinition getDefaultProcessResourceActionDefinition(PrismScope scope) {
         return getDefaultResourceActionDefinition(PROCESS_RESOURCE, scope);
-    }
-
-    private static PrismActionDefinition getDefaultReviewResourceActionDefinition(PrismScope scope) {
-        return getDefaultProcessResourceActionDefinitionVisible(scope) //
-                .withDeclinableAction() //
-                .withRatingAction();
     }
 
     private static PrismActionDefinition getDefaultPartnerActionDefinition(PrismScope scope, PrismPartnershipState partnershipState,

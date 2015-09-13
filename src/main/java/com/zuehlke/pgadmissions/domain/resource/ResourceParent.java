@@ -19,14 +19,6 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
 
     public abstract void setName(String name);
 
-    public abstract ResourceEmailList getRecruiterEmailList();
-
-    public abstract void setRecruiterEmailList(ResourceEmailList recruiterEmailList);
-
-    public abstract ResourceEmailList getApplicantEmailList();
-
-    public abstract void setApplicantEmailList(ResourceEmailList applicantEmailList);
-
     public abstract DateTime getUpdatedTimestampSitemap();
 
     public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);

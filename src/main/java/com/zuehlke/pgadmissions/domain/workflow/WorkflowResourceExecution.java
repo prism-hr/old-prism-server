@@ -4,7 +4,6 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.Resume;
 
 public abstract class WorkflowResourceExecution extends WorkflowResource {
 
@@ -12,13 +11,9 @@ public abstract class WorkflowResourceExecution extends WorkflowResource {
 
     public abstract void setApplication(Application application);
 
-    public abstract Resume getResume();
-
-    public abstract void setResume(Resume resume);
-
     @Override
     public Resource getResource() {
-        return firstNonNull(super.getResource(), getApplication(), getResume());
+        return firstNonNull(super.getResource(), getApplication());
     }
 
 }

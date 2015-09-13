@@ -22,7 +22,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
@@ -72,7 +71,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -115,10 +113,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id")
-    private Resume resume;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -297,16 +291,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Override
     public void setApplication(Application application) {
         this.application = application;
-    }
-
-    @Override
-    public Resume getResume() {
-        return resume;
-    }
-
-    @Override
-    public void setResume(Resume resume) {
-        this.resume = resume;
     }
 
     public User getUser() {
@@ -700,10 +684,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public boolean isApplicationSubmittedComment() {
         return action.getId().equals(APPLICATION_COMPLETE);
-    }
-
-    public boolean isResumeRatingComment() {
-        return action.getId().getScope().equals(RESUME) && action.getRatingAction() && rating != null;
     }
 
     public boolean isApplicationRatingComment() {

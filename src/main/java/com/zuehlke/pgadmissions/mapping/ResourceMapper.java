@@ -64,7 +64,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceEmailList;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
@@ -91,7 +90,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentati
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceCountRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceEmailListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
@@ -422,16 +420,6 @@ public class ResourceMapper {
             List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
-
-        ResourceEmailList recruiterEmailList = resource.getRecruiterEmailList();
-        if (recruiterEmailList != null) {
-            representation.setRecruiterEmailList(getResourceEmailListRepresentation(recruiterEmailList));
-        }
-
-        ResourceEmailList applicantEmailList = resource.getApplicantEmailList();
-        if (recruiterEmailList != null) {
-            representation.setApplicantEmailList(getResourceEmailListRepresentation(applicantEmailList));
-        }
 
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         representation.setPartnerActions(actionService.getPartnerActions(resource));
@@ -931,10 +919,6 @@ public class ResourceMapper {
             }
         }
         return incompleteSections;
-    }
-
-    private ResourceEmailListRepresentation getResourceEmailListRepresentation(ResourceEmailList resourceEmailList) {
-        return new ResourceEmailListRepresentation().withEmailAddresses(resourceEmailList.getEmailAddresses()).withMailingList(resourceEmailList.getMailingList());
     }
 
     private static class ResourceProcessingMonth {

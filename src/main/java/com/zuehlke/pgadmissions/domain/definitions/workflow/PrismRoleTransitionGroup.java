@@ -24,8 +24,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PRO
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.RESUME_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.RESUME_REVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -39,18 +37,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflow
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.RESUME_ASSIGN_REVIEWER;
 
 public enum PrismRoleTransitionGroup {
-
-    RESUME_CREATE_CREATOR_GROUP( //
-            new PrismRoleTransition() //
-                    .withRole(RESUME_CREATOR) //
-                    .withTransitionType(CREATE) //
-                    .withTransitionRole(RESUME_CREATOR) //
-                    .withRestrictToOwner() //
-                    .withMinimumPermitted(1) //
-                    .withMaximumPermitted(1)), //
 
     APPLICATION_CREATE_CREATOR_GROUP( //
             new PrismRoleTransition() //
@@ -60,31 +48,7 @@ public enum PrismRoleTransitionGroup {
                     .withRestrictToOwner() //
                     .withMinimumPermitted(1) //
                     .withMaximumPermitted(1)), //
-
-    RESUME_ASSIGN_REVIEWER_GROUP( //
-            new PrismRoleTransition() //
-                    .withRole(RESUME_REVIEWER) //
-                    .withTransitionType(CREATE) //
-                    .withTransitionRole(RESUME_REVIEWER) //
-                    .withPropertyDefinition(RESUME_ASSIGN_REVIEWER),
-            new PrismRoleTransition() //
-                    .withRole(RESUME_REVIEWER) //
-                    .withTransitionType(DELETE) //
-                    .withTransitionRole(RESUME_REVIEWER)), //
-
-    RESUME_PROVIDE_REVIEW_GROUP( //
-            new PrismRoleTransition() //
-                    .withRole(RESUME_REVIEWER) //
-                    .withTransitionType(DELETE) //
-                    .withTransitionRole(RESUME_REVIEWER) //
-                    .withRestrictToOwner()), //
-
-    RESUME_DELETE_REVIEWER_GROUP( //
-            new PrismRoleTransition() //
-                    .withRole(RESUME_REVIEWER) //
-                    .withTransitionType(DELETE) //
-                    .withTransitionRole(RESUME_REVIEWER)), //
-
+    
     APPLICATION_CREATE_REFEREE_GROUP(
             new PrismRoleTransition() //
                     .withRole(APPLICATION_REFEREE) //

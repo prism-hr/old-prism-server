@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationApprovedResolver;
@@ -42,13 +41,8 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.Prog
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.resume.ResumeCompletedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.resume.ResumeUpdatedResolver;
 
 public enum PrismStateTransitionEvaluation {
-
-    RESUME_COMPLETED_OUTCOME(true, RESUME, ResumeCompletedResolver.class), //
-    RESUME_UPDATED_OUTCOME(true, RESUME, ResumeUpdatedResolver.class), //
 
     APPLICATION_COMPLETED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
     APPLICATION_CONFIRMED_SUPERVISION_OUTCOME(false, APPLICATION, ApplicationConfirmedSupervisionResolver.class), //

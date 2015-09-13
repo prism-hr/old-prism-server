@@ -6,9 +6,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYS
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
@@ -54,8 +54,8 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -529,7 +529,7 @@ public class UserService {
         DateTime baseline = new DateTime().minusDays(1);
         LocalDate lastNotifiedBaseline = baseline.toLocalDate().minusDays(3);
 
-        List<PrismScope> resourceScopes = scopeService.getEnclosingScopesDescending(RESUME, SYSTEM);
+        List<PrismScope> resourceScopes = scopeService.getEnclosingScopesDescending(APPLICATION, SYSTEM);
         int lastScopeIndex = (resourceScopes.size() - 1);
         for (int i = 0; i <= lastScopeIndex; i++) {
             PrismScope resourceScope = resourceScopes.get(i);

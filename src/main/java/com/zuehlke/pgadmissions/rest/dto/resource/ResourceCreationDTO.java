@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-        @Type(value = ApplicationDTO.class, name = "RESUME"),
         @Type(value = ApplicationDTO.class, name = "APPLICATION"),
         @Type(value = ResourceOpportunityDTO.class, name = "PROJECT"),
         @Type(value = ResourceOpportunityDTO.class, name = "PROGRAM"),

@@ -21,8 +21,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.RESUME_ASSIGN_REVIEWERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.RESUME_COMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
@@ -81,9 +79,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.RESUME_COMPLETE_CONCEALED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.RESUME_COMPLETE_PUBLISHED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.RESUME_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_APPROVED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME;
@@ -110,8 +105,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_CREATED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_UPDATED_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.RESUME_COMPLETED_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.RESUME_UPDATED_OUTCOME;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -120,31 +113,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 public enum PrismStateTransitionGroup {
-
-    RESUME_CREATE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(RESUME_INCOMPLETE)
-                    .withTransitionAction(RESUME_COMPLETE)), //
-
-    RESUME_COMPLETE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(RESUME_COMPLETE_PUBLISHED) //
-                    .withTransitionAction(RESUME_ASSIGN_REVIEWERS) //
-                    .withTransitionEvaluation(RESUME_COMPLETED_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(RESUME_COMPLETE_CONCEALED) //
-                    .withTransitionAction(RESUME_ASSIGN_REVIEWERS) //
-                    .withTransitionEvaluation(RESUME_COMPLETED_OUTCOME)),
-
-    RESUME_VIEW_EDIT_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(RESUME_COMPLETE_PUBLISHED) //
-                    .withTransitionAction(RESUME_ASSIGN_REVIEWERS) //
-                    .withTransitionEvaluation(RESUME_UPDATED_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(RESUME_COMPLETE_CONCEALED) //
-                    .withTransitionAction(RESUME_ASSIGN_REVIEWERS) //
-                    .withTransitionEvaluation(RESUME_UPDATED_OUTCOME)),
 
     APPLICATION_CREATE_TRANSITION( //
             new PrismStateTransition() //

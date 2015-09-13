@@ -2,9 +2,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 public enum PrismActionEnhancement {
 
-    RESUME_VIEW_EDIT_AS_CREATOR, //
-    RESUME_VIEW_AS_RECUITER, //
-    
 	APPLICATION_VIEW_EDIT_AS_CREATOR, //
 	APPLICATION_VIEW_EDIT_AS_APPROVER, //
 	APPLICATION_VIEW_AS_CREATOR, //

@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
@@ -25,17 +24,14 @@ import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.ResumeExecutor;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ApplicationCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.DepartmentCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.InstitutionCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ProgramCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ProjectCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ResumeCreator;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ApplicationPopulator;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
-import com.zuehlke.pgadmissions.workflow.transition.populators.ResumePopulator;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
@@ -43,9 +39,7 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.De
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ResumePostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ResumePreprocessor;
 
 import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
@@ -92,16 +86,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
                     .withResourcePopulator(ApplicationPopulator.class) //
                     .withResourcePreprocessor(ApplicationPreprocessor.class) //
                     .withResourceProcessor(ApplicationProcessor.class) //
-                    .withResourcePostprocessor(ApplicationPostprocessor.class)), //
-    RESUME(PrismScopeCategory.APPLICATION, "RE", //
-            new PrismScopeDefinition() //
-                    .withResourceClass(Resume.class) //
-                    .withResourceDTOClass(ApplicationDTO.class) //
-                    .withActionExecutor(ResumeExecutor.class) //
-                    .withResourceCreator(ResumeCreator.class) //
-                    .withResourcePopulator(ResumePopulator.class) //
-                    .withResourcePreprocessor(ResumePreprocessor.class) //
-                    .withResourcePostprocessor(ResumePostprocessor.class));
+                    .withResourcePostprocessor(ApplicationPostprocessor.class));
 
     private PrismScopeCategory scopeCategory;
     

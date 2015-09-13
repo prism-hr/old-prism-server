@@ -20,23 +20,18 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT;
-import static javax.persistence.DiscriminatorType.STRING;
-import static javax.persistence.InheritanceType.SINGLE_TABLE;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -58,7 +53,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -76,17 +70,11 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "application")
-@Inheritance(strategy = SINGLE_TABLE)
-@DiscriminatorColumn(name = "scope_id", discriminatorType = STRING)
-@DiscriminatorValue("APPLICATION")
 public class Application extends Resource {
 
     @Id
     @GeneratedValue
     private Integer id;
-
-    @Column(name = "scope_id", insertable = false, updatable = false, nullable = false)
-    private String scope;
 
     @Column(name = "code", unique = true)
     private String code;
@@ -311,14 +299,6 @@ public class Application extends Resource {
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
     }
 
     @Override
@@ -762,11 +742,6 @@ public class Application extends Resource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Application withScope(PrismScope scope) {
-        this.scope = scope.name();
-        return this;
-    }
-
     public Application withUser(User user) {
         this.user = user;
         return this;
@@ -824,7 +799,7 @@ public class Application extends Resource {
             }
             return parent.getName() + SPACE + at + SPACE + institution.getName();
         }
-        
+
         return null;
     }
 

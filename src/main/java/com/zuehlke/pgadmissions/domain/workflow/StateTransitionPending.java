@@ -14,15 +14,13 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.Resume;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 @Entity
 @Table(name = "state_transition_pending", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "action_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "action_id" }), @UniqueConstraint(columnNames = { "application_id", "action_id" }),
-        @UniqueConstraint(columnNames = { "resume_id", "action_id" })})
+        @UniqueConstraint(columnNames = { "project_id", "action_id" }), @UniqueConstraint(columnNames = { "application_id", "action_id" }) })
 public class StateTransitionPending extends WorkflowResourceExecution {
 
     @Id
@@ -36,7 +34,7 @@ public class StateTransitionPending extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -53,10 +51,6 @@ public class StateTransitionPending extends WorkflowResourceExecution {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id")
-    private Resume resume;
-    
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
@@ -88,12 +82,12 @@ public class StateTransitionPending extends WorkflowResourceExecution {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
@@ -127,16 +121,6 @@ public class StateTransitionPending extends WorkflowResourceExecution {
     @Override
     public void setApplication(Application application) {
         this.application = application;
-    }
-
-    @Override
-    public Resume getResume() {
-        return resume;
-    }
-
-    @Override
-    public void setResume(Resume resume) {
-        this.resume = resume;
     }
 
     public Action getAction() {

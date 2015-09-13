@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.institution.Institu
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "scope")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ApplicationRepresentationClient.class, name = "RESUME"),
         @JsonSubTypes.Type(value = ApplicationRepresentationClient.class, name = "APPLICATION"),
         @JsonSubTypes.Type(value = ProjectRepresentationClient.class, name = "PROJECT"),
         @JsonSubTypes.Type(value = ProgramRepresentationClient.class, name = "PROGRAM"),

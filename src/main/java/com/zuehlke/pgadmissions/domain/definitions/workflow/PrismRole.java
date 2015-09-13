@@ -9,7 +9,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.RESUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static java.util.Arrays.asList;
 
@@ -19,10 +18,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 
 public enum PrismRole implements PrismLocalizableDefinition {
-
-    RESUME_CREATOR(APPLICANT, RESUME), //
-    RESUME_REVIEWER(RECRUITER, RESUME), //
-
+    
     APPLICATION_ADMINISTRATOR(RECRUITER, APPLICATION), //
     APPLICATION_CREATOR(APPLICANT, APPLICATION), //
     APPLICATION_INTERVIEWEE(APPLICANT, APPLICATION), //
@@ -107,7 +103,8 @@ public enum PrismRole implements PrismLocalizableDefinition {
         ADMINISTRATOR, //
         RECRUITER, //
         APPLICANT, //
-        REFEREE;
+        REFEREE, //
+        EMPLOYEE;
 
     }
 

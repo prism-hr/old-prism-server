@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
@@ -35,7 +33,7 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
             opportunityCategory = newResource.getOpportunityCategory();
         }
 
-        return new Application().withScope(APPLICATION).withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert())
+        return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert())
                 .withOpportunityCategories(opportunityCategory.name());
     }
 

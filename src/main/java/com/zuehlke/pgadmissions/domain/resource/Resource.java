@@ -56,7 +56,7 @@ public abstract class Resource implements UniqueEntity {
     public abstract Advert getAdvert();
 
     public abstract void setAdvert(Advert advert);
-    
+
     public abstract String getOpportunityCategories();
 
     public abstract void setOpportunityCategories(String opportunityCategories);
@@ -140,8 +140,6 @@ public abstract class Resource implements UniqueEntity {
             return (T) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
         case APPLICATION:
             return (T) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
-        case RESUME:
-            return (T) getSystem();
         default:
             throw new UnsupportedOperationException();
         }

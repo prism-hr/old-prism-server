@@ -93,7 +93,7 @@ public class DocumentService {
         return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
     }
 
-    public Document createDocument(Part uploadStream) throws Exception {
+    public Document createDocument(Part uploadStream) throws IOException {
         try (InputStream iStream = uploadStream.getInputStream()) {
             return create(DOCUMENT, getFileName(uploadStream), Streams.readAll(iStream), uploadStream.getContentType(), null, null);
         }

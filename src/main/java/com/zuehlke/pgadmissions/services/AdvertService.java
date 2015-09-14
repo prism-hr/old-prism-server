@@ -224,7 +224,7 @@ public class AdvertService {
         }
     }
 
-    public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
+    public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         advert.setDescription(advertDetailsDTO.getDescription());
@@ -257,28 +257,28 @@ public class AdvertService {
         updateFinancialDetails(resource.getResourceScope(), resource.getId(), new AdvertFinancialDetailsDTO().withFee(feeDTO).withPay(payDTO));
     }
 
-    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
+    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateCategories(advert, categoriesDTO);
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) throws Exception {
+    public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateTargets(advert, targetsDTO, true);
         executeUpdate(resource, "COMMENT_UPDATED_TARGET");
     }
 
-    public void updateCompetences(PrismScope resourceScope, Integer resourceId, List<AdvertCompetenceDTO> competencesDTO) throws Exception {
+    public void updateCompetences(PrismScope resourceScope, Integer resourceId, List<AdvertCompetenceDTO> competencesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateCompetences(advert, competencesDTO);
         executeUpdate(resource, "COMMENT_UPDATED_COMPETENCE");
     }
 
-    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
+    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -293,7 +293,7 @@ public class AdvertService {
         return null;
     }
 
-    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) throws Exception {
+    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 

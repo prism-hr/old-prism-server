@@ -243,12 +243,12 @@ public class ResourceService {
         }
     }
 
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) throws Exception {
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
         return executeAction(user, commentDTO, null);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO, String referralEmailAddress) throws Exception {
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO, String referralEmailAddress) {
         Resource operativeResource = null;
         ActionOutcomeDTO actionOutcome = null;
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
@@ -417,7 +417,7 @@ public class ResourceService {
                 resource.getWorkflowPropertyConfigurationVersion());
     }
 
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) throws Exception {
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) {
         Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
         for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.getProperties(propertiesScope)) {

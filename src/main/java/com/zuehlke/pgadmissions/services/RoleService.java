@@ -1,51 +1,36 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static org.apache.commons.collections.CollectionUtils.containsAny;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.joda.time.DateTime;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
 
 @Service
 @Transactional
@@ -88,7 +73,7 @@ public class RoleService {
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return roleDAO.getUserRole(resource, user, role);
     }
-    
+
     public UserRole getUserRole(Resource resource, User user, PrismRole role) {
         return roleDAO.getUserRole(resource, user, role);
     }
@@ -134,7 +119,7 @@ public class RoleService {
         notificationService.sendInvitationNotifications(comment);
     }
 
-    public void setResourceOwner(Resource resource, User user) throws Exception {
+    public void setResourceOwner(Resource resource, User user) {
         if (roleDAO.getRolesForResourceStrict(resource, user).isEmpty()) {
             throw new PrismForbiddenException("User has no role within given resource");
         }
@@ -206,7 +191,7 @@ public class RoleService {
         return roleDAO.getCreatorRole(resource);
     }
 
-    public void executeRoleTransitions(Resource resource, Comment comment, StateTransition stateTransition) throws DeduplicationException {
+    public void executeRoleTransitions(Resource resource, Comment comment, StateTransition stateTransition) {
         for (PrismRoleTransitionType roleTransitionType : PrismRoleTransitionType.values()) {
             List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(stateTransition, roleTransitionType);
             executeRoleTransitions(resource, comment, roleTransitions);
@@ -214,7 +199,7 @@ public class RoleService {
         entityService.flush();
     }
 
-    public void deleteUserRoles(User invoker, Resource resource, User user) throws Exception {
+    public void deleteUserRoles(User invoker, Resource resource, User user) {
         List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
         modifyUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
@@ -241,8 +226,8 @@ public class RoleService {
         }
     }
 
-    public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope... exludedPrismScopes) {
-        return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory, exludedPrismScopes);
+    public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope... excludedPrismScopes) {
+        return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory, excludedPrismScopes);
     }
 
     public void setCreatorRoles() {
@@ -291,7 +276,7 @@ public class RoleService {
         }
     }
 
-    private List<User> getRoleTransitionUsers(Resource resource, Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
+    private List<User> getRoleTransitionUsers(Resource resource, Comment comment, RoleTransition roleTransition)  {
         User restrictedToUser = roleTransition.getRestrictToActionOwner() ? comment.getActionOwner() : null;
 
         List<User> users;
@@ -343,7 +328,7 @@ public class RoleService {
         return transitionUsers;
     }
 
-    private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws DeduplicationException {
+    private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) {
         DateTime baseline = new DateTime();
 
         Role role = roleTransition.getRole();

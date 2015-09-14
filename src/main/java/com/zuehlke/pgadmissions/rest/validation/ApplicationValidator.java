@@ -87,17 +87,8 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             case APPLICATION_DOCUMENT_CV:
                 validateDocumentConstraint(application, "cv", configuration, errors);
                 break;
-            case APPLICATION_DOCUMENT_PERSONAL_STATEMENT:
-                validateDocumentConstraint(application, "personalStatement", configuration, errors);
-                break;
-            case APPLICATION_DOCUMENT_RESEARCH_STATEMENT:
-                validateDocumentConstraint(application, "researchStatement", configuration, errors);
-                break;
             case APPLICATION_EMPLOYMENT_POSITION:
                 validateRangeConstraint(application, "employmentPositions", configuration, errors);
-                break;
-            case APPLICATION_PRIZE:
-                validateRangeConstraint(application, "prizes", configuration, errors);
                 break;
             case APPLICATION_QUALIFICATION:
                 validateRangeConstraint(application, "qualifications", configuration, errors);

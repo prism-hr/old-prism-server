@@ -133,9 +133,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private Set<UserFeedback> userFeedbacks = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
-    private Set<UserProgram> userPrograms = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
     private Set<UserAdvert> userAdverts = Sets.newHashSet();
 
     @OneToMany(mappedBy = "valueUser")
@@ -297,10 +294,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return userFeedbacks;
     }
 
-    public Set<UserProgram> getUserPrograms() {
-        return userPrograms;
-    }
-
     public Set<UserAdvert> getUserAdverts() {
         return userAdverts;
     }
@@ -363,7 +356,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         this.parentUser = parentUser;
         return this;
     }
-    
+
     public String getRobotRepresentation() {
         return fullName + ": " + email.replace("@", "-").replace(".", "-");
     }

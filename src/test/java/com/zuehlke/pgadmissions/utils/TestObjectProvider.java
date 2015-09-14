@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -247,12 +247,12 @@ public class TestObjectProvider {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass).setMaxResults(1).uniqueResult();
     }
 
-    public ImportedAdvertDomicile getInstitutionDomicile() {
-        return (ImportedAdvertDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class).setMaxResults(1).uniqueResult();
+    public ImportedDomicile getInstitutionDomicile() {
+        return (ImportedDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class).setMaxResults(1).uniqueResult();
     }
 
-    public ImportedAdvertDomicile getAlternativeInstitutionDomicile(ImportedAdvertDomicile domicile) {
-        return (ImportedAdvertDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class)//
+    public ImportedDomicile getAlternativeInstitutionDomicile(ImportedDomicile domicile) {
+        return (ImportedDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class)//
                 .add(Restrictions.ne("id", domicile.getId())) //
                 .setMaxResults(1).uniqueResult();
     }

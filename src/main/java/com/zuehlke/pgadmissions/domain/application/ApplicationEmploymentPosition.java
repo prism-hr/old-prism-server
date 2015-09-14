@@ -1,24 +1,22 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 
 @Entity
 @Table(name = "application_employment_position")
-public class ApplicationEmploymentPosition extends ApplicationSection {
+public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSection {
 
     @Id
     @GeneratedValue
@@ -28,18 +26,9 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
-    @Column(name = "employer_name", nullable = false)
-    private String employerName;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "address_id", nullable = false)
-    private AddressApplication employerAddress;
-
-    @Column(name = "position", nullable = false)
-    private String position;
-
-    @Column(name = "remit", nullable = false)
-    private String remit;
+    @ManyToOne
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
 
     @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -72,28 +61,14 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
         this.application = application;
     }
 
-    public String getEmployerName() {
-        return employerName;
+    @Override
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public void setEmployerName(String employer) {
-        this.employerName = employer;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String title) {
-        this.position = title;
-    }
-
-    public String getRemit() {
-        return remit;
-    }
-
-    public void setRemit(String remit) {
-        this.remit = remit;
+    @Override
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public LocalDate getStartDate() {
@@ -120,14 +95,6 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
         this.endDate = endDate;
     }
 
-    public AddressApplication getEmployerAddress() {
-        return employerAddress;
-    }
-
-    public void setEmployerAddress(AddressApplication employerAdress) {
-        this.employerAddress = employerAdress;
-    }
-
     @Override
     public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
@@ -148,28 +115,13 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
         return this;
     }
 
-    public ApplicationEmploymentPosition withEmployerName(String employerName) {
-        this.employerName = employerName;
-        return this;
-    }
-
-    public ApplicationEmploymentPosition withEmployerAddress(AddressApplication employerAddress) {
-        this.employerAddress = employerAddress;
-        return this;
-    }
-
-    public ApplicationEmploymentPosition withPosition(String position) {
-        this.position = position;
+    public ApplicationEmploymentPosition withAdvert(Advert advert) {
+        this.advert = advert;
         return this;
     }
 
     public ApplicationEmploymentPosition withCurrent(boolean current) {
         this.current = current;
-        return this;
-    }
-
-    public ApplicationEmploymentPosition withRemit(String remit) {
-        this.remit = remit;
         return this;
     }
 
@@ -182,7 +134,7 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
         this.endDate = endDate;
         return this;
     }
-    
+
     public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat);
     }

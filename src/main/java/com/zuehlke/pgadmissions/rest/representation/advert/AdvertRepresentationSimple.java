@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 
 public class AdvertRepresentationSimple {
 
@@ -21,7 +21,7 @@ public class AdvertRepresentationSimple {
 
     private String telephone;
 
-    private AddressAdvertRepresentation address;
+    private AddressRepresentation address;
 
     private AdvertFinancialDetailsRepresentation financialDetails;
 
@@ -91,11 +91,11 @@ public class AdvertRepresentationSimple {
         this.telephone = telephone;
     }
 
-    public AddressAdvertRepresentation getAddress() {
+    public AddressRepresentation getAddress() {
         return address;
     }
 
-    public void setAddress(AddressAdvertRepresentation address) {
+    public void setAddress(AddressRepresentation address) {
         this.address = address;
     }
 

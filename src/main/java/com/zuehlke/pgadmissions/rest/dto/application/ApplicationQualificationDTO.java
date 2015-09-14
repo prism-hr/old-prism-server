@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -7,21 +8,22 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
-public class ApplicationQualificationDTO {
+public class ApplicationQualificationDTO extends ApplicationAdvertRelationSectionDTO {
 
     private Integer id;
 
+    @Valid
     @NotNull
-    private ResourceOpportunityDTO program;
+    private ResourceCreationDTO resource;
 
-    @DateNotFuture
     @NotNull
+    @DateNotFuture
     private LocalDate startDate;
 
     @NotNull
@@ -43,12 +45,14 @@ public class ApplicationQualificationDTO {
         this.id = id;
     }
 
-    public ResourceOpportunityDTO getProgram() {
-        return program;
+    @Override
+    public ResourceCreationDTO getResource() {
+        return resource;
     }
 
-    public void setProgram(ResourceOpportunityDTO program) {
-        this.program = program;
+    @Override
+    public void setResource(ResourceCreationDTO resource) {
+        this.resource = resource;
     }
 
     public LocalDate getStartDate() {

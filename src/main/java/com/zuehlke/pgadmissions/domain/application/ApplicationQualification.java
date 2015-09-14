@@ -14,12 +14,12 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.resource.Program;
 
 @Entity
 @Table(name = "application_qualification")
-public class ApplicationQualification extends ApplicationSection {
+public class ApplicationQualification extends ApplicationAdvertRelationSection {
 
     @Id
     @GeneratedValue
@@ -30,8 +30,8 @@ public class ApplicationQualification extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "program_id")
-    private Program program;
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
 
     @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -87,12 +87,14 @@ public class ApplicationQualification extends ApplicationSection {
         this.awardDate = awardDate;
     }
 
-    public Program getProgram() {
-        return program;
+    @Override
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public void setProgram(Program program) {
-        this.program = program;
+    @Override
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public String getGrade() {
@@ -154,8 +156,8 @@ public class ApplicationQualification extends ApplicationSection {
         return this;
     }
 
-    public ApplicationQualification withProgram(Program program) {
-        this.program = program;
+    public ApplicationQualification withAdvert(Advert advert) {
+        this.advert = advert;
         return this;
     }
 

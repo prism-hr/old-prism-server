@@ -1,30 +1,23 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 
 public class ApplicationReferenceDTO {
 
     private Integer id;
-    
+
     private User user;
-    
-    private PrismRefereeType refereeType;
 
-    private String jobEmployer;
-    
-    private String jobTitle;
-
-    private AddressApplication address;
+    private ResourceCreationDTO resource;
 
     private String phone;
-    
+
     private String skype;
 
     private Comment comment;
-    
+
     public Integer getId() {
         return id;
     }
@@ -40,37 +33,13 @@ public class ApplicationReferenceDTO {
     public final void setUser(User user) {
         this.user = user;
     }
-    
-    public PrismRefereeType getRefereeType() {
-        return refereeType;
+
+    public ResourceCreationDTO getResource() {
+        return resource;
     }
 
-    public void setRefereeType(PrismRefereeType refereeType) {
-        this.refereeType = refereeType;
-    }
-
-    public String getJobEmployer() {
-        return jobEmployer;
-    }
-
-    public void setJobEmployer(String jobEmployer) {
-        this.jobEmployer = jobEmployer;
-    }
-
-    public final String getJobTitle() {
-        return jobTitle;
-    }
-
-    public final void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public AddressApplication getAddress() {
-        return address;
-    }
-
-    public void setAddress(AddressApplication address) {
-        this.address = address;
+    public void setResource(ResourceCreationDTO resource) {
+        this.resource = resource;
     }
 
     public final String getPhone() {

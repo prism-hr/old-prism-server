@@ -11,16 +11,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_CURRENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_REMIT_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_START_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_SUBHEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_TITLE_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSTIION_POSITION_EMPLOYER_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL;
@@ -30,12 +26,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_TELEPHONE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_TITLE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIZE_AWARD_DATE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIZE_DESCRIPTION_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIZE_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIZE_PROVIDER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIZE_SUBHEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIZE_TITLE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL;
@@ -47,13 +37,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EXPECTED_AWARD_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EXPECTED_RESULT_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_PROVIDER_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_PROVIDER_PROGRAM_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_START_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_SUBHEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_SUBJECT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_EMPLOYER_ADDRESS_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_POSITION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_POSITION_EMPLOYER_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_REFERENCE_APPENDIX;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_REFERENCE_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_SUBHEADER;
@@ -96,7 +84,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Chunk;
@@ -121,9 +108,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
@@ -132,7 +118,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationEmploymentPositionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPersonalDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPrizeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationQualificationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
@@ -172,7 +157,6 @@ public class ApplicationDownloadBuilder {
             addAddressSection(application, pdfDocument);
             addQualificationSection(application, pdfDocument);
             addEmploymentSection(application, pdfDocument);
-            addPrizesSection(application, pdfDocument);
             addReferencesSection(application, pdfDocument);
             addDocumentSection(application, pdfDocument);
             addAdditionalInformationSection(application, pdfDocument);
@@ -267,17 +251,10 @@ public class ApplicationDownloadBuilder {
                     propertyLoader.loadLazy(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL), personalDetail.getDateOfBirth()
                             .toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)),
                     body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL),
-                    getImportedEntityAsString(personalDetail.getCountry()), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL),
                     getImportedEntityAsString(personalDetail.getDomicile()), body);
             applicationDownloadBuilderHelper.addContentRowMedium(
-                    propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL),
-                    Joiner.on(", ")
-                            .skipNulls()
-                            .join(getImportedEntityAsString(personalDetail.getFirstNationality()),
-                                    getImportedEntityAsString(personalDetail.getSecondNationality())),
-                    body);
+                    propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL), getImportedEntityAsString(personalDetail.getNationality()), body);
 
             ApplicationDemographicRepresentation demographic = personalDetail.getDemographic();
             if (demographic != null) {
@@ -302,13 +279,13 @@ public class ApplicationDownloadBuilder {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument,
                     propertyLoader.loadLazy(PrismDisplayPropertyDefinition.APPLICATION_ADDRESS_HEADER));
 
-            AddressApplicationRepresentation currentAddress = address.getCurrentAddress();
+            AddressRepresentation currentAddress = address.getCurrentAddress();
             if (currentAddress != null) {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_ADDRESS_CURRENT_HEADER),
                         address == null ? null : currentAddress.getLocationString(), body);
             }
 
-            AddressApplicationRepresentation contactAddress = address.getContactAddress();
+            AddressRepresentation contactAddress = address.getContactAddress();
             if (contactAddress != null) {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_ADDRESS_CONTACT_HEADER),
                         address == null ? null : contactAddress.getLocationString(), body);
@@ -331,13 +308,8 @@ public class ApplicationDownloadBuilder {
 
                 String dateFormat = propertyLoader.loadLazy(SYSTEM_DATE_FORMAT);
 
-                ResourceRepresentationActivity program = qualification.getProgram();
-                ResourceRepresentationSimple institution = program.getInstitution();
-
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_PROVIDER_LABEL), institution.getName(),
-                        subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_SUBJECT_LABEL),
-                        program.getName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_PROVIDER_PROGRAM_LABEL),
+                        qualification.getResource().getDisplayName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_START_DATE_LABEL),
                         qualification.getStartDate().toString(dateFormat), subBody);
 
@@ -377,42 +349,14 @@ public class ApplicationDownloadBuilder {
 
                 String dateFormat = propertyLoader.loadLazy(SYSTEM_DATE_FORMAT);
 
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_LABEL),
-                        position.getEmployerName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS_LABEL),
-                        position.getEmployerAddress().getLocationString(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_TITLE_LABEL),
-                        position.getPosition(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_REMIT_LABEL), position.getRemit(),
-                        subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSTIION_POSITION_EMPLOYER_LABEL),
+                        position.getResource().getDisplayName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_START_DATE_LABEL),
                         position.getStartDate().toString(dateFormat), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_CURRENT_LABEL),
                         propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, position.getCurrent()), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL),
                         position.getEndDate().toString(dateFormat), subBody);
-
-                applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
-            }
-        }
-    }
-
-    private void addPrizesSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
-        List<ApplicationPrizeRepresentation> prizes = application.getPrizes();
-
-        if (!prizes.isEmpty()) {
-            applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_PRIZE_HEADER));
-
-            int counter = 1;
-            for (ApplicationPrizeRepresentation prize : prizes) {
-                PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(APPLICATION_PRIZE_SUBHEADER) + "(" + counter++
-                        + ")");
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PRIZE_PROVIDER_LABEL), prize.getProvider(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PRIZE_TITLE_LABEL), prize.getTitle(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PRIZE_DESCRIPTION_LABEL), prize.getDescription(),
-                        subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PRIZE_AWARD_DATE_LABEL),
-                        prize.getAwardDate().toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)), subBody);
 
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }
@@ -437,14 +381,11 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL),
                         userNull ? null : user.getLastName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_EMAIL), userNull ? null : user.getEmail(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_REFEREE_EMPLOYER_ADDRESS_LABEL),
-                        referee.getAddress().getLocationString(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_REFEREE_POSITION_EMPLOYER_LABEL),
+                        referee.getResource().getDisplayName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_TELEPHONE_LABEL), referee.getPhone(),
                         subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL), referee.getSkype(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_LABEL),
-                        referee.getJobEmployer(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_REFEREE_POSITION_LABEL), referee.getJobTitle(), subBody);
 
                 CommentRepresentation referenceComment = referee.getComment();
                 if (referenceComment != null) {

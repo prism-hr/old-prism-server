@@ -9,13 +9,13 @@ import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedAdvertDomicileDefinition;
+import uk.co.alumeni.prism.api.model.imported.ImportedDomicileDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 @Entity
-@Table(name = "imported_advert_domicile")
-public class ImportedAdvertDomicile extends ImportedEntity<String>
-        implements ImportedAdvertDomicileDefinition, ImportedEntityResponseDefinition<String> {
+@Table(name = "imported_domicile")
+public class ImportedDomicile extends ImportedEntity<String>
+        implements ImportedDomicileDefinition, ImportedEntityResponseDefinition<String> {
 
     @Id
     private String id;
@@ -74,22 +74,22 @@ public class ImportedAdvertDomicile extends ImportedEntity<String>
         this.enabled = enabled;
     }
 
-    public ImportedAdvertDomicile withId(String id) {
+    public ImportedDomicile withId(String id) {
         this.id = id;
         return this;
     }
 
-    public ImportedAdvertDomicile withName(String name) {
+    public ImportedDomicile withName(String name) {
         this.name = name;
         return this;
     }
 
-    public ImportedAdvertDomicile withCurrency(final String currency) {
+    public ImportedDomicile withCurrency(final String currency) {
         this.currency = currency;
         return this;
     }
 
-    public ImportedAdvertDomicile withEnabled(Boolean enabled) {
+    public ImportedDomicile withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }

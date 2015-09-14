@@ -346,9 +346,9 @@ alter table application_qualification
 ;
 
 alter table application_qualification
-	change column imported_program_id program_id int(10) unsigned not null,
-	add index (program_id),
-	add foreign key (program_id) references program (id)
+	change column imported_program_id advert_id int(10) unsigned not null,
+	add index (advert_id),
+	add foreign key (advert_id) references advert (id)
 ;
 
 alter table application_qualification
@@ -396,4 +396,121 @@ alter table application_referee
 
 alter table application_referee
 	add foreign key (address_id) references advert_address (id)
+;
+
+alter table application_employment_position
+	drop foreign key application_form_employment_position_address_fk,
+	add foreign key (address_id) references advert_address (id)
+;
+
+drop table address
+;
+
+rename table advert_address to address
+;
+
+alter table application_employment_position
+	drop column employer_name,
+	drop foreign key application_employment_position_ibfk_2,
+	drop index application_form_employment_position_address_fk,
+	drop column address_id
+;
+
+alter table application_employment_position
+	add column advert_id int(10) unsigned after application_id,
+	add index (advert_id),
+	add foreign key (advert_id) references advert (id)
+;
+
+alter table application_referee
+	drop column job_employer,
+	drop foreign key application_referee_ibfk_2,
+	drop index application_form_referee_address_fk,
+	drop column address_id
+;
+
+alter table application_referee
+	add column advert_id int(10) unsigned not null after application_id,
+	add index (advert_id),
+	add foreign key (advert_id) references advert (id)
+;
+
+alter table application_personal_detail
+	drop foreign key application_personal_detail_ibfk_13,
+	drop index country_fk,
+	drop column imported_country_id
+;
+
+rename table imported_advert_domicile to imported_domicile
+;
+
+alter table application_employment_position
+	drop column position,
+	drop column remit
+;
+
+alter table application_referee
+	drop column referee_type,
+	drop column job_title
+;
+
+drop procedure admin_delete_institution
+;
+
+drop procedure admin_insert_user
+;
+
+drop procedure admin_insert_user_role
+;
+
+drop table application_prize
+;
+
+alter table institution
+	drop column staff_email_list,
+	drop column staff_email_list_group,
+	drop column student_email_list,
+	drop column student_email_list_group
+;
+
+alter table department
+	drop column staff_email_list,
+	drop column staff_email_list_group,
+	drop column student_email_list,
+	drop column student_email_list_group
+;
+
+alter table program
+	drop column staff_email_list,
+	drop column staff_email_list_group,
+	drop column student_email_list,
+	drop column student_email_list_group
+;
+
+alter table project
+	drop column staff_email_list,
+	drop column staff_email_list_group,
+	drop column student_email_list,
+	drop column student_email_list_group
+;
+
+alter table application_personal_detail
+	modify column first_language_locale int(1) unsigned after imported_domicile_id,
+	drop foreign key application_personal_detail_ibfk_17,
+	drop foreign key application_personal_detail_ibfk_16,
+	drop index first_nationality,
+	drop index domicile_fk,
+	modify column imported_nationality_id varchar(10),
+	add index (imported_nationality_id),
+	add foreign key (imported_nationality_id) references imported_domicile (id),
+	modify column imported_domicile_id varchar(10),
+	add index (imported_domicile_id),
+	add foreign key (imported_domicile_id) references imported_domicile (id)
+;
+
+alter table address
+	change column imported_advert_domicile_id imported_domicile_id varchar(10) not null
+;
+
+drop table user_program
 ;

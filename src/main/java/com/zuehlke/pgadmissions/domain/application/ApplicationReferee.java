@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain.application;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -16,9 +14,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.workflow.user.ApplicationRefereeReassignmentProcessor;
 
@@ -38,29 +35,19 @@ public class ApplicationReferee extends ApplicationAssignmentSection<Application
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
-
-    @Column(name = "referee_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismRefereeType refereeType;
-
-    @Column(name = "job_employer")
-    private String jobEmployer;
-
-    @Column(name = "job_title")
-    private String jobTitle;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "address_id", nullable = false)
-    private AddressApplication address;
+    @ManyToOne
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
 
     @Column(name = "phone", nullable = false)
     private String phone;
 
     @Column(name = "skype")
     private String skype;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -86,44 +73,14 @@ public class ApplicationReferee extends ApplicationAssignmentSection<Application
         this.application = application;
     }
 
-    public Comment getComment() {
-        return comment;
+    @Override
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public void setComment(Comment comment) {
-        this.comment = comment;
-    }
-
-    public final PrismRefereeType getRefereeType() {
-        return refereeType;
-    }
-
-    public final void setRefereeType(PrismRefereeType refereeType) {
-        this.refereeType = refereeType;
-    }
-
-    public String getJobEmployer() {
-        return jobEmployer;
-    }
-
-    public void setJobEmployer(String jobEmployer) {
-        this.jobEmployer = jobEmployer;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public AddressApplication getAddress() {
-        return address;
-    }
-
-    public void setAddress(AddressApplication address) {
-        this.address = address;
+    @Override
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public String getSkype() {
@@ -150,6 +107,14 @@ public class ApplicationReferee extends ApplicationAssignmentSection<Application
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
     @Override

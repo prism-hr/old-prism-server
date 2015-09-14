@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
 
 public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTargetDTO> {
 
@@ -21,7 +21,7 @@ public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTa
     private BigDecimal bLon;
 
     public ResourceTargetListDTO(Advert advert) {
-        AddressCoordinates coordinates = advert.getAddress().getCoordinates();
+        AddressCoordinates coordinates = advert.getAddress().getAddressCoordinates();
         if (coordinates != null) {
             bLat = coordinates.getLatitude();
             bLon = coordinates.getLongitude();

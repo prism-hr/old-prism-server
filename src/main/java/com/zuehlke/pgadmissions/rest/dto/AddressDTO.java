@@ -1,6 +1,13 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.dto;
 
-public class AddressRepresentation {
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
+
+public class AddressDTO extends com.zuehlke.pgadmissions.domain.address.AddressDefinition<ImportedDomicileDTO> {
+
+    private Integer id;
 
     private String addressLine1;
 
@@ -11,6 +18,20 @@ public class AddressRepresentation {
     private String addressRegion;
 
     private String addressCode;
+
+    @NotNull
+    @Valid
+    private ImportedDomicileDTO domicile;
+
+    private String googleId;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getAddressLine1() {
         return addressLine1;
@@ -52,29 +73,22 @@ public class AddressRepresentation {
         this.addressCode = addressCode;
     }
 
-    public AddressRepresentation withAddressLine1(String addressLine1) {
-        setAddressLine1(addressLine1);
-        return this;
+    @Override
+    public ImportedDomicileDTO getDomicile() {
+        return domicile;
     }
 
-    public AddressRepresentation withAddressLine2(String addressLine2) {
-        setAddressLine2(addressLine2);
-        return this;
+    @Override
+    public void setDomicile(ImportedDomicileDTO domicile) {
+        this.domicile = domicile;
     }
 
-    public AddressRepresentation withAddressTown(String addressTown) {
-        setAddressTown(addressTown);
-        return this;
+    public String getGoogleId() {
+        return googleId;
     }
 
-    public AddressRepresentation withAddressRegion(String addressRegion) {
-        setAddressRegion(addressRegion);
-        return this;
-    }
-
-    public AddressRepresentation withAddressCode(String addressCode) {
-        setAddressCode(addressCode);
-        return this;
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
 }

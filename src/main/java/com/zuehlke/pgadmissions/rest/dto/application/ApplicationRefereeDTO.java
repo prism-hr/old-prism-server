@@ -1,38 +1,27 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
-public class ApplicationRefereeDTO {
+public class ApplicationRefereeDTO extends ApplicationAdvertRelationSectionDTO {
 
     private Integer id;
 
-    @NotNull
     @Valid
+    @NotNull
     private UserDTO user;
 
+    @Valid
     @NotNull
-    private PrismRefereeType refereeType;
-
-    @NotEmpty
-    @Size(max = 200)
-    private String jobEmployer;
-
-    @NotEmpty
-    @Size(max = 200)
-    private String jobTitle;
-
-    @NotNull
-    private AddressApplicationDTO address;
+    private ResourceCreationDTO resource;
 
     @NotEmpty
     @PhoneNumber
@@ -57,36 +46,14 @@ public class ApplicationRefereeDTO {
         this.user = user;
     }
 
-    public final PrismRefereeType getRefereeType() {
-        return refereeType;
+    @Override
+    public ResourceCreationDTO getResource() {
+        return resource;
     }
 
-    public final void setRefereeType(PrismRefereeType refereeType) {
-        this.refereeType = refereeType;
-    }
-
-    public String getJobEmployer() {
-        return jobEmployer;
-    }
-
-    public void setJobEmployer(String jobEmployer) {
-        this.jobEmployer = jobEmployer;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public AddressApplicationDTO getAddress() {
-        return address;
-    }
-
-    public void setAddress(AddressApplicationDTO address) {
-        this.address = address;
+    @Override
+    public void setResource(ResourceCreationDTO resource) {
+        this.resource = resource;
     }
 
     public String getPhone() {

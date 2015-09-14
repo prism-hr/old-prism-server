@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
-import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
@@ -29,7 +29,7 @@ public class AdvertDTO {
     private String telephone;
 
     @Valid
-    private AddressAdvertDTO address;
+    private AddressDTO address;
 
     @Valid
     private AdvertCategoriesDTO categories;
@@ -69,11 +69,11 @@ public class AdvertDTO {
         this.telephone = telephone;
     }
 
-    public AddressAdvertDTO getAddress() {
+    public AddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(AddressAdvertDTO address) {
+    public void setAddress(AddressDTO address) {
         this.address = address;
     }
 

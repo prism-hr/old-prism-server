@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static java.util.Arrays.asList;
 
+import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
@@ -56,11 +59,11 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
     public void setProject(ResourceRepresentationSimple project) {
         this.project = project;
     }
-    
+
     public void setParentResource(ResourceRepresentationSimple parentResource) {
         setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
-    
+
     public ResourceRepresentationActivity withScope(PrismScope scope) {
         setScope(scope);
         return this;
@@ -94,6 +97,10 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
     public ResourceRepresentationActivity withInstitution(ResourceRepresentationSimple institution) {
         setInstitution(institution);
         return this;
+    }
+
+    public String getDisplayName() {
+        return Joiner.on(SPACE).skipNulls().join(asList(project, program, department, institution));
     }
 
 }

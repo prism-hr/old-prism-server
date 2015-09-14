@@ -53,7 +53,7 @@ public class InstitutionService {
     private EntityService entityService;
 
     @Inject
-    private GeocodableLocationService geocodableLocationService;
+    private AddressService geocodableLocationService;
 
     @Inject
     private ResourceMapper resourceMapper;

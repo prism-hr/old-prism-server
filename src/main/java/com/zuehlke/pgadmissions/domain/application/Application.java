@@ -144,11 +144,6 @@ public class Application extends Resource {
     @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    private Set<ApplicationPrize> prizes = Sets.newHashSet();
-
-    @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationReferee> referees = Sets.newHashSet();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -593,10 +588,6 @@ public class Application extends Resource {
 
     public Set<ApplicationQualification> getQualifications() {
         return qualifications;
-    }
-
-    public Set<ApplicationPrize> getPrizes() {
-        return prizes;
     }
 
     public Set<ApplicationEmploymentPosition> getEmploymentPositions() {

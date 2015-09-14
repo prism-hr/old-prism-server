@@ -26,7 +26,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
+import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -108,7 +108,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @OneToOne
     @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "advert_address_id")
-    private AddressAdvert address;
+    private Address address;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval") ),
@@ -297,11 +297,11 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.telephone = telephone;
     }
 
-    public AddressAdvert getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(AddressAdvert address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 

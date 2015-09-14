@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAdvertDomicileExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtractor;
+import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedDomicileExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimpleExtractor;
 import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedRejectionReasonSelector;
@@ -29,14 +29,14 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
     // FIXME: mechanism to filter in charts based on department / program of origin
     IMPORTED_ADVERT_DOMICILE(new PrismImportedEntityImportDefinition()
-            .withEntityClass(ImportedAdvertDomicile.class),
+            .withEntityClass(ImportedDomicile.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_advert_domicile")
                     .withPivotColumn("id")
                     .withColumn("name")
                     .withColumn("currency")
                     .withColumn("enabled")
-                    .withExtractor(ImportedAdvertDomicileExtractor.class),
+                    .withExtractor(ImportedDomicileExtractor.class),
             null, true),
     IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedAgeRange.class),

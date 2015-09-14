@@ -10,8 +10,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     private Integer id;
 
-    // FIXME - make a representation that has institution country and program type in it for this
-    private ResourceRepresentationActivity program;
+    private ResourceRepresentationActivity resource;
 
     private LocalDate startDate;
 
@@ -31,12 +30,12 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.id = id;
     }
 
-    public ResourceRepresentationActivity getProgram() {
-        return program;
+    public ResourceRepresentationActivity getResource() {
+        return resource;
     }
 
-    public void setProgram(ResourceRepresentationActivity program) {
-        this.program = program;
+    public void setResource(ResourceRepresentationActivity resource) {
+        this.resource = resource;
     }
 
     public LocalDate getStartDate() {
@@ -85,7 +84,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
     }
 
     public ApplicationQualificationRepresentation withProgram(ResourceRepresentationActivity program) {
-        this.program = program;
+        this.resource = program;
         return this;
     }
 

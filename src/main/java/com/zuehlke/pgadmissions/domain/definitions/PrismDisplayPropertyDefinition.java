@@ -1,12 +1,80 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.DEPARTMENT_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_OPPORTUNITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_ENQUIRY_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_FINANCIAL_DETAILS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
 
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -363,8 +431,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_STUDY_OPTION_FULL_TIME(SYSTEM_STUDY_OPTION, "Full Time"),
     SYSTEM_STUDY_OPTION_PART_TIME(SYSTEM_STUDY_OPTION, "Part Time"),
-    SYSTEM_STUDY_OPTION_MODULAR_FLEXIBLE(SYSTEM_STUDY_OPTION, "Modular / Flexible"),
-    SYSTEM_STUDY_OPTION_UNCLASSIFIED(SYSTEM_STUDY_OPTION, "Unclassified"),
 
     /*
      * *************** SYSTEM OPPORTUNITY CATEGORY *********************
@@ -401,7 +467,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_PROPERTY_PROGRAM_NAME(SYSTEM_FILTER_PROPERTY, "Program"),
     SYSTEM_FILTER_PROPERTY_PROJECT_NAME(SYSTEM_FILTER_PROPERTY, "Position"),
     SYSTEM_FILTER_PROPERTY_NAME(SYSTEM_FILTER_PROPERTY, "Title"),
-    SYSTEM_FILTER_PROPERTY_STATE_GROUP_NAME(SYSTEM_FILTER_PROPERTY, "Status"),
+    SYSTEM_FILTER_PROPERTY_STATE_GROUP_NAME(SYSTEM_FILTER_PROPERTY, "State"),
     SYSTEM_FILTER_PROPERTY_CREATED_TIMESTAMP(SYSTEM_FILTER_PROPERTY, "Created Date"),
     SYSTEM_FILTER_PROPERTY_SUBMITTED_TIMESTAMP(SYSTEM_FILTER_PROPERTY, "Submitted Date"),
     SYSTEM_FILTER_PROPERTY_UPDATED_TIMESTAMP(SYSTEM_FILTER_PROPERTY, "Last Updated Date"),
@@ -420,7 +486,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_PROPERTY_PRIMARY_THEME(SYSTEM_FILTER_PROPERTY, "Primary Subject"),
     SYSTEM_FILTER_PROPERTY_SECONDARY_THEME(SYSTEM_FILTER_PROPERTY, "Secondary Subject"),
     SYSTEM_FILTER_PROPERTY_STUDY_APPLICATION(SYSTEM_FILTER_PROPERTY, "Study Application ID"),
-    SYSTEM_FILTER_PROPERTY_RESERVE_STATUS(SYSTEM_FILTER_PROPERTY, "Reserve Status"),
+    SYSTEM_FILTER_PROPERTY_RESERVE_STATUS(SYSTEM_FILTER_PROPERTY, "Reserve State"),
 
     /*
      * *************** SYSTEM FILTER EXPRESSION *********************
@@ -764,7 +830,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_QUALIFICATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Qualification Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_EMPLOYMENT_POSITION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Employment Position Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_FUNDING(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Funding Section"),
-    SYSTEM_DISPLAY_CATEGORY_APPLICATION_PRIZE(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Prize Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_REFEREE(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Referee Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_DOCUMENT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Document Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_ADDITIONAL_INFORMATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Additional Information Section"),
@@ -913,8 +978,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_APPLICATION_FUNDING_HINT(SYSTEM_WORKFLOW, "Enable collection of funding information"),
     SYSTEM_APPLICATION_FUNDING_PROOF_OF_AWARD_LABEL(SYSTEM_WORKFLOW, "Proof of Funding"),
     SYSTEM_APPLICATION_FUNDING_PROOF_OF_AWARD_HINT(SYSTEM_WORKFLOW, "Enable collection of documentary proof of funding"),
-    SYSTEM_APPLICATION_PRIZE_LABEL(SYSTEM_WORKFLOW, "Prizes"),
-    SYSTEM_APPLICATION_PRIZE_HINT(SYSTEM_WORKFLOW, "Enable collection of information about prizes and achievements"),
     SYSTEM_APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL(SYSTEM_WORKFLOW, "Personal Statement"),
     SYSTEM_APPLICATION_DOCUMENT_PERSONAL_STATEMENT_HINT(SYSTEM_WORKFLOW, "Enable upload of a personal statement"),
     SYSTEM_APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL(SYSTEM_WORKFLOW, "Research Statement"),
@@ -1733,10 +1796,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_HINT(
             APPLICATION_PERSONAL_DETAIL,
             "Your date of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
-    APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL(APPLICATION_PERSONAL_DETAIL, "Country of Birth"),
-    APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Your country of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_NATIONALITIES_SUBHEADER(APPLICATION_PERSONAL_DETAIL, "Nationalities"),
     APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Nationality"),
     APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Primary Nationality"),
@@ -1782,8 +1841,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             APPLICATION_STUDY_DETAIL,
             "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     APPLICATION_QUALIFICATION_SUBHEADER(APPLICATION_QUALIFICATION, "Qualification"),
-    APPLICATION_QUALIFICATION_PROVIDER_LABEL(APPLICATION_QUALIFICATION, "Organization / Provider Name"),
-    APPLICATION_QUALIFICATION_SUBJECT_LABEL(APPLICATION_QUALIFICATION, "Qualification Subject"),
+    APPLICATION_QUALIFICATION_PROVIDER_PROGRAM_LABEL(APPLICATION_QUALIFICATION, "Provider & Program"),
+    APPLICATION_QUALIFICATION_PROVIDER_PROGRAM_HINT(APPLICATION_QUALIFICATION, "The provider of the qualification, and the program that you are following/completed."),
     APPLICATION_QUALIFICATION_START_DATE_LABEL(APPLICATION_QUALIFICATION, "Start Date"),
     APPLICATION_QUALIFICATION_START_DATE_HINT(APPLICATION_QUALIFICATION, "The start date of study."),
     APPLICATION_QUALIFICATION_COMPLETED_LABEL(APPLICATION_QUALIFICATION, "Has this qualification been awarded?"),
@@ -1809,15 +1868,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_EMPLOYMENT_POSITION_HEADER(APPLICATION_EMPLOYMENT_POSITION, "Employment Positions"),
     APPLICATION_EMPLOYMENT_POSITION_DESCRIPTION(APPLICATION_EMPLOYMENT_POSITION,
             "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),
-    APPLICATION_EMPLOYMENT_POSITION_SUBHEADER(APPLICATION_EMPLOYMENT_POSITION, "Position"),
-    APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Employer Name"),
-    APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_HINT(APPLICATION_EMPLOYMENT_POSITION, "Type the name of your organization here."),
-    APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS_HEADER(APPLICATION_EMPLOYMENT_POSITION, "Employer Address"),
-    APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Employer Address"),
-    APPLICATION_EMPLOYMENT_POSITION_TITLE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Position Title"),
-    APPLICATION_EMPLOYMENT_POSITION_TITLE_HINT(APPLICATION_EMPLOYMENT_POSITION, "Type the title of your position here."),
-    APPLICATION_EMPLOYMENT_POSITION_REMIT_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Roles and Responsibilities"),
-    APPLICATION_EMPLOYMENT_POSITION_REMIT_HINT(APPLICATION_EMPLOYMENT_POSITION, "A concise description of your roles and responsibilities."),
+    APPLICATION_EMPLOYMENT_POSITION_SUBHEADER(APPLICATION_EMPLOYMENT_POSITION, "Position Details"),
+    APPLICATION_EMPLOYMENT_POSTIION_POSITION_EMPLOYER_LABEL(APPLICATION_REFEREE, "Postion & Employer"), 
+    APPLICATION_EMPLOYMNET_POSTIION_POSITION_EMPLOYER_HINT(APPLICATION_REFEREE, "The position that you held, and the organization that employed/employs you."), 
     APPLICATION_EMPLOYMENT_POSITION_START_DATE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Start Date"),
     APPLICATION_EMPLOYMENT_POSITION_START_DATE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The start date of the position."),
     APPLICATION_EMPLOYMENT_POSITION_CURRENT_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Is this your current position?"),
@@ -1826,32 +1879,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_EMPLOYMENT_POSITION_END_DATE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The end date of the position."),
     APPLICATION_EMPLOYMENT_POSITION_PERIOD_LABEL(APPLICATION_QUALIFICATION, "Employment Period"),
 
-    APPLICATION_PRIZE_HEADER(APPLICATION_PRIZE, "Awards, Prizes & Achievements"),
-    APPLICATION_PRIZE_DESCRIPTION(APPLICATION_PRIZE,
-            "Please provide details of any awards, prizes or other outstanding achievements relevant to your application."),
-    APPLICATION_PRIZE_SUBHEADER(APPLICATION_PRIZE, "Prize"),
-    APPLICATION_PRIZE_PROVIDER_LABEL(APPLICATION_PRIZE, "Provider"),
-    APPLICATION_PRIZE_PROVIDER_HINT(APPLICATION_PRIZE, "The provider of the prize/award."),
-    APPLICATION_PRIZE_TITLE_LABEL(APPLICATION_PRIZE, "Title"),
-    APPLICATION_PRIZE_TITLE_HINT(APPLICATION_PRIZE, "The title of the prize/award."),
-    APPLICATION_PRIZE_DESCRIPTION_LABEL(APPLICATION_PRIZE, "Description"),
-    APPLICATION_PRIZE_DESCRIPTION_HINT(APPLICATION_PRIZE, "A concise description of the prize/award."),
-    APPLICATION_PRIZE_AWARD_DATE_LABEL(APPLICATION_PRIZE, "Award Date"),
-    APPLICATION_PRIZE_AWARD_DATE_HINT(APPLICATION_PRIZE, "The date upon which the prize/award was granted."),
-    APPLICATION_PRIZE_AWARD_NO_ITEMS(APPLICATION_PRIZE, "This Application doesn't contain any Prizes/Awards"),
-
     APPLICATION_REFEREE_HEADER(APPLICATION_REFEREE, "Referees"),
     APPLICATION_REFEREE_DESCRIPTION(APPLICATION_REFEREE,
             "Specify your referee(s) here. Each referee will be asked to provide a statement in support of your application."),
     APPLICATION_REFEREE_SUBHEADER(APPLICATION_REFEREE, "Referee"),
     APPLICATION_REFEREE_POSITION_DETAILS_SUBHEADER(APPLICATION_REFEREE, "Position Details"),
-    APPLICATION_REFEREE_TYPE_LABEL(APPLICATION_REFEREE, "Referee Type"),
-    APPLICATION_REFEREE_TYPE_HINT(APPLICATION_REFEREE, "The type of reference that this referee will be able to provide."),
-    APPLICATION_REFEREE_EMPLOYER_LABEL(APPLICATION_REFEREE, "Employer"),
-    APPLICATION_REFEREE_EMPLOYER_HINT(APPLICATION_REFEREE, "The employer of the referee."),
-    APPLICATION_REFEREE_POSITION_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Position"),
-    APPLICATION_REFEREE_POSITION_HINT(APPLICATION_EMPLOYMENT_POSITION, "The position of the referee"),
-    APPLICATION_REFEREE_EMPLOYER_ADDRESS_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Employer Address"),
+    APPLICATION_REFEREE_POSITION_EMPLOYER_LABEL(APPLICATION_REFEREE, "Postion & Employer"),
+    APPLICATION_REFEREE_POSITION_EMPLOYER_HINT(APPLICATION_REFEREE, "The position that your referee holds, and the organization that employs them."),
     APPLICATION_REFEREE_PHONE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Telephone"),
     APPLICATION_REFEREE_PHONE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The employer telephone number of the referee."),
     APPLICATION_REFEREE_SKYPE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Skype user name"),
@@ -1995,7 +2029,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_COMMENT_UPDATED_ADDRESS(APPLICATION_COMMENT, "Updated the address section"),
     APPLICATION_COMMENT_UPDATED_QUALIFICATION(APPLICATION_COMMENT, "Updated the qualification section"),
     APPLICATION_COMMENT_UPDATED_EMPLOYMENT(APPLICATION_COMMENT, "Updated the employment section"),
-    APPLICATION_COMMENT_UPDATED_PRIZE(APPLICATION_COMMENT, "Updated the prizes and awards section"),
     APPLICATION_COMMENT_UPDATED_REFEREE(APPLICATION_COMMENT, "Updated the referee section"),
     APPLICATION_COMMENT_UPDATED_DOCUMENT(APPLICATION_COMMENT, "Updated the document section"),
     APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information section"),

@@ -28,14 +28,16 @@ import org.springframework.web.client.ResourceAccessException;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
+import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -56,7 +58,13 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
     private String facebookClientId;
 
     @Inject
+    private DocumentService documentService;
+
+    @Inject
     private ImportedEntityService importedEntityService;
+
+    @Inject
+    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private InstitutionService institutionService;
@@ -66,14 +74,14 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
     @Inject
     private SystemService systemService;
-    
+
     @Inject
     private ApplicationContext applicationContext;
 
     private AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         System system = systemService.getSystem();
 
         FacebookServiceProvider facebookServiceProvider = new FacebookServiceProvider(facebookClientId, facebookAppSecret, null);
@@ -86,10 +94,9 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
         }
         Facebook facebookApi = facebookServiceProvider.getApi(accessGrant.getAccessToken());
 
-        List<ImportedInstitution> unimportedUcasInstitutions = importedEntityService.getUnimportedUcasInstitutions();
-        for (ImportedInstitution importedInstitution : unimportedUcasInstitutions) {
+        getImportedInstitutions().forEach(importedInstitution -> {
             importInstitution(system, importedInstitution, facebookApi);
-        }
+        });
     }
 
     @Override
@@ -97,7 +104,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
         return shuttingDown;
     }
 
-    private void importInstitution(System system, ImportedInstitution importedInstitution, Facebook facebookApi) {
+    private void importInstitution(System system, ImportedInstitutionImportDTO importedInstitution, Facebook facebookApi) {
         if (!isShuttingDown()) {
             logger.info("Importing institution: " + importedInstitution.getName());
 
@@ -107,17 +114,17 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
                 try {
                     facebookPage = facebookApi.pageOperations().getPage(facebookId);
                 } catch (UncategorizedApiException e) {
-                    logger.error("Could not read Facebook data for imported institution ID: " + importedInstitution.getId());
+                    logger.error("Could not read Facebook data for imported institution ID: " + importedInstitution.getName());
                 }
             }
             facebookPage = ObjectUtils.firstNonNull(facebookPage, new Page());
 
             InstitutionUcasScraper.UcasInstitutionData ucasInstitutionData = institutionUcasScraper.getInstitutionData(importedInstitution.getUcasIds());
             if (ucasInstitutionData == null) {
-                logger.error("Could not read UCAS data for imported institution ID: " + importedInstitution.getId());
+                logger.error("Could not read UCAS data for imported institution ID: " + importedInstitution.getName());
                 return;
             }
-            
+
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
 
             AdvertDTO advertDTO = new AdvertDTO();
@@ -126,17 +133,15 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             institutionDTO.setCurrency("GBP");
             institutionDTO.setBusinessYearStartMonth(10);
             institutionDTO.setOpportunityCategories(Collections.singletonList(PrismOpportunityCategory.STUDY));
-            institutionDTO.setImportedInstitutionId(importedInstitution.getId());
             institutionDTO.setName(importedInstitution.getName());
             institutionDTO.setAdvert(advertDTO);
             AddressAdvertDTO address = new AddressAdvertDTO();
             advertDTO.setAddress(address);
 
-
             String summary = createSummary(facebookPage, ucasInstitutionData.getSummary());
 
             advertDTO.setSummary(summary);
-            
+
             String placeholder = loader.loadLazy(SYSTEM_VALUE_NOT_SPECIFIED);
             advertDTO.setTelephone(firstNonNull(ucasInstitutionData.getTelephone(), facebookPage.getPhone(), placeholder));
             advertDTO.setHomepage(firstNonNull(ucasInstitutionData.getHomepage(), facebookPage.getWebsite(), placeholder));
@@ -205,6 +210,11 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             summaryBuilder += "\n\n" + paragraph;
         }
         return summaryBuilder;
+    }
+
+    private List<ImportedInstitutionImportDTO> getImportedInstitutions() throws Exception {
+        return importedEntityMapper.getImportedEntityRepresentations(ImportedInstitutionImportDTO.class,
+                documentService.getAmazonClient().getObject("prism-import-data", "institution.json").getObjectContent());
     }
 
 }

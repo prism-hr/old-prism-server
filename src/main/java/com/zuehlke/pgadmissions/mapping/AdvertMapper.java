@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
@@ -71,7 +70,6 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetail
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertSubjectAreaRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
@@ -391,8 +389,7 @@ public class AdvertMapper {
     private AdvertCategoriesRepresentation getAdvertCategoriesRepresentation(Advert advert) {
         AdvertCategories categories = advertService.getAdvertCategories(advert);
         return categories == null ? null : new AdvertCategoriesRepresentation().withIndustries(getAdvertCategoryRepresentations(categories.getIndustries()))
-                .withFunctions(getAdvertCategoryRepresentations(categories.getFunctions()))
-                .withThemes(getAdvertCategoryRepresentations(categories.getThemes()));
+                .withFunctions(getAdvertCategoryRepresentations(categories.getFunctions()));
     }
 
     private <T extends AdvertAttribute<U>, U> List<U> getAdvertCategoryRepresentations(Set<T> categories) {
@@ -403,7 +400,6 @@ public class AdvertMapper {
         AdvertTargets targets = advertService.getAdvertTargets(advert);
         if (targets != null) {
             return new AdvertTargetsRepresentation().withCompetences(getAdvertCompetenceRepresentations(targets.getCompetences()))
-                    .withSubjectAreas(getAdvertSubjectAreaRepresentations(targets.getSubjectAreas()))
                     .withResources(getAdvertResourceRepresentations(advert, false)).withSelectedResources(getAdvertResourceRepresentations(advert, true));
         }
         return null;
@@ -414,14 +410,9 @@ public class AdvertMapper {
                 .withDescription(competence.getValue().getDescription()).withImportance(competence.getImportance())).collect(Collectors.toList());
     }
 
-    private List<AdvertSubjectAreaRepresentation> getAdvertSubjectAreaRepresentations(Collection<AdvertSubjectArea> subjectAreas) {
-        return subjectAreas.stream().map(subjectArea -> new AdvertSubjectAreaRepresentation().withId(subjectArea.getValueId()).withName(subjectArea.getName()))
-                .collect(Collectors.toList());
-    }
-
     private List<ResourceRepresentationTarget> getAdvertResourceRepresentations(Advert advert, boolean selected) {
-        return resourceMapper.getResourceTargetingRepresentations(advert, null, advertService.getAdvertTargetResources(advert, INSTITUTION, selected),
-                advertService.getAdvertTargetResources(advert, DEPARTMENT, selected), false);
+        return resourceMapper.getResourceTargetingRepresentations(advert, advertService.getAdvertTargetResources(advert, INSTITUTION, selected),
+                advertService.getAdvertTargetResources(advert, DEPARTMENT, selected));
     }
 
     private ImportedAdvertDomicileResponse getAdvertDomicileRepresentation(ImportedAdvertDomicile domicile) {

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.evaluators;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
@@ -11,10 +13,7 @@ public class ResourceAdvertCategoriesEvaluator implements ResourceCompletenessEv
     @Override
     public boolean evaluate(ResourceParent resource) {
         AdvertCategories categories = resource.getAdvert().getCategories();
-        if (categories == null) {
-            return false;
-        }
-        return !categories.getFunctions().isEmpty() || !categories.getIndustries().isEmpty() || !categories.getThemes().isEmpty();
+        return !(categories == null || isEmpty(categories.getFunctions()) || isEmpty(categories.getIndustries()));
     }
 
 }

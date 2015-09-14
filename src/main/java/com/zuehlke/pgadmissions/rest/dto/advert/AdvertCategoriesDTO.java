@@ -11,8 +11,6 @@ public class AdvertCategoriesDTO {
 
     private List<PrismAdvertFunction> functions;
 
-    private List<String> themes;
-
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
     }
@@ -27,14 +25,6 @@ public class AdvertCategoriesDTO {
 
     public void setFunctions(List<PrismAdvertFunction> functions) {
         this.functions = functions;
-    }
-
-    public List<String> getThemes() {
-        return themes;
-    }
-
-    public void setThemes(List<String> themes) {
-        this.themes = themes;
     }
 
 }

@@ -7,7 +7,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDI
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static java.math.RoundingMode.HALF_UP;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
@@ -39,7 +37,6 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
@@ -60,9 +57,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     private ApplicationService applicationService;
 
     @Inject
-    private RoleService roleService;
-
-    @Inject
     private ScopeService scopeService;
 
     @Inject
@@ -70,10 +64,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
     @Override
     public void process(Application resource, Comment comment) {
-        if (comment.isProjectCreateApplicationComment()) {
-            synchronizeProjectSupervisors(resource);
-        }
-
         if (comment.isApplicationProvideReferenceComment()) {
             synchronizeApplicationReferees(resource, comment);
         }
@@ -96,14 +86,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
         if (comment.isApplicationCompletionComment()) {
             resource.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
-        }
-    }
-
-    private void synchronizeProjectSupervisors(Application application) {
-        List<User> supervisorUsers = roleService.getRoleUsers(application.getProject(), PROJECT_SUPERVISOR_GROUP);
-        for (User supervisorUser : supervisorUsers) {
-            application.getSupervisors().add(
-                    new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true).withLastUpdatedTimestamp(new DateTime()));
         }
     }
 

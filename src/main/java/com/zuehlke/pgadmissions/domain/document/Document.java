@@ -15,12 +15,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.PrismConstants;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -69,25 +66,13 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
     private Comment comment;
 
     @OneToOne(mappedBy = "document")
-    private ApplicationLanguageQualification applicationLanguageQualification;
-
-    @OneToOne(mappedBy = "document")
     private ApplicationQualification applicationQualification;
-
-    @OneToOne(mappedBy = "document")
-    private ApplicationFunding applicationFunding;
-
-    @OneToOne(mappedBy = "personalStatement")
-    private ApplicationDocument applicationPersonalStatement;
-
-    @OneToOne(mappedBy = "researchStatement")
-    private ApplicationDocument applicationResearchStatement;
-
-    @OneToOne(mappedBy = "coveringLetter")
-    private ApplicationDocument applicationCoveringLetter;
 
     @OneToOne(mappedBy = "cv")
     private ApplicationDocument applicationCv;
+
+    @OneToOne(mappedBy = "coveringLetter")
+    private ApplicationDocument applicationCoveringLetter;
 
     @OneToOne(mappedBy = "portraitImage")
     private UserAccount portraitImage;
@@ -166,24 +151,8 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
         return comment;
     }
 
-    public ApplicationLanguageQualification getApplicationLanguageQualification() {
-        return applicationLanguageQualification;
-    }
-
     public ApplicationQualification getApplicationQualification() {
         return applicationQualification;
-    }
-
-    public ApplicationFunding getApplicationFunding() {
-        return applicationFunding;
-    }
-
-    public ApplicationDocument getApplicationPersonalStatement() {
-        return applicationPersonalStatement;
-    }
-
-    public ApplicationDocument getApplicationResearchStatement() {
-        return applicationResearchStatement;
     }
 
     public ApplicationDocument getApplicationCv() {
@@ -249,16 +218,8 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
     public Resource getResource() {
         if (comment != null) {
             return comment.getResource();
-        } else if (applicationLanguageQualification != null) {
-            return applicationLanguageQualification.getPersonalDetail().getApplication();
         } else if (applicationQualification != null) {
             return applicationQualification.getApplication();
-        } else if (applicationFunding != null) {
-            return applicationFunding.getApplication();
-        } else if (applicationPersonalStatement != null) {
-            return applicationPersonalStatement.getApplication();
-        } else if (applicationResearchStatement != null) {
-            return applicationResearchStatement.getApplication();
         } else if (applicationCoveringLetter != null) {
             return applicationCoveringLetter.getApplication();
         } else if (applicationCv != null) {
@@ -270,10 +231,6 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     public String getExportFilenameAmazon() {
         return id.toString();
-    }
-
-    public String getExportFilenameSits() {
-        return getExportFilenameAmazon() + PrismConstants.DOT + PrismConstants.FILE_EXTENSION_PDF;
     }
 
     @Override

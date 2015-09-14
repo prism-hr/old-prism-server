@@ -11,7 +11,7 @@ public class DepartmentInvitationDTO {
 
     @NotNull
     @Valid
-    private DepartmentDTO department;
+    private ResourceParentDivisionDTO department;
 
     @Valid
     private UserSimpleDTO departmentUser;
@@ -24,11 +24,11 @@ public class DepartmentInvitationDTO {
         this.advertId = advertId;
     }
 
-    public DepartmentDTO getDepartment() {
+    public ResourceParentDivisionDTO getDepartment() {
         return department;
     }
 
-    public void setDepartment(DepartmentDTO department) {
+    public void setDepartment(ResourceParentDivisionDTO department) {
         this.department = department;
     }
 

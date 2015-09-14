@@ -105,8 +105,8 @@ public class InstitutionUcasScraper {
         jg.close();
     }
 
-    public UcasInstitutionData getInstitutionData(String ucasIds) {
-        int ucasId = Integer.parseInt(ucasIds.split("\\|", 2)[0]);
+    public UcasInstitutionData getInstitutionData(List<Integer> ucasIds) {
+        Integer ucasId = ucasIds.get(0);
         Document document = null;
         try {
             document = getInstitutionHtmlDocument(ucasId);
@@ -123,8 +123,8 @@ public class InstitutionUcasScraper {
             addressDTO = new AddressAdvertDTO();
             String countryString = Optional.ofNullable(addressElement.getElementById("country")).map(e -> e.text()).orElse(null);
             addressDTO.setAddressLine1(Optional.ofNullable(addressElement.getElementById("street")).map(e -> e.text()).orElse(null));
-
-            Element townElement = ObjectUtils.firstNonNull(addressElement.getElementById("town"), addressElement.getElementById("locality"), addressElement.getElementById("county"));
+            Element townElement = ObjectUtils.firstNonNull(addressElement.getElementById("town"), addressElement.getElementById("locality"),
+                    addressElement.getElementById("county"));
             addressDTO.setAddressTown(Optional.ofNullable(townElement).map(e -> e.text()).orElse(null));
             addressDTO.setAddressCode(Optional.ofNullable(addressElement.getElementById("postCode")).map(e -> e.text()).orElse(null));
             addressDTO.setAddressRegion(Optional.ofNullable(addressElement.getElementById("county")).map(e -> e.text()).orElse(null));

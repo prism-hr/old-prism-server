@@ -2,25 +2,20 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_ADVERT_DOMICILE;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAdvertDomicileMapping;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedAdvertDomicileDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 @Entity
 @Table(name = "imported_advert_domicile")
-public class ImportedAdvertDomicile extends ImportedEntity<String, ImportedAdvertDomicileMapping> implements ImportedAdvertDomicileDefinition,
-        ImportedEntityResponseDefinition<String> {
+public class ImportedAdvertDomicile extends ImportedEntity<String>
+        implements ImportedAdvertDomicileDefinition, ImportedEntityResponseDefinition<String> {
 
     @Id
     private String id;
@@ -33,9 +28,6 @@ public class ImportedAdvertDomicile extends ImportedEntity<String, ImportedAdver
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-
-    @OneToMany(mappedBy = "importedEntity")
-    private Set<ImportedAdvertDomicileMapping> mappings = Sets.newHashSet();
 
     @Override
     public String getId() {
@@ -82,11 +74,6 @@ public class ImportedAdvertDomicile extends ImportedEntity<String, ImportedAdver
         this.enabled = enabled;
     }
 
-    @Override
-    public Set<ImportedAdvertDomicileMapping> getMappings() {
-        return mappings;
-    }
-
     public ImportedAdvertDomicile withId(String id) {
         this.id = id;
         return this;
@@ -106,7 +93,7 @@ public class ImportedAdvertDomicile extends ImportedEntity<String, ImportedAdver
         this.enabled = enabled;
         return this;
     }
-    
+
     @Override
     public String index() {
         return id.toString();

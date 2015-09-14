@@ -30,11 +30,10 @@ import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.workflow.notification.property.ActionCompleteBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ActionViewEditBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCodeBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedManagerBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedOfferConditionBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPositionDescriptionBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPositionTitleBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPrimarySupervisorBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedSecondarySupervisorBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedStartDateBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCreatorFullNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewDateTimeBuilder;
@@ -119,8 +118,7 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_CONFIRMED_POSITION_TITLE(APPLICATION_APPROVED, true, ApplicationConfirmedPositionTitleBuilder.class), //
     APPLICATION_CONFIRMED_POSITION_DESCRIPTION(APPLICATION_APPROVED, true, ApplicationConfirmedPositionDescriptionBuilder.class), //
     APPLICATION_CONFIRMED_START_DATE(APPLICATION_APPROVED, true, ApplicationConfirmedStartDateBuilder.class), //
-    APPLICATION_CONFIRMED_PRIMARY_SUPERVISOR(APPLICATION_APPROVED, true, ApplicationConfirmedPrimarySupervisorBuilder.class), //
-    APPLICATION_CONFIRMED_SECONDARY_SUPERVISOR(APPLICATION_APPROVED, true, ApplicationConfirmedSecondarySupervisorBuilder.class), //
+    APPLICATION_CONFIRMED_MANAGER(APPLICATION_APPROVED, true, ApplicationConfirmedManagerBuilder.class), //
     APPLICATION_CONFIRMED_OFFER_CONDITION(APPLICATION_APPROVED, true, ApplicationConfirmedOfferConditionBuilder.class), //
     APPLICATION_REJECTION_REASON(APPLICATION_REJECTED, true, ApplicationRejectionReasonBuilder.class), //
     PROJECT_TITLE(PROJECT_GLOBAL, true, ProjectTitleBuilder.class), //

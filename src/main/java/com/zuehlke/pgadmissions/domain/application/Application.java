@@ -5,35 +5,27 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramS
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_RETAINED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_CORRECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_RETAINED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_PENDING_CORRECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_RETAINED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -131,14 +123,6 @@ public class Application extends Resource {
     @Column(name = "previous_application")
     private Boolean previousApplication;
 
-    @Embedded
-    private ApplicationStudyDetail studyDetail;
-
-    @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id", nullable = false)
-    private Set<ApplicationSupervisor> supervisors = Sets.newHashSet();
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
     private ApplicationPersonalDetail personalDetail;
@@ -160,11 +144,6 @@ public class Application extends Resource {
     @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    private Set<ApplicationFunding> fundings = Sets.newHashSet();
-
-    @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationPrize> prizes = Sets.newHashSet();
 
     @OrderBy(clause = "id")
@@ -179,14 +158,6 @@ public class Application extends Resource {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
-
-    @Lob
-    @Column(name = "primary_theme")
-    private String primaryTheme;
-
-    @Lob
-    @Column(name = "secondary_theme")
-    private String secondaryTheme;
 
     @Column(name = "identified")
     private Boolean identified;
@@ -548,40 +519,12 @@ public class Application extends Resource {
         this.previousApplication = previousApplication;
     }
 
-    public final ApplicationStudyDetail getStudyDetail() {
-        return studyDetail;
-    }
-
-    public final void setStudyDetail(ApplicationStudyDetail studyDetail) {
-        this.studyDetail = studyDetail;
-    }
-
-    public Set<ApplicationSupervisor> getSupervisors() {
-        return supervisors;
-    }
-
     public ApplicationAdditionalInformation getAdditionalInformation() {
         return additionalInformation;
     }
 
     public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
-    }
-
-    public String getPrimaryTheme() {
-        return primaryTheme;
-    }
-
-    public void setPrimaryTheme(String primaryTheme) {
-        this.primaryTheme = primaryTheme;
-    }
-
-    public String getSecondaryTheme() {
-        return secondaryTheme;
-    }
-
-    public void setSecondaryTheme(String secondaryTheme) {
-        this.secondaryTheme = secondaryTheme;
     }
 
     public Boolean getIdentified() {
@@ -650,10 +593,6 @@ public class Application extends Resource {
 
     public Set<ApplicationQualification> getQualifications() {
         return qualifications;
-    }
-
-    public Set<ApplicationFunding> getFundings() {
-        return fundings;
     }
 
     public Set<ApplicationPrize> getPrizes() {
@@ -774,14 +713,6 @@ public class Application extends Resource {
         return closingDate == null ? null : closingDate.toString(dateFormat);
     }
 
-    public String getPrimaryThemeDisplay() {
-        return primaryTheme == null ? null : primaryTheme.replace("|", ", ");
-    }
-
-    public String getSecondaryThemeDisplay() {
-        return secondaryTheme == null ? null : secondaryTheme.replace("|", ", ");
-    }
-
     public boolean isSubmitted() {
         return submittedTimestamp != null;
     }
@@ -830,18 +761,12 @@ public class Application extends Resource {
                 .addProperty("department", department)
                 .addProperty("institution", institution)
                 .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED)
-                .addExclusion("state.id", APPLICATION_APPROVED_PENDING_EXPORT)
-                .addExclusion("state.id", APPLICATION_APPROVED_PENDING_CORRECTION)
                 .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED_PURGED)
                 .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED_RETAINED)
                 .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED)
-                .addExclusion("state.id", APPLICATION_REJECTED_PENDING_EXPORT)
-                .addExclusion("state.id", APPLICATION_REJECTED_PENDING_CORRECTION)
                 .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED_PURGED)
                 .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED_RETAINED)
                 .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED)
-                .addExclusion("state.id", APPLICATION_WITHDRAWN_PENDING_EXPORT)
-                .addExclusion("state.id", APPLICATION_WITHDRAWN_PENDING_CORRECTION)
                 .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_PURGED)
                 .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_RETAINED)
                 .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)

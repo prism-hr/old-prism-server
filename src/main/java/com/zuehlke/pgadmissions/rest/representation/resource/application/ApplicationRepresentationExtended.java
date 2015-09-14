@@ -4,15 +4,15 @@ import java.util.List;
 
 public class ApplicationRepresentationExtended extends ApplicationRepresentationSimple {
 
-    private List<ApplicationAssignedSupervisorRepresentation> assignedSupervisors;
+    private List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors;
     
     private ApplicationOfferRepresentation offerRecommendation;
     
-    public List<ApplicationAssignedSupervisorRepresentation> getAssignedSupervisors() {
+    public List<ApplicationAssignedHiringManagerRepresentation> getAssignedSupervisors() {
         return assignedSupervisors;
     }
 
-    public void setAssignedSupervisors(List<ApplicationAssignedSupervisorRepresentation> assignedSupervisors) {
+    public void setAssignedSupervisors(List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors) {
         this.assignedSupervisors = assignedSupervisors;
     }
 

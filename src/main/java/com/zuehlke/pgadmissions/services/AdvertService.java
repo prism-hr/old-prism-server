@@ -61,10 +61,8 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.advert.AdvertSubjectArea;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -77,7 +75,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -374,27 +371,6 @@ public class AdvertService {
         return targets;
     }
 
-    public List<String> getAdvertThemes(Advert advert) {
-        List<String> themes = Lists.newLinkedList();
-        AdvertCategories categories = getAdvertCategories(advert);
-        for (AdvertTheme theme : categories.getThemes()) {
-            themes.add(theme.getValue());
-        }
-        return themes;
-    }
-
-    public Set<String> getAvailableAdvertThemes(Advert advert, Set<String> themes) {
-        themes = themes == null ? Sets.newTreeSet() : themes;
-        themes.addAll(getAdvertThemes(advert));
-
-        Resource parentResource = advert.getResource().getParentResource();
-        if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
-            getAvailableAdvertThemes(parentResource.getAdvert(), themes);
-        }
-
-        return themes;
-    }
-
     public List<ImportedAdvertDomicile> getAdvertDomiciles() {
         return advertDAO.getAdvertDomiciles();
     }
@@ -444,7 +420,7 @@ public class AdvertService {
             User user = comment.getUser();
             Advert advert = resource.getAdvert();
             PrismScope resourceScope = resource.getResourceScope();
-            
+
             Set<Integer> advertTargets = Sets.newHashSet();
             for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
                 advertTargets.addAll(advertDAO.getAdvertTargetsUserCanEndorseFor(advert, user, resourceScope, partnerScope));
@@ -471,17 +447,6 @@ public class AdvertService {
             advert.setTargets(targets);
         }
 
-        List<Integer> newSubjectAreaValues = Lists.newArrayList();
-        Set<AdvertSubjectArea> subjectAreas = targets.getSubjectAreas();
-        if (targetsDTO.getSubjectAreas() != null) {
-            targetsDTO.getSubjectAreas().stream().forEach(targetDTO -> {
-                AdvertSubjectArea target = new AdvertSubjectArea().withAdvert(advert).withValue(entityService.getById(ImportedSubjectArea.class, targetDTO.getId()));
-                entityService.getOrCreate(target);
-                newSubjectAreaValues.add(target.getValueId());
-                subjectAreas.add(target);
-            });
-        }
-
         User user = userService.getCurrentUser();
 
         List<Integer> newTargetValues = Lists.newArrayList();
@@ -504,12 +469,6 @@ public class AdvertService {
         }
 
         if (refreshTargets) {
-            if (newSubjectAreaValues.isEmpty()) {
-                advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class);
-            } else {
-                advertDAO.deleteAdvertAttributes(advert, AdvertSubjectArea.class, newSubjectAreaValues);
-            }
-
             if (newTargetValues.isEmpty()) {
                 advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class);
             } else {
@@ -548,9 +507,6 @@ public class AdvertService {
             advertDAO.deleteAdvertAttributes(advert, AdvertFunction.class);
             categories.getFunctions().clear();
 
-            advertDAO.deleteAdvertAttributes(advert, AdvertTheme.class);
-            categories.getThemes().clear();
-
             entityService.flush();
         }
 
@@ -566,13 +522,6 @@ public class AdvertService {
             AdvertFunction category = new AdvertFunction().withAdvert(advert).withValue(categoryDTO);
             entityService.save(category);
             functions.add(category);
-        });
-
-        Set<AdvertTheme> themes = categories.getThemes();
-        categoriesDTO.getThemes().stream().forEach(categoryDTO -> {
-            AdvertTheme category = new AdvertTheme().withAdvert(advert).withValue(categoryDTO);
-            entityService.save(category);
-            themes.add(category);
         });
     }
 

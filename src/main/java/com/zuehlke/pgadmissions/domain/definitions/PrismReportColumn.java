@@ -7,17 +7,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_GENDER_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDED_REFERENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFERRAL_SOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_STUDY_DETAIL_APPLICATION_ID_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_STUDY_DETAIL_AREA_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_STUDY_DETAIL_DIVISION_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_STUDY_DETAIL_LOCATION_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_STUDY_DETAIL_START_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SUBMISSION_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_AVERAGE_RATING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CLOSING_DATE;
@@ -35,11 +27,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAccessorType.DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAccessorType.DISPLAY_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAccessorType.STRING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_PRIMARY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_SECONDARY;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,16 +47,6 @@ public enum PrismReportColumn {
     PROGRAM_NAME(SYSTEM_PROGRAM, "program.name", null, false, "program", STRING), //
     PROJECT_NAME(SYSTEM_PROJECT, "project.name", null, false, "project", STRING), //
     STUDY_OPTION(APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL, "studyOption.name", null, false, "studyOption", DISPLAY_PROPERTY), //
-    REFERRAL_SOURCE(APPLICATION_REFERRAL_SOURCE, "referralSource.name", null, false, "referralSource", STRING), //
-    PRIMARY_THEME(APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_LABEL, "application.primaryTheme", Arrays.asList(APPLICATION_THEME_PRIMARY), false, "primaryTheme", STRING), //
-    SECONDARY_THEME(APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL, "application.secondaryTheme", Arrays.asList(APPLICATION_THEME_SECONDARY), false, "secondaryTheme", STRING), //
-    STUDY_INSTITUTION(APPLICATION_STUDY_DETAIL_LOCATION_LABEL, "application.studyDetail.studyLocation", Arrays.asList(APPLICATION_STUDY_DETAIL), false, "studyLocation", STRING), //
-    STUDY_DIVISION(APPLICATION_STUDY_DETAIL_DIVISION_LABEL, "application.studyDetail.studyDivision", Arrays.asList(APPLICATION_STUDY_DETAIL), false, "studyDivision", STRING), //
-    STUDY_AREA(APPLICATION_STUDY_DETAIL_AREA_LABEL, "application.studyDetail.studyArea", Arrays.asList(APPLICATION_STUDY_DETAIL), false, "studyArea", STRING), //
-    STUDY_APPLICATION(APPLICATION_STUDY_DETAIL_APPLICATION_ID_LABEL, "application.studyDetail.studyApplicationId", Arrays.asList(APPLICATION_STUDY_DETAIL), false, //
-            "studyApplicationId", STRING), //
-    STUDY_START_DATE(APPLICATION_STUDY_DETAIL_START_DATE_LABEL, "application.studyDetail.studyStartDate", Arrays.asList(APPLICATION_STUDY_DETAIL), false, //
-            "studyStartDate", DATE), //
     CREATED_DATE(SYSTEM_CREATED_DATE, "application.createdTimestamp", null, false, "createdDate", DATE), //
     CLOSING_DATE(SYSTEM_CLOSING_DATE, "application.closingDate", null, false, "closingDate", DATE), //
     SUBMITTED_DATE(APPLICATION_SUBMISSION_DATE, "application.submittedTimestamp", null, false, "submittedDate", DATE), //

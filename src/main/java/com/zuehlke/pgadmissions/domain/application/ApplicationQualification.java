@@ -15,7 +15,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 
 @Entity
 @Table(name = "application_qualification")
@@ -30,8 +30,8 @@ public class ApplicationQualification extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "imported_program_id")
-    private ImportedProgram program;
+    @JoinColumn(name = "program_id")
+    private Program program;
 
     @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -40,9 +40,6 @@ public class ApplicationQualification extends ApplicationSection {
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
-
-    @Column(name = "qualification_language", nullable = false)
-    private String language;
 
     @Column(name = "grade", nullable = false)
     private String grade;
@@ -90,20 +87,12 @@ public class ApplicationQualification extends ApplicationSection {
         this.awardDate = awardDate;
     }
 
-    public ImportedProgram getProgram() {
+    public Program getProgram() {
         return program;
     }
 
-    public void setProgram(ImportedProgram program) {
+    public void setProgram(Program program) {
         this.program = program;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     public String getGrade() {
@@ -155,11 +144,6 @@ public class ApplicationQualification extends ApplicationSection {
         return this;
     }
 
-    public ApplicationQualification withLanguage(String language) {
-        this.language = language;
-        return this;
-    }
-
     public ApplicationQualification withGrade(String grade) {
         this.grade = grade;
         return this;
@@ -170,7 +154,7 @@ public class ApplicationQualification extends ApplicationSection {
         return this;
     }
 
-    public ApplicationQualification withProgram(ImportedProgram program) {
+    public ApplicationQualification withProgram(Program program) {
         this.program = program;
         return this;
     }

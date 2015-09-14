@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +24,9 @@ import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
@@ -55,9 +51,6 @@ public class InstitutionService {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private ImportedEntityService importedEntityService;
 
     @Inject
     private GeocodableLocationService geocodableLocationService;
@@ -121,54 +114,39 @@ public class InstitutionService {
                 : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
-    public List<ResourceTargetRelevanceDTO> getInstitutionsBySubjectAreas(Collection<Integer> subjectAreas) {
-        return institutionDAO.getInstitutionsBySubjectAreas(subjectAreas);
-    }
-
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
-        String name = institutionDTO.getName();
-        Institution persistentInstitution = (Institution) resourceService.getActiveResourceByName(INSTITUTION, name);
-        if (persistentInstitution == null) {
-            ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
-            Institution institution = (Institution) outcome.getResource();
-            Integer institutionId = institution.getId();
-            if (facebookId != null) {
-                try {
-                    CloseableHttpClient httpclient = HttpClients.createDefault();
-                    HttpEntity logoEntity = httpclient.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large")).getEntity();
-                    byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
-                    documentService.createImage("" + institutionId + "_logo", logoImageContent, logoEntity.getContentType().getValue(), institutionId,
-                            PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
-
-                    if (facebookPage.getCover() != null) {
-                        HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource())).getEntity();
-                        byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
-                        documentService.createImage("" + institutionId + "_background", backgroundImageContent, backgroundEntity.getContentType().getValue(),
-                                institutionId, PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
-                    }
-                } catch (IOException e) {
-                    logger.error("Could not load facebook image for institution ID: " + institutionId, e);
-                }
-            }
-
+        ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
+        Institution institution = (Institution) outcome.getResource();
+        Integer institutionId = institution.getId();
+        if (facebookId != null) {
             try {
-                geocodableLocationService.setGeocodeLocation(name, institution.getAdvert().getAddress());
-            } catch (Exception e) {
-                logger.error("Could not load geocode location for institution ID: " + institutionId, e);
+                CloseableHttpClient httpclient = HttpClients.createDefault();
+                HttpEntity logoEntity = httpclient.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large")).getEntity();
+                byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
+                documentService.createImage("" + institutionId + "_logo", logoImageContent, logoEntity.getContentType().getValue(), institutionId,
+                        PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
+
+                if (facebookPage.getCover() != null) {
+                    HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource())).getEntity();
+                    byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
+                    documentService.createImage("" + institutionId + "_background", backgroundImageContent, backgroundEntity.getContentType().getValue(),
+                            institutionId, PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
+                }
+            } catch (IOException e) {
+                logger.error("Could not load facebook image for institution ID: " + institutionId, e);
             }
-            return institution;
-        } else {
-            persistentInstitution.setImportedInstitution(importedEntityService.getById(ImportedInstitution.class, institutionDTO.getImportedInstitutionId()));
-            return persistentInstitution;
         }
+
+        try {
+            geocodableLocationService.setGeocodeLocation(institution.getName(), institution.getAdvert().getAddress());
+        } catch (Exception e) {
+            logger.error("Could not set geocoded location for institution ID: " + institutionId, e);
+        }
+        return institution;
     }
 
     public List<Integer> getInstitutionsByDepartments(List<Integer> departments, List<PrismState> activeStates) {
         return institutionDAO.getInstitutionsByDepartments(departments, activeStates);
-    }
-
-    public Institution getInstitutionByImportedProgram(ImportedProgram importedProgram) {
-        return institutionDAO.getInstitutionByImportedProgram(importedProgram);
     }
 
     private void changeInstitutionCurrency(Institution institution, String newCurrency) {

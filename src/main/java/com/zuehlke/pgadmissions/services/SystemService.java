@@ -282,7 +282,7 @@ public class SystemService {
             if (importedDataSource != null) {
                 logger.info("Initializing system data for: " + prismImportedEntity.name());
                 try (InputStream inputStream = importedDataSource.getObjectContent()) {
-                    Class<T> requestClass = (Class<T>) prismImportedEntity.getSystemRequestClass();
+                    Class<T> requestClass = (Class<T>) prismImportedEntity.getRequestClass();
                     List<T> representations = importedEntityMapper.getImportedEntityRepresentations(requestClass, inputStream);
                     importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
                     importedEntityType.setLastImportedTimestamp(new DateTime(importedDataSource.getObjectMetadata().getLastModified()));

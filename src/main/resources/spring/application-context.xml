@@ -29,16 +29,11 @@
     <!-- validator config -->
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
-    <!-- exporter config -->
-    <bean id="applicationExportService" class="${xml.export.exporter}"/>
-
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="ehcache"/>
     <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
           p:configLocation="classpath:ehcache.xml"/>
 
     <import resource="data-context.xml"/>
-    <import resource="ucl-context.xml"/>
-    <import resource="scheduler-context.xml"/>
     <import resource="security-context.xml"/>
     <import resource="mvc-context.xml"/>
 

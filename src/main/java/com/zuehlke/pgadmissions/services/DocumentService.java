@@ -57,7 +57,7 @@ import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcess
 public class DocumentService {
 
     private static Logger logger = LoggerFactory.getLogger(DocumentService.class);
-    
+
     @Value("${context.environment}")
     private String contextEnvironment;
 
@@ -90,7 +90,7 @@ public class DocumentService {
     }
 
     public Document getById(Integer id, PrismFileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
     }
 
     public Document createDocument(Part uploadStream) throws Exception {
@@ -241,9 +241,10 @@ public class DocumentService {
         String bucketName = "prism-import-data";
         String fileName = StringUtils.uncapitalize(importedEntityType.getId().getUpperCamelName().replace("Imported", "")) + ".json";
 
+        AmazonS3 amazonClient = getAmazonClient();
         DateTime lastImportedTimestamp = importedEntityType.getLastImportedTimestamp();
         try {
-            ObjectMetadata importDataObjectMetadata = getAmazonClient().getObjectMetadata(bucketName, fileName);
+            ObjectMetadata importDataObjectMetadata = amazonClient.getObjectMetadata(bucketName, fileName);
             DateTime lastModified = new DateTime(importDataObjectMetadata.getLastModified());
             if (lastImportedTimestamp != null && lastImportedTimestamp.equals(lastModified)) {
                 return null;
@@ -252,7 +253,7 @@ public class DocumentService {
             logger.error("Could not import data due to missing file: " + bucketName + "/" + fileName);
         }
 
-        return getAmazonClient().getObject(bucketName, fileName);
+        return amazonClient.getObject(bucketName, fileName);
     }
 
     private void validatePdfDocument(byte[] content) {
@@ -288,8 +289,8 @@ public class DocumentService {
         GetObjectRequest amazonRequest = new GetObjectRequest(bucketName, amazonObjectKey);
         return getAmazonClient().getObject(amazonRequest);
     }
-    
-    private AmazonS3 getAmazonClient() throws IntegrationException {
+
+    public AmazonS3 getAmazonClient() throws IntegrationException {
         return new AmazonS3Client(systemService.getAmazonCredentials());
     }
 

@@ -7,21 +7,11 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 
 public class ResourceRepresentationTarget extends ResourceRepresentationLocation {
 
-    private BigDecimal relevance;
-
     private BigDecimal distance;
 
     private Boolean selected;
 
     private List<ResourceRepresentationLocation> departments;
-
-    public BigDecimal getRelevance() {
-        return relevance;
-    }
-
-    public void setRelevance(BigDecimal relevance) {
-        this.relevance = relevance;
-    }
 
     public BigDecimal getDistance() {
         return distance;

@@ -26,14 +26,6 @@ public class ApplicationDocument extends ApplicationSection {
     private Application application;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "personal_statement_id", unique = true)
-    private Document personalStatement;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "research_statement_id", unique = true)
-    private Document researchStatement;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cv_id", unique = true)
     private Document cv;
 
@@ -61,22 +53,6 @@ public class ApplicationDocument extends ApplicationSection {
         this.application = application;
     }
 
-    public Document getPersonalStatement() {
-        return personalStatement;
-    }
-
-    public void setPersonalStatement(Document personalStatement) {
-        this.personalStatement = personalStatement;
-    }
-
-    public final Document getResearchStatement() {
-        return researchStatement;
-    }
-
-    public final void setResearchStatement(Document researchStatement) {
-        this.researchStatement = researchStatement;
-    }
-
     public Document getCv() {
         return cv;
     }
@@ -91,16 +67,6 @@ public class ApplicationDocument extends ApplicationSection {
 
     public final void setCoveringLetter(Document coveringLetter) {
         this.coveringLetter = coveringLetter;
-    }
-
-    public ApplicationDocument withPersonalStatement(Document document) {
-        this.personalStatement = document;
-        return this;
-    }
-
-    public ApplicationDocument withResearchStatement(Document researchStatement) {
-        this.researchStatement = researchStatement;
-        return this;
     }
 
     public ApplicationDocument withCv(Document document) {

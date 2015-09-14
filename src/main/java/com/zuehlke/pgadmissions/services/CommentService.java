@@ -283,16 +283,15 @@ public class CommentService {
                 : preferenceComment;
     }
 
-    public List<CommentAssignedUser> getAssignedSupervisors(Comment comment) {
-        return commentDAO.getAssignedSupervisors(comment);
+    public List<CommentAssignedUser> getAssignedHiringManagers(Comment comment) {
+        return commentDAO.getAssignedHiringManagers(comment);
     }
 
-    public List<String> getDeclinedSupervisors(Comment comment) {
-        return commentDAO.getDeclinedSupervisors(comment);
+    public List<String> getDeclinedHiringManagers(Comment comment) {
+        return commentDAO.getDeclinedHiringManagers(comment);
     }
 
-    public <T extends ResourceParent> Comment prepareProcessResourceComment(
-            T resource, User user, Action action, CommentDTO commentDTO) {
+    public <T extends ResourceParent> Comment prepareProcessResourceComment(T resource, User user, Action action, CommentDTO commentDTO) {
         String resourceScopeReference = resource.getResourceScope().name();
 
         String commentContent;

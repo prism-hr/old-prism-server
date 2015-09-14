@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
@@ -18,7 +18,7 @@ public class ApplicationQualificationDTO {
     private Integer id;
 
     @NotNull
-    private ImportedProgramDTO program;
+    private ResourceOpportunityDTO program;
 
     @DateNotFuture
     @NotNull
@@ -26,10 +26,6 @@ public class ApplicationQualificationDTO {
 
     @NotNull
     private LocalDate awardDate;
-
-    @NotEmpty
-    @Size(max = 70)
-    private String language;
 
     @NotEmpty
     @Size(max = 200)
@@ -47,11 +43,11 @@ public class ApplicationQualificationDTO {
         this.id = id;
     }
 
-    public ImportedProgramDTO getProgram() {
+    public ResourceOpportunityDTO getProgram() {
         return program;
     }
 
-    public void setProgram(ImportedProgramDTO program) {
+    public void setProgram(ResourceOpportunityDTO program) {
         this.program = program;
     }
 
@@ -69,14 +65,6 @@ public class ApplicationQualificationDTO {
 
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     public String getGrade() {

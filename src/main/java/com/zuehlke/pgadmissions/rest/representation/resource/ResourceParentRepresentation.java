@@ -11,8 +11,6 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     private List<PrismAction> partnerActions;
 
-    private List<ResourceRepresentationIdentity> resourcesNotYetEndorsedFor;
-
     public AdvertRepresentationSimple getAdvert() {
         return advert;
     }
@@ -27,14 +25,6 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     public void setPartnerActions(List<PrismAction> partnerActions) {
         this.partnerActions = partnerActions;
-    }
-
-    public List<ResourceRepresentationIdentity> getResourcesNotYetEndorsedFor() {
-        return resourcesNotYetEndorsedFor;
-    }
-
-    public void setResourcesNotYetEndorsedFor(List<ResourceRepresentationIdentity> resourcesNotYetEndorsedFor) {
-        this.resourcesNotYetEndorsedFor = resourcesNotYetEndorsedFor;
     }
 
 }

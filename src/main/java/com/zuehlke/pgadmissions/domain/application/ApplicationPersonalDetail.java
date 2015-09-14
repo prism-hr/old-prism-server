@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -55,26 +54,14 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     private ImportedEntitySimple domicile;
 
     @ManyToOne
-    @JoinColumn(name = "imported_nationality_id1")
+    @JoinColumn(name = "imported_nationality_id")
     private ImportedEntitySimple firstNationality;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_nationality_id2")
-    private ImportedEntitySimple secondNationality;
 
     @Column(name = "first_language_locale")
     private Boolean firstLanguageLocale;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_language_qualification_id")
-    private ApplicationLanguageQualification languageQualification;
-
     @Column(name = "visa_required")
     private Boolean visaRequired;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_passport_id")
-    private ApplicationPassport passport;
 
     @Column(name = "skype")
     @Size(min = 6, max = 32)
@@ -155,32 +142,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.firstNationality = firstNationality;
     }
 
-    public ImportedEntitySimple getSecondNationality() {
-        return secondNationality;
-    }
-
-    public void setSecondNationality(ImportedEntitySimple secondNationality) {
-        this.secondNationality = secondNationality;
-    }
-
     public Boolean getFirstLanguageLocale() {
         return firstLanguageLocale;
     }
 
     public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
         this.firstLanguageLocale = firstLanguageLocale;
-    }
-
-    public Boolean getLanguageQualificationAvailable() {
-        return languageQualification != null;
-    }
-
-    public ApplicationLanguageQualification getLanguageQualification() {
-        return languageQualification;
-    }
-
-    public void setLanguageQualification(ApplicationLanguageQualification languageQualification) {
-        this.languageQualification = languageQualification;
     }
 
     public ImportedEntitySimple getDomicile() {
@@ -197,14 +164,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
 
     public void setVisaRequired(Boolean visaRequired) {
         this.visaRequired = visaRequired;
-    }
-
-    public ApplicationPassport getPassport() {
-        return passport;
-    }
-
-    public void setPassport(ApplicationPassport passport) {
-        this.passport = passport;
     }
 
     public String getPhone() {

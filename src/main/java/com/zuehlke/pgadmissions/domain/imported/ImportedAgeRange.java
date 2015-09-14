@@ -2,26 +2,21 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_AGE_RANGE;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedAgeRangeMapping;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedAgeRangeDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 @Entity
 @Table(name = "imported_age_range")
-public class ImportedAgeRange extends ImportedEntity<Integer, ImportedAgeRangeMapping> implements ImportedAgeRangeDefinition,
-        ImportedEntityResponseDefinition<Integer> {
+public class ImportedAgeRange extends ImportedEntity<Integer>
+        implements ImportedAgeRangeDefinition, ImportedEntityResponseDefinition<Integer> {
 
     @Id
     @GeneratedValue
@@ -38,9 +33,6 @@ public class ImportedAgeRange extends ImportedEntity<Integer, ImportedAgeRangeMa
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-
-    @OneToMany(mappedBy = "importedEntity")
-    private Set<ImportedAgeRangeMapping> mappings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -95,11 +87,6 @@ public class ImportedAgeRange extends ImportedEntity<Integer, ImportedAgeRangeMa
     @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    @Override
-    public Set<ImportedAgeRangeMapping> getMappings() {
-        return mappings;
     }
 
     public ImportedAgeRange withName(String name) {

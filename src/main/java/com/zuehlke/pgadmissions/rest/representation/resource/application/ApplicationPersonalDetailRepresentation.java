@@ -23,13 +23,9 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     private Boolean firstLanguageLocale;
 
-    private ApplicationLanguageQualificationRepresentation languageQualification;
-
     private ImportedEntityResponse domicile;
 
     private Boolean visaRequired;
-
-    private ApplicationPassportRepresentation passport;
 
     private String skype;
 
@@ -101,14 +97,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.firstLanguageLocale = firstLanguageLocale;
     }
 
-    public ApplicationLanguageQualificationRepresentation getLanguageQualification() {
-        return languageQualification;
-    }
-
-    public void setLanguageQualification(ApplicationLanguageQualificationRepresentation languageQualification) {
-        this.languageQualification = languageQualification;
-    }
-
     public ImportedEntityResponse getDomicile() {
         return domicile;
     }
@@ -123,14 +111,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     public void setVisaRequired(Boolean visaRequired) {
         this.visaRequired = visaRequired;
-    }
-
-    public ApplicationPassportRepresentation getPassport() {
-        return passport;
-    }
-
-    public void setPassport(ApplicationPassportRepresentation passport) {
-        this.passport = passport;
     }
 
     public String getSkype() {
@@ -197,11 +177,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withLanguageQualification(ApplicationLanguageQualificationRepresentation languageQualification) {
-        this.languageQualification = languageQualification;
-        return this;
-    }
-
     public ApplicationPersonalDetailRepresentation withDomicile(ImportedEntityResponse domicile) {
         this.domicile = domicile;
         return this;
@@ -209,11 +184,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     public ApplicationPersonalDetailRepresentation withVisaRequired(Boolean visaRequired) {
         this.visaRequired = visaRequired;
-        return this;
-    }
-
-    public ApplicationPersonalDetailRepresentation withPassport(ApplicationPassportRepresentation passport) {
-        this.passport = passport;
         return this;
     }
 
@@ -231,6 +201,5 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
-    
-    
+
 }

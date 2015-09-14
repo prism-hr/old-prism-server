@@ -15,7 +15,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING_IDENTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -43,7 +42,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -52,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
@@ -197,22 +194,11 @@ public class AdvertDAO {
                     .createAlias("instanceGroup.studyOption", "studyOption", JoinType.LEFT_OUTER_JOIN);
         }
 
-        boolean projectScope = resourceClass.equals(Projection.class);
-        if (projectScope) {
-            criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.LEFT_OUTER_JOIN,
-                    Restrictions.in("userRole.role.id", asList(PROJECT_SUPERVISOR_GROUP)))
-                    .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN);
-        }
-
         criteria.add(Restrictions.in("state.id", activeStates));
 
         appendContextConstraint(criteria, query);
         appendLocationConstraint(criteria, query);
         appendKeywordConstraint(query, criteria);
-
-        if (projectScope) {
-            appendSupervisorConstraint(query, criteria);
-        }
 
         appendIndustryConstraint(criteria, query);
         appendFunctionConstraint(criteria, query);
@@ -403,14 +389,6 @@ public class AdvertDAO {
                 .setProjection(Projections.property("function")) //
                 .add(Restrictions.eq("advert", advert)) //
                 .addOrder(Order.asc("function")) //
-                .list();
-    }
-
-    public List<String> getAdvertThemes(Advert advert) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
-                .setProjection(Projections.property("value")) //
-                .add(Restrictions.eq("advert", advert)) //
-                .addOrder(Order.asc("value")) //
                 .list();
     }
 
@@ -607,16 +585,6 @@ public class AdvertDAO {
         }
     }
 
-    private void appendSupervisorConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
-        String keyword = queryDTO.getKeyword();
-        if (keyword != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.like("user.firstName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("user.lastName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("user.email", keyword, MatchMode.ANYWHERE))); //
-        }
-    }
-
     private void appendIndustryConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         List<PrismAdvertIndustry> industries = queryDTO.getIndustries();
         if (CollectionUtils.isNotEmpty(industries)) {
@@ -630,7 +598,7 @@ public class AdvertDAO {
             criteria.add(Restrictions.in("function", functions));
         }
     }
-    
+
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         PrismAdvertContext context = queryDTO.getContext();
         if (context.equals(EMPLOYERS)) {

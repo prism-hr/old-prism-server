@@ -4,8 +4,6 @@ import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
 import static com.zuehlke.pgadmissions.PrismConstants.GEOCODING_PRECISION;
 import static com.zuehlke.pgadmissions.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -15,7 +13,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -100,7 +97,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationMetadataUserRelated;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
@@ -303,23 +299,12 @@ public class ResourceMapper {
         return getResourceRepresentationLocation(resource, ResourceRepresentationLocation.class);
     }
 
-    public List<ResourceRepresentationTarget> getResourceTargetingRepresentations(Advert currentAdvert, List<Integer> subjectAreas, List<Integer> institutions,
-            List<Integer> departments, boolean allDepartments) {
-        return resourceService.getResourceTargets(currentAdvert, subjectAreas, institutions, departments, allDepartments).stream().map(this::getResourceRepresentationTargeting)
-                .collect(Collectors.toList());
-    }
-
-    public List<ResourceRepresentationTarget> getSimilarResourceTargetingRepresentations(Advert targetAdvert) {
-        return resourceService.getSimilarResourceTargets(targetAdvert).stream().map(this::getResourceRepresentationTargeting).collect(Collectors.toList());
+    public List<ResourceRepresentationTarget> getResourceTargetingRepresentations(Advert currentAdvert, List<Integer> institutions, List<Integer> departments) {
+        return resourceService.getResourceTargets(currentAdvert, institutions, departments).stream().map(this::getResourceRepresentationTargeting).collect(Collectors.toList());
     }
 
     public ResourceRepresentationTarget getResourceRepresentationTargeting(ResourceTargetDTO resource) {
         ResourceRepresentationTarget representation = getResourceRepresentationLocation(resource, ResourceRepresentationTarget.class);
-
-        BigDecimal targetingRelevance = resource.getTargetingRelevance();
-        if (targetingRelevance != null) {
-            representation.setRelevance(targetingRelevance.setScale(TARGETING_PRECISION, HALF_UP));
-        }
 
         BigDecimal targetingDistance = resource.getTargetingDistance();
         if (targetingDistance != null) {
@@ -420,18 +405,8 @@ public class ResourceMapper {
             List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
-
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         representation.setPartnerActions(actionService.getPartnerActions(resource));
-
-        List<ResourceRepresentationIdentity> resourcesNotYetEndorsedFor = Lists.newLinkedList();
-        for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            resourceService.getResourcesNotYetEndorsedFor(resource).forEach(resourceNotYetEndorsedFor -> {
-                resourcesNotYetEndorsedFor.add(getResourceRepresentation(scope, resourceNotYetEndorsedFor, ResourceRepresentationIdentity.class));
-            });
-        }
-
-        representation.setResourcesNotYetEndorsedFor(resourcesNotYetEndorsedFor);
         return representation;
     }
 
@@ -622,7 +597,6 @@ public class ResourceMapper {
         return resourceService.getStudyOptions(resource).stream().map(studyOption -> PrismStudyOption.valueOf(studyOption.getName())).collect(Collectors.toList());
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
 
@@ -642,18 +616,6 @@ public class ResourceMapper {
             String childScopeReference = "related" + childScope.getUpperCamelName() + "s";
             setProperty(representation, childScopeReference, resourceService.getResourceRobotRelatedRepresentations(resource, childScope,
                     loader.loadLazy(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITIES_RELATED_" + childScope.name() + "S"))));
-        }
-
-        Set<Resource> userResources = resourceScope.equals(PROJECT) ? Sets.newHashSet(resource) : (Set<Resource>) getProperty(resource, "projects");
-
-        if (!userResources.isEmpty()) {
-            List<User> users = userService.getUsersForResourcesAndRoles(userResources, PROJECT_SUPERVISOR_GROUP.getRoles());
-            List<String> relatedUsers = users.stream().map(User::getRobotRepresentation).collect(Collectors.toList());
-
-            if (!relatedUsers.isEmpty()) {
-                representation.setRelatedUsers(new ResourceRepresentationMetadataUserRelated().withLabel(loader.loadLazy(SYSTEM_OPPORTUNITIES_RELATED_USERS))
-                        .withUsers(relatedUsers));
-            }
         }
 
         return representation;

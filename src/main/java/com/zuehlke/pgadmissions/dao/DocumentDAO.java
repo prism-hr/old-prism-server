@@ -26,11 +26,7 @@ public class DocumentDAO {
                 .add(Restrictions.eq("exported", false)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNotNull("comment.id")) //
-                        .add(Restrictions.isNotNull("applicationLanguageQualification.id")) //
                         .add(Restrictions.isNotNull("applicationQualification.id")) //
-                        .add(Restrictions.isNotNull("applicationFunding.id")) //
-                        .add(Restrictions.isNotNull("applicationPersonalStatement.id")) //
-                        .add(Restrictions.isNotNull("applicationResearchStatement.id")) //
                         .add(Restrictions.isNotNull("applicationCv.id")) //
                         .add(Restrictions.isNotNull("applicationCoveringLetter.id")) //
                         .add(Restrictions.isNotNull("portraitImage.id")) //
@@ -42,11 +38,7 @@ public class DocumentDAO {
     public List<Integer> getOrphanDocuments(DateTime baselineTime) {
         return (List<Integer>) getDocumentCriteria() //
                 .add(Restrictions.isNull("comment.id")) //
-                .add(Restrictions.isNull("applicationLanguageQualification.id")) //
                 .add(Restrictions.isNull("applicationQualification.id")) //
-                .add(Restrictions.isNull("applicationFunding.id")) //
-                .add(Restrictions.isNull("applicationPersonalStatement.id")) //
-                .add(Restrictions.isNull("applicationResearchStatement.id")) //
                 .add(Restrictions.isNull("applicationCv.id")) //
                 .add(Restrictions.isNull("applicationCoveringLetter.id")) //
                 .add(Restrictions.isNull("portraitImage.id")) //
@@ -79,11 +71,7 @@ public class DocumentDAO {
         return sessionFactory.getCurrentSession().createCriteria(Document.class) //
                 .setProjection(Projections.property("id")) //
                 .createAlias("comment", "comment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("applicationLanguageQualification", "applicationLanguageQualification", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("applicationQualification", "applicationQualification", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("applicationFunding", "applicationFunding", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("applicationPersonalStatement", "applicationPersonalStatement", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("applicationResearchStatement", "applicationResearchStatement", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("applicationCv", "applicationCv", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("applicationCoveringLetter", "applicationCoveringLetter", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("portraitImage", "portraitImage", JoinType.LEFT_OUTER_JOIN) //

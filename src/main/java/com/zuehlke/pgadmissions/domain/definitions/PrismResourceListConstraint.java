@@ -57,20 +57,10 @@ public enum PrismResourceListConstraint {
             Arrays.asList(APPLICATION)), //
     CLOSING_DATE("closingDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
-    STUDY_LOCATION("studyDetail.studyLocation", STRING, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION)), //
-    STUDY_DIVISION("studyDetail.studyDivision", STRING, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION)), //
-    STUDY_AREA("studyDetail.studyArea", STRING, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION)), //
-    STUDY_APPLICATION("studyDetail.studyApplicationId", STRING, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION)), //
     CONFIRMED_START_DATE("confirmedStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
     RATING("applicationRatingAverage", DECIMAL, Arrays.asList(BETWEEN, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    SUPERVISOR("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
-            Arrays.asList(APPLICATION)), //
     PROJECT_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(PROJECT)), //
     PROGRAM_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
@@ -79,13 +69,9 @@ public enum PrismResourceListConstraint {
             Arrays.asList(DEPARTMENT)), //
     INSTITUTION_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(INSTITUTION)), //
-    PRIMARY_THEME("primaryTheme", STRING, Arrays.asList(CONTAIN, EQUAL, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION)), //
-    SECONDARY_THEME("secondaryTheme", STRING, Arrays.asList(CONTAIN, EQUAL, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION)), //
     RESERVE_STATUS("applicationReserveStatus", APPLICATION_RESERVE_STATUS, Arrays.asList(EQUAL, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION));
-
+    
     private String propertyName;
 
     private PrismResourceListFilterPropertyType propertyType;
@@ -106,9 +92,8 @@ public enum PrismResourceListConstraint {
         }
     }
 
-    private PrismResourceListConstraint(String propertyName, PrismResourceListFilterPropertyType propertyType,
-                                        List<PrismResourceListFilterExpression> permittedExpressions,
-                                        List<PrismScope> permittedScopes) {
+    private PrismResourceListConstraint(String propertyName, PrismResourceListFilterPropertyType propertyType, List<PrismResourceListFilterExpression> permittedExpressions,
+            List<PrismScope> permittedScopes) {
         this.propertyName = propertyName;
         this.propertyType = propertyType;
         this.permittedExpressions = permittedExpressions;
@@ -116,8 +101,8 @@ public enum PrismResourceListConstraint {
     }
 
     private PrismResourceListConstraint(String propertyName, PrismResourceListFilterPropertyType propertyType,
-                                        Class<? extends PrismResourceListFilterSelector<?>> propertyValueSelector,
-                                        List<PrismResourceListFilterExpression> permittedExpressions, List<PrismScope> permittedScopes) {
+            Class<? extends PrismResourceListFilterSelector<?>> propertyValueSelector, List<PrismResourceListFilterExpression> permittedExpressions,
+            List<PrismScope> permittedScopes) {
         this(propertyName, propertyType, permittedExpressions, permittedScopes);
         this.propertyValueSelector = propertyValueSelector;
     }

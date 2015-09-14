@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.indices.ImportedSubjectAreaIndex;
 
 @Service
 public class LifeCycleService {
@@ -54,9 +53,6 @@ public class LifeCycleService {
     private SystemService systemService;
 
     @Inject
-    private ImportedSubjectAreaIndex importedSubjectAreaIndex;
-
-    @Inject
     private ApplicationContext applicationContext;
 
     @PostConstruct
@@ -86,8 +82,6 @@ public class LifeCycleService {
         if (BooleanUtils.isTrue(initializeData)) {
             systemService.initializeSystemData();
         }
-
-        importedSubjectAreaIndex.index();
 
         if (BooleanUtils.isTrue(maintain)) {
             executorService = newFixedThreadPool((PrismMaintenanceTask.values().length));

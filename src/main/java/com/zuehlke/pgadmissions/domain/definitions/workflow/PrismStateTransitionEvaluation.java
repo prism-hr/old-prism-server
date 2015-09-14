@@ -7,7 +7,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedInterviewerResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedReviewerResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedSupervisorResolver;
@@ -17,18 +16,14 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedVerificationStateResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedEligibilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedInterviewResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedSupervisionResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationEscalatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationExportedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedManagementResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationIdentifiedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewAvailabilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewFeedbackResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedReferenceResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedReviewResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationPurgedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationRejectedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationUpdateInterviewAvailabilityResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationWithdrawnResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentApprovedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentUpdatedResolver;
@@ -45,20 +40,14 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.Proj
 public enum PrismStateTransitionEvaluation {
 
     APPLICATION_COMPLETED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
-    APPLICATION_CONFIRMED_SUPERVISION_OUTCOME(false, APPLICATION, ApplicationConfirmedSupervisionResolver.class), //
+    APPLICATION_CONFIRMED_APPOINTMENT_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //
     APPLICATION_COMPLETED_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedStateResolver.class), //
-    APPLICATION_EXPORTED_OUTCOME(false, APPLICATION, ApplicationExportedResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewAvailabilityResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewFeedbackResolver.class), //
     APPLICATION_ASSIGNED_REVIEWER_OUTCOME(false, APPLICATION, ApplicationAssignedReviewerResolver.class), //
     APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME(false, APPLICATION, ApplicationAssignedInterviewerResolver.class), //
     APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME(false, APPLICATION, ApplicationAssignedSupervisorResolver.class), //
     APPLICATION_CONFIRMED_INTERVIEW_OUTCOME(false, APPLICATION, ApplicationConfirmedInterviewResolver.class), //
-    APPLICATION_ESCALATED_OUTCOME(false, APPLICATION, ApplicationEscalatedResolver.class), //
-    APPLICATION_APPROVED_OUTCOME(false, APPLICATION, ApplicationApprovedResolver.class), //
-    APPLICATION_REJECTED_OUTCOME(false, APPLICATION, ApplicationRejectedResolver.class), //
-    APPLICATION_TERMINATED_OUTCOME(false, APPLICATION, ApplicationEscalatedResolver.class), //
-    APPLICATION_WITHDRAWN_OUTCOME(false, APPLICATION, ApplicationWithdrawnResolver.class), //
     APPLICATION_CONFIRMED_ELIGIBILITY_OUTCOME(false, APPLICATION, ApplicationConfirmedEligibilityResolver.class), //
     APPLICATION_PROVIDED_REFERENCE_OUTCOME(false, APPLICATION, ApplicationProvidedReferenceResolver.class), //
     APPLICATION_COMPLETED_VERIFICATION_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedVerificationStateResolver.class), //

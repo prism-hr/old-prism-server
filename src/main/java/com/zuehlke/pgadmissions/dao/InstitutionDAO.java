@@ -1,32 +1,36 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetRelevanceDTO;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -129,26 +133,6 @@ public class InstitutionDAO {
                 .createAlias("departments", "department") //
                 .add(Restrictions.in("resourceState.state.id", activeStates)) //
                 .add(Restrictions.in("department.id", departments)) //
-                .list();
-    }
-
-    public Institution getInstitutionByImportedProgram(ImportedProgram importedProgram) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .createAlias("importedInstitution", "importedInstitution", JoinType.INNER_JOIN) //
-                .createAlias("importedInstitution.programs", "importedProgram", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("importedProgram.id", importedProgram.getId())) //
-                .uniqueResult();
-    }
-
-    public List<ResourceTargetRelevanceDTO> getInstitutionsBySubjectAreas(Collection<Integer> subjectAreas) {
-        return (List<ResourceTargetRelevanceDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id"), "resourceId") //
-                        .add(Projections.sum("institutionSubjectArea.relationStrength"), "targetingRelevance")) //
-                .createAlias("importedInstitution", "importedInstitution", JoinType.INNER_JOIN) //
-                .createAlias("importedInstitution.institutionSubjectAreas", "institutionSubjectArea", JoinType.INNER_JOIN)
-                .add(Restrictions.in("institutionSubjectArea.subjectArea.id", subjectAreas)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceTargetRelevanceDTO.class))
                 .list();
     }
 

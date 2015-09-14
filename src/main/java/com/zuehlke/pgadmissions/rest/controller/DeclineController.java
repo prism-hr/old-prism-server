@@ -30,7 +30,7 @@ public class DeclineController {
     private UserService userService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode) throws Exception {
+    public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode) {
         User user = userService.getUserByActivationCode(activationCode);
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setUser(user.getId());

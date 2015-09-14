@@ -25,7 +25,7 @@ public class UserProgram implements UniqueEntity, UserAssignment<UserProgramReas
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "imported_id", nullable = false)
+    @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
     public Integer getId() {

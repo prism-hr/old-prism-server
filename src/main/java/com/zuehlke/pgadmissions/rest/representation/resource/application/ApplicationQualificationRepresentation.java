@@ -4,20 +4,18 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedProgramResponse;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 
 public class ApplicationQualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private ImportedProgramResponse program;
+    // FIXME - make a representation that has institution country and program type in it for this
+    private ResourceRepresentationActivity program;
 
     private LocalDate startDate;
 
     private LocalDate awardDate;
-
-    private String language;
 
     private String grade;
 
@@ -33,11 +31,11 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.id = id;
     }
 
-    public ImportedProgramResponse getProgram() {
+    public ResourceRepresentationActivity getProgram() {
         return program;
     }
 
-    public void setProgram(ImportedProgramResponse program) {
+    public void setProgram(ResourceRepresentationActivity program) {
         this.program = program;
     }
 
@@ -55,14 +53,6 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     public String getGrade() {
@@ -94,7 +84,7 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         return this;
     }
 
-    public ApplicationQualificationRepresentation withProgram(ImportedProgramResponse program) {
+    public ApplicationQualificationRepresentation withProgram(ResourceRepresentationActivity program) {
         this.program = program;
         return this;
     }
@@ -106,11 +96,6 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     public ApplicationQualificationRepresentation withAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
-        return this;
-    }
-
-    public ApplicationQualificationRepresentation withLanguage(String language) {
-        this.language = language;
         return this;
     }
 
@@ -128,11 +113,10 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.completed = completed;
         return this;
     }
-    
+
     public ApplicationQualificationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
-    
 
 }

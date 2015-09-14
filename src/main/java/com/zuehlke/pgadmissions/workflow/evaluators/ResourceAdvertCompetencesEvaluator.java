@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.evaluators;
 
-import org.apache.commons.collections.CollectionUtils;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
@@ -12,7 +13,7 @@ public class ResourceAdvertCompetencesEvaluator implements ResourceCompletenessE
     @Override
     public boolean evaluate(ResourceParent resource) {
         AdvertTargets targets = resource.getAdvert().getTargets();
-        return !(targets == null || CollectionUtils.isEmpty(targets.getCompetences()));
+        return !(targets == null || isEmpty(targets.getCompetences()));
     }
 
 }

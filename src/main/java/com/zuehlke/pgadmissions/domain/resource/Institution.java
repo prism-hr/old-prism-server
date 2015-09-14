@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -142,10 +141,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-
-    @OneToOne
-    @JoinColumn(name = "imported_institution_id", unique = true)
-    private ImportedInstitution importedInstitution;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "institution_id")
@@ -372,14 +367,6 @@ public class Institution extends ResourceParent implements TargetEntity {
         return adverts;
     }
 
-    public ImportedInstitution getImportedInstitution() {
-        return importedInstitution;
-    }
-
-    public void setImportedInstitution(ImportedInstitution importedInstitution) {
-        this.importedInstitution = importedInstitution;
-    }
-
     public Institution withParentResource(System parentResource) {
         setParentResource(parentResource);
         return this;
@@ -437,11 +424,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     public Institution withLogoImage(final Document logoImage) {
         this.logoImage = logoImage;
-        return this;
-    }
-
-    public Institution withImportedInstitution(final ImportedInstitution importedInstitution) {
-        this.importedInstitution = importedInstitution;
         return this;
     }
 

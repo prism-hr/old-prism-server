@@ -27,18 +27,10 @@ public class ApplicationPersonalDetailDTO {
 
     private Boolean firstLanguageLocale;
 
-    @Valid
-    private ApplicationLanguageQualificationDTO languageQualification;
-
     private Boolean visaRequired;
-
-    @Valid
-    private ApplicationPassportDTO passport;
 
     @NotNull
     private ImportedEntityDTO firstNationality;
-
-    private ImportedEntityDTO secondNationality;
 
     private ImportedEntityDTO title;
 
@@ -97,14 +89,6 @@ public class ApplicationPersonalDetailDTO {
         this.firstLanguageLocale = firstLanguageLocale;
     }
 
-    public ApplicationLanguageQualificationDTO getLanguageQualification() {
-        return languageQualification;
-    }
-
-    public void setLanguageQualification(ApplicationLanguageQualificationDTO languageQualification) {
-        this.languageQualification = languageQualification;
-    }
-
     public Boolean getVisaRequired() {
         return visaRequired;
     }
@@ -113,28 +97,12 @@ public class ApplicationPersonalDetailDTO {
         this.visaRequired = visaRequired;
     }
 
-    public ApplicationPassportDTO getPassport() {
-        return passport;
-    }
-
-    public void setPassport(ApplicationPassportDTO passport) {
-        this.passport = passport;
-    }
-
     public ImportedEntityDTO getFirstNationality() {
         return firstNationality;
     }
 
     public void setFirstNationality(ImportedEntityDTO firstNationality) {
         this.firstNationality = firstNationality;
-    }
-
-    public ImportedEntityDTO getSecondNationality() {
-        return secondNationality;
-    }
-
-    public void setSecondNationality(ImportedEntityDTO secondNationality) {
-        this.secondNationality = secondNationality;
     }
 
     public ImportedEntityDTO getTitle() {

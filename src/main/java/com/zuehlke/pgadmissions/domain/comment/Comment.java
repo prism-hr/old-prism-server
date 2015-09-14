@@ -658,10 +658,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return action.getId().equals(PROGRAM_RESTORE);
     }
 
-    public boolean isProjectCreateApplicationComment() {
-        return action.getId().equals(PROJECT_CREATE_APPLICATION);
-    }
-
     public boolean isProjectViewEditComment() {
         return action.getId().equals(PROJECT_VIEW_EDIT);
     }

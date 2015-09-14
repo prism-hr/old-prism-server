@@ -5,9 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_REENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
@@ -19,9 +16,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_ENDORSE_TRANSITION;
@@ -32,7 +26,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproved;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionApproved extends PrismWorkflowState {
@@ -80,24 +73,6 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                 .withAction(INSTITUTION_REENDORSE) //
                 .withPartnerAssignments(INSTITUTION_ENDORSER_GROUP) //
                 .withTransitions(INSTITUTION_ENDORSE_TRANSITION));
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(INSTITUTION_IMPORT_DEPARTMENT) //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(DEPARTMENT_APPROVED) //
-                        .withTransitionAction(INSTITUTION_IMPORT_DEPARTMENT)));
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(INSTITUTION_IMPORT_PROGRAM) //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(PROGRAM_APPROVED) //
-                        .withTransitionAction(INSTITUTION_IMPORT_PROGRAM)));
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(INSTITUTION_IMPORT_PROJECT) //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(PROJECT_APPROVED) //
-                        .withTransitionAction(INSTITUTION_CREATE_PROJECT)));
 
         stateActions.add(institutionTerminateApproved());
         stateActions.add(institutionViewEditApproved()); //

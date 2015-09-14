@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -111,24 +113,23 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<CommentAssignedUser> getAssignedSupervisors(Comment comment) {
+    public List<CommentAssignedUser> getAssignedHiringManagers(Comment comment) {
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
-                .add(Restrictions.in("role.id", Lists.newArrayList(PrismRole.APPLICATION_PRIMARY_SUPERVISOR, //
-                        PrismRole.APPLICATION_SECONDARY_SUPERVISOR))) //
+                .add(Restrictions.in("role.id", Lists.newArrayList(APPLICATION_HIRING_MANAGER))) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
                 .list();
     }
 
-    public List<String> getDeclinedSupervisors(Comment comment) {
+    public List<String> getDeclinedHiringManagers(Comment comment) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("user.email")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.ge("createdTimestamp", comment.getCreatedTimestamp())) //
-                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_SUPERVISORS)) //
+                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS)) //
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
                 .list();
     }

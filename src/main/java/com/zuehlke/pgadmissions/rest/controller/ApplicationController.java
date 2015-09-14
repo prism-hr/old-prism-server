@@ -15,23 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -55,29 +50,6 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
     public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) throws Exception {
         applicationSectionService.updateProgramDetail(applicationId, programDetailDTO);
-    }
-
-    @RequestMapping(value = "/{applicationId}/studyDetail", method = RequestMethod.PUT)
-    public void saveStudyDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationStudyDetailDTO studyDetailDTO) throws Exception {
-        applicationSectionService.updateStudyDetail(applicationId, studyDetailDTO);
-    }
-
-    @RequestMapping(value = "/{applicationId}/supervisors", method = RequestMethod.POST)
-    public Map<String, Object> createSupervisor(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO)
-            throws Exception {
-        ApplicationSupervisor supervisor = applicationSectionService.updateSupervisor(applicationId, null, supervisorDTO);
-        return ImmutableMap.of("id", (Object) supervisor.getId());
-    }
-
-    @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.PUT)
-    public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId,
-            @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws Exception {
-        applicationSectionService.updateSupervisor(applicationId, supervisorId, supervisorDTO);
-    }
-
-    @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.DELETE)
-    public void updateSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId) throws Exception {
-        applicationSectionService.deleteSupervisor(applicationId, supervisorId);
     }
 
     @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)
@@ -124,23 +96,6 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.DELETE)
     public void deleteEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) throws Exception {
         applicationSectionService.deleteEmploymentPosition(applicationId, employmentPositionId);
-    }
-
-    @RequestMapping(value = "/{applicationId}/fundings", method = RequestMethod.POST)
-    public Map<String, Object> createFunding(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationFundingDTO fundingDTO) throws Exception {
-        ApplicationFunding funding = applicationSectionService.updateFunding(applicationId, null, fundingDTO);
-        return ImmutableMap.of("id", (Object) funding.getId());
-    }
-
-    @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.PUT)
-    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @Valid @RequestBody ApplicationFundingDTO fundingDTO)
-            throws Exception {
-        applicationSectionService.updateFunding(applicationId, fundingId, fundingDTO);
-    }
-
-    @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.DELETE)
-    public void deleteFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) throws Exception {
-        applicationSectionService.deleteFunding(applicationId, fundingId);
     }
 
     @RequestMapping(value = "/{applicationId}/prizes", method = RequestMethod.POST)

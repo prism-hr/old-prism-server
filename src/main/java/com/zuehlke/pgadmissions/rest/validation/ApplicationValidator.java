@@ -8,7 +8,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -20,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -77,9 +75,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             case APPLICATION_ASSIGN_REFEREE:
                 validateRangeConstraint(application, "referees", configuration, errors);
                 break;
-            case APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR:
-                validateRangeConstraint(application, "supervisors", configuration, errors);
-                break;
             case APPLICATION_DEMOGRAPHIC:
                 validateDemographicConstraint(application, configuration, errors);
                 break;
@@ -101,18 +96,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             case APPLICATION_EMPLOYMENT_POSITION:
                 validateRangeConstraint(application, "employmentPositions", configuration, errors);
                 break;
-            case APPLICATION_FUNDING:
-                validateRangeConstraint(application, "fundings", configuration, errors);
-                break;
-            case APPLICATION_FUNDING_PROOF_OF_AWARD:
-                validateDocumentConstraint(application, "fundings", "document", configuration, errors);
-                break;
-            case APPLICATION_LANGUAGE:
-                validateLanguageConstraint(application, configuration, errors);
-                break;
-            case APPLICATION_LANGUAGE_PROOF_OF_AWARD:
-                validateLanguageDocumentConstraint(application, configuration, errors);
-                break;
             case APPLICATION_PRIZE:
                 validateRangeConstraint(application, "prizes", configuration, errors);
                 break;
@@ -121,18 +104,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 break;
             case APPLICATION_QUALIFICATION_PROOF_OF_AWARD:
                 validateDocumentConstraint(application, "qualifications", "document", configuration, errors);
-                break;
-            case APPLICATION_RESIDENCE:
-                validateResidenceConstraint(application, configuration, errors);
-                break;
-            case APPLICATION_STUDY_DETAIL:
-                validateStudyDetailConstraint(errors, application, configuration);
-                break;
-            case APPLICATION_THEME_PRIMARY:
-                validateImplodedRangeConstraint(application, "primaryTheme", configuration, errors);
-                break;
-            case APPLICATION_THEME_SECONDARY:
-                validateImplodedRangeConstraint(application, "secondaryTheme", configuration, errors);
                 break;
             default:
                 break;
@@ -176,15 +147,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         validateRangeConstraint(configuration, property, properties.size(), errors);
     }
 
-    private void validateImplodedRangeConstraint(Application application, String property, WorkflowPropertyConfiguration configuration, Errors errors) {
-        String properties = (String) PrismReflectionUtils.getProperty(application, property);
-        if (properties == null || properties.isEmpty()) {
-            validateRangeConstraint(configuration, property, 0, errors);
-        } else {
-            validateRangeConstraint(configuration, property, StringUtils.countMatches(properties, "|") + 1, errors);
-        }
-    }
-
     private void validateDocumentConstraint(Application application, String property, String propertyDocument, WorkflowPropertyConfiguration configuration,
             Errors errors) throws Error {
         int i = 0;
@@ -221,35 +183,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     private void validateCriminalConvictionConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
         validateRequiredConstraint(additionalInformation, "additionalInformation", "convictionsText", configuration, errors);
-    }
-
-    private void validateLanguageDocumentConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        ApplicationLanguageQualification languageQualification = personalDetail == null ? null : personalDetail.getLanguageQualification();
-
-        if (languageQualification != null) {
-            validateRequiredConstraint(languageQualification.getDocument(), "personalDetail.languageQualification", "document", configuration, errors);
-        }
-    }
-
-    private void validateLanguageConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        Boolean firstLanguageLocale = personalDetail == null ? null : personalDetail.getFirstLanguageLocale();
-        validateRequiredConstraint(firstLanguageLocale, "personalDetail", "firstLanguageLocale", configuration, errors);
-    }
-
-    private void validateResidenceConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        Boolean visaRequired = personalDetail == null ? null : personalDetail.getVisaRequired();
-        validateRequiredConstraint(visaRequired, "personalDetail", "visaRequired", configuration, errors);
-    }
-
-    private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) {
-        if (BooleanUtils.isTrue(configuration.getEnabled())) {
-            if (BooleanUtils.isTrue(configuration.getRequired())) {
-                ValidationUtils.rejectIfEmpty(errors, "studyDetail", "notNull");
-            }
-        }
     }
 
     private void validateRangeConstraint(WorkflowPropertyConfiguration configuration, String property, Integer propertiesSize, Errors errors) {

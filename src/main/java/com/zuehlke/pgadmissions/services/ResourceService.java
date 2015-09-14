@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WOR
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.FULL_TIME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
@@ -21,12 +20,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
-import static java.util.Collections.emptyMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +32,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
@@ -86,7 +82,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -96,7 +91,6 @@ import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
@@ -105,7 +99,6 @@ import com.zuehlke.pgadmissions.dto.resource.ResourceTargetListDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
@@ -150,9 +143,6 @@ public class ResourceService {
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private DepartmentService departmentService;
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -380,8 +370,7 @@ public class ResourceService {
     }
 
     public <T extends Resource> T getOperativeResource(T resource, Action action) {
-        return Arrays.asList(CREATE_RESOURCE, IMPORT_RESOURCE).contains(action.getActionCategory())
-                ? resource.getParentResource() : resource;
+        return action.getActionCategory().equals(CREATE_RESOURCE) ? resource.getParentResource() : resource;
     }
 
     public List<Integer> getResourcesToEscalate(PrismScope resourceScope, PrismAction actionId, LocalDate baseline) {
@@ -635,11 +624,6 @@ public class ResourceService {
 
     public <T extends ResourceParentDivision, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
         resource.setImportedCode(resourceDTO.getImportedCode());
-
-        if (resourceDTO.getClass().equals(DepartmentDTO.class)) {
-            departmentService.setImportedPrograms((Department) resource, ((DepartmentDTO) resourceDTO).getImportedPrograms());
-        }
-
         updateResource(resource, (ResourceParentDTO) resourceDTO);
     }
 
@@ -713,21 +697,12 @@ public class ResourceService {
                 : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
 
-    public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> subjectAreas, List<Integer> institutions, List<Integer> departments, boolean allDepartments) {
+    public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> institutions, List<Integer> departments) {
         PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION };
         List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
         List<Integer> targetInstitutions = advertService.getAdvertTargetResources(advert, INSTITUTION, true);
 
         ResourceTargetListDTO targets = new ResourceTargetListDTO(advert);
-        if (!allDepartments && isNotEmpty(subjectAreas)) {
-            Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-            Map<Integer, BigDecimal> subjectAreaInstitutions = institutionService.getInstitutionsBySubjectAreas(subjectAreasLookup).stream()
-                    .collect(Collectors.toMap(institution -> (institution.getResourceId()), institution -> (institution.getTargetingRelevance())));
-
-            List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(institutionScopes, subjectAreaInstitutions.keySet(), institutionStates);
-            addResourceTargets(subjectAreaTargets, subjectAreaInstitutions, targets, targetInstitutions);
-        }
-
         if (isNotEmpty(institutions)) {
             addResourceTargets(targets, resourceDAO.getResourceTargets(institutionScopes, institutions, institutionStates), targetInstitutions);
         }
@@ -742,31 +717,7 @@ public class ResourceService {
             addResourceTargets(targets, resourceDAO.getResourceTargets(new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
         }
 
-        if (allDepartments) {
-            Integer institution = institutions.get(0);
-            Map<Integer, BigDecimal> subjectAreaDepartments = emptyMap();
-            if (!CollectionUtils.isEmpty(subjectAreas)) {
-                Set<Integer> subjectAreasLookup = importedEntityService.getImportedSubjectAreaFamily(subjectAreas.toArray(new Integer[subjectAreas.size()]));
-                subjectAreaDepartments = departmentService.getDepartmentsBySubjectAreas(institution, subjectAreasLookup).stream()
-                        .collect(Collectors.toMap(department -> (department.getResourceId()), department -> (department.getTargetingRelevance())));
-            }
-
-            departments = departmentService.getDepartments(institution);
-            if (!departments.isEmpty()) {
-                List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
-                List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
-
-                List<ResourceTargetDTO> subjectAreaTargets = resourceDAO.getResourceTargets(new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates);
-                addResourceTargets(subjectAreaTargets, subjectAreaDepartments, targets, targetDepartments);
-            }
-        }
-
         return targets.keySet();
-    }
-
-    public Set<ResourceTargetDTO> getSimilarResourceTargets(Advert targetAdvert) {
-        List<Integer> relatedSubjectAreas = importedEntityService.getRelatedImportedSubjectAreas(targetAdvert.getInstitution());
-        return getResourceTargets(targetAdvert, relatedSubjectAreas, null, null, false);
     }
 
     public ResourceStandardDTO getResourceWithParents(Resource resource, List<PrismScope> parentScopes) {
@@ -861,10 +812,6 @@ public class ResourceService {
             parent.setOpportunityRatingCount(parentRatingSummary.getRatingCount().intValue());
             parent.setOpportunityRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
         });
-    }
-
-    public List<ResourceIdentityDTO> getResourcesNotYetEndorsedFor(ResourceParent resource) {
-        return resourceDAO.getResourcesNotYetEndorsedFor(resource);
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes) {
@@ -980,14 +927,6 @@ public class ResourceService {
     private void addResourceTargets(ResourceTargetListDTO targets, List<ResourceTargetDTO> newTargets, List<Integer> targetResources) {
         newTargets.forEach(newTarget -> {
             addResourceTarget(targets, newTarget, targetResources);
-        });
-    }
-
-    private void addResourceTargets(List<ResourceTargetDTO> subjectAreaTargets, Map<Integer, BigDecimal> subjectAreaIndex, ResourceTargetListDTO targets,
-            List<Integer> targetResources) {
-        subjectAreaTargets.forEach(target -> {
-            target.setTargetingRelevance(subjectAreaIndex.get(target.getId()));
-            addResourceTarget(targets, target, targetResources);
         });
     }
 

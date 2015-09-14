@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_ENDORSE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_IMPORT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_REENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
@@ -11,7 +10,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ENDORSER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_ENDORSE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
@@ -20,7 +18,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.Prism
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditApproved;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProgramApproved extends PrismWorkflowState {
@@ -56,12 +53,6 @@ public class PrismProgramApproved extends PrismWorkflowState {
                 .withAction(PROGRAM_REENDORSE) //
                 .withPartnerAssignments(PROGRAM_ENDORSER_GROUP) //
                 .withTransitions(PROGRAM_ENDORSE_TRANSITION));
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(PROGRAM_IMPORT_PROJECT) //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(PROJECT_APPROVED) //
-                        .withTransitionAction(PROGRAM_IMPORT_PROJECT)));
 
         stateActions.add(programTerminateApproved()); //
         stateActions.add(programViewEditApproved()); //

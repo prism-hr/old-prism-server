@@ -10,8 +10,6 @@ public class InstitutionDTO extends ResourceParentDTO {
     @NotNull
     private Integer businessYearStartMonth;
 
-    private Integer importedInstitutionId;
-
     public String getCurrency() {
         return currency;
     }
@@ -26,14 +24,6 @@ public class InstitutionDTO extends ResourceParentDTO {
 
     public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
         this.businessYearStartMonth = businessYearStartMonth;
-    }
-
-    public Integer getImportedInstitutionId() {
-        return importedInstitutionId;
-    }
-
-    public void setImportedInstitutionId(Integer importedInstitutionId) {
-        this.importedInstitutionId = importedInstitutionId;
     }
 
 }

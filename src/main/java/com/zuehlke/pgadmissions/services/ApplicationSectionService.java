@@ -4,13 +4,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_FUNDING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PRIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
@@ -20,14 +19,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -39,16 +38,11 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -58,9 +52,8 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -74,46 +67,44 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDemographicDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 @Service
 @Transactional
 public class ApplicationSectionService {
 
-    @Autowired
+    @Inject
     private ActionService actionService;
 
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private ImportedEntityService importedEntityService;
 
-    @Autowired
+    @Inject
     private ResourceService resourceService;
 
-    @Autowired
+    @Inject
     private RoleService roleService;
 
-    @Autowired
+    @Inject
+    private SystemService systemService;
+
+    @Inject
     private UserService userService;
 
-    @Autowired
+    @Inject
     private DocumentService documentService;
 
     public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws Exception {
@@ -139,63 +130,12 @@ public class ApplicationSectionService {
         }
 
         ImportedEntitySimple studyOption = importedEntityService.getById(ImportedEntitySimple.class, programDetailDTO.getStudyOption().getId());
-        ImportedEntitySimple referralSource = importedEntityService.getById(ImportedEntitySimple.class, programDetailDTO.getReferralSource().getId());
         programDetail.setStudyOption(studyOption);
         programDetail.setStartDate(programDetailDTO.getStartDate());
-        programDetail.setReferralSource(referralSource);
         programDetail.setLastUpdatedTimestamp(DateTime.now());
-
-        List<String> primaryThemes = programDetailDTO.getPrimaryThemes();
-        application.setPrimaryTheme(primaryThemes.isEmpty() ? null : Joiner.on("|").join(primaryThemes));
-
-        List<String> secondaryThemes = programDetailDTO.getSecondaryThemes();
-        application.setSecondaryTheme(secondaryThemes.isEmpty() ? null : Joiner.on("|").join(secondaryThemes));
 
         application.setProgramDetail(programDetail);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
-    }
-
-    public void updateStudyDetail(Integer applicationId, ApplicationStudyDetailDTO studyDetailDTO) throws Exception {
-        Application application = applicationService.getById(applicationId);
-        application.setStudyDetail(new ApplicationStudyDetail().withStudyLocation(studyDetailDTO.getStudyLocation())
-                .withStudyDivision(studyDetailDTO.getStudyDivision()).withStudyArea(studyDetailDTO.getStudyArea())
-                .withStudyApplicationId(studyDetailDTO.getStudyApplicationId()).withStudyStartDate(studyDetailDTO.getStudyStartDate()));
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_STUDY_DETAIL);
-    }
-
-    public ApplicationSupervisor updateSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO) throws Exception {
-        Application application = applicationService.getById(applicationId);
-
-        ApplicationSupervisor supervisor;
-        if (supervisorId == null) {
-            supervisor = new ApplicationSupervisor();
-        } else {
-            supervisor = entityService.getByProperties(ApplicationSupervisor.class, ImmutableMap.of("application", application, "id", supervisorId));
-        }
-
-        UserDTO userDTO = supervisorDTO.getUser();
-        User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-
-        supervisor.setUser(newUser);
-        supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
-        supervisor.setLastUpdatedTimestamp(DateTime.now());
-
-        if (supervisorId == null) {
-            application.getSupervisors().add(supervisor);
-        }
-
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR);
-        return supervisor;
-    }
-
-    public void deleteSupervisor(Integer applicationId, Integer supervisorId) throws Exception {
-        Application application = applicationService.getById(applicationId);
-
-        ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class,
-                ImmutableMap.of("application", application, "id", supervisorId));
-        application.getSupervisors().remove(supervisor);
-
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR);
     }
 
     public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws Exception {
@@ -215,8 +155,6 @@ public class ApplicationSectionService {
         ImportedEntitySimple country = personalDetailDTO.getCountry() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO
                 .getCountry().getId()) : null;
         ImportedEntitySimple firstNationality = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getFirstNationality().getId());
-        ImportedEntitySimple secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.getById(ImportedEntitySimple.class,
-                personalDetailDTO.getSecondNationality().getId()) : null;
         ImportedEntitySimple residenceCountry = personalDetailDTO.getDomicile() != null ? importedEntityService.getById(ImportedEntitySimple.class,
                 personalDetailDTO.getDomicile().getId()) : null;
 
@@ -232,7 +170,6 @@ public class ApplicationSectionService {
 
         personalDetail.setCountry(country);
         personalDetail.setFirstNationality(firstNationality);
-        personalDetail.setSecondNationality(secondNationality);
         personalDetail.setFirstLanguageLocale(personalDetailDTO.getFirstLanguageLocale());
         personalDetail.setDomicile(residenceCountry);
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
@@ -249,12 +186,8 @@ public class ApplicationSectionService {
         }
         personalDetail.setDemographic(demographic);
 
-        updateLanguageQualification(personalDetailDTO, institution, personalDetail);
-        updatePassport(personalDetailDTO, personalDetail);
         personalDetail.setLastUpdatedTimestamp(DateTime.now());
-
         application.setPersonalDetail(personalDetail);
-
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
 
@@ -299,21 +232,21 @@ public class ApplicationSectionService {
             qualification = entityService.getByProperties(ApplicationQualification.class, ImmutableMap.of("application", application, "id", qualificationId));
         }
 
-        Institution institution = application.getInstitution();
-
-        ImportedProgramDTO importedProgramDTO = qualificationDTO.getProgram();
-        ImportedProgram importedProgram = importedEntityService.getOrCreateImportedProgram(institution, importedProgramDTO);
+        // FIXME - implement all of the possible scenarios (e.g. suggested user,
+        // no known department, etc)
+        ResourceOpportunityDTO programDTO = qualificationDTO.getProgram();
+        Program newProgram = (Program) resourceService.createResource(systemService.getSystem().getUser(), actionService.getById(DEPARTMENT_CREATE_PROGRAM), programDTO)
+                .getResource();
 
         User user = application.getUser();
-        ImportedProgram oldImportedProgram = qualification.getProgram();
-        if (oldImportedProgram != null && !oldImportedProgram.getId().equals(importedProgram.getId())) {
-            userService.deleteUserProgram(user, oldImportedProgram);
+        Program oldProgram = qualification.getProgram();
+        if (oldProgram != null && !oldProgram.getId().equals(newProgram.getId())) {
+            userService.deleteUserProgram(user, oldProgram);
         }
 
-        qualification.setProgram(importedProgram);
+        qualification.setProgram(newProgram);
         userService.createOrUpdateUserProgram(user, qualification.getProgram());
 
-        qualification.setLanguage(qualificationDTO.getLanguage());
         qualification.setStartDate(qualificationDTO.getStartDate());
         qualification.setCompleted(BooleanUtils.isTrue(qualificationDTO.getCompleted()));
         qualification.setGrade(qualificationDTO.getGrade());
@@ -339,7 +272,7 @@ public class ApplicationSectionService {
 
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
                 ImmutableMap.of("application", application, "id", qualificationId));
-        ImportedProgram program = qualification.getProgram();
+        Program program = qualification.getProgram();
 
         application.getQualifications().remove(qualification);
         entityService.flush();
@@ -397,47 +330,6 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
-    public ApplicationFunding updateFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws Exception {
-        Application application = applicationService.getById(applicationId);
-
-        ApplicationFunding funding;
-        if (fundingId == null) {
-            funding = new ApplicationFunding();
-        } else {
-            funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
-        }
-
-        ImportedEntitySimple fundingSource = importedEntityService.getById(ImportedEntitySimple.class, fundingDTO.getFundingSource().getId());
-
-        funding.setFundingSource(fundingSource);
-        funding.setSponsor(fundingDTO.getSponsor());
-        funding.setDescription(fundingDTO.getDescription());
-        funding.setValue(fundingDTO.getValue());
-        funding.setAwardDate(fundingDTO.getAwardDate());
-        funding.setTerms(fundingDTO.getTerms());
-
-        FileDTO fileDTO = fundingDTO.getDocument();
-        if (fileDTO != null) {
-            Document qualificationDocument = documentService.getById(fileDTO.getId(), PrismFileCategory.DOCUMENT);
-            funding.setDocument(qualificationDocument);
-        }
-        funding.setLastUpdatedTimestamp(DateTime.now());
-
-        if (fundingId == null) {
-            application.getFundings().add(funding);
-        }
-
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
-        return funding;
-    }
-
-    public void deleteFunding(Integer applicationId, Integer fundingId) throws Exception {
-        Application application = applicationService.getById(applicationId);
-        ApplicationFunding funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
-        application.getFundings().remove(funding);
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
-    }
-
     public ApplicationPrize updatePrize(Integer applicationId, Integer prizeId, ApplicationPrizeDTO prizeDTO) throws Exception {
         Application application = applicationService.getById(applicationId);
 
@@ -458,7 +350,7 @@ public class ApplicationSectionService {
             application.getPrizes().add(prize);
         }
 
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_PRIZE);
         return prize;
     }
 
@@ -466,7 +358,7 @@ public class ApplicationSectionService {
         Application application = applicationService.getById(applicationId);
         ApplicationPrize prize = entityService.getByProperties(ApplicationPrize.class, ImmutableMap.of("application", application, "id", prizeId));
         application.getPrizes().remove(prize);
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_PRIZE);
     }
 
     public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws Exception {
@@ -526,21 +418,14 @@ public class ApplicationSectionService {
             document = new ApplicationDocument();
         }
 
-        Document personalStatement = documentDTO.getPersonalStatement() != null ? documentService.getById(documentDTO.getPersonalStatement().getId(),
-                PrismFileCategory.DOCUMENT) : null;
         Document cv = documentDTO.getCv() != null ? documentService.getById(documentDTO.getCv().getId(), PrismFileCategory.DOCUMENT) : null;
-        Document researchStatement = documentDTO.getResearchStatement() != null ? documentService.getById(documentDTO.getResearchStatement().getId(),
-                PrismFileCategory.DOCUMENT) : null;
         Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(),
                 PrismFileCategory.DOCUMENT) : null;
         document.setCv(cv);
-        document.setPersonalStatement(personalStatement);
-        document.setResearchStatement(researchStatement);
         document.setCoveringLetter(coveringLetter);
         document.setLastUpdatedTimestamp(DateTime.now());
 
         application.setDocument(document);
-
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
@@ -556,7 +441,6 @@ public class ApplicationSectionService {
         additionalInformation.setLastUpdatedTimestamp(DateTime.now());
 
         application.setAdditionalInformation(additionalInformation);
-
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
@@ -569,52 +453,6 @@ public class ApplicationSectionService {
             userCurrent.setFullName(userCurrent.getFirstName() + " " + userCurrent.getLastName());
             userCurrent.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
             userCurrent.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
-        }
-    }
-
-    private void updatePassport(ApplicationPersonalDetailDTO personalDetailDTO, ApplicationPersonalDetail personalDetail) {
-        ApplicationPassportDTO passportDTO = personalDetailDTO.getPassport();
-        if (passportDTO == null) {
-            personalDetail.setPassport(null);
-        } else {
-            ApplicationPassport passport = personalDetail.getPassport();
-            if (passport == null) {
-                passport = new ApplicationPassport();
-            }
-            passport.setNumber(passportDTO.getNumber());
-            passport.setName(passportDTO.getName());
-            passport.setIssueDate(passportDTO.getIssueDate());
-            passport.setExpiryDate(passportDTO.getExpiryDate());
-            personalDetail.setPassport(passport);
-        }
-    }
-
-    private void updateLanguageQualification(ApplicationPersonalDetailDTO personalDetailDTO, Institution institution, ApplicationPersonalDetail personalDetail) {
-        ApplicationLanguageQualificationDTO languageQualificationDTO = personalDetailDTO.getLanguageQualification();
-        if (languageQualificationDTO == null) {
-            personalDetail.setLanguageQualification(null);
-        } else {
-            ApplicationLanguageQualification languageQualification = personalDetail.getLanguageQualification();
-            if (languageQualification == null) {
-                languageQualification = new ApplicationLanguageQualification();
-            }
-
-            ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(ImportedLanguageQualificationType.class,
-                    languageQualificationDTO.getType().getId());
-            languageQualification.setLanguageQualificationType(languageQualificationType);
-            languageQualification.setExamDate(languageQualificationDTO.getExamDate());
-            languageQualification.setOverallScore(languageQualificationDTO.getOverallScore());
-            languageQualification.setReadingScore(languageQualificationDTO.getReadingScore());
-            languageQualification.setWritingScore(languageQualificationDTO.getWritingScore());
-            languageQualification.setSpeakingScore(languageQualificationDTO.getSpeakingScore());
-            languageQualification.setListeningScore(languageQualificationDTO.getListeningScore());
-
-            FileDTO upload = languageQualificationDTO.getDocument();
-            if (upload != null) {
-                Document languageQualificationDocument = documentService.getById(upload.getId(), PrismFileCategory.DOCUMENT);
-                languageQualification.setDocument(languageQualificationDocument);
-            }
-            personalDetail.setLanguageQualification(languageQualification);
         }
     }
 

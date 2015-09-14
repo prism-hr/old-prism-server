@@ -6,17 +6,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflow
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_PRIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE;
 
 import java.util.Set;
 
@@ -37,16 +30,12 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.services.CustomizationService;
@@ -65,12 +54,11 @@ public class ApplicationCopyHelper {
     private final Set<ApplicationSection> sectionsWithErrors = Sets.newHashSet();
 
     @Transactional
-    public <T extends Application> void copyApplication(T to, T from) {
+    public void copyApplication(Application to, Application from) {
         copyApplicationPersonalDetail(to, from);
         copyApplicationAddress(to, from);
         copyApplicationQualifications(to, from);
         copyApplicationEmploymentPositions(to, from);
-        copyApplicationFundings(to, from);
         copyApplicationPrizes(to, from);
         copyApplicationReferences(to, from);
         copyApplicationDocument(to, from);
@@ -81,19 +69,18 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private <T extends Application> void copyApplicationPersonalDetail(T to, T from) {
+    private void copyApplicationPersonalDetail(Application to, Application from) {
         if (from.getPersonalDetail() != null) {
             ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
             to.setPersonalDetail(personalDetail);
             personalDetail.setApplication(to);
 
-            personalDetail.setTitle(getEnabledImportedEntity(from.getPersonalDetail().getTitle(), personalDetail));
-            personalDetail.setGender(getEnabledImportedEntity(from.getPersonalDetail().getGender(), personalDetail));
+            personalDetail.setTitle(from.getPersonalDetail().getTitle());
+            personalDetail.setGender(from.getPersonalDetail().getGender());
             personalDetail.setDateOfBirth(from.getPersonalDetail().getDateOfBirth());
-            personalDetail.setCountry(getEnabledImportedEntity(from.getPersonalDetail().getCountry(), personalDetail));
-            personalDetail.setFirstNationality(getEnabledImportedEntity(from.getPersonalDetail().getFirstNationality(), personalDetail));
-            personalDetail.setSecondNationality(getEnabledImportedEntity(from.getPersonalDetail().getSecondNationality(), personalDetail));
-            personalDetail.setDomicile(getEnabledImportedEntity(from.getPersonalDetail().getDomicile(), personalDetail));
+            personalDetail.setCountry(from.getPersonalDetail().getCountry());
+            personalDetail.setFirstNationality(from.getPersonalDetail().getFirstNationality());
+            personalDetail.setDomicile(from.getPersonalDetail().getDomicile());
             personalDetail.setPhone(from.getPersonalDetail().getPhone());
             personalDetail.setSkype(from.getPersonalDetail().getSkype());
 
@@ -103,12 +90,12 @@ public class ApplicationCopyHelper {
             if (BooleanUtils.isTrue(demographicConfiguration.getEnabled())) {
                 ApplicationDemographic fromDemographic = from.getPersonalDetail().getDemographic();
 
-                ImportedEntitySimple ethnicity = null; 
+                ImportedEntitySimple ethnicity = null;
                 ImportedEntitySimple disability = null;
 
                 if (fromDemographic != null) {
-                    ethnicity = getEnabledImportedEntity(fromDemographic.getEthnicity(), personalDetail);
-                    disability = getEnabledImportedEntity(fromDemographic.getDisability(), personalDetail);
+                    ethnicity = fromDemographic.getEthnicity();
+                    disability = fromDemographic.getDisability();
                     personalDetail.setDemographic(new ApplicationDemographic().withEthnicity(ethnicity).withDisability(disability));
                 }
 
@@ -117,37 +104,17 @@ public class ApplicationCopyHelper {
                 }
             }
 
-            WorkflowPropertyConfiguration languageConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                    WORKFLOW_PROPERTY, APPLICATION_LANGUAGE, to.getWorkflowPropertyConfigurationVersion());
+            Boolean firstLanguageLocale = from.getPersonalDetail().getFirstLanguageLocale();
+            personalDetail.setFirstLanguageLocale(firstLanguageLocale);
 
-            if (BooleanUtils.isTrue(languageConfiguration.getEnabled())) {
-                Boolean firstLanguageLocale = from.getPersonalDetail().getFirstLanguageLocale();
-                personalDetail.setFirstLanguageLocale(firstLanguageLocale);
-                personalDetail.setLanguageQualification(copyLanguageQualification(from.getPersonalDetail().getLanguageQualification(), to));
-
-                if (BooleanUtils.isTrue(languageConfiguration.getRequired()) && firstLanguageLocale == null) {
-                    sectionsWithErrors.add(personalDetail);
-                }
-            }
-
-            WorkflowPropertyConfiguration residenceConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                    WORKFLOW_PROPERTY, APPLICATION_RESIDENCE, to.getWorkflowPropertyConfigurationVersion());
-
-            if (BooleanUtils.isTrue(residenceConfiguration.getEnabled())) {
-                Boolean visaRequired = from.getPersonalDetail().getVisaRequired();
-                personalDetail.setVisaRequired(visaRequired);
-                personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
-
-                if (BooleanUtils.isTrue(residenceConfiguration.getRequired()) && visaRequired == null) {
-                    sectionsWithErrors.add(personalDetail);
-                }
-            }
+            Boolean visaRequired = from.getPersonalDetail().getVisaRequired();
+            personalDetail.setVisaRequired(visaRequired);
 
             personalDetail.setLastUpdatedTimestamp(new DateTime());
         }
     }
 
-    private <T extends Application> void copyApplicationAddress(T to, T from) {
+    private void copyApplicationAddress(Application to, Application from) {
         if (from.getAddress() != null) {
             ApplicationAddress applicationAddress = new ApplicationAddress();
             to.setAddress(applicationAddress);
@@ -158,7 +125,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private <T extends Application> void copyApplicationQualifications(T to, T from) {
+    private void copyApplicationQualifications(Application to, Application from) {
         WorkflowPropertyConfiguration qualificationConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_QUALIFICATION, to.getWorkflowPropertyConfigurationVersion());
 
@@ -180,7 +147,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private <T extends Application> void copyApplicationEmploymentPositions(T to, T from) {
+    private void copyApplicationEmploymentPositions(Application to, Application from) {
         WorkflowPropertyConfiguration employmentConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_EMPLOYMENT_POSITION, to.getWorkflowPropertyConfigurationVersion());
 
@@ -199,28 +166,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private <T extends Application> void copyApplicationFundings(T to, T from) {
-        WorkflowPropertyConfiguration fundingConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                WORKFLOW_PROPERTY, APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
-
-        if (BooleanUtils.isTrue(fundingConfiguration.getEnabled())) {
-            boolean fundingDocumentEnabled = customizationService.isWorkflowConfigurationEnabled(to, APPLICATION_FUNDING_PROOF_OF_AWARD);
-
-            Integer counter = 0;
-            for (ApplicationFunding fromFunding : from.getFundings()) {
-                if (counter.equals(fundingConfiguration.getMaximum())) {
-                    break;
-                }
-                ApplicationFunding funding = new ApplicationFunding();
-                to.getFundings().add(funding);
-                funding.setApplication(to);
-                copyFunding(funding, fromFunding, fundingDocumentEnabled);
-                counter++;
-            }
-        }
-    }
-
-    private <T extends Application> void copyApplicationPrizes(T to, T from) {
+    private void copyApplicationPrizes(Application to, Application from) {
         WorkflowPropertyConfiguration prizeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_PRIZE, to.getWorkflowPropertyConfigurationVersion());
 
@@ -239,7 +185,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private <T extends Application> void copyApplicationReferences(T to, T from) {
+    private void copyApplicationReferences(Application to, Application from) {
         WorkflowPropertyConfiguration refereeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_ASSIGN_REFEREE, to.getWorkflowPropertyConfigurationVersion());
 
@@ -258,52 +204,26 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private <T extends Application> void copyApplicationDocument(T to, T from) {
-        WorkflowPropertyConfiguration personalStatementConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_PERSONAL_STATEMENT, to.getWorkflowPropertyConfigurationVersion());
-        boolean personalStatementEnabled = BooleanUtils.isTrue(personalStatementConfiguration.getEnabled());
-
+    private void copyApplicationDocument(Application to, Application from) {
         WorkflowPropertyConfiguration cvConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_CV, to.getWorkflowPropertyConfigurationVersion());
         boolean cvEnabled = BooleanUtils.isTrue(cvConfiguration.getEnabled());
-
-        WorkflowPropertyConfiguration researchStatementConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_RESEARCH_STATEMENT, to.getWorkflowPropertyConfigurationVersion());
-        boolean researchStatementEnabled = BooleanUtils.isTrue(researchStatementConfiguration.getEnabled());
 
         WorkflowPropertyConfiguration coveringLetterConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_COVERING_LETTER, to.getWorkflowPropertyConfigurationVersion());
         boolean coveringLetterEnabled = BooleanUtils.isTrue(coveringLetterConfiguration.getEnabled());
 
-        if (personalStatementEnabled || cvEnabled || researchStatementEnabled || coveringLetterEnabled) {
+        if (cvEnabled || coveringLetterEnabled) {
             if (from.getDocument() != null) {
                 ApplicationDocument applicationDocument = new ApplicationDocument();
                 to.setDocument(applicationDocument);
                 applicationDocument.setApplication(to);
-
-                if (personalStatementEnabled) {
-                    Document document = from.getDocument().getPersonalStatement();
-                    applicationDocument.setPersonalStatement(copyDocument(document));
-
-                    if (BooleanUtils.isTrue(personalStatementConfiguration.getRequired()) && document == null) {
-                        sectionsWithErrors.add(applicationDocument);
-                    }
-                }
 
                 if (cvEnabled) {
                     Document document = from.getDocument().getCv();
                     applicationDocument.setCv(copyDocument(document));
 
                     if (BooleanUtils.isTrue(cvConfiguration.getRequired()) && document == null) {
-                        sectionsWithErrors.add(applicationDocument);
-                    }
-                }
-
-                if (researchStatementEnabled) {
-                    Document document = from.getDocument().getResearchStatement();
-                    applicationDocument.setResearchStatement(copyDocument(document));
-
-                    if (BooleanUtils.isTrue(researchStatementConfiguration.getRequired()) && document == null) {
                         sectionsWithErrors.add(applicationDocument);
                     }
                 }
@@ -322,7 +242,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private <T extends Application> void copyApplicationAdditionalInformation(T to, T from) {
+    private void copyApplicationAdditionalInformation(Application to, Application from) {
         if (customizationService.isWorkflowConfigurationEnabled(to, APPLICATION_CRIMINAL_CONVICTION) && from.getAdditionalInformation() != null) {
             ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
             to.setAdditionalInformation(additionalInformation);
@@ -340,21 +260,6 @@ public class ApplicationCopyHelper {
         to.setPhone(from.getPhone());
         to.setSkype(from.getSkype());
         to.setAddress(copyAddress(from.getAddress(), to));
-        to.setLastUpdatedTimestamp(new DateTime());
-    }
-
-    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) {
-        to.setSponsor(from.getSponsor());
-        to.setFundingSource(getEnabledImportedEntity(from.getFundingSource(), to));
-        to.setDescription(from.getDescription());
-        to.setValue(from.getValue());
-        to.setAwardDate(from.getAwardDate());
-        to.setTerms(from.getTerms());
-
-        if (documentEnabled) {
-            to.setDocument(copyDocument(from.getDocument()));
-        }
-
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
@@ -378,8 +283,7 @@ public class ApplicationCopyHelper {
     }
 
     public void copyQualification(ApplicationQualification to, ApplicationQualification from, WorkflowPropertyConfiguration configuration) {
-        to.setProgram(getEnabledImportedEntity(from.getProgram(), to));
-        to.setLanguage(from.getLanguage());
+        to.setProgram(from.getProgram());
         to.setStartDate(from.getStartDate());
         to.setCompleted(from.getCompleted());
         to.setGrade(from.getGrade());
@@ -407,7 +311,7 @@ public class ApplicationCopyHelper {
         toAddress.setAddressTown(fromAddress.getAddressTown());
         toAddress.setAddressRegion(fromAddress.getAddressRegion());
         toAddress.setAddressCode(fromAddress.getAddressCode());
-        toAddress.setDomicile(getEnabledImportedEntity(fromAddress.getDomicile(), toSection));
+        toAddress.setDomicile(fromAddress.getDomicile());
         return toAddress;
     }
 
@@ -424,64 +328,6 @@ public class ApplicationCopyHelper {
         to.setCreatedTimestamp(new DateTime());
         to.setExported(false);
         return to;
-    }
-
-    private <T extends Application> ApplicationLanguageQualification copyLanguageQualification(ApplicationLanguageQualification from, T toApplication) {
-        if (from == null) {
-            return null;
-        }
-        ApplicationLanguageQualification to = new ApplicationLanguageQualification();
-        to.setLanguageQualificationType(getEnabledImportedEntity(from.getLanguageQualificationType(), to));
-        to.setExamDate(from.getExamDate());
-        to.setOverallScore(from.getOverallScore());
-        to.setReadingScore(from.getReadingScore());
-        to.setWritingScore(from.getWritingScore());
-        to.setSpeakingScore(from.getSpeakingScore());
-        to.setListeningScore(from.getListeningScore());
-        to.setPersonalDetail(toApplication.getPersonalDetail());
-
-        WorkflowPropertyConfiguration languageDocumentConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                WORKFLOW_PROPERTY, APPLICATION_LANGUAGE_PROOF_OF_AWARD, toApplication.getWorkflowPropertyConfigurationVersion());
-
-        if (BooleanUtils.isTrue(languageDocumentConfiguration.getEnabled())) {
-            Document document = from.getDocument();
-            to.setDocument(copyDocument(document));
-
-            if (BooleanUtils.isTrue(languageDocumentConfiguration.getRequired()) && document == null) {
-                sectionsWithErrors.add(to.getPersonalDetail());
-            }
-        }
-
-        to.setLastUpdatedTimestamp(new DateTime());
-        return to;
-    }
-
-    private ApplicationPassport copyPassport(ApplicationPassport from) {
-        if (from == null) {
-            return null;
-        }
-        ApplicationPassport to = new ApplicationPassport();
-        to.setNumber(from.getNumber());
-        to.setName(from.getName());
-        to.setIssueDate(from.getIssueDate());
-        to.setExpiryDate(from.getExpiryDate());
-        to.setLastUpdatedTimestamp(new DateTime());
-        return to;
-    }
-
-    private <V extends ImportedEntity<?, ?>> V getEnabledImportedEntity(V fromEntity, ApplicationSection toSection) {
-        V toEntity = null;
-        if (fromEntity == null) {
-            toEntity = null;
-        } else if (fromEntity.getEnabled()) {
-            toEntity = fromEntity;
-        }
-
-        if (fromEntity != null && toEntity == null) {
-            sectionsWithErrors.add(toSection);
-        }
-
-        return toEntity;
     }
 
 }

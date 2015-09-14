@@ -10,8 +10,6 @@ import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
 
-    private List<String> possibleThemes;
-
     private List<ImportedEntityResponse> possibleStudyOptions;
 
     private List<String> possibleLocations;
@@ -29,14 +27,6 @@ public class ApplicationRepresentationClient extends ApplicationRepresentationEx
     private List<ResourceRepresentationSimple> otherLiveApplications;
 
     private List<AdvertRepresentationExtended> recommendedAdverts;
-
-    public List<String> getPossibleThemes() {
-        return possibleThemes;
-    }
-
-    public void setPossibleThemes(List<String> possibleThemes) {
-        this.possibleThemes = possibleThemes;
-    }
 
     public List<ImportedEntityResponse> getPossibleStudyOptions() {
         return possibleStudyOptions;

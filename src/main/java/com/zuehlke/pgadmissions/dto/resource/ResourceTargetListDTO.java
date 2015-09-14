@@ -45,11 +45,6 @@ public class ResourceTargetListDTO extends TreeMap<ResourceTargetDTO, ResourceTa
             valueParent.getDepartments().add(value);
             return valueParent;
         }
-        BigDecimal relevance = value.getTargetingRelevance();
-        BigDecimal relevanceOld = valueOld.getTargetingRelevance();
-        if (relevanceOld == null || !(relevance == null || relevance.compareTo(relevanceOld) < 1)) {
-            valueOld.setTargetingRelevance(relevance);
-        }
         return valueOld;
     }
 

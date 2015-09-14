@@ -9,9 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -29,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -167,14 +164,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
 
     @OneToMany(mappedBy = "department")
     private Set<Advert> adverts = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "department")
-    private Set<DepartmentImportedSubjectArea> departmentSubjectAreas = Sets.newHashSet();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "department_imported_program", joinColumns = { @JoinColumn(name = "department_id", nullable = false) }, inverseJoinColumns = {
-            @JoinColumn(name = "imported_program_id", nullable = false) })
-    private Set<ImportedProgram> importedPrograms = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -445,14 +434,6 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @Override
     public Set<Advert> getAdverts() {
         return adverts;
-    }
-
-    public Set<DepartmentImportedSubjectArea> getDepartmentSubjectAreas() {
-        return departmentSubjectAreas;
-    }
-
-    public Set<ImportedProgram> getImportedPrograms() {
-        return importedPrograms;
     }
 
     @Override

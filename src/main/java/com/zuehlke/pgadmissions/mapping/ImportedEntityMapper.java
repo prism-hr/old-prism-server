@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mapping;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -14,47 +13,23 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismQualificationLevel;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.imported.ImportedSubjectArea;
-import com.zuehlke.pgadmissions.domain.imported.mapping.ImportedEntityMapping;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.mapping.helpers.ImportedEntityTransformer;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityMappingDefinition;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedInstitutionResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedLanguageQualificationTypeResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedSubjectAreaResponse;
 
 @Service
 @Transactional
 public class ImportedEntityMapper {
-
-    private Map<ResourceDTO, PropertyLoader> loaders = Maps.newHashMap();
-
-    @Inject
-    private ImportedEntityService importedEntityService;
 
     @Inject
     private SystemService systemService;
@@ -65,151 +40,43 @@ public class ImportedEntityMapper {
     @Inject
     private ObjectMapper objectMapper;
 
-    public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity) {
-        return getImportedEntityRepresentation(entity, null);
-    }
-
     @SuppressWarnings("unchecked")
-    public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity, Institution institution) {
+    public <T extends ImportedEntity<?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity) {
         Class<?> entityClass = entity.getClass();
         if (ImportedAgeRange.class.equals(entityClass)) {
-            return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity, institution);
+            return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity);
         } else if (ImportedAdvertDomicile.class.equals(entityClass)) {
-            return (U) getImportedAdvertDomicileRepresentation((ImportedAdvertDomicile) entity, institution);
-        } else if (ImportedInstitution.class.equals(entityClass)) {
-            return (U) getImportedInstitutionRepresentation((ImportedInstitution) entity, institution);
-        } else if (ImportedLanguageQualificationType.class.equals(entityClass)) {
-            return (U) getImportedLanguageQualificationTypeRepresentation((ImportedLanguageQualificationType) entity, institution);
-        } else if (ImportedProgram.class.equals(entityClass)) {
-            return (U) getImportedProgramRepresentation((ImportedProgram) entity, institution);
-        } else if (ImportedSubjectArea.class.equals(entityClass)) {
-            return (U) getImportedSubjectAreaRepresentation((ImportedSubjectArea) entity, institution);
+            return (U) getImportedAdvertDomicileRepresentation((ImportedAdvertDomicile) entity);
         }
 
-        return (U) getImportedEntitySimpleRepresentation((ImportedEntitySimple) entity, institution, ImportedEntityResponse.class);
+        return (U) getImportedEntitySimpleRepresentation((ImportedEntitySimple) entity, ImportedEntityResponse.class);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private <S, T extends ImportedEntity<S, U>, U extends ImportedEntityMapping<T>, V extends ImportedEntityResponseDefinition<S> & ImportedEntityMappingDefinition> V getImportedEntitySimpleRepresentation(
-            T entity, Institution institution, Class<V> returnType) {
+    private <S, T extends ImportedEntity<S>, V extends ImportedEntityResponseDefinition<S>> V getImportedEntitySimpleRepresentation(T entity, Class<V> returnType) {
         V representation = BeanUtils.instantiate(returnType);
         representation.setId(entity.getId());
 
-        boolean institutionNull = institution == null;
         Class<?> entityNameClass = entity.getType().getEntityClassName();
         if (entityNameClass == null) {
             representation.setName(entity.getName());
         } else {
-            Resource resource = institutionNull ? systemService.getSystem() : institution;
-            ResourceDTO resourceDTO = new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId());
-            PropertyLoader loader = loaders.get(resourceDTO);
-            if (loader == null) {
-                loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-                loaders.put(resourceDTO, loader);
-            }
-
-            representation.setName(loader.loadLazy(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName()))
-                    .getDisplayProperty()));
-        }
-
-        if (!institutionNull) {
-            U mapping = importedEntityService.getEnabledImportedEntityMapping(institution, entity);
-            if (mapping != null) {
-                representation.setCode(mapping.getCode());
-            }
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
+            representation.setName(loader.loadLazy(((PrismLocalizableDefinition) Enum.valueOf((Class<Enum>) entityNameClass, entity.getName())).getDisplayProperty()));
         }
 
         return representation;
     }
 
-    public ImportedAgeRangeResponse getImportedAgeRangeRepresentation(ImportedAgeRange ageRange, Institution institution) {
-        ImportedAgeRangeResponse representation = getImportedEntitySimpleRepresentation(ageRange, institution, ImportedAgeRangeResponse.class);
-
+    public ImportedAgeRangeResponse getImportedAgeRangeRepresentation(ImportedAgeRange ageRange) {
+        ImportedAgeRangeResponse representation = getImportedEntitySimpleRepresentation(ageRange, ImportedAgeRangeResponse.class);
         representation.setLowerBound(ageRange.getLowerBound());
         representation.setUpperBound(ageRange.getUpperBound());
-
         return representation;
     }
 
-    public ImportedAdvertDomicileResponse getImportedAdvertDomicileRepresentation(ImportedAdvertDomicile advertDomicile, Institution institution) {
-        return getImportedEntitySimpleRepresentation(advertDomicile, institution, ImportedAdvertDomicileResponse.class).withCurrency(
-                advertDomicile.getCurrency());
-    }
-
-    public ImportedInstitutionRepresentation getImportedInstitutionSimpleRepresentation(ImportedInstitution importedInstitution) {
-        ImportedInstitutionRepresentation representation = getImportedEntitySimpleRepresentation(importedInstitution, null, ImportedInstitutionRepresentation.class);
-        representation.setRequiresDepartment(importedInstitution.getInstitution() != null);
-        return representation;
-    }
-
-    public ImportedInstitutionResponse getImportedInstitutionRepresentation(ImportedInstitution importedInstitution, Institution institution) {
-        ImportedInstitutionResponse representation = getImportedEntitySimpleRepresentation(importedInstitution, institution, ImportedInstitutionResponse.class);
-
-        representation.setDomicile(getImportedEntitySimpleRepresentation(importedInstitution.getDomicile(), institution, ImportedEntityResponse.class));
-
-        return representation;
-    }
-
-    public ImportedLanguageQualificationTypeResponse getImportedLanguageQualificationTypeRepresentation(
-            ImportedLanguageQualificationType languageQualificationType, Institution institution) {
-        ImportedLanguageQualificationTypeResponse representation = getImportedEntitySimpleRepresentation(languageQualificationType, institution,
-                ImportedLanguageQualificationTypeResponse.class);
-
-        representation.setMinimumOverallScore(languageQualificationType.getMinimumOverallScore());
-        representation.setMaximumOverallScore(languageQualificationType.getMaximumOverallScore());
-        representation.setMinimumReadingScore(languageQualificationType.getMinimumReadingScore());
-        representation.setMaximumReadingScore(languageQualificationType.getMaximumReadingScore());
-        representation.setMinimumWritingScore(languageQualificationType.getMinimumWritingScore());
-        representation.setMaximumWritingScore(languageQualificationType.getMaximumWritingScore());
-        representation.setMinimumSpeakingScore(languageQualificationType.getMinimumSpeakingScore());
-        representation.setMaximumSpeakingScore(languageQualificationType.getMaximumSpeakingScore());
-        representation.setMinimumListeningScore(languageQualificationType.getMinimumListeningScore());
-        representation.setMaximumListeningScore(languageQualificationType.getMaximumListeningScore());
-
-        return representation;
-    }
-
-    public ImportedEntityResponse getImportedProgramSimpleRepresentation(ImportedProgram program) {
-        return getImportedEntitySimpleRepresentation(program, null, ImportedEntityResponse.class);
-    }
-
-    public ImportedProgramRepresentation getImportedProgramRepresentation(ImportedProgram program, Institution institution) {
-        ImportedProgramRepresentation representation = getImportedEntitySimpleRepresentation(program, institution, ImportedProgramRepresentation.class);
-
-        ImportedInstitution importedInstitution = program.getInstitution();
-        representation.setInstitution(getImportedInstitutionRepresentation(importedInstitution, institution));
-
-        ImportedEntitySimple qualificationType = program.getQualificationType();
-        representation.setQualificationType(qualificationType == null ? null : getImportedEntitySimpleRepresentation(qualificationType, institution,
-                ImportedEntityResponse.class));
-
-        PrismQualificationLevel level = program.getLevel();
-        representation.setLevel(level == null ? null : level.getUcasLevel());
-        representation.setQualification(program.getQualification());
-        representation.setRequiresDepartment(importedInstitution.getInstitution() != null && program.getDeparments().isEmpty());
-
-        return representation;
-    }
-
-    public ImportedSubjectAreaResponse getImportedSubjectAreaRepresentation(ImportedSubjectArea subjectArea, Institution institution) {
-        ImportedSubjectAreaResponse representation = getImportedEntitySimpleRepresentation(subjectArea, institution,
-                ImportedSubjectAreaResponse.class);
-        return representation;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends ImportedEntityRequest, U extends ImportedEntity<?, ?>> U transformImportedEntity(T source, PrismImportedEntity targetEntity) {
-        U target = BeanUtils.instantiate((Class<U>) targetEntity.getEntityClass());
-        target.setName(source.getName());
-
-        Class<? extends ImportedEntityTransformer<? extends ImportedEntityRequest, ? extends ImportedEntity<?, ?>>> transformerClass = targetEntity
-                .getTransformerClass();
-        if (transformerClass != null) {
-            ImportedEntityTransformer<T, U> transformer = (ImportedEntityTransformer<T, U>) applicationContext.getBean(targetEntity.getTransformerClass());
-            transformer.transform(source, target);
-        }
-
-        return target;
+    public ImportedAdvertDomicileResponse getImportedAdvertDomicileRepresentation(ImportedAdvertDomicile advertDomicile) {
+        return getImportedEntitySimpleRepresentation(advertDomicile, ImportedAdvertDomicileResponse.class).withCurrency(advertDomicile.getCurrency());
     }
 
     public <T extends ImportedEntityRequest> List<T> getImportedEntityRepresentations(Class<T> requestClass, InputStream data) throws IOException {

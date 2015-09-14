@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -237,11 +236,6 @@ public class TestObjectProvider {
     public Institution getInstitution() {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)).setMaxResults(1).uniqueResult();
-    }
-
-    public ImportedInstitution getImportedInstitution() {
-        return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class).add(Restrictions.eq("enabled", true))
-                .setMaxResults(1).uniqueResult();
     }
 
     public ImportedEntitySimple getDomicile() {

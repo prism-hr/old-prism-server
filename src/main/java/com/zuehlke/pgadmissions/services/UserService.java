@@ -60,7 +60,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -118,12 +117,6 @@ public class UserService {
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private DepartmentService departmentService;
-
-    @Inject
-    private InstitutionService institutionService;
 
     @Inject
     private ResourceService resourceService;
@@ -228,17 +221,17 @@ public class UserService {
         roleService.modifyUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
-
-    public void createOrUpdateUserProgram(User user, ImportedProgram importedProgram) {
-        entityService.createOrUpdate(new UserProgram().withUser(user).withProgram(importedProgram));
-        createOrUpdateUserAdverts(user, importedProgram);
+    
+    public void createOrUpdateUserProgram(User user, Program program) {
+        entityService.createOrUpdate(new UserProgram().withUser(user).withProgram(program));
+        createOrUpdateUserAdverts(user, program);
     }
 
-    public Long getUserProgramRelationCount(User user, ImportedProgram importedProgram) {
-        return userDAO.getUserProgramRelationCount(user, importedProgram);
+    public Long getUserProgramRelationCount(User user, Program program) {
+        return userDAO.getUserProgramRelationCount(user, program);
     }
 
-    public void deleteUserProgram(User user, ImportedProgram importedProgram) {
+    public void deleteUserProgram(User user, Program importedProgram) {
         userDAO.deleteUserProgram(user, importedProgram);
         userDAO.deleteUserAdvert(user);
         entityService.flush();
@@ -368,13 +361,6 @@ public class UserService {
             DateTime userNotInterestedTimestamp = userNotInterestedEvents.get(userInterested);
             if (userNotInterestedTimestamp == null || userNotInterestedTimestamp.isBefore(userInterested.getEventTimestamp())) {
                 orderedUsers.put(userInterested.getIndexName(), userInterested);
-            }
-        }
-
-        List<UserSelectionDTO> suggestedSupervisors = userDAO.getSuggestedSupervisors(application);
-        for (UserSelectionDTO suggestedSupervisor : suggestedSupervisors) {
-            if (!(orderedUsers.containsValue(suggestedSupervisor) || userNotInterestedEvents.containsKey(suggestedSupervisor))) {
-                orderedUsers.put(suggestedSupervisor.getIndexName(), suggestedSupervisor);
             }
         }
 
@@ -580,20 +566,11 @@ public class UserService {
 
         return userAssignments;
     }
-
-    private void createOrUpdateUserAdverts(User user, ImportedProgram importedProgram) {
-        List<Department> departments = departmentService.getDepartmentsByImportedProgram(importedProgram);
-        if (departments.isEmpty()) {
-            Institution institution = institutionService.getInstitutionByImportedProgram(importedProgram);
-            if (institution != null) {
-                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(institution.getAdvert()).withIdentified(false));
-            }
-        } else {
-            departments.forEach(department -> {
-                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getAdvert()).withIdentified(false));
-                entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getInstitution().getAdvert()).withIdentified(false));
-            });
-        }
+    
+    private void createOrUpdateUserAdverts(User user, Program program) {
+        Department department = program.getDepartment();
+        entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getAdvert()).withIdentified(false));
+        entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getInstitution().getAdvert()).withIdentified(false));
     }
 
     private void verifyAdvertTargetUser(Resource resource, User user) {

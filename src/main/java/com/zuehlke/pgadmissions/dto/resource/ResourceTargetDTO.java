@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.dto.resource;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import jersey.repackaged.com.google.common.collect.Sets;
@@ -30,8 +28,6 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
     private BigDecimal addressCoordinateLongitude;
 
     private Boolean selected;
-
-    private BigDecimal targetingRelevance;
 
     private BigDecimal targetingDistance;
 
@@ -117,14 +113,6 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
         this.selected = selected;
     }
 
-    public BigDecimal getTargetingRelevance() {
-        return targetingRelevance;
-    }
-
-    public void setTargetingRelevance(BigDecimal targetingRelevance) {
-        this.targetingRelevance = targetingRelevance;
-    }
-
     public BigDecimal getTargetingDistance() {
         return targetingDistance;
     }
@@ -154,13 +142,6 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
     @Override
     public ResourceTargetDTO getEnclosingResource(PrismScope scope) {
         return super.getEnclosingResource(scope, ResourceTargetDTO.class);
-    }
-
-    @Override
-    public int compareTo(Object object) {
-        ResourceTargetDTO other = (ResourceTargetDTO) object;
-        int relevanceComparison = ObjectUtils.compare(other.targetingRelevance, targetingRelevance);
-        return relevanceComparison == 0 ? super.compareTo(other) : relevanceComparison;
     }
 
 }

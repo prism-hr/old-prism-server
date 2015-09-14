@@ -11,8 +11,6 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
 
     private LocalDate startDate;
 
-    private ImportedEntityResponse referralSource;
-
     public ImportedEntityResponse getStudyOption() {
         return studyOption;
     }
@@ -29,14 +27,6 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
         this.startDate = startDate;
     }
 
-    public ImportedEntityResponse getReferralSource() {
-        return referralSource;
-    }
-
-    public void setReferralSource(ImportedEntityResponse referralSource) {
-        this.referralSource = referralSource;
-    }
-
     public ApplicationProgramDetailRepresentation withStudyOption(ImportedEntityResponse studyOption) {
         this.studyOption = studyOption;
         return this;
@@ -47,15 +37,9 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
         return this;
     }
 
-    public ApplicationProgramDetailRepresentation withReferralSource(ImportedEntityResponse referralSource) {
-        this.referralSource = referralSource;
-        return this;
-    }
-    
     public ApplicationProgramDetailRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
-    
 
 }

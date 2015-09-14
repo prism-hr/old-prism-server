@@ -44,10 +44,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -61,15 +57,12 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.OpportunityCategoryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedInstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.imported.ImportedProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
 @Transactional
@@ -268,50 +261,19 @@ public class StaticDataService {
 
     @SuppressWarnings("unchecked")
     @Cacheable("importedInstitutionData")
-    public <T extends ImportedEntity<?, ?>, U extends ImportedEntityResponseDefinition<?>> Map<String, Object> getInstitutionData(Integer institutionId) {
+    public <T extends ImportedEntity<?>, U extends ImportedEntityResponseDefinition<?>> Map<String, Object> getInstitutionData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
-        Institution institution = entityService.getById(Institution.class, institutionId);
 
         for (PrismImportedEntity prismImportedEntity : getPrefetchEntities()) {
-            List<T> entities = importedEntityService.getEnabledImportedEntities(institution, prismImportedEntity);
+            List<T> entities = importedEntityService.getEnabledImportedEntities(prismImportedEntity);
             List<U> entityRepresentations = entities.stream().map(entity -> (U) importedEntityMapper.getImportedEntityRepresentation(entity))
                     .collect(Collectors.toList());
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
 
-        staticData.put("institution", resourceMapper.getResourceRepresentationSimple(institution));
+        staticData.put("institution", resourceMapper.getResourceRepresentationSimple(institutionService.getById(institutionId)));
         staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
         return staticData;
-    }
-
-    public List<ImportedInstitutionRepresentation> getImportedInstitutions(Integer institutionId, Integer domicileId) {
-        Institution institution = institutionService.getById(institutionId);
-        ImportedEntitySimple domicile = entityService.getById(ImportedEntitySimple.class, domicileId);
-        List<ImportedInstitution> importedInstitutions = importedEntityService.getEnabledImportedInstitutions(institution, domicile);
-        
-        return importedInstitutions.stream().map(importedEntityMapper::getImportedInstitutionSimpleRepresentation).collect(Collectors.toList());
-    }
-
-    public List<ImportedEntityResponse> getImportedPrograms(Integer institutionId, Integer importedInstitutionId) {
-        Institution institution = institutionService.getById(institutionId);
-        ImportedInstitution importedInstitution = entityService.getById(ImportedInstitution.class, importedInstitutionId);
-        List<ImportedProgram> importedPrograms = importedEntityService.getEnabledImportedPrograms(institution, importedInstitution);
-
-        return importedPrograms.stream().map(importedEntityMapper::getImportedProgramSimpleRepresentation).collect(Collectors.toList());
-    }
-
-    public List<ImportedProgramRepresentation> getImportedPrograms(Integer institutionId, String searchTerm, Boolean restrictToInstitution) {
-        Institution institution = institutionService.getById(institutionId);
-        ImportedInstitution importedInstitution = null;
-        if (restrictToInstitution) {
-            if (institution.getImportedInstitution() == null) {
-                return Collections.emptyList();
-            }
-            importedInstitution = institution.getImportedInstitution();
-        }
-        List<ImportedProgram> importedPrograms = importedEntityService.getImportedPrograms(importedInstitution, searchTerm);
-        return importedPrograms.stream().map(program -> importedEntityMapper.getImportedProgramRepresentation(program, institution))
-                .collect(Collectors.toList());
     }
 
     private static class ToIdFunction implements Function<WorkflowDefinition, Object> {

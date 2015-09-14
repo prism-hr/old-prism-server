@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.DepartmentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
@@ -19,9 +18,6 @@ public class DepartmentPostprocessor implements ResourceProcessor<Department> {
     private AdvertService advertService;
 
     @Inject
-    private DepartmentService departmentService;
-    
-    @Inject
     private ResourceService resourceService;
 
     @Override
@@ -30,10 +26,6 @@ public class DepartmentPostprocessor implements ResourceProcessor<Department> {
         resource.setUpdatedTimestampSitemap(updatedTimestamp);
         resource.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
-
-        if (comment.isCreateComment() || comment.isViewEditComment()) {
-            departmentService.synchronizeImportedSubjectAreas(resource);
-        }
 
         if (comment.isResourceEndorsementComment()) {
             resourceService.synchronizeResourceEndorsement(resource, comment);

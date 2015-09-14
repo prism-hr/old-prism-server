@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -105,9 +104,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<Advert> adverts = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
-    private Set<ApplicationSupervisor> applicationSupervisors = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<ApplicationReferee> applicationReferees = Sets.newHashSet();
@@ -269,10 +265,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return adverts;
     }
 
-    public Set<ApplicationSupervisor> getApplicationSupervisors() {
-        return applicationSupervisors;
-    }
-
     public Set<ApplicationReferee> getApplicationReferees() {
         return applicationReferees;
     }
@@ -371,7 +363,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         this.parentUser = parentUser;
         return this;
     }
-
+    
     public String getRobotRepresentation() {
         return fullName + ": " + email.replace("@", "-").replace(".", "-");
     }

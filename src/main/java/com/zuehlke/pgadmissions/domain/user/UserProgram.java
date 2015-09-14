@@ -9,11 +9,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.workflow.user.UserProgramReassignmentProcessor;
 
 @Entity
-@Table(name = "user_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "imported_program_id" }) })
+@Table(name = "user_program", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "program_id" }) })
 public class UserProgram implements UniqueEntity, UserAssignment<UserProgramReassignmentProcessor> {
 
     @Id
@@ -25,8 +25,8 @@ public class UserProgram implements UniqueEntity, UserAssignment<UserProgramReas
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "imported_program_id", nullable = false)
-    private ImportedProgram program;
+    @JoinColumn(name = "imported_id", nullable = false)
+    private Program program;
 
     public Integer getId() {
         return id;
@@ -44,11 +44,11 @@ public class UserProgram implements UniqueEntity, UserAssignment<UserProgramReas
         this.user = user;
     }
 
-    public ImportedProgram getProgram() {
+    public Program getProgram() {
         return program;
     }
 
-    public void setProgram(ImportedProgram program) {
+    public void setProgram(Program program) {
         this.program = program;
     }
 
@@ -56,12 +56,12 @@ public class UserProgram implements UniqueEntity, UserAssignment<UserProgramReas
         this.user = user;
         return this;
     }
-    
-    public UserProgram withProgram(ImportedProgram program) {
+
+    public UserProgram withProgram(Program program) {
         this.program = program;
         return this;
     }
-    
+
     @Override
     public Class<UserProgramReassignmentProcessor> getUserReassignmentProcessor() {
         return UserProgramReassignmentProcessor.class;

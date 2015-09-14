@@ -1,12 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.dto.EntityDTO;
@@ -25,13 +22,6 @@ public class ApplicationProgramDetailDTO {
 
     @NotNull
     private LocalDate startDate;
-
-    @NotNull
-    private EntityDTO referralSource;
-
-    private List<String> primaryThemes = Lists.newArrayList();
-
-    private List<String> secondaryThemes = Lists.newArrayList();
 
     public Boolean getPreviousApplication() {
         return previousApplication;
@@ -71,30 +61,6 @@ public class ApplicationProgramDetailDTO {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
-    }
-
-    public EntityDTO getReferralSource() {
-        return referralSource;
-    }
-
-    public void setReferralSource(EntityDTO referralSource) {
-        this.referralSource = referralSource;
-    }
-
-    public List<String> getPrimaryThemes() {
-        return primaryThemes;
-    }
-
-    public void setPrimaryThemes(List<String> primaryThemes) {
-        this.primaryThemes = primaryThemes;
-    }
-
-    public List<String> getSecondaryThemes() {
-        return secondaryThemes;
-    }
-
-    public void setSecondaryThemes(List<String> secondaryThemes) {
-        this.secondaryThemes = secondaryThemes;
     }
 
 }

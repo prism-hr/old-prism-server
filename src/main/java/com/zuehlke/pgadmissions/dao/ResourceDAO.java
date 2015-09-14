@@ -38,7 +38,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -60,7 +59,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
@@ -191,7 +189,7 @@ public class ResourceDAO {
                     .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
 
             criteria.add(Restrictions.in("id", resourceIds));
-            
+
             PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();
             if (opportunityCategory != null) {
                 criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
@@ -530,7 +528,7 @@ public class ResourceDAO {
 
     public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope,
             List<PrismScope> parentScopes, PrismScope creationScope, String searchTerm, boolean userLoggedIn) {
-        Criteria criteria = getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope,                parentScopes,
+        Criteria criteria = getResourcesCriteria(filterScope, Lists.newArrayList(filterResourceId), resourceScope, parentScopes,
                 Projections.property("resourceCondition.internalMode").as("internalMode"),
                 Projections.property("resourceCondition.externalMode").as("externalMode"))
                         .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -678,30 +676,6 @@ public class ResourceDAO {
                 .add(Restrictions.isNotNull("opportunityRatingCount")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
-    }
-
-    public List<ResourceIdentityDTO> getResourcesNotYetEndorsedFor(ResourceParent resource) {
-        PrismScope resourceScope = resource.getResourceScope();
-        String resourceReference = resourceScope.getLowerCamelName();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertTargetAdvert.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty(resourceReference + ".id").as("id")) //
-                        .add(Projections.property(resourceReference + ".name").as("name")) //
-                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId"))) //
-                .createAlias("value", "value", JoinType.INNER_JOIN) //
-                .createAlias("value." + resourceReference, resourceReference, JoinType.INNER_JOIN);
-
-        if (!resourceScope.equals(INSTITUTION)) {
-            criteria.createAlias("value.institution", "institution", JoinType.INNER_JOIN);
-        }
-
-        return (List<ResourceIdentityDTO>) criteria.add(Restrictions.eq("advert", resource.getAdvert())) //
-                .add(Restrictions.eq("selected", true)) //
-                .add(Restrictions.isNull("partnershipState")) //
-                .addOrder(Order.asc(resourceReference + ".name")) //
-                .addOrder(Order.asc(resourceReference + ".id")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceIdentityDTO.class)) //
-                .list();
     }
 
     private Criteria getResourcesCriteria(PrismScope filterScope, List<Integer> filerResourceIds,

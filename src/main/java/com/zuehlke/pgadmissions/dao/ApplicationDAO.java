@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EXPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
@@ -23,7 +22,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -46,17 +44,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
@@ -97,24 +92,6 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public String getApplicationExportReference(Application application) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("export.exportReference")) //
-                .add(Restrictions.eq("application", application)) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public String getApplicationCreatorIpAddress(Application application) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("creatorIpAddress")) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNotNull("creatorIpAddress")) //
-                .uniqueResult();
-    }
-
     @SuppressWarnings("unchecked")
     public List<ApplicationReferenceDTO> getApplicationRefereesResponded(Application application) {
         return (List<ApplicationReferenceDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
@@ -137,15 +114,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
-        return (List<ApplicationQualification>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
-                .add(Restrictions.eq("application", application)) //
-                .addOrder(Order.desc("awardDate")) //
-                .addOrder(Order.desc("startDate")) //
-                .list();
-    }
-
     public ApplicationReferee getApplicationReferee(Application application, User user) {
         return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -159,17 +127,6 @@ public class ApplicationDAO {
                 .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNull("comment")) //
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsForExport() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.actionCategory", EXPORT_RESOURCE)) //
                 .list();
     }
 
@@ -314,17 +271,6 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByMatchingSuggestedSupervisor(String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
-                .setProjection(Projections.property("application.id")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.like("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like("user.email", searchTerm, MatchMode.ANYWHERE))) //
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByImportedProgram(ResourceParent parent, Collection<Integer> importedPrograms) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
@@ -353,28 +299,6 @@ public class ApplicationDAO {
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
                 .add(Restrictions.in("program.qualificationType.id", importedQualificationTypes)) //
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByImportedSubjectArea(ResourceParent parent, Collection<Integer> importedSubjectAreas) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .createAlias("programSubjectAreas", "subjectArea", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.in("subjectArea.id", importedSubjectAreas)) //
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByImportedFundingSource(ResourceParent parent, Collection<Integer> importedFundingSources) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFunding.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.in("fundingSource.id", importedFundingSources)) //
                 .list();
     }
 

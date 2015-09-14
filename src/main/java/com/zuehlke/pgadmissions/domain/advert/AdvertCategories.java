@@ -22,10 +22,6 @@ public class AdvertCategories implements AdvertAttributes {
     @OrderBy(clause = "value")
     private Set<AdvertFunction> functions = Sets.newHashSet();
 
-    @OrderBy(clause = "value")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertTheme> themes = Sets.newHashSet();
-
     public Set<AdvertIndustry> getIndustries() {
         return industries;
     }
@@ -42,14 +38,6 @@ public class AdvertCategories implements AdvertAttributes {
         this.functions = functions;
     }
 
-    public Set<AdvertTheme> getThemes() {
-        return themes;
-    }
-
-    public void setThemes(Set<AdvertTheme> themes) {
-        this.themes = themes;
-    }
-
     @Override
     public void storeAttribute(AdvertAttribute<?> attribute) {
         Class<?> valueClass = attribute.getValue().getClass();
@@ -57,8 +45,6 @@ public class AdvertCategories implements AdvertAttributes {
             industries.add((AdvertIndustry) attribute);
         } else if (valueClass.equals(PrismAdvertFunction.class)) {
             functions.add((AdvertFunction) attribute);
-        } else {
-            themes.add((AdvertTheme) attribute);
         }
     }
 

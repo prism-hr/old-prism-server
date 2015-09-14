@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CORRECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_EMAIL_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_FORGET_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PURGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
@@ -32,7 +30,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PRO
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_VIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
@@ -92,25 +89,6 @@ public class PrismApplicationWorkflow {
                         .withRoleTransitionsAndExclusions(applicationNextStateExclusions(state), roleTransitions));
     }
 
-    public static PrismStateAction applicationCorrect(PrismState state) {
-        return new PrismStateAction() //
-                .withAction(APPLICATION_CORRECT) //
-                .withRaisesUrgentFlag() //
-                .withAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(state) //
-                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
-    }
-
-    public static PrismStateAction applicationForgetExport(PrismState state) {
-        return new PrismStateAction() //
-                .withAction(APPLICATION_FORGET_EXPORT) //
-                .withAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(state) //
-                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
-    }
-
     public static PrismStateAction applicationEmailCreator() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_EMAIL_CREATOR) //
@@ -149,12 +127,6 @@ public class PrismApplicationWorkflow {
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_ESCALATE) //
                         .withRoleTransitions(roleTransitions));
-    }
-
-    public static PrismStateAction applicationExport(PrismStateTransitionGroup stateTransitions) {
-        return new PrismStateAction() //
-                .withAction(PrismAction.APPLICATION_EXPORT) //
-                .withTransitions(stateTransitions);
     }
 
     public static PrismStateAction applicationPurge(PrismStateTransitionGroup stateTransitions) {
@@ -207,7 +179,6 @@ public class PrismApplicationWorkflow {
                 .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROJECT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
-                .withAssignments(PROJECT_PRIMARY_SUPERVISOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_AS_CREATOR) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE) //
                 .withAssignments(APPLICATION_VIEWER_RECRUITER, APPLICATION_VIEW_AS_RECRUITER) //
@@ -227,7 +198,6 @@ public class PrismApplicationWorkflow {
                 .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROJECT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
-                .withAssignments(PROJECT_PRIMARY_SUPERVISOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_AS_CREATOR) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE) //
                 .withAssignments(APPLICATION_VIEWER_RECRUITER, APPLICATION_VIEW_AS_RECRUITER) //
@@ -247,7 +217,6 @@ public class PrismApplicationWorkflow {
                 .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(PROJECT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
-                .withAssignments(PROJECT_PRIMARY_SUPERVISOR, APPLICATION_VIEW_AS_RECRUITER) //
                 .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, APPLICATION_VIEW_AS_RECRUITER)

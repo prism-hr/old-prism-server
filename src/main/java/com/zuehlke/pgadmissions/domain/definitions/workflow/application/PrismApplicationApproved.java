@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_HIRING_MANAGER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_ALL_STATES_GROUP;
@@ -34,7 +34,7 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION) //
                 .withTransitions(APPLICATION_CONFIRM_OFFER_RECOMMENDATION_TRANSITION //
                         .withStateTerminationsAndRoleTransitions(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
-                                APPLICATION_CREATE_SUPERVISOR_GROUP, //
+                                APPLICATION_CREATE_HIRING_MANAGER_GROUP, //
                                 APPLICATION_RETIRE_REFEREE_GROUP))); //
 
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //

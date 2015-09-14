@@ -4,20 +4,14 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
 import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.valueOf;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.math.BigDecimal;
@@ -48,7 +42,6 @@ import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -56,39 +49,27 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
-import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
-import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
-import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
 @Transactional
@@ -107,13 +88,7 @@ public class ApplicationService {
     private EntityService entityService;
 
     @Inject
-    private RoleService roleService;
-
-    @Inject
     private UserService userService;
-
-    @Inject
-    private CustomizationService customizationService;
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -129,15 +104,6 @@ public class ApplicationService {
 
     @Inject
     private SystemService systemService;
-
-    @Inject
-    private ApplicationMapper applicationMapper;
-
-    @Inject
-    private UserMapper userMapper;
-
-    @Inject
-    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private ApplicationValidator applicationValidator;
@@ -209,63 +175,8 @@ public class ApplicationService {
         return new LocalDate().plusYears(1);
     }
 
-    public String getApplicationExportReference(Application application) {
-        return applicationDAO.getApplicationExportReference(application);
-    }
-
-    public String getApplicationCreatorIpAddress(Application application) {
-        return applicationDAO.getApplicationCreatorIpAddress(application);
-    }
-
-    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
-        return applicationDAO.getApplicationExportQualifications(application);
-    }
-
-    public List<ApplicationRefereeRepresentation> getApplicationExportReferees(Application application) throws Exception {
-        List<ApplicationReferenceDTO> references = applicationDAO.getApplicationRefereesResponded(application);
-
-        Institution institution = application.getInstitution();
-        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(application);
-        List<ApplicationRefereeRepresentation> representations = Lists.newArrayListWithCapacity(references.size());
-        for (ApplicationReferenceDTO reference : references) {
-            representations.add(applicationMapper.getApplicationRefereeRepresentation(reference, institution, overridingRoles));
-        }
-
-        // TODO move this shit into the adapter
-        WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(
-                WORKFLOW_PROPERTY, application, APPLICATION_ASSIGN_REFEREE, application.getWorkflowPropertyConfigurationVersion());
-
-        int referencesPending = configuration.getMinimum() - references.size();
-        if (referencesPending > 0) {
-            DomicileUseDTO domicileUseDTO = importedEntityService.getMostUsedDomicile(institution);
-
-            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(application);
-            String jobTitle = loader.loadLazy(SYSTEM_ROLE_APPLICATION_ADMINISTRATOR);
-            String addressLineMock = loader.loadLazy(SYSTEM_ADDRESS_LINE_MOCK);
-            String addressCodeMock = loader.loadLazy(SYSTEM_ADDRESS_CODE_MOCK);
-            String phoneMock = loader.loadLazy(SYSTEM_PHONE_MOCK);
-
-            if (domicileUseDTO != null) {
-                ImportedEntityResponse domicileMock = importedEntityMapper.getImportedEntityRepresentation(domicileUseDTO.getDomicile(), institution);
-
-                for (int i = 0; i < referencesPending; i++) {
-                    representations.add(new ApplicationRefereeRepresentation().withUser(userMapper.getUserRepresentationSimple(institution.getUser()))
-                            .withJobTitle(jobTitle).withAddress(new AddressApplicationRepresentation().withDomicile(domicileMock)
-                                    .withAddressLine1(addressLineMock).withAddressCode(addressLineMock).withAddressCode(addressCodeMock))
-                            .withPhone(phoneMock));
-                }
-            }
-        }
-
-        return representations;
-    }
-
     public List<User> getApplicationRefereesNotResponded(Application application) {
         return applicationDAO.getApplicationRefereesNotResponded(application);
-    }
-
-    public List<Integer> getApplicationsForExport() {
-        return applicationDAO.getApplicationsForExport();
     }
 
     public DataTable getApplicationReport(ResourceListFilterDTO filter) throws Exception {
@@ -367,10 +278,6 @@ public class ApplicationService {
         return errors;
     }
 
-    public List<Integer> getApplicationsByMatchingSuggestedSupervisor(String searchTerm) {
-        return applicationDAO.getApplicationsByMatchingSuggestedSupervisor(searchTerm);
-    }
-
     public Long getProvidedReferenceCount(Application application) {
         return applicationDAO.getProvidedReferenceCount(application);
     }
@@ -429,14 +336,6 @@ public class ApplicationService {
 
     public List<Integer> getApplicationsByImportedQualificationType(ResourceParent parent, Collection<Integer> importedQualificationTypes) {
         return applicationDAO.getApplicationsByImportedQualificationType(parent, importedQualificationTypes);
-    }
-
-    public List<Integer> getApplicationsByImportedSubjectArea(ResourceParent parent, Collection<Integer> importedSubjectAreas) {
-        return applicationDAO.getApplicationsByImportedSubjectArea(parent, importedSubjectAreas);
-    }
-
-    public List<Integer> getApplicationsByImportedFundingSource(ResourceParent parent, Collection<Integer> importedFundingSources) {
-        return applicationDAO.getApplicationsByImportedFundingSource(parent, importedFundingSources);
     }
 
     public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {

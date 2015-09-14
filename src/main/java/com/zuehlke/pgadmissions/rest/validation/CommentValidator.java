@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_APPOINTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_OFFER_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL;
-
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 
 import javax.inject.Inject;
 
@@ -49,8 +48,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
     }
 
     private void validateConfiguredProperties(Comment comment, PrismAction action, Errors errors) {
-        if (Arrays.asList(APPLICATION_ASSIGN_SUPERVISORS, APPLICATION_CONFIRM_PRIMARY_SUPERVISION,
-                APPLICATION_CONFIRM_OFFER_RECOMMENDATION).contains(action)) {
+        if (asList(APPLICATION_ASSIGN_HIRING_MANAGERS, APPLICATION_CONFIRM_APPOINTMENT, APPLICATION_CONFIRM_OFFER_RECOMMENDATION).contains(action)) {
             PrismConfiguration configurationType = WORKFLOW_PROPERTY;
             Integer workflowPropertyConfigurationVersion = comment.getResource().getWorkflowPropertyConfigurationVersion();
 

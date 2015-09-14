@@ -39,10 +39,6 @@ public class ApplicationProgramDetail extends ApplicationSection {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
 
-    @ManyToOne
-    @JoinColumn(name = "imported_referral_source_id")
-    private ImportedEntitySimple referralSource;
-
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -87,14 +83,6 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.startDate = startDate;
     }
 
-    public ImportedEntitySimple getReferralSource() {
-        return referralSource;
-    }
-
-    public void setReferralSource(ImportedEntitySimple referralSource) {
-        this.referralSource = referralSource;
-    }
-
     @Override
     public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
@@ -125,11 +113,6 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withReferralSource(ImportedEntitySimple referralSource) {
-        this.referralSource = referralSource;
-        return this;
-    }
-
     public ApplicationProgramDetail withApplication(Application application) {
         this.application = application;
         return this;
@@ -137,10 +120,6 @@ public class ApplicationProgramDetail extends ApplicationSection {
 
     public PrismStudyOption getStudyOptionDisplay() {
         return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getName());
-    }
-
-    public String getReferralSourceDisplay() {
-        return referralSource == null ? null : referralSource.getName();
     }
 
 }

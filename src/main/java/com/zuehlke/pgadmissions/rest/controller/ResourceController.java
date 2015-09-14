@@ -7,7 +7,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +57,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlot
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -79,9 +77,6 @@ public class ResourceController {
 
     @Inject
     private ApplicationService applicationService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private ActionMapper actionMapper;
@@ -110,7 +105,7 @@ public class ResourceController {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceMapper.getResourceRepresentationSimple(resource);
     }
-    
+
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=activity")
     @PreAuthorize("permitAll")
@@ -205,12 +200,11 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/request", method = RequestMethod.POST)
     @PreAuthorize("permitAll")
     public UserRepresentationSimple requestUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                @RequestBody UserDTO newUser) throws Exception {
+            @RequestBody UserDTO newUser) throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.requestUser(newUser, resource, getUnverifiedViewerRole(resource));
         return userMapper.getUserRepresentationSimple(user);
     }
-
 
     @RequestMapping(value = "{resourceId}/users/{userId}/verify", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
@@ -245,12 +239,6 @@ public class ResourceController {
             @Valid @RequestBody CommentDTO commentDTO, @RequestParam(required = false) String referralEmailAddress) throws Exception {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), commentDTO, referralEmailAddress);
         return actionMapper.getActionOutcomeRepresentation(actionOutcome);
-    }
-
-    @RequestMapping(value = "/{resourceId}/availableThemes", method = RequestMethod.GET)
-    public Set<String> getAvailableThemes(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
-        return advertService.getAvailableAdvertThemes(resource.getAdvert(), null);
     }
 
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)

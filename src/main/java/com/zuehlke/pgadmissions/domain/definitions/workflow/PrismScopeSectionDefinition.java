@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_DETAILS_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_DEPARTMENT_PROGRAMS_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_DETAILS_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TARGETS_INCOMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -17,7 +16,6 @@ import java.util.Set;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.workflow.evaluators.DepartmentProgramsEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCategoriesEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCompetencesEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertDetailsEvaluator;
@@ -28,7 +26,6 @@ import com.zuehlke.pgadmissions.workflow.evaluators.ResourceDetailsEvaluator;
 public enum PrismScopeSectionDefinition {
 
     RESOURCE_DETAILS(ResourceDetailsEvaluator.class, SYSTEM_RESOURCE_DETAILS_INCOMPLETE), //
-    DEPARTMENT_PROGRAMS(DepartmentProgramsEvaluator.class, SYSTEM_RESOURCE_DEPARTMENT_PROGRAMS_INCOMPLETE), //
     ADVERT_CATEGORIES(ResourceAdvertCategoriesEvaluator.class, SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE), //
     ADVERT_DETAILS(ResourceAdvertDetailsEvaluator.class, SYSTEM_RESOURCE_ADVERT_DETAILS_INCOMPLETE), //
     ADVERT_COMPETENCES(ResourceAdvertCompetencesEvaluator.class, SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE), //
@@ -38,7 +35,7 @@ public enum PrismScopeSectionDefinition {
 
     static {
         requiredSections.putAll(INSTITUTION, getDefaultRequiredSections());
-        requiredSections.putAll(DEPARTMENT, Lists.newArrayList(RESOURCE_DETAILS, DEPARTMENT_PROGRAMS, ADVERT_DETAILS, ADVERT_CATEGORIES, ADVERT_COMPETENCES, ADVERT_TARGETS));
+        requiredSections.putAll(DEPARTMENT, getDefaultRequiredSections());
         requiredSections.putAll(PROGRAM, getDefaultRequiredSections());
         requiredSections.put(PROGRAM, ADVERT_COMPETENCES);
         requiredSections.putAll(PROJECT, getDefaultRequiredSections());

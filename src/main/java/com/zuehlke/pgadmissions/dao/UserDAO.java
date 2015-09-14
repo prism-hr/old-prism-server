@@ -35,15 +35,14 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.ImportedProgram;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -111,24 +110,6 @@ public class UserDAO {
                 .add(Restrictions.eqOrIsNull("identityType", identityType)) //
                 .setMaxResults(1) //
                 .uniqueResult();
-    }
-
-    public List<UserSelectionDTO> getSuggestedSupervisors(Application application) {
-        return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("user.parentUser"), "user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
-                .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.id")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
-                .addOrder(Order.asc("parentUser.firstName")) //
-                .addOrder(Order.asc("parentUser.lastName")) //
-                .addOrder(Order.asc("user.id")) //
-                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)) //
-                .list();
     }
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
@@ -371,23 +352,23 @@ public class UserDAO {
                 .list();
     }
 
-    public Long getUserProgramRelationCount(User user, ImportedProgram importedProgram) {
+    public Long getUserProgramRelationCount(User user, Program program) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.count("qualification.id")) //
                 .createAlias("qualification", "qualification", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("program", importedProgram)) //
+                .add(Restrictions.eq("program", program)) //
                 .uniqueResult();
 
     }
 
-    public void deleteUserProgram(User user, ImportedProgram importedProgram) {
+    public void deleteUserProgram(User user, Program program) {
         sessionFactory.getCurrentSession()
                 .createQuery("delete UserProgram " //
                         + "where user = :user " //
-                        + "and program = :importedProgram") //
+                        + "and program = :program") //
                 .setParameter("user", user) //
-                .setParameter("importedProgram", importedProgram) //
+                .setParameter("program", program) //
                 .executeUpdate();
     }
 

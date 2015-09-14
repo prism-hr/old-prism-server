@@ -1,19 +1,19 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 
-import javax.validation.constraints.NotNull;
-
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @Type(value = ApplicationDTO.class, name = "APPLICATION"),
         @Type(value = ResourceOpportunityDTO.class, name = "PROJECT"),
         @Type(value = ResourceOpportunityDTO.class, name = "PROGRAM"),
-        @Type(value = DepartmentDTO.class, name = "DEPARTMENT"),
+        @Type(value = ResourceParentDivisionDTO.class, name = "DEPARTMENT"),
         @Type(value = InstitutionDTO.class, name = "INSTITUTION"),
         @Type(value = ResourceCreationDTO.class, name = "SIMPLE")
 })

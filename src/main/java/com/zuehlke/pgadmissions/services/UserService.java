@@ -53,6 +53,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
@@ -64,13 +65,11 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAdvert;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
-import com.zuehlke.pgadmissions.domain.user.UserProgram;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
@@ -222,25 +221,18 @@ public class UserService {
         return user;
     }
     
-    public void createOrUpdateUserProgram(User user, Program program) {
-        entityService.createOrUpdate(new UserProgram().withUser(user).withProgram(program));
-        createOrUpdateUserAdverts(user, program);
+    public void getOrCreateUserAdvert(User user, Advert advert) {
+        entityService.getOrCreate(new UserAdvert().withUser(user).withAdvert(advert));
     }
 
-    public Long getUserProgramRelationCount(User user, Program program) {
-        return userDAO.getUserProgramRelationCount(user, program);
+    public void deleteUserAdvert(User user, Advert advert) {
+        userDAO.deleteUserAdvert(user, advert);
     }
-
-    public void deleteUserProgram(User user, Program importedProgram) {
-        userDAO.deleteUserProgram(user, importedProgram);
-        userDAO.deleteUserAdvert(user);
-        entityService.flush();
-
-        user.getUserPrograms().forEach(userProgram -> {
-            createOrUpdateUserAdverts(user, importedProgram);
-        });
+    
+    public Long getUserAdvertRelationCount(User user, Advert advert) {
+        return userDAO.getUserAdvertRelationCount(user, advert);
     }
-
+    
     public Set<String> getUserProperties(Class<? extends UniqueEntity> userAssignmentClass) {
         return userAssignments.get(userAssignmentClass);
     }
@@ -565,12 +557,6 @@ public class UserService {
         }
 
         return userAssignments;
-    }
-    
-    private void createOrUpdateUserAdverts(User user, Program program) {
-        Department department = program.getDepartment();
-        entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getAdvert()).withIdentified(false));
-        entityService.createOrUpdate(new UserAdvert().withUser(user).withAdvert(department.getInstitution().getAdvert()).withIdentified(false));
     }
 
     private void verifyAdvertTargetUser(Resource resource, User user) {

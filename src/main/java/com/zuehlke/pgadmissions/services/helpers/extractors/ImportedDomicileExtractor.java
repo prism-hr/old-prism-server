@@ -11,15 +11,15 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedAdvertDomicileRequest;
+import uk.co.alumeni.prism.api.model.imported.request.ImportedDomicileRequest;
 
 @Component
-public class ImportedAdvertDomicileExtractor implements ImportedEntityExtractor<ImportedAdvertDomicileRequest> {
+public class ImportedDomicileExtractor implements ImportedEntityExtractor<ImportedDomicileRequest> {
 
     @Override
-    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedAdvertDomicileRequest> definitions, boolean enable) {
+    public List<String> extract(PrismImportedEntity prismImportedEntity, List<ImportedDomicileRequest> definitions, boolean enable) {
         List<String> rows = Lists.newLinkedList();
-        for (ImportedAdvertDomicileRequest definition : definitions) {
+        for (ImportedDomicileRequest definition : definitions) {
             List<String> cells = Lists.newLinkedList();
             cells.add(prepareStringForSqlInsert(definition.getId()));
             cells.add(prepareStringForSqlInsert(definition.getName()));

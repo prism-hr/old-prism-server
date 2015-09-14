@@ -2,9 +2,8 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismStudyOption implements PrismLocalizableDefinition {
 
-    FULL_TIME,
-    PART_TIME,
-    MODULAR_FLEXIBLE;
+    FULL_TIME, //
+    PART_TIME;
 
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {

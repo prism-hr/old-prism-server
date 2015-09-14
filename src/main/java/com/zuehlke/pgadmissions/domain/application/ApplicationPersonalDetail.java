@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 
 @Entity
@@ -46,16 +47,12 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     private ImportedAgeRange ageRange;
 
     @ManyToOne
-    @JoinColumn(name = "imported_country_id")
-    private ImportedEntitySimple country;
-
-    @ManyToOne
     @JoinColumn(name = "imported_domicile_id")
-    private ImportedEntitySimple domicile;
+    private ImportedDomicile domicile;
 
     @ManyToOne
     @JoinColumn(name = "imported_nationality_id")
-    private ImportedEntitySimple firstNationality;
+    private ImportedDomicile nationality;
 
     @Column(name = "first_language_locale")
     private Boolean firstLanguageLocale;
@@ -126,20 +123,20 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.ageRange = ageRange;
     }
 
-    public ImportedEntitySimple getCountry() {
-        return country;
+    public ImportedDomicile getDomicile() {
+        return domicile;
     }
 
-    public void setCountry(ImportedEntitySimple country) {
-        this.country = country;
+    public void setDomicile(ImportedDomicile domicile) {
+        this.domicile = domicile;
     }
 
-    public ImportedEntitySimple getFirstNationality() {
-        return firstNationality;
+    public ImportedDomicile getNationality() {
+        return nationality;
     }
 
-    public void setFirstNationality(ImportedEntitySimple firstNationality) {
-        this.firstNationality = firstNationality;
+    public void setNationality(ImportedDomicile nationality) {
+        this.nationality = nationality;
     }
 
     public Boolean getFirstLanguageLocale() {
@@ -148,14 +145,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
 
     public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
         this.firstLanguageLocale = firstLanguageLocale;
-    }
-
-    public ImportedEntitySimple getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(ImportedEntitySimple domicile) {
-        this.domicile = domicile;
     }
 
     public Boolean getVisaRequired() {
@@ -198,16 +187,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @Override
     public void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
-    }
-
-    public ApplicationPersonalDetail withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withApplication(Application application) {
-        this.application = application;
-        return this;
     }
 
 }

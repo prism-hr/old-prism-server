@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
@@ -23,7 +22,6 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
@@ -96,23 +94,6 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.DELETE)
     public void deleteEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) throws Exception {
         applicationSectionService.deleteEmploymentPosition(applicationId, employmentPositionId);
-    }
-
-    @RequestMapping(value = "/{applicationId}/prizes", method = RequestMethod.POST)
-    public Map<String, Object> createPrize(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPrizeDTO prizeDTO) throws Exception {
-        ApplicationPrize prize = applicationSectionService.updatePrize(applicationId, null, prizeDTO);
-        return ImmutableMap.of("id", (Object) prize.getId());
-    }
-
-    @RequestMapping(value = "/{applicationId}/prizes/{prizeId}", method = RequestMethod.PUT)
-    public void updatePrize(@PathVariable Integer applicationId, @PathVariable Integer prizeId, @Valid @RequestBody ApplicationPrizeDTO prizeDTO)
-            throws Exception {
-        applicationSectionService.updatePrize(applicationId, prizeId, prizeDTO);
-    }
-
-    @RequestMapping(value = "/{applicationId}/prizes/{prizeId}", method = RequestMethod.DELETE)
-    public void deletePrize(@PathVariable Integer applicationId, @PathVariable Integer prizeId) throws Exception {
-        applicationSectionService.deletePrize(applicationId, prizeId);
     }
 
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)

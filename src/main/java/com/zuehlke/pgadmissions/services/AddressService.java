@@ -18,9 +18,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
-import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
-import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
 import com.zuehlke.pgadmissions.dto.json.EstablishmentSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO;
@@ -29,9 +28,9 @@ import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 
 @Service
 @Transactional
-public class GeocodableLocationService {
+public class AddressService {
 
-    private static Logger logger = LoggerFactory.getLogger(GeocodableLocationService.class);
+    private static Logger logger = LoggerFactory.getLogger(AddressService.class);
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
@@ -48,7 +47,7 @@ public class GeocodableLocationService {
     @Inject
     private RestTemplate restTemplate;
 
-    public void setLocation(String googleIdentifier, String establishment, AddressAdvert address) {
+    public void setLocation(String googleIdentifier, String establishment, Address address) {
         try {
             if (googleIdentifier == null || !setEstablishmentLocation(googleIdentifier, address)) {
                 setGeocodeLocation(establishment, address);
@@ -63,8 +62,8 @@ public class GeocodableLocationService {
         URI request = new DefaultResourceLoader().getResource(googlePlacesApiUri + "json?placeid=" + googleIdentifier + "&key=" + googleApiKey).getURI();
         return restTemplate.getForObject(request, EstablishmentSearchResponseDTO.class);
     }
-    
-    public void setGeocodeLocation(String establishment, AddressAdvert address) throws Exception {
+
+    public void setGeocodeLocation(String establishment, Address address) throws Exception {
         List<String> addressTokens = Lists.reverse(address.getLocationTokens());
         addressTokens.add(establishment);
         for (int i = addressTokens.size(); i >= 0; i--) {
@@ -80,7 +79,7 @@ public class GeocodableLocationService {
         }
     }
 
-    private boolean setEstablishmentLocation(String googleIdentifier, AddressAdvert address) throws Exception {
+    private boolean setEstablishmentLocation(String googleIdentifier, Address address) throws Exception {
         EstablishmentSearchResponseDTO response = getEstablishmentLocation(googleIdentifier);
         if (response.getStatus().equals(OK)) {
             GoogleResultDTO result = response.getResult();
@@ -99,10 +98,10 @@ public class GeocodableLocationService {
         return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
     }
 
-    private void setLocation(GeocodableLocation location, GoogleGeometryDTO geometry) {
+    private void setLocation(Address address, GoogleGeometryDTO geometry) {
         Location googleLocation = geometry.getLocation();
         AddressCoordinates addressCoordinates = new AddressCoordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
-        location.setCoordinates(addressCoordinates);
+        address.setAddressCoordinates(addressCoordinates);
     }
 
 }

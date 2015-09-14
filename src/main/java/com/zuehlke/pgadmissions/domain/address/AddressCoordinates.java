@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.location;
+package com.zuehlke.pgadmissions.domain.address;
 
 import java.math.BigDecimal;
 

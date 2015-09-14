@@ -1,16 +1,25 @@
 package com.zuehlke.pgadmissions.domain.address;
 
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 
-@MappedSuperclass
-public class Address {
+@Entity
+@Table(name = "address")
+public class Address extends AddressDefinition<ImportedDomicile> {
 
     @Id
     @GeneratedValue
@@ -32,6 +41,16 @@ public class Address {
 
     @Column(name = "address_code")
     private String addressCode;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_domicile_id", nullable = false)
+    private ImportedDomicile domicile;
+
+    @Column(name = "google_id")
+    private String googleId;
+
+    @Embedded
+    private AddressCoordinates addressCoordinates;
 
     public Integer getId() {
         return id;
@@ -81,8 +100,57 @@ public class Address {
         this.addressCode = addressCode;
     }
 
+    public ImportedDomicile getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(ImportedDomicile domicile) {
+        this.domicile = domicile;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public AddressCoordinates getAddressCoordinates() {
+        return addressCoordinates;
+    }
+
+    public void setAddressCoordinates(AddressCoordinates addressCoordinates) {
+        this.addressCoordinates = addressCoordinates;
+    }
+
     public String getLocationString() {
-        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode);
+        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getName());
+    }
+
+    public List<String> getLocationTokens() {
+        List<String> tokens = Lists.newLinkedList();
+
+        tokens.add(getAddressLine1());
+
+        String addressLine2 = getAddressLine2();
+        if (addressLine2 != null) {
+            tokens.add(addressLine2);
+        }
+
+        tokens.add(getAddressTown());
+
+        String addressRegion = getAddressRegion();
+        if (addressRegion != null) {
+            tokens.add(addressRegion);
+        }
+
+        String addressCode = getAddressCode();
+        if (addressCode != null) {
+            tokens.add(addressCode);
+        }
+
+        return tokens;
     }
 
 }

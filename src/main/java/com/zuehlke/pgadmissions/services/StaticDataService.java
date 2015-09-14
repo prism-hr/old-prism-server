@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
@@ -165,9 +164,8 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
-                PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class, PrismApplicationReserveStatus.class,
-                PrismDisplayPropertyCategory.class, PrismImportedEntity.class}) {
+        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
+                PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -249,7 +247,6 @@ public class StaticDataService {
         return staticData;
     }
 
-
     public Map<String, Object> getRequiredSections() {
         List<Object> sectionDefinitions = new LinkedList<>();
         for (PrismScopeSectionDefinition section : PrismScopeSectionDefinition.values()) {
@@ -257,7 +254,6 @@ public class StaticDataService {
         }
         return Collections.singletonMap("requiredSections", sectionDefinitions);
     }
-
 
     @SuppressWarnings("unchecked")
     @Cacheable("importedInstitutionData")

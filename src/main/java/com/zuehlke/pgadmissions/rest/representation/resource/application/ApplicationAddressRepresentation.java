@@ -2,36 +2,36 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 
 public class ApplicationAddressRepresentation extends ApplicationSectionRepresentation {
 
-    private AddressApplicationRepresentation currentAddress;
+    private AddressRepresentation currentAddress;
 
-    private AddressApplicationRepresentation contactAddress;
+    private AddressRepresentation contactAddress;
 
-    public AddressApplicationRepresentation getCurrentAddress() {
+    public AddressRepresentation getCurrentAddress() {
         return currentAddress;
     }
 
-    public void setCurrentAddress(AddressApplicationRepresentation currentAddress) {
+    public void setCurrentAddress(AddressRepresentation currentAddress) {
         this.currentAddress = currentAddress;
     }
 
-    public AddressApplicationRepresentation getContactAddress() {
+    public AddressRepresentation getContactAddress() {
         return contactAddress;
     }
 
-    public void setContactAddress(AddressApplicationRepresentation contactAddress) {
+    public void setContactAddress(AddressRepresentation contactAddress) {
         this.contactAddress = contactAddress;
     }
 
-    public ApplicationAddressRepresentation withCurrentAddress(AddressApplicationRepresentation currentAddress) {
+    public ApplicationAddressRepresentation withCurrentAddress(AddressRepresentation currentAddress) {
         this.currentAddress = currentAddress;
         return this;
     }
 
-    public ApplicationAddressRepresentation withContactAddress(AddressApplicationRepresentation contactAddress) {
+    public ApplicationAddressRepresentation withContactAddress(AddressRepresentation contactAddress) {
         this.contactAddress = contactAddress;
         return this;
     }

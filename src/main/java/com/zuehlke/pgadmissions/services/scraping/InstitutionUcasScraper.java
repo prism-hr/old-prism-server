@@ -26,8 +26,8 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 
 @Service
@@ -114,13 +114,13 @@ public class InstitutionUcasScraper {
             logger.error("Could not read UCAS page for institution ID: " + ucasId);
         }
 
-        AddressAdvertDTO addressDTO = null;
+        AddressDTO addressDTO = null;
         String telephone = null;
         String homepage = null;
 
         Element addressElement = document.getElementsByClass("provcontactaddress").first();
         if (addressElement != null) {
-            addressDTO = new AddressAdvertDTO();
+            addressDTO = new AddressDTO();
             String countryString = Optional.ofNullable(addressElement.getElementById("country")).map(e -> e.text()).orElse(null);
             addressDTO.setAddressLine1(Optional.ofNullable(addressElement.getElementById("street")).map(e -> e.text()).orElse(null));
             Element townElement = ObjectUtils.firstNonNull(addressElement.getElementById("town"), addressElement.getElementById("locality"),
@@ -128,7 +128,7 @@ public class InstitutionUcasScraper {
             addressDTO.setAddressTown(Optional.ofNullable(townElement).map(e -> e.text()).orElse(null));
             addressDTO.setAddressCode(Optional.ofNullable(addressElement.getElementById("postCode")).map(e -> e.text()).orElse(null));
             addressDTO.setAddressRegion(Optional.ofNullable(addressElement.getElementById("county")).map(e -> e.text()).orElse(null));
-            addressDTO.setDomicile(new ImportedAdvertDomicileDTO().withName(countryString));
+            addressDTO.setDomicile(new ImportedDomicileDTO().withName(countryString));
         }
 
         Element contactElement = document.getElementsByClass("provider_details_contact").first();
@@ -148,7 +148,7 @@ public class InstitutionUcasScraper {
 
     public static class UcasInstitutionData {
 
-        private AddressAdvertDTO address;
+        private AddressDTO address;
 
         private String telephone;
 
@@ -156,14 +156,14 @@ public class InstitutionUcasScraper {
 
         private String summary;
 
-        public UcasInstitutionData(AddressAdvertDTO address, String telephone, String homepage, String summary) {
+        public UcasInstitutionData(AddressDTO address, String telephone, String homepage, String summary) {
             this.address = address;
             this.telephone = telephone;
             this.homepage = homepage;
             this.summary = summary;
         }
 
-        public AddressAdvertDTO getAddress() {
+        public AddressDTO getAddress() {
             return address;
         }
 

@@ -1,16 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 
 public class ResourceRepresentationLocation extends ResourceRepresentationSimple {
 
-    private AddressAdvertRepresentation address;
+    private AddressRepresentation address;
 
-    public AddressAdvertRepresentation getAddress() {
+    public AddressRepresentation getAddress() {
         return address;
     }
 
-    public void setAddress(AddressAdvertRepresentation address) {
+    public void setAddress(AddressRepresentation address) {
         this.address = address;
     }
 

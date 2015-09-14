@@ -18,11 +18,13 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
         @Type(value = ResourceCreationDTO.class, name = "SIMPLE")
 })
 public class ResourceCreationDTO {
-
+    
     private Integer id;
 
     @NotNull
     private PrismScope scope;
+    
+    private ResourceCreationDTO childResource;
 
     public Integer getId() {
         return id;
@@ -38,6 +40,14 @@ public class ResourceCreationDTO {
 
     public void setScope(PrismScope scope) {
         this.scope = scope;
+    }
+    
+    public ResourceCreationDTO getChildResource() {
+        return childResource;
+    }
+
+    public void setChildResource(ResourceCreationDTO childResource) {
+        this.childResource = childResource;
     }
 
     public ResourceDTO getParentResource() {

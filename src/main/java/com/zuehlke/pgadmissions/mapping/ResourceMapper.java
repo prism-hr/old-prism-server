@@ -81,8 +81,8 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.Resour
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
@@ -121,7 +121,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismListUtils;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
@@ -669,7 +669,7 @@ public class ResourceMapper {
         representation.setName(resource.getName());
         representation.setLogoImage(Optional.ofNullable(logoImageId).map(id -> new DocumentRepresentation().withId(logoImageId)).orElse(null));
 
-        representation.setAddress(new AddressAdvertRepresentation().withDomicile(new ImportedAdvertDomicileResponse()
+        representation.setAddress(new AddressRepresentation().withDomicile(new ImportedDomicileResponse()
                 .withName(resource.getAddressDomicileName())).withAddressLine1(resource.getAddressLine1())
                 .withAddressLine2(resource.getAddressLine2()).withAddressTown(resource.getAddressTown())
                 .withAddressRegion(resource.getAddressRegion()).withAddressCode(resource.getAddressCode())

@@ -7,20 +7,16 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -88,21 +84,6 @@ public class ImportedEntityDAO {
         }
 
         query.executeUpdate();
-    }
-
-    public DomicileUseDTO getMostUsedDomicile(Institution institution) {
-        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(AddressApplication.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("domicile"), "domicile") //
-                        .add(Projections.count("id").as("useCount"), "useCount")) //
-                .createAlias("domicile", "domicile", JoinType.INNER_JOIN) //
-                .createAlias("domicile.mappings", "domicileMapping", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("domicileMapping.institution", institution)) //
-                .add(Restrictions.eq("domicileMapping.enabled", true))
-                .addOrder(Order.desc("useCount")) //
-                .setMaxResults(1) //
-                .setResultTransformer(Transformers.aliasToBean(DomicileUseDTO.class)) //
-                .uniqueResult();
     }
 
     public ImportedAgeRange getAgeRange(Institution institution, Integer age) {

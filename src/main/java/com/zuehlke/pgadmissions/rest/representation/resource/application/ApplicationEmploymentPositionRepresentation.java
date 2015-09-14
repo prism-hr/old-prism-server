@@ -3,24 +3,18 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 
 public class ApplicationEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private String employerName;
-
-    private AddressApplicationRepresentation employerAddress;
-
-    private String position;
-
-    private String remit;
+    private ResourceRepresentationActivity resource;
 
     private LocalDate startDate;
 
     private Boolean current;
-    
+
     private LocalDate endDate;
 
     public Integer getId() {
@@ -31,36 +25,12 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         this.id = id;
     }
 
-    public String getEmployerName() {
-        return employerName;
+    public ResourceRepresentationActivity getResource() {
+        return resource;
     }
 
-    public void setEmployerName(String employerName) {
-        this.employerName = employerName;
-    }
-
-    public AddressApplicationRepresentation getEmployerAddress() {
-        return employerAddress;
-    }
-
-    public void setEmployerAddress(AddressApplicationRepresentation employerAddress) {
-        this.employerAddress = employerAddress;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-    
-    public String getRemit() {
-        return remit;
-    }
-
-    public void setRemit(String remit) {
-        this.remit = remit;
+    public void setResource(ResourceRepresentationActivity resource) {
+        this.resource = resource;
     }
 
     public LocalDate getStartDate() {
@@ -70,7 +40,7 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
-    
+
     public Boolean getCurrent() {
         return current;
     }
@@ -86,32 +56,17 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
-    
+
     public ApplicationEmploymentPositionRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
-    
-    public ApplicationEmploymentPositionRepresentation withEmployerName(String employerName) {
-        this.employerName = employerName;
+
+    public ApplicationEmploymentPositionRepresentation withResource(ResourceRepresentationActivity resource) {
+        this.resource = resource;
         return this;
     }
-    
-    public ApplicationEmploymentPositionRepresentation withEmployerAddress(AddressApplicationRepresentation employerAddress) {
-        this.employerAddress = employerAddress;
-        return this;
-    }
-    
-    public ApplicationEmploymentPositionRepresentation withPosition(String position) {
-        this.position = position;
-        return this;
-    }    
-    
-    public ApplicationEmploymentPositionRepresentation withRemit(String remit) {
-        this.remit = remit;
-        return this;
-    }
-    
+
     public ApplicationEmploymentPositionRepresentation withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
@@ -121,16 +76,15 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         this.current = current;
         return this;
     }
-    
+
     public ApplicationEmploymentPositionRepresentation withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }
-    
+
     public ApplicationEmploymentPositionRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
-    
-    
+
 }

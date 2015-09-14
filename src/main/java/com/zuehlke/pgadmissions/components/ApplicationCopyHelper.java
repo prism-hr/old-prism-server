@@ -7,7 +7,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflow
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_PRIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD;
 
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -31,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
@@ -59,8 +57,7 @@ public class ApplicationCopyHelper {
         copyApplicationAddress(to, from);
         copyApplicationQualifications(to, from);
         copyApplicationEmploymentPositions(to, from);
-        copyApplicationPrizes(to, from);
-        copyApplicationReferences(to, from);
+        copyApplicationReferees(to, from);
         copyApplicationDocument(to, from);
         copyApplicationAdditionalInformation(to, from);
 
@@ -78,8 +75,7 @@ public class ApplicationCopyHelper {
             personalDetail.setTitle(from.getPersonalDetail().getTitle());
             personalDetail.setGender(from.getPersonalDetail().getGender());
             personalDetail.setDateOfBirth(from.getPersonalDetail().getDateOfBirth());
-            personalDetail.setCountry(from.getPersonalDetail().getCountry());
-            personalDetail.setFirstNationality(from.getPersonalDetail().getFirstNationality());
+            personalDetail.setNationality(from.getPersonalDetail().getNationality());
             personalDetail.setDomicile(from.getPersonalDetail().getDomicile());
             personalDetail.setPhone(from.getPersonalDetail().getPhone());
             personalDetail.setSkype(from.getPersonalDetail().getSkype());
@@ -166,26 +162,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationPrizes(Application to, Application from) {
-        WorkflowPropertyConfiguration prizeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                WORKFLOW_PROPERTY, APPLICATION_PRIZE, to.getWorkflowPropertyConfigurationVersion());
-
-        if (BooleanUtils.isTrue(prizeConfiguration.getEnabled())) {
-            Integer counter = 0;
-            for (ApplicationPrize fromPrize : from.getPrizes()) {
-                if (counter.equals(prizeConfiguration.getMaximum())) {
-                    break;
-                }
-                ApplicationPrize prize = new ApplicationPrize();
-                to.getPrizes().add(prize);
-                prize.setApplication(to);
-                copyPrize(prize, fromPrize);
-                counter++;
-            }
-        }
-    }
-
-    private void copyApplicationReferences(Application to, Application from) {
+    private void copyApplicationReferees(Application to, Application from) {
         WorkflowPropertyConfiguration refereeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 WORKFLOW_PROPERTY, APPLICATION_ASSIGN_REFEREE, to.getWorkflowPropertyConfigurationVersion());
 
@@ -198,7 +175,7 @@ public class ApplicationCopyHelper {
                 ApplicationReferee referee = new ApplicationReferee();
                 to.getReferees().add(referee);
                 referee.setApplication(to);
-                copyReferee(referee, fromReferee);
+                copyApplicationReferee(referee, fromReferee);
                 counter++;
             }
         }
@@ -252,38 +229,24 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyReferee(ApplicationReferee to, ApplicationReferee from) {
+    public void copyApplicationReferee(ApplicationReferee to, ApplicationReferee from) {
         to.setUser(from.getUser());
-        to.setRefereeType(from.getRefereeType());
-        to.setJobEmployer(from.getJobEmployer());
-        to.setJobTitle(from.getJobTitle());
+        to.setAdvert(from.getAdvert());
         to.setPhone(from.getPhone());
         to.setSkype(from.getSkype());
-        to.setAddress(copyAddress(from.getAddress(), to));
-        to.setLastUpdatedTimestamp(new DateTime());
-    }
-
-    public void copyPrize(ApplicationPrize to, ApplicationPrize from) {
-        to.setProvider(from.getProvider());
-        to.setTitle(from.getTitle());
-        to.setDescription(from.getDescription());
-        to.setAwardDate(from.getAwardDate());
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
     public void copyEmploymentPosition(ApplicationEmploymentPosition to, ApplicationEmploymentPosition from) {
-        to.setEmployerName(from.getEmployerName());
-        to.setPosition(from.getPosition());
-        to.setRemit(from.getRemit());
+        to.setAdvert(from.getAdvert());
         to.setStartDate(from.getStartDate());
         to.setCurrent(from.getCurrent());
         to.setEndDate(from.getEndDate());
-        to.setEmployerAddress(copyAddress(from.getEmployerAddress(), to));
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
     public void copyQualification(ApplicationQualification to, ApplicationQualification from, WorkflowPropertyConfiguration configuration) {
-        to.setProgram(from.getProgram());
+        to.setAdvert(from.getAdvert());
         to.setStartDate(from.getStartDate());
         to.setCompleted(from.getCompleted());
         to.setGrade(from.getGrade());
@@ -301,11 +264,11 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    private AddressApplication copyAddress(AddressApplication fromAddress, ApplicationSection toSection) {
+    private Address copyAddress(Address fromAddress, ApplicationSection toSection) {
         if (fromAddress == null) {
             return null;
         }
-        AddressApplication toAddress = new AddressApplication();
+        Address toAddress = new Address();
         toAddress.setAddressLine1(fromAddress.getAddressLine1());
         toAddress.setAddressLine2(fromAddress.getAddressLine2());
         toAddress.setAddressTown(fromAddress.getAddressTown());

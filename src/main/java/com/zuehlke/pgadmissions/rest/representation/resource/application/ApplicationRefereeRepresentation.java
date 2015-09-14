@@ -2,9 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationRefereeRepresentation extends ApplicationSectionRepresentation {
@@ -13,13 +12,7 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
 
     private UserRepresentationSimple user;
 
-    private PrismRefereeType refereeType;
-
-    private String jobEmployer;
-
-    private String jobTitle;
-
-    private AddressApplicationRepresentation address;
+    private ResourceRepresentationActivity resource;
 
     private String phone;
 
@@ -43,36 +36,12 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.user = user;
     }
 
-    public PrismRefereeType getRefereeType() {
-        return refereeType;
+    public ResourceRepresentationActivity getResource() {
+        return resource;
     }
 
-    public void setRefereeType(PrismRefereeType refereeType) {
-        this.refereeType = refereeType;
-    }
-
-    public String getJobEmployer() {
-        return jobEmployer;
-    }
-
-    public void setJobEmployer(String jobEmployer) {
-        this.jobEmployer = jobEmployer;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public AddressApplicationRepresentation getAddress() {
-        return address;
-    }
-
-    public void setAddress(AddressApplicationRepresentation address) {
-        this.address = address;
+    public void setResource(ResourceRepresentationActivity resource) {
+        this.resource = resource;
     }
 
     public String getPhone() {
@@ -109,23 +78,8 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         return this;
     }
 
-    public ApplicationRefereeRepresentation withRefereeType(PrismRefereeType refereeType) {
-        this.refereeType = refereeType;
-        return this;
-    }
-
-    public ApplicationRefereeRepresentation withJobEmployer(String jobEmployer) {
-        this.jobEmployer = jobEmployer;
-        return this;
-    }
-
-    public ApplicationRefereeRepresentation withJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-        return this;
-    }
-
-    public ApplicationRefereeRepresentation withAddress(AddressApplicationRepresentation address) {
-        this.address = address;
+    public ApplicationRefereeRepresentation withResource(ResourceRepresentationActivity resource) {
+        this.resource = resource;
         return this;
     }
 
@@ -143,11 +97,10 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.comment = comment;
         return this;
     }
-    
+
     public ApplicationRefereeRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
-    
 
 }

@@ -30,7 +30,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.address.AddressAdvert;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
@@ -45,8 +46,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
-import com.zuehlke.pgadmissions.domain.location.AddressCoordinates;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -56,12 +56,12 @@ import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
-import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressAdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
@@ -78,7 +78,7 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 
 @Service
 @Transactional
@@ -239,9 +239,9 @@ public class AdvertMapper {
         representation.setApplyHomepage(advert.getApplyHomepage());
         representation.setTelephone(advert.getTelephone());
 
-        representation.setAddress(new AddressAdvertRepresentation().withAddressLine1(advert.getAddressLine1()).withAddressLine2(advert.getAddressLine2())
+        representation.setAddress(new AddressRepresentation().withAddressLine1(advert.getAddressLine1()).withAddressLine2(advert.getAddressLine2())
                 .withAddressTown(advert.getAddressTown()).withAddressRegion(advert.getAddressRegion()).withAddressCode(advert.getAddressCode())
-                .withDomicile(new ImportedAdvertDomicileResponse().withId(advert.getAddressDomicileId()).withName(advert.getAddressDomicileName()))
+                .withDomicile(new ImportedDomicileResponse().withId(advert.getAddressDomicileId()).withName(advert.getAddressDomicileName()))
                 .withGoogleId(advert.getAddressGoogleId())
                 .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()).withLongitude(advert.getAddressCoordinateLongitude())));
 
@@ -303,17 +303,15 @@ public class AdvertMapper {
         return representation;
     }
 
-    public AddressAdvertDTO getAddressDTO(AddressAdvert address) {
-        AddressAdvertDTO addressDTO = addressMapper.transform(address, AddressAdvertDTO.class);
-
-        addressDTO.setDomicile(new ImportedAdvertDomicileDTO().withId(address.getDomicile().getId()));
+    public AddressDTO getAddressDTO(Address address) {
+        AddressDTO addressDTO = addressMapper.transform(address, AddressDTO.class);
+        addressDTO.setDomicile(new ImportedDomicileDTO().withId(address.getDomicile().getId()));
         addressDTO.setGoogleId(address.getGoogleId());
-
         return addressDTO;
     }
 
-    public List<ImportedAdvertDomicileResponse> getAdvertDomicileRepresentations() {
-        List<ImportedAdvertDomicile> importedAdvertDomiciles = advertService.getAdvertDomiciles();
+    public List<ImportedDomicileResponse> getAdvertDomicileRepresentations() {
+        List<ImportedDomicile> importedAdvertDomiciles = advertService.getAdvertDomiciles();
         return importedAdvertDomiciles.stream().map(this::getAdvertDomicileRepresentation).collect(Collectors.toList());
     }
 
@@ -326,15 +324,15 @@ public class AdvertMapper {
         return representations;
     }
 
-    public AddressAdvertRepresentation getAdvertAddressRepresentation(Advert advert) {
-        AddressAdvert address = advert.getAddress();
+    public AddressRepresentation getAdvertAddressRepresentation(Advert advert) {
+        Address address = advert.getAddress();
         if (address != null) {
-            AddressAdvertRepresentation representation = addressMapper.transform(address, AddressAdvertRepresentation.class);
+            AddressRepresentation representation = addressMapper.transform(address, AddressRepresentation.class);
 
             representation.setDomicile(getAdvertDomicileRepresentation(address.getDomicile()));
             representation.setGoogleId(address.getGoogleId());
 
-            AddressCoordinates addressCoordinates = address.getCoordinates();
+            AddressCoordinates addressCoordinates = address.getAddressCoordinates();
             if (addressCoordinates != null) {
                 representation.setCoordinates(new AddressCoordinatesRepresentation().withLatitude(addressCoordinates.getLatitude()).withLongitude(
                         addressCoordinates.getLongitude()));
@@ -415,8 +413,8 @@ public class AdvertMapper {
                 advertService.getAdvertTargetResources(advert, DEPARTMENT, selected));
     }
 
-    private ImportedAdvertDomicileResponse getAdvertDomicileRepresentation(ImportedAdvertDomicile domicile) {
-        return new ImportedAdvertDomicileResponse().withId(domicile.getId()).withName(domicile.getName()).withCurrency(domicile.getCurrency());
+    private ImportedDomicileResponse getAdvertDomicileRepresentation(ImportedDomicile domicile) {
+        return new ImportedDomicileResponse().withId(domicile.getId()).withName(domicile.getName()).withCurrency(domicile.getCurrency());
     }
 
     private ResourceRepresentationSimple getAdvertResourceRepresentation(ResourceStandardDTO resource) {

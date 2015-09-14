@@ -25,7 +25,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
 
@@ -49,7 +49,7 @@ public class InstitutionDAO {
     }
 
     public List<String> listAvailableCurrencies() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedAdvertDomicile.class) //
+        return sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("currency")) //

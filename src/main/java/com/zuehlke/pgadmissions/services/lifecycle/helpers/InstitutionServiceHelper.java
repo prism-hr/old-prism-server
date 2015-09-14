@@ -27,13 +27,13 @@ import org.springframework.web.client.ResourceAccessException;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
-import com.zuehlke.pgadmissions.rest.dto.AddressAdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedAdvertDomicileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedInstitutionImportDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
@@ -135,7 +135,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             institutionDTO.setOpportunityCategories(Collections.singletonList(PrismOpportunityCategory.STUDY));
             institutionDTO.setName(importedInstitution.getName());
             institutionDTO.setAdvert(advertDTO);
-            AddressAdvertDTO address = new AddressAdvertDTO();
+            AddressDTO address = new AddressDTO();
             advertDTO.setAddress(address);
 
             String summary = createSummary(facebookPage, ucasInstitutionData.getSummary());
@@ -148,13 +148,13 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
             if (facebookPage.getLocation() != null) {
                 Location location = facebookPage.getLocation();
-                address.setDomicile(location.getCountry() != null ? new ImportedAdvertDomicileDTO().withName(location.getCountry()) : null);
+                address.setDomicile(location.getCountry() != null ? new ImportedDomicileDTO().withName(location.getCountry()) : null);
                 address.setAddressLine1(firstNonNull(location.getStreet(), placeholder));
                 address.setAddressCode(firstNonNull(location.getZip(), placeholder));
                 address.setAddressTown(firstNonNull(location.getCity(), placeholder));
             }
 
-            AddressAdvertDTO ucasAddress = ucasInstitutionData.getAddress();
+            AddressDTO ucasAddress = ucasInstitutionData.getAddress();
             if (ucasAddress != null) {
                 address.setAddressLine1(firstNonNull(address.getAddressLine1(), ucasAddress.getAddressLine1(), placeholder));
                 address.setAddressCode(firstNonNull(address.getAddressCode(), ucasAddress.getAddressCode(), placeholder));
@@ -165,7 +165,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             }
 
             if (address.getDomicile().getId() == null) {
-                List<ImportedAdvertDomicile> domiciles = importedEntityService.searchByName(ImportedAdvertDomicile.class, address.getDomicile().getName());
+                List<ImportedDomicile> domiciles = importedEntityService.searchByName(ImportedDomicile.class, address.getDomicile().getName());
                 if (domiciles.isEmpty()) {
                     logger.error("Expected exactly one imported advert domicile for given search term: " + address.getDomicile().getName());
                     return;

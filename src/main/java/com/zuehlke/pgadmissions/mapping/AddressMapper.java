@@ -5,13 +5,13 @@ import javax.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressDefinition;
 
 @Service
 @Transactional
 public class AddressMapper {
 
-    public <T extends Address, V extends Address> V transform(T source, Class<V> targetClass) {
+    public <T extends AddressDefinition<?>, V extends AddressDefinition<?>> V transform(T source, Class<V> targetClass) {
         V target = BeanUtils.instantiate(targetClass);
 
         target.setId(source.getId());

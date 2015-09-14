@@ -5,11 +5,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PRIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
@@ -30,50 +28,52 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.address.AddressApplication;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdvertRelationSection;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDemographic;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDemographicDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 @Service
@@ -147,16 +147,12 @@ public class ApplicationSectionService {
             personalDetail = new ApplicationPersonalDetail();
         }
 
-        updateUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
-
         ImportedEntitySimple title = personalDetailDTO.getTitle() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO
                 .getTitle().getId()) : null;
         ImportedEntitySimple gender = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getGender().getId());
-        ImportedEntitySimple country = personalDetailDTO.getCountry() != null ? importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO
-                .getCountry().getId()) : null;
-        ImportedEntitySimple firstNationality = importedEntityService.getById(ImportedEntitySimple.class, personalDetailDTO.getFirstNationality().getId());
-        ImportedEntitySimple residenceCountry = personalDetailDTO.getDomicile() != null ? importedEntityService.getById(ImportedEntitySimple.class,
-                personalDetailDTO.getDomicile().getId()) : null;
+        ImportedDomicile firstNationality = importedEntityService.getById(ImportedDomicile.class, personalDetailDTO.getNationality().getId());
+        ImportedDomicile residenceCountry = personalDetailDTO.getDomicile() != null ? importedEntityService.getById(ImportedDomicile.class, personalDetailDTO.getDomicile().getId())
+                : null;
 
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
@@ -168,8 +164,7 @@ public class ApplicationSectionService {
         ImportedAgeRange ageRange = importedEntityService.getAgeRange(institution, ageAtCreation);
         personalDetail.setAgeRange(ageRange);
 
-        personalDetail.setCountry(country);
-        personalDetail.setFirstNationality(firstNationality);
+        personalDetail.setNationality(firstNationality);
         personalDetail.setFirstLanguageLocale(personalDetailDTO.getFirstLanguageLocale());
         personalDetail.setDomicile(residenceCountry);
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
@@ -199,18 +194,18 @@ public class ApplicationSectionService {
             address = new ApplicationAddress();
         }
 
-        AddressApplicationDTO currentAddressDTO = addressDTO.getCurrentAddress();
-        AddressApplication currentAddress = address.getCurrentAddress();
+        AddressDTO currentAddressDTO = addressDTO.getCurrentAddress();
+        Address currentAddress = address.getCurrentAddress();
         if (currentAddress == null) {
-            currentAddress = new AddressApplication();
+            currentAddress = new Address();
             address.setCurrentAddress(currentAddress);
         }
         copyAddress(currentAddress, currentAddressDTO);
 
-        AddressApplicationDTO contactAddressDTO = addressDTO.getContactAddress();
-        AddressApplication contactAddress = address.getContactAddress();
+        AddressDTO contactAddressDTO = addressDTO.getContactAddress();
+        Address contactAddress = address.getContactAddress();
         if (contactAddress == null) {
-            contactAddress = new AddressApplication();
+            contactAddress = new Address();
             address.setContactAddress(contactAddress);
         }
         copyAddress(contactAddress, contactAddressDTO);
@@ -234,18 +229,7 @@ public class ApplicationSectionService {
 
         // FIXME - implement all of the possible scenarios (e.g. suggested user,
         // no known department, etc)
-        ResourceOpportunityDTO programDTO = qualificationDTO.getProgram();
-        Program newProgram = (Program) resourceService.createResource(systemService.getSystem().getUser(), actionService.getById(DEPARTMENT_CREATE_PROGRAM), programDTO)
-                .getResource();
-
-        User user = application.getUser();
-        Program oldProgram = qualification.getProgram();
-        if (oldProgram != null && !oldProgram.getId().equals(newProgram.getId())) {
-            userService.deleteUserProgram(user, oldProgram);
-        }
-
-        qualification.setProgram(newProgram);
-        userService.createOrUpdateUserProgram(user, qualification.getProgram());
+        createApplicationAdvertRelation(application, qualification, qualificationDTO);
 
         qualification.setStartDate(qualificationDTO.getStartDate());
         qualification.setCompleted(BooleanUtils.isTrue(qualificationDTO.getCompleted()));
@@ -272,21 +256,17 @@ public class ApplicationSectionService {
 
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
                 ImmutableMap.of("application", application, "id", qualificationId));
-        Program program = qualification.getProgram();
+        Advert advert = qualification.getAdvert();
 
         application.getQualifications().remove(qualification);
         entityService.flush();
 
-        User user = application.getUser();
-        if (userService.getUserProgramRelationCount(user, program).equals(0)) {
-            userService.deleteUserProgram(user, program);
-        }
-
+        updateUserAdvertRelation(application, advert);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
 
-    public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-            ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
+    public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId, ApplicationEmploymentPositionDTO employmentPositionDTO)
+            throws Exception {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -297,18 +277,8 @@ public class ApplicationSectionService {
                     ImmutableMap.of("application", application, "id", employmentPositionId));
         }
 
-        employmentPosition.setEmployerName(employmentPositionDTO.getEmployerName());
+        createApplicationAdvertRelation(application, employmentPosition, employmentPositionDTO);
 
-        AddressApplicationDTO employerAddressDTO = employmentPositionDTO.getEmployerAddress();
-        AddressApplication employerAddress = employmentPosition.getEmployerAddress();
-        if (employerAddress == null) {
-            employerAddress = new AddressApplication();
-            employmentPosition.setEmployerAddress(employerAddress);
-        }
-        copyAddress(employerAddress, employerAddressDTO);
-
-        employmentPosition.setPosition(employmentPositionDTO.getPosition());
-        employmentPosition.setRemit(employmentPositionDTO.getRemit());
         employmentPosition.setStartDate(employmentPositionDTO.getStartDate());
         employmentPosition.setCurrent(BooleanUtils.isTrue(employmentPositionDTO.getCurrent()));
         employmentPosition.setEndDate(employmentPositionDTO.getEndDate());
@@ -326,39 +296,12 @@ public class ApplicationSectionService {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
                 ImmutableMap.of("application", application, "id", employmentPositionId));
+
+        Advert advert = employmentPosition.getAdvert();
         application.getEmploymentPositions().remove(employmentPosition);
+
+        updateUserAdvertRelation(application, advert);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
-    }
-
-    public ApplicationPrize updatePrize(Integer applicationId, Integer prizeId, ApplicationPrizeDTO prizeDTO) throws Exception {
-        Application application = applicationService.getById(applicationId);
-
-        ApplicationPrize prize;
-        if (prizeId == null) {
-            prize = new ApplicationPrize();
-        } else {
-            prize = entityService.getByProperties(ApplicationPrize.class, ImmutableMap.of("application", application, "id", prizeId));
-        }
-
-        prize.setProvider(prizeDTO.getProvider());
-        prize.setTitle(prizeDTO.getTitle());
-        prize.setDescription(prizeDTO.getDescription());
-        prize.setAwardDate(prizeDTO.getAwardDate());
-        prize.setLastUpdatedTimestamp(DateTime.now());
-
-        if (prizeId == null) {
-            application.getPrizes().add(prize);
-        }
-
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_PRIZE);
-        return prize;
-    }
-
-    public void deletePrize(Integer applicationId, Integer prizeId) throws Exception {
-        Application application = applicationService.getById(applicationId);
-        ApplicationPrize prize = entityService.getByProperties(ApplicationPrize.class, ImmutableMap.of("application", application, "id", prizeId));
-        application.getPrizes().remove(prize);
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_PRIZE);
     }
 
     public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws Exception {
@@ -376,20 +319,8 @@ public class ApplicationSectionService {
         User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         referee.setUser(newUser);
 
-        referee.setRefereeType(refereeDTO.getRefereeType());
+        createApplicationAdvertRelation(application, referee, refereeDTO);
 
-        referee.setJobEmployer(refereeDTO.getJobEmployer());
-        referee.setJobTitle(refereeDTO.getJobTitle());
-
-        AddressApplicationDTO addressApplicationDTO = refereeDTO.getAddress();
-        AddressApplication addressApplication = referee.getAddress();
-
-        if (addressApplication == null) {
-            addressApplication = new AddressApplication();
-            referee.setAddress(addressApplication);
-        }
-
-        copyAddress(addressApplication, addressApplicationDTO);
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
         referee.setLastUpdatedTimestamp(DateTime.now());
@@ -406,7 +337,11 @@ public class ApplicationSectionService {
     public void deleteReferee(Integer applicationId, Integer refereeId) throws Exception {
         Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
+
+        Advert advert = referee.getAdvert();
         application.getReferees().remove(referee);
+
+        updateUserAdvertRelation(application, advert);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
 
@@ -444,20 +379,46 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
-    private void updateUserDetail(ApplicationPersonalDetailDTO personalDetailDTO, User userCurrent, Application application) {
-        User userCreator = application.getUser();
-        if (userCurrent.getId().equals(userCreator.getId())) {
-            ApplicationPersonalDetailUserDTO userDTO = personalDetailDTO.getUser();
-            userCurrent.setFirstName(userDTO.getFirstName());
-            userCurrent.setLastName(userDTO.getLastName());
-            userCurrent.setFullName(userCurrent.getFirstName() + " " + userCurrent.getLastName());
-            userCurrent.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
-            userCurrent.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
+    private void createApplicationAdvertRelation(Application application, ApplicationAdvertRelationSection advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
+        List<ResourceCreationDTO> resourceCreations = getResourceCreations(advertRelationDTO.getResource(), null);
+        // TODO - implement the resource creation loop and link to the
+        // connections infrastructure
+
+        ResourceCreationDTO resourceDTO = Iterables.getLast(resourceCreations);
+        Advert newAdvert = resourceService
+                .createResource(systemService.getSystem().getUser(), actionService.getById(PrismAction.valueOf("INSTITUTION_CREATE" + resourceDTO.getScope().name())), resourceDTO)
+                .getResource().getAdvert();
+
+        User user = application.getUser();
+        Advert oldAdvert = advertRelation.getAdvert();
+        if (oldAdvert != null && !oldAdvert.getId().equals(newAdvert.getId())) {
+            userService.deleteUserAdvert(user, oldAdvert);
+        }
+
+        advertRelation.setAdvert(newAdvert);
+        userService.getOrCreateUserAdvert(user, advertRelation.getAdvert());
+    }
+
+    private List<ResourceCreationDTO> getResourceCreations(ResourceCreationDTO resource, List<ResourceCreationDTO> unpackedResources) {
+        unpackedResources = unpackedResources == null ? Lists.newLinkedList() : unpackedResources;
+        ResourceCreationDTO childResource = resource.getChildResource();
+        if (childResource == null) {
+            return unpackedResources;
+        } else {
+            unpackedResources.add(childResource);
+            return getResourceCreations(childResource, unpackedResources);
         }
     }
 
-    private void copyAddress(AddressApplication to, AddressApplicationDTO from) {
-        ImportedEntitySimple currentAddressDomicile = importedEntityService.getById(ImportedEntitySimple.class, from.getDomicile().getId());
+    private void updateUserAdvertRelation(Application application, Advert advert) {
+        User user = application.getUser();
+        if (userService.getUserAdvertRelationCount(user, advert).equals(0)) {
+            userService.deleteUserAdvert(user, advert);
+        }
+    }
+
+    private void copyAddress(Address to, AddressDTO from) {
+        ImportedDomicile currentAddressDomicile = importedEntityService.getById(ImportedDomicile.class, from.getDomicile().getId());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());
         to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));

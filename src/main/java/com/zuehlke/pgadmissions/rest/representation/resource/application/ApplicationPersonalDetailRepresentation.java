@@ -15,11 +15,7 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     private ImportedEntityResponse ageRange;
 
-    private ImportedEntityResponse firstNationality;
-
-    private ImportedEntityResponse secondNationality;
-
-    private ImportedEntityResponse country;
+    private ImportedEntityResponse nationality;
 
     private Boolean firstLanguageLocale;
 
@@ -65,28 +61,12 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.ageRange = ageRange;
     }
 
-    public ImportedEntityResponse getFirstNationality() {
-        return firstNationality;
+    public ImportedEntityResponse getNationality() {
+        return nationality;
     }
 
-    public void setFirstNationality(ImportedEntityResponse firstNationality) {
-        this.firstNationality = firstNationality;
-    }
-
-    public ImportedEntityResponse getSecondNationality() {
-        return secondNationality;
-    }
-
-    public void setSecondNationality(ImportedEntityResponse secondNationality) {
-        this.secondNationality = secondNationality;
-    }
-
-    public ImportedEntityResponse getCountry() {
-        return country;
-    }
-
-    public void setCountry(ImportedEntityResponse country) {
-        this.country = country;
+    public void setNationality(ImportedEntityResponse nationality) {
+        this.nationality = nationality;
     }
 
     public Boolean getFirstLanguageLocale() {
@@ -157,18 +137,8 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withFirstNationality(ImportedEntityResponse firstNationality) {
-        this.firstNationality = firstNationality;
-        return this;
-    }
-
-    public ApplicationPersonalDetailRepresentation withSecondNationality(ImportedEntityResponse secondNationality) {
-        this.secondNationality = secondNationality;
-        return this;
-    }
-
-    public ApplicationPersonalDetailRepresentation withCountry(ImportedEntityResponse country) {
-        this.country = country;
+    public ApplicationPersonalDetailRepresentation withFirstNationality(ImportedEntityResponse nationality) {
+        this.nationality = nationality;
         return this;
     }
 

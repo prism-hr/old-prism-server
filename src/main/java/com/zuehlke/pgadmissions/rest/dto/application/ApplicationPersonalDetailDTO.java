@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,96 +13,32 @@ import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ApplicationPersonalDetailDTO {
 
-    @NotNull
-    @Valid
-    private ApplicationPersonalDetailUserDTO user;
-
-    @Size(min = 6, max = 32)
-    private String skype;
-
-    @NotEmpty
-    @PhoneNumber
-    private String phone;
-
-    private Boolean firstLanguageLocale;
-
-    private Boolean visaRequired;
-
-    @NotNull
-    private ImportedEntityDTO firstNationality;
-
     private ImportedEntityDTO title;
 
     @NotNull
     private ImportedEntityDTO gender;
-
+    
     @NotNull
     @DatePast
     private LocalDate dateOfBirth;
-
-    @NotNull
-    private ImportedEntityDTO country;
-
+    
     private ImportedEntityDTO domicile;
+    
+    @NotNull
+    private ImportedEntityDTO nationality;
+    
+    private Boolean firstLanguageLocale;
 
-    @Size(min = 1)
-    private String studyLocation;
-
-    @Size(min = 1)
-    private String studyDivision;
-
-    @Size(min = 1)
-    private String studyArea;
+    private Boolean visaRequired;
+    
+    @Size(min = 6, max = 32)
+    private String skype;
+    
+    @NotEmpty
+    @PhoneNumber
+    private String phone;
 
     private ApplicationDemographicDTO demographic;
-
-    public ApplicationPersonalDetailUserDTO getUser() {
-        return user;
-    }
-
-    public void setUser(ApplicationPersonalDetailUserDTO user) {
-        this.user = user;
-    }
-
-    public String getSkype() {
-        return skype;
-    }
-
-    public void setSkype(String skype) {
-        this.skype = skype;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Boolean getFirstLanguageLocale() {
-        return firstLanguageLocale;
-    }
-
-    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
-        this.firstLanguageLocale = firstLanguageLocale;
-    }
-
-    public Boolean getVisaRequired() {
-        return visaRequired;
-    }
-
-    public void setVisaRequired(Boolean visaRequired) {
-        this.visaRequired = visaRequired;
-    }
-
-    public ImportedEntityDTO getFirstNationality() {
-        return firstNationality;
-    }
-
-    public void setFirstNationality(ImportedEntityDTO firstNationality) {
-        this.firstNationality = firstNationality;
-    }
 
     public ImportedEntityDTO getTitle() {
         return title;
@@ -129,14 +64,6 @@ public class ApplicationPersonalDetailDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedEntityDTO getCountry() {
-        return country;
-    }
-
-    public void setCountry(ImportedEntityDTO country) {
-        this.country = country;
-    }
-
     public ImportedEntityDTO getDomicile() {
         return domicile;
     }
@@ -145,28 +72,44 @@ public class ApplicationPersonalDetailDTO {
         this.domicile = domicile;
     }
 
-    public String getStudyLocation() {
-        return studyLocation;
+    public ImportedEntityDTO getNationality() {
+        return nationality;
     }
 
-    public void setStudyLocation(String studyLocation) {
-        this.studyLocation = studyLocation;
+    public void setNationality(ImportedEntityDTO nationality) {
+        this.nationality = nationality;
     }
 
-    public String getStudyDivision() {
-        return studyDivision;
+    public Boolean getFirstLanguageLocale() {
+        return firstLanguageLocale;
     }
 
-    public void setStudyDivision(String studyDivision) {
-        this.studyDivision = studyDivision;
+    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
+        this.firstLanguageLocale = firstLanguageLocale;
     }
 
-    public String getStudyArea() {
-        return studyArea;
+    public Boolean getVisaRequired() {
+        return visaRequired;
     }
 
-    public void setStudyArea(String studyArea) {
-        this.studyArea = studyArea;
+    public void setVisaRequired(Boolean visaRequired) {
+        this.visaRequired = visaRequired;
+    }
+
+    public String getSkype() {
+        return skype;
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public ApplicationDemographicDTO getDemographic() {
@@ -176,4 +119,5 @@ public class ApplicationPersonalDetailDTO {
     public void setDemographic(ApplicationDemographicDTO demographic) {
         this.demographic = demographic;
     }
+    
 }

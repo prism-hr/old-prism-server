@@ -17,8 +17,6 @@ import org.joda.time.LocalDateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ValidationUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -47,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentCompetenceDTO;
@@ -55,7 +52,6 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import com.zuehlke.pgadmissions.rest.validation.CommentValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
@@ -76,9 +72,6 @@ public class CommentService {
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private CommentValidator commentValidator;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -145,7 +138,6 @@ public class CommentService {
         comment.getCompetences().addAll(persistentCompetences);
         resource.addComment(comment);
 
-        validateComment(comment);
         entityService.flush();
     }
 
@@ -231,14 +223,6 @@ public class CommentService {
 
         if (commentDTO.getInterviewInstruction() != null) {
             appendInterviewInstruction(comment, commentDTO);
-        }
-    }
-
-    public void validateComment(Comment comment) {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(comment, "comment");
-        ValidationUtils.invokeValidator(commentValidator, comment, errors);
-        if (errors.hasErrors()) {
-            throw new PrismValidationException("Comment not completed", errors);
         }
     }
 

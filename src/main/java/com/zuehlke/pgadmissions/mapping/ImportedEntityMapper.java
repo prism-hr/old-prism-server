@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
-import com.zuehlke.pgadmissions.domain.imported.ImportedAdvertDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
+import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -23,8 +23,8 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedAdvertDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedAgeRangeResponse;
+import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
@@ -45,8 +45,8 @@ public class ImportedEntityMapper {
         Class<?> entityClass = entity.getClass();
         if (ImportedAgeRange.class.equals(entityClass)) {
             return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity);
-        } else if (ImportedAdvertDomicile.class.equals(entityClass)) {
-            return (U) getImportedAdvertDomicileRepresentation((ImportedAdvertDomicile) entity);
+        } else if (ImportedDomicile.class.equals(entityClass)) {
+            return (U) getImportedAdvertDomicileRepresentation((ImportedDomicile) entity);
         }
 
         return (U) getImportedEntitySimpleRepresentation((ImportedEntitySimple) entity, ImportedEntityResponse.class);
@@ -75,8 +75,8 @@ public class ImportedEntityMapper {
         return representation;
     }
 
-    public ImportedAdvertDomicileResponse getImportedAdvertDomicileRepresentation(ImportedAdvertDomicile advertDomicile) {
-        return getImportedEntitySimpleRepresentation(advertDomicile, ImportedAdvertDomicileResponse.class).withCurrency(advertDomicile.getCurrency());
+    public ImportedDomicileResponse getImportedAdvertDomicileRepresentation(ImportedDomicile advertDomicile) {
+        return getImportedEntitySimpleRepresentation(advertDomicile, ImportedDomicileResponse.class).withCurrency(advertDomicile.getCurrency());
     }
 
     public <T extends ImportedEntityRequest> List<T> getImportedEntityRepresentations(Class<T> requestClass, InputStream data) throws IOException {

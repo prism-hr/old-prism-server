@@ -34,7 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
@@ -42,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -352,32 +353,23 @@ public class UserDAO {
                 .list();
     }
 
-    public Long getUserProgramRelationCount(User user, Program program) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.count("qualification.id")) //
-                .createAlias("qualification", "qualification", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("program", program)) //
-                .uniqueResult();
-
-    }
-
-    public void deleteUserProgram(User user, Program program) {
-        sessionFactory.getCurrentSession()
-                .createQuery("delete UserProgram " //
-                        + "where user = :user " //
-                        + "and program = :program") //
-                .setParameter("user", user) //
-                .setParameter("program", program) //
-                .executeUpdate();
-    }
-
-    public void deleteUserAdvert(User user) {
+    public void deleteUserAdvert(User user, Advert advert) {
         sessionFactory.getCurrentSession()
                 .createQuery("delete UserAdvert " //
-                        + "where user = :user") //
+                        + "where user = :user "
+                        + "and advert = :advert") //
                 .setParameter("user", user) //
+                .setParameter("advert", advert) //
                 .executeUpdate();
+    }
+
+    public Long getUserAdvertRelationCount(User user, Advert advert) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
+                .setProjection(Projections.count("id")) //
+                .createAlias("application", "application") //
+                .add(Restrictions.eq("advert", "advert")) //
+                .add(Restrictions.eq("application.user", user)) //
+                .uniqueResult();
     }
 
     public List<UserRole> getUsersToVerify(PrismScope resourceScope, Collection<Integer> resources) {

@@ -11,13 +11,10 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.StateDurationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
 public enum PrismConfiguration {
 
@@ -26,9 +23,7 @@ public enum PrismConfiguration {
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class,
             false, false, null, null, "_COMMENT_UPDATED_NOTIFICATION", true, new String[] { "id" }), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class,
-            true, false, 1, 364, "_COMMENT_UPDATED_STATE_DURATION", true, new String[] { "id" }), //
-    WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class,
-            true, true, null, null, "_COMMENT_UPDATED_WORKFLOW_PROPERTY", true, new String[] { "category", "id" });
+            true, false, 1, 364, "_COMMENT_UPDATED_STATE_DURATION", true, new String[] { "id" }); //
 
     private Class<? extends WorkflowConfiguration<?>> configurationClass;
 

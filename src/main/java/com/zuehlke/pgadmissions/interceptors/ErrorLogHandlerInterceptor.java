@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.interceptors;
 
+import static com.zuehlke.pgadmissions.utils.PrismDiagnosticUtils.getRequestErrorLogMessage;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +14,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
 public class ErrorLogHandlerInterceptor extends HandlerInterceptorAdapter {
 
@@ -25,13 +26,11 @@ public class ErrorLogHandlerInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         if (ex != null) {
             if (ex instanceof AuthenticationException || ex instanceof AccessDeniedException) {
-                // should be handled by Spring Security filters
                 return;
             }
 
             User currentUser = userService.getCurrentUser();
-
-            log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser) + ", Exception: " + ex);
+            log.error(getRequestErrorLogMessage(request, currentUser) + ", Exception: " + ex);
 
         }
     }

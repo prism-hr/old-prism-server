@@ -33,38 +33,35 @@ public class AdvertController {
     private AdvertService advertService;
 
     @RequestMapping(value = "/advertDetails", method = RequestMethod.PUT)
-    public void updateAdvert(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                             @Valid @RequestBody AdvertDetailsDTO advertDetailsDTO) {
+    public void updateAdvert(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertDetailsDTO advertDetailsDTO) {
         advertService.updateDetail(resourceDescriptor.getResourceScope(), resourceId, advertDetailsDTO);
     }
 
     @RequestMapping(value = "/financialDetails", method = RequestMethod.PUT)
     public void updateFeesAndPayments(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                      @Valid @RequestBody AdvertFinancialDetailsDTO financialDetailsDTO) {
+            @Valid @RequestBody AdvertFinancialDetailsDTO financialDetailsDTO) {
         advertService.updateFinancialDetails(resourceDescriptor.getResourceScope(), resourceId, financialDetailsDTO);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
-    public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                 @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) {
+    public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) {
         advertService.updateCategories(resourceDescriptor.getResourceScope(), resourceId, categoriesDTO);
     }
 
     @RequestMapping(value = "/targets", method = RequestMethod.PUT)
-    public void updateTargets(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                              @Valid @RequestBody AdvertTargetsDTO targetsDTO) {
+    public void updateTargets(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertTargetsDTO targetsDTO) {
         advertService.updateTargets(resourceDescriptor.getResourceScope(), resourceId, targetsDTO);
     }
 
     @RequestMapping(value = "/competences", method = RequestMethod.PUT)
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                  @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
+            @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
         advertService.updateCompetences(resourceDescriptor.getResourceScope(), resourceId, competencesDTO);
     }
 
     @RequestMapping(value = "/closingDates", method = RequestMethod.POST)
     public Integer addClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                  @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) {
+            @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) {
         AdvertClosingDate closingDate = advertService.createClosingDate(resourceDescriptor.getResourceScope(), resourceId, advertClosingDateDTO);
         return closingDate.getId();
     }

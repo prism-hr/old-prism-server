@@ -83,8 +83,7 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
+import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
 
 @Service
@@ -170,7 +169,7 @@ public class UserService {
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
-            transientUser.setActivationCode(EncryptionUtils.getUUID());
+            transientUser.setActivationCode(PrismEncryptionUtils.getUUID());
             entityService.save(transientUser);
             transientUser.setParentUser(transientUser);
             return transientUser;
@@ -220,7 +219,7 @@ public class UserService {
         roleService.modifyUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
-    
+
     public void getOrCreateUserAdvert(User user, Advert advert) {
         entityService.getOrCreate(new UserAdvert().withUser(user).withAdvert(advert));
     }
@@ -228,11 +227,11 @@ public class UserService {
     public void deleteUserAdvert(User user, Advert advert) {
         userDAO.deleteUserAdvert(user, advert);
     }
-    
+
     public Long getUserAdvertRelationCount(User user, Advert advert) {
         return userDAO.getUserAdvertRelationCount(user, advert);
     }
-    
+
     public Set<String> getUserProperties(Class<? extends UniqueEntity> userAssignmentClass) {
         return userAssignments.get(userAssignmentClass);
     }
@@ -247,7 +246,7 @@ public class UserService {
     public void updateUser(UserSimpleDTO userDTO) {
         User user = getCurrentUser();
         User userByEmail = getUserByEmail(userDTO.getEmail());
-        if (userByEmail != null && !HibernateUtils.sameEntities(userByEmail, user)) {
+        if (!(userByEmail == null || user.equals(userByEmail))) {
             BeanPropertyBindingResult errors = new BeanPropertyBindingResult(userDTO, "userDTO");
             PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
             errors.rejectValue("email", null, propertyLoader.loadLazy(PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
@@ -272,7 +271,7 @@ public class UserService {
 
         String password = userDTO.getPassword();
         if (password != null) {
-            userAccount.setPassword(EncryptionUtils.getMD5(password));
+            userAccount.setPassword(PrismEncryptionUtils.getMD5(password));
             userAccount.setTemporaryPassword(null);
             userAccount.setTemporaryPasswordExpiryTimestamp(null);
         }
@@ -298,9 +297,9 @@ public class UserService {
                 User superAdmin = getUserByEmail("systemUserEmail");
                 notificationService.sendInvitationNotification(superAdmin, user);
             } else {
-                String newPassword = EncryptionUtils.getTemporaryPassword();
+                String newPassword = PrismEncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);
-                account.setTemporaryPassword(EncryptionUtils.getMD5(newPassword));
+                account.setTemporaryPassword(PrismEncryptionUtils.getMD5(newPassword));
                 account.setTemporaryPasswordExpiryTimestamp(new DateTime().plusDays(2));
             }
         }
@@ -521,6 +520,10 @@ public class UserService {
 
         users.addAll(userDAO.getUsersWithAppointmentsForApplications());
         return users;
+    }
+
+    public String getOauthProfileUrl(User user, PrismOauthProvider provider) {
+        return userDAO.getOauthProfileUrl(user, provider);
     }
 
     @SuppressWarnings("unchecked")

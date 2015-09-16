@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
@@ -17,22 +16,17 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.StateDurationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.NotificationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateDurationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDefinitionRepresentation;
 
 @Service
 @Transactional
@@ -44,8 +38,6 @@ public class CustomizationMapper {
 
         if (NotificationDefinition.class.equals(definitionClass)) {
             return (U) getNotificationDefinitionRepresentation((NotificationDefinition) definition);
-        } else if (WorkflowPropertyDefinition.class.equals(definitionClass)) {
-            return (U) getWorkflowPropertyDefinitionRepresentation((WorkflowPropertyDefinition) definition);
         } else if (StateDurationDefinition.class.equals(definitionClass)) {
             return (U) getStateDurationDefinitionRepresentation((StateDurationDefinition) definition);
         }
@@ -61,11 +53,9 @@ public class CustomizationMapper {
             return (U) getDisplayPropertyConfiguration((DisplayPropertyConfigurationDTO) configurationDTO);
         } else if (NotificationConfigurationDTO.class.equals(configurationClass)) {
             return (U) getNotificationConfiguration((NotificationConfigurationDTO) configurationDTO);
-        } else if (StateDurationConfigurationValueDTO.class.equals(configurationClass)) {
-            return (U) getStateDurationConfiguration((StateDurationConfigurationValueDTO) configurationDTO);
         }
 
-        return (U) getWorkflowPropertyConfiguration((WorkflowPropertyConfigurationValueDTO) configurationDTO);
+        return (U) getStateDurationConfiguration((StateDurationConfigurationValueDTO) configurationDTO);
     }
 
     @SuppressWarnings("unchecked")
@@ -76,11 +66,9 @@ public class CustomizationMapper {
             return getDisplayPropertyConfigurationRepresentation((DisplayPropertyConfiguration) configuration);
         } else if (NotificationConfiguration.class.equals(configurationClass)) {
             return getNotificationConfigurationRepresentation((NotificationConfiguration) configuration);
-        } else if (StateDurationConfiguration.class.equals(configurationClass)) {
-            return getStateDurationConfigurationRepresentation((StateDurationConfiguration) configuration);
         }
 
-        return getWorkflowPropertyConfigurationRepresentation((WorkflowPropertyConfiguration) configuration);
+        return getStateDurationConfigurationRepresentation((StateDurationConfiguration) configuration);
     }
 
     public NotificationDefinitionRepresentation getNotificationDefinitionRepresentation(NotificationDefinition definition) {
@@ -92,15 +80,6 @@ public class CustomizationMapper {
         }
 
         return representation;
-    }
-
-    public WorkflowPropertyDefinitionRepresentation getWorkflowPropertyDefinitionRepresentation(WorkflowPropertyDefinition definition) {
-        PrismConfiguration prismConfiguration = STATE_DURATION;
-        return new WorkflowPropertyDefinitionRepresentation().withId(definition.getId())
-                .withMinimumPermitted(prismConfiguration.getMinimumPermitted())
-                .withMaximumPermitted(prismConfiguration.getMaximumPermitted())
-                .withDefineRange(definition.getDefineRange())
-                .withCanBeDisabled(definition.getCanBeDisabled());
     }
 
     public StateDurationDefinitionRepresentation getStateDurationDefinitionRepresentation(StateDurationDefinition definition) {
@@ -126,18 +105,6 @@ public class CustomizationMapper {
         return new StateDurationConfiguration().withDuration(configurationDTO.getDuration());
     }
 
-    public WorkflowPropertyConfiguration getWorkflowPropertyConfiguration(WorkflowPropertyConfigurationValueDTO configurationDTO) {
-        boolean enabled = configurationDTO.getEnabled();
-        PrismWorkflowPropertyDefinition definitionId = configurationDTO.getDefinitionId();
-
-        boolean defineRange = definitionId.isDefineRange();
-        int minimum = defineRange && enabled ? configurationDTO.getMinimum() : 0;
-        int maximum = defineRange && enabled ? configurationDTO.getMaximum() : 0;
-
-        boolean required = defineRange ? configurationDTO.getMinimum() > 1 : definitionId.isCanBeOptional() ? true : configurationDTO.getRequired();
-        return new WorkflowPropertyConfiguration().withEnabled(enabled).withMinimum(minimum).withMaximum(maximum).withRequired(required).withActive(true);
-    }
-
     public DisplayPropertyConfigurationRepresentation getDisplayPropertyConfigurationRepresentation(DisplayPropertyConfiguration configuration) {
         return new DisplayPropertyConfigurationRepresentation().withProperty(configuration.getDefinition().getId()).withValue(configuration.getValue());
     }
@@ -149,13 +116,6 @@ public class CustomizationMapper {
 
     public StateDurationConfigurationRepresentation getStateDurationConfigurationRepresentation(StateDurationConfiguration configuration) {
         return new StateDurationConfigurationRepresentation().withProperty(configuration.getDefinition().getId()).withDuration(configuration.getDuration());
-    }
-
-    public WorkflowPropertyConfigurationRepresentation getWorkflowPropertyConfigurationRepresentation(WorkflowPropertyConfiguration configuration) {
-        WorkflowPropertyDefinition definition = configuration.getDefinition();
-        return new WorkflowPropertyConfigurationRepresentation().withProperty(definition.getId()).withCategory(definition.getCategory())
-                .withEnabled(configuration.getEnabled()).withRequired(configuration.getRequired()).withMinimum(configuration.getMinimum())
-                .withMaximum(configuration.getMaximum()).withVersion(configuration.getVersion());
     }
 
 }

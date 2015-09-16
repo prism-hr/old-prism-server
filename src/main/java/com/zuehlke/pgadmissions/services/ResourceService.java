@@ -4,7 +4,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceOpportunityCategoryProjection;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.FULL_TIME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
@@ -79,9 +78,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -106,7 +103,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
@@ -151,9 +147,6 @@ public class ResourceService {
     private EntityService entityService;
 
     @Inject
-    private NotificationService notificationService;
-
-    @Inject
     private RoleService roleService;
 
     @Inject
@@ -167,9 +160,6 @@ public class ResourceService {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private CustomizationService customizationService;
 
     @Inject
     private InstitutionService institutionService;
@@ -198,8 +188,6 @@ public class ResourceService {
         ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
         Resource resource = resourceCreator.create(user, resourceDTO);
 
-        resource.setWorkflowPropertyConfigurationVersion(resourceDTO.getWorkflowPropertyConfigurationVersion());
-
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
@@ -222,12 +210,6 @@ public class ResourceService {
             entityService.flush();
 
             resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
-
-            Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
-            if (workflowPropertyConfigurationVersion == null) {
-                workflowPropertyConfigurationVersion = customizationService.getActiveConfigurationVersion(WORKFLOW_PROPERTY, resource);
-            }
-            resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
 
             Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();
             if (populator != null) {
@@ -332,14 +314,9 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends Resource> void postProcessResource(T resource, Comment comment) {
-        Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource
-                .getResourceScope().getResourcePostprocessor();
+        Class<? extends ResourceProcessor<T>> processor = (Class<? extends ResourceProcessor<T>>) resource.getResourceScope().getResourcePostprocessor();
         if (processor != null) {
             applicationContext.getBean(processor).process(resource, comment);
-        }
-
-        if (comment.isUserCreationComment()) {
-            notificationService.resetNotifications(resource);
         }
 
         if (comment.isStateGroupTransitionComment() && comment.getAction().getCreationScope() == null) {
@@ -349,6 +326,7 @@ public class ResourceService {
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             setResourceAdvertIncompleteSection((ResourceParent) resource);
         }
+
         entityService.flush();
     }
 
@@ -409,12 +387,6 @@ public class ResourceService {
         }
 
         return Lists.newArrayList();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) {
-        return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(WORKFLOW_PROPERTY, resource,
-                resource.getWorkflowPropertyConfigurationVersion());
     }
 
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) {
@@ -482,28 +454,6 @@ public class ResourceService {
         return filteredStudyOptions;
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource, ImportedEntitySimple studyOption) {
-        return resourceDAO.getFirstStudyOptionInstance(resource, studyOption);
-    }
-
-    public List<String> getStudyLocations(ResourceOpportunity resource) {
-        List<String> filteredStudyLocations = Lists.newLinkedList();
-        List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource,
-                ResourceStudyLocation.class, "studyLocation", null);
-
-        PrismScope lastResourceScope = null;
-        for (ResourceStudyLocation studyLocation : studyLocations) {
-            PrismScope thisResourceScope = studyLocation.getResource().getResourceScope();
-            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
-                break;
-            }
-            filteredStudyLocations.add(studyLocation.getStudyLocation());
-            lastResourceScope = thisResourceScope;
-        }
-
-        return filteredStudyLocations;
-    }
-
     public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
         List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
         resourceDAO.getResourceConditions(resource).forEach(condition -> {
@@ -528,8 +478,6 @@ public class ResourceService {
                         .map(studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId())).collect(Collectors.toList());
                 setStudyOptions(resourceOpportunity, studyOptions, LocalDate.now());
             }
-
-            setStudyLocations(resourceOpportunity, resourceOpportunityDTO.getStudyLocations());
         }
 
         setResourceConditions(resource, resourceDTO.getConditions());
@@ -543,15 +491,11 @@ public class ResourceService {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
             case INSTITUTION:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(false).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
                 break;
             case DEPARTMENT:
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                break;
-            case PROGRAM:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(false));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(false));
                 break;
             case PROJECT:
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(false));
@@ -574,31 +518,16 @@ public class ResourceService {
 
     public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
         if (resource.getId() != null) {
-            resourceDAO.disableImportedResourceStudyOptionInstances(resource);
-            resourceDAO.disableImportedResourceStudyOptions(resource);
+            resourceDAO.deleteResourceStudyOptions(resource);
             resource.getInstanceGroups().clear();
         }
 
-        LocalDate close = getResourceEndDate(resource);
         if (studyOptions == null) {
             studyOptions = studyOptions == null ? newArrayList(importedEntityService.getByName(ImportedEntitySimple.class, FULL_TIME.name())) : studyOptions;
         }
 
-        resource.getInstanceGroups().addAll(studyOptions.stream().filter(studyOption -> close == null || close.isAfter(baseline)).map(
-                studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline).withApplicationCloseDate(close))
-                .collect(Collectors.toList()));
-    }
-
-    public void setStudyLocations(ResourceOpportunity resource, List<String> studyLocations) {
-        resource.getStudyLocations().clear();
-        entityService.flush();
-
-        if (studyLocations != null) {
-            for (String studyLocation : studyLocations) {
-                resource.addStudyLocation(
-                        new ResourceStudyLocation().withResource(resource).withStudyLocation(studyLocation));
-            }
-        }
+        resource.getInstanceGroups()
+                .addAll(studyOptions.stream().map(studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption)).collect(Collectors.toList()));
     }
 
     public <T extends ResourceParentDTO> void updateResource(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) {
@@ -607,8 +536,6 @@ public class ResourceService {
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
-
-        setStudyLocations(resource, resourceDTO.getStudyLocations());
 
         if (!resource.getAdvert().isImported()) {
             ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class,
@@ -641,12 +568,6 @@ public class ResourceService {
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
     }
 
-    public void deleteElapsedStudyOptions() {
-        LocalDate baseline = new LocalDate();
-        resourceDAO.deleteElapsedStudyOptionInstances(baseline);
-        resourceDAO.deleteElapsedStudyOptions(baseline);
-    }
-
     public Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {
@@ -656,10 +577,6 @@ public class ResourceService {
             }
         }
         return conditions;
-    }
-
-    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
-        return resourceDAO.getResourceEndDate(resource);
     }
 
     public <T extends ResourceParent> Integer getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
@@ -830,6 +747,17 @@ public class ResourceService {
     public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
         parent.setOpportunityCategories(opportunityCategories);
         parent.getAdvert().setOpportunityCategories(opportunityCategories);
+    }
+
+    public List<ResourceCreationDTO> getResourceCreations(ResourceCreationDTO resource, List<ResourceCreationDTO> unpackedResources) {
+        unpackedResources = unpackedResources == null ? Lists.newLinkedList() : unpackedResources;
+        ResourceCreationDTO childResource = resource.getChildResource();
+        if (childResource == null) {
+            return unpackedResources;
+        } else {
+            unpackedResources.add(childResource);
+            return getResourceCreations(childResource, unpackedResources);
+        }
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {

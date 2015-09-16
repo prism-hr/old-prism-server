@@ -10,9 +10,6 @@ import com.zuehlke.pgadmissions.rest.dto.EntityDTO;
 
 public class ApplicationProgramDetailDTO {
 
-    @NotNull
-    private Boolean previousApplication;
-
     private PrismOpportunityType opportunityType;
 
     private PrismOpportunityCategory opportunityCategory;
@@ -22,14 +19,6 @@ public class ApplicationProgramDetailDTO {
 
     @NotNull
     private LocalDate startDate;
-
-    public Boolean getPreviousApplication() {
-        return previousApplication;
-    }
-
-    public void setPreviousApplication(Boolean previousApplication) {
-        this.previousApplication = previousApplication;
-    }
 
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;

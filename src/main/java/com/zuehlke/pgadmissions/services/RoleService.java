@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -40,8 +39,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -67,9 +64,6 @@ public class RoleService {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private CustomizationService customizationService;
 
     @Inject
     private ScopeService scopeService;
@@ -290,7 +284,7 @@ public class RoleService {
         }
     }
 
-    private List<User> getRoleTransitionUsers(Resource resource, Comment comment, RoleTransition roleTransition)  {
+    private List<User> getRoleTransitionUsers(Resource resource, Comment comment, RoleTransition roleTransition) {
         User restrictedToUser = roleTransition.getRestrictToActionOwner() ? comment.getActionOwner() : null;
 
         List<User> users;
@@ -300,20 +294,8 @@ public class RoleService {
             users = roleDAO.getUnspecifiedRoleTransitionUsers(resource, roleTransition, restrictedToUser);
         }
 
-        Integer minimumPermitted;
-        Integer maximumPermitted;
-
-        WorkflowPropertyDefinition definition = roleTransition.getWorkflowPropertyDefinition();
-        if (definition == null) {
-            minimumPermitted = roleTransition.getMinimumPermitted();
-            maximumPermitted = roleTransition.getMaximumPermitted();
-        } else {
-            WorkflowPropertyConfiguration workflowPropertyConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                    PrismConfiguration.WORKFLOW_PROPERTY, definition, resource.getWorkflowPropertyConfigurationVersion());
-
-            minimumPermitted = workflowPropertyConfiguration.getMinimum();
-            maximumPermitted = workflowPropertyConfiguration.getMaximum();
-        }
+        Integer minimumPermitted = roleTransition.getMinimumPermitted();
+        Integer maximumPermitted = roleTransition.getMaximumPermitted();
 
         if (!(minimumPermitted == null || users.size() >= minimumPermitted) && !(maximumPermitted == null || users.size() <= maximumPermitted)) {
             throw new WorkflowEngineException("Incorrect number of role assignments");

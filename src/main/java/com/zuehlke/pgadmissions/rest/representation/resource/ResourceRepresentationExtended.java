@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
 
@@ -25,8 +24,6 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
     private CommentTimelineRepresentation timeline;
 
     private List<ResourceUserRolesRepresentation> userRoles;
-
-    private List<WorkflowPropertyConfigurationRepresentation> workflowConfigurations;
 
     private List<ResourceConditionRepresentation> conditions;
 
@@ -52,14 +49,6 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     public void setUserRoles(List<ResourceUserRolesRepresentation> userRoles) {
         this.userRoles = userRoles;
-    }
-
-    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowConfigurations() {
-        return workflowConfigurations;
-    }
-
-    public void setWorkflowConfigurations(List<WorkflowPropertyConfigurationRepresentation> workflowConfigurations) {
-        this.workflowConfigurations = workflowConfigurations;
     }
 
     public List<ResourceConditionRepresentation> getConditions() {

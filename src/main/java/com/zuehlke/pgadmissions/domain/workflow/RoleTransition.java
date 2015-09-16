@@ -47,10 +47,6 @@ public class RoleTransition implements UniqueEntity {
     @Column(name = "maximum_permitted")
     private Integer maximumPermitted;
 
-    @ManyToOne
-    @JoinColumn(name = "workflow_property_definition_id")
-    private WorkflowPropertyDefinition workflowPropertyDefinition;
-
     public Integer getId() {
         return id;
     }
@@ -115,14 +111,6 @@ public class RoleTransition implements UniqueEntity {
         this.maximumPermitted = maximumPermitted;
     }
 
-    public final WorkflowPropertyDefinition getWorkflowPropertyDefinition() {
-        return workflowPropertyDefinition;
-    }
-
-    public final void setWorkflowPropertyDefinition(WorkflowPropertyDefinition workflowPropertyDefinition) {
-        this.workflowPropertyDefinition = workflowPropertyDefinition;
-    }
-
     public RoleTransition withStateTransition(StateTransition stateTransition) {
         this.stateTransition = stateTransition;
         return this;
@@ -155,11 +143,6 @@ public class RoleTransition implements UniqueEntity {
 
     public RoleTransition withMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
-        return this;
-    }
-
-    public RoleTransition withWorkflowPropertyDefinition(WorkflowPropertyDefinition workflowPropertyDefinition) {
-        this.workflowPropertyDefinition = workflowPropertyDefinition;
         return this;
     }
 

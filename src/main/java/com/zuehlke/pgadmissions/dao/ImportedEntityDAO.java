@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -86,10 +85,9 @@ public class ImportedEntityDAO {
         query.executeUpdate();
     }
 
-    public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
+    public ImportedAgeRange getAgeRange(Integer age) {
         return (ImportedAgeRange) sessionFactory.getCurrentSession().createCriteria(ImportedAgeRange.class) //
                 .createAlias("mappings", "ageMapping", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("ageMapping.institution", institution)) //
                 .add(Restrictions.eq("ageMapping.enabled", true))
                 .add(Restrictions.ge("lowerBound", age)) //
                 .add(Restrictions.disjunction() //

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.application;
 
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_RETAINED;
@@ -44,7 +43,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
+import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -55,14 +55,14 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "application")
-public class Application extends Resource {
+public class Application extends Resource implements
+        ProfileEntity<ApplicationPersonalDetail, ApplicationAddress, ApplicationQualification, ApplicationEmploymentPosition, ApplicationReferee, ApplicationDocument, ApplicationAdditionalInformation> {
 
     @Id
     @GeneratedValue
@@ -120,9 +120,6 @@ public class Application extends Resource {
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
 
-    @Column(name = "previous_application")
-    private Boolean previousApplication;
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
     private ApplicationPersonalDetail personalDetail;
@@ -153,9 +150,6 @@ public class Application extends Resource {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
-
-    @Column(name = "identified")
-    private Boolean identified;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -222,21 +216,6 @@ public class Application extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-
-    @Column(name = "last_reminded_request_individual")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestIndividual;
-
-    @Column(name = "last_reminded_request_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestSyndicated;
-
-    @Column(name = "last_notified_update_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedUpdateSyndicated;
-
-    @Column(name = "workflow_property_configuration_version")
-    private Integer workflowPropertyConfigurationVersion;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
@@ -404,36 +383,6 @@ public class Application extends Resource {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    @Override
-    public LocalDate getLastRemindedRequestIndividual() {
-        return lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
-        this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public LocalDate getLastRemindedRequestSyndicated() {
-        return lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
-        this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public LocalDate getLastNotifiedUpdateSyndicated() {
-        return lastNotifiedUpdateSyndicated;
-    }
-
-    @Override
-    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
-        this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
-    }
-
     public DateTime getSubmittedTimestamp() {
         return submittedTimestamp;
     }
@@ -506,28 +455,12 @@ public class Application extends Resource {
         this.programDetail = programDetail;
     }
 
-    public final Boolean getPreviousApplication() {
-        return previousApplication;
-    }
-
-    public final void setPreviousApplication(Boolean previousApplication) {
-        this.previousApplication = previousApplication;
-    }
-
     public ApplicationAdditionalInformation getAdditionalInformation() {
         return additionalInformation;
     }
 
     public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
-    }
-
-    public Boolean getIdentified() {
-        return identified;
-    }
-
-    public void setIdentified(Boolean identified) {
-        this.identified = identified;
     }
 
     public Integer getApplicationRatingCount() {
@@ -653,16 +586,6 @@ public class Application extends Resource {
     }
 
     @Override
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        return workflowPropertyConfigurationVersion;
-    }
-
-    @Override
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
-        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
-    }
-
-    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -721,13 +644,11 @@ public class Application extends Resource {
             }
             return parent.getName() + SPACE + at + SPACE + institution.getName();
         }
-
         return null;
     }
 
     public String getParentResourceCodeDisplay() {
-        ResourceParent parent = (ResourceParent) getParentResource();
-        return parent.getCode();
+        return getParentResource().getCode();
     }
 
     public PrismOpportunityType getOpportunityType() {
@@ -736,11 +657,6 @@ public class Application extends Resource {
             return PrismOpportunityType.valueOf(((ResourceOpportunity) resourceParent).getOpportunityType().getName());
         }
         return null;
-    }
-
-    public PrismProgramStartType getDefaultStartType() {
-        PrismOpportunityType opportunityType = getOpportunityType();
-        return opportunityType == null ? IMMEDIATE : opportunityType.getDefaultStartType();
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
@@ -55,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityType;
@@ -77,7 +75,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
@@ -88,10 +85,8 @@ import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismFileUtils;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
@@ -221,10 +216,6 @@ public class SystemService {
         verifyDefinition(StateDurationDefinition.class);
         initializeStateDurationDefinitions();
 
-        logger.info("Initializing workflow property definitions");
-        verifyDefinition(WorkflowPropertyDefinition.class);
-        initializeWorkflowPropertyDefinitions();
-
         logger.info("Initializing notification definitions");
         verifyDefinition(NotificationDefinition.class);
         initializeNotificationDefinitions();
@@ -237,9 +228,6 @@ public class SystemService {
 
         logger.info("Initializing state duration configurations");
         initializeStateDurationConfigurations(system);
-
-        logger.info("Initializing workflow property configurations");
-        initializeWorkflowPropertyConfigurations(system);
 
         logger.info("Initializing notification configurations");
         initializeNotificationConfigurations(system);
@@ -293,11 +281,6 @@ public class SystemService {
                 logger.info("Skipped initializing system data for: " + prismImportedEntity.name());
             }
         }
-    }
-
-    @Transactional
-    public void setLastNotifiedRecommendationSyndicated(LocalDate baseline) {
-        getSystem().setLastNotifiedRecommendationSyndicated(baseline);
     }
 
     @Transactional
@@ -409,19 +392,6 @@ public class SystemService {
         }
     }
 
-    private void initializeWorkflowPropertyDefinitions() {
-        for (PrismWorkflowPropertyDefinition prismWorkflowPropertyDefinition : PrismWorkflowPropertyDefinition.values()) {
-            Scope scope = scopeService.getById(prismWorkflowPropertyDefinition.getScope());
-            WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowPropertyDefinition)
-                    .withCategory(prismWorkflowPropertyDefinition.getCategory()).withDefineRange(prismWorkflowPropertyDefinition.isDefineRange())
-                    .withCanBeDisabled(prismWorkflowPropertyDefinition.isCanBeDisabled()).withCanBeOptional(prismWorkflowPropertyDefinition.isCanBeOptional())
-                    .withMinimumPermitted(prismWorkflowPropertyDefinition.getMinimumPermitted())
-                    .withMaximumPermitted(prismWorkflowPropertyDefinition.getMaximumPermitted())
-                    .withScope(scope);
-            entityService.createOrUpdate(transientWorkflowPropertyDefinition);
-        }
-    }
-
     private System initializeSystemResource() throws DeduplicationException {
         System system = getSystem();
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
@@ -430,7 +400,7 @@ public class SystemService {
         if (system == null) {
             State systemRunning = stateService.getById(SYSTEM_RUNNING);
             system = new System().withId(systemId).withName(systemName).withUser(systemUser).withState(systemRunning)
-                    .withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
+                    .withCipherSalt(PrismEncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
             entityService.save(system);
 
             ResourceState systemState = new ResourceState().withResource(system).withState(systemRunning).withPrimaryState(true)
@@ -472,28 +442,6 @@ public class SystemService {
                             prismScope.ordinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
                 }
             }
-        }
-    }
-
-    private void initializeWorkflowPropertyConfigurations(System system) {
-        for (PrismScope prismScope : scopeService.getScopesDescending()) {
-            WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
-            for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
-                if (prismScope == prismWorkflowProperty.getScope()) {
-                    boolean range = prismWorkflowProperty.isDefineRange();
-
-                    Boolean enabled = prismWorkflowProperty.getDefaultEnabled();
-                    enabled = enabled == null ? range && prismWorkflowProperty.getDefaultMaximum() > 0 : enabled;
-
-                    Boolean required = prismWorkflowProperty.getDefaultRequired();
-                    required = required == null ? range && prismWorkflowProperty.getDefaultMinimum() > 0 : required;
-
-                    configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty).withEnabled(enabled)
-                            .withRequired(required).withMinimum(prismWorkflowProperty.getDefaultMinimum())
-                            .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
-                }
-            }
-            persistConfigurations(WORKFLOW_PROPERTY, system, prismScope, configurationDTO);
         }
     }
 
@@ -611,12 +559,10 @@ public class SystemService {
         for (PrismRoleTransition prismRoleTransition : prismStateTransition.getRoleTransitions()) {
             Role role = roleService.getById(prismRoleTransition.getRole());
             Role transitionRole = roleService.getById(prismRoleTransition.getTransitionRole());
-            WorkflowPropertyDefinition workflowPropertyDefinition = (WorkflowPropertyDefinition) customizationService.getDefinitionById(
-                    WORKFLOW_PROPERTY, prismRoleTransition.getPropertyDefinition());
             RoleTransition roleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
                     .withRoleTransitionType(prismRoleTransition.getTransitionType()).withTransitionRole(transitionRole)
                     .withRestrictToActionOwner(prismRoleTransition.getRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
-                    .withMaximumPermitted(prismRoleTransition.getMaximumPermitted()).withWorkflowPropertyDefinition(workflowPropertyDefinition);
+                    .withMaximumPermitted(prismRoleTransition.getMaximumPermitted());
             entityService.save(roleTransition);
             stateTransition.getRoleTransitions().add(roleTransition);
         }

@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
 @Service
 @Transactional
@@ -304,7 +304,7 @@ public class AuthenticationService {
 
     private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
         UserAccount userAccount;
-        String encryptedPassword = password != null ? EncryptionUtils.getMD5(password) : null;
+        String encryptedPassword = password != null ? PrismEncryptionUtils.getMD5(password) : null;
         userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withEnabled(enableAccount);
         entityService.save(userAccount);
         user.setUserAccount(userAccount);

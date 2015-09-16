@@ -36,6 +36,7 @@ public class StaticDataController {
         staticData.putAll(staticDataService.getOpportunityCategories());
         staticData.putAll(staticDataService.getActionConditions());
         staticData.putAll(staticDataService.getRequiredSections());
+        staticData.putAll(staticDataService.getWorkflowConstraints());
         return staticData;
     }
 

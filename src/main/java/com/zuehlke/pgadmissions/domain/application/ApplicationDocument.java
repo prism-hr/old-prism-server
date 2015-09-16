@@ -13,17 +13,21 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
 
 @Entity
 @Table(name = "application_document")
-public class ApplicationDocument extends ApplicationSection {
+public class ApplicationDocument extends ApplicationSection implements ProfileDocument<Application> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @OneToOne(mappedBy = "document")
-    private Application application;
+    private Application association;
+
+    @Column(name = "personal_summary", nullable = false)
+    private String personalSummary;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cv_id", unique = true)
@@ -45,12 +49,20 @@ public class ApplicationDocument extends ApplicationSection {
         this.id = id;
     }
 
-    public Application getApplication() {
-        return application;
+    public Application getAssociation() {
+        return association;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    public void setAssociation(Application association) {
+        this.association = association;
+    }
+
+    public String getPersonalSummary() {
+        return personalSummary;
+    }
+
+    public void setPersonalSummary(String personalSummary) {
+        this.personalSummary = personalSummary;
     }
 
     public Document getCv() {
@@ -67,16 +79,6 @@ public class ApplicationDocument extends ApplicationSection {
 
     public final void setCoveringLetter(Document coveringLetter) {
         this.coveringLetter = coveringLetter;
-    }
-
-    public ApplicationDocument withCv(Document document) {
-        this.cv = document;
-        return this;
-    }
-
-    public ApplicationDocument withCoveringLetter(Document coveringLetter) {
-        this.coveringLetter = coveringLetter;
-        return this;
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
 @Service
 public class
@@ -16,14 +16,14 @@ public class
     }
 
     private boolean checkPassword(User user, String providedPassword) {
-        return StringUtils.equals(user.getUserAccount().getPassword(), EncryptionUtils.getMD5(providedPassword))
+        return StringUtils.equals(user.getUserAccount().getPassword(), PrismEncryptionUtils.getMD5(providedPassword))
                 || checkTemporaryPassword(user, providedPassword);
     }
 
     private boolean checkTemporaryPassword(User user, String providedPassword) {
         DateTime temporaryPasswordExpiryTimestamp = user.getUserAccount().getTemporaryPasswordExpiryTimestamp();
         return temporaryPasswordExpiryTimestamp != null && new DateTime().isBefore(temporaryPasswordExpiryTimestamp)
-                && StringUtils.equals(user.getUserAccount().getTemporaryPassword(), EncryptionUtils.getMD5(providedPassword));
+                && StringUtils.equals(user.getUserAccount().getTemporaryPassword(), PrismEncryptionUtils.getMD5(providedPassword));
     }
 
 }

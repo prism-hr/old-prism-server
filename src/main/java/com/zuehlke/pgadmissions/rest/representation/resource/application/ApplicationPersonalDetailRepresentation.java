@@ -17,8 +17,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     private ImportedEntityResponse nationality;
 
-    private Boolean firstLanguageLocale;
-
     private ImportedEntityResponse domicile;
 
     private Boolean visaRequired;
@@ -27,7 +25,9 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     private String phone;
 
-    private ApplicationDemographicRepresentation demographic;
+    private ImportedEntityResponse ethnicity;
+
+    private ImportedEntityResponse disability;
 
     public ImportedEntityResponse getTitle() {
         return title;
@@ -69,14 +69,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.nationality = nationality;
     }
 
-    public Boolean getFirstLanguageLocale() {
-        return firstLanguageLocale;
-    }
-
-    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
-        this.firstLanguageLocale = firstLanguageLocale;
-    }
-
     public ImportedEntityResponse getDomicile() {
         return domicile;
     }
@@ -109,12 +101,20 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.phone = phone;
     }
 
-    public ApplicationDemographicRepresentation getDemographic() {
-        return demographic;
+    public ImportedEntityResponse getEthnicity() {
+        return ethnicity;
     }
 
-    public void setDemographic(ApplicationDemographicRepresentation demographic) {
-        this.demographic = demographic;
+    public void setEthnicity(ImportedEntityResponse ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    public ImportedEntityResponse getDisability() {
+        return disability;
+    }
+
+    public void setDisability(ImportedEntityResponse disability) {
+        this.disability = disability;
     }
 
     public ApplicationPersonalDetailRepresentation withTitle(ImportedEntityResponse title) {
@@ -142,11 +142,6 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withFirstLanguageLocale(Boolean firstLanguageLocale) {
-        this.firstLanguageLocale = firstLanguageLocale;
-        return this;
-    }
-
     public ApplicationPersonalDetailRepresentation withDomicile(ImportedEntityResponse domicile) {
         this.domicile = domicile;
         return this;
@@ -164,6 +159,16 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
 
     public ApplicationPersonalDetailRepresentation withSkype(String skype) {
         this.skype = skype;
+        return this;
+    }
+
+    public ApplicationPersonalDetailRepresentation withEthnicity(ImportedEntityResponse ethnicity) {
+        this.ethnicity = ethnicity;
+        return this;
+    }
+
+    public ApplicationPersonalDetailRepresentation withDisability(ImportedEntityResponse disability) {
+        this.disability = disability;
         return this;
     }
 

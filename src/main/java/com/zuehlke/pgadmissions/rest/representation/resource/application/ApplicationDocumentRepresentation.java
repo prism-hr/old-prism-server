@@ -1,14 +1,24 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ApplicationDocumentRepresentation extends ApplicationSectionRepresentation {
 
+    private String personalSummary;
+
     private DocumentRepresentation cv;
 
     private DocumentRepresentation coveringLetter;
+
+    private String linkedinProfileUrl;
+
+    public String getPersonalSummary() {
+        return personalSummary;
+    }
+
+    public void setPersonalSummary(String personalSummary) {
+        this.personalSummary = personalSummary;
+    }
 
     public DocumentRepresentation getCv() {
         return cv;
@@ -26,19 +36,12 @@ public class ApplicationDocumentRepresentation extends ApplicationSectionReprese
         this.coveringLetter = coveringLetter;
     }
 
-    public ApplicationDocumentRepresentation withCv(DocumentRepresentation cv) {
-        this.cv = cv;
-        return this;
+    public String getLinkedinProfileUrl() {
+        return linkedinProfileUrl;
     }
 
-    public ApplicationDocumentRepresentation withCoveringLetter(DocumentRepresentation coveringLetter) {
-        this.coveringLetter = coveringLetter;
-        return this;
-    }
-
-    public ApplicationDocumentRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
-        setLastUpdatedTimestamp(lastUpdatedTimestamp);
-        return this;
+    public void setLinkedinProfileUrl(String linkedinProfileUrl) {
+        this.linkedinProfileUrl = linkedinProfileUrl;
     }
 
 }

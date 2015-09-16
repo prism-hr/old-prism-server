@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
+
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
@@ -12,15 +13,19 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
 
     private ResourceRepresentationActivity resource;
 
-    private LocalDate startDate;
+    private Integer startYear;
 
-    private LocalDate awardDate;
+    private Integer startMonth;
+
+    private Integer awardYear;
+
+    private Integer awardMonth;
 
     private String grade;
 
-    private DocumentRepresentation document;
-
     private Boolean completed;
+
+    private DocumentRepresentation document;
 
     public Integer getId() {
         return id;
@@ -38,20 +43,36 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.resource = resource;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public Integer getStartYear() {
+        return startYear;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
     }
 
-    public LocalDate getAwardDate() {
-        return awardDate;
+    public Integer getStartMonth() {
+        return startMonth;
     }
 
-    public void setAwardDate(LocalDate awardDate) {
-        this.awardDate = awardDate;
+    public void setStartMonth(Integer startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public Integer getAwardYear() {
+        return awardYear;
+    }
+
+    public void setAwardYear(Integer awardYear) {
+        this.awardYear = awardYear;
+    }
+
+    public Integer getAwardMonth() {
+        return awardMonth;
+    }
+
+    public void setAwardMonth(Integer awardMonth) {
+        this.awardMonth = awardMonth;
     }
 
     public String getGrade() {
@@ -62,20 +83,20 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.grade = grade;
     }
 
-    public DocumentRepresentation getDocument() {
-        return document;
-    }
-
-    public void setDocument(DocumentRepresentation document) {
-        this.document = document;
-    }
-
     public Boolean getCompleted() {
         return completed;
     }
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
+    }
+
+    public DocumentRepresentation getDocument() {
+        return document;
+    }
+
+    public void setDocument(DocumentRepresentation document) {
+        this.document = document;
     }
 
     public ApplicationQualificationRepresentation withId(Integer id) {
@@ -88,13 +109,23 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         return this;
     }
 
-    public ApplicationQualificationRepresentation withStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public ApplicationQualificationRepresentation withStartYear(Integer startYear) {
+        this.startYear = startYear;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withAwardDate(LocalDate awardDate) {
-        this.awardDate = awardDate;
+    public ApplicationQualificationRepresentation withStartMonth(Integer startMonth) {
+        this.startMonth = startMonth;
+        return this;
+    }
+
+    public ApplicationQualificationRepresentation withAwardYear(Integer awardYear) {
+        this.awardYear = awardYear;
+        return this;
+    }
+
+    public ApplicationQualificationRepresentation withAwardMonth(Integer awardMonth) {
+        this.awardMonth = awardMonth;
         return this;
     }
 
@@ -103,19 +134,27 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         return this;
     }
 
-    public ApplicationQualificationRepresentation withDocumentRepresentation(DocumentRepresentation document) {
-        this.document = document;
+    public ApplicationQualificationRepresentation withCompleted(Boolean completed) {
+        this.completed = completed;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withCompleted(Boolean completed) {
-        this.completed = completed;
+    public ApplicationQualificationRepresentation withDocumentRepresentation(DocumentRepresentation document) {
+        this.document = document;
         return this;
     }
 
     public ApplicationQualificationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
+    }
+
+    public String getStartDateDisplay() {
+        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
+    }
+
+    public String getAwardDateDisplay() {
+        return awardYear == null ? null : awardMonth.toString() + BACK_SLASH + awardYear.toString();
     }
 
 }

@@ -294,6 +294,21 @@ public class DocumentService {
         return new AmazonS3Client(systemService.getAmazonCredentials());
     }
 
+    public Document cloneDocument(Document oldDocument) {
+        if (oldDocument != null) {
+            Document newDocument = new Document();
+            newDocument.setContentType(oldDocument.getContentType());
+            newDocument.setFileName(oldDocument.getFileName());
+            newDocument.setCategory(oldDocument.getCategory());
+            newDocument.setContent(getDocumentContent(oldDocument));
+            newDocument.setUser(oldDocument.getUser());
+            newDocument.setCreatedTimestamp(new DateTime());
+            newDocument.setExported(false);
+            return newDocument;
+        }
+        return null;
+    }
+    
     private String getFileName(Part upload) {
         for (String cd : upload.getHeader("content-disposition").split(";")) {
             if (cd.trim().startsWith("filename")) {

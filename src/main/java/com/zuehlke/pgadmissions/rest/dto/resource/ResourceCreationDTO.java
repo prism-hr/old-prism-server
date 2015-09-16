@@ -18,12 +18,12 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
         @Type(value = ResourceCreationDTO.class, name = "SIMPLE")
 })
 public class ResourceCreationDTO {
-    
+
     private Integer id;
 
     @NotNull
     private PrismScope scope;
-    
+
     private ResourceCreationDTO childResource;
 
     public Integer getId() {
@@ -41,7 +41,7 @@ public class ResourceCreationDTO {
     public void setScope(PrismScope scope) {
         this.scope = scope;
     }
-    
+
     public ResourceCreationDTO getChildResource() {
         return childResource;
     }
@@ -55,14 +55,6 @@ public class ResourceCreationDTO {
     }
 
     public void setParentResource(ResourceDTO parentResource) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         throw new UnsupportedOperationException();
     }
 

@@ -7,14 +7,12 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.EmailBounceServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.PrismServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ResourceServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
 
 public enum PrismMaintenanceTask {
 
     SYSTEM_IMPORT_UCAS_INSTITUTION(InstitutionServiceHelper.class),
-    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ResourceServiceHelper.class),
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class),
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class),
     SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class),

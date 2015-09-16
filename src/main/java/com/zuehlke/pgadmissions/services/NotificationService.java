@@ -152,12 +152,6 @@ public class NotificationService {
         return (List<PrismNotificationDefinition>) (List<?>) customizationService.getDefinitions(PrismConfiguration.NOTIFICATION, scope);
     }
 
-    public void resetNotifications(Resource resource) {
-        resource.setLastRemindedRequestIndividual(null);
-        resource.setLastRemindedRequestSyndicated(null);
-        resource.setLastNotifiedUpdateSyndicated(null);
-    }
-
     public void resetNotifications(User user) {
         notificationDAO.resetNotifications(user);
         for (PrismScope scope : PrismScope.values()) {

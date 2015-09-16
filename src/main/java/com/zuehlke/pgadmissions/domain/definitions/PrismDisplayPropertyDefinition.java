@@ -13,7 +13,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.DEPARTMENT_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
@@ -67,7 +66,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
 
 import java.util.List;
@@ -270,7 +268,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(SYSTEM_ACTION, "Confirm Interview Arrangements"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_RECOMMENDATION(SYSTEM_ACTION, "Confirm Offer Recommendation"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(SYSTEM_ACTION, "Confirm Rejection"),
-    SYSTEM_ACTION_APPLICATION_CONFIRM_APPOINTMENT(SYSTEM_ACTION, "Confirm Primary Supervision"),
+    SYSTEM_ACTION_APPLICATION_CONFIRM_APPOINTMENT(SYSTEM_ACTION, "Confirm Appointment"),
     SYSTEM_ACTION_APPLICATION_EMAIL_CREATOR(SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_APPLICATION_ESCALATE(SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(SYSTEM_ACTION, "Provide Interview Availability"),
@@ -396,8 +394,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ROLE_PROGRAM_VIEWER(SYSTEM_ROLE, "Viewer"),
     SYSTEM_ROLE_PROJECT_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
     SYSTEM_ROLE_PROJECT_APPROVER(SYSTEM_ROLE, "Approver"),
-    SYSTEM_ROLE_PROJECT_PRIMARY_SUPERVISOR(SYSTEM_ROLE, "Primary Supervisor/Manager"),
-    SYSTEM_ROLE_PROJECT_SECONDARY_SUPERVISOR(SYSTEM_ROLE, "Secondary Supervisor/Manager"),
     SYSTEM_ROLE_PROJECT_VIEWER(SYSTEM_ROLE, "Viewer"),
     SYSTEM_ROLE_SYSTEM_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
 
@@ -462,11 +458,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_FILTER_PROPERTY_USER(SYSTEM_FILTER_PROPERTY, "Creator"),
     SYSTEM_FILTER_PROPERTY_CODE(SYSTEM_FILTER_PROPERTY, "Code"),
+    SYSTEM_FILTER_PROPERTY_NAME(SYSTEM_FILTER_PROPERTY, "Name"),
     SYSTEM_FILTER_PROPERTY_INSTITUTION_NAME(SYSTEM_FILTER_PROPERTY, "Organization"),
     SYSTEM_FILTER_PROPERTY_DEPARTMENT_NAME(SYSTEM_FILTER_PROPERTY, "Department"),
     SYSTEM_FILTER_PROPERTY_PROGRAM_NAME(SYSTEM_FILTER_PROPERTY, "Program"),
     SYSTEM_FILTER_PROPERTY_PROJECT_NAME(SYSTEM_FILTER_PROPERTY, "Position"),
-    SYSTEM_FILTER_PROPERTY_NAME(SYSTEM_FILTER_PROPERTY, "Title"),
     SYSTEM_FILTER_PROPERTY_STATE_GROUP_NAME(SYSTEM_FILTER_PROPERTY, "State"),
     SYSTEM_FILTER_PROPERTY_CREATED_TIMESTAMP(SYSTEM_FILTER_PROPERTY, "Created Date"),
     SYSTEM_FILTER_PROPERTY_SUBMITTED_TIMESTAMP(SYSTEM_FILTER_PROPERTY, "Submitted Date"),
@@ -475,17 +471,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_PROPERTY_CLOSING_DATE(SYSTEM_FILTER_PROPERTY, "Closing Date"),
     SYSTEM_FILTER_PROPERTY_CONFIRMED_START_DATE(SYSTEM_FILTER_PROPERTY, "Confirmed Start Date"),
     SYSTEM_FILTER_PROPERTY_RATING(SYSTEM_FILTER_PROPERTY, "Rating"),
-    SYSTEM_FILTER_PROPERTY_REFERRER(SYSTEM_FILTER_PROPERTY, "Referrer"),
-    SYSTEM_FILTER_PROPERTY_STUDY_LOCATION(SYSTEM_FILTER_PROPERTY, "Study Location"),
-    SYSTEM_FILTER_PROPERTY_STUDY_DIVISION(SYSTEM_FILTER_PROPERTY, "Study Department"),
-    SYSTEM_FILTER_PROPERTY_STUDY_AREA(SYSTEM_FILTER_PROPERTY, "Study Area"),
-    SYSTEM_FILTER_PROPERTY_SUPERVISOR(SYSTEM_FILTER_PROPERTY, "Supervisor/Manager"),
     SYSTEM_FILTER_PROPERTY_PROJECT_USER(SYSTEM_FILTER_PROPERTY, "Role Holder"),
     SYSTEM_FILTER_PROPERTY_PROGRAM_USER(SYSTEM_FILTER_PROPERTY, "Role Holder"),
+    SYSTEM_FILTER_PROPERTY_DEPARTMENT_USER(SYSTEM_FILTER_PROPERTY, "Role Holder"),
     SYSTEM_FILTER_PROPERTY_INSTITUTION_USER(SYSTEM_FILTER_PROPERTY, "Role Holder"),
-    SYSTEM_FILTER_PROPERTY_PRIMARY_THEME(SYSTEM_FILTER_PROPERTY, "Primary Subject"),
-    SYSTEM_FILTER_PROPERTY_SECONDARY_THEME(SYSTEM_FILTER_PROPERTY, "Secondary Subject"),
-    SYSTEM_FILTER_PROPERTY_STUDY_APPLICATION(SYSTEM_FILTER_PROPERTY, "Study Application ID"),
     SYSTEM_FILTER_PROPERTY_RESERVE_STATUS(SYSTEM_FILTER_PROPERTY, "Reserve State"),
 
     /*
@@ -823,13 +812,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_PROJECT_COMMENT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Comment"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_GLOBAL(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Global"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_PROGRAM_DETAIL(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Application Detail Section"),
-    SYSTEM_DISPLAY_CATEGORY_APPLICATION_STUDY_DETAIL(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Study Detail Section"),
-    SYSTEM_DISPLAY_CATEGORY_APPLICATION_SUPERVISOR(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Supervisor/Manager Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_PERSONAL_DETAIL(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Personal Detail Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_ADDRESS(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Address Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_QUALIFICATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Qualification Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_EMPLOYMENT_POSITION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Employment Position Section"),
-    SYSTEM_DISPLAY_CATEGORY_APPLICATION_FUNDING(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Funding Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_REFEREE(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Referee Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_DOCUMENT(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Document Section"),
     SYSTEM_DISPLAY_CATEGORY_APPLICATION_ADDITIONAL_INFORMATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Additional Information Section"),
@@ -912,9 +898,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL(SYSTEM_STATE_DURATION, "Interview Feedback Duration"),
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_HINT(SYSTEM_STATE_DURATION,
             "The length of time you expect it to take to collect feedback on an interview"),
-    SYSTEM_APPLICATION_CONFIRM_SUPERVISION_DURATION_LABEL(SYSTEM_STATE_DURATION, "Supervision Confirmation Duration"),
-    SYSTEM_APPLICATION_CONFIRM_SUPERVISION_DURATION_HINT(SYSTEM_STATE_DURATION,
-            "The length of time you expect it to take for a supervisor/manager to confirm that they are willing to support an offer being made to an applicant"),
+    SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_LABEL(SYSTEM_STATE_DURATION, "Appointment Confirmation Duration"),
+    SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_HINT(SYSTEM_STATE_DURATION,
+            "The length of time you expect it to take for a hiring manager to provide confirmation of appointment"),
     SYSTEM_APPLICATION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
     SYSTEM_APPLICATION_ESCALATE_DURATION_HINT(SYSTEM_STATE_DURATION,
             "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
@@ -949,63 +935,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MONTH_OCTOBER(SYSTEM_MONTH, "October"),
     SYSTEM_MONTH_NOVEMBER(SYSTEM_MONTH, "November"),
     SYSTEM_MONTH_DECEMBER(SYSTEM_MONTH, "December"),
-
-    /*
-     * *************** SYSTEM WORKFLOW *********************
-     */
-
-    SYSTEM_APPLICATION_STUDY_DETAIL_LABEL(SYSTEM_WORKFLOW, "Advanced Study Preferences"),
-    SYSTEM_APPLICATION_STUDY_DETAIL_HINT(SYSTEM_WORKFLOW, "Enable collection of advanced study preferences"),
-    SYSTEM_APPLICATION_THEME_PRIMARY_LABEL(SYSTEM_WORKFLOW, "Primary Themes"),
-    SYSTEM_APPLICATION_THEME_PRIMARY_HINT(SYSTEM_WORKFLOW, "Enable selection of primary study themes"),
-    SYSTEM_APPLICATION_THEME_SECONDARY_LABEL(SYSTEM_WORKFLOW, "Secondary Themes"),
-    SYSTEM_APPLICATION_THEME_SECONDARY_HINT(SYSTEM_WORKFLOW, "Enable selection of secondary study themes"),
-    SYSTEM_APPLICATION_DEMOGRAPHIC_LABEL(SYSTEM_WORKFLOW, "Equal Opportunities Information"),
-    SYSTEM_APPLICATION_DEMOGRAPHIC_HINT(SYSTEM_WORKFLOW, "Enable collection of applicant equal opportunities information"),
-    SYSTEM_APPLICATION_LANGUAGE_LABEL(SYSTEM_WORKFLOW, "Language Competence"),
-    SYSTEM_APPLICATION_LANGUAGE_HINT(SYSTEM_WORKFLOW, "Enable collection of language competence information"),
-    SYSTEM_APPLICATION_LANGUAGE_PROOF_OF_AWARD_LABEL(SYSTEM_WORKFLOW, "Proof of Language Competence"),
-    SYSTEM_APPLICATION_LANGUAGE_PROOF_OF_AWARD_HINT(SYSTEM_WORKFLOW, "Enable collection of documentary proof of language competence"),
-    SYSTEM_APPLICATION_RESIDENCE_LABEL(SYSTEM_WORKFLOW, "Right of Residence"),
-    SYSTEM_APPLICATION_RESIDENCE_HINT(SYSTEM_WORKFLOW, "Enable collection of right of residence information"),
-    SYSTEM_APPLICATION_QUALIFICATION_LABEL(SYSTEM_WORKFLOW, "Qualifications"),
-    SYSTEM_APPLICATION_QUALIFICATION_HINT(SYSTEM_WORKFLOW, "Enable collection of qualification information"),
-    SYSTEM_APPLICATION_QUALIFICATION_PROOF_OF_AWARD_LABEL(SYSTEM_WORKFLOW, "Proof of Qualification"),
-    SYSTEM_APPLICATION_QUALIFICATION_PROOF_OF_AWARD_HINT(SYSTEM_WORKFLOW, "Enable collection of documentary proof of qualification"),
-    SYSTEM_APPLICATION_EMPLOYMENT_POSITION_LABEL(SYSTEM_WORKFLOW, "Employment History"),
-    SYSTEM_APPLICATION_EMPLOYMENT_POSITION_HINT(SYSTEM_WORKFLOW, "Enable collection of employment history information"),
-    SYSTEM_APPLICATION_FUNDING_LABEL(SYSTEM_WORKFLOW, "Funding"),
-    SYSTEM_APPLICATION_FUNDING_HINT(SYSTEM_WORKFLOW, "Enable collection of funding information"),
-    SYSTEM_APPLICATION_FUNDING_PROOF_OF_AWARD_LABEL(SYSTEM_WORKFLOW, "Proof of Funding"),
-    SYSTEM_APPLICATION_FUNDING_PROOF_OF_AWARD_HINT(SYSTEM_WORKFLOW, "Enable collection of documentary proof of funding"),
-    SYSTEM_APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL(SYSTEM_WORKFLOW, "Personal Statement"),
-    SYSTEM_APPLICATION_DOCUMENT_PERSONAL_STATEMENT_HINT(SYSTEM_WORKFLOW, "Enable upload of a personal statement"),
-    SYSTEM_APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL(SYSTEM_WORKFLOW, "Research Statement"),
-    SYSTEM_APPLICATION_DOCUMENT_RESEARCH_STATEMENT_HINT(SYSTEM_WORKFLOW, "Enable upload of a research statement"),
-    SYSTEM_APPLICATION_DOCUMENT_CV_LABEL(SYSTEM_WORKFLOW, "CV/Resume"),
-    SYSTEM_APPLICATION_DOCUMENT_CV_HINT(SYSTEM_WORKFLOW, "Enable upload of a cv/resume"),
-    SYSTEM_APPLICATION_DOCUMENT_COVERING_LETTER_LABEL(SYSTEM_WORKFLOW, "Covering Letter"),
-    SYSTEM_APPLICATION_DOCUMENT_COVERING_LETTER_HINT(SYSTEM_WORKFLOW, "Enable upload of a covering letter"),
-    SYSTEM_APPLICATION_CRIMINAL_CONVICTION_LABEL(SYSTEM_WORKFLOW, "Criminal Convictions"),
-    SYSTEM_APPLICATION_CRIMINAL_CONVICTION_HINT(SYSTEM_WORKFLOW, "Enable collection of criminal conviction information"),
-    SYSTEM_APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_LABEL(SYSTEM_WORKFLOW, "Provisional Supervisor/Manager Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_HINT(SYSTEM_WORKFLOW, "Specify how many provisional supervisors/managers may be assigned by the applicant during application creation"),
-    SYSTEM_APPLICATION_ASSIGN_REFEREE_LABEL(SYSTEM_WORKFLOW, "Referee Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_REFEREE_HINT(SYSTEM_WORKFLOW, "Specify how many referees may be assigned during application"),
-    SYSTEM_APPLICATION_ASSIGN_REVIEWER_LABEL(SYSTEM_WORKFLOW, "Reviewer Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_REVIEWER_HINT(SYSTEM_WORKFLOW, "Specify how many reviewers may be assigned during any application processing action"),
-    SYSTEM_APPLICATION_ASSIGN_INTERVIEWER_LABEL(SYSTEM_WORKFLOW, "Interviewer Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_INTERVIEWER_HINT(SYSTEM_WORKFLOW, "Specify how many interviewers may be assigned during any application processing action"),
-    SYSTEM_APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_LABEL(SYSTEM_WORKFLOW, "Primary Supervisor/Manager Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_HINT(SYSTEM_WORKFLOW,
-            "Specify how many primary supervisors/managers may be assigned during any application processing action"),
-    SYSTEM_APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_LABEL(SYSTEM_WORKFLOW, "Secondary Supervisor/Manager Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_HINT(SYSTEM_WORKFLOW,
-            "Specify how many secondary supervisors/managers may be assigned during any application processing action"),
-    SYSTEM_APPLICATION_POSITION_DETAIL_LABEL(SYSTEM_WORKFLOW, "Position Detail"),
-    SYSTEM_APPLICATION_POSITION_DETAIL_HINT(SYSTEM_WORKFLOW, "Enable collection of advanced position information"),
-    SYSTEM_APPLICATION_OFFER_DETAIL_LABEL(SYSTEM_WORKFLOW, "Offer Detail"),
-    SYSTEM_APPLICATION_OFFER_DETAIL_HINT(SYSTEM_WORKFLOW, "Enable collection of advanced terms of offer information"),
 
     /*
      * *************** SYSTEM DECLINE ACTION *********************
@@ -1583,8 +1512,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MANAGE_USERS_EXISTING_USERS_SUBHEADER(SYSTEM_HTML_MANAGE_USERS, "Existing users and roles"),
 
     /*
-     * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION
-      *********************
+     * *************** SYSTEM HTML EMAIL TEMPLATE CONFIGURATION *********************
      */
 
     SYSTEM_EMAIL_CONFIGURATION_TEMPLATE_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Email Template"),
@@ -1613,8 +1541,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_WORKFLOW_CONFIGURATION_REQUIRED(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Required"),
 
     /*
-     * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION
-     * *******************
+     * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION *******************
      */
 
     SYSTEM_TRANSLATIONS_CONFIGURATION_CATEGORY_LABEL(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Category"),
@@ -1840,7 +1767,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     APPLICATION_QUALIFICATION_HEADER(APPLICATION_QUALIFICATION, "Qualifications"),
     APPLICATION_QUALIFICATION_DESCRIPTION(
-            APPLICATION_STUDY_DETAIL,
+            APPLICATION_QUALIFICATION,
             "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     APPLICATION_QUALIFICATION_SUBHEADER(APPLICATION_QUALIFICATION, "Qualification"),
     APPLICATION_QUALIFICATION_PROVIDER_PROGRAM_LABEL(APPLICATION_QUALIFICATION, "Provider & Program"),
@@ -1899,6 +1826,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us"),
 
     APPLICATION_DOCUMENT_HEADER(APPLICATION_DOCUMENT, "Documents"),
+    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL(APPLICATION_DOCUMENT, "Personal Summary"),
+    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_HINT(APPLICATION_DOCUMENT,
+            "A concise overview of your skills, personal characteristics and achievements. Take your time with this. Employers use it to differentiate between applicants. It is your chance to promote yourself."),
     APPLICATION_DOCUMENT_CV_LABEL(APPLICATION_DOCUMENT, "CV / Resume (PDF)"),
     APPLICATION_DOCUMENT_CV_HINT(APPLICATION_DOCUMENT,
             "Your CV/resume. This should summarise your academic and professional achievements. Please provide no more than 2 pages of A4."),
@@ -1956,10 +1886,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_ASSIGN_REVIEWERS_HINT(APPLICATION_ACTION, "Select the users you wish to assign and add them to the task list."),
     APPLICATION_ACTION_ASSIGN_INTERVIEWERS_LABEL(APPLICATION_ACTION, "Assign Interviewers"),
     APPLICATION_ACTION_ASSIGN_INTERVIEWERS_HINT(APPLICATION_ACTION, "Select the users you wish to assign and add them to the task list."),
-    APPLICATION_ACTION_ASSIGN_PRIMARY_SUPERVISORS_LABEL(APPLICATION_ACTION, "Assign Primary Supervisors/Managers"),
-    APPLICATION_ACTION_ASSIGN_PRIMARY_SUPERVISORS_HINT(APPLICATION_ACTION, "Select the users you wish to assign and add them to the task list."),
-    APPLICATION_ACTION_ASSIGN_SECONDARY_SUPERVISORS_LABEL(APPLICATION_ACTION, "Assign Secondary Supervisors/Managers"),
-    APPLICATION_ACTION_ASSIGN_SECONDARY_SUPERVISORS_HINT(APPLICATION_ACTION, "Select the users you wish to assign and add them to the task list."),
+    APPLICATION_ACTION_ASSIGN_HIRING_MANAGERS_LABEL(APPLICATION_ACTION, "Assign Hiring Managers"),
+    APPLICATION_ACTION_ASSIGN_HIRING_MANAGERS_HINT(APPLICATION_ACTION, "Select the users you wish to assign and add them to the task list."),
     APPLICATION_ACTION_INTERVIEW_STATUS_LABEL(APPLICATION_ACTION, "Interview Status"),
     APPLICATION_ACTION_INTERVIEW_STATUS_HINT(APPLICATION_ACTION, "Specify whether the interview has taken place, been scheduled, or needs to be scheduled."),
     APPLICATION_ACTION_INTERVIEW_STATUS_TAKEN_PLACE(APPLICATION_ACTION, "Taken place"),

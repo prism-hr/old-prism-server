@@ -4,12 +4,11 @@ import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 public abstract class ResourceOpportunity extends ResourceParentDivision implements
-        ResourceOpportunityDefinition<Advert, ImportedEntitySimple, ResourceStudyOption> {
+        ResourceOpportunityDefinition<Advert, ImportedEntitySimple> {
 
     public abstract Department getDepartment();
 
@@ -35,20 +34,12 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
 
     public abstract void setDurationMaximum(Integer maximum);
 
-    @Override
     public abstract Set<ResourceStudyOption> getInstanceGroups();
 
-    @Override
     public abstract void setInstanceGroups(Set<ResourceStudyOption> instanceGroups);
-
-    public abstract Set<ResourceStudyLocation> getStudyLocations();
 
     public void addStudyOption(ResourceStudyOption instanceGroup) {
         getInstanceGroups().add(instanceGroup);
-    }
-
-    public void addStudyLocation(ResourceStudyLocation studyLocation) {
-        getStudyLocations().add(studyLocation);
     }
 
     @Override

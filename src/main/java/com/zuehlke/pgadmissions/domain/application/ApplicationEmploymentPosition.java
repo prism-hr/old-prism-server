@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.application;
 
+import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,16 +9,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
 
 @Entity
-@Table(name = "application_employment_position")
-public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSection {
+@Table(name = "application_employment_position", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })
+public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSection implements ProfileEmploymentPosition<Application> {
 
     @Id
     @GeneratedValue
@@ -24,22 +27,26 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
 
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
-    private Application application;
+    private Application association;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
-    @Column(name = "start_date", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate startDate;
+    @Column(name = "start_year", nullable = false)
+    private Integer startYear;
+
+    @Column(name = "start_month", nullable = false)
+    private Integer startMonth;
+
+    @Column(name = "end_year")
+    private Integer endYear;
+
+    @Column(name = "end_month")
+    private Integer endMonth;
 
     @Column(name = "current", nullable = false)
     private Boolean current;
-
-    @Column(name = "end_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate endDate;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -53,12 +60,12 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
         return id;
     }
 
-    public Application getApplication() {
-        return application;
+    public Application getAssociation() {
+        return association;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    public void setAssociation(Application association) {
+        this.association = association;
     }
 
     @Override
@@ -71,12 +78,36 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
         this.advert = advert;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public Integer getStartYear() {
+        return startYear;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
+    }
+
+    public Integer getStartMonth() {
+        return startMonth;
+    }
+
+    public void setStartMonth(Integer startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public Integer getEndYear() {
+        return endYear;
+    }
+
+    public void setEndYear(Integer endYear) {
+        this.endYear = endYear;
+    }
+
+    public Integer getEndMonth() {
+        return endMonth;
+    }
+
+    public void setEndMonth(Integer endMonth) {
+        this.endMonth = endMonth;
     }
 
     public Boolean getCurrent() {
@@ -85,14 +116,6 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
 
     public void setCurrent(Boolean current) {
         this.current = current;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     @Override
@@ -105,42 +128,17 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
-    public ApplicationEmploymentPosition withId(Integer id) {
-        this.id = id;
-        return this;
+    public String getStartDateDisplay() {
+        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
     }
 
-    public ApplicationEmploymentPosition withApplication(Application application) {
-        this.application = application;
-        return this;
+    public String getEndDateDisplay() {
+        return endYear == null ? null : endMonth.toString() + BACK_SLASH + endYear.toString();
     }
 
-    public ApplicationEmploymentPosition withAdvert(Advert advert) {
-        this.advert = advert;
-        return this;
-    }
-
-    public ApplicationEmploymentPosition withCurrent(boolean current) {
-        this.current = current;
-        return this;
-    }
-
-    public ApplicationEmploymentPosition withStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-        return this;
-    }
-
-    public ApplicationEmploymentPosition withEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-        return this;
-    }
-
-    public String getStartDateDisplay(String dateFormat) {
-        return startDate == null ? null : startDate.toString(dateFormat);
-    }
-
-    public String getEndDateDisplay(String dateFormat) {
-        return endDate == null ? null : endDate.toString(dateFormat);
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("startYear", startYear);
     }
 
 }

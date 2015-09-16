@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -69,22 +68,6 @@ public class System extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-
-    @Column(name = "last_reminded_request_individual")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestIndividual;
-
-    @Column(name = "last_reminded_request_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestSyndicated;
-
-    @Column(name = "last_notified_update_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedUpdateSyndicated;
-
-    @Column(name = "last_notified_recommendation_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedRecommendationSyndicated;
 
     @Column(name = "cipher_salt", nullable = false)
     private String cipherSalt;
@@ -222,12 +205,12 @@ public class System extends Resource {
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
-    
+
     @Override
     public String getOpportunityCategories() {
         return null;
     }
-    
+
     @Override
     public void setOpportunityCategories(String opportunityCategories) {
         return;
@@ -288,44 +271,6 @@ public class System extends Resource {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    @Override
-    public final LocalDate getLastRemindedRequestIndividual() {
-        return lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public final void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
-        this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public final LocalDate getLastRemindedRequestSyndicated() {
-        return lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public final void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
-        this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public final LocalDate getLastNotifiedUpdateSyndicated() {
-        return lastNotifiedUpdateSyndicated;
-    }
-
-    @Override
-    public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
-        this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
-    }
-
-    public LocalDate getLastNotifiedRecommendationSyndicated() {
-        return lastNotifiedRecommendationSyndicated;
-    }
-
-    public void setLastNotifiedRecommendationSyndicated(LocalDate lastNotifiedRecommendedSyndicated) {
-        this.lastNotifiedRecommendationSyndicated = lastNotifiedRecommendedSyndicated;
-    }
-
     public final String getCipherSalt() {
         return cipherSalt;
     }
@@ -366,16 +311,6 @@ public class System extends Resource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }
-
-    @Override
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        return null;
-    }
-
-    @Override
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion) {
-        return;
     }
 
     @Override

@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
+import com.zuehlke.pgadmissions.utils.PrismDiagnosticUtils;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -61,7 +61,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         if (ex.getMessage() != null) {
             body.put("message", ex.getMessage());
         }
-        log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request.getRequest(), currentUser) + ", Exception: " + ex);
+        log.error(PrismDiagnosticUtils.getRequestErrorLogMessage(request.getRequest(), currentUser) + ", Exception: " + ex);
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 

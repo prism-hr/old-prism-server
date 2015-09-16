@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
+import static com.zuehlke.pgadmissions.PrismConstants.CONFIDENCE_MEDIUM;
 import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
@@ -13,6 +14,7 @@ import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -46,6 +49,9 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private CommentService commentService;
@@ -117,10 +123,13 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     private void buildAggregatedRating(Comment comment) {
         Set<CommentCompetence> competences = comment.getCompetences();
         if (!competences.isEmpty()) {
+            Map<Integer, Integer> importances = advertService.getCompetenceImportances(comment.getResource().getAdvert());
+
             List<Integer> scores = Lists.newArrayList();
             BigDecimal sumImportance = new BigDecimal(0).setScale(0);
             for (CommentCompetence competence : competences) {
-                Integer importance = competence.getImportance();
+                Integer importance = importances.get(competence.getId());
+                importance = importance == null ? CONFIDENCE_MEDIUM : importance;
                 scores.add(importance * competence.getRating());
                 sumImportance = sumImportance.add(new BigDecimal(importance).setScale(0));
             }

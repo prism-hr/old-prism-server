@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,7 +127,7 @@ public class ProfileService {
     }
 
     public void updatePersonalDetailUser(Integer userId, ProfilePersonalDetailDTO personalDetailDTO) {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserPersonalDetail personalDetail = updatePersonalDetail(userAccount, UserPersonalDetail.class, personalDetailDTO);
         userAccount.setPersonalDetail(personalDetail);
         userAccountService.updateUserAccount(userAccount);
@@ -144,7 +143,7 @@ public class ProfileService {
         LocalDate dateOfBirth = personalDetailDTO.getDateOfBirth();
         userPersonalDetail.setDateOfBirth(personalDetailDTO.getDateOfBirth());
         applicationPersonalDetail.setAgeRange(importedEntityService.getAgeRange(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
-        
+
         userAccount.setPersonalDetail(userPersonalDetail);
         userAccountService.updateUserAccount(userAccount);
 
@@ -154,7 +153,7 @@ public class ProfileService {
     }
 
     public void updateAddressUser(Integer userId, ProfileAddressDTO addressDTO) {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserAddress address = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(address);
         userAccountService.updateUserAccount(userAccount);
@@ -163,7 +162,7 @@ public class ProfileService {
     public void updateAddressApplication(Integer applicationId, ProfileAddressDTO addressDTO) throws Exception {
         Application application = applicationService.getById(applicationId);
         ApplicationAddress address = updateAddress(application, ApplicationAddress.class, addressDTO);
-        
+
         UserAccount userAccount = application.getUser().getUserAccount();
         UserAddress userAddress = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(userAddress);
@@ -175,7 +174,7 @@ public class ProfileService {
     }
 
     public UserQualification updateQualificationUser(Integer userId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserQualification userQualification = updateQualification(userAccount, UserQualification.class, qualificationId, qualificationDTO);
         userAccountService.updateUserAccount(userAccount);
         return userQualification;
@@ -197,7 +196,7 @@ public class ProfileService {
     }
 
     public void deleteQualificationUser(Integer userId, Integer qualificationId) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         deleteQualification(userAccount, UserQualification.class, qualificationId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -209,7 +208,7 @@ public class ProfileService {
     }
 
     public UserEmploymentPosition updateEmploymentPositionUser(Integer userId, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
         userAccountService.updateUserAccount(userAccount);
         return employmentPosition;
@@ -232,7 +231,7 @@ public class ProfileService {
     }
 
     public void deleteEmploymentPositionUser(Integer userId, Integer employmentPositionId) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         deleteEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -244,7 +243,7 @@ public class ProfileService {
     }
 
     public UserReferee updateRefereeUser(Integer userId, Integer refereeId, ProfileRefereeDTO refereeDTO) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserReferee userReferee = (UserReferee) updateReferee(userAccount, UserReferee.class, refereeId, refereeDTO).getReferee();
         userAccountService.updateUserAccount(userAccount);
         return userReferee;
@@ -266,7 +265,7 @@ public class ProfileService {
     }
 
     public void deleteRefereeUser(Integer userId, Integer refereeId) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         deleteReferee(userAccount, UserReferee.class, refereeId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -278,7 +277,7 @@ public class ProfileService {
     }
 
     public void updateDocumentUser(Integer userId, ProfileDocumentDTO documentDTO) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserDocument document = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(document);
         userAccountService.updateUserAccount(userAccount);
@@ -292,14 +291,14 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccountService.updateUserAccount(userAccount);
-        
-        document.setLastUpdatedTimestamp(DateTime.now());        
+
+        document.setLastUpdatedTimestamp(DateTime.now());
         application.setDocument(document);
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
     public void updateAdditionalInformationUser(Integer userId, ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
-        UserAccount userAccount = getCurrentUserAccount(userId);
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserAdditionalInformation additionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(additionalInformation);
         userAccountService.updateUserAccount(userAccount);
@@ -431,14 +430,6 @@ public class ProfileService {
             additionalInformation.setConvictionsText(userAdditionalInformation.getConvictionsText());
             additionalInformation.setLastUpdatedTimestamp(new DateTime());
         }
-    }
-
-    private UserAccount getCurrentUserAccount(Integer userId) {
-        User user = userService.getCurrentUser();
-        if (user.getId().equals(userId)) {
-            return user.getUserAccount();
-        }
-        throw new BadCredentialsException("Unauthorized profile modification attempt");
     }
 
     @SuppressWarnings("unchecked")

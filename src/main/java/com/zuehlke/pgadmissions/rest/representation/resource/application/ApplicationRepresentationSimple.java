@@ -15,21 +15,19 @@ public class ApplicationRepresentationSimple extends ResourceRepresentationExten
 
     private ApplicationProgramDetailRepresentation programDetail;
 
-    private ApplicationPersonalDetailRepresentation personalDetail;
+    private ProfilePersonalDetailRepresentation personalDetail;
 
-    private ApplicationAddressRepresentation address;
+    private ProfileAddressRepresentation address;
 
-    private List<ApplicationQualificationRepresentation> qualifications;
+    private List<ProfileQualificationRepresentation> qualifications;
 
-    private List<ApplicationEmploymentPositionRepresentation> employmentPositions;
+    private List<ProfileEmploymentPositionRepresentation> employmentPositions;
 
-    private List<ApplicationPrizeRepresentation> prizes;
+    private List<ProfileRefereeRepresentation> referees;
 
-    private List<ApplicationRefereeRepresentation> referees;
+    private ProfileDocumentRepresentation document;
 
-    private ApplicationDocumentRepresentation document;
-
-    private ApplicationAdditionalInformationRepresentation additionalInformation;
+    private ProfileAdditionalInformationRepresentation additionalInformation;
 
     public LocalDate getClosingDate() {
         return closingDate;
@@ -55,67 +53,59 @@ public class ApplicationRepresentationSimple extends ResourceRepresentationExten
         this.programDetail = programDetail;
     }
 
-    public ApplicationPersonalDetailRepresentation getPersonalDetail() {
+    public ProfilePersonalDetailRepresentation getPersonalDetail() {
         return personalDetail;
     }
 
-    public void setPersonalDetail(ApplicationPersonalDetailRepresentation personalDetail) {
+    public void setPersonalDetail(ProfilePersonalDetailRepresentation personalDetail) {
         this.personalDetail = personalDetail;
     }
 
-    public ApplicationAddressRepresentation getAddress() {
+    public ProfileAddressRepresentation getAddress() {
         return address;
     }
 
-    public void setAddress(ApplicationAddressRepresentation address) {
+    public void setAddress(ProfileAddressRepresentation address) {
         this.address = address;
     }
 
-    public List<ApplicationQualificationRepresentation> getQualifications() {
+    public List<ProfileQualificationRepresentation> getQualifications() {
         return qualifications;
     }
 
-    public void setQualifications(List<ApplicationQualificationRepresentation> qualifications) {
+    public void setQualifications(List<ProfileQualificationRepresentation> qualifications) {
         this.qualifications = qualifications;
     }
 
-    public List<ApplicationEmploymentPositionRepresentation> getEmploymentPositions() {
+    public List<ProfileEmploymentPositionRepresentation> getEmploymentPositions() {
         return employmentPositions;
     }
 
-    public void setEmploymentPositions(List<ApplicationEmploymentPositionRepresentation> employmentPositions) {
+    public void setEmploymentPositions(List<ProfileEmploymentPositionRepresentation> employmentPositions) {
         this.employmentPositions = employmentPositions;
     }
 
-    public List<ApplicationPrizeRepresentation> getPrizes() {
-        return prizes;
-    }
-
-    public void setPrizes(List<ApplicationPrizeRepresentation> prizes) {
-        this.prizes = prizes;
-    }
-
-    public List<ApplicationRefereeRepresentation> getReferees() {
+    public List<ProfileRefereeRepresentation> getReferees() {
         return referees;
     }
 
-    public void setReferees(List<ApplicationRefereeRepresentation> referees) {
+    public void setReferees(List<ProfileRefereeRepresentation> referees) {
         this.referees = referees;
     }
 
-    public ApplicationDocumentRepresentation getDocument() {
+    public ProfileDocumentRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(ApplicationDocumentRepresentation document) {
+    public void setDocument(ProfileDocumentRepresentation document) {
         this.document = document;
     }
 
-    public ApplicationAdditionalInformationRepresentation getAdditionalInformation() {
+    public ProfileAdditionalInformationRepresentation getAdditionalInformation() {
         return additionalInformation;
     }
 
-    public void setAdditionalInformation(ApplicationAdditionalInformationRepresentation additionalInformation) {
+    public void setAdditionalInformation(ProfileAdditionalInformationRepresentation additionalInformation) {
         this.additionalInformation = additionalInformation;
     }
 

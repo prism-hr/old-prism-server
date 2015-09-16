@@ -2,12 +2,10 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
 
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 
-public class ApplicationQualificationRepresentation extends ApplicationSectionRepresentation {
+public class ProfileQualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
@@ -99,53 +97,48 @@ public class ApplicationQualificationRepresentation extends ApplicationSectionRe
         this.document = document;
     }
 
-    public ApplicationQualificationRepresentation withId(Integer id) {
+    public ProfileQualificationRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withProgram(ResourceRepresentationActivity program) {
+    public ProfileQualificationRepresentation withProgram(ResourceRepresentationActivity program) {
         this.resource = program;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withStartYear(Integer startYear) {
+    public ProfileQualificationRepresentation withStartYear(Integer startYear) {
         this.startYear = startYear;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withStartMonth(Integer startMonth) {
+    public ProfileQualificationRepresentation withStartMonth(Integer startMonth) {
         this.startMonth = startMonth;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withAwardYear(Integer awardYear) {
+    public ProfileQualificationRepresentation withAwardYear(Integer awardYear) {
         this.awardYear = awardYear;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withAwardMonth(Integer awardMonth) {
+    public ProfileQualificationRepresentation withAwardMonth(Integer awardMonth) {
         this.awardMonth = awardMonth;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withGrade(String grade) {
+    public ProfileQualificationRepresentation withGrade(String grade) {
         this.grade = grade;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withCompleted(Boolean completed) {
+    public ProfileQualificationRepresentation withCompleted(Boolean completed) {
         this.completed = completed;
         return this;
     }
 
-    public ApplicationQualificationRepresentation withDocumentRepresentation(DocumentRepresentation document) {
+    public ProfileQualificationRepresentation withDocumentRepresentation(DocumentRepresentation document) {
         this.document = document;
-        return this;
-    }
-
-    public ApplicationQualificationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
-        setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
 

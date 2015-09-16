@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookServiceProvider;
 import org.springframework.social.google.api.impl.GoogleTemplate;
@@ -175,6 +176,15 @@ public class UserAccountService {
         userAccount.setUpdatedTimestamp(baseline);
         userAccount.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
     }
+    
+    public UserAccount getCurrentUserAccount(Integer userId) {
+        User user = userService.getCurrentUser();
+        if (user.getId().equals(userId)) {
+            return user.getUserAccount();
+        }
+        throw new BadCredentialsException("Unauthorized access attempt");
+    }
+
 
     private OauthUserDefinition getOauthUserDefinition(PrismOauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthUserDefinition definition;

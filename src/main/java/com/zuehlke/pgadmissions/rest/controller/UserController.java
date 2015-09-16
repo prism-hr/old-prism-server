@@ -56,7 +56,6 @@ import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ProfileService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
-import com.zuehlke.pgadmissions.services.UserAccountService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController

@@ -100,12 +100,12 @@ public class AdvertMapper {
     }
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
-        PrismScope filterScope = query.getScope();
         PrismAdvertContext filterContext = query.getContext();
+        PrismScope[] filterScopes = query.getTab() != null ? query.getTab().getScopes() : new PrismScope[0];
 
         PrismScope[] opportunityScopes = new PrismScope[] { PROJECT, PROGRAM };
         PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
-        PrismScope[] queryScopes = filterContext.equals(APPLICANTS) ? opportunityScopes : new PrismScope[] { filterScope };
+        PrismScope[] queryScopes = filterContext.equals(APPLICANTS) ? opportunityScopes : filterScopes;
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();

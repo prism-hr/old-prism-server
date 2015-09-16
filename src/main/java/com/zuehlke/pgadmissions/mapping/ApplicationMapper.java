@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_APPOINTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
@@ -45,12 +44,10 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedHiringManagerRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
@@ -131,19 +128,6 @@ public class ApplicationMapper {
         representation.setInterview(getApplicationInterviewRepresentation(application));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
-
-        Long providedReferenceCount = applicationService.getProvidedReferenceCount(application);
-        representation.setReferenceProvidedCount(providedReferenceCount == null ? null : providedReferenceCount.intValue());
-
-        Long declinedReferenceCount = applicationService.getDeclinedReferenceCount(application);
-        representation.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
-
-        List<ResourceRepresentationSimple> otherLiveApplications = Lists.newLinkedList();
-        for (ResourceSimpleDTO otherLiveApplication : applicationService.getOtherLiveApplications(application)) {
-            otherLiveApplications.add(resourceMapper.getResourceRepresentationSimple(APPLICATION, otherLiveApplication));
-        }
-        representation.setOtherLiveApplications(otherLiveApplications);
-
         return representation;
     }
 

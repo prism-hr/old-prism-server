@@ -29,6 +29,8 @@ public class DocumentDAO {
                         .add(Restrictions.isNotNull("applicationQualification.id")) //
                         .add(Restrictions.isNotNull("applicationCv.id")) //
                         .add(Restrictions.isNotNull("applicationCoveringLetter.id")) //
+                        .add(Restrictions.isNotNull("userQualification.id")) //
+                        .add(Restrictions.isNotNull("userCv.id")) //
                         .add(Restrictions.isNotNull("portraitImage.id")) //
                         .add(Restrictions.isNotNull("logoImage.id")) //
                         .add(Restrictions.isNotNull("backgroundImage.id"))) //
@@ -41,6 +43,8 @@ public class DocumentDAO {
                 .add(Restrictions.isNull("applicationQualification.id")) //
                 .add(Restrictions.isNull("applicationCv.id")) //
                 .add(Restrictions.isNull("applicationCoveringLetter.id")) //
+                .add(Restrictions.isNull("userQualification.id")) //
+                .add(Restrictions.isNull("userCv.id")) //
                 .add(Restrictions.isNull("portraitImage.id")) //
                 .add(Restrictions.isNull("logoImage.id")) //
                 .add(Restrictions.isNull("backgroundImage.id")) //
@@ -74,6 +78,8 @@ public class DocumentDAO {
                 .createAlias("applicationQualification", "applicationQualification", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("applicationCv", "applicationCv", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("applicationCoveringLetter", "applicationCoveringLetter", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userQualification", "userQualification", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userCv", "userCv", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("portraitImage", "portraitImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("backgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN);

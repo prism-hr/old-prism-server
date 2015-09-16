@@ -25,6 +25,8 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.domain.user.UserDocument;
+import com.zuehlke.pgadmissions.domain.user.UserQualification;
 import com.zuehlke.pgadmissions.workflow.user.DocumentReassignmentProcessor;
 
 @Entity
@@ -67,12 +69,18 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     @OneToOne(mappedBy = "document")
     private ApplicationQualification applicationQualification;
-    
+
     @OneToOne(mappedBy = "cv")
     private ApplicationDocument applicationCv;
 
     @OneToOne(mappedBy = "coveringLetter")
     private ApplicationDocument applicationCoveringLetter;
+
+    @OneToOne(mappedBy = "document")
+    private UserQualification userQualification;
+
+    @OneToOne(mappedBy = "cv")
+    private UserDocument userCv;
 
     @OneToOne(mappedBy = "portraitImage")
     private UserAccount portraitImage;
@@ -163,6 +171,14 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
         return applicationCoveringLetter;
     }
 
+    public UserQualification getUserQualification() {
+        return userQualification;
+    }
+
+    public UserDocument getUserCv() {
+        return userCv;
+    }
+
     public UserAccount getPortraitImage() {
         return portraitImage;
     }
@@ -220,13 +236,12 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
             return comment.getResource();
         } else if (applicationQualification != null) {
             return applicationQualification.getAssociation();
-        } else if (applicationCoveringLetter != null) {
-            return applicationCoveringLetter.getAssociation();
         } else if (applicationCv != null) {
             return applicationCv.getAssociation();
-        } else {
-            return null;
+        } else if (applicationCoveringLetter != null) {
+            return applicationCoveringLetter.getAssociation();
         }
+        return null;
     }
 
     public String getExportFilenameAmazon() {

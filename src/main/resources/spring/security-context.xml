@@ -40,7 +40,7 @@
 
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"/>
     <bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PrismUserDetailsService"/>
-    <bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils"
+    <bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.PrismEncryptionUtils"
           autowire-candidate="false"/>
 
 </beans>

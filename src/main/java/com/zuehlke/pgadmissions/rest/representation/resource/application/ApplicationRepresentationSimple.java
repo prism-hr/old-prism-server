@@ -5,6 +5,13 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAdditionalInformationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileDocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfilePersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 
 public class ApplicationRepresentationSimple extends ResourceRepresentationExtended {

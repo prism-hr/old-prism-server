@@ -8,8 +8,9 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
+import com.zuehlke.pgadmissions.dto.ProfileEntityDTO;
 
-public class ResourceListRowDTO extends ResourceSimpleDTO {
+public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEntityDTO {
 
     private Integer systemId;
 

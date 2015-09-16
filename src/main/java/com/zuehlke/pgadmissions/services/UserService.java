@@ -17,6 +17,7 @@ import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSq
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.WordUtils.capitalize;
 
@@ -72,12 +73,14 @@ import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
@@ -524,6 +527,13 @@ public class UserService {
 
     public String getOauthProfileUrl(User user, PrismOauthProvider provider) {
         return userDAO.getOauthProfileUrl(user, provider);
+    }
+
+    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
+        User user = getCurrentUser();
+        List<Integer> institutions = resourceService.getResources(user, INSTITUTION, asList(SYSTEM)).stream().map(i -> i.getId()).collect(toList());
+        List<Integer> departments = resourceService.getResources(user, DEPARTMENT, asList(INSTITUTION, SYSTEM)).stream().map(d -> d.getId()).collect(toList());
+        return userDAO.getUserProfiles(institutions, departments, filter);
     }
 
     @SuppressWarnings("unchecked")

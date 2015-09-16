@@ -1,6 +1,8 @@
-package com.zuehlke.pgadmissions.rest.representation.resource.application;
+package com.zuehlke.pgadmissions.rest.representation.profile;
 
 import org.joda.time.DateTime;
+
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 
 public class ProfileAdditionalInformationRepresentation extends ApplicationSectionRepresentation {
 

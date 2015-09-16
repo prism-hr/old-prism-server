@@ -1,6 +1,7 @@
-package com.zuehlke.pgadmissions.rest.representation.resource.application;
+package com.zuehlke.pgadmissions.rest.representation.profile;
 
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 
 public class ProfileAddressRepresentation extends ApplicationSectionRepresentation {
 

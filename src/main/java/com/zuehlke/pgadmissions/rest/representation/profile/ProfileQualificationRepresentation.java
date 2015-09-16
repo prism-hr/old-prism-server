@@ -1,9 +1,10 @@
-package com.zuehlke.pgadmissions.rest.representation.resource.application;
+package com.zuehlke.pgadmissions.rest.representation.profile;
 
 import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
 
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 
 public class ProfileQualificationRepresentation extends ApplicationSectionRepresentation {
 

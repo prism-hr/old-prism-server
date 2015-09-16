@@ -121,7 +121,6 @@ public class UserAccountService {
         boolean enableAccount = user != null;
         if (enableAccount) {
             if (user.getUserAccount() == null && registrationDTO.getActivationCode() != null) {
-                // account not activated and activation code provided
                 if (!user.getActivationCode().equals(registrationDTO.getActivationCode())) {
                     throw new Error();
                 }

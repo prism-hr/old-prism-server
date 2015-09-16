@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -51,7 +45,6 @@ import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 
 import freemarker.template.Template;
@@ -78,44 +71,6 @@ public class ApplicationDAO {
                 .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("association", application)) //
                 .add(Restrictions.isNull("comment")) //
-                .list();
-    }
-
-    public Long getProvidedReferenceCount(Application application) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.rowCount()) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("action.id", APPLICATION_PROVIDE_REFERENCE)) //
-                .add(Restrictions.eq("declinedResponse", false)) //
-                .uniqueResult();
-    }
-
-    public Long getDeclinedReferenceCount(Application application) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.rowCount()) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("action.id", APPLICATION_PROVIDE_REFERENCE)) //
-                .add(Restrictions.eq("declinedResponse", true)) //
-                .uniqueResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<ResourceSimpleDTO> getOtherLiveApplications(Application application) {
-        return (List<ResourceSimpleDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
-                        .add(Projections.property("code"), "code") //
-                        .add(Projections.property("state.id"), "stateId"))
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("institution", application.getInstitution())) //
-                .add(Restrictions.eq("user", application.getUser())) //
-                .add(Restrictions.ne("id", application.getId())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VALIDATION.ordinal(), APPLICATION_RESERVED.ordinal())) //
-                        .add(Restrictions.in("state.id", new PrismState[] { APPLICATION_APPROVAL, APPLICATION_REJECTED }))) //
-                .addOrder(Order.desc("sequenceIdentifier")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class))
                 .list();
     }
 

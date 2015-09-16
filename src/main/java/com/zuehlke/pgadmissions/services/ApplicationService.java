@@ -57,7 +57,6 @@ import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
@@ -207,18 +206,6 @@ public class ApplicationService {
         return errors;
     }
 
-    public Long getProvidedReferenceCount(Application application) {
-        return applicationDAO.getProvidedReferenceCount(application);
-    }
-
-    public Long getDeclinedReferenceCount(Application application) {
-        return applicationDAO.getDeclinedReferenceCount(application);
-    }
-
-    public List<ResourceSimpleDTO> getOtherLiveApplications(Application application) {
-        return applicationDAO.getOtherLiveApplications(application);
-    }
-
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
             List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
         return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints, transformedConstraints);
@@ -254,7 +241,7 @@ public class ApplicationService {
         application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
         application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
     }
-    
+
     public List<Integer> getApplicationsByImportedInstitution(ResourceParent parent, Collection<Integer> importedInstitutions) {
         return applicationDAO.getApplicationsByImportedInstitution(parent, importedInstitutions);
     }
@@ -299,7 +286,7 @@ public class ApplicationService {
         application.setProgramDetail(programDetail);
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }
-    
+
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, ImportedEntitySimple opportunityType) {
         programDetail.setOpportunityType(opportunityType);
         application.setOpportunityCategories(PrismOpportunityType.valueOf(opportunityType.getName()).getCategory().name());

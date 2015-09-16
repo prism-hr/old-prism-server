@@ -28,9 +28,6 @@ public class CommentCompetence {
     @JoinColumn(name = "competence_id", nullable = false)
     private Competence competence;
 
-    @Column(name = "importance", nullable = false)
-    private Integer importance;
-
     @Column(name = "rating", nullable = false)
     private Integer rating;
 
@@ -61,14 +58,6 @@ public class CommentCompetence {
         this.competence = competence;
     }
 
-    public Integer getImportance() {
-        return importance;
-    }
-
-    public void setImportance(Integer importance) {
-        this.importance = importance;
-    }
-
     public Integer getRating() {
         return rating;
     }
@@ -92,11 +81,6 @@ public class CommentCompetence {
 
     public CommentCompetence withCompetence(Competence competence) {
         this.competence = competence;
-        return this;
-    }
-
-    public CommentCompetence withImportance(Integer importance) {
-        this.importance = importance;
         return this;
     }
 

@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
-public class ApplicationDocumentRepresentation extends ApplicationSectionRepresentation {
+public class ProfileDocumentRepresentation extends ApplicationSectionRepresentation {
 
     private String personalSummary;
 

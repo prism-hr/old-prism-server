@@ -5,7 +5,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
-public class ApplicationPersonalDetailRepresentation extends ApplicationSectionRepresentation {
+public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepresentation {
 
     private ImportedEntityResponse title;
 
@@ -117,62 +117,62 @@ public class ApplicationPersonalDetailRepresentation extends ApplicationSectionR
         this.disability = disability;
     }
 
-    public ApplicationPersonalDetailRepresentation withTitle(ImportedEntityResponse title) {
+    public ProfilePersonalDetailRepresentation withTitle(ImportedEntityResponse title) {
         this.title = title;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withGender(ImportedEntityResponse gender) {
+    public ProfilePersonalDetailRepresentation withGender(ImportedEntityResponse gender) {
         this.gender = gender;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withDateOfBirth(LocalDate dateOfBirth) {
+    public ProfilePersonalDetailRepresentation withDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withAgeRange(ImportedEntityResponse ageRange) {
+    public ProfilePersonalDetailRepresentation withAgeRange(ImportedEntityResponse ageRange) {
         this.ageRange = ageRange;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withFirstNationality(ImportedEntityResponse nationality) {
+    public ProfilePersonalDetailRepresentation withFirstNationality(ImportedEntityResponse nationality) {
         this.nationality = nationality;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withDomicile(ImportedEntityResponse domicile) {
+    public ProfilePersonalDetailRepresentation withDomicile(ImportedEntityResponse domicile) {
         this.domicile = domicile;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withVisaRequired(Boolean visaRequired) {
+    public ProfilePersonalDetailRepresentation withVisaRequired(Boolean visaRequired) {
         this.visaRequired = visaRequired;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withPhone(String phone) {
+    public ProfilePersonalDetailRepresentation withPhone(String phone) {
         this.phone = phone;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withSkype(String skype) {
+    public ProfilePersonalDetailRepresentation withSkype(String skype) {
         this.skype = skype;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withEthnicity(ImportedEntityResponse ethnicity) {
+    public ProfilePersonalDetailRepresentation withEthnicity(ImportedEntityResponse ethnicity) {
         this.ethnicity = ethnicity;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withDisability(ImportedEntityResponse disability) {
+    public ProfilePersonalDetailRepresentation withDisability(ImportedEntityResponse disability) {
         this.disability = disability;
         return this;
     }
 
-    public ApplicationPersonalDetailRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+    public ProfilePersonalDetailRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }

@@ -112,16 +112,16 @@ import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationEmploymentPositionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationPersonalDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationQualificationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileAdditionalInformationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileDocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfilePersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
@@ -223,7 +223,7 @@ public class ApplicationDownloadBuilder {
             throws Exception {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_HEADER));
 
-        ApplicationPersonalDetailRepresentation personalDetail = application.getPersonalDetail();
+        ProfilePersonalDetailRepresentation personalDetail = application.getPersonalDetail();
         boolean personalDetailNull = personalDetail == null;
 
         if (personalDetailNull) {
@@ -266,7 +266,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addAddressSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
-        ApplicationAddressRepresentation address = application.getAddress();
+        ProfileAddressRepresentation address = application.getAddress();
 
         if (address != null) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument,
@@ -289,13 +289,13 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addQualificationSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
-        List<ApplicationQualificationRepresentation> qualifications = application.getQualifications();
+        List<ProfileQualificationRepresentation> qualifications = application.getQualifications();
 
         if (!qualifications.isEmpty()) {
             applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_QUALIFICATION_HEADER));
 
             int counter = 1;
-            for (ApplicationQualificationRepresentation qualification : qualifications) {
+            for (ProfileQualificationRepresentation qualification : qualifications) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_SUBHEADER) + "("
                         + counter++ + ")");
 
@@ -328,13 +328,13 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addEmploymentSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
-        List<ApplicationEmploymentPositionRepresentation> positions = application.getEmploymentPositions();
+        List<ProfileEmploymentPositionRepresentation> positions = application.getEmploymentPositions();
 
         if (!positions.isEmpty()) {
             applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_HEADER));
 
             int counter = 1;
-            for (ApplicationEmploymentPositionRepresentation position : positions) {
+            for (ProfileEmploymentPositionRepresentation position : positions) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_SUBHEADER) + "("
                         + counter++ + ")");
 
@@ -353,13 +353,13 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addReferencesSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
-        List<ApplicationRefereeRepresentation> referees = application.getReferees();
+        List<ProfileRefereeRepresentation> referees = application.getReferees();
 
         if (!referees.isEmpty()) {
             applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_REFEREE_HEADER));
 
             int counter = 1;
-            for (ApplicationRefereeRepresentation referee : referees) {
+            for (ProfileRefereeRepresentation referee : referees) {
                 PdfPTable subBody = applicationDownloadBuilderHelper
                         .startSubSection(propertyLoader.loadLazy(APPLICATION_REFEREE_SUBHEADER) + "(" + counter++ + ")");
 
@@ -389,7 +389,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addDocumentSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
-        ApplicationDocumentRepresentation document = application.getDocument();
+        ProfileDocumentRepresentation document = application.getDocument();
 
         if (document != null) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_DOCUMENT_HEADER));
@@ -414,7 +414,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addAdditionalInformationSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
-        ApplicationAdditionalInformationRepresentation additionalInformation = application.getAdditionalInformation();
+        ProfileAdditionalInformationRepresentation additionalInformation = application.getAdditionalInformation();
 
         if (additionalInformation != null) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_ADDITIONAL_INFORMATION_HEADER));

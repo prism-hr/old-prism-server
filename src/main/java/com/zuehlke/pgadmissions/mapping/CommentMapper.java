@@ -223,7 +223,7 @@ public class CommentMapper {
         for (CommentCompetence commentCompetence : commentCompetences) {
             Competence competence = commentCompetence.getCompetence();
             representations.add(new CommentCompetenceRepresentation().withCompetence(competence.getId()).withName(competence.getName())
-                    .withDescription(competence.getDescription()).withImportance(commentCompetence.getImportance()).withRating(commentCompetence.getRating())
+                    .withDescription(competence.getDescription()).withRating(commentCompetence.getRating())
                     .withRemark(commentCompetence.getRemark()));
         }
         return representations;

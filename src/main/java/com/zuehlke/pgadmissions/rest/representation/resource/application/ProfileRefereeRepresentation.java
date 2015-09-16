@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
-public class ApplicationRefereeRepresentation extends ApplicationSectionRepresentation {
+public class ProfileRefereeRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
@@ -68,38 +66,33 @@ public class ApplicationRefereeRepresentation extends ApplicationSectionRepresen
         this.comment = comment;
     }
 
-    public ApplicationRefereeRepresentation withId(Integer id) {
+    public ProfileRefereeRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public ApplicationRefereeRepresentation withUser(UserRepresentationSimple user) {
+    public ProfileRefereeRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }
 
-    public ApplicationRefereeRepresentation withResource(ResourceRepresentationActivity resource) {
+    public ProfileRefereeRepresentation withResource(ResourceRepresentationActivity resource) {
         this.resource = resource;
         return this;
     }
 
-    public ApplicationRefereeRepresentation withPhone(String phone) {
+    public ProfileRefereeRepresentation withPhone(String phone) {
         this.phone = phone;
         return this;
     }
 
-    public ApplicationRefereeRepresentation withSkype(String skype) {
+    public ProfileRefereeRepresentation withSkype(String skype) {
         this.skype = skype;
         return this;
     }
 
-    public ApplicationRefereeRepresentation withComment(CommentRepresentation comment) {
+    public ProfileRefereeRepresentation withComment(CommentRepresentation comment) {
         this.comment = comment;
-        return this;
-    }
-
-    public ApplicationRefereeRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
-        setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
 

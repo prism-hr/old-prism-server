@@ -638,7 +638,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     }
 
     public Comment addCompetence(Competence competence, Integer importance, Integer rating, String remark) {
-        competences.add(new CommentCompetence().withCompetence(competence).withImportance(importance).withRating(rating).withRemark(remark));
+        competences.add(new CommentCompetence().withCompetence(competence).withRating(rating).withRemark(remark));
         return this;
     }
 

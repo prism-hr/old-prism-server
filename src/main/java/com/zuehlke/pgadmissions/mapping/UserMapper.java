@@ -34,11 +34,13 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentat
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.UserAccountService;
 import com.zuehlke.pgadmissions.services.UserFeedbackService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -54,6 +56,9 @@ public class UserMapper {
     private RoleService roleService;
 
     @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
     private UserFeedbackService userFeedbackService;
 
     @Inject
@@ -64,6 +69,9 @@ public class UserMapper {
 
     @Inject
     private ApplicationMapper applicationMapper;
+
+    @Inject
+    private ProfileMapper profileMapper;
 
     @Inject
     private ScopeMapper scopeMapper;
@@ -173,6 +181,17 @@ public class UserMapper {
     public UserActivityRepresentation getUserActivityRepresentation(User user, PrismScope permissionScope) {
         return new UserActivityRepresentation().withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, permissionScope))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user)).withConnectionActivities(getUnverifiedUserRepresentations(user));
+    }
+
+    public UserProfileRepresentation getUserProfileRepresentation(Integer userId) {
+        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+        return new UserProfileRepresentation().withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail()))
+                .withAddress(profileMapper.getAddressRepresentation(userAccount.getAddress()))
+                .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications()))
+                .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions()))
+                .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees())).withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
+                .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation()))
+                .withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
     }
 
     private List<ConnectionActivityRepresentation> getUnverifiedUserRepresentations(User user) {

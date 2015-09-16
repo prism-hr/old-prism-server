@@ -483,6 +483,18 @@ public class AdvertService {
     public void identifyForAdverts(User user, Collection<Integer> adverts) {
         advertDAO.identifyForAdverts(user, adverts);
     }
+    
+    public Map<Integer, Integer> getCompetenceImportances(Advert advert) {
+        AdvertTargets targets = advert.getTargets();
+        if (targets != null) {
+            Map<Integer, Integer> importances = Maps.newHashMap();
+            targets.getCompetences().forEach(c -> {
+                importances.put(c.getValueId(), c.getImportance());
+            });
+            return importances;
+        }
+        return null;
+    }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();

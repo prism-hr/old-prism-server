@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
@@ -55,6 +56,7 @@ import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ProfileService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
+import com.zuehlke.pgadmissions.services.UserAccountService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -83,7 +85,7 @@ public class UserController {
 
     @Inject
     private UserService userService;
-
+    
     @Inject
     private UserLinkingValidator userLinkingValidator;
 
@@ -210,6 +212,7 @@ public class UserController {
     }
 
     @InitBinder(value = "userRegistrationDTO")
+
     public void configureUserRegistrationBinding(WebDataBinder binder) {
         binder.setValidator(userRegistrationValidator);
     }
@@ -219,27 +222,32 @@ public class UserController {
         binder.setValidator(userLinkingValidator);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/personalDetail", method = RequestMethod.PUT)
     public void savePersonalDetail(@PathVariable Integer userId, @Valid @RequestBody ProfilePersonalDetailDTO personalDetailDTO) throws Exception {
         profileService.updatePersonalDetailUser(userId, personalDetailDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/address", method = RequestMethod.PUT)
     public void saveAddress(@PathVariable Integer userId, @Valid @RequestBody ProfileAddressDTO addressDTO) throws Exception {
         profileService.updateAddressUser(userId, addressDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer userId, @PathVariable Integer qualificationId,
             @Valid @RequestBody ProfileQualificationDTO qualificationDTO) throws Exception {
         profileService.updateQualificationUser(userId, qualificationId, qualificationDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
     public void deleteQualification(@PathVariable Integer userId, @PathVariable Integer qualificationId) throws Exception {
         profileService.deleteQualificationUser(userId, qualificationId);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer userId,
             @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
@@ -247,41 +255,54 @@ public class UserController {
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer userId, @PathVariable Integer employmentPositionId,
             @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
         profileService.updateEmploymentPositionUser(userId, employmentPositionId, employmentPositionDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/referees", method = RequestMethod.POST)
     public Map<String, Object> createReferee(@PathVariable Integer userId, @Valid @RequestBody ProfileRefereeDTO refereeDTO) throws Exception {
         UserReferee referee = profileService.updateRefereeUser(userId, null, refereeDTO);
         return ImmutableMap.of("id", (Object) referee.getId());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/referees/{refereeId}", method = RequestMethod.PUT)
     public void deleteReferee(@PathVariable Integer userId, @PathVariable Integer refereeId, @Valid @RequestBody ProfileRefereeDTO refereeDTO) throws Exception {
         profileService.updateRefereeUser(userId, refereeId, refereeDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/employmentPositions/{employmentPositionId}", method = RequestMethod.DELETE)
     public void deleteEmploymentPosition(@PathVariable Integer userId, @PathVariable Integer employmentPositionId) throws Exception {
         profileService.deleteEmploymentPositionUser(userId, employmentPositionId);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/referees/{refereeId}", method = RequestMethod.DELETE)
     public void updateReferee(@PathVariable Integer userId, @PathVariable Integer refereeId) throws Exception {
         profileService.deleteRefereeUser(userId, refereeId);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/document", method = RequestMethod.PUT)
     public void saveDocument(@PathVariable Integer userId, @Valid @RequestBody ProfileDocumentDTO documentDTO) throws Exception {
         profileService.updateDocumentUser(userId, documentDTO);
     }
-
+    
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/additionalInformation", method = RequestMethod.PUT)
     public void saveAdditionalInformation(@PathVariable Integer userId, @Valid @RequestBody ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
         profileService.updateAdditionalInformationUser(userId, additionalInformationDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/{userId}/profile", method = RequestMethod.GET)
+    public UserProfileRepresentation getUserProfile(@PathVariable Integer userId)  {
+        return userMapper.getUserProfileRepresentation(userId);
+    }
+    
 }

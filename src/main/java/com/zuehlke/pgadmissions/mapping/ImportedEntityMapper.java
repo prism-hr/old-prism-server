@@ -42,14 +42,17 @@ public class ImportedEntityMapper {
 
     @SuppressWarnings("unchecked")
     public <T extends ImportedEntity<?>, U extends ImportedEntityResponseDefinition<?>> U getImportedEntityRepresentation(T entity) {
-        Class<?> entityClass = entity.getClass();
-        if (ImportedAgeRange.class.equals(entityClass)) {
-            return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity);
-        } else if (ImportedDomicile.class.equals(entityClass)) {
-            return (U) getImportedAdvertDomicileRepresentation((ImportedDomicile) entity);
-        }
+        if (entity != null) {
+            Class<?> entityClass = entity.getClass();
+            if (ImportedAgeRange.class.equals(entityClass)) {
+                return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity);
+            } else if (ImportedDomicile.class.equals(entityClass)) {
+                return (U) getImportedAdvertDomicileRepresentation((ImportedDomicile) entity);
+            }
 
-        return (U) getImportedEntitySimpleRepresentation((ImportedEntitySimple) entity, ImportedEntityResponse.class);
+            return (U) getImportedEntitySimpleRepresentation((ImportedEntitySimple) entity, ImportedEntityResponse.class);
+        }
+        return null;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -83,5 +86,4 @@ public class ImportedEntityMapper {
         CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, requestClass);
         return objectMapper.readValue(data, collectionType);
     }
-
 }

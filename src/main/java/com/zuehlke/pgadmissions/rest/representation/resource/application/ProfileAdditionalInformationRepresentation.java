@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.DateTime;
 
-public class ApplicationAdditionalInformationRepresentation extends ApplicationSectionRepresentation {
+public class ProfileAdditionalInformationRepresentation extends ApplicationSectionRepresentation {
 
     private String convictionsText;
 
@@ -14,12 +14,12 @@ public class ApplicationAdditionalInformationRepresentation extends ApplicationS
         this.convictionsText = convictionsText;
     }
 
-    public ApplicationAdditionalInformationRepresentation withConvictionsText(String convictionsText) {
+    public ProfileAdditionalInformationRepresentation withConvictionsText(String convictionsText) {
         this.convictionsText = convictionsText;
         return this;
     }
     
-    public ApplicationAdditionalInformationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+    public ProfileAdditionalInformationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }

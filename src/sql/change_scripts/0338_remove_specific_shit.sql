@@ -894,3 +894,6 @@ alter table advert
 	drop index year_fee_maximum_at_locale
 ;
 
+alter table comment_competence
+	drop column importance
+;

@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 
-public class ApplicationEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
+public class ProfileEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
@@ -78,42 +78,42 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         this.current = current;
     }
 
-    public ApplicationEmploymentPositionRepresentation withId(Integer id) {
+    public ProfileEmploymentPositionRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withResource(ResourceRepresentationActivity resource) {
+    public ProfileEmploymentPositionRepresentation withResource(ResourceRepresentationActivity resource) {
         this.resource = resource;
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withStartYear(Integer startYear) {
+    public ProfileEmploymentPositionRepresentation withStartYear(Integer startYear) {
         this.startYear = startYear;
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withStartMonth(Integer startMonth) {
+    public ProfileEmploymentPositionRepresentation withStartMonth(Integer startMonth) {
         this.startMonth = startMonth;
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withEndYear(Integer endYear) {
+    public ProfileEmploymentPositionRepresentation withEndYear(Integer endYear) {
         this.endYear = endYear;
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withEndMonth(Integer endMonth) {
+    public ProfileEmploymentPositionRepresentation withEndMonth(Integer endMonth) {
         this.endMonth = endMonth;
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withCurrent(Boolean current) {
+    public ProfileEmploymentPositionRepresentation withCurrent(Boolean current) {
         this.current = current;
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+    public ProfileEmploymentPositionRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }

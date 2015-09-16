@@ -31,6 +31,8 @@ import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import org.apache.commons.lang.StringUtils;
@@ -558,7 +560,8 @@ public class UserService {
     private Set<String> getUserAssignments(Class<?> entityClass, Set<String> userAssignments) {
         userAssignments = userAssignments == null ? Sets.newHashSet() : userAssignments;
         for (Field entityProperty : entityClass.getDeclaredFields()) {
-            if (User.class.isAssignableFrom(entityProperty.getType()) && !asList(entityProperty.getDeclaredAnnotations()).contains(OneToOne.class)) {
+            if (User.class.isAssignableFrom(entityProperty.getType())
+                    && !(entityProperty.getAnnotation(Column.class) == null && entityProperty.getAnnotation(JoinColumn.class) == null)) {
                 userAssignments.add(entityProperty.getName());
             }
         }

@@ -91,7 +91,10 @@ public class UserAccount
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
+    @Column(name = "shared", nullable = false)
+    private Boolean shared;
+
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
@@ -224,6 +227,14 @@ public class UserAccount
         this.enabled = enabled;
     }
 
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
@@ -258,18 +269,23 @@ public class UserAccount
         return this;
     }
 
+    public UserAccount withEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public UserAccount withShared(Boolean shared) {
+        this.shared = shared;
+        return this;
+    }
+
     public UserAccount withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }
-    
+
     public UserAccount withSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-        return this;
-    }
-    
-    public UserAccount withEnabled(Boolean enabled) {
-        this.enabled = enabled;
         return this;
     }
 

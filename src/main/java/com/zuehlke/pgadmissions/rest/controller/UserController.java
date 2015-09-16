@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ProfileService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
+import com.zuehlke.pgadmissions.services.UserAccountService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -84,7 +85,10 @@ public class UserController {
 
     @Inject
     private UserService userService;
-    
+
+    @Inject
+    private UserAccountService userAccountService;
+
     @Inject
     private UserLinkingValidator userLinkingValidator;
 
@@ -291,7 +295,7 @@ public class UserController {
     public void saveDocument(@PathVariable Integer userId, @Valid @RequestBody ProfileDocumentDTO documentDTO) throws Exception {
         profileService.updateDocumentUser(userId, documentDTO);
     }
-    
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/additionalInformation", method = RequestMethod.PUT)
     public void saveAdditionalInformation(@PathVariable Integer userId, @Valid @RequestBody ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
@@ -300,8 +304,14 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/profile", method = RequestMethod.GET)
-    public UserProfileRepresentation getUserProfile(@PathVariable Integer userId)  {
+    public UserProfileRepresentation getUserProfile(@PathVariable Integer userId) {
         return userMapper.getUserProfileRepresentation(userId);
     }
-    
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/{userId}/profile/share", method = RequestMethod.PUT)
+    public void shareUserProfile(@PathVariable Integer userId, @RequestParam(required = true) Boolean shareProfile) {
+        userAccountService.shareUserProfile(userId, shareProfile);
+    }
+
 }

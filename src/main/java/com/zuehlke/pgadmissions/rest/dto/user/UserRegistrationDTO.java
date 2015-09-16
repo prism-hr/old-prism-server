@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.user;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -26,6 +27,9 @@ public class UserRegistrationDTO {
 
     @Size(min = 8, max = 15)
     private String password;
+    
+    @NotNull
+    private Boolean shareProfile;
 
     @Valid
     private CommentDTO comment;
@@ -68,6 +72,14 @@ public class UserRegistrationDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public Boolean getShareProfile() {
+        return shareProfile;
+    }
+
+    public void setShareProfile(Boolean shareProfile) {
+        this.shareProfile = shareProfile;
     }
 
     public CommentDTO getComment() {

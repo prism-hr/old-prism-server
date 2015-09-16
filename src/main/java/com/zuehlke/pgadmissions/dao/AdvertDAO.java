@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -49,11 +50,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
@@ -607,8 +603,9 @@ public class AdvertDAO {
         if (ResourceOpportunity.class.isAssignableFrom(scope.getResourceClass())) {
             Collection<PrismOpportunityType> opportunityTypes = queryDTO.getOpportunityTypes();
             if (opportunityTypes == null) {
-                if (queryDTO.getOpportunityCategory() != null) {
-                    opportunityTypes = PrismOpportunityType.getOpportunityTypes(queryDTO.getOpportunityCategory());
+                PrismOpportunityCategory opportunityCategory = queryDTO.getOpportunityCategory();
+                if (opportunityCategory != null) {
+                    opportunityTypes = PrismOpportunityType.getOpportunityTypes(opportunityCategory);
                 } else {
                     opportunityTypes = Collections.emptyList();
                 }
@@ -621,8 +618,9 @@ public class AdvertDAO {
             }
             criteria.add(opportunityTypeConstraint);
         } else {
-            if (queryDTO.getOpportunityCategory() != null) {
-                criteria.add(Restrictions.like("advert.opportunityCategories", queryDTO.getOpportunityCategory().name(), MatchMode.ANYWHERE));
+            PrismOpportunityCategory opportunityCategory = queryDTO.getOpportunityCategory();
+            if (opportunityCategory != null) {
+                criteria.add(Restrictions.like("advert.opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
             }
         }
     }

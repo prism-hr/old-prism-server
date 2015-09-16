@@ -897,3 +897,8 @@ alter table advert
 alter table comment_competence
 	drop column importance
 ;
+
+alter table user_account
+	add column shared int(1) unsigned not null after enabled,
+	add index (shared)
+;

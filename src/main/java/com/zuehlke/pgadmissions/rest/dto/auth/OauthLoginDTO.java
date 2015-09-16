@@ -13,15 +13,13 @@ public class OauthLoginDTO {
     @NotNull
     private OauthAssociationType associationType;
 
-    /**
-     * e.g. used to identify user when he's invited
-     */
     private String activationCode;
 
-    // OAUTH 1.0 fields
     private String oauthToken;
 
     private String oauthVerifier;
+    
+    private Boolean shareProfile;
 
     public String getClientId() {
         return clientId;
@@ -78,4 +76,13 @@ public class OauthLoginDTO {
     public void setOauthVerifier(String oauthVerifier) {
         this.oauthVerifier = oauthVerifier;
     }
+
+    public Boolean getShareProfile() {
+        return shareProfile;
+    }
+
+    public void setShareProfile(Boolean shareProfile) {
+        this.shareProfile = shareProfile;
+    }
+    
 }

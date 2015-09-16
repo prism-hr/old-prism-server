@@ -6,5 +6,5 @@ public enum PrismScopeCategory {
     OPPORTUNITY, //
     ORGANIZATION, //
     SYSTEM; //
-    
+
 }

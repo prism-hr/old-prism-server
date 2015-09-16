@@ -16,12 +16,14 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.workflow.user.ApplicationRefereeReassignmentProcessor;
 
 @Entity
 @Table(name = "application_referee", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
-public class ApplicationReferee extends ApplicationAssignmentSection<ApplicationRefereeReassignmentProcessor> {
+public class ApplicationReferee extends ApplicationAdvertRelationSection implements ProfileReferee<Application>, UserAssignment<ApplicationRefereeReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -29,7 +31,7 @@ public class ApplicationReferee extends ApplicationAssignmentSection<Application
 
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, updatable = false, insertable = false)
-    private Application application;
+    private Application association;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -54,23 +56,23 @@ public class ApplicationReferee extends ApplicationAssignmentSection<Application
     private DateTime lastUpdatedTimestamp;
 
     @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
     public Integer getId() {
         return id;
     }
 
     @Override
-    public Application getApplication() {
-        return application;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override
-    public void setApplication(Application application) {
-        this.application = application;
+    public Application getAssociation() {
+        return association;
+    }
+
+    @Override
+    public void setAssociation(Application application) {
+        this.association = application;
     }
 
     @Override
@@ -127,24 +129,19 @@ public class ApplicationReferee extends ApplicationAssignmentSection<Application
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
-    public ApplicationReferee withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public ApplicationReferee withUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    public ApplicationReferee withApplication(Application application) {
-        this.application = application;
-        return this;
-    }
-
     @Override
     public Class<ApplicationRefereeReassignmentProcessor> getUserReassignmentProcessor() {
         return ApplicationRefereeReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("association", getAssociation()).addProperty("user", getUser());
     }
 
 }

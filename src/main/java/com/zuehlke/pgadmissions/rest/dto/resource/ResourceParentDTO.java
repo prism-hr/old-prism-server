@@ -16,8 +16,6 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     @Valid
     private ResourceDTO parentResource;
 
-    private Integer workflowPropertyConfigurationVersion;
-
     @NotEmpty
     private String name;
 
@@ -36,16 +34,6 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     @Override
     public void setParentResource(ResourceDTO parentResource) {
         this.parentResource = parentResource;
-    }
-
-    @Override
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        return workflowPropertyConfigurationVersion;
-    }
-
-    @Override
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
-        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     @Override

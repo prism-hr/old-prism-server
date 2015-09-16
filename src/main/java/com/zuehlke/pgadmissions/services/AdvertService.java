@@ -131,7 +131,7 @@ public class AdvertService {
     private StateService stateService;
 
     @Inject
-    private AddressService geocodableLocationService;
+    private AddressService addressService;
 
     @Inject
     private AdvertMapper advertMapper;
@@ -797,32 +797,16 @@ public class AdvertService {
         return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 
-    private Address createAddress(AddressDTO addressDTO) {
-        Address address = new Address();
-        updateAddress(addressDTO, address);
-        return address;
-    }
-
     private void updateAddress(Advert advert, AddressDTO addressDTO) {
         Address address = advert.getAddress();
         if (address == null) {
-            address = createAddress(addressDTO);
+            address = new Address();
+            addressService.copyAddress(address, addressDTO, advert.getName());
             entityService.save(address);
             advert.setAddress(address);
         } else {
-            updateAddress(addressDTO, address);
+            addressService.copyAddress(address, addressDTO, advert.getName());
         }
-        geocodableLocationService.setLocation(addressDTO.getGoogleId(), advert.getName(), address);
-    }
-
-    private void updateAddress(AddressDTO addressDTO, Address address) {
-        address.setDomicile(entityService.getById(ImportedDomicile.class, addressDTO.getDomicile().getId()));
-        address.setAddressLine1(addressDTO.getAddressLine1());
-        address.setAddressLine2(addressDTO.getAddressLine2());
-        address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressRegion(addressDTO.getAddressRegion());
-        address.setAddressCode(addressDTO.getAddressCode());
-        address.setGoogleId(addressDTO.getGoogleId());
     }
 
     private Address getResourceAddress(Resource resource) {

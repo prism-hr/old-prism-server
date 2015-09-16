@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.interceptors;
 
+import static com.zuehlke.pgadmissions.utils.PrismDiagnosticUtils.getRequestErrorLogMessage;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,7 +15,6 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
 public class PrismExceptionResolver extends AbstractHandlerExceptionResolver {
 
@@ -28,7 +29,6 @@ public class PrismExceptionResolver extends AbstractHandlerExceptionResolver {
         view.setExtractValueFromSingleKeyModel(true);
         ModelAndView modelAndView = new ModelAndView(view);
         if (ex instanceof AuthenticationException) {
-            // should be handled by Spring Security filters
             return null;
         }
 
@@ -38,7 +38,8 @@ public class PrismExceptionResolver extends AbstractHandlerExceptionResolver {
         } catch (Exception e) {
             log.error("Couldn't get current user because of " + e.getClass() + ": " + e.getMessage());
         }
-        log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser), ex);
+
+        log.error(getRequestErrorLogMessage(request, currentUser), ex);
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return modelAndView;
     }

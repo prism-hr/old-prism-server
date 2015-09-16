@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -54,7 +54,7 @@ public class ApplicationDownloadService {
     @Inject
     private ApplicationContext applicationContext;
 
-    public void build(ApplicationRepresentationExport application, PropertyLoader propertyLoader,
+    public void build(ApplicationRepresentationExtended application, PropertyLoader propertyLoader,
             ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper, final OutputStream outputStream) {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
@@ -103,7 +103,7 @@ public class ApplicationDownloadService {
                 try {
                     applicationContext.getBean(ApplicationDownloadBuilder.class)
                             .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))
-                            .build(applicationMapper.getApplicationRepresentationExport(application, overridingRoles), pdfDocument, pdfWriter);
+                            .build(applicationMapper.getApplicationRepresentationExtended(application, overridingRoles), pdfDocument, pdfWriter);
                 } catch (PdfDocumentBuilderException e) {
                     logger.error("Error building download for application " + application.getCode(), e);
                 }

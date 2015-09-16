@@ -67,12 +67,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -722,15 +722,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public boolean isApplicationInterviewScheduledConfirmedComment() {
         return action.getId().equals(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
-    }
-
-    public boolean isUserCreationComment() {
-        for (CommentAssignedUser assignee : assignedUsers) {
-            if (assignee.getRoleTransitionType().equals(CREATE) && assignee.getUser().getPassword() == null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isStateTransitionComment() {

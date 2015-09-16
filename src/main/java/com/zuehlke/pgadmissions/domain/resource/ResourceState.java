@@ -14,7 +14,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity

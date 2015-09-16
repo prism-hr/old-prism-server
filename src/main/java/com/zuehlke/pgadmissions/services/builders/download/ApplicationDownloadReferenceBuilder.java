@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -47,7 +47,7 @@ public class ApplicationDownloadReferenceBuilder {
     @Inject
     private DocumentService documentService;
 
-    public byte[] build(ApplicationRepresentationExport application, CommentRepresentation commentRepresentation) {
+    public byte[] build(ApplicationRepresentationExtended application, CommentRepresentation commentRepresentation) {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -67,7 +67,7 @@ public class ApplicationDownloadReferenceBuilder {
         }
     }
 
-    public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, ApplicationRepresentationExport application,
+    public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, ApplicationRepresentationExtended application,
             CommentRepresentation referenceComment) throws Exception {
         String rowTitle = propertyLoader.loadLazy(SYSTEM_COMMENT_HEADER);
 

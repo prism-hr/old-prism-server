@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -123,21 +122,6 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
-
-    @Column(name = "last_reminded_request_individual")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestIndividual;
-
-    @Column(name = "last_reminded_request_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestSyndicated;
-
-    @Column(name = "last_notified_update_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedUpdateSyndicated;
-
-    @Column(name = "workflow_property_configuration_version")
-    private Integer workflowPropertyConfigurationVersion;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
@@ -548,36 +532,6 @@ public class Institution extends ResourceParent implements TargetEntity {
     }
 
     @Override
-    public LocalDate getLastRemindedRequestIndividual() {
-        return lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
-        this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public LocalDate getLastRemindedRequestSyndicated() {
-        return lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
-        this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public LocalDate getLastNotifiedUpdateSyndicated() {
-        return lastNotifiedUpdateSyndicated;
-    }
-
-    @Override
-    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
-        this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
-    }
-
-    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -585,17 +539,7 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }
-
-    @Override
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        return workflowPropertyConfigurationVersion;
-    }
-
-    @Override
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
-        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
-    }
+    }   
 
     @Override
     public EntitySignature getEntitySignature() {

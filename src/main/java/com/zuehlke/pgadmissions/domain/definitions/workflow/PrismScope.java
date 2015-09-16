@@ -7,13 +7,13 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;

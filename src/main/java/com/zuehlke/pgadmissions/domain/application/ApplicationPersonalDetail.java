@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.application;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,22 +12,22 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
 
 @Entity
 @Table(name = "application_personal_detail")
-public class ApplicationPersonalDetail extends ApplicationSection {
+public class ApplicationPersonalDetail extends ApplicationSection implements ProfilePersonalDetail<Application> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @OneToOne(mappedBy = "personalDetail")
-    private Application application;
+    private Application association;
 
     @ManyToOne
     @JoinColumn(name = "imported_title_id")
@@ -37,10 +36,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @ManyToOne
     @JoinColumn(name = "imported_gender_id")
     private ImportedEntitySimple gender;
-
-    @Column(name = "date_of_birth", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate dateOfBirth;
 
     @ManyToOne
     @JoinColumn(name = "imported_age_range_id")
@@ -54,9 +49,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @JoinColumn(name = "imported_nationality_id")
     private ImportedDomicile nationality;
 
-    @Column(name = "first_language_locale")
-    private Boolean firstLanguageLocale;
-
     @Column(name = "visa_required")
     private Boolean visaRequired;
 
@@ -68,27 +60,32 @@ public class ApplicationPersonalDetail extends ApplicationSection {
     @Size(max = 50)
     private String phone;
 
-    @Embedded
-    private ApplicationDemographic demographic;
+    @ManyToOne
+    @JoinColumn(name = "imported_ethnicity_id")
+    private ImportedEntitySimple ethnicity;
+
+    @ManyToOne
+    @JoinColumn(name = "imported_disability_id")
+    private ImportedEntitySimple disability;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    public Integer getId() {
+        return id;
+    }
+    
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public Integer getId() {
-        return id;
+    public Application getAssociation() {
+        return association;
     }
 
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
+    public void setAssociation(Application association) {
+        this.association = association;
     }
 
     public ImportedEntitySimple getTitle() {
@@ -105,14 +102,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
 
     public void setGender(ImportedEntitySimple gender) {
         this.gender = gender;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
     }
 
     public ImportedAgeRange getAgeRange() {
@@ -139,14 +128,6 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.nationality = nationality;
     }
 
-    public Boolean getFirstLanguageLocale() {
-        return firstLanguageLocale;
-    }
-
-    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
-        this.firstLanguageLocale = firstLanguageLocale;
-    }
-
     public Boolean getVisaRequired() {
         return visaRequired;
     }
@@ -171,12 +152,20 @@ public class ApplicationPersonalDetail extends ApplicationSection {
         this.skype = skype;
     }
 
-    public ApplicationDemographic getDemographic() {
-        return demographic;
+    public ImportedEntitySimple getEthnicity() {
+        return ethnicity;
     }
 
-    public void setDemographic(ApplicationDemographic demographic) {
-        this.demographic = demographic;
+    public void setEthnicity(ImportedEntitySimple ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    public ImportedEntitySimple getDisability() {
+        return disability;
+    }
+
+    public void setDisability(ImportedEntitySimple disability) {
+        this.disability = disability;
     }
 
     @Override

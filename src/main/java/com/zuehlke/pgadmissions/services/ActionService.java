@@ -79,7 +79,7 @@ public class ActionService {
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
         resource = resourceService.getOperativeResource(resource, action);
-        if (checkActionAvailable(resource, action, comment.getUser(), comment.getDeclinedResponse())) {
+        if (checkActionExecutable(resource, action, comment.getUser(), comment.getDeclinedResponse())) {
             return;
         }
         throw new WorkflowPermissionException(resource, action);

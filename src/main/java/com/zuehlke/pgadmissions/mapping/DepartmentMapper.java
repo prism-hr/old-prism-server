@@ -8,7 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.rest.representation.resource.DepartmentRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentDivisionRepresentation;
 

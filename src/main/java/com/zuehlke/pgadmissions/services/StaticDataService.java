@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+import static java.util.Collections.singletonMap;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -54,8 +55,9 @@ import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
+import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.WorkflowConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.OpportunityCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
@@ -252,7 +254,16 @@ public class StaticDataService {
         for (PrismScopeSectionDefinition section : PrismScopeSectionDefinition.values()) {
             sectionDefinitions.add(ImmutableMap.of("id", section, "explanationDisplayProperty", section.getIncompleteExplanation()));
         }
-        return Collections.singletonMap("requiredSections", sectionDefinitions);
+        return singletonMap("requiredSections", sectionDefinitions);
+    }
+
+    public Map<String, Object> getWorkflowConstraints() {
+        List<Object> constraintDefinitions = Lists.newArrayList();
+        for (PrismWorkflowConstraint constraint : PrismWorkflowConstraint.values()) {
+            constraintDefinitions.add(new WorkflowConstraintRepresentation().withConstraint(constraint).withMinimumPermitted(constraint.getMinimumPermitted())
+                    .withMaximumPermitted(constraint.getMaximumPermitted()));
+        }
+        return singletonMap("workflowConstraints", constraintDefinitions);
     }
 
     @SuppressWarnings("unchecked")

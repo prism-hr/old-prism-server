@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
@@ -70,8 +69,8 @@ public class ImportedEntityService {
         entityService.flush();
     }
 
-    public ImportedAgeRange getAgeRange(Institution institution, Integer age) {
-        return importedEntityDAO.getAgeRange(institution, age);
+    public ImportedAgeRange getAgeRange(Integer age) {
+        return importedEntityDAO.getAgeRange(age);
     }
 
     public void deleteImportedEntityTypes() {

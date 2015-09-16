@@ -10,12 +10,10 @@ import java.util.List;
 
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
@@ -76,29 +73,6 @@ public class ProgramDAO {
                 .list();
     }
 
-    public List<String> getSuggestedDivisions(Program program, String location) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("studyDetail.studyDivision")) //
-                .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("studyDetail.studyLocation", location)) //
-                .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceStudyLocation.class) //
-                        .setProjection(Projections.property("studyLocation")) //
-                        .add(Restrictions.eq("program", program)))) //
-                .list();
-    }
-
-    public List<String> getSuggestedStudyAreas(Program program, String location, String division) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("studyDetail.studyArea")) //
-                .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("studyDetail.studyLocation", location)) //
-                .add(Restrictions.eq("studyDetail.studyDivision", division)) //
-                .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceStudyLocation.class) //
-                        .setProjection(Projections.property("studyLocation")) //
-                        .add(Restrictions.eq("program", program)))) //
-                .list();
-    }
-
     public List<Integer> getProjects(Integer program) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.property("id")) //
@@ -112,5 +86,5 @@ public class ProgramDAO {
                 .add(Restrictions.eq("program.id", program)) //
                 .list();
     }
-    
+
 }

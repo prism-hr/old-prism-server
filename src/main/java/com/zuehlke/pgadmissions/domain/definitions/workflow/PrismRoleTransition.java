@@ -16,8 +16,6 @@ public class PrismRoleTransition {
 
     private Integer maximumPermitted;
 
-    private PrismWorkflowPropertyDefinition propertyDefinition;
-
     public PrismRole getRole() {
         return role;
     }
@@ -44,10 +42,6 @@ public class PrismRoleTransition {
 
     public Integer getMaximumPermitted() {
         return maximumPermitted;
-    }
-
-    public final PrismWorkflowPropertyDefinition getPropertyDefinition() {
-        return propertyDefinition;
     }
 
     public PrismRoleTransition withRole(PrismRole role) {
@@ -80,14 +74,15 @@ public class PrismRoleTransition {
         return this;
     }
 
-    public PrismRoleTransition withPropertyDefinition(PrismWorkflowPropertyDefinition propertyDefinition) {
-        this.propertyDefinition = propertyDefinition;
+    public PrismRoleTransition withPropertyDefinition(PrismWorkflowConstraint propertyDefinition) {
+        this.minimumPermitted = propertyDefinition.getMinimumPermitted();
+        this.maximumPermitted = propertyDefinition.getMaximumPermitted();
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, transitionType, transitionRole, restrictToActionOwner, minimumPermitted, maximumPermitted, propertyDefinition);
+        return Objects.hashCode(role, transitionType, transitionRole, restrictToActionOwner, minimumPermitted, maximumPermitted);
     }
 
     @Override
@@ -101,8 +96,7 @@ public class PrismRoleTransition {
         final PrismRoleTransition other = (PrismRoleTransition) obj;
         return Objects.equal(role, other.getRole()) && Objects.equal(transitionType, other.getTransitionType())
                 && Objects.equal(transitionRole, other.getTransitionRole()) && Objects.equal(restrictToActionOwner, other.getRestrictToActionOwner())
-                && Objects.equal(minimumPermitted, other.getMinimumPermitted()) && Objects.equal(maximumPermitted, other.getMaximumPermitted())
-                && Objects.equal(propertyDefinition, other.getPropertyDefinition());
+                && Objects.equal(minimumPermitted, other.getMinimumPermitted()) && Objects.equal(maximumPermitted, other.getMaximumPermitted());
     }
 
 }

@@ -31,7 +31,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAcces
 import java.util.Collections;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
 
 public enum PrismReportColumn {
 
@@ -64,7 +64,7 @@ public enum PrismReportColumn {
 
     private String column;
 
-    private List<PrismWorkflowPropertyDefinition> definitions;
+    private List<PrismWorkflowConstraint> definitions;
 
     private boolean hasRedactions;
 
@@ -72,7 +72,7 @@ public enum PrismReportColumn {
 
     private PrismReportColumnAccessorType accessorType;
 
-    private PrismReportColumn(PrismDisplayPropertyDefinition title, String column, List<PrismWorkflowPropertyDefinition> definitions,
+    private PrismReportColumn(PrismDisplayPropertyDefinition title, String column, List<PrismWorkflowConstraint> definitions,
             boolean hasRedactions, String accessor, PrismReportColumnAccessorType accessorType) {
         this.title = title;
         this.column = column;
@@ -90,8 +90,8 @@ public enum PrismReportColumn {
         return column;
     }
 
-    public final List<PrismWorkflowPropertyDefinition> getDefinitions() {
-        return definitions == null ? Collections.<PrismWorkflowPropertyDefinition> emptyList() : definitions;
+    public final List<PrismWorkflowConstraint> getDefinitions() {
+        return definitions == null ? Collections.<PrismWorkflowConstraint> emptyList() : definitions;
     }
 
     public boolean isHasRedactions() {

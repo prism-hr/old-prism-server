@@ -138,7 +138,7 @@ public class InstitutionService {
         }
 
         try {
-            geocodableLocationService.setGeocodeLocation(institution.getName(), institution.getAdvert().getAddress());
+            geocodableLocationService.geocodeAddressAsLocation(institution.getAdvert().getAddress(), institution.getName());
         } catch (Exception e) {
             logger.error("Could not set geocoded location for institution ID: " + institutionId, e);
         }

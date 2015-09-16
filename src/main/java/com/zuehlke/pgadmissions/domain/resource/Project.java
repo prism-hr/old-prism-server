@@ -21,7 +21,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -31,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -142,21 +140,6 @@ public class Project extends ResourceOpportunity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
 
-    @Column(name = "last_reminded_request_individual")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestIndividual;
-
-    @Column(name = "last_reminded_request_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastRemindedRequestSyndicated;
-
-    @Column(name = "last_notified_update_syndicated")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedUpdateSyndicated;
-
-    @Column(name = "workflow_property_configuration_version")
-    private Integer workflowPropertyConfigurationVersion;
-
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -167,11 +150,6 @@ public class Project extends ResourceOpportunity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private Set<ResourceStudyOption> instanceGroups = Sets.newHashSet();
-
-    @OrderBy(clause = "study_location")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "project_id")
-    private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -490,36 +468,6 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public LocalDate getLastRemindedRequestIndividual() {
-        return lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
-        this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
-    }
-
-    @Override
-    public LocalDate getLastRemindedRequestSyndicated() {
-        return lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
-        this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
-    }
-
-    @Override
-    public LocalDate getLastNotifiedUpdateSyndicated() {
-        return lastNotifiedUpdateSyndicated;
-    }
-
-    @Override
-    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
-        this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
-    }
-
-    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -537,21 +485,6 @@ public class Project extends ResourceOpportunity {
     @Override
     public void setInstanceGroups(Set<ResourceStudyOption> instanceGroups) {
         this.instanceGroups = instanceGroups;
-    }
-
-    @Override
-    public Set<ResourceStudyLocation> getStudyLocations() {
-        return studyLocations;
-    }
-
-    @Override
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        return workflowPropertyConfigurationVersion;
-    }
-
-    @Override
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
-        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     @Override

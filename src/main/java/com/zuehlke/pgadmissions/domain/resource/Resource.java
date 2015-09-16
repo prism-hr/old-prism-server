@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -82,22 +81,6 @@ public abstract class Resource implements UniqueEntity {
     public abstract DateTime getUpdatedTimestamp();
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
-
-    public abstract LocalDate getLastRemindedRequestIndividual();
-
-    public abstract void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual);
-
-    public abstract LocalDate getLastRemindedRequestSyndicated();
-
-    public abstract void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated);
-
-    public abstract LocalDate getLastNotifiedUpdateSyndicated();
-
-    public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
-
-    public abstract Integer getWorkflowPropertyConfigurationVersion();
-
-    public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion);
 
     public abstract String getSequenceIdentifier();
 

@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_CURRENT_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_HEADER;
@@ -113,7 +114,6 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAdditionalInformationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDemographicRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationDocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationEmploymentPositionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
@@ -121,7 +121,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationQualificationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRefereeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExport;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
@@ -148,7 +148,7 @@ public class ApplicationDownloadBuilder {
     @Inject
     private ApplicationContext applicationContext;
 
-    public void build(ApplicationRepresentationExport application, Document pdfDocument, PdfWriter writer) throws PdfDocumentBuilderException {
+    public void build(ApplicationRepresentationExtended application, Document pdfDocument, PdfWriter writer) throws PdfDocumentBuilderException {
         try {
             addCoverPage(application, pdfDocument, writer);
             writer.setPageEvent(new NewPageEvent().withApplication(application));
@@ -172,7 +172,7 @@ public class ApplicationDownloadBuilder {
         return this;
     }
 
-    private void addCoverPage(ApplicationRepresentationExport application, Document pdfDocument, PdfWriter writer) throws Exception {
+    private void addCoverPage(ApplicationRepresentationExtended application, Document pdfDocument, PdfWriter writer) throws Exception {
         pdfDocument.newPage();
         addLogoImage(pdfDocument);
 
@@ -197,7 +197,7 @@ public class ApplicationDownloadBuilder {
         pdfDocument.newPage();
     }
 
-    private void addProgramSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
+    private void addProgramSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_HEADER));
         addApplicationSummary(application, body, MEDIUM);
 
@@ -219,7 +219,7 @@ public class ApplicationDownloadBuilder {
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
-    private void addPersonalDetailSection(ApplicationRepresentationExport application, Document pdfDocument)
+    private void addPersonalDetailSection(ApplicationRepresentationExtended application, Document pdfDocument)
             throws Exception {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_HEADER));
 
@@ -256,23 +256,16 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(
                     propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL), getImportedEntityAsString(personalDetail.getNationality()), body);
 
-            ApplicationDemographicRepresentation demographic = personalDetail.getDemographic();
-            if (demographic != null) {
-                appendEqualOpportunitiesSection(personalDetail.getDemographic(), body);
-            }
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL),
+                    getImportedEntityAsString(personalDetail.getEthnicity()), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL),
+                    getImportedEntityAsString(personalDetail.getDisability()), body);
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
     }
 
-    private void appendEqualOpportunitiesSection(ApplicationDemographicRepresentation demographic, PdfPTable body) throws Exception {
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL),
-                getImportedEntityAsString(demographic.getEthnicity()), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL),
-                getImportedEntityAsString(demographic.getDisability()), body);
-    }
-
-    private void addAddressSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
+    private void addAddressSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
         ApplicationAddressRepresentation address = application.getAddress();
 
         if (address != null) {
@@ -295,7 +288,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addQualificationSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
+    private void addQualificationSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
         List<ApplicationQualificationRepresentation> qualifications = application.getQualifications();
 
         if (!qualifications.isEmpty()) {
@@ -306,12 +299,10 @@ public class ApplicationDownloadBuilder {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_SUBHEADER) + "("
                         + counter++ + ")");
 
-                String dateFormat = propertyLoader.loadLazy(SYSTEM_DATE_FORMAT);
-
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_PROVIDER_PROGRAM_LABEL),
                         qualification.getResource().getDisplayName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_QUALIFICATION_START_DATE_LABEL),
-                        qualification.getStartDate().toString(dateFormat), subBody);
+                        qualification.getStartDateDisplay(), subBody);
 
                 boolean completed = BooleanUtils.isTrue(qualification.getCompleted());
 
@@ -323,7 +314,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(
                         propertyLoader.loadLazy(APPLICATION_QUALIFICATION_CONFIRMED_AWARD_DATE_LABEL, APPLICATION_QUALIFICATION_EXPECTED_AWARD_DATE_LABEL,
                                 completed),
-                        qualification.getAwardDate().toString(dateFormat), subBody);
+                        qualification.getAwardDateDisplay(), subBody);
 
                 DocumentRepresentation proofOfAward = qualification.getDocument();
                 if (proofOfAward != null) {
@@ -336,7 +327,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addEmploymentSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
+    private void addEmploymentSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
         List<ApplicationEmploymentPositionRepresentation> positions = application.getEmploymentPositions();
 
         if (!positions.isEmpty()) {
@@ -347,23 +338,21 @@ public class ApplicationDownloadBuilder {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_SUBHEADER) + "("
                         + counter++ + ")");
 
-                String dateFormat = propertyLoader.loadLazy(SYSTEM_DATE_FORMAT);
-
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSTIION_POSITION_EMPLOYER_LABEL),
                         position.getResource().getDisplayName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_START_DATE_LABEL),
-                        position.getStartDate().toString(dateFormat), subBody);
+                        position.getStartDateDisplay(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_CURRENT_LABEL),
                         propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, position.getCurrent()), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL),
-                        position.getEndDate().toString(dateFormat), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL), position.getEndDateDisplay(),
+                        subBody);
 
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }
         }
     }
 
-    private void addReferencesSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
+    private void addReferencesSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
         List<ApplicationRefereeRepresentation> referees = application.getReferees();
 
         if (!referees.isEmpty()) {
@@ -399,11 +388,13 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addDocumentSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
+    private void addDocumentSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
         ApplicationDocumentRepresentation document = application.getDocument();
 
         if (document != null) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_DOCUMENT_HEADER));
+
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL), document.getPersonalSummary(), body);
 
             DocumentRepresentation cv = document.getCv();
             if (cv != null) {
@@ -422,7 +413,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addAdditionalInformationSection(ApplicationRepresentationExport application, Document pdfDocument) throws Exception {
+    private void addAdditionalInformationSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
         ApplicationAdditionalInformationRepresentation additionalInformation = application.getAdditionalInformation();
 
         if (additionalInformation != null) {
@@ -435,7 +426,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addSupportingDocuments(ApplicationRepresentationExport application, Document pdfDocument, PdfWriter pdfWriter) throws Exception {
+    private void addSupportingDocuments(ApplicationRepresentationExtended application, Document pdfDocument, PdfWriter pdfWriter) throws Exception {
         int index = 0;
         for (Map.Entry<String, Bookmark<?>> entry : bookmarks.entrySet()) {
             pdfDocument.newPage();
@@ -494,7 +485,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addApplicationSummary(ApplicationRepresentationExport application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize)
+    private void addApplicationSummary(ApplicationRepresentationExtended application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize)
             throws Exception {
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.loadLazy(SYSTEM_INSTITUTION), application.getInstitution().getName(), fontSize, table);
 
@@ -521,7 +512,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addApplicationSummaryExtended(ApplicationRepresentationExport application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize)
+    private void addApplicationSummaryExtended(ApplicationRepresentationExtended application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize)
             throws Exception {
         addApplicationSummary(application, table, fontSize);
 
@@ -542,7 +533,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private <T> void addBookmark(ApplicationRepresentationExport application, Bookmark<T> bookmark, PdfPTable table, String rowTitle) throws Exception {
+    private <T> void addBookmark(ApplicationRepresentationExtended application, Bookmark<T> bookmark, PdfPTable table, String rowTitle) throws Exception {
         table.addCell(applicationDownloadBuilderHelper.newTitleCellMedium(rowTitle));
         T content = bookmark.getContent();
         if (content == null) {
@@ -564,7 +555,7 @@ public class ApplicationDownloadBuilder {
 
     private class NewPageEvent extends PdfPageEventForwarder {
 
-        private ApplicationRepresentationExport application;
+        private ApplicationRepresentationExtended application;
 
         private boolean applyHeaderFooter = true;
 
@@ -610,7 +601,7 @@ public class ApplicationDownloadBuilder {
             this.applyHeaderFooter = applyHeader;
         }
 
-        public NewPageEvent withApplication(ApplicationRepresentationExport application) {
+        public NewPageEvent withApplication(ApplicationRepresentationExtended application) {
             this.application = application;
             return this;
         }

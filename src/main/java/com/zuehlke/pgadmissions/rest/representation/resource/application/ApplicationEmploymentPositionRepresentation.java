@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
+
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 
@@ -11,11 +12,15 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
 
     private ResourceRepresentationActivity resource;
 
-    private LocalDate startDate;
+    private Integer startYear;
+
+    private Integer startMonth;
+
+    private Integer endYear;
+
+    private Integer endMonth;
 
     private Boolean current;
-
-    private LocalDate endDate;
 
     public Integer getId() {
         return id;
@@ -33,12 +38,36 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         this.resource = resource;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public Integer getStartYear() {
+        return startYear;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
+    }
+
+    public Integer getStartMonth() {
+        return startMonth;
+    }
+
+    public void setStartMonth(Integer startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public Integer getEndYear() {
+        return endYear;
+    }
+
+    public void setEndYear(Integer endYear) {
+        this.endYear = endYear;
+    }
+
+    public Integer getEndMonth() {
+        return endMonth;
+    }
+
+    public void setEndMonth(Integer endMonth) {
+        this.endMonth = endMonth;
     }
 
     public Boolean getCurrent() {
@@ -47,14 +76,6 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
 
     public void setCurrent(Boolean current) {
         this.current = current;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     public ApplicationEmploymentPositionRepresentation withId(Integer id) {
@@ -67,8 +88,23 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public ApplicationEmploymentPositionRepresentation withStartYear(Integer startYear) {
+        this.startYear = startYear;
+        return this;
+    }
+
+    public ApplicationEmploymentPositionRepresentation withStartMonth(Integer startMonth) {
+        this.startMonth = startMonth;
+        return this;
+    }
+
+    public ApplicationEmploymentPositionRepresentation withEndYear(Integer endYear) {
+        this.endYear = endYear;
+        return this;
+    }
+
+    public ApplicationEmploymentPositionRepresentation withEndMonth(Integer endMonth) {
+        this.endMonth = endMonth;
         return this;
     }
 
@@ -77,14 +113,17 @@ public class ApplicationEmploymentPositionRepresentation extends ApplicationSect
         return this;
     }
 
-    public ApplicationEmploymentPositionRepresentation withEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-        return this;
-    }
-
     public ApplicationEmploymentPositionRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
+    }
+
+    public String getStartDateDisplay() {
+        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
+    }
+
+    public String getEndDateDisplay() {
+        return endYear == null ? null : endMonth.toString() + BACK_SLASH + endYear.toString();
     }
 
 }

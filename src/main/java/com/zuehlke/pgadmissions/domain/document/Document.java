@@ -67,7 +67,7 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     @OneToOne(mappedBy = "document")
     private ApplicationQualification applicationQualification;
-
+    
     @OneToOne(mappedBy = "cv")
     private ApplicationDocument applicationCv;
 
@@ -219,11 +219,11 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
         if (comment != null) {
             return comment.getResource();
         } else if (applicationQualification != null) {
-            return applicationQualification.getApplication();
+            return applicationQualification.getAssociation();
         } else if (applicationCoveringLetter != null) {
-            return applicationCoveringLetter.getApplication();
+            return applicationCoveringLetter.getAssociation();
         } else if (applicationCv != null) {
-            return applicationCv.getApplication();
+            return applicationCv.getAssociation();
         } else {
             return null;
         }

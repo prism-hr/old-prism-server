@@ -29,9 +29,18 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
+import com.zuehlke.pgadmissions.domain.user.UserEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.user.UserReferee;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
@@ -44,6 +53,7 @@ import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
 import com.zuehlke.pgadmissions.rest.validation.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ProfileService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -64,6 +74,9 @@ public class UserController {
 
     @Inject
     private UserMapper userMapper;
+
+    @Inject
+    private ProfileService profileService;
 
     @Inject
     private ResourceListFilterService resourceListFilterService;
@@ -204,6 +217,71 @@ public class UserController {
     @InitBinder(value = "userLinkingDTO")
     public void configureUserLinkingBinding(WebDataBinder binder) {
         binder.setValidator(userLinkingValidator);
+    }
+
+    @RequestMapping(value = "/{userId}/personalDetail", method = RequestMethod.PUT)
+    public void savePersonalDetail(@PathVariable Integer userId, @Valid @RequestBody ProfilePersonalDetailDTO personalDetailDTO) throws Exception {
+        profileService.updatePersonalDetailUser(userId, personalDetailDTO);
+    }
+
+    @RequestMapping(value = "/{userId}/address", method = RequestMethod.PUT)
+    public void saveAddress(@PathVariable Integer userId, @Valid @RequestBody ProfileAddressDTO addressDTO) throws Exception {
+        profileService.updateAddressUser(userId, addressDTO);
+    }
+
+    @RequestMapping(value = "/{userId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
+    public void updateQualification(@PathVariable Integer userId, @PathVariable Integer qualificationId,
+            @Valid @RequestBody ProfileQualificationDTO qualificationDTO) throws Exception {
+        profileService.updateQualificationUser(userId, qualificationId, qualificationDTO);
+    }
+
+    @RequestMapping(value = "/{userId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
+    public void deleteQualification(@PathVariable Integer userId, @PathVariable Integer qualificationId) throws Exception {
+        profileService.deleteQualificationUser(userId, qualificationId);
+    }
+
+    @RequestMapping(value = "/{userId}/employmentPositions", method = RequestMethod.POST)
+    public Map<String, Object> createEmploymentPosition(@PathVariable Integer userId,
+            @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
+        UserEmploymentPosition employmentPosition = profileService.updateEmploymentPositionUser(userId, null, employmentPositionDTO);
+        return ImmutableMap.of("id", (Object) employmentPosition.getId());
+    }
+
+    @RequestMapping(value = "/{userId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
+    public void updateEmploymentPosition(@PathVariable Integer userId, @PathVariable Integer employmentPositionId,
+            @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
+        profileService.updateEmploymentPositionUser(userId, employmentPositionId, employmentPositionDTO);
+    }
+
+    @RequestMapping(value = "/{userId}/referees", method = RequestMethod.POST)
+    public Map<String, Object> createReferee(@PathVariable Integer userId, @Valid @RequestBody ProfileRefereeDTO refereeDTO) throws Exception {
+        UserReferee referee = profileService.updateRefereeUser(userId, null, refereeDTO);
+        return ImmutableMap.of("id", (Object) referee.getId());
+    }
+
+    @RequestMapping(value = "/{userId}/referees/{refereeId}", method = RequestMethod.PUT)
+    public void deleteReferee(@PathVariable Integer userId, @PathVariable Integer refereeId, @Valid @RequestBody ProfileRefereeDTO refereeDTO) throws Exception {
+        profileService.updateRefereeUser(userId, refereeId, refereeDTO);
+    }
+
+    @RequestMapping(value = "/{userId}/employmentPositions/{employmentPositionId}", method = RequestMethod.DELETE)
+    public void deleteEmploymentPosition(@PathVariable Integer userId, @PathVariable Integer employmentPositionId) throws Exception {
+        profileService.deleteEmploymentPositionUser(userId, employmentPositionId);
+    }
+
+    @RequestMapping(value = "/{userId}/referees/{refereeId}", method = RequestMethod.DELETE)
+    public void updateReferee(@PathVariable Integer userId, @PathVariable Integer refereeId) throws Exception {
+        profileService.deleteRefereeUser(userId, refereeId);
+    }
+
+    @RequestMapping(value = "/{userId}/document", method = RequestMethod.PUT)
+    public void saveDocument(@PathVariable Integer userId, @Valid @RequestBody ProfileDocumentDTO documentDTO) throws Exception {
+        profileService.updateDocumentUser(userId, documentDTO);
+    }
+
+    @RequestMapping(value = "/{userId}/additionalInformation", method = RequestMethod.PUT)
+    public void saveAdditionalInformation(@PathVariable Integer userId, @Valid @RequestBody ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
+        profileService.updateAdditionalInformationUser(userId, additionalInformationDTO);
     }
 
 }

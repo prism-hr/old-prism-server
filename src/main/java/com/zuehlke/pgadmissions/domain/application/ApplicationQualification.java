@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.application;
 
+import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,17 +11,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
 
 @Entity
-@Table(name = "application_qualification")
-public class ApplicationQualification extends ApplicationAdvertRelationSection {
+@Table(name = "application_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })
+public class ApplicationQualification extends ApplicationAdvertRelationSection implements ProfileQualification<Application> {
 
     @Id
     @GeneratedValue
@@ -27,19 +30,23 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection {
 
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
-    private Application application;
+    private Application association;
 
     @ManyToOne
     @JoinColumn(name = "advert_id")
     private Advert advert;
 
-    @Column(name = "start_date", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate startDate;
+    @Column(name = "start_year", nullable = false)
+    private Integer startYear;
 
-    @Column(name = "award_date", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate awardDate;
+    @Column(name = "start_month", nullable = false)
+    private Integer startMonth;
+
+    @Column(name = "award_year", nullable = false)
+    private Integer awardYear;
+
+    @Column(name = "award_month", nullable = false)
+    private Integer awardMonth;
 
     @Column(name = "grade", nullable = false)
     private String grade;
@@ -63,28 +70,12 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection {
         this.id = id;
     }
 
-    public Application getApplication() {
-        return application;
+    public Application getAssociation() {
+        return association;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
-    public Document getDocument() {
-        return document;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
-    }
-
-    public LocalDate getAwardDate() {
-        return awardDate;
-    }
-
-    public void setAwardDate(LocalDate awardDate) {
-        this.awardDate = awardDate;
+    public void setAssociation(Application association) {
+        this.association = association;
     }
 
     @Override
@@ -97,6 +88,38 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection {
         this.advert = advert;
     }
 
+    public Integer getStartYear() {
+        return startYear;
+    }
+
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
+    }
+
+    public Integer getStartMonth() {
+        return startMonth;
+    }
+
+    public void setStartMonth(Integer startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public Integer getAwardYear() {
+        return awardYear;
+    }
+
+    public void setAwardYear(Integer awardYear) {
+        this.awardYear = awardYear;
+    }
+
+    public Integer getAwardMonth() {
+        return awardMonth;
+    }
+
+    public void setAwardMonth(Integer awardMonth) {
+        this.awardMonth = awardMonth;
+    }
+
     public String getGrade() {
         return grade;
     }
@@ -105,20 +128,20 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection {
         this.grade = grade;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
     public Boolean getCompleted() {
         return completed;
     }
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     @Override
@@ -131,52 +154,17 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
-    public ApplicationQualification withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public ApplicationQualification withStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-        return this;
-    }
-
-    public ApplicationQualification withAwardDate(LocalDate awardDate) {
-        this.awardDate = awardDate;
-        return this;
-    }
-
-    public ApplicationQualification withGrade(String grade) {
-        this.grade = grade;
-        return this;
-    }
-
-    public ApplicationQualification withDocument(Document document) {
-        this.document = document;
-        return this;
-    }
-
-    public ApplicationQualification withAdvert(Advert advert) {
-        this.advert = advert;
-        return this;
-    }
-
-    public ApplicationQualification withApplication(Application application) {
-        this.application = application;
-        return this;
-    }
-
-    public ApplicationQualification withCompleted(Boolean completed) {
-        this.completed = completed;
-        return this;
-    }
-
     public String getStartDateDisplay(String dateFormat) {
-        return startDate == null ? null : startDate.toString(dateFormat);
+        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
     }
 
     public String getAwardDateDisplay(String dateFormat) {
-        return awardDate == null ? null : awardDate.toString(dateFormat);
+        return awardYear == null ? null : awardMonth.toString() + BACK_SLASH + awardYear.toString();
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("startYear", startYear);
     }
 
 }

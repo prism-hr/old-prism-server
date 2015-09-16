@@ -6,7 +6,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 
 public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowPropertyConfigurationValueDTO> {
@@ -16,7 +16,7 @@ public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowProperty
     public static class WorkflowPropertyConfigurationValueDTO extends WorkflowConfigurationDTO {
 
         @NotNull
-        private PrismWorkflowPropertyDefinition definitionId;
+        private PrismWorkflowConstraint definitionId;
 
         private Boolean enabled;
 
@@ -30,11 +30,11 @@ public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowProperty
         @Max(999)
         private Integer maximum;
 
-        public PrismWorkflowPropertyDefinition getDefinitionId() {
+        public PrismWorkflowConstraint getDefinitionId() {
             return definitionId;
         }
 
-        public void setDefinitionId(PrismWorkflowPropertyDefinition definitionId) {
+        public void setDefinitionId(PrismWorkflowConstraint definitionId) {
             this.definitionId = definitionId;
         }
 
@@ -70,7 +70,7 @@ public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowProperty
             this.maximum = maximum;
         }
 
-        public WorkflowPropertyConfigurationValueDTO withDefinition(PrismWorkflowPropertyDefinition definitionId) {
+        public WorkflowPropertyConfigurationValueDTO withDefinition(PrismWorkflowConstraint definitionId) {
             setDefinitionId(definitionId);
             return this;
         }

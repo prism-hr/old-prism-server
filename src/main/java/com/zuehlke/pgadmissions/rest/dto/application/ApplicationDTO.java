@@ -13,18 +13,6 @@ public class ApplicationDTO extends ResourceCreationDTO {
 
     private PrismOpportunityCategory opportunityCategory;
 
-    private Integer workflowPropertyConfigurationVersion;
-
-    @Override
-    public Integer getWorkflowPropertyConfigurationVersion() {
-        return workflowPropertyConfigurationVersion;
-    }
-
-    @Override
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
-        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
-    }
-
     @Override
     public ResourceDTO getParentResource() {
         return parentResource;

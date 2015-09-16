@@ -52,7 +52,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.NotificationService;
@@ -316,11 +315,9 @@ public class SystemInitialisationHelper {
                     .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
-                WorkflowPropertyDefinition workflowPropertyDefinition = roleTransition.getWorkflowPropertyDefinition();
                 PrismRoleTransition prismRoleTransition = new PrismRoleTransition().withRole(roleTransition.getRole().getId())
                         .withTransitionType(roleTransition.getRoleTransitionType()).withTransitionRole(roleTransition.getTransitionRole().getId())
-                        .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted())
-                        .withPropertyDefinition(workflowPropertyDefinition == null ? null : workflowPropertyDefinition.getId());
+                        .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted());
                 prismRoleTransition.setRestrictToActionOwner(roleTransition.getRestrictToActionOwner());
                 prismStateTransition.getRoleTransitions().add(prismRoleTransition);
             }

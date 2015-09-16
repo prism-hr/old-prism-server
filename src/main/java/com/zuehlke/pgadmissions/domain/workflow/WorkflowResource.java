@@ -4,12 +4,12 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 
 public abstract class WorkflowResource implements UniqueEntity {
 

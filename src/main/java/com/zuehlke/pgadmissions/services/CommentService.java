@@ -45,7 +45,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -327,7 +327,7 @@ public class CommentService {
 
     private void appendDocuments(Comment comment, CommentDTO commentDTO) {
         List<Integer> documentIds = Lists.newArrayList();
-        for (FileDTO fileDTO : commentDTO.getDocuments()) {
+        for (DocumentDTO fileDTO : commentDTO.getDocuments()) {
             Integer documentId = fileDTO.getId();
             if (!documentIds.contains(documentId)) {
                 comment.addDocument(documentService.getById(fileDTO.getId(), DOCUMENT));

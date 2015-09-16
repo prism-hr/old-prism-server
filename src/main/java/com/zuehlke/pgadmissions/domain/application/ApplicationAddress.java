@@ -13,17 +13,18 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
 
 @Entity
 @Table(name = "application_address")
-public class ApplicationAddress extends ApplicationSection {
+public class ApplicationAddress extends ApplicationSection implements ProfileAddress<Application> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @OneToOne(mappedBy = "address")
-    private Application application;
+    private Application association;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "current_address_id", nullable = false)
@@ -45,12 +46,12 @@ public class ApplicationAddress extends ApplicationSection {
         this.id = id;
     }
 
-    public Application getApplication() {
-        return application;
+    public Application getAssociation() {
+        return association;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    public void setAssociation(Application association) {
+        this.association = association;
     }
 
     public Address getCurrentAddress() {
@@ -77,20 +78,6 @@ public class ApplicationAddress extends ApplicationSection {
     @Override
     public void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
-    }
-
-    public boolean currentAddressIsContactAddress() {
-        return currentAddress == contactAddress;
-    }
-
-    public ApplicationAddress withCurrentAddress(Address Address) {
-        this.currentAddress = Address;
-        return this;
-    }
-
-    public ApplicationAddress withContactAddress(Address Address) {
-        this.contactAddress = Address;
-        return this;
     }
 
 }

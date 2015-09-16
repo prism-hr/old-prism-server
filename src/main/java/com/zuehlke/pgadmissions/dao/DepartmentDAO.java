@@ -9,7 +9,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 
 @Repository
 @SuppressWarnings("unchecked")

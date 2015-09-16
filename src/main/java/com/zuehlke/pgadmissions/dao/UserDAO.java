@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
@@ -54,7 +55,7 @@ import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -73,7 +74,7 @@ public class UserDAO {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("email", email)) //
-                .add(Restrictions.eq("userAccount.password", EncryptionUtils.getMD5(password))) //
+                .add(Restrictions.eq("userAccount.password", PrismEncryptionUtils.getMD5(password))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
     }
@@ -486,6 +487,14 @@ public class UserDAO {
                 .addOrder(Order.asc("application.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationAppointmentDTO.class)) //
                 .list();
+    }
+
+    public String getOauthProfileUrl(User user, PrismOauthProvider provider) {
+        return (String) sessionFactory.getCurrentSession().createCriteria(UserAccountExternal.class) //
+                .setProjection(Projections.property("accountProfileUrl")) //
+                .add(Restrictions.eq("userAccount", user.getUserAccount())) //
+                .add(Restrictions.eq("accountType", provider)) //
+                .uniqueResult();
     }
 
     private Junction getSystemActivityNotificationLastSentConstraint(LocalDate lastNotifiedBaseline) {

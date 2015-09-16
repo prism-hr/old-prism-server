@@ -47,14 +47,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -370,44 +367,6 @@ public class ResourceDAO {
                 .list();
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceOpportunity resource,
-            ImportedEntitySimple studyOption) {
-        return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession()
-                .createCriteria(ResourceStudyOptionInstance.class) //
-                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("studyOption." + resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("studyOption.studyOption", studyOption)) //
-                .addOrder(Order.asc("applicationStartDate")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public void deleteElapsedStudyOptions(LocalDate baseline) {
-        sessionFactory.getCurrentSession()
-                .createQuery( //
-                        "delete ResourceStudyOption " //
-                                + "where applicationCloseDate < :baseline") //
-                .setParameter("baseline", baseline) //
-                .executeUpdate();
-    }
-
-    public void deleteElapsedStudyOptionInstances(LocalDate baseline) {
-        sessionFactory.getCurrentSession()
-                .createQuery( //
-                        "delete ResourceStudyOptionInstance " //
-                                + "where applicationCloseDate < :baseline") //
-                .setParameter("baseline", baseline) //
-                .executeUpdate();
-    }
-
-    public LocalDate getResourceEndDate(ResourceOpportunity resource) {
-        return (LocalDate) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
-                .setProjection(Projections.property("applicationCloseDate")) //
-                .addOrder(Order.desc("applicationCloseDate")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
     public DateTime getLatestUpdatedTimestampSitemap(PrismScope resourceScope, List<PrismState> scopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
@@ -488,11 +447,13 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public void disableImportedResourceStudyOptions(ResourceOpportunity resourceOpportunity) {
+    public void deleteResourceStudyOptions(ResourceOpportunity resourceOpportunity) {
         String propertyName = resourceOpportunity.getResourceScope().getLowerCamelName();
         sessionFactory.getCurrentSession()
-                .createQuery("delete ResourceStudyOption " + "where " + propertyName + " = :resourceOpportunity")
-                .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
+                .createQuery("delete ResourceStudyOption " //
+                        + "where " + propertyName + " = :resourceOpportunity")
+                .setParameter("resourceOpportunity", resourceOpportunity) //
+                .executeUpdate();
     }
 
     public ResourceStandardDTO getParentResources(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope, Integer resourceId, List<PrismScope> parentScopes) {
@@ -551,16 +512,6 @@ public class ResourceDAO {
         return (List<ResourceChildCreationDTO>) criteria.addOrder(Order.desc("name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
                 .list();
-    }
-
-    public void disableImportedResourceStudyOptionInstances(ResourceOpportunity resourceOpportunity) {
-        String propertyName = resourceOpportunity.getResourceScope().getLowerCamelName();
-        sessionFactory.getCurrentSession()
-                .createQuery("delete ResourceStudyOptionInstance " + "where studyOption in ("
-                        + "select resourceStudyOption.id " + "from ResourceStudyOption as resourceStudyOption "
-                        + "join resourceStudyOption." + propertyName + " as program "
-                        + "where program = :resourceOpportunity)")
-                .setParameter("resourceOpportunity", resourceOpportunity).executeUpdate();
     }
 
     public List<ResourceTargetDTO> getResourceTargets(PrismScope[] resourceScopes, Collection<Integer> resourceIds, Collection<PrismState> activeStates) {

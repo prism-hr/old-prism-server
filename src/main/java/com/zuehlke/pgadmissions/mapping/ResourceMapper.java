@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.mapping;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
 import static com.zuehlke.pgadmissions.PrismConstants.GEOCODING_PRECISION;
-import static com.zuehlke.pgadmissions.PrismConstants.TARGETING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -59,12 +58,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDef
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
-import com.zuehlke.pgadmissions.domain.resource.department.Department;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
@@ -101,7 +99,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceStudyOptionInstanceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
@@ -308,7 +305,7 @@ public class ResourceMapper {
 
         BigDecimal targetingDistance = resource.getTargetingDistance();
         if (targetingDistance != null) {
-            representation.setDistance(targetingDistance.setScale(TARGETING_PRECISION, HALF_UP));
+            representation.setDistance(targetingDistance.setScale(GEOCODING_PRECISION, HALF_UP));
         }
 
         representation.setSelected(resource.getSelected());
@@ -364,7 +361,6 @@ public class ResourceMapper {
         representation.setTimeline(commentMapper.getCommentTimelineRepresentation(resource, currentUser, overridingRoles));
         representation.setUserRoles(roleMapper.getResourceUserRoleRepresentations(resource));
 
-        representation.setWorkflowConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
         representation.setConditions(getResourceConditionRepresentations(resource));
         return representation;
     }
@@ -422,7 +418,7 @@ public class ResourceMapper {
         representation.setOpportunityType(PrismOpportunityType.valueOf(resource.getOpportunityType().getName()));
         representation.setOpportunityCategory(PrismOpportunityCategory.valueOf(resource.getOpportunityCategories()));
         representation.setStudyOptions(studyOptions);
-        representation.setStudyLocations(resourceService.getStudyLocations(resource));
+
         representation.setDurationMinimum(resource.getDurationMinimum());
         representation.setDurationMaximum(resource.getDurationMaximum());
         return representation;
@@ -464,9 +460,9 @@ public class ResourceMapper {
         } else if (Department.class.equals(resourceClass)) {
             return departmentMapper.getDepartmentRepresentation((Department) resource, overridingRoles);
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
-            return getResourceOpportunityRepresentation((ResourceOpportunity) resource, ResourceOpportunityRepresentationClient.class, overridingRoles);
+            return getResourceOpportunityRepresentation((ResourceOpportunity) resource, ResourceOpportunityRepresentation.class, overridingRoles);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
-            return applicationMapper.getApplicationRepresentationExport((Application) resource, overridingRoles);
+            return applicationMapper.getApplicationRepresentationExtended((Application) resource, overridingRoles);
         }
 
         return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
@@ -578,12 +574,6 @@ public class ResourceMapper {
             index.put(new ResourceProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
         }
         return index;
-    }
-
-    public ResourceStudyOptionInstanceRepresentation getResourceStudyOptionInstanceRepresentation(ResourceStudyOptionInstance resourceStudyOptionInstance) {
-        return new ResourceStudyOptionInstanceRepresentation().withApplicationStartDate(resourceStudyOptionInstance.getApplicationStartDate())
-                .withApplicationCloseDate(resourceStudyOptionInstance.getApplicationCloseDate())
-                .withBusinessYear(resourceStudyOptionInstance.getBusinessYear()).withIdentifier(resourceStudyOptionInstance.getIdentifier());
     }
 
     public List<ResourceConditionRepresentation> getResourceConditionRepresentations(Resource resource) {
@@ -726,10 +716,6 @@ public class ResourceMapper {
         setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
 
         Class<T> resourceClass = (Class<T>) resource.getClass();
-        if (resourceClass.equals(Application.class)) {
-            representation.setApplicationIdentified(((Application) resource).getIdentified());
-        }
-
         if (ResourceParent.class.isAssignableFrom(resourceClass) && actionService.getRedactions(resource, userService.getCurrentUser(), overridingRoles).isEmpty()) {
             representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
             representation.setOpportunityRatingAverage(((ResourceParent) resource).getOpportunityRatingAverage());

@@ -10,31 +10,40 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
+
 @Entity
 @Table(name = "application_additional_information")
-public class ApplicationAdditionalInformation extends ApplicationSection {
+public class ApplicationAdditionalInformation extends ApplicationSection implements ProfileAdditionalInformation<Application> {
 
     @Id
     @GeneratedValue
     private Integer id;
 
+    @OneToOne(mappedBy = "additionalInformation")
+    private Application association;
+
     @Column(name = "convictions_text")
     private String convictionsText;
-
-    @OneToOne(mappedBy = "additionalInformation")
-    private Application application;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    public Integer getId() {
+        return id;
+    }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public Integer getId() {
-        return id;
+    public Application getAssociation() {
+        return association;
+    }
+
+    public void setAssociation(Application application) {
+        this.association = application;
     }
 
     public String getConvictionsText() {
@@ -43,29 +52,6 @@ public class ApplicationAdditionalInformation extends ApplicationSection {
 
     public void setConvictionsText(String convictionsText) {
         this.convictionsText = convictionsText;
-    }
-
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
-    public ApplicationAdditionalInformation withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public ApplicationAdditionalInformation withConvictionsText(String convictionsText) {
-        this.convictionsText = convictionsText;
-        return this;
-    }
-
-    public ApplicationAdditionalInformation withApplication(Application application) {
-        this.application = application;
-        return this;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class AdvertRepresentationSimple {
 
     private AddressRepresentation address;
 
-    private AdvertFinancialDetailsRepresentation financialDetails;
+    private AdvertFinancialDetailRepresentation pay;
 
     private AdvertClosingDateRepresentation closingDate;
 
@@ -99,12 +99,12 @@ public class AdvertRepresentationSimple {
         this.address = address;
     }
 
-    public AdvertFinancialDetailsRepresentation getFinancialDetails() {
-        return financialDetails;
+    public AdvertFinancialDetailRepresentation getPay() {
+        return pay;
     }
 
-    public void setFinancialDetails(AdvertFinancialDetailsRepresentation financialDetails) {
-        this.financialDetails = financialDetails;
+    public void setPay(AdvertFinancialDetailRepresentation pay) {
+        this.pay = pay;
     }
 
     public AdvertClosingDateRepresentation getClosingDate() {

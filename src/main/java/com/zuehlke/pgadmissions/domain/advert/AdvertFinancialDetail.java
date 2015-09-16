@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.advert;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,29 +12,41 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 @Embeddable
 public class AdvertFinancialDetail {
 
+    @Column(name = "pay_interval")
     @Enumerated(EnumType.STRING)
     private PrismDurationUnit interval;
 
+    @Column(name = "pay_currency_specified")
     private String currencySpecified;
 
+    @Column(name = "pay_currency_at_locale")
     private String currencyAtLocale;
 
+    @Column(name = "month_pay_minimum_specified")
     private BigDecimal monthMinimumSpecified;
 
+    @Column(name = "month_pay_maximum_specified")
     private BigDecimal monthMaximumSpecified;
 
+    @Column(name = "year_pay_minimum_specified")
     private BigDecimal yearMinimumSpecified;
 
+    @Column(name = "year_pay_maximum_specified")
     private BigDecimal yearMaximumSpecified;
 
+    @Column(name = "month_pay_minimum_at_locale")
     private BigDecimal monthMinimumAtLocale;
 
+    @Column(name = "month_pay_maximum_at_locale")
     private BigDecimal monthMaximumAtLocale;
 
+    @Column(name = "year_pay_minimum_at_locale")
     private BigDecimal yearMinimumAtLocale;
 
+    @Column(name = "year_pay_maximum_at_locale")
     private BigDecimal yearMaximumAtLocale;
 
+    @Column(name = "pay_converted")
     private Boolean converted;
 
     public PrismDurationUnit getInterval() {

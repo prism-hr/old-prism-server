@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.LEARNING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 
@@ -12,19 +10,17 @@ import com.google.common.collect.LinkedListMultimap;
 
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
-public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>, PrismLocalizableDefinition {
+public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>,PrismLocalizableDefinition {
 
-    STUDY_UNDERGRADUATE(STUDY), //
-    STUDY_POSTGRADUATE_TAUGHT(STUDY), //
-    STUDY_POSTGRADUATE_RESEARCH(STUDY), //
-    SCHOLARSHIP_UNDERGRADUATE(FUNDING), //
-    SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING), //
-    SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING), //
-    WORK_EXPERIENCE(EXPERIENCE), //
-    VOLUNTEERING(EXPERIENCE), //
-    EMPLOYMENT(WORK), //
-    EMPLOYMENT_SECONDMENT(WORK), //
-    TRAINING(LEARNING); //
+    STUDY_UNDERGRADUATE(false, STUDY), //
+    STUDY_POSTGRADUATE_TAUGHT(false, STUDY), //
+    STUDY_POSTGRADUATE_RESEARCH(false, STUDY), //
+    WORK_EXPERIENCE(true, EXPERIENCE), //
+    VOLUNTEERING(true, EXPERIENCE), //
+    EMPLOYMENT(true, WORK), //
+    EMPLOYMENT_SECONDMENT(true, WORK); //
+
+    private boolean published;
 
     private PrismOpportunityCategory category;
 
@@ -36,13 +32,13 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
         }
     }
 
-    private PrismOpportunityType(PrismOpportunityCategory category) {
+    private PrismOpportunityType(boolean published, PrismOpportunityCategory category) {
+        this.published = published;
         this.category = category;
     }
 
-    @Override
-    public uk.co.alumeni.prism.enums.PrismOpportunityType getDefinition() {
-        return uk.co.alumeni.prism.enums.PrismOpportunityType.valueOf(name());
+    public boolean isPublished() {
+        return published;
     }
 
     public PrismOpportunityCategory getCategory() {
@@ -54,7 +50,12 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     }
 
     public static PrismOpportunityType getSystemOpportunityType() {
-        return STUDY_POSTGRADUATE_RESEARCH;
+        return EMPLOYMENT;
+    }
+
+    @Override
+    public uk.co.alumeni.prism.enums.PrismOpportunityType getDefinition() {
+        return uk.co.alumeni.prism.enums.PrismOpportunityType.valueOf(name());
     }
 
     @Override

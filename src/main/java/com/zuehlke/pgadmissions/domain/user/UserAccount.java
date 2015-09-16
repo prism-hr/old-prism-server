@@ -91,6 +91,13 @@ public class UserAccount
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+    
+    @Column(name = "updated_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
+
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
 
     @OneToMany(mappedBy = "userAccount")
     @MapKeyJoinColumn(name = "scope_id")
@@ -217,6 +224,22 @@ public class UserAccount
         this.enabled = enabled;
     }
 
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
+
     public Map<Scope, ResourceListFilter> getFilters() {
         return filters;
     }
@@ -235,6 +258,16 @@ public class UserAccount
         return this;
     }
 
+    public UserAccount withUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+        return this;
+    }
+    
+    public UserAccount withSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+        return this;
+    }
+    
     public UserAccount withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;

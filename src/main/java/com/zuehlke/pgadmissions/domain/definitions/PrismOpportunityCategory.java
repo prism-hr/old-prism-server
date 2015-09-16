@@ -2,27 +2,18 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismOpportunityCategory implements PrismLocalizableDefinition {
 
-    STUDY(true, true), //
-    FUNDING(false, true), //
-    EXPERIENCE(false, true), //
-    WORK(false, true), //
-    LEARNING(true, false);
+    STUDY(false), //
+    EXPERIENCE(true), //
+    WORK(true);
 
-    private boolean hasFee;
+    private boolean published;
 
-    private boolean hasPay;
-
-    PrismOpportunityCategory(boolean hasFee, boolean hasPay) {
-        this.hasFee = hasFee;
-        this.hasPay = hasPay;
+    private PrismOpportunityCategory(boolean published) {
+        this.published = published;
     }
 
-    public boolean isHasFee() {
-        return hasFee;
-    }
-
-    public boolean isHasPay() {
-        return hasPay;
+    public boolean isPublished() {
+        return published;
     }
 
     @Override

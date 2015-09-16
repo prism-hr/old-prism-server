@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
@@ -46,7 +47,7 @@ import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
 @Service
 @Transactional
-public class AuthenticationService {
+public class UserAccountService {
 
     public static final String OAUTH_USER_TO_CONFIRM = "oauthUserToConfirm";
 
@@ -84,14 +85,14 @@ public class AuthenticationService {
 
     public String requestToken(HttpSession session, PrismOauthProvider oauthProvider) {
         switch (oauthProvider) {
-            case TWITTER:
-                TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-                OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
-                OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
-                session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
-                return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
-            default:
-                throw new Error("Requesting token not supported for: " + oauthProvider);
+        case TWITTER:
+            TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
+            OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
+            OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
+            session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
+            return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
+        default:
+            throw new Error("Requesting token not supported for: " + oauthProvider);
         }
     }
 
@@ -100,16 +101,16 @@ public class AuthenticationService {
         OauthUserDefinition oauthUserDefinition = getOauthUserDefinition(oauthProvider, oauthLoginDTO, session);
 
         switch (oauthAssociationType) {
-            case ASSOCIATE_CURRENT_USER:
-                return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition);
-            case ASSOCIATE_NEW_USER:
-                return oauthAssociateNewUser(oauthProvider, oauthUserDefinition, session);
-            case ASSOCIATE_SPECIFIED_USER:
-                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition);
-            case AUTHENTICATE:
-                return oauthAuthenticate(oauthProvider, oauthUserDefinition);
-            default:
-                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+        case ASSOCIATE_CURRENT_USER:
+            return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition);
+        case ASSOCIATE_NEW_USER:
+            return oauthAssociateNewUser(oauthProvider, oauthUserDefinition, session);
+        case ASSOCIATE_SPECIFIED_USER:
+            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition);
+        case AUTHENTICATE:
+            return oauthAuthenticate(oauthProvider, oauthUserDefinition);
+        default:
+            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 
@@ -168,24 +169,30 @@ public class AuthenticationService {
         entityService.delete(accountToUnlink);
         return userAccount.getPrimaryExternalAccount();
     }
+    
+    public void updateUserAccount(UserAccount userAccount) {
+        DateTime baseline = DateTime.now();
+        userAccount.setUpdatedTimestamp(baseline);
+        userAccount.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
+    }
 
     private OauthUserDefinition getOauthUserDefinition(PrismOauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthUserDefinition definition;
         switch (oauthProvider) {
-            case FACEBOOK:
-                definition = getFacebookUserDefinition(oauthLoginDTO);
-                break;
-            case LINKEDIN:
-                definition = getLinkedinUserDefinition(oauthLoginDTO);
-                break;
-            case GOOGLE:
-                definition = getGoogleUserDefinition(oauthLoginDTO);
-                break;
-            case TWITTER:
-                definition = getTwitterUserDefinition(oauthLoginDTO, session);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown Oauth provider: " + oauthProvider);
+        case FACEBOOK:
+            definition = getFacebookUserDefinition(oauthLoginDTO);
+            break;
+        case LINKEDIN:
+            definition = getLinkedinUserDefinition(oauthLoginDTO);
+            break;
+        case GOOGLE:
+            definition = getGoogleUserDefinition(oauthLoginDTO);
+            break;
+        case TWITTER:
+            definition = getTwitterUserDefinition(oauthLoginDTO, session);
+            break;
+        default:
+            throw new UnsupportedOperationException("Unknown Oauth provider: " + oauthProvider);
         }
         return definition.withOauthProvider(oauthProvider);
     }
@@ -303,12 +310,13 @@ public class AuthenticationService {
     }
 
     private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
-        UserAccount userAccount;
+        DateTime baseline = DateTime.now();
         String encryptedPassword = password != null ? PrismEncryptionUtils.getMD5(password) : null;
-        userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withEnabled(enableAccount);
+        UserAccount userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withUpdatedTimestamp(baseline)
+                .withEnabled(enableAccount);
         entityService.save(userAccount);
         user.setUserAccount(userAccount);
-        return userAccount;
+        return userAccount.withSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
     }
 
     private void createExternalUserAccount(UserAccount userAccount, OauthUserDefinition oauthUserDefinition) {

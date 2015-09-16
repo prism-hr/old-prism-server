@@ -6,8 +6,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActi
 import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.EMPLOYERS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.UNIVERSITIES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.LEARNING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STAGE;
@@ -122,12 +120,6 @@ public class AdvertDAO {
                         .add(Projections.property("address.googleId").as("addressGoogleId")) //
                         .add(Projections.property("address.addressCoordinates.latitude").as("addressCoordinateLatitude")) //
                         .add(Projections.property("address.addressCoordinates.longitude").as("addressCoordinateLongitude")) //
-                        .add(Projections.property("fee.currencyAtLocale").as("feeCurrency")) //
-                        .add(Projections.property("fee.interval").as("feeInterval")) //
-                        .add(Projections.property("fee.monthMinimumAtLocale").as("feeMonthMinimum")) //
-                        .add(Projections.property("fee.monthMaximumAtLocale").as("feeMonthMaximum")) //
-                        .add(Projections.property("fee.yearMinimumAtLocale").as("feeYearMinimum")) //
-                        .add(Projections.property("fee.yearMaximumAtLocale").as("feeYearMaximum")) //
                         .add(Projections.property("pay.currencyAtLocale").as("payCurrency")) //
                         .add(Projections.property("pay.interval").as("payInterval")) //
                         .add(Projections.property("pay.monthMinimumAtLocale").as("payMonthMinimum")) //
@@ -607,9 +599,7 @@ public class AdvertDAO {
                     .add(Restrictions.like("advert.opportunityCategories", WORK.name(), MatchMode.ANYWHERE)));
         } else if (context.equals(UNIVERSITIES)) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.like("advert.opportunityCategories", STUDY.name(), MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.opportunityCategories", FUNDING.name(), MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.opportunityCategories", LEARNING.name(), MatchMode.ANYWHERE)));
+                    .add(Restrictions.like("advert.opportunityCategories", STUDY.name(), MatchMode.ANYWHERE)));
         }
     }
 

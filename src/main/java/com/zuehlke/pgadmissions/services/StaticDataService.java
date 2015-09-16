@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 
 import java.util.LinkedList;
@@ -34,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -56,6 +57,7 @@ import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation.OpportunityTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.WorkflowConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
@@ -166,8 +168,8 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
-                PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
+        for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertFunction.class,
+                PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -221,18 +223,11 @@ public class StaticDataService {
 
     public Map<String, Object> getOpportunityCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
-
-        List<OpportunityCategoryRepresentation> opportunityCategories = Lists.newArrayListWithCapacity(PrismOpportunityCategory.values().length);
-        for (PrismOpportunityCategory opportunityCategory : PrismOpportunityCategory.values()) {
-            OpportunityCategoryRepresentation category = new OpportunityCategoryRepresentation();
-            category.setId(opportunityCategory);
-            category.setHasFee(opportunityCategory.isHasFee());
-            category.setHasPay(opportunityCategory.isHasPay());
-            category.setOpportunityTypes(PrismOpportunityType.getOpportunityTypes(opportunityCategory));
-            opportunityCategories.add(category);
-        }
-
-        staticData.put("opportunityCategories", opportunityCategories);
+        staticData.put("opportunityCategories",
+                asList(PrismOpportunityCategory.values()).stream()
+                        .map(oc -> new OpportunityCategoryRepresentation(oc, oc.isPublished(),
+                                getOpportunityTypes(oc).stream().map(ot -> new OpportunityTypeRepresentation(ot, ot.isPublished())).collect(Collectors.toList())))
+                        .collect(Collectors.toList()));
         return staticData;
     }
 

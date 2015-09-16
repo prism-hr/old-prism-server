@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
@@ -39,8 +39,8 @@ public class AdvertController {
 
     @RequestMapping(value = "/financialDetails", method = RequestMethod.PUT)
     public void updateFeesAndPayments(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody AdvertFinancialDetailsDTO financialDetailsDTO) {
-        advertService.updateFinancialDetails(resourceDescriptor.getResourceScope(), resourceId, financialDetailsDTO);
+            @Valid @RequestBody AdvertFinancialDetailDTO financialDetailDTO) {
+        advertService.updateFinancialDetails(resourceDescriptor.getResourceScope(), resourceId, financialDetailDTO);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)

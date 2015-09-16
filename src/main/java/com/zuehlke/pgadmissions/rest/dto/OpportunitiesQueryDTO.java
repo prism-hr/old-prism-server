@@ -1,26 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
 public class OpportunitiesQueryDTO {
 
@@ -39,7 +30,7 @@ public class OpportunitiesQueryDTO {
 
     private PrismOpportunityCategory opportunityCategory;
 
-    private PrismScope scope;
+    private OpportunitiesQueryScopeTab tab;
 
     private String keyword;
 
@@ -123,12 +114,12 @@ public class OpportunitiesQueryDTO {
         this.opportunityCategory = opportunityCategory;
     }
 
-    public PrismScope getScope() {
-        return scope;
+    public OpportunitiesQueryScopeTab getTab() {
+        return tab;
     }
 
-    public void setScope(PrismScope scope) {
-        this.scope = scope;
+    public void setTab(OpportunitiesQueryScopeTab tab) {
+        this.tab = tab;
     }
 
     public PrismAdvertContext getContext() {
@@ -306,6 +297,23 @@ public class OpportunitiesQueryDTO {
 
     private String getResourceIdReference(PrismScope resourceScope) {
         return resourceScope.getLowerCamelName() + "Id";
+    }
+
+    public  enum OpportunitiesQueryScopeTab {
+        SCOPE_INSTITUTIONS(INSTITUTION),
+        SCOPE_DEPARTMENTS(DEPARTMENT),
+        MAIN_OPPORTUNITIES(PROGRAM, PROJECT),
+        MAIN_DEPARTMENTS(DEPARTMENT);
+
+        private PrismScope[] scopes;
+
+        OpportunitiesQueryScopeTab(PrismScope... scopes) {
+            this.scopes = scopes;
+        }
+
+        public PrismScope[] getScopes() {
+            return scopes;
+        }
     }
 
 }

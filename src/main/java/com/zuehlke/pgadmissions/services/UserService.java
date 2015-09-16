@@ -31,7 +31,7 @@ import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.persistence.Column;
+import javax.persistence.OneToOne;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
@@ -558,7 +558,7 @@ public class UserService {
     private Set<String> getUserAssignments(Class<?> entityClass, Set<String> userAssignments) {
         userAssignments = userAssignments == null ? Sets.newHashSet() : userAssignments;
         for (Field entityProperty : entityClass.getDeclaredFields()) {
-            if (User.class.isAssignableFrom(entityProperty.getType()) && asList(entityProperty.getDeclaredAnnotations()).contains(Column.class)) {
+            if (User.class.isAssignableFrom(entityProperty.getType()) && !asList(entityProperty.getDeclaredAnnotations()).contains(OneToOne.class)) {
                 userAssignments.add(entityProperty.getName());
             }
         }

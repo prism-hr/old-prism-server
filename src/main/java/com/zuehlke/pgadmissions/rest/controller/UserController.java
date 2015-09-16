@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
@@ -46,6 +47,7 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
@@ -312,6 +314,12 @@ public class UserController {
     @RequestMapping(value = "/{userId}/profile/share", method = RequestMethod.PUT)
     public void shareUserProfile(@PathVariable Integer userId, @RequestParam(required = true) Boolean shareProfile) {
         userAccountService.shareUserProfile(userId, shareProfile);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "profiles", method = RequestMethod.GET)
+    public List<ProfileListRowRepresentation> getUserProfiles(@RequestBody ProfileListFilterDTO filter) {
+        return userMapper.getProfileListRowRepresentations(filter);
     }
 
 }

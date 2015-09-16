@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileAdditionalInformationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileDocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileEmploymentPositionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfilePersonalDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileQualificationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileRefereeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAdditionalInformationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileDocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfilePersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
 
 public class UserProfileRepresentation {
 

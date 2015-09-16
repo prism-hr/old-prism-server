@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
+import static java.math.RoundingMode.HALF_UP;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -28,8 +31,11 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
+import com.zuehlke.pgadmissions.dto.ProfileEntityDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
@@ -77,7 +83,29 @@ public class UserMapper {
     private ScopeMapper scopeMapper;
 
     @Inject
+    private DocumentMapper documentMapper;
+
+    @Inject
     private ApplicationContext applicationContext;
+
+    public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
+        DateTime updatedBaseline = DateTime.now().minusDays(1);
+        List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
+        userService.getUserProfiles(filter).forEach(u -> {
+            representations.add(new ProfileListRowRepresentation()
+                    .withRaisesUpdateFlag(u.getUpdatedTimestamp().isAfter(updatedBaseline))
+                    .withUser(getUserRepresentationSimple(u))
+                    .withPersonalSummary(u.getPersonalSummary())
+                    .withCv(u.getCvId() == null ? null : documentMapper.getDocumentRepresentation(u.getCvId()))
+                    .withLinkedInProfileUrl(u.getLinkedInProfileUrl())
+                    .withApplicationCount(u.getApplicationCount() == null ? null : u.getApplicationCount().intValue())
+                    .withApplicationRatingCount(u.getApplicationRatingCount() == null ? null : u.getApplicationRatingCount().intValue())
+                    .withApplicationRatingAverage(u.getApplicationRatingAverage() == null ? null : u.getApplicationRatingAverage().setScale(RATING_PRECISION, HALF_UP))
+                    .withUpdatedTimestamp(u.getUpdatedTimestamp())
+                    .withSequenceIdentifier(u.getSequenceIdentifier()));
+        });
+        return representations;
+    }
 
     public UserRepresentationSimple getUserRepresentationSimple(User user) {
         return getUserRepresentation(user, UserRepresentationSimple.class);
@@ -192,6 +220,18 @@ public class UserMapper {
                 .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees())).withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
                 .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation()))
                 .withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
+    }
+
+    public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity) {
+        UserRepresentationSimple representation = new UserRepresentationSimple();
+        representation.setId(profileEntity.getUserId());
+        representation.setFirstName(profileEntity.getUserFirstName());
+        representation.setFirstName2(profileEntity.getUserFirstName2());
+        representation.setFirstName3(profileEntity.getUserFirstName3());
+        representation.setLastName(profileEntity.getUserLastName());
+        representation.setEmail(profileEntity.getUserEmail());
+        representation.setAccountImageUrl(profileEntity.getUserAccountImageUrl());
+        return representation;
     }
 
     private List<ConnectionActivityRepresentation> getUnverifiedUserRepresentations(User user) {

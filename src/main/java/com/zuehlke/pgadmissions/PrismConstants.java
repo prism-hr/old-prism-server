@@ -19,6 +19,8 @@ public class PrismConstants {
     public static final Integer ADVERT_LIST_PAGE_ROW_COUNT = 25;
 
     public static final Integer RESOURCE_LIST_PAGE_ROW_COUNT = 50;
+    
+    public static final Integer PROFILE_LIST_PAGE_ROW_COUNT = 50;
 
     public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
 

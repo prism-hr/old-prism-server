@@ -107,7 +107,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlot
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -246,16 +245,7 @@ public class ResourceMapper {
             }
 
             representation.setCode(row.getCode());
-
-            UserRepresentationSimple userRepresentation = new UserRepresentationSimple();
-            userRepresentation.setId(row.getUserId());
-            userRepresentation.setFirstName(row.getUserFirstName());
-            userRepresentation.setFirstName2(row.getUserFirstName2());
-            userRepresentation.setFirstName3(row.getUserFirstName3());
-            userRepresentation.setLastName(row.getUserLastName());
-            userRepresentation.setEmail(row.getUserEmail());
-            userRepresentation.setAccountImageUrl(row.getUserAccountImageUrl());
-            representation.setUser(userRepresentation);
+            representation.setUser(userMapper.getUserRepresentationSimple(row));
 
             representation.setApplicationIdentified(row.getApplicationIdentified());
             representation.setApplicationRatingAverage(row.getApplicationRatingAverage());

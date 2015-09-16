@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedHiringManagerRepresentation;
@@ -57,7 +58,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ProfileRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;

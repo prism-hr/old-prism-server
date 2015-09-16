@@ -1,7 +1,8 @@
-package com.zuehlke.pgadmissions.rest.representation.resource.application;
+package com.zuehlke.pgadmissions.rest.representation.profile;
 
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ProfileRefereeRepresentation extends ApplicationSectionRepresentation {

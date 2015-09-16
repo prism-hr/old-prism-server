@@ -1,10 +1,11 @@
-package com.zuehlke.pgadmissions.rest.representation.resource.application;
+package com.zuehlke.pgadmissions.rest.representation.profile;
 
 import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
 
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 
 public class ProfileEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 

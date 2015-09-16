@@ -91,7 +91,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
@@ -233,18 +232,13 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
-    public void updateFinancialDetails(PrismScope resourceScope, Integer resourceId, AdvertFinancialDetailsDTO financialDetailsDTO) {
+    public void updateFinancialDetails(PrismScope resourceScope, Integer resourceId, AdvertFinancialDetailDTO financialDetailDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
         LocalDate baseline = new LocalDate();
         String currencyAtLocale = getCurrencyAtLocale(advert);
-
-        AdvertFinancialDetailDTO feeDTO = financialDetailsDTO.getFee();
-        updateFee(baseline, advert, currencyAtLocale, feeDTO);
-
-        AdvertFinancialDetailDTO payDTO = financialDetailsDTO.getPay();
-        updatePay(baseline, advert, currencyAtLocale, payDTO);
+        updateFinancialDetail(baseline, advert, currencyAtLocale, financialDetailDTO);
 
         advert.setLastCurrencyConversionDate(baseline);
         executeUpdate(resource, "COMMENT_UPDATED_FEE_AND_PAYMENT");
@@ -252,9 +246,8 @@ public class AdvertService {
 
     public void updateFinancialDetails(Advert advert, String newCurrency) {
         Resource resource = advert.getResource();
-        AdvertFinancialDetailDTO feeDTO = getFinancialDetailDTO(advert.getFee(), newCurrency);
-        AdvertFinancialDetailDTO payDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
-        updateFinancialDetails(resource.getResourceScope(), resource.getId(), new AdvertFinancialDetailsDTO().withFee(feeDTO).withPay(payDTO));
+        AdvertFinancialDetailDTO financialDetailDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
+        updateFinancialDetails(resource.getResourceScope(), resource.getId(), financialDetailDTO);
     }
 
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
@@ -323,10 +316,6 @@ public class AdvertService {
     public void updateCurrencyConversion(Integer advertId) {
         Advert advert = getById(advertId);
         LocalDate baseline = new LocalDate();
-
-        if (advert.hasConvertedFee()) {
-            updateConvertedMonetaryValues(advert.getFee(), baseline);
-        }
 
         if (advert.hasConvertedPay()) {
             updateConvertedMonetaryValues(advert.getPay(), baseline);
@@ -700,26 +689,15 @@ public class AdvertService {
                 .forEach(exchangeRates::remove);
     }
 
-    private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO feeDTO) {
-        if (feeDTO == null) {
-            advert.setFee(null);
-            return;
-        }
-        if (advert.getFee() == null) {
-            advert.setFee(new AdvertFinancialDetail());
-        }
-        updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
-    }
-
-    private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO payDTO) {
-        if (payDTO == null) {
+    private void updateFinancialDetail(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO financialDetailDTO) {
+        if (financialDetailDTO == null) {
             advert.setPay(null);
             return;
         }
         if (advert.getPay() == null) {
             advert.setPay(new AdvertFinancialDetail());
         }
-        updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
+        updateFinancialDetails(advert.getPay(), financialDetailDTO, currencyAtLocale, baseline);
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,

@@ -66,7 +66,6 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepre
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
@@ -245,31 +244,15 @@ public class AdvertMapper {
                 .withGoogleId(advert.getAddressGoogleId())
                 .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()).withLongitude(advert.getAddressCoordinateLongitude())));
 
-        String feeCurrency = advert.getFeeCurrency();
         String payCurrency = advert.getPayCurrency();
-        if (!(feeCurrency == null && payCurrency == null)) {
-            AdvertFinancialDetailsRepresentation financialDetailsRepresentation = new AdvertFinancialDetailsRepresentation();
-            if (feeCurrency != null) {
-                PrismDurationUnit feeInterval = advert.getFeeInterval();
-                AdvertFinancialDetailRepresentation feeRepresentation = new AdvertFinancialDetailRepresentation().withCurrency(feeCurrency).withInterval(feeInterval);
+        if (payCurrency != null) {
+            PrismDurationUnit payInterval = advert.getPayInterval();
+            AdvertFinancialDetailRepresentation payRepresentation = new AdvertFinancialDetailRepresentation().withCurrency(payCurrency).withInterval(payInterval);
 
-                boolean byYear = feeInterval.equals(YEAR);
-                feeRepresentation.setMinimum(byYear ? advert.getFeeYearMinimum() : advert.getFeeMonthMinimum());
-                feeRepresentation.setMaximum(byYear ? advert.getFeeYearMaximum() : advert.getFeeMonthMaximum());
-                financialDetailsRepresentation.setFee(feeRepresentation);
-            }
-
-            if (payCurrency != null) {
-                PrismDurationUnit payInterval = advert.getPayInterval();
-                AdvertFinancialDetailRepresentation payRepresentation = new AdvertFinancialDetailRepresentation().withCurrency(payCurrency).withInterval(payInterval);
-
-                boolean byYear = payInterval.equals(YEAR);
-                payRepresentation.setMinimum(byYear ? advert.getPayYearMinimum() : advert.getPayMonthMinimum());
-                payRepresentation.setMaximum(byYear ? advert.getPayYearMaximum() : advert.getPayMonthMaximum());
-                financialDetailsRepresentation.setFee(payRepresentation);
-            }
-
-            representation.setFinancialDetails(financialDetailsRepresentation);
+            boolean byYear = payInterval.equals(YEAR);
+            payRepresentation.setMinimum(byYear ? advert.getPayYearMinimum() : advert.getPayMonthMinimum());
+            payRepresentation.setMaximum(byYear ? advert.getPayYearMaximum() : advert.getPayMonthMaximum());
+            representation.setPay(payRepresentation);
         }
 
         representation.setClosingDate(advert.getClosingDate() != null ? new AdvertClosingDateRepresentation().withClosingDate(advert.getClosingDate()) : null);
@@ -291,7 +274,7 @@ public class AdvertMapper {
 
         representation.setTelephone(advert.getTelephone());
         representation.setAddress(getAdvertAddressRepresentation(advert));
-        representation.setFinancialDetails(getAdvertFinancialDetailsRepresentation(advert));
+        representation.setPay(getAdvertFinancialDetailRepresentation(advert));
 
         representation.setClosingDate(getAdvertClosingDateRepresentation(advert));
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
@@ -344,27 +327,18 @@ public class AdvertMapper {
         return null;
     }
 
-    private AdvertFinancialDetailsRepresentation getAdvertFinancialDetailsRepresentation(Advert advert) {
-        AdvertFinancialDetail fee = advert.getFee();
-        AdvertFinancialDetail pay = advert.getPay();
-        if (!(fee == null && pay == null)) {
-            return new AdvertFinancialDetailsRepresentation().withFee(getAdvertFinancialDetailRepresentation(fee)).withPay(
-                    getAdvertFinancialDetailRepresentation(pay));
-        }
-        return null;
-    }
-
-    private AdvertFinancialDetailRepresentation getAdvertFinancialDetailRepresentation(AdvertFinancialDetail detail) {
-        if (detail != null) {
-            PrismDurationUnit durationUnit = detail.getInterval();
-            AdvertFinancialDetailRepresentation representation = new AdvertFinancialDetailRepresentation().withCurrency(detail.getCurrencySpecified())
-                    .withInterval(detail.getInterval());
+    private AdvertFinancialDetailRepresentation getAdvertFinancialDetailRepresentation(Advert advert) {
+        AdvertFinancialDetail financialDetail = advert.getPay();
+        if (financialDetail != null) {
+            PrismDurationUnit durationUnit = financialDetail.getInterval();
+            AdvertFinancialDetailRepresentation representation = new AdvertFinancialDetailRepresentation().withCurrency(financialDetail.getCurrencySpecified())
+                    .withInterval(financialDetail.getInterval());
             if (durationUnit.equals(YEAR)) {
-                representation.setMinimum(detail.getYearMinimumSpecified());
-                representation.setMaximum(detail.getYearMaximumSpecified());
+                representation.setMinimum(financialDetail.getYearMinimumSpecified());
+                representation.setMaximum(financialDetail.getYearMaximumSpecified());
             } else {
-                representation.setMinimum(detail.getMonthMinimumSpecified());
-                representation.setMaximum(detail.getMonthMaximumSpecified());
+                representation.setMinimum(financialDetail.getMonthMinimumSpecified());
+                representation.setMaximum(financialDetail.getMonthMaximumSpecified());
             }
             return representation;
         }

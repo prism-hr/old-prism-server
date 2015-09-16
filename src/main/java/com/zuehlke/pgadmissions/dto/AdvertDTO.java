@@ -53,18 +53,6 @@ public class AdvertDTO extends ResourceStandardDTO {
 
     private BigDecimal addressCoordinateLongitude;
 
-    private String feeCurrency;
-
-    private PrismDurationUnit feeInterval;
-
-    private BigDecimal feeMonthMinimum;
-
-    private BigDecimal feeMonthMaximum;
-
-    private BigDecimal feeYearMinimum;
-
-    private BigDecimal feeYearMaximum;
-
     private String payCurrency;
 
     private PrismDurationUnit payInterval;
@@ -255,54 +243,6 @@ public class AdvertDTO extends ResourceStandardDTO {
 
     public void setAddressCoordinateLongitude(BigDecimal addressCoordinateLongitude) {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
-    }
-
-    public String getFeeCurrency() {
-        return feeCurrency;
-    }
-
-    public void setFeeCurrency(String feeCurrency) {
-        this.feeCurrency = feeCurrency;
-    }
-
-    public PrismDurationUnit getFeeInterval() {
-        return feeInterval;
-    }
-
-    public void setFeeInterval(PrismDurationUnit feeInterval) {
-        this.feeInterval = feeInterval;
-    }
-
-    public BigDecimal getFeeMonthMinimum() {
-        return feeMonthMinimum;
-    }
-
-    public void setFeeMonthMinimum(BigDecimal feeMonthMinimum) {
-        this.feeMonthMinimum = feeMonthMinimum;
-    }
-
-    public BigDecimal getFeeMonthMaximum() {
-        return feeMonthMaximum;
-    }
-
-    public void setFeeMonthMaximum(BigDecimal feeMonthMaximum) {
-        this.feeMonthMaximum = feeMonthMaximum;
-    }
-
-    public BigDecimal getFeeYearMinimum() {
-        return feeYearMinimum;
-    }
-
-    public void setFeeYearMinimum(BigDecimal feeYearMinimum) {
-        this.feeYearMinimum = feeYearMinimum;
-    }
-
-    public BigDecimal getFeeYearMaximum() {
-        return feeYearMaximum;
-    }
-
-    public void setFeeYearMaximum(BigDecimal feeYearMaximum) {
-        this.feeYearMaximum = feeYearMaximum;
     }
 
     public String getPayCurrency() {

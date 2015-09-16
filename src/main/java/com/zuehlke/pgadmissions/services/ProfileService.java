@@ -111,6 +111,9 @@ public class ProfileService {
     private SystemService systemService;
 
     @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
     private UserService userService;
 
     public void fillApplication(Application application) {
@@ -128,6 +131,7 @@ public class ProfileService {
         UserAccount userAccount = getCurrentUserAccount(userId);
         UserPersonalDetail personalDetail = updatePersonalDetail(userAccount, UserPersonalDetail.class, personalDetailDTO);
         userAccount.setPersonalDetail(personalDetail);
+        userAccountService.updateUserAccount(userAccount);
     }
 
     public void updatePersonalDetailApplication(Integer applicationId, ProfilePersonalDetailDTO personalDetailDTO) throws Exception {
@@ -140,11 +144,12 @@ public class ProfileService {
         LocalDate dateOfBirth = personalDetailDTO.getDateOfBirth();
         userPersonalDetail.setDateOfBirth(personalDetailDTO.getDateOfBirth());
         applicationPersonalDetail.setAgeRange(importedEntityService.getAgeRange(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
-
+        
         userAccount.setPersonalDetail(userPersonalDetail);
+        userAccountService.updateUserAccount(userAccount);
+
         applicationPersonalDetail.setLastUpdatedTimestamp(DateTime.now());
         application.setPersonalDetail(applicationPersonalDetail);
-
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
 
@@ -152,25 +157,28 @@ public class ProfileService {
         UserAccount userAccount = getCurrentUserAccount(userId);
         UserAddress address = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(address);
+        userAccountService.updateUserAccount(userAccount);
     }
 
     public void updateAddressApplication(Integer applicationId, ProfileAddressDTO addressDTO) throws Exception {
         Application application = applicationService.getById(applicationId);
         ApplicationAddress address = updateAddress(application, ApplicationAddress.class, addressDTO);
-
+        
         UserAccount userAccount = application.getUser().getUserAccount();
         UserAddress userAddress = updateAddress(userAccount, UserAddress.class, addressDTO);
-
         userAccount.setAddress(userAddress);
+        userAccountService.updateUserAccount(userAccount);
+
         address.setLastUpdatedTimestamp(DateTime.now());
         application.setAddress(address);
-
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
 
     public UserQualification updateQualificationUser(Integer userId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) throws Exception {
         UserAccount userAccount = getCurrentUserAccount(userId);
-        return updateQualification(userAccount, UserQualification.class, qualificationId, qualificationDTO);
+        UserQualification userQualification = updateQualification(userAccount, UserQualification.class, qualificationId, qualificationDTO);
+        userAccountService.updateUserAccount(userAccount);
+        return userQualification;
     }
 
     public ApplicationQualification updateQualificationApplication(Integer applicationId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) throws Exception {
@@ -182,6 +190,7 @@ public class ProfileService {
                 new EntitySignature().addProperty("userAccount", userAccount).addProperty("advert", qualification.getAdvert()).addProperty("startYear",
                         qualification.getStartYear()));
         updateQualification(userAccount, userQualification == null ? new UserQualification() : userQualification, qualificationDTO);
+        userAccountService.updateUserAccount(userAccount);
 
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
@@ -190,6 +199,7 @@ public class ProfileService {
     public void deleteQualificationUser(Integer userId, Integer qualificationId) throws Exception {
         UserAccount userAccount = getCurrentUserAccount(userId);
         deleteQualification(userAccount, UserQualification.class, qualificationId);
+        userAccountService.updateUserAccount(userAccount);
     }
 
     public void deleteQualificationApplication(Integer applicationId, Integer qualificationId) throws Exception {
@@ -200,7 +210,9 @@ public class ProfileService {
 
     public UserEmploymentPosition updateEmploymentPositionUser(Integer userId, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
         UserAccount userAccount = getCurrentUserAccount(userId);
-        return updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
+        UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
+        userAccountService.updateUserAccount(userAccount);
+        return employmentPosition;
     }
 
     public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
@@ -213,6 +225,7 @@ public class ProfileService {
                 new EntitySignature().addProperty("userAccount", userAccount).addProperty("advert", employmentPosition.getAdvert()).addProperty("startYear",
                         employmentPosition.getStartYear()));
         updateEmploymentPosition(userAccount, userEmploymentPosition == null ? new UserEmploymentPosition() : userEmploymentPosition, employmentPositionDTO);
+        userAccountService.updateUserAccount(userAccount);
 
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
@@ -221,6 +234,7 @@ public class ProfileService {
     public void deleteEmploymentPositionUser(Integer userId, Integer employmentPositionId) throws Exception {
         UserAccount userAccount = getCurrentUserAccount(userId);
         deleteEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId);
+        userAccountService.updateUserAccount(userAccount);
     }
 
     public void deleteEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId) throws Exception {
@@ -231,7 +245,9 @@ public class ProfileService {
 
     public UserReferee updateRefereeUser(Integer userId, Integer refereeId, ProfileRefereeDTO refereeDTO) throws Exception {
         UserAccount userAccount = getCurrentUserAccount(userId);
-        return (UserReferee) updateReferee(userAccount, UserReferee.class, refereeId, refereeDTO).getReferee();
+        UserReferee userReferee = (UserReferee) updateReferee(userAccount, UserReferee.class, refereeId, refereeDTO).getReferee();
+        userAccountService.updateUserAccount(userAccount);
+        return userReferee;
     }
 
     public ApplicationReferee updateRefereeApplication(Integer applicationId, Integer refereeId, ProfileRefereeDTO refereeDTO) throws Exception {
@@ -242,6 +258,7 @@ public class ProfileService {
         UserReferee userReferee = entityService.getDuplicateEntity(UserReferee.class,
                 new EntitySignature().addProperty("userAccount", userAccount).addProperty("user", referee.getReferee().getUser()));
         updateReferee(userAccount, userReferee, refereeDTO);
+        userAccountService.updateUserAccount(userAccount);
 
         List<CommentAssignedUser> assignees = referee.getAssignments();
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
@@ -251,6 +268,7 @@ public class ProfileService {
     public void deleteRefereeUser(Integer userId, Integer refereeId) throws Exception {
         UserAccount userAccount = getCurrentUserAccount(userId);
         deleteReferee(userAccount, UserReferee.class, refereeId);
+        userAccountService.updateUserAccount(userAccount);
     }
 
     public void deleteRefereeApplication(Integer applicationId, Integer refereeId) throws Exception {
@@ -263,15 +281,19 @@ public class ProfileService {
         UserAccount userAccount = getCurrentUserAccount(userId);
         UserDocument document = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(document);
+        userAccountService.updateUserAccount(userAccount);
     }
 
     public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) throws Exception {
         Application application = applicationService.getById(applicationId);
         ApplicationDocument document = updateDocument(application, ApplicationDocument.class, documentDTO);
-
         document.setCoveringLetter(documentService.getById(getDocumentId(documentDTO.getCoveringLetter()), DOCUMENT));
-        document.setLastUpdatedTimestamp(DateTime.now());
 
+        UserAccount userAccount = application.getUser().getUserAccount();
+        updateDocument(userAccount, UserDocument.class, documentDTO);
+        userAccountService.updateUserAccount(userAccount);
+        
+        document.setLastUpdatedTimestamp(DateTime.now());        
         application.setDocument(document);
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
@@ -280,11 +302,18 @@ public class ProfileService {
         UserAccount userAccount = getCurrentUserAccount(userId);
         UserAdditionalInformation additionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(additionalInformation);
+        userAccountService.updateUserAccount(userAccount);
     }
 
     public void updateAdditionalInformationApplication(Integer applicationId, ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
         Application application = applicationService.getById(applicationId);
         ApplicationAdditionalInformation additionalInformation = updateAdditionalInformation(application, ApplicationAdditionalInformation.class, additionalInformationDTO);
+
+        UserAccount userAccount = application.getUser().getUserAccount();
+        updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
+        userAccountService.updateUserAccount(userAccount);
+
+        additionalInformation.setLastUpdatedTimestamp(DateTime.now());
         application.setAdditionalInformation(additionalInformation);
         resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }

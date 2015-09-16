@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.rest.dto.auth.UsernamePasswordLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentation;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
-import com.zuehlke.pgadmissions.services.AuthenticationService;
+import com.zuehlke.pgadmissions.services.UserAccountService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -54,7 +54,7 @@ public class AuthenticationController {
     private AuthenticationTokenHelper authenticationTokenHelper;
 
     @Inject
-    private AuthenticationService authenticationService;
+    private UserAccountService authenticationService;
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -115,7 +115,7 @@ public class AuthenticationController {
 
     private Map<String, Object> generateTokenOrSuggestedDetails(User user, HttpServletRequest request, HttpServletResponse response) {
         if (user == null) {
-            OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(AuthenticationService.OAUTH_USER_TO_CONFIRM);
+            OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(UserAccountService.OAUTH_USER_TO_CONFIRM);
             UserRepresentation suggestedDetails = new UserRepresentation().withFirstName(userDefinition.getFirstName())
                     .withLastName(userDefinition.getLastName()).withEmail(userDefinition.getEmail());
             response.setStatus(HttpStatus.I_AM_A_TEAPOT.value());

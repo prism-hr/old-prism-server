@@ -864,3 +864,33 @@ drop table workflow_property_definition
 
 drop table user_institution_identity
 ;
+
+alter table user_account
+	add column updated_timestamp datetime not null after enabled,
+	add column sequence_identifier varchar(23) not null after updated_timestamp
+;
+
+alter table advert
+	drop column fee_interval,
+	drop column fee_currency_specified,
+	drop column fee_currency_at_locale,
+	drop column month_fee_minimum_specified,
+	drop column month_fee_maximum_specified,
+	drop column year_fee_minimum_specified,
+	drop column year_fee_maximum_specified,
+	drop column month_fee_minimum_at_locale,
+	drop column month_fee_maximum_at_locale,
+	drop column year_fee_minimum_at_locale,
+	drop column year_fee_maximum_at_locale,
+	drop column fee_converted,
+	drop index fee_currency_at_locale,
+	drop index month_fee_minimum_specified,
+	drop index month_fee_maximum_specified,
+	drop index year_fee_minimum_specified,
+	drop index year_fee_maximum_specified,
+	drop index month_fee_minimum_at_locale,
+	drop index month_fee_maximum_at_locale,
+	drop index year_fee_minimum_at_locale,
+	drop index year_fee_maximum_at_locale
+;
+

@@ -14,7 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_ALL_STATES_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
@@ -58,7 +58,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP)); //
 
-        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 
@@ -66,7 +66,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
         stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
 
         stateActions.add(applicationWithdrawSubmitted(APPLICATION_APPROVER_GROUP, //
-                APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
     }
@@ -86,7 +86,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
     }
 
     public static PrismStateAction applicationTerminateApproval() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_HIRING_MANAGER_GROUP);
@@ -99,7 +99,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 
     public static PrismStateAction applicationWithdrawApproval() {
         return applicationWithdrawSubmitted(APPLICATION_APPROVER_GROUP, //
-                APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_HIRING_MANAGER_GROUP);

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_ELIGIBILITY_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_SUPERVISION_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
@@ -8,7 +7,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDur
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PURGE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
@@ -28,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedCompletedRetained;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingAvailability;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingCompletion;
@@ -39,10 +36,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReferencePendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejectedCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejectedCompletedRetained;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReserved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReservedPendingReallocation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReservedWaiting;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReview;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReviewPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReviewPendingFeedback;
@@ -50,12 +43,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationUnsubmittedPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidationPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationVerification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationVerificationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedRetained;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedUnsubmitted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedUnsubmittedRetained;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApproved;
@@ -91,10 +80,6 @@ public enum PrismState {
     APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, APPLICATION_CLOSING_DATE, PrismApplicationValidation.class),
     APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationValidationPendingCompletion.class),
-    APPLICATION_VERIFICATION(PrismStateGroup.APPLICATION_VERIFICATION, APPLICATION_CONFIRM_ELIGIBILITY_DURATION, null,
-            PrismApplicationVerification.class),
-    APPLICATION_VERIFICATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VERIFICATION, APPLICATION_ESCALATE_DURATION, null,
-            PrismApplicationVerificationPendingCompletion.class),
     APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_PROVIDE_REFERENCE_DURATION, null,
             PrismApplicationReference.class),
     APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null,
@@ -124,27 +109,13 @@ public enum PrismState {
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationApproved.class),
     APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_PURGE_DURATION, null,
             PrismApplicationApprovedCompleted.class),
-    APPLICATION_APPROVED_COMPLETED_RETAINED(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedCompletedRetained.class),
-    APPLICATION_APPROVED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_APPROVED, null, null, null),
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationRejected.class),
     APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_PURGE_DURATION, null,
             PrismApplicationRejectedCompleted.class),
-    APPLICATION_REJECTED_COMPLETED_RETAINED(PrismStateGroup.APPLICATION_REJECTED, null, null, PrismApplicationRejectedCompletedRetained.class),
-    APPLICATION_REJECTED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_REJECTED, null, null, null),
-    APPLICATION_RESERVED(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationReserved.class),
-    APPLICATION_RESERVED_WAITING(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_DURATION, null,
-            PrismApplicationReservedWaiting.class),
-    APPLICATION_RESERVED_PENDING_REALLOCATION(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_ESCALATE_DURATION, null,
-            PrismApplicationReservedPendingReallocation.class),
     APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, null,
             PrismApplicationWithdrawnCompletedUnsubmitted.class),
-    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null,
-            PrismApplicationWithdrawnCompletedUnsubmittedRetained.class),
-    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, null),
     APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, null,
             PrismApplicationWithdrawnCompleted.class),
-    APPLICATION_WITHDRAWN_COMPLETED_RETAINED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompletedRetained.class),
-    APPLICATION_WITHDRAWN_COMPLETED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, null),
     
     PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, PrismProjectApproval.class),
     PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null,

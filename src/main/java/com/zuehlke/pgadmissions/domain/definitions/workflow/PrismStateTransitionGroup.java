@@ -4,14 +4,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_ELIGIBILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PURGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_RESERVE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
@@ -30,8 +27,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_RETAINED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_COMPLETION;
@@ -40,21 +35,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_RETAINED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_RESERVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VALIDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VERIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_RETAINED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_DISABLED_COMPLETED;
@@ -76,7 +63,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_REVIEW_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PURGED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.DEPARTMENT_APPROVED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.DEPARTMENT_CREATED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.DEPARTMENT_UPDATED_OUTCOME;
@@ -115,10 +101,6 @@ public enum PrismStateTransitionGroup {
 
     APPLICATION_COMPLETE_STATE_TRANSITION( //
             new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_VERIFICATION) //
-                    .withTransitionAction(APPLICATION_CONFIRM_ELIGIBILITY) //
-                    .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
-            new PrismStateTransition() //
                     .withTransitionState(APPLICATION_REFERENCE) //
                     .withTransitionAction(APPLICATION_PROVIDE_REFERENCE) //
                     .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME) //
@@ -138,10 +120,6 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED) //
                     .withTransitionAction(APPLICATION_CONFIRM_OFFER_RECOMMENDATION) //
-                    .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_RESERVED) //
-                    .withTransitionAction(APPLICATION_RESERVE) //
                     .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_REJECTED) //
@@ -212,46 +190,6 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_REJECTED_COMPLETED) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)), //
-
-    APPLICATION_APPROVED_PURGED_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_COMPLETED_RETAINED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_COMPLETED_PURGED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME)), //
-
-    APPLICATION_REJECTED_PURGED_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_REJECTED_COMPLETED_RETAINED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_REJECTED_COMPLETED_PURGED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME)), //
-
-    APPLICATION_WITHDRAWN_PURGED_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_RETAINED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_PURGED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME)), //
-
-    APPLICATION_WITHDRAWN_UNSUBMITTED_PURGED_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED) //
-                    .withTransitionAction(APPLICATION_PURGE) //
-                    .withTransitionEvaluation(APPLICATION_PURGED_OUTCOME)), //
 
     PROJECT_CREATE_TRANSITION( //
             new PrismStateTransition() //

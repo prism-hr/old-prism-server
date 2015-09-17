@@ -31,17 +31,20 @@ public class LifeCycleService {
 
     private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
 
+    @Value("${startup.workflow.initialize.drop}")
+    private Boolean dropWorkflow;
+
     @Value("${startup.workflow.initialize}")
     private Boolean initializeWorkflow;
 
     @Value("${startup.display.initialize.drop}")
-    private Boolean destroyDisplayProperties;
+    private Boolean dropDisplayProperties;
 
     @Value("${startup.display.initialize}")
     private Boolean initializeDisplayProperties;
 
-    @Value("${startup.import.system.data.overwrite}")
-    private Boolean overwriteData;
+    @Value("${startup.import.system.data.drop}")
+    private Boolean dropData;
 
     @Value("${startup.import.system.data}")
     private Boolean initializeData;
@@ -59,12 +62,16 @@ public class LifeCycleService {
     public void startup() throws Exception {
         boolean doInitializeWorkflow = BooleanUtils.isTrue(initializeWorkflow);
 
+        if (BooleanUtils.isTrue(dropWorkflow)) {
+            systemService.dropWorkflow();
+        }
+        
         if (doInitializeWorkflow) {
             systemService.initializeWorkflow();
         }
 
-        if (BooleanUtils.isTrue(destroyDisplayProperties)) {
-            systemService.destroyDisplayProperties();
+        if (BooleanUtils.isTrue(dropDisplayProperties)) {
+            systemService.dropDisplayProperties();
         }
 
         if (BooleanUtils.isTrue(initializeDisplayProperties)) {
@@ -75,8 +82,8 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
-        if (BooleanUtils.isTrue(overwriteData)) {
-            systemService.overwriteSystemData();
+        if (BooleanUtils.isTrue(dropData)) {
+            systemService.dropSystemData();
         }
 
         if (BooleanUtils.isTrue(initializeData)) {

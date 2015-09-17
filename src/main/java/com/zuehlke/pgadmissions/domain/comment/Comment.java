@@ -725,10 +725,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return false;
     }
 
-    public boolean isPartnershipStateTransitionComment() {
-        return action.getPartnershipState() != null;
-    }
-
     public boolean isCreateComment() {
         return action.getActionCategory().equals(CREATE_RESOURCE);
     }

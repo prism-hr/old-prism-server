@@ -33,7 +33,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_ALL_STATES_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_INTERVIEW_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
@@ -91,7 +91,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, APPLICATION_ADMINISTRATOR_GROUP,
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 
-        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 
@@ -99,7 +99,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
 
         stateActions.add(applicationWithdrawSubmitted(APPLICATION_ADMINISTRATOR_GROUP, //
-                APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
     }
@@ -169,7 +169,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
     }
 
     public static PrismStateAction applicationTerminateInterviewScheduling() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWEE_GROUP,
@@ -177,7 +177,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
     }
 
     public static PrismStateAction applicationTerminateInterviewScheduled() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP);
@@ -195,7 +195,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 
     public static PrismStateAction applicationWithdrawInterviewScheduling() {
         return applicationWithdrawSubmitted(APPLICATION_ADMINISTRATOR_GROUP, //
-                APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWEE_GROUP,
@@ -204,7 +204,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 
     public static PrismStateAction applicationWithdrawInterviewScheduled() {
         return applicationWithdrawSubmitted(APPLICATION_ADMINISTRATOR_GROUP, //
-                APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP);

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.integration.helpers;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -157,7 +156,7 @@ public class WorkflowConfigurationHelper {
                 assertNotNull(stateAction.getNotificationDefinition());
             }
 
-            if (actionCategory == ESCALATE_RESOURCE || actionCategory == PURGE_RESOURCE) {
+            if (actionCategory == ESCALATE_RESOURCE) {
                 escalationActions.add(action);
             }
 

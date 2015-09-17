@@ -9,10 +9,8 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleWithPartn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -361,7 +359,7 @@ public class ActionDAO {
                 .setProjection(Projections.groupProperty("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, PURGE_RESOURCE))) //
+                .add(Restrictions.eq("action.actionCategory", ESCALATE_RESOURCE)) //
                 .addOrder(Order.desc("scope.ordinal")) //
                 .list();
     }
@@ -450,6 +448,7 @@ public class ActionDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.isNotNull("stateAction.actionEnhancement"))
                 .list();
     }
 
@@ -462,6 +461,7 @@ public class ActionDAO {
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement"))
                 .list();
     }
 

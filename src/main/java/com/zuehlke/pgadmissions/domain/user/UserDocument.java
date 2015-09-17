@@ -22,7 +22,7 @@ public class UserDocument implements ProfileDocument<UserAccount> {
     @OneToOne(mappedBy = "document")
     private UserAccount association;
 
-    @Column(name = "personal_summary", nullable = false)
+    @Column(name = "personal_summary")
     private String personalSummary;
 
     @OneToOne

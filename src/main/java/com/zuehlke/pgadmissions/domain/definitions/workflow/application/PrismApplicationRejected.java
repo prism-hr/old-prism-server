@@ -11,7 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_ALL_STATES_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CONFIRM_REJECTION_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
@@ -38,21 +38,21 @@ public class PrismApplicationRejected extends PrismWorkflowState {
                 .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_REJECTION_NOTIFICATION) //
                 .withTransitions(APPLICATION_CONFIRM_REJECTION_TRANSITION //
-                        .withStateTerminationsAndRoleTransitions(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                        .withStateTerminationsAndRoleTransitions(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                                 APPLICATION_RETIRE_REFEREE_GROUP)));
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiter());
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
         stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REJECTED_STAGE, state, APPLICATION_PARENT_APPROVER_GROUP));
 
-        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP));
 
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditWithViewerRecruiter(state));
 
         stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_APPROVER_GROUP, //
-                APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP));
     }
 

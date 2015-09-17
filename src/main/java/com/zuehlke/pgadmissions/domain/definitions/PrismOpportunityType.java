@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PROFESSIONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 
@@ -15,6 +16,7 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     STUDY_UNDERGRADUATE(false, STUDY), //
     STUDY_POSTGRADUATE_TAUGHT(false, STUDY), //
     STUDY_POSTGRADUATE_RESEARCH(false, STUDY), //
+    TRAINING(false, PROFESSIONAL_DEVELOPMENT), //
     WORK_EXPERIENCE(true, EXPERIENCE), //
     VOLUNTEERING(true, EXPERIENCE), //
     EMPLOYMENT(true, WORK), //

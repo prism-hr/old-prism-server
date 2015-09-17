@@ -1,12 +1,9 @@
 package com.zuehlke.pgadmissions.security;
 
-import com.google.common.base.Charsets;
-import com.zuehlke.pgadmissions.services.UserService;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.filter.GenericFilterBean;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.servlet.FilterChain;
@@ -16,10 +13,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collections;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.GenericFilterBean;
+
+import com.google.common.base.Charsets;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 

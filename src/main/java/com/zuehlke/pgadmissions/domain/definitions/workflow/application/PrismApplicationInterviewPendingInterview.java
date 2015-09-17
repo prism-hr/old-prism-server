@@ -12,7 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_ALL_STATES_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationUpdateInterviewAvailability;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduled;
@@ -55,7 +55,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
                                 .withTransitionEvaluation(APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME)));
 
-        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP,
@@ -65,7 +65,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
         stateActions.add(applicationViewEditInterviewScheduled(state)); //
 
         stateActions.add(applicationWithdrawSubmitted(APPLICATION_ADMINISTRATOR_GROUP, //
-                APPLICATION_TERMINATE_ALL_STATES_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP,

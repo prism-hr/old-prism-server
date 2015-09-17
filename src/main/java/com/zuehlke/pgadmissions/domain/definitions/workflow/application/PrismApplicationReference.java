@@ -13,7 +13,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation.APPLICATION_REFERENCED_TERMINATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_VERIFICATION_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_REFERENCE_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
@@ -86,7 +86,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
     }
 
     public static PrismStateAction applicationTerminateReference() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_VERIFICATION_GROUP, //
+        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP);
     }
 
@@ -97,7 +97,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
 
     public static PrismStateAction applicationWithdrawReference() {
         return applicationWithdrawSubmitted(APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
-                APPLICATION_TERMINATE_VERIFICATION_GROUP, //
+                APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP);
     }
 

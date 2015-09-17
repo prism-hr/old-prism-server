@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions;
 public enum PrismOpportunityCategory implements PrismLocalizableDefinition {
 
     STUDY(false), //
+    PROFESSIONAL_DEVELOPMENT(false), //
     EXPERIENCE(true), //
     WORK(true);
 

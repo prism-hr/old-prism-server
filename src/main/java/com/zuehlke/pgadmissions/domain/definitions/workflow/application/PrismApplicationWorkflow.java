@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_EMAIL_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PURGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
@@ -55,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup;
 
 public class PrismApplicationWorkflow {
 
@@ -127,12 +125,6 @@ public class PrismApplicationWorkflow {
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_ESCALATE) //
                         .withRoleTransitions(roleTransitions));
-    }
-
-    public static PrismStateAction applicationPurge(PrismStateTransitionGroup stateTransitions) {
-        return new PrismStateAction() //
-                .withAction(APPLICATION_PURGE) //
-                .withTransitions(stateTransitions);
     }
 
     public static PrismStateAction applicationTerminateUnsubmitted() {

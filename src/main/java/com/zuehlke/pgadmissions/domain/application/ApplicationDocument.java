@@ -26,7 +26,7 @@ public class ApplicationDocument extends ApplicationSection implements ProfileDo
     @OneToOne(mappedBy = "document")
     private Application association;
 
-    @Column(name = "personal_summary", nullable = false)
+    @Column(name = "personal_summary")
     private String personalSummary;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

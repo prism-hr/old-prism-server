@@ -13,8 +13,6 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedReferenceStateResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedVerificationStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedEligibilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedInterviewResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedManagementResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationIdentifiedResolver;
@@ -48,9 +46,7 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME(false, APPLICATION, ApplicationAssignedInterviewerResolver.class), //
     APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME(false, APPLICATION, ApplicationAssignedSupervisorResolver.class), //
     APPLICATION_CONFIRMED_INTERVIEW_OUTCOME(false, APPLICATION, ApplicationConfirmedInterviewResolver.class), //
-    APPLICATION_CONFIRMED_ELIGIBILITY_OUTCOME(false, APPLICATION, ApplicationConfirmedEligibilityResolver.class), //
     APPLICATION_PROVIDED_REFERENCE_OUTCOME(false, APPLICATION, ApplicationProvidedReferenceResolver.class), //
-    APPLICATION_COMPLETED_VERIFICATION_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedVerificationStateResolver.class), //
     APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedReferenceStateResolver.class), //
     APPLICATION_PROVIDED_REVIEW_OUTCOME(false, APPLICATION, ApplicationProvidedReviewResolver.class), //
     APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationUpdateInterviewAvailabilityResolver.class), //

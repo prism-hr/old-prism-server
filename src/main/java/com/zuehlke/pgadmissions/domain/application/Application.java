@@ -2,17 +2,9 @@ package com.zuehlke.pgadmissions.domain.application;
 
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_RETAINED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_RETAINED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_RETAINED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -668,17 +660,9 @@ public class Application extends Resource implements
                 .addProperty("department", department)
                 .addProperty("institution", institution)
                 .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED)
-                .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED_PURGED)
-                .addExclusion("state.id", APPLICATION_APPROVED_COMPLETED_RETAINED)
                 .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED)
-                .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED_PURGED)
-                .addExclusion("state.id", APPLICATION_REJECTED_COMPLETED_RETAINED)
                 .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED)
-                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_PURGED)
-                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_RETAINED)
-                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)
-                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED)
-                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_RETAINED);
+                .addExclusion("state.id", APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED);
     }
 
 }

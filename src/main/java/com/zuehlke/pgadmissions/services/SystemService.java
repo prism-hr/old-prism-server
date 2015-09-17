@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
+import static java.util.Arrays.asList;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.SystemDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
@@ -99,6 +101,9 @@ public class SystemService {
 
     private PropertyLoader propertyLoader;
 
+    @Value("${context.environment}")
+    private String environment;
+    
     @Value("${application.url}")
     private String applicationUrl;
 
@@ -129,6 +134,9 @@ public class SystemService {
     @Value("${system.default.email.content.directory}")
     private String defaultEmailContentDirectory;
 
+    @Inject
+    private SystemDAO systemDAO;
+    
     @Inject
     private ActionService actionService;
 
@@ -173,8 +181,8 @@ public class SystemService {
         return entityService.getByProperty(System.class, "name", systemName);
     }
 
-    @Transactional
-    public void destroyDisplayProperties() {
+    @Transactional(timeout = 600)
+    public void dropDisplayProperties() {
         logger.info("Destroying display properties");
         entityService.deleteAll(DisplayPropertyConfiguration.class);
         entityService.deleteAll(DisplayPropertyDefinition.class);
@@ -189,7 +197,15 @@ public class SystemService {
         logger.info("Initializing display property configurations");
         initializeDisplayPropertyConfigurations(getSystem());
     }
-
+    
+    @Transactional(timeout = 600)
+    public void dropWorkflow() {
+        if (asList("prod", "uat").contains(environment)) {
+            throw new Error("You tried to reset the " + environment + " database, destroying all data and contents. Did you really mean to do that?");
+        }
+        systemDAO.clearSchema();
+    }
+    
     @Transactional(timeout = 600)
     public void initializeWorkflow() throws Exception {
         logger.info("Initializing scope definitions");
@@ -256,7 +272,7 @@ public class SystemService {
     }
 
     @Transactional
-    public void overwriteSystemData() {
+    public void dropSystemData() {
         importedEntityService.deleteImportedEntityTypes();
     }
 

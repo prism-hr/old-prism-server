@@ -1,19 +1,11 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "application_document")
@@ -26,7 +18,7 @@ public class ApplicationDocument extends ApplicationSection implements ProfileDo
     @OneToOne(mappedBy = "document")
     private Application association;
 
-    @Column(name = "personal_summary", nullable = false)
+    @Column(name = "personal_summary")
     private String personalSummary;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

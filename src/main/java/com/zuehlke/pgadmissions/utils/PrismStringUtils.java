@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.math.BigDecimal;
+
 import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
-import java.math.BigDecimal;
 
 public class PrismStringUtils {
 

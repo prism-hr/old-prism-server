@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-
-import java.util.List;
 
 public class OpportunityCategoryRepresentation {
 

@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDate;
-import uk.co.alumeni.prism.utils.validation.DatePast;
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+
+import uk.co.alumeni.prism.utils.validation.DatePast;
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ProfilePersonalDetailDTO {
 

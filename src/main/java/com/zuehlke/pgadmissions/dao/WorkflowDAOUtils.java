@@ -81,15 +81,10 @@ public class WorkflowDAOUtils {
 
     public static Junction getEndorsementActionFilterResolution() {
         return Restrictions.disjunction() //
-                .add(Restrictions.isNull("action.partnershipState")) //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.eqProperty("action.partnershipState", "advertTarget.partnershipState")) //
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.isNull("advertTarget.valueUser")) //
-                                .add(Restrictions.eqProperty("advertTarget.valueUser", "userRole.user")))
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.ne("action.scope.id", APPLICATION)) //
-                                .add(Restrictions.eqProperty("ownerAdvert.advert", "advertTarget.value"))));
+                .add(Restrictions.isNull("advertTarget.valueUser")) //
+                .add(Restrictions.eqProperty("advertTarget.valueUser", "userRole.user"))
+                .add(Restrictions.ne("action.scope.id", APPLICATION)) //
+                .add(Restrictions.eqProperty("ownerAdvert.advert", "advertTarget.value"));
     }
 
     public static ProjectionList getResourceOpportunityCategoryProjection() {

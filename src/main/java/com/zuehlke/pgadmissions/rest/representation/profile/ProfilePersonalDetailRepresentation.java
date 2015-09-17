@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
+
 import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 

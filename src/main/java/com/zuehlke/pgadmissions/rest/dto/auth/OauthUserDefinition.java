@@ -1,12 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.auth;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
-
 public class OauthUserDefinition {
 
-    private PrismOauthProvider oauthProvider;
-
-    private String externalId;
+    private String linkedinId;
 
     private String firstName;
 
@@ -18,12 +14,8 @@ public class OauthUserDefinition {
 
     private String accountImageUrl;
 
-    public PrismOauthProvider getOauthProvider() {
-        return oauthProvider;
-    }
-
-    public String getExternalId() {
-        return externalId;
+    public String getLinkedinId() {
+        return linkedinId;
     }
 
     public String getFirstName() {
@@ -46,13 +38,8 @@ public class OauthUserDefinition {
         return accountImageUrl;
     }
 
-    public OauthUserDefinition withOauthProvider(final PrismOauthProvider oauthProvider) {
-        this.oauthProvider = oauthProvider;
-        return this;
-    }
-
-    public OauthUserDefinition withExternalId(final String externalId) {
-        this.externalId = externalId;
+    public OauthUserDefinition withLinkedinId(final String linkedinId) {
+        this.linkedinId = linkedinId;
         return this;
     }
 

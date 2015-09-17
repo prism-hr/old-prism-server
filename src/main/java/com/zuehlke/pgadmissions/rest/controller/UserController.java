@@ -1,47 +1,15 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.user.UserEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.user.UserReferee;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.*;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
@@ -55,11 +23,23 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
 import com.zuehlke.pgadmissions.rest.validation.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ProfileService;
-import com.zuehlke.pgadmissions.services.ResourceListFilterService;
-import com.zuehlke.pgadmissions.services.UserAccountService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -164,8 +144,7 @@ public class UserController {
         } else {
             userService.activateUser(user.getId(), activateDTO.getActionId(), activateDTO.getResourceId());
             status = "ACTIVATED";
-            UserAccountExternal primaryExternalAccount = user.getUserAccount().getPrimaryExternalAccount();
-            loginProvider = primaryExternalAccount != null ? primaryExternalAccount.getAccountType().getName() : null;
+            loginProvider = user.getUserAccount().getLinkedinId() != null ? "linkedin" : null;
         }
         UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user);
 
@@ -242,7 +221,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer userId, @PathVariable Integer qualificationId,
-            @Valid @RequestBody ProfileQualificationDTO qualificationDTO) throws Exception {
+                                    @Valid @RequestBody ProfileQualificationDTO qualificationDTO) throws Exception {
         profileService.updateQualificationUser(userId, qualificationId, qualificationDTO);
     }
 
@@ -255,7 +234,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer userId,
-            @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
+                                                        @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
         UserEmploymentPosition employmentPosition = profileService.updateEmploymentPositionUser(userId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
@@ -263,7 +242,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{userId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer userId, @PathVariable Integer employmentPositionId,
-            @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
+                                         @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
         profileService.updateEmploymentPositionUser(userId, employmentPositionId, employmentPositionDTO);
     }
 

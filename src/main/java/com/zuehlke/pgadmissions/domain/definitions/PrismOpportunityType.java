@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_PAID_TOC;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PROFESSIONAL_DEVELOPMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 
@@ -19,7 +19,7 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     STUDY_UNDERGRADUATE(false, null, STUDY), //
     STUDY_POSTGRADUATE_TAUGHT(false, null, STUDY), //
     STUDY_POSTGRADUATE_RESEARCH(false, null, STUDY), //
-    TRAINING(false, null, PROFESSIONAL_DEVELOPMENT), //
+    TRAINING(false, null, PERSONAL_DEVELOPMENT), //
     WORK_EXPERIENCE(true, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC, EXPERIENCE), //
     ON_COURSE_PLACEMENT(true, SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC, EXPERIENCE), //
     VOLUNTEERING(true, SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC, EXPERIENCE), //
@@ -27,7 +27,7 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     EMPLOYMENT_SECONDMENT(true, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC, WORK); //
 
     private boolean published;
-    
+
     private PrismDisplayPropertyDefinition termsAndConditions;
 
     private PrismOpportunityCategory category;
@@ -49,7 +49,7 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     public boolean isPublished() {
         return published;
     }
-    
+
     public PrismDisplayPropertyDefinition getTermsAndConditions() {
         return termsAndConditions;
     }

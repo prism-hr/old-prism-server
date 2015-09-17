@@ -902,3 +902,7 @@ alter table user_account
 	add column shared int(1) unsigned not null after enabled,
 	add index (shared)
 ;
+
+alter table system
+	drop column minimum_wage
+;

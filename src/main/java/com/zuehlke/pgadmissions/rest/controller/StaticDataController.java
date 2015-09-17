@@ -26,7 +26,6 @@ public class StaticDataController {
         Map<String, Object> staticData = Maps.newHashMap();
         staticData.putAll(staticDataService.getActions());
         staticData.putAll(staticDataService.getStates());
-        staticData.putAll(staticDataService.getStateGroups());
         staticData.putAll(staticDataService.getRoles());
         staticData.putAll(staticDataService.getInstitutionDomiciles());
         staticData.putAll(staticDataService.getPerformanceIndicatorGroups());

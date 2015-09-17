@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.g
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -20,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -43,12 +42,12 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.mapping.ActionMapper;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
@@ -62,6 +61,7 @@ import com.zuehlke.pgadmissions.rest.representation.WorkflowConstraintRepresenta
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
@@ -73,8 +73,6 @@ public class StaticDataService {
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
-
-    private ToIdFunction toIdFunction = new ToIdFunction();
 
     @Inject
     private CustomizationService customizationService;
@@ -108,35 +106,24 @@ public class StaticDataService {
 
     public Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
-
         List<Action> actions = entityService.list(Action.class);
         List<ActionRepresentation> actionRepresentations = actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId()))
                 .collect(Collectors.toList());
-
         staticData.put("actions", actionRepresentations);
         return staticData;
     }
 
     public Map<String, Object> getStates() {
         Map<String, Object> staticData = Maps.newHashMap();
-
         List<State> states = entityService.list(State.class);
-
         staticData.put("states", states.stream().map(stateMapper::getStateRepresentationSimple).collect(Collectors.toList()));
-        return staticData;
-    }
-
-    public Map<String, Object> getStateGroups() {
-        Map<String, Object> staticData = Maps.newHashMap();
-        List<StateGroup> stateGroups = entityService.list(StateGroup.class);
-        staticData.put("stateGroups", Lists.newArrayList(Iterables.transform(stateGroups, toIdFunction)));
         return staticData;
     }
 
     public Map<String, Object> getRoles() {
         Map<String, Object> staticData = Maps.newHashMap();
         List<Role> roles = entityService.list(Role.class);
-        staticData.put("roles", Lists.newArrayList(Iterables.transform(roles, toIdFunction)));
+        staticData.put("roles", roles.stream().map(r -> new RoleRepresentation(r.getId(), r.getDirectlyAssignable())).collect(toList()));
         return staticData;
     }
 
@@ -169,7 +156,8 @@ public class StaticDataService {
         Map<String, Object> staticData = Maps.newHashMap();
 
         for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertFunction.class,
-                PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class, PrismFilterEntity.class }) {
+                PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class, PrismFilterEntity.class,
+                PrismStateGroup.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -277,34 +265,6 @@ public class StaticDataService {
         staticData.put("institution", resourceMapper.getResourceRepresentationSimple(institutionService.getById(institutionId)));
         staticData.put("resourceReportFilterProperties", Arrays.asList(PrismFilterEntity.values()));
         return staticData;
-    }
-
-    private static class ToIdFunction implements Function<WorkflowDefinition, Object> {
-        @Override
-        public Object apply(WorkflowDefinition input) {
-            return input.getId();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private class EnumDefinition {
-
-        private String id;
-
-        private String name;
-
-        private EnumDefinition(String id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 
 }

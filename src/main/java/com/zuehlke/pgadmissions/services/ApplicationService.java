@@ -4,13 +4,16 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
 import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 
 import java.math.BigDecimal;
@@ -42,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -53,10 +57,12 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
@@ -284,7 +290,18 @@ public class ApplicationService {
         programDetail.setLastUpdatedTimestamp(DateTime.now());
 
         application.setProgramDetail(programDetail);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
+    }
+
+    public void executeUpdate(Application application, PrismDisplayPropertyDefinition message, CommentAssignedUser... assignees) {
+        if (application.getState().getStateGroup().getId().equals(APPLICATION_UNSUBMITTED)) {
+            Action action = actionService.getById(APPLICATION_COMPLETE);
+            if (!actionService.checkActionExecutable(application, action, userService.getCurrentUser(), false)) {
+                throw new WorkflowPermissionException(application, action);
+            }
+        } else {
+            resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL, assignees);
+        }
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, ImportedEntitySimple opportunityType) {

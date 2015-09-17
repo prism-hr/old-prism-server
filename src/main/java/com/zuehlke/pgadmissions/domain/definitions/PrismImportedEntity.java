@@ -26,32 +26,37 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     IMPORTED_DOMICILE(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedDomicile.class),
             new PrismImportedEntityImportInsertDefinition()
-                    .withTable("imported_domicile")
-                    .withPivotColumn("id")
-                    .withColumn("name")
-                    .withColumn("currency")
+                .withTable("imported_domicile")
+                .withPivotColumn("id")
+                .withColumn("name")
+                .withColumn("currency")
+                .withColumn("enabled")
+                .withExtractor(ImportedDomicileExtractor.class)), //
+    IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition()
+            .withEntityClass(ImportedAgeRange.class),
+            new PrismImportedEntityImportInsertDefinition()
+                    .withTable("imported_age_range")
+                    .withPivotColumn("name")
+                    .withColumn("lower_bound")
+                    .withColumn("upper_bound")
                     .withColumn("enabled")
-                    .withExtractor(ImportedDomicileExtractor.class)), IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition()
-                            .withEntityClass(ImportedAgeRange.class),
-                            new PrismImportedEntityImportInsertDefinition()
-                                    .withTable("imported_age_range")
-                                    .withPivotColumn("name")
-                                    .withColumn("lower_bound")
-                                    .withColumn("upper_bound")
-                                    .withColumn("enabled")
-                                    .withExtractor(ImportedAgeRangeExtractor.class)), IMPORTED_DISABILITY(getImportedEntitySimpleImportDefinition(),
-                                            getImportedEntitySimpleImportInsertDefinition()), IMPORTED_ETHNICITY(getImportedEntitySimpleImportDefinition(),
-                                                    getImportedEntitySimpleImportInsertDefinition()), IMPORTED_GENDER(getImportedEntitySimpleImportDefinition(),
-                                                            getImportedEntitySimpleImportInsertDefinition()), IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition()
-                                                                    .withEntityNameClass(PrismOpportunityType.class),
-                                                                    getImportedEntitySimpleImportInsertDefinition()), IMPORTED_REJECTION_REASON(
-                                                                            getImportedEntitySimpleImportDefinition(),
-                                                                            getImportedEntitySimpleImportInsertDefinition()), IMPORTED_STUDY_OPTION(
-                                                                                    getImportedEntitySimpleImportDefinition()
-                                                                                            .withEntityNameClass(PrismStudyOption.class),
-                                                                                    getImportedEntitySimpleImportInsertDefinition()), IMPORTED_TITLE(
-                                                                                            getImportedEntitySimpleImportDefinition(),
-                                                                                            getImportedEntitySimpleImportInsertDefinition());
+                    .withExtractor(ImportedAgeRangeExtractor.class)), //
+    IMPORTED_DISABILITY(getImportedEntitySimpleImportDefinition(),
+            getImportedEntitySimpleImportInsertDefinition()), //
+    IMPORTED_ETHNICITY(getImportedEntitySimpleImportDefinition(),
+            getImportedEntitySimpleImportInsertDefinition()), //
+    IMPORTED_GENDER(getImportedEntitySimpleImportDefinition(),
+            getImportedEntitySimpleImportInsertDefinition()), //
+    IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition()
+            .withEntityNameClass(PrismOpportunityType.class),
+            getImportedEntitySimpleImportInsertDefinition()), //
+    IMPORTED_REJECTION_REASON(getImportedEntitySimpleImportDefinition(),
+            getImportedEntitySimpleImportInsertDefinition()), //
+    IMPORTED_STUDY_OPTION(getImportedEntitySimpleImportDefinition()
+            .withEntityNameClass(PrismStudyOption.class),
+            getImportedEntitySimpleImportInsertDefinition()), 
+    IMPORTED_TITLE(getImportedEntitySimpleImportDefinition(),
+            getImportedEntitySimpleImportInsertDefinition());
 
     private PrismImportedEntityImportDefinition importDefinition;
 

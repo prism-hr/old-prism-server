@@ -4,12 +4,10 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
@@ -19,16 +17,13 @@ import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedAgeRangeExtr
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedDomicileExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntityExtractor;
 import com.zuehlke.pgadmissions.services.helpers.extractors.ImportedEntitySimpleExtractor;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedRejectionReasonSelector;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.PrismResourceSummarySelector;
 
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.enums.PrismImportedEntity> {
 
-    // FIXME: mechanism to filter in charts based on department / program of origin
-    IMPORTED_ADVERT_DOMICILE(new PrismImportedEntityImportDefinition()
+    IMPORTED_DOMICILE(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedDomicile.class),
             new PrismImportedEntityImportInsertDefinition()
                     .withTable("imported_domicile")
@@ -36,95 +31,35 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
                     .withColumn("name")
                     .withColumn("currency")
                     .withColumn("enabled")
-                    .withExtractor(ImportedDomicileExtractor.class),
-            null, true),
-    IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition()
-            .withEntityClass(ImportedAgeRange.class),
-            new PrismImportedEntityImportInsertDefinition()
-                    .withTable("imported_age_range")
-                    .withPivotColumn("name")
-                    .withColumn("lower_bound")
-                    .withColumn("upper_bound")
-                    .withColumn("enabled")
-                    .withExtractor(ImportedAgeRangeExtractor.class),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_age_range_id" }),
-            true),
-    IMPORTED_DISABILITY(getImportedEntitySimpleImportDefinition(),
-            getImportedEntitySimpleImportInsertDefinition(),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_disability_id" }),
-            true),
-    IMPORTED_ETHNICITY(getImportedEntitySimpleImportDefinition(),
-            getImportedEntitySimpleImportInsertDefinition(),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_ethnicity_id" }),
-            true),
-    IMPORTED_GENDER(getImportedEntitySimpleImportDefinition(),
-            getImportedEntitySimpleImportInsertDefinition(),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_personal_detail.imported_gender_id" }),
-            true),
-    IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition()
-            .withEntityNameClass(PrismOpportunityType.class),
-            getImportedEntitySimpleImportInsertDefinition(),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_program_detail.imported_opportunity_type_id" }),
-            true),
-    IMPORTED_REJECTION_REASON(getImportedEntitySimpleImportDefinition(),
-            getImportedEntitySimpleImportInsertDefinition(),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application.id" })
-                    .withSelector(ApplicationByImportedRejectionReasonSelector.class),
-            true),
-    IMPORTED_STUDY_OPTION(getImportedEntitySimpleImportDefinition()
-            .withEntityNameClass(PrismStudyOption.class),
-            getImportedEntitySimpleImportInsertDefinition(),
-            new PrismImportedEntityReportDefinition() //
-                    .withColumns(new String[] { "application_program_detail.imported_study_option_id" }),
-            true),
-    IMPORTED_TITLE(getImportedEntitySimpleImportDefinition(),
-            getImportedEntitySimpleImportInsertDefinition(),
-            null, true);
-
-    private static final List<PrismImportedEntity> prefetchEntities = Lists.newLinkedList();
-
-    private static final List<PrismImportedEntity> resourceReportFilterProperties = Lists.newLinkedList();
-
-    static {
-        for (PrismImportedEntity entity : values()) {
-            if (entity.isPrefetchImport()) {
-                prefetchEntities.add(entity);
-            }
-
-            if (entity.getFilterColumns() != null) {
-                resourceReportFilterProperties.add(entity);
-            }
-        }
-    }
+                    .withExtractor(ImportedDomicileExtractor.class)), IMPORTED_AGE_RANGE(new PrismImportedEntityImportDefinition()
+                            .withEntityClass(ImportedAgeRange.class),
+                            new PrismImportedEntityImportInsertDefinition()
+                                    .withTable("imported_age_range")
+                                    .withPivotColumn("name")
+                                    .withColumn("lower_bound")
+                                    .withColumn("upper_bound")
+                                    .withColumn("enabled")
+                                    .withExtractor(ImportedAgeRangeExtractor.class)), IMPORTED_DISABILITY(getImportedEntitySimpleImportDefinition(),
+                                            getImportedEntitySimpleImportInsertDefinition()), IMPORTED_ETHNICITY(getImportedEntitySimpleImportDefinition(),
+                                                    getImportedEntitySimpleImportInsertDefinition()), IMPORTED_GENDER(getImportedEntitySimpleImportDefinition(),
+                                                            getImportedEntitySimpleImportInsertDefinition()), IMPORTED_OPPORTUNITY_TYPE(getImportedEntitySimpleImportDefinition()
+                                                                    .withEntityNameClass(PrismOpportunityType.class),
+                                                                    getImportedEntitySimpleImportInsertDefinition()), IMPORTED_REJECTION_REASON(
+                                                                            getImportedEntitySimpleImportDefinition(),
+                                                                            getImportedEntitySimpleImportInsertDefinition()), IMPORTED_STUDY_OPTION(
+                                                                                    getImportedEntitySimpleImportDefinition()
+                                                                                            .withEntityNameClass(PrismStudyOption.class),
+                                                                                    getImportedEntitySimpleImportInsertDefinition()), IMPORTED_TITLE(
+                                                                                            getImportedEntitySimpleImportDefinition(),
+                                                                                            getImportedEntitySimpleImportInsertDefinition());
 
     private PrismImportedEntityImportDefinition importDefinition;
 
     private PrismImportedEntityImportInsertDefinition importInsertDefinition;
 
-    private PrismImportedEntityReportDefinition reportDefinition;
-
-    private boolean prefetchImport;
-
-    PrismImportedEntity(PrismImportedEntityImportDefinition importDefinition, PrismImportedEntityImportInsertDefinition importInsertDefinition,
-            PrismImportedEntityReportDefinition reportDefinition, boolean prefetchImport) {
+    PrismImportedEntity(PrismImportedEntityImportDefinition importDefinition, PrismImportedEntityImportInsertDefinition importInsertDefinition) {
         this.importDefinition = importDefinition;
         this.importInsertDefinition = importInsertDefinition;
-        this.reportDefinition = reportDefinition;
-        this.prefetchImport = prefetchImport;
-    }
-
-    public static List<PrismImportedEntity> getPrefetchEntities() {
-        return prefetchEntities;
-    }
-
-    public static List<PrismImportedEntity> getResourceReportFilterProperties() {
-        return resourceReportFilterProperties;
     }
 
     private static PrismImportedEntityImportDefinition getImportedEntitySimpleImportDefinition() {
@@ -149,7 +84,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     public Class<? extends ImportedEntityRequest> getRequestClass() {
         return getDefinition().getRequestClass();
     }
-    
+
     public Class<? extends ImportedEntity<?>> getEntityClass() {
         return importDefinition.getEntityClass();
     }
@@ -173,25 +108,13 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     public String getImportInsertOnDuplicateKeyUpdate() {
         return importInsertDefinition.getOnDuplicateKeyUpdate();
     }
-    
+
     public String getMappingInsertColumns() {
         return "institution_id, " + importInsertDefinition.getTable() + "_id, code, enabled";
     }
 
     public String getMappingInsertOnDuplicateKeyUpdate() {
         return "enabled = values(enabled)";
-    }
-
-    public String[] getFilterColumns() {
-        return reportDefinition == null ? null : reportDefinition.getColumns();
-    }
-
-    public Class<? extends PrismResourceSummarySelector> getFilterSelector() {
-        return reportDefinition == null ? null : reportDefinition.getSelector();
-    }
-
-    public boolean isPrefetchImport() {
-        return prefetchImport;
     }
 
     public String getLowerCamelName() {
@@ -219,7 +142,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
         public Class<? extends PrismLocalizableDefinition> getEntityNameClass() {
             return entityNameClass;
         }
-        
+
         public PrismImportedEntityImportDefinition withEntityClass(Class<? extends ImportedEntity<?>> entityClass) {
             this.entityClass = entityClass;
             return this;
@@ -279,32 +202,6 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
 
         public PrismImportedEntityImportInsertDefinition withExtractor(Class<? extends ImportedEntityExtractor<?>> extractor) {
             this.extractor = extractor;
-            return this;
-        }
-
-    }
-
-    private static class PrismImportedEntityReportDefinition {
-
-        private String[] columns;
-
-        private Class<? extends PrismResourceSummarySelector> selector;
-
-        public String[] getColumns() {
-            return columns;
-        }
-
-        public Class<? extends PrismResourceSummarySelector> getSelector() {
-            return selector;
-        }
-
-        public PrismImportedEntityReportDefinition withColumns(String[] columns) {
-            this.columns = columns;
-            return this;
-        }
-
-        public PrismImportedEntityReportDefinition withSelector(Class<? extends PrismResourceSummarySelector> selector) {
-            this.selector = selector;
             return this;
         }
 

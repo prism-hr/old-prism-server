@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 
 public class ResourceSummaryPlotConstraintRepresentation {
 
     private Integer entityId;
 
-    private PrismImportedEntity entityType;
+    private PrismFilterEntity entityType;
 
     public Integer getEntityId() {
         return entityId;
@@ -16,20 +16,20 @@ public class ResourceSummaryPlotConstraintRepresentation {
         this.entityId = id;
     }
 
-    public PrismImportedEntity getEntityType() {
+    public PrismFilterEntity getEntityType() {
         return entityType;
     }
 
-    public void setEntityType(PrismImportedEntity entityType) {
+    public void setEntityType(PrismFilterEntity entityType) {
         this.entityType = entityType;
     }
-    
+
     public ResourceSummaryPlotConstraintRepresentation withEntityId(Integer entityId) {
         this.entityId = entityId;
         return this;
     }
-    
-    public ResourceSummaryPlotConstraintRepresentation withType(PrismImportedEntity entityType) {
+
+    public ResourceSummaryPlotConstraintRepresentation withType(PrismFilterEntity entityType) {
         this.entityType = entityType;
         return this;
     }

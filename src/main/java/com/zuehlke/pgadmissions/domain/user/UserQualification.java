@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
 
 @Entity
-@Table(name = "UserAccount_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "advert_id", "start_year" }) })
+@Table(name = "user_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "advert_id", "start_year" }) })
 public class UserQualification extends UserAdvertRelationSection implements ProfileQualification<UserAccount> {
 
     @Id
@@ -26,7 +26,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_account_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private UserAccount association;
 
     @ManyToOne
@@ -50,7 +50,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
 
     @Column(name = "completed", nullable = false)
     private Boolean completed;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", unique = true)
     private Document document;
@@ -128,7 +128,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
-    
+
     public Document getDocument() {
         return document;
     }

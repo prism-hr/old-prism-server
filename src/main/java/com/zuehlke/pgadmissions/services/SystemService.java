@@ -180,7 +180,7 @@ public class SystemService {
     public System getSystem() {
         return entityService.getByProperty(System.class, "name", systemName);
     }
-    
+
     @Transactional(timeout = 600)
     public void dropDisplayProperties() {
         logger.info("Destroying display properties");
@@ -197,7 +197,7 @@ public class SystemService {
         logger.info("Initializing display property configurations");
         initializeDisplayPropertyConfigurations(getSystem());
     }
-    
+
     @Transactional(timeout = 600)
     public void dropWorkflow() {
         if (asList("prod", "uat").contains(environment)) {
@@ -270,12 +270,11 @@ public class SystemService {
             notificationService.sendRegistrationNotification(user, outcome, comment);
         }
     }
-    
+
     @Transactional
     public void initializeAmazon() {
         systemDAO.resetAmazon();
     }
-    
 
     @Transactional
     public void dropSystemData() {
@@ -332,7 +331,8 @@ public class SystemService {
     private void initializeRoles() throws DeduplicationException {
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = scopeService.getById(prismRole.getScope());
-            entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withScope(scope));
+            entityService.createOrUpdate(
+                    new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withDirectlyAssignable(prismRole.isDirectlyAssignable()).withScope(scope));
         }
     }
 

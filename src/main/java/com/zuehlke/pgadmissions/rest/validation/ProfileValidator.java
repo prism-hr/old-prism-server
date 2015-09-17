@@ -3,13 +3,13 @@ package com.zuehlke.pgadmissions.rest.validation;
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_LATEST_BUFFER;
 import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -138,7 +138,7 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
     }
 
     private void validateRequiredConstraint(Object object, String parentProperty, String property, PrismWorkflowConstraint constraint, Errors errors) {
-        if (BooleanUtils.isTrue(constraint.isRequired()) && object == null) {
+        if (isTrue(constraint.isRequired()) && object == null) {
             setValidationMessage(parentProperty, property, errors);
         }
     }

@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
@@ -150,7 +149,7 @@ public class ProfileService {
 
         applicationPersonalDetail.setLastUpdatedTimestamp(DateTime.now());
         application.setPersonalDetail(applicationPersonalDetail);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
+
     }
 
     public void updateAddressUser(Integer userId, ProfileAddressDTO addressDTO) {
@@ -171,7 +170,7 @@ public class ProfileService {
 
         address.setLastUpdatedTimestamp(DateTime.now());
         application.setAddress(address);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
 
     public UserQualification updateQualificationUser(Integer userId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) throws Exception {
@@ -192,7 +191,7 @@ public class ProfileService {
         updateQualification(userAccount, userQualification == null ? new UserQualification() : userQualification, qualificationDTO);
         userAccountService.updateUserAccount(userAccount);
 
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
     }
 
@@ -205,7 +204,7 @@ public class ProfileService {
     public void deleteQualificationApplication(Integer applicationId, Integer qualificationId) throws Exception {
         Application application = applicationService.getById(applicationId);
         deleteQualification(application, ApplicationQualification.class, qualificationId);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
 
     public UserEmploymentPosition updateEmploymentPositionUser(Integer userId, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
@@ -227,7 +226,7 @@ public class ProfileService {
         updateEmploymentPosition(userAccount, userEmploymentPosition == null ? new UserEmploymentPosition() : userEmploymentPosition, employmentPositionDTO);
         userAccountService.updateUserAccount(userAccount);
 
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
     }
 
@@ -240,7 +239,7 @@ public class ProfileService {
     public void deleteEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId) throws Exception {
         Application application = applicationService.getById(applicationId);
         deleteEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
     public UserReferee updateRefereeUser(Integer userId, Integer refereeId, ProfileRefereeDTO refereeDTO) throws Exception {
@@ -261,7 +260,7 @@ public class ProfileService {
         userAccountService.updateUserAccount(userAccount);
 
         List<CommentAssignedUser> assignees = referee.getAssignments();
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
         return (ApplicationReferee) referee.getReferee();
     }
 
@@ -274,7 +273,7 @@ public class ProfileService {
     public void deleteRefereeApplication(Integer applicationId, Integer refereeId) throws Exception {
         Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = deleteReferee(application, ApplicationReferee.class, refereeId);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
 
     public void updateDocumentUser(Integer userId, ProfileDocumentDTO documentDTO) throws Exception {
@@ -295,7 +294,7 @@ public class ProfileService {
 
         document.setLastUpdatedTimestamp(DateTime.now());
         application.setDocument(document);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
     public void updateAdditionalInformationUser(Integer userId, ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
@@ -315,7 +314,7 @@ public class ProfileService {
 
         additionalInformation.setLastUpdatedTimestamp(DateTime.now());
         application.setAdditionalInformation(additionalInformation);
-        resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
     private void fillApplicationPersonalDetail(Application application, UserAccount userAccount) {
@@ -644,7 +643,7 @@ public class ProfileService {
         return emptyList();
     }
 
-    // TODO - implement the resource creation loop and link to theo
+    // TODO - implement the resource creation loop and link to the
     // connections infrastructure
     // TODO - implement all of the possible scenarios (e.g. suggested user,
     // no known department, etc)

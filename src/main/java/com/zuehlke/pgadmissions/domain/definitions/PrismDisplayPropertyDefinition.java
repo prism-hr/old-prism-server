@@ -1467,10 +1467,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** INSTITUTION COMMENT *********************
      */
 
-    INSTITUTION_COMMENT_APPROVED(INSTITUTION_COMMENT,
-            "We are pleased to tell you that your organization has been approved. You may now login to create other users, Departments, programs and positions, and manage your student/graduate recruitmemt"),
-    INSTITUTION_COMMENT_CORRECTION(INSTITUTION_COMMENT,
-            "Further information is required to activate your organization. Please login to address the reviewers comments"),
+    INSTITUTION_COMMENT_APPROVAL(INSTITUTION_COMMENT, "Your Institution has been submitted for approval. We will notify you when it is ready to use"),
+    INSTITUTION_COMMENT_APPROVED(INSTITUTION_COMMENT, "We are pleased to tell you that your organization has been approved. You may now login to create other users, Departments, programs and positions, and manage your student/graduate recruitmemt"),
+    INSTITUTION_COMMENT_CORRECTION(INSTITUTION_COMMENT, "Further information is required to activate your organization. Please login to address the reviewers comments"),
     INSTITUTION_COMMENT_REJECTED(INSTITUTION_COMMENT, "We are sorry to inform you that your organization has been rejected"),
     INSTITUTION_COMMENT_UPDATED(INSTITUTION_COMMENT, "Updated organization"),
     INSTITUTION_COMMENT_UPDATED_USER_ROLE(INSTITUTION_COMMENT, "Updated organization user roles"),

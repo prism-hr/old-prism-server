@@ -1,30 +1,22 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PROFESSIONAL_DEVELOPMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
+import com.google.common.collect.LinkedListMultimap;
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 import java.util.List;
 
-import com.google.common.collect.LinkedListMultimap;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.*;
 
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-
-public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>,PrismLocalizableDefinition {
+public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>, PrismLocalizableDefinition {
 
     STUDY_UNDERGRADUATE(false, STUDY), //
     STUDY_POSTGRADUATE_TAUGHT(false, STUDY), //
     STUDY_POSTGRADUATE_RESEARCH(false, STUDY), //
-    TRAINING(false, PROFESSIONAL_DEVELOPMENT), //
+    TRAINING(false, PERSONAL_DEVELOPMENT), //
     WORK_EXPERIENCE(true, EXPERIENCE), //
     VOLUNTEERING(true, EXPERIENCE), //
     EMPLOYMENT(true, WORK), //
     EMPLOYMENT_SECONDMENT(true, WORK); //
-
-    private boolean published;
-
-    private PrismOpportunityCategory category;
 
     private static final LinkedListMultimap<PrismOpportunityCategory, PrismOpportunityType> byCategory = LinkedListMultimap.create();
 
@@ -34,17 +26,12 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
         }
     }
 
-    private PrismOpportunityType(boolean published, PrismOpportunityCategory category) {
+    private boolean published;
+    private PrismOpportunityCategory category;
+
+    PrismOpportunityType(boolean published, PrismOpportunityCategory category) {
         this.published = published;
         this.category = category;
-    }
-
-    public boolean isPublished() {
-        return published;
-    }
-
-    public PrismOpportunityCategory getCategory() {
-        return category;
     }
 
     public static List<PrismOpportunityType> getOpportunityTypes(PrismOpportunityCategory opportunityCategory) {
@@ -53,6 +40,14 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
 
     public static PrismOpportunityType getSystemOpportunityType() {
         return EMPLOYMENT;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public PrismOpportunityCategory getCategory() {
+        return category;
     }
 
     @Override

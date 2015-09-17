@@ -1,42 +1,20 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.*;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
+import com.zuehlke.pgadmissions.rest.representation.profile.*;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
-import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
-import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
-import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
-import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAdditionalInformationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileDocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfilePersonalDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.UserService;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -121,7 +99,7 @@ public class ProfileMapper {
             if (document.getClass().equals(ApplicationDocument.class)) {
                 Document coveringLetter = ((ApplicationDocument) document).getCoveringLetter();
                 representation.setCoveringLetter(coveringLetter == null ? null : documentMapper.getDocumentRepresentation(coveringLetter));
-                representation.setLinkedinProfileUrl(userService.getOauthProfileUrl(document.getAssociation().getUser(), LINKEDIN));
+                representation.setLinkedinProfileUrl(document.getAssociation().getUser().getUserAccount().getLinkedinProfileUrl());
             }
 
             return representation;

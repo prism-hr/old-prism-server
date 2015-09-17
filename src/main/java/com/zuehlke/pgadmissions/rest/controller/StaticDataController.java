@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
@@ -27,7 +26,6 @@ public class StaticDataController {
         staticData.putAll(staticDataService.getActions());
         staticData.putAll(staticDataService.getStates());
         staticData.putAll(staticDataService.getRoles());
-        staticData.putAll(staticDataService.getDomiciles());
         staticData.putAll(staticDataService.getPerformanceIndicatorGroups());
         staticData.putAll(staticDataService.getSimpleProperties());
         staticData.putAll(staticDataService.getFilterProperties());
@@ -36,12 +34,8 @@ public class StaticDataController {
         staticData.putAll(staticDataService.getActionConditions());
         staticData.putAll(staticDataService.getRequiredSections());
         staticData.putAll(staticDataService.getWorkflowConstraints());
+        staticData.putAll(staticDataService.getImportedEntities());
         return staticData;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, params = "institutionId")
-    public Map<String, Object> getInstitutionStaticData(@RequestParam Integer institutionId) {
-        return staticDataService.getInstitutionData(institutionId);
     }
 
 }

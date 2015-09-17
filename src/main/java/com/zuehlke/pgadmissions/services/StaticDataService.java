@@ -6,7 +6,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,10 +48,8 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.mapping.ActionMapper;
-import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
 import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
-import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation.OpportunityTypeRepresentation;
@@ -90,16 +86,10 @@ public class StaticDataService {
     private ActionMapper actionMapper;
 
     @Inject
-    private AdvertMapper advertMapper;
-
-    @Inject
     private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private StateMapper stateMapper;
-
-    @Inject
-    private ResourceMapper resourceMapper;
 
     @Inject
     private CustomizationMapper customizationMapper;
@@ -124,12 +114,6 @@ public class StaticDataService {
         Map<String, Object> staticData = Maps.newHashMap();
         List<Role> roles = entityService.list(Role.class);
         staticData.put("roles", roles.stream().map(r -> new RoleRepresentation(r.getId(), r.getDirectlyAssignable())).collect(toList()));
-        return staticData;
-    }
-
-    public Map<String, Object> getInstitutionDomiciles() {
-        Map<String, Object> staticData = Maps.newHashMap();
-        staticData.put("institutionDomiciles", advertMapper.getAdvertDomicileRepresentations());
         return staticData;
     }
 
@@ -251,8 +235,7 @@ public class StaticDataService {
     }
 
     @SuppressWarnings("unchecked")
-    @Cacheable("importedInstitutionData")
-    public <T extends ImportedEntity<?>, U extends ImportedEntityResponseDefinition<?>> Map<String, Object> getInstitutionData(Integer institutionId) {
+    public <U extends ImportedEntityResponseDefinition<?>, T extends ImportedEntity<?>> Map<String, Object> getImportedEntities() {
         Map<String, Object> staticData = Maps.newHashMap();
 
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
@@ -261,9 +244,6 @@ public class StaticDataService {
                     .collect(Collectors.toList());
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
-
-        staticData.put("institution", resourceMapper.getResourceRepresentationSimple(institutionService.getById(institutionId)));
-        staticData.put("resourceReportFilterProperties", Arrays.asList(PrismFilterEntity.values()));
         return staticData;
     }
 

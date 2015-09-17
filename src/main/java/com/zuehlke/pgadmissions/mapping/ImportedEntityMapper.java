@@ -47,7 +47,7 @@ public class ImportedEntityMapper {
             if (ImportedAgeRange.class.equals(entityClass)) {
                 return (U) getImportedAgeRangeRepresentation((ImportedAgeRange) entity);
             } else if (ImportedDomicile.class.equals(entityClass)) {
-                return (U) getImportedAdvertDomicileRepresentation((ImportedDomicile) entity);
+                return (U) getImportedDomicileRepresentation((ImportedDomicile) entity);
             }
 
             return (U) getImportedEntitySimpleRepresentation((ImportedEntitySimple) entity, ImportedEntityResponse.class);
@@ -78,12 +78,13 @@ public class ImportedEntityMapper {
         return representation;
     }
 
-    public ImportedDomicileResponse getImportedAdvertDomicileRepresentation(ImportedDomicile advertDomicile) {
-        return getImportedEntitySimpleRepresentation(advertDomicile, ImportedDomicileResponse.class).withCurrency(advertDomicile.getCurrency());
+    public ImportedDomicileResponse getImportedDomicileRepresentation(ImportedDomicile domicile) {
+        return getImportedEntitySimpleRepresentation(domicile, ImportedDomicileResponse.class).withCurrency(domicile.getCurrency());
     }
 
     public <T extends ImportedEntityRequest> List<T> getImportedEntityRepresentations(Class<T> requestClass, InputStream data) throws IOException {
         CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, requestClass);
         return objectMapper.readValue(data, collectionType);
     }
+
 }

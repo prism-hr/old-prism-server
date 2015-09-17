@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.user;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
-import java.util.List;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 

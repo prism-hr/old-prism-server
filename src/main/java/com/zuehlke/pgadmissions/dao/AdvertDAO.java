@@ -51,7 +51,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
@@ -371,13 +370,6 @@ public class AdvertDAO {
                 .setProjection(Projections.property("function")) //
                 .add(Restrictions.eq("advert", advert)) //
                 .addOrder(Order.asc("function")) //
-                .list();
-    }
-
-    public List<ImportedDomicile> getAdvertDomiciles() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class) //
-                .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("name")) //
                 .list();
     }
 

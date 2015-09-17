@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
-
+import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepresentation {
@@ -17,9 +16,9 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
 
     private ImportedEntityResponse ageRange;
 
-    private ImportedEntityResponse nationality;
+    private ImportedDomicileResponse nationality;
 
-    private ImportedEntityResponse domicile;
+    private ImportedDomicileResponse domicile;
 
     private Boolean visaRequired;
 
@@ -63,19 +62,19 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
         this.ageRange = ageRange;
     }
 
-    public ImportedEntityResponse getNationality() {
+    public ImportedDomicileResponse getNationality() {
         return nationality;
     }
 
-    public void setNationality(ImportedEntityResponse nationality) {
+    public void setNationality(ImportedDomicileResponse nationality) {
         this.nationality = nationality;
     }
 
-    public ImportedEntityResponse getDomicile() {
+    public ImportedDomicileResponse getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedEntityResponse domicile) {
+    public void setDomicile(ImportedDomicileResponse domicile) {
         this.domicile = domicile;
     }
 
@@ -139,12 +138,12 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
         return this;
     }
 
-    public ProfilePersonalDetailRepresentation withFirstNationality(ImportedEntityResponse nationality) {
+    public ProfilePersonalDetailRepresentation withFirstNationality(ImportedDomicileResponse nationality) {
         this.nationality = nationality;
         return this;
     }
 
-    public ProfilePersonalDetailRepresentation withDomicile(ImportedEntityResponse domicile) {
+    public ProfilePersonalDetailRepresentation withDomicile(ImportedDomicileResponse domicile) {
         this.domicile = domicile;
         return this;
     }

@@ -87,8 +87,6 @@ public class ImportedEntityDAO {
 
     public ImportedAgeRange getAgeRange(Integer age) {
         return (ImportedAgeRange) sessionFactory.getCurrentSession().createCriteria(ImportedAgeRange.class) //
-                .createAlias("mappings", "ageMapping", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("ageMapping.enabled", true))
                 .add(Restrictions.ge("lowerBound", age)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.le("upperBound", age)) //

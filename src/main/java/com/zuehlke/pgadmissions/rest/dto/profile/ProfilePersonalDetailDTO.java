@@ -1,32 +1,39 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
-
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
-
 import uk.co.alumeni.prism.utils.validation.DatePast;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class ProfilePersonalDetailDTO {
 
+    @NotNull
+    @Valid
     private ImportedEntityDTO title;
 
     @NotNull
+    @Valid
     private ImportedEntityDTO gender;
 
     @NotNull
     @DatePast
     private LocalDate dateOfBirth;
 
-    private ImportedEntityDTO domicile;
+    @NotNull
+    @Valid
+    private ImportedDomicileDTO domicile;
 
     @NotNull
-    private ImportedEntityDTO nationality;
+    @Valid
+    private ImportedDomicileDTO nationality;
 
+    @NotNull
     private Boolean visaRequired;
 
     @NotEmpty
@@ -36,8 +43,12 @@ public class ProfilePersonalDetailDTO {
     @Size(min = 6, max = 32)
     private String skype;
 
+    @NotNull
+    @Valid
     private ImportedEntityDTO ethnicity;
 
+    @NotNull
+    @Valid
     private ImportedEntityDTO disability;
 
     public ImportedEntityDTO getTitle() {
@@ -64,19 +75,19 @@ public class ProfilePersonalDetailDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedEntityDTO getDomicile() {
+    public ImportedDomicileDTO getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedEntityDTO domicile) {
+    public void setDomicile(ImportedDomicileDTO domicile) {
         this.domicile = domicile;
     }
 
-    public ImportedEntityDTO getNationality() {
+    public ImportedDomicileDTO getNationality() {
         return nationality;
     }
 
-    public void setNationality(ImportedEntityDTO nationality) {
+    public void setNationality(ImportedDomicileDTO nationality) {
         this.nationality = nationality;
     }
 

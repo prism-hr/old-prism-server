@@ -1,52 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getViewerRole;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
-import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang.WordUtils.capitalize;
-
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -59,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -67,12 +19,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAdvert;
-import com.zuehlke.pgadmissions.domain.user.UserAssignment;
-import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.user.*;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
@@ -89,6 +36,44 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang.WordUtils.capitalize;
 
 @Service
 @Transactional
@@ -283,8 +268,8 @@ public class UserService {
         return userDAO.getUserByActivationCode(activationCode);
     }
 
-    public User getByExternalAccountId(PrismOauthProvider oauthProvider, String externalId) {
-        return userDAO.getByExternalAccountId(oauthProvider, externalId);
+    public User getByLinkedinId(String externalId) {
+        return userDAO.getByLinkedinId(externalId);
     }
 
     public void resetPassword(String email) {
@@ -408,7 +393,7 @@ public class UserService {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
             return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
         }
-        return Lists.<User> newArrayList();
+        return Lists.<User>newArrayList();
     }
 
     public void correctBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
@@ -488,7 +473,7 @@ public class UserService {
         }
 
         List<UserRole> userRoles = Lists.newLinkedList();
-        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+        for (PrismScope scope : new PrismScope[]{DEPARTMENT, INSTITUTION}) {
             userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
         }
 
@@ -520,10 +505,6 @@ public class UserService {
         return users;
     }
 
-    public String getOauthProfileUrl(User user, PrismOauthProvider provider) {
-        return userDAO.getOauthProfileUrl(user, provider);
-    }
-
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
         List<Integer> institutions = resourceService.getResources(user, INSTITUTION, asList(SYSTEM)).stream().map(i -> i.getId()).collect(toList());
@@ -540,9 +521,8 @@ public class UserService {
                 applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAssignmentEntry.getValue());
             } else if (Resource.class.isAssignableFrom(userAssignmentClass)) {
                 Resource resource = BeanUtils.instantiate((Class<? extends Resource>) userAssignmentClass);
-                resourceService.getResourcesByUser(resource.getResourceScope(), oldUser).forEach(resourceAssigment -> {
-                    resourceService.reassignResource(resource, newUser, userAssignmentEntry.getValue());
-                });
+                resourceService.getResourcesByUser(resource.getResourceScope(), oldUser).forEach(
+                        resourceAssignment -> resourceService.reassignResource(resource, newUser, userAssignmentEntry.getValue()));
             } else {
                 throw new Error("Attempted to merge invalid role assignment");
             }

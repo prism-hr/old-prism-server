@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.user;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
@@ -15,7 +15,7 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private List<String> linkedUsers;
 
-    private List<String> oauthProviders;
+    private Boolean connectedWithLinkedin;
 
     private PrismRoleCategory requiredFeedbackRoleCategory;
 
@@ -51,12 +51,12 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
         this.linkedUsers = linkedUsers;
     }
 
-    public List<String> getOauthProviders() {
-        return oauthProviders;
+    public Boolean getConnectedWithLinkedin() {
+        return connectedWithLinkedin;
     }
 
-    public void setOauthProviders(List<String> oauthProviders) {
-        this.oauthProviders = oauthProviders;
+    public void setConnectedWithLinkedin(Boolean connectedWithLinkedin) {
+        this.connectedWithLinkedin = connectedWithLinkedin;
     }
 
     public PrismRoleCategory getRequiredFeedbackRoleCategory() {

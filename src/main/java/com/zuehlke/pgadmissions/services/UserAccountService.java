@@ -1,50 +1,33 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.social.facebook.api.impl.FacebookTemplate;
-import org.springframework.social.facebook.connect.FacebookServiceProvider;
-import org.springframework.social.google.api.impl.GoogleTemplate;
-import org.springframework.social.google.api.plus.Person;
-import org.springframework.social.google.connect.GoogleOAuth2Template;
-import org.springframework.social.linkedin.api.LinkedInProfile;
-import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
-import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
-import org.springframework.social.oauth1.AuthorizedRequestToken;
-import org.springframework.social.oauth1.OAuth1Operations;
-import org.springframework.social.oauth1.OAuth1Parameters;
-import org.springframework.social.oauth1.OAuthToken;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.social.twitter.api.TwitterProfile;
-import org.springframework.social.twitter.api.impl.TwitterTemplate;
-import org.springframework.social.twitter.connect.TwitterServiceProvider;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.social.linkedin.api.LinkedInProfile;
+import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
+import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
+import org.springframework.social.oauth1.OAuth1Operations;
+import org.springframework.social.oauth1.OAuth1Parameters;
+import org.springframework.social.oauth1.OAuthToken;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.social.twitter.connect.TwitterServiceProvider;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 @Service
 @Transactional
@@ -86,32 +69,32 @@ public class UserAccountService {
 
     public String requestToken(HttpSession session, PrismOauthProvider oauthProvider) {
         switch (oauthProvider) {
-        case TWITTER:
-            TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-            OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
-            OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
-            session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
-            return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
-        default:
-            throw new Error("Requesting token not supported for: " + oauthProvider);
+            case TWITTER:
+                TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
+                OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
+                OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
+                session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
+                return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
+            default:
+                throw new Error("Requesting token not supported for: " + oauthProvider);
         }
     }
 
-    public User getOrCreateUserAccountExternal(PrismOauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
+    public User getOrCreateUserAccountExternal(OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();
-        OauthUserDefinition oauthUserDefinition = getOauthUserDefinition(oauthProvider, oauthLoginDTO, session);
+        OauthUserDefinition oauthUserDefinition = getOauthUserDefinition(oauthLoginDTO, session);
 
         switch (oauthAssociationType) {
-        case ASSOCIATE_CURRENT_USER:
-            return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition);
-        case ASSOCIATE_NEW_USER:
-            return oauthAssociateNewUser(oauthProvider, oauthUserDefinition, session);
-        case ASSOCIATE_SPECIFIED_USER:
-            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition);
-        case AUTHENTICATE:
-            return oauthAuthenticate(oauthProvider, oauthUserDefinition);
-        default:
-            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+            case ASSOCIATE_CURRENT_USER:
+                return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
+            case ASSOCIATE_NEW_USER:
+                return oauthAssociateNewUser(oauthUserDefinition, session);
+            case ASSOCIATE_SPECIFIED_USER:
+                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
+            case AUTHENTICATE:
+                return oauthAuthenticate(oauthUserDefinition);
+            default:
+                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 
@@ -145,31 +128,6 @@ public class UserAccountService {
         return user;
     }
 
-    public UserAccountExternal unlinkExternalAccount(PrismOauthProvider oauthProvider) {
-        User currentUser = userService.getCurrentUser();
-        UserAccount userAccount = currentUser.getUserAccount();
-        Set<UserAccountExternal> externalAccounts = userAccount.getExternalAccounts();
-
-        UserAccountExternal accountToUnlink = null;
-        for (UserAccountExternal externalAccount : externalAccounts) {
-            if (externalAccount.getAccountType() == oauthProvider) {
-                accountToUnlink = externalAccount;
-            }
-        }
-
-        if (accountToUnlink == null) {
-            throw new PrismForbiddenException("Account is not associated with given provider.");
-        }
-
-        externalAccounts.remove(accountToUnlink);
-        if (userAccount.getPrimaryExternalAccount().getId().equals(accountToUnlink.getId())) {
-            userAccount.setPrimaryExternalAccount(Iterables.getFirst(externalAccounts, null));
-        }
-
-        entityService.delete(accountToUnlink);
-        return userAccount.getPrimaryExternalAccount();
-    }
-
     public void updateUserAccount(UserAccount userAccount) {
         DateTime baseline = DateTime.now();
         userAccount.setUpdatedTimestamp(baseline);
@@ -188,40 +146,9 @@ public class UserAccountService {
         throw new BadCredentialsException("Unauthorized access attempt");
     }
 
-    private OauthUserDefinition getOauthUserDefinition(PrismOauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
-        OauthUserDefinition definition;
-        switch (oauthProvider) {
-        case FACEBOOK:
-            definition = getFacebookUserDefinition(oauthLoginDTO);
-            break;
-        case LINKEDIN:
-            definition = getLinkedinUserDefinition(oauthLoginDTO);
-            break;
-        case GOOGLE:
-            definition = getGoogleUserDefinition(oauthLoginDTO);
-            break;
-        case TWITTER:
-            definition = getTwitterUserDefinition(oauthLoginDTO, session);
-            break;
-        default:
-            throw new UnsupportedOperationException("Unknown Oauth provider: " + oauthProvider);
-        }
-        return definition.withOauthProvider(oauthProvider);
-    }
-
-    private OauthUserDefinition getFacebookUserDefinition(OauthLoginDTO oauthLoginDTO) {
-        FacebookServiceProvider facebookServiceProvider = new FacebookServiceProvider(oauthLoginDTO.getClientId(), facebookAppSecret, null);
-        AccessGrant accessGrant = facebookServiceProvider.getOAuthOperations().exchangeForAccess(oauthLoginDTO.getCode(), oauthLoginDTO.getRedirectUri(), null);
-
-        FacebookTemplate facebookTemplate = new FacebookTemplate(accessGrant.getAccessToken());
-        org.springframework.social.facebook.api.User userProfile = facebookTemplate.userOperations().getUserProfile();
-        String userId = userProfile.getId();
-
-        String profileUrl = "https://www.facebook.com/" + userId;
-        String imageUrl = "https://graph.facebook.com/" + userId + "/picture";
-
-        return new OauthUserDefinition().withExternalId(userId).withEmail(userProfile.getEmail()).withFirstName(userProfile.getFirstName())
-                .withLastName(userProfile.getLastName()).withAccountProfileUrl(profileUrl).withAccountImageUrl(imageUrl);
+    private OauthUserDefinition getOauthUserDefinition(OauthLoginDTO oauthLoginDTO, HttpSession session) {
+        OauthUserDefinition definition = getLinkedinUserDefinition(oauthLoginDTO);
+        return definition;
     }
 
     private OauthUserDefinition getLinkedinUserDefinition(OauthLoginDTO oauthLoginDTO) {
@@ -231,42 +158,14 @@ public class UserAccountService {
         LinkedInTemplate linkedInTemplate = new LinkedInTemplate(accessGrant.getAccessToken());
         LinkedInProfile userProfile = linkedInTemplate.profileOperations().getUserProfile();
 
-        return new OauthUserDefinition().withExternalId(userProfile.getId()).withEmail(userProfile.getEmailAddress()).withFirstName(userProfile.getFirstName())
+        return new OauthUserDefinition().withLinkedinId(userProfile.getId()).withEmail(userProfile.getEmailAddress()).withFirstName(userProfile.getFirstName())
                 .withLastName(userProfile.getLastName()).withAccountProfileUrl(userProfile.getPublicProfileUrl())
                 .withAccountImageUrl(userProfile.getProfilePictureUrl());
     }
 
-    private OauthUserDefinition getGoogleUserDefinition(OauthLoginDTO oauthLoginDTO) {
-        GoogleOAuth2Template googleOAuth2Template = new GoogleOAuth2Template(oauthLoginDTO.getClientId(), googleAppSecret);
-        AccessGrant accessGrant = googleOAuth2Template.exchangeForAccess(oauthLoginDTO.getCode(), oauthLoginDTO.getRedirectUri(), null);
-
-        GoogleTemplate googleTemplate = new GoogleTemplate(accessGrant.getAccessToken());
-        Person person = googleTemplate.plusOperations().getGoogleProfile();
-
-        return new OauthUserDefinition().withExternalId(person.getId()).withEmail(person.getAccountEmail()).withFirstName(person.getGivenName())
-                .withLastName(person.getFamilyName()).withAccountProfileUrl(person.getUrl()).withAccountImageUrl(person.getImageUrl());
-    }
-
-    private OauthUserDefinition getTwitterUserDefinition(OauthLoginDTO oauthLoginDTO, HttpSession session) {
-        OAuthToken requestToken = (OAuthToken) session.getAttribute(OAUTH_TOKEN_ATTRIBUTE);
-        session.removeAttribute(OAUTH_TOKEN_ATTRIBUTE);
-
-        TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-        AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauthLoginDTO.getOauthVerifier());
-        OAuthToken oAuthToken = twitterServiceProvider.getOAuthOperations().exchangeForAccessToken(authorizedRequestToken, null);
-
-        TwitterTemplate twitterTemplate = new TwitterTemplate(twitterClientId, twitterAppSecret, oAuthToken.getValue(), oAuthToken.getSecret());
-        TwitterProfile profile = twitterTemplate.userOperations().getUserProfile();
-        ArrayList<String> names = Lists.newArrayList(Splitter.on("\\s+").limit(2).split(profile.getName()));
-
-        return new OauthUserDefinition().withExternalId(Long.toString(profile.getId())).withFirstName(names.get(0))
-                .withLastName(names.size() > 1 ? names.get(1) : null).withAccountProfileUrl(profile.getProfileUrl())
-                .withAccountImageUrl(profile.getProfileImageUrl());
-    }
-
-    private User oauthAssociateUser(User user, PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
+    private User oauthAssociateUser(User user, OauthUserDefinition oauthUserDefinition) {
         Preconditions.checkNotNull(user);
-        User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
+        User oauthUser = userService.getByLinkedinId(oauthUserDefinition.getLinkedinId());
 
         if (oauthUser == null) {
             oauthUser = user;
@@ -278,25 +177,25 @@ public class UserAccountService {
         return oauthUser;
     }
 
-    private User oauthAssociateNewUser(PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition, HttpSession session) {
-        User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
+    private User oauthAssociateNewUser(OauthUserDefinition oauthUserDefinition, HttpSession session) {
+        User oauthUser = userService.getByLinkedinId(oauthUserDefinition.getLinkedinId());
         if (oauthUser == null) {
             oauthUser = userService.getUserByEmail(oauthUserDefinition.getEmail());
             if (oauthUser == null) {
                 session.setAttribute(OAUTH_USER_TO_CONFIRM, oauthUserDefinition);
                 return null;
             }
-            createExternalUserAccount(oauthUser.getUserAccount(), oauthUserDefinition);
+            updateLinkedinDetails(oauthUser.getUserAccount(), oauthUserDefinition);
         }
         return oauthUser;
     }
 
-    private User oauthAuthenticate(PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
-        User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
+    private User oauthAuthenticate(OauthUserDefinition oauthUserDefinition) {
+        User oauthUser = userService.getByLinkedinId(oauthUserDefinition.getLinkedinId());
         if (oauthUser == null) {
             throw new AccessDeniedException("Account is not associated with any user.");
         }
-        createOrUpdateUserAccountExternal(oauthUser.getUserAccount(), oauthUserDefinition);
+        updateLinkedinDetails(oauthUser.getUserAccount(), oauthUserDefinition);
         return oauthUser;
     }
 
@@ -317,8 +216,14 @@ public class UserAccountService {
         }
 
         if (oauthUserDefinition != null) {
-            createExternalUserAccount(userAccount, oauthUserDefinition);
+            updateLinkedinDetails(userAccount, oauthUserDefinition);
         }
+    }
+
+    private void updateLinkedinDetails(UserAccount userAccount, OauthUserDefinition oauthUserDefinition) {
+        userAccount.setLinkedinId(oauthUserDefinition.getLinkedinId());
+        userAccount.setLinkedinProfileUrl(oauthUserDefinition.getAccountProfileUrl());
+        userAccount.setLinkedinImageUrl(oauthUserDefinition.getAccountImageUrl());
     }
 
     private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
@@ -329,18 +234,6 @@ public class UserAccountService {
         entityService.save(userAccount);
         user.setUserAccount(userAccount);
         return userAccount.withSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
-    }
-
-    private void createExternalUserAccount(UserAccount userAccount, OauthUserDefinition oauthUserDefinition) {
-        UserAccountExternal externalAccount = createOrUpdateUserAccountExternal(userAccount, oauthUserDefinition);
-        userAccount.getExternalAccounts().add(externalAccount);
-        userAccount.setPrimaryExternalAccount(externalAccount);
-    }
-
-    private UserAccountExternal createOrUpdateUserAccountExternal(UserAccount userAccount, OauthUserDefinition oauthUserDefinition) {
-        return entityService.createOrUpdate(new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthUserDefinition.getOauthProvider())
-                .withAccountIdentifier(oauthUserDefinition.getExternalId()).withAccountProfileUrl(oauthUserDefinition.getAccountProfileUrl())
-                .withAccountImageUrl(oauthUserDefinition.getAccountImageUrl()));
     }
 
 }

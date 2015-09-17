@@ -3,13 +3,13 @@ package com.zuehlke.pgadmissions.domain.definitions;
 public enum PrismOpportunityCategory implements PrismLocalizableDefinition {
 
     STUDY(false), //
-    PROFESSIONAL_DEVELOPMENT(false), //
+    PERSONAL_DEVELOPMENT(false), //
     EXPERIENCE(true), //
     WORK(true);
 
     private boolean published;
 
-    private PrismOpportunityCategory(boolean published) {
+    PrismOpportunityCategory(boolean published) {
         this.published = published;
     }
 

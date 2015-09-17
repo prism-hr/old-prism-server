@@ -312,6 +312,7 @@ public class OpportunitiesQueryDTO {
         SCOPE_INSTITUTIONS(INSTITUTION),
         SCOPE_DEPARTMENTS(DEPARTMENT),
         MAIN_OPPORTUNITIES(PROGRAM, PROJECT),
+        MAIN_EMPLOYERS(INSTITUTION),
         MAIN_DEPARTMENTS(DEPARTMENT);
 
         private PrismScope[] scopes;

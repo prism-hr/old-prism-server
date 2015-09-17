@@ -67,7 +67,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -348,10 +347,6 @@ public class AdvertService {
             return null;
         }
         return targets;
-    }
-
-    public List<ImportedDomicile> getAdvertDomiciles() {
-        return advertDAO.getAdvertDomiciles();
     }
 
     public Integer getBackgroundImage(Advert advert) {

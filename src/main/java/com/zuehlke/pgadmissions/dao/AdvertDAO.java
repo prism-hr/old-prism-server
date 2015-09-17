@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.UNI
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING_IDENTIFICATION;
@@ -473,37 +472,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getAdvertsUserCanIdentifyFor(Advert advert, User applicant, User user, PrismScope scope, PrismScope partnerScope) {
-        String partnerScopeReference = partnerScope.getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass())
-                .setProjection(Projections.groupProperty("userAdvert.advert.id")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.INNER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.INNER_JOIN)
-                .createAlias("targetAdvert." + partnerScopeReference, partnerScopeReference, JoinType.INNER_JOIN) //
-                .createAlias(partnerScopeReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
-                        Restrictions.disjunction() //
-                                .add(Restrictions.isNull("action.partnershipState")) //
-                                .add(Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState"))) //
-                .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value")) //
-                .add(Restrictions.eq("advert", advert)) //
-                .add(Restrictions.eq("user", applicant)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("stateAction.action.id", APPLICATION_COMPLETE_IDENTIFICATION_STAGE)) //
-                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
-                .list();
-    }
-
     public void endorseForAdvertTargets(Collection<Integer> advertTargets, PrismPartnershipState partnershipState) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTargetAdvert "
@@ -512,17 +480,6 @@ public class AdvertDAO {
                         + "and selected = true") //
                 .setParameterList("advertTargets", advertTargets) //
                 .setParameter("partnershipState", partnershipState) //
-                .executeUpdate();
-    }
-
-    public void identifyForAdverts(User user, Collection<Integer> adverts) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update UserAdvert "
-                        + "set identified = true "
-                        + "where user = :user "
-                        + "and advert.id in (:adverts)") //
-                .setParameter("user", user) //
-                .setParameterList("adverts", adverts) //
                 .executeUpdate();
     }
 

@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -21,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -32,9 +30,6 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
 
     @Inject
     private ActionService actionService;
-    
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private CommentService commentService;
@@ -53,10 +48,6 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
 
         if (comment.isApplicationSubmittedComment()) {
             setSubmissionData(resource);
-        }
-        
-        if (comment.isApplicationIdentifiedComment()) {
-            synchronizeUserAdverts(resource, comment);
         }
 
         if (comment.isApplicationInterviewScheduledConfirmedComment()) {
@@ -83,14 +74,6 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
         application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getValue());
     }
 
-    private void synchronizeUserAdverts(Application application, Comment comment) {
-        User applicant = application.getUser();
-        Set<Integer> adverts = advertService.getAdvertsUserCanIdentifyFor(application.getAdvert(), applicant, comment.getUser());
-        if (!adverts.isEmpty()) {
-            advertService.identifyForAdverts(applicant, adverts);
-        }
-    }
-    
     private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) {
         PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
         Action action = actionService.getById(prismAction);

@@ -31,7 +31,7 @@ public enum PrismImportedEntity implements EnumDefinition<uk.co.alumeni.prism.en
     IMPORTED_ADVERT_DOMICILE(new PrismImportedEntityImportDefinition()
             .withEntityClass(ImportedDomicile.class),
             new PrismImportedEntityImportInsertDefinition()
-                    .withTable("imported_advert_domicile")
+                    .withTable("imported_domicile")
                     .withPivotColumn("id")
                     .withColumn("name")
                     .withColumn("currency")

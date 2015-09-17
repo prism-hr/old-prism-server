@@ -33,7 +33,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;

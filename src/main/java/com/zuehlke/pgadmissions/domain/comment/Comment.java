@@ -180,9 +180,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
 
-    @Embedded
-    private CommentExport export;
-
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -445,14 +442,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
-    public CommentExport getExport() {
-        return export;
-    }
-
-    public void setExport(CommentExport export) {
-        this.export = export;
-    }
-
     public Set<CommentAssignedUser> getAssignedUsers() {
         return assignedUsers;
     }
@@ -609,11 +598,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public Comment withApplicationReserveStatus(final PrismApplicationReserveStatus applicationReserveStatus) {
         this.applicationReserveStatus = applicationReserveStatus;
-        return this;
-    }
-
-    public Comment withApplicationExport(CommentExport export) {
-        this.export = export;
         return this;
     }
 

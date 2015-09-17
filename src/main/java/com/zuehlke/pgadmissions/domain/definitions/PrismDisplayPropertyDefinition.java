@@ -1744,7 +1744,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             APPLICATION_REFEREE,
             "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us"),
 
-    APPLICATION_DOCUMENT_HEADER(APPLICATION_DOCUMENT, "Documents"),
+    APPLICATION_DOCUMENT_HEADER(APPLICATION_DOCUMENT, "Supporting Information"),
     APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL(APPLICATION_DOCUMENT, "Personal Summary"),
     APPLICATION_DOCUMENT_PERSONAL_SUMMARY_HINT(APPLICATION_DOCUMENT,
             "A concise overview of your skills, personal characteristics and achievements. Take your time with this. Employers use it to differentiate between applicants. It is your chance to promote yourself."),

@@ -577,7 +577,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileAdditionalInformation<T>> U updateAdditionalInformation(T profile, Class<U> additionalInformationClass,
             ProfileAdditionalInformationDTO additionalInformationDTO) {
-        U additionalInformation = (U) profile.getAddress();
+        U additionalInformation = (U) profile.getAdditionalInformation();
         if (additionalInformation == null) {
             additionalInformation = instantiate(additionalInformationClass);
         }

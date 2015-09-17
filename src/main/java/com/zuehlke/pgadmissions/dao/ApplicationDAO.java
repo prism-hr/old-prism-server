@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -110,7 +110,7 @@ public class ApplicationDAO {
 
     @SuppressWarnings("unchecked")
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
+            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints, transformedConstraints,
                 "sql/application_processing_summary_year.ftl")
                         .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
@@ -119,7 +119,7 @@ public class ApplicationDAO {
 
     @SuppressWarnings("unchecked")
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
+            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints, transformedConstraints,
                 "sql/application_processing_summary_month.ftl")
                         .addScalar("applicationMonth", IntegerType.INSTANCE) //
@@ -129,7 +129,7 @@ public class ApplicationDAO {
 
     @SuppressWarnings("unchecked")
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismImportedEntity, Integer> transformedConstraints) {
+            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints, transformedConstraints,
                 "sql/application_processing_summary_week.ftl")
                         .addScalar("applicationMonth", IntegerType.INSTANCE) //
@@ -253,26 +253,24 @@ public class ApplicationDAO {
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints,
-            HashMultimap<PrismImportedEntity, Integer> transformedConstraints, String templateLocation) {
+            HashMultimap<PrismFilterEntity, Integer> transformedConstraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
         List<String> filterConstraintExpressions = Lists.newLinkedList();
         if (constraints != null) {
-            HashMultimap<PrismImportedEntity, Integer> flattenedConstraints = HashMultimap.create();
+            HashMultimap<PrismFilterEntity, Integer> flattenedConstraints = HashMultimap.create();
             for (ResourceReportFilterPropertyDTO constraint : constraints) {
-                PrismImportedEntity importedEntityType = constraint.getEntityType();
+                PrismFilterEntity importedEntityType = constraint.getEntityType();
                 if (!transformedConstraints.containsKey(importedEntityType)) {
                     flattenedConstraints.put(constraint.getEntityType(), constraint.getEntityId());
                 }
             }
 
-            for (PrismImportedEntity entity : flattenedConstraints.keySet()) {
+            for (PrismFilterEntity entity : flattenedConstraints.keySet()) {
                 String columnConstraintExpression = "(";
                 List<String> columnConstraint = Lists.newArrayList();
-                for (String column : entity.getFilterColumns()) {
-                    Set<Integer> queryConstraints = transformedConstraints.containsKey(entity) ? transformedConstraints.get(entity) : flattenedConstraints.get(entity);
-                    columnConstraint.add(column + " in (" + Joiner.on(", ").join(queryConstraints) + ")");
-                }
+                Set<Integer> queryConstraints = transformedConstraints.containsKey(entity) ? transformedConstraints.get(entity) : flattenedConstraints.get(entity);
+                columnConstraint.add(entity.getFilterColumn() + " in (" + Joiner.on(", ").join(queryConstraints) + ")");
                 filterConstraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tand ").join(columnConstraint) + ")");
             }
         }

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_ADVERT_DOMICILE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_DOMICILE;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +41,7 @@ public class ImportedDomicile extends ImportedEntity<String>
 
     @Override
     public PrismImportedEntity getType() {
-        return IMPORTED_ADVERT_DOMICILE;
+        return IMPORTED_DOMICILE;
     }
 
     @Override

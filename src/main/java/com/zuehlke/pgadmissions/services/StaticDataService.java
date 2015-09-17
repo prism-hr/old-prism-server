@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getPrefetchEntities;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.getResourceReportFilterProperties;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
@@ -266,7 +266,7 @@ public class StaticDataService {
     public <T extends ImportedEntity<?>, U extends ImportedEntityResponseDefinition<?>> Map<String, Object> getInstitutionData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (PrismImportedEntity prismImportedEntity : getPrefetchEntities()) {
+        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
             List<T> entities = importedEntityService.getEnabledImportedEntities(prismImportedEntity);
             List<U> entityRepresentations = entities.stream().map(entity -> (U) importedEntityMapper.getImportedEntityRepresentation(entity))
                     .collect(Collectors.toList());
@@ -274,7 +274,7 @@ public class StaticDataService {
         }
 
         staticData.put("institution", resourceMapper.getResourceRepresentationSimple(institutionService.getById(institutionId)));
-        staticData.put("resourceReportFilterProperties", getResourceReportFilterProperties());
+        staticData.put("resourceReportFilterProperties", Arrays.asList(PrismFilterEntity.values()));
         return staticData;
     }
 

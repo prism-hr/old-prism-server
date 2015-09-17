@@ -57,7 +57,7 @@ public class UserAccount
 
     @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
     private Set<UserQualification> qualifications = Sets.newHashSet();
 
     @OrderBy(clause = "id")
